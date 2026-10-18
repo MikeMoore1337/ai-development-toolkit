@@ -182,6 +182,9 @@ def check_link(root: Path, source: Path, line: int, raw: str,
         return
     relative = unquote(parsed.path)
     fragment = unquote(parsed.fragment)
+    if "\\" in relative or "\x00" in relative or re.match(r"^[a-zA-Z]:", relative):
+        add(findings, "PATH001", location(source, root), line, "Unsafe encoded local target: " + raw)
+        return
     unresolved = source.parent / relative if relative else source
     target = unresolved.resolve()
     cursor = unresolved
