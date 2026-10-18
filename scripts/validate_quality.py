@@ -182,13 +182,23 @@ def check_link(root: Path, source: Path, line: int, raw: str,
         return
     relative = unquote(parsed.path)
     fragment = unquote(parsed.fragment)
-    target = (source.parent / relative).resolve() if relative else source.resolve()
+    unresolved = source.parent / relative if relative else source
+    target = unresolved.resolve()
+    cursor = unresolved
+    linked = False
+    while cursor != root.parent:
+        if cursor.is_symlink() or (hasattr(cursor, "is_junction") and cursor.is_junction()):
+            linked = True
+            break
+        if cursor == cursor.parent:
+            break
+        cursor = cursor.parent
     if not target.is_relative_to(root):
         add(findings, "PATH001", location(source, root), line, "Link escapes package: " + raw)
+    elif linked:
+        add(findings, "PATH001", location(source, root), line, "Symlink or junction target: " + raw)
     elif not target.is_file():
         add(findings, "LINK001", location(source, root), line, "Missing local file: " + raw)
-    elif target.is_symlink():
-        add(findings, "PATH001", location(source, root), line, "Symlink target: " + raw)
     elif fragment:
         if target.suffix.lower() not in (".md", ".markdown"):
             return
