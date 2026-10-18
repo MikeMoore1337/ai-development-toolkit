@@ -14,7 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from agent_eval_fixtures import FIXTURES, init_git, materialize, oracle_command, snapshot_digest
 from agent_eval_runner import (agent_command, assert_safe_outdir, build_prompt,
-                               preflight, prepare_oracle_destination, run_checked, source_hash)
+                               preflight, prepare_oracle_destination, run_checked, source_hash,
+                               execute, require_owner_real_execution_permission)
 
 
 class PairedPilotTests(unittest.TestCase):
@@ -108,6 +109,30 @@ class PairedPilotTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unsafe link"):
             prepare_oracle_destination(workspace, "python-api")
         self.assertEqual("KEEP", outside.read_text(encoding="utf-8"))
+
+    def test_zero_spend_freeze_denies_direct_execute_without_io(self):
+        from unittest.mock import patch
+        output = self.root / "should-not-exist"
+        with patch("agent_eval_runner.preflight") as preflight, \
+             patch("agent_eval_runner.run_checked") as runner, \
+             patch("agent_eval_runner.shutil.which") as lookup, \
+             patch("agent_eval_runner.subprocess.run") as process:
+            with self.assertRaisesRegex(ValueError, "zero_incremental_spend"):
+                execute("codex", "model", ["python-api"], 1, output, 30, 10, 1)
+            preflight.assert_not_called()
+            runner.assert_not_called()
+            lookup.assert_not_called()
+            process.assert_not_called()
+        self.assertFalse(output.exists())
+
+    def test_environment_or_cost_acknowledgement_cannot_unfreeze(self):
+        from unittest.mock import patch
+        with patch.dict(os.environ, {
+                "EVALS_ALLOW_PAID": "1", "OWNER_RUNTIME_GO": "true",
+                "OPENAI_API_KEY": "synthetic-do-not-use",
+        }):
+            with self.assertRaisesRegex(ValueError, "zero_incremental_spend"):
+                require_owner_real_execution_permission()
 
     def test_artifact_output_must_not_overwrite(self):
         existing = self.root / "exists"
