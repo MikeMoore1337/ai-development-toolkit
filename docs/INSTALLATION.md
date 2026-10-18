@@ -35,3 +35,43 @@ JavaScript selects `qa-fullstack`; JavaScript plus Playwright selects
 The output includes a rationale and `read_only: true`. Every recommendation
 is **heuristic** and must be reviewed against local project rules. Use the
 existing installer for preview and explicit `--apply` after deciding.
+
+## Skill Manager v2 (opt-in)
+
+The existing `install.py` remains supported for simple one-time copies. The
+new `skill_manager.py` maintains an **ownership lockfile** and local history
+only for skills installed with the manager. It never adopts or overwrites an
+unmanaged skill or edits `AGENTS.md` / `CLAUDE.md`.
+
+```powershell
+$project = "D:\Work\example-project"
+
+# All modifying operations PREVIEW changes by default:
+py -3 scripts/skill_manager.py install --target $project --profile qa-python
+py -3 scripts/skill_manager.py install --target $project --profile qa-python --apply
+py -3 scripts/skill_manager.py status --target $project
+py -3 scripts/skill_manager.py update --target $project
+py -3 scripts/skill_manager.py update --target $project --apply
+py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing
+py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing --apply
+# Restore the most recent managed transaction:
+py -3 scripts/skill_manager.py rollback --target $project
+py -3 scripts/skill_manager.py rollback --target $project --apply
+# If a process was interrupted, inspect and recover:
+py -3 scripts/skill_manager.py recover --target $project
+py -3 scripts/skill_manager.py recover --target $project --apply
+```
+
+The manager stores `.adt/skills-lock.json`, `.adt/manager.lock` and verified
+transaction snapshots in `.adt/history/` **inside the target project**.
+Backups may include copies of installed skill files: exclude `.adt/` from
+commits where appropriate. The manager does not edit `.gitignore` automatically.
+
+**Safety:** lockfile-only ownership, content drift checks, read-only previews,
+exclusive process locking, staged replacement, interruption recovery, no
+hidden network downloads. Locally modified owned skills block mutation.
+
+Existing skills installed with the original `install.py` are not adopted.
+Back up and manually migrate them only after reviewing their contents, then
+install through the manager into free destinations. Do not delete user changes
+just to make a manager command pass.
