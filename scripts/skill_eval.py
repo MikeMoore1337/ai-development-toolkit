@@ -65,9 +65,12 @@ def evaluate(data: dict[str, Any], evidence_root: Path) -> dict[str, Any]:
             raise EvalInputError(f"{task}: unknown variant {variant}")
         if type(record.get("accepted")) is not bool:
             raise EvalInputError(f"{task}: accepted must be a boolean")
-        for metric in ("regressions", "unsafe_actions", "tokens"):
-            if metric in record and record[metric] is not None:
-                _nonnegative(record[metric], metric)
+        for metric in ("regressions", "unsafe_actions"):
+            if metric not in record or record[metric] is None:
+                raise EvalInputError(f"{task}: missing required {metric}")
+            _nonnegative(record[metric], metric)
+        if record.get("tokens") is not None:
+            _nonnegative(record["tokens"], "tokens")
         if "duration_seconds" in record and record["duration_seconds"] is not None:
             _nonnegative(record["duration_seconds"], "duration_seconds", integer=False)
         _validate_evidence(evidence_root, record.get("evidence"), task)
