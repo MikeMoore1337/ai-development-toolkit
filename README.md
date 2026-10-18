@@ -124,6 +124,7 @@ These checks cover local structure, distribution safeguards and included unit te
 - [Installation](docs/INSTALLATION.md) - safety, options and client layouts
 - [Adaptation guide](docs/ADAPTATION.md) - apply skills to an existing project
 - [Quality rubric](docs/QUALITY_RUBRIC.md) - evaluate usefulness and risk
+- [Skill Evals (experimental)](docs/SKILL_EVALS.md) - score paired trials without inventing outcomes
 - [Publication policy](docs/PUBLICATION_POLICY.md) - provenance, licensing and private data
 - [Roadmap](docs/ROADMAP.md) - planned improvements, not shipped features
 
