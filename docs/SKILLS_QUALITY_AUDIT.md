@@ -93,6 +93,18 @@ The existing Windows and Linux CI matrix runs the same gate. External URL
 checks remain **outside mandatory CI**; 404/410, 401/403, 429, timeouts and
 network restrictions cannot safely be treated as equivalent failures.
 
+## External URLs: sampled verification (2026-10-19)
+
+Checked [Agent Skills specification](https://agentskills.io/specification):
+content available. Checked the
+[Hermes delegation guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/delegation/):
+redirects to the working canonical URL without the final slash.
+Official `skills-ref` availability is additionally exercised by the existing
+pinned GitHub Actions installation and CLI check. These are **samples**, not
+exhaustive verification of every outbound URL. Access refusal, rate limits and
+transient network failures are not proven broken links; only confirmed 404/410
+should be reported as such. No required CI job performs outbound link crawling.
+
 Not proved by this audit: actual Codex/Claude/Hermes skill activation,
 independent agent review, improved generated code, full semantic consistency
 of free-form text, current external link availability, upstream legal rights
