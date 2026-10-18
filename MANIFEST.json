@@ -1,0 +1,302 @@
+{
+  "package": "ai-development-toolkit",
+  "version": "5.2.0",
+  "scope": "Portable skill and QA library, including full generic Clear Voice and owner-authorized Make Feature 0.3.0 source; no personal project references or personal-issued license documents",
+  "skill_root": ".agents/skills",
+  "core_skills": [
+    "architecture-decisions",
+    "code-review",
+    "documentation-maintenance",
+    "implementation",
+    "qa-strategy",
+    "release-safety",
+    "research-verification",
+    "security-boundaries",
+    "task-scoping"
+  ],
+  "core_roles": [
+    "implementer",
+    "orchestrator",
+    "qa-verifier",
+    "researcher",
+    "reviewer"
+  ],
+  "original_skills_bundled_as_opt_in": 0,
+  "original_skills_in_inventory": 52,
+  "original_skills_not_bundled": "All third-party or project-specific original snapshots excluded from initial public publication pending provenance and license review.",
+  "automatic_external_binary_installation": false,
+  "license_note": "Core/QA/Clear Voice include their own licenses and provenance. Make Feature code is MIT-labeled upstream; publication authorization beyond the personal-issued document is stated by the recipient but not independently verified. Personal-issued license file excluded.",
+  "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
+  "extension_skills": [
+    "adaptive-delivery",
+    "agent-framework-fit",
+    "browser-workflow-evidence",
+    "clear-voice",
+    "codebase-knowledge-map",
+    "design-system-consistency",
+    "editorial-naturalness",
+    "external-skill-review",
+    "feature-delivery",
+    "minimal-safe-change",
+    "motion-quality",
+    "provider-reality-check",
+    "screenshot-fidelity",
+    "skill-portability"
+  ],
+  "profiles": {
+    "general": [
+      "task-scoping",
+      "implementation",
+      "qa-strategy",
+      "code-review",
+      "minimal-safe-change"
+    ],
+    "codex-feature": [
+      "task-scoping",
+      "feature-delivery",
+      "minimal-safe-change",
+      "implementation",
+      "qa-strategy",
+      "code-review"
+    ],
+    "ui-fix": [
+      "task-scoping",
+      "design-system-consistency",
+      "screenshot-fidelity",
+      "qa-strategy"
+    ],
+    "ui-motion": [
+      "design-system-consistency",
+      "motion-quality",
+      "qa-strategy"
+    ],
+    "skill-import": [
+      "skill-portability",
+      "external-skill-review",
+      "research-verification"
+    ],
+    "agent-architecture": [
+      "architecture-decisions",
+      "agent-framework-fit",
+      "codebase-knowledge-map",
+      "qa-strategy"
+    ],
+    "provider-research": [
+      "research-verification",
+      "provider-reality-check"
+    ],
+    "browser-task": [
+      "browser-workflow-evidence",
+      "qa-strategy"
+    ],
+    "feature-delivery": [
+      "feature-delivery",
+      "minimal-safe-change",
+      "implementation",
+      "qa-strategy",
+      "release-safety"
+    ],
+    "qa-core": [
+      "requirement-analysis",
+      "test-analysis-design",
+      "test-review",
+      "change-impact-analysis",
+      "quality-gate-assessment"
+    ],
+    "qa-python": [
+      "test-analysis-design",
+      "test-review",
+      "api-testing",
+      "pytest-test-design",
+      "database-validation",
+      "test-data-management",
+      "failure-triage"
+    ],
+    "qa-fullstack": [
+      "requirement-analysis",
+      "test-analysis-design",
+      "test-review",
+      "change-impact-analysis",
+      "api-testing",
+      "contract-testing",
+      "integration-testing",
+      "e2e-testing",
+      "playwright-testing"
+    ],
+    "qa-ci": [
+      "failure-triage",
+      "flaky-analysis",
+      "test-data-management",
+      "test-review"
+    ],
+    "qa-release": [
+      "change-impact-analysis",
+      "coverage-analysis",
+      "requirements-traceability",
+      "quality-gate-assessment"
+    ],
+    "qa-security": [
+      "security-testing",
+      "test-data-management",
+      "test-review",
+      "quality-gate-assessment"
+    ],
+    "qa-contract": [
+      "contract-testing",
+      "integration-testing",
+      "api-testing",
+      "change-impact-analysis"
+    ],
+    "qa-ui": [
+      "test-analysis-design",
+      "e2e-testing",
+      "playwright-testing",
+      "test-review",
+      "quality-gate-assessment"
+    ],
+    "qa-management": [
+      "requirements-traceability",
+      "test-management",
+      "defect-management",
+      "quality-gate-assessment"
+    ],
+    "qa-collaboration": [
+      "collaborative-development",
+      "qa-safe-change",
+      "qa-code-review",
+      "test-review"
+    ],
+    "qa-all": [
+      "api-testing",
+      "change-impact-analysis",
+      "collaborative-development",
+      "contract-testing",
+      "coverage-analysis",
+      "database-validation",
+      "defect-management",
+      "e2e-testing",
+      "failure-triage",
+      "flaky-analysis",
+      "graphify-adapter",
+      "integration-testing",
+      "playwright-testing",
+      "pytest-test-design",
+      "qa-clear-voice",
+      "qa-code-review",
+      "qa-safe-change",
+      "quality-gate-assessment",
+      "requirement-analysis",
+      "requirements-traceability",
+      "security-review",
+      "security-testing",
+      "test-analysis-design",
+      "test-data-management",
+      "test-management",
+      "test-review",
+      "test-strategy"
+    ],
+    "editorial": [
+      "clear-voice"
+    ],
+    "editorial-qa": [
+      "qa-clear-voice"
+    ],
+    "make-feature": [
+      "make-feature"
+    ]
+  },
+  "third_party_runtime_bundled": false,
+  "github_readme_review_date": "2026-10-17",
+  "source_revision_pins": {
+    "artemiimillier/bulletproof": "49e9c28f317c549de2767c6bbe11848fdfc9587a",
+    "DietrichGebert/ponytail": "16352ac229eb08a9598dcae48fe9f2b342567d86",
+    "NVIDIA/SkillSpector": "cf5cac7ba5c756a6e0ebf52dc9763f49422f889f",
+    "Leonxlnx/taste-skill": "f624f37a8c650b9cc550253104925efe4c8de246",
+    "pbakaus/impeccable": "08d5b470495d242ca0470f4aeae1956c3a074f83",
+    "emilkowalski/skills": "2d228630ba1446365f614a108cb8252f1feda202",
+    "Graphify-Labs/graphify": "86c57be8204673c2a1b9849a3292a7dd3ab373d8",
+    "NousResearch/hermes-agent": "edab579989a1680a6cbd2bb98ad30dc165c36c8b"
+  },
+  "private_make_feature_bundled": false,
+  "agent_skills_spec": {
+    "url": "https://agentskills.io/specification",
+    "reference_repository": "https://github.com/agentskills/agentskills",
+    "verified_against": "repository specification read 2026-10-17",
+    "official_cli_not_executed": true
+  },
+  "deprecated_skills": [
+    "adaptive-delivery"
+  ],
+  "extension_packs": {
+    "qa": {
+      "skill_root": "extensions/qa/skills",
+      "skills": [
+        "api-testing",
+        "change-impact-analysis",
+        "collaborative-development",
+        "contract-testing",
+        "coverage-analysis",
+        "database-validation",
+        "defect-management",
+        "e2e-testing",
+        "failure-triage",
+        "flaky-analysis",
+        "graphify-adapter",
+        "integration-testing",
+        "playwright-testing",
+        "pytest-test-design",
+        "qa-clear-voice",
+        "qa-code-review",
+        "qa-safe-change",
+        "quality-gate-assessment",
+        "requirement-analysis",
+        "requirements-traceability",
+        "security-review",
+        "security-testing",
+        "test-analysis-design",
+        "test-data-management",
+        "test-management",
+        "test-review",
+        "test-strategy"
+      ],
+      "role_root": "extensions/qa/roles",
+      "roles": [
+        "ci-investigator",
+        "coverage-analyst",
+        "flaky-analyst",
+        "qa-architect",
+        "quality-gatekeeper",
+        "requirement-analyst",
+        "security-reviewer",
+        "test-designer",
+        "test-implementer",
+        "test-management-analyst",
+        "test-reviewer"
+      ],
+      "license": "MIT (new portable adaptation; work-derived provenance documented)",
+      "auto_install": false
+    },
+    "make-feature": {
+      "skill_root": "extensions/make-feature/skills",
+      "skills": [
+        "make-feature"
+      ],
+      "auto_install": false
+    }
+  },
+  "qa_source_distribution_policy": "User identifies QA source as own material from work project. Public release contains portable rewrites, not original proprietary project policies; confirm employer IP obligations if applicable.",
+  "clear_voice": {
+    "skill": "clear-voice",
+    "version": "1.1.0-portable",
+    "profiles": [
+      "general",
+      "product-ui",
+      "knowledge-base",
+      "research-digest"
+    ],
+    "fixtures": 61,
+    "private_project_references": false
+  },
+  "optional_integrations": {},
+  "make_feature_source_bundled": true
+}

@@ -1,0 +1,7 @@
+{
+  "op": "spec",
+  "revision": 1,
+  "approval": "EXAMPLE_ONLY: replace with actual user request reference",
+  "criteria": {"C1": "EXAMPLE_ONLY: replace with observable required behavior"},
+  "tasks": [{"id": "T1", "criteria": ["C1"], "deps": [], "files": ["app.py", "test_app.py"]}]
+}

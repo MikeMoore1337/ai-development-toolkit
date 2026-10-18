@@ -1,0 +1,31 @@
+# Local caches and tooling
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+*.py[cod]
+.DS_Store
+.idea/
+.vscode/
+
+# Credentials and private/local-only materials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+LICENSE.personal.txt
+# Personally issued or downloaded add-on archives, not the checked-in skill
+make-feature-0.3.0*
+*.tar.gz
+*.tgz
+*.zip
+
+# Temporary results
+.artifacts/
+dist/
+build/

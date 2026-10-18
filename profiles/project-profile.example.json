@@ -1,0 +1,25 @@
+{
+  "project_name": "replace-with-project-name",
+  "category": "web|cli|library|data|mobile|documentation|other",
+  "runtime_languages": [],
+  "source_of_truth": [
+    "AGENTS.md",
+    "README.md"
+  ],
+  "repository": {
+    "provider": "auto-detect",
+    "base_branch": "auto-detect"
+  },
+  "commands": {
+    "install": null,
+    "test": null,
+    "lint": null,
+    "build": null
+  },
+  "release": {
+    "deploy_enabled": false,
+    "approval_policy": "use repository policy"
+  },
+  "optional_skills": [],
+  "notes": "Replace examples with verified project facts; never treat this template as a checked configuration."
+}

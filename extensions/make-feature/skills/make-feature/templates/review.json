@@ -1,0 +1,9 @@
+{
+  "op": "review",
+  "task": "T1",
+  "reviewer": "EXAMPLE_ONLY: replace with actual independent reviewer ID",
+  "provenance": "EXAMPLE_ONLY: replace with actual tool or session reference",
+  "report": ".make-feature/example/tasks/review.md",
+  "spec": "fail",
+  "quality": "fail"
+}

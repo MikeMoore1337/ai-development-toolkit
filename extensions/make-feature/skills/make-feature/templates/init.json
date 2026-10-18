@@ -1,0 +1,5 @@
+{
+  "op": "init",
+  "budget": 6,
+  "permissions": ["local_write", "test"]
+}

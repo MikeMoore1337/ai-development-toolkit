@@ -1,0 +1,7 @@
+{
+  "op": "bind",
+  "task": "T1",
+  "owner": "EXAMPLE_ONLY: same assignment key as claim",
+  "worker": "EXAMPLE_ONLY: actual isolated worker ID returned by dispatch",
+  "provenance": "EXAMPLE_ONLY: actual dispatch tool or session reference"
+}

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="435" viewBox="0 0 1280 435" role="img" aria-label="AI Development Toolkit - skills, roles and QA workflows">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#091423" /><stop offset=".66" stop-color="#101B34" /><stop offset="1" stop-color="#151A36" /></linearGradient>
+  <radialGradient id="glow"><stop offset="0" stop-color="#17645C" stop-opacity=".45"/><stop offset="1" stop-color="#17645C" stop-opacity="0"/></radialGradient>
+  <clipPath id="rounded"><rect width="1280" height="435" rx="20" /></clipPath>
+</defs>
+<g clip-path="url(#rounded)"><rect width="1280" height="435" fill="url(#bg)" />
+<g opacity=".36"><path d="M 0 0 V 435 M 0 0 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 64 0 V 435 M 0 64 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 128 0 V 435 M 0 128 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 192 0 V 435 M 0 192 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 256 0 V 435 M 0 256 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 320 0 V 435 M 0 320 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 384 0 V 435 M 0 384 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 448 0 V 435 M 0 448 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 512 0 V 435 M 0 512 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 576 0 V 435 M 0 576 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 640 0 V 435 M 0 640 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 704 0 V 435 M 0 704 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 768 0 V 435 M 0 768 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 832 0 V 435 M 0 832 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 896 0 V 435 M 0 896 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 960 0 V 435 M 0 960 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 1024 0 V 435 M 0 1024 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 1088 0 V 435 M 0 1088 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 1152 0 V 435 M 0 1152 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 1216 0 V 435 M 0 1216 H 1280" stroke="#22314F" stroke-width="1" /><path d="M 1280 0 V 435 M 0 1280 H 1280" stroke="#22314F" stroke-width="1" /></g>
+<circle cx="1035" cy="190" r="360" fill="url(#glow)" />
+<path d="M 0 427 Q 310 255 580 350 T 1280 285" fill="none" stroke="#39BFAD" stroke-width="1.5" opacity=".17"/>
+<rect x="72" y="56" width="10" height="10" rx="3" fill="#3FF3C5"/>
+<text x="96" y="66" font-family="DejaVu Sans,Arial,sans-serif" fill="#A4B5CF" font-size="15" letter-spacing="2.9" font-weight="600">PORTABLE WORKFLOWS  ·  VERSION 5.2</text>
+<text x="74" y="165" font-family="DejaVu Sans,Arial,sans-serif" fill="#F5F8FE" font-size="62" font-weight="700" letter-spacing="-2">AI Development</text>
+<text x="73" y="233" font-family="DejaVu Sans,Arial,sans-serif" fill="#55E8CA" font-size="62" font-weight="700" letter-spacing="-2">Toolkit</text>
+<text x="77" y="263" font-family="DejaVu Sans,Arial,sans-serif" fill="#B8C5D7" font-size="21">Skills, roles, QA engineering and reliable AI workflows.</text>
+<path d="M 897 122 l 85 -47 85 47 v 98 l -85 48 -85 -48Z" fill="#142740" stroke="#5C91AB" stroke-width="2" />
+    <path d="M 928 168 l 24 24 -24 24 M 1036 168 l -24 24 24 24" fill="none" stroke="#3FF3C5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 975 216 l 13 -46" fill="none" stroke="#A6AEFF" stroke-width="9" stroke-linecap="round" />
+    <circle cx="982" cy="172" r="139" fill="none" stroke="#3CE2CD" stroke-opacity=".14" stroke-width="1.5" />
+    <circle cx="982" cy="172" r="175" fill="none" stroke="#91A2EC" stroke-opacity=".12" stroke-width="1.5" />
+    <circle cx="1110" cy="84" r="5" fill="#43EDC6" /><circle cx="814" cy="210" r="4" fill="#94A5FE" />
+    <path d="M 827 302 L 895 265 L 958 302 L 1025 265 L 1094 302" fill="none" stroke="#4EC3C9" stroke-opacity=".35" stroke-width="2" stroke-dasharray="4 12" />
+<g font-family="DejaVu Sans,Arial,sans-serif"><rect x="76" y="325" width="125" height="38" rx="19" fill="#1B344A" stroke="#2B5C67" />
+    <text x="138.5" y="350" fill="#72EFD0" font-size="17" font-weight="600" text-anchor="middle">51 skills</text>
+    <rect x="215" y="325" width="123" height="38" rx="19" fill="#222B4A" stroke="#46538B" />
+    <text x="276.5" y="350" fill="#B4BDFF" font-size="17" font-weight="600" text-anchor="middle">16 roles</text>
+    <rect x="352" y="325" width="143" height="38" rx="19" fill="#1B344A" stroke="#2B5C67" />
+    <text x="423.5" y="350" fill="#72EFD0" font-size="17" font-weight="600" text-anchor="middle">23 profiles</text></g>
+</g></svg>

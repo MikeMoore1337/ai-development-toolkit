@@ -1,0 +1,5 @@
+{
+  "op": "claim",
+  "task": "T1",
+  "owner": "EXAMPLE_ONLY: replace with unique assignment key, then bind actual worker ID"
+}
