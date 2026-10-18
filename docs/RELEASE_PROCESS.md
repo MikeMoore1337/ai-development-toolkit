@@ -30,3 +30,30 @@ substitute for independently verifying a tagged public release.
 For the current Ruleset configuration, see [branch protection](BRANCH_PROTECTION.md).
 Skills' structure is checked in CI, but real-agent portability and effectiveness
 are separate experimental claims.
+
+## Independent verification of a GitHub source archive
+
+Before publishing a new release, download the actual GitHub-generated ZIP and
+extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
+For example, on Windows (replace the tag for the release under review):
+
+```powershell
+$tag = "v5.3.1"
+$zip = Join-Path $env:TEMP "adt-$tag.zip"
+$dest = Join-Path $env:TEMP "adt-$tag-source"
+if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
+Invoke-WebRequest "https://github.com/MikeMoore1337/ai-development-toolkit/archive/refs/tags/$tag.zip" -OutFile $zip
+Expand-Archive -LiteralPath $zip -DestinationPath $dest
+$root = Get-ChildItem $dest -Directory | Select-Object -First 1
+python scripts/verify_checksums.py --archive-root $root.FullName
+```
+
+The archive check compares SHA256 values **and requires every extracted source
+file to appear exactly once** in `SHA256SUMS.txt`. It rejects missing, extra,
+linked and unlisted files. Git worktree mode uses `git ls-files -z` for the
+canonical tracked inventory, so new tracked files also require checksums.
+
+This does not authenticate the download or prove publisher identity: verify
+the intended tag commit and GitHub workflow results separately. Publication
+requires a real execution record for archive verification; merely documenting
+this procedure is not evidence that the archive was downloaded.
