@@ -89,11 +89,19 @@ def oracle_exit(case_id: str, workspace: Path, *, timeout: int = 45) -> dict:
     argv = oracle_command(case_id)
     if Path(argv[0]).name.lower() not in ALLOWED_EXECUTABLES:
         raise ValueError("Refusing unexpected oracle executable")
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(workspace)
-    env["GOPROXY"] = "off"
-    env["GOSUMDB"] = "off"
-    env["GOTOOLCHAIN"] = "local"
+    # Synthetic source must not inherit provider credentials, CLI hooks or
+    # Python/Node/Go injection options from the invoking user's environment.
+    env = {key: value for key in ("PATH", "SYSTEMROOT", "WINDIR", "PATHEXT")
+           if (value := os.environ.get(key)) is not None}
+    env.update({
+        "HOME": str(workspace), "USERPROFILE": str(workspace),
+        "TMP": str(workspace), "TEMP": str(workspace), "TMPDIR": str(workspace),
+        "PYTHONPATH": str(workspace), "PYTHONNOUSERSITE": "1",
+        "PYTHONSAFEPATH": "1", "GOPROXY": "off", "GOSUMDB": "off",
+        "GOTOOLCHAIN": "local", "GOWORK": "off",
+        "GOCACHE": str(workspace.parent / ".go-build-cache"),
+        "GOPATH": str(workspace.parent / ".go-path"),
+    })
     # Fixed command; no shell, no provider client, no downloading packages.
     try:
         result = subprocess.run(argv, cwd=workspace, env=env, stdin=subprocess.DEVNULL,
