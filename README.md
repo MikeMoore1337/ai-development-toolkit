@@ -1,5 +1,7 @@
 <div align="center">
 
+![AI Development Toolkit](assets/branding/hero.png)
+
 **Build with AI. Ship with evidence.**
 
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
