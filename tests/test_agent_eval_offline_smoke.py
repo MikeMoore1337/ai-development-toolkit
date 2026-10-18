@@ -81,6 +81,33 @@ class OfflineSmokeTests(unittest.TestCase):
         self.assertIn("git", launched)
         self.assertIn(Path(sys.executable).name.lower(), launched)
 
+    def test_oracle_process_environment_never_inherits_secrets_or_hooks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            original = subprocess.run
+            observed = []
+            def probe(argv, *args, **kwargs):
+                observed.append(kwargs["env"])
+                return subprocess.CompletedProcess(argv, 1, b"", b"")
+            with patch.dict("os.environ", {
+                "OPENAI_API_KEY": "fake-openai-secret",
+                "ANTHROPIC_API_KEY": "fake-anthropic-secret",
+                "NODE_OPTIONS": "--require=/tmp/evil.js",
+                "PYTHONINSPECT": "1",
+                "GIT_CONFIG_COUNT": "1",
+                "GOFLAGS": "-mod=mod",
+            }), patch("agent_eval_offline_smoke.subprocess.run", side_effect=probe):
+                verdict = oracle_exit("python-api", workspace)
+        self.assertEqual(1, verdict["returncode"])
+        self.assertEqual(len(observed), 1)
+        env = observed[0]
+        for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "NODE_OPTIONS",
+                    "PYTHONINSPECT", "GIT_CONFIG_COUNT", "GOFLAGS"):
+            self.assertNotIn(key, env)
+        self.assertEqual("off", env["GOPROXY"])
+        self.assertEqual("local", env["GOTOOLCHAIN"])
+        self.assertEqual(str(workspace), env["PYTHONPATH"])
+
     def test_unknown_cases_and_invalid_timeouts_fail_closed(self):
         for inputs in ([], ["unknown"], ["python-api", "python-api"]):
             with self.assertRaises(ValueError):

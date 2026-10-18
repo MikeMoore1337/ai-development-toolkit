@@ -45,3 +45,14 @@ jobs:
       - name: Offline hidden-oracle discrimination (no agent, no API)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: python scripts/agent_eval_offline_smoke.py --strict-runtimes
+      - name: Checkout pinned Hermes contract (source only)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        uses: actions/checkout@v7
+        with:
+          repository: MikeMoore1337/hermes
+          ref: db7ed22d4faef39af3d5aafa0cc6f20b91b23a3a
+          path: .hermes-compat
+          persist-credentials: false
+      - name: Offline Hermes/Toolkit compatibility (no agent, no API)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: python scripts/agent_eval_hermes_contract.py --hermes-root .hermes-compat
