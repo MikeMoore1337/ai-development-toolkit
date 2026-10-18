@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -30,6 +31,9 @@ class ReviewGateTests(unittest.TestCase):
                     "returncode": 0, "timed_out": False, "duration_seconds": 13.5
                 }, "oracle": {"returncode": 0, "timed_out": False},
                 "evidence": [f"{name}/oracle.stdout.txt"],
+                "evidence_sha256": {
+                    f"{name}/oracle.stdout.txt": hashlib.sha256(evidence.read_bytes()).hexdigest()
+                },
             })
             decisions.append({
                 "case_id": "python-api", "trial": 1, "variant": variant,
@@ -87,6 +91,12 @@ class ReviewGateTests(unittest.TestCase):
     def test_activation_cannot_be_assumed(self):
         self.reviews["decisions"][0]["skill_activation_observed"] = True
         with self.assertRaisesRegex(EvalInputError, "Baseline"):
+            self.build()
+
+    def test_tampered_evidence_is_rejected(self):
+        p = self.root / "python-api-t1-candidate" / "oracle.stdout.txt"
+        p.write_text("Changed after run", encoding="utf-8")
+        with self.assertRaisesRegex(EvalInputError, "Evidence altered"):
             self.build()
 
     def test_missing_evidence_is_rejected(self):
