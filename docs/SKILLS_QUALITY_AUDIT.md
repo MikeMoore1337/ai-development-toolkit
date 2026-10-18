@@ -81,8 +81,11 @@ Avoid presenting such recommendations as verified user intent.
 `python scripts/validate_quality.py` examines declared inventory, profiles,
 the explicit exclusive-workflow rules and Markdown links under skills, roles,
 references, project documentation and root guides. It recognizes relative and
-percent-encoded paths, Markdown heading anchors (including duplicates), code
-fences, inline code, Markdown reference definitions and external HTTP links.
+percent-encoded paths, Markdown heading anchors (including duplicates), fenced
+code blocks with accurate closing delimiters, multi-backtick inline code,
+Markdown reference definitions and external HTTP links. This is not a full
+CommonMark parser; indented code, HTML hrefs and complex nested link syntax
+still require manual review.
 Unsafe paths and missing local files are BLOCKERs. JSON output includes
 `rule_id`, `severity`, `file`, `line` and `explanation`; result order is
 stable. Invalid/missing quality-rule configuration is itself a BLOCKER.
