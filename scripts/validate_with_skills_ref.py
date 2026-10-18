@@ -45,6 +45,9 @@ def skill_directories(root: Path = ROOT, scope: str = "all") -> list[Path]:
         if len(names) != len(set(names)):
             raise ValueError(f"Duplicate skills in {label} manifest")
         actual = sorted(p.name for p in base.iterdir() if p.is_dir()) if base.is_dir() else []
+        missing_names = sorted(set(names) - set(actual))
+        if missing_names:
+            raise FileNotFoundError(f"Missing declared skill directories in {label}: {missing_names}")
         if actual != sorted(names):
             raise ValueError(f"{label} skill inventory mismatch: declared={sorted(names)}, present={actual}")
         for name in names:
