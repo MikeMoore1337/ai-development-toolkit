@@ -164,6 +164,22 @@ class SkillManagerTests(unittest.TestCase):
         self.assertTrue(self.installed.exists())
         self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
 
+    def test_recover_orphaned_staging_without_touching_skills(self):
+        base = self.repo / ".adt" / "history" / ("e" * 32)
+        (base / "staged" / "test-skill").mkdir(parents=True)
+        (base / "staged" / "test-skill" / "SKILL.md").write_text(
+            "# Staged but not applied\n", encoding="utf-8",
+        )
+        with self.assertRaisesRegex(manager.ManagerError, "Interrupted"):
+            self.call("status")
+        self.assertEqual(1, self.call("recover")["orphan_staging"])
+        result = self.call("recover", apply=True)
+        self.assertEqual(1, result["discarded_incomplete_staging"])
+        self.assertFalse(base.exists())
+        self.assertEqual("Private project rules.\n",
+                         (self.repo / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertEqual({}, self.call("status")["skills"])
+
     def test_manifest_source_traversal_refused(self):
         extension = self.source / "external"
         extension.mkdir()
