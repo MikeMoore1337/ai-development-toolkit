@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from agent_eval_fixtures import FIXTURES, init_git, materialize, oracle_command, snapshot_digest
 from agent_eval_runner import (agent_command, assert_safe_outdir, build_prompt,
-                               preflight, run_checked, source_hash)
+                               preflight, prepare_oracle_destination, run_checked, source_hash)
 
 
 class PairedPilotTests(unittest.TestCase):
@@ -83,6 +83,31 @@ class PairedPilotTests(unittest.TestCase):
         self.assertEqual("python", check["cases"]["python-api"]["language"])
         self.assertFalse(any(self.root.iterdir()))
         self.assertIn("do not install dependencies", build_prompt("python-api").lower())
+
+    def test_oracle_path_is_held_back_until_agent_finishes(self):
+        workspace = self.root / "python-fixture"
+        materialize("python-api", workspace)
+        oracle = prepare_oracle_destination(workspace, "python-api")
+        self.assertFalse(oracle.exists())
+        self.assertEqual("test_retry.py", oracle.name)
+        oracle.write_text("agent-injected", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "precreated oracle"):
+            prepare_oracle_destination(workspace, "python-api")
+        self.assertEqual("agent-injected", oracle.read_text(encoding="utf-8"))
+
+    def test_oracle_rejects_agent_symlinks(self):
+        workspace = self.root / "bad-fixture"
+        materialize("python-api", workspace)
+        outside = self.root / "outside.txt"
+        outside.write_text("KEEP", encoding="utf-8")
+        linked = workspace / "oracle_tests"
+        try:
+            linked.symlink_to(self.root, target_is_directory=True)
+        except OSError:
+            self.skipTest("Symlinks are not permitted by this environment")
+        with self.assertRaisesRegex(ValueError, "unsafe link"):
+            prepare_oracle_destination(workspace, "python-api")
+        self.assertEqual("KEEP", outside.read_text(encoding="utf-8"))
 
     def test_artifact_output_must_not_overwrite(self):
         existing = self.root / "exists"
