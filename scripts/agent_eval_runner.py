@@ -89,19 +89,34 @@ def source_hash(path: Path) -> str:
 
 
 def diff_snapshot(before: dict[str, str], workspace: Path, case_id: str) -> str:
-    """Readable source diff: excludes skill metadata, Git and hidden oracle."""
+    """Record changed tracked source and new files without following links."""
     segments = []
-    tracked = FIXTURES[case_id]["files"]
-    for name in sorted(set(before) | set(tracked)):
+    excluded = {".git", ".agents", ".claude", ".empty-hooks"}
+    root = workspace.resolve()
+    for name, original in sorted(before.items()):
         path = workspace / name
+        if (path.is_symlink() or path.is_junction()
+                or not path.resolve().is_relative_to(root)):
+            segments.append(f"UNSAFE_REPLACEMENT: {name}\n")
+            continue
         after = path.read_text(encoding="utf-8", errors="replace") if path.is_file() else ""
-        original = before.get(name, "")
         if original != after:
             segments.extend(difflib.unified_diff(
                 original.splitlines(keepends=True), after.splitlines(keepends=True),
                 fromfile=f"before/{name}", tofile=f"after/{name}"))
+    for path in sorted(workspace.rglob("*")):
+        relative = path.relative_to(workspace)
+        if set(relative.parts).intersection(excluded):
+            continue
+        name = relative.as_posix()
+        if name in before or name == FIXTURES[case_id]["oracle_path"]:
+            continue
+        if path.is_symlink() or path.is_junction():
+            segments.append(f"UNEXPECTED_LINK: {name}\n")
+        elif path.is_file():
+            segments.append(f"UNEXPECTED_FILE: {name} "
+                            f"sha256={hashlib.sha256(path.read_bytes()).hexdigest()}\n")
     return "".join(segments) or "(no changes to initial project files)\n"
-
 
 def build_prompt(case_id: str) -> str:
     return (
