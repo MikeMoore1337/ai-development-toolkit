@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BAD_EXACT = {"LICENSE.personal.txt", "make-feature-0.3.0.tar.gz", "make-feature-0.3.0.tar(1).gz"}
 BAD_SUFFIXES = {".exe", ".dll", ".pem", ".p12", ".pfx", ".zip", ".tgz"}
 PROJECT_RULES = {
-    "nonportable-project": r"(?i)your[- ]fitness[- ]coach|second[- ]brain|\\byfc\\b",
-    "private-repository": r"(?i)github\\.com/MikeMoore1337/(?!ai-development-toolkit)",
-    "personal-email": r"(?i)mikhail\\.murzaev@",
+    "nonportable-project": r"(?i)your[- ]fitness[- ]coach|second[- ]brain|\byfc\b",
+    "private-repository": r"(?i)github\.com/MikeMoore1337/(?!ai-development-toolkit)",
+    "personal-email": r"(?i)mikhail\.murzaev@",
 }
 SECRETS = {
     "private-key-header": r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
