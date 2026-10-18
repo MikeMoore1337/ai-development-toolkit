@@ -105,7 +105,7 @@ class OfflineSmokeTests(unittest.TestCase):
                     "PYTHONINSPECT", "GIT_CONFIG_COUNT", "GOFLAGS"):
             self.assertNotIn(key, env)
         self.assertEqual("off", env["GOPROXY"])
-        self.assertEqual("off", env["GOTOOLCHAIN"])
+        self.assertEqual("local", env["GOTOOLCHAIN"])
         self.assertEqual(str(workspace), env["PYTHONPATH"])
 
     def test_unknown_cases_and_invalid_timeouts_fail_closed(self):
