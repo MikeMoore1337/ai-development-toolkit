@@ -32,11 +32,11 @@ class ChecksumTests(unittest.TestCase):
     def test_windows_checkout_line_endings(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            canonical = b"alpha\\nbeta\\n"
-            (root / "file.txt").write_bytes(b"alpha\\r\\nbeta\\r\\n")
+            canonical = b"alpha\nbeta\n"
+            (root / "file.txt").write_bytes(b"alpha\r\nbeta\r\n")
             digest = hashlib.sha256(canonical).hexdigest()
             (root / "SHA256SUMS.txt").write_text(
-                f"{digest}  file.txt\\n", encoding="utf-8",
+                f"{digest}  file.txt\n", encoding="utf-8",
             )
             self.assertEqual([], checks.verify(root))
 
