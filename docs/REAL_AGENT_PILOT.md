@@ -148,7 +148,7 @@ The required result for each of Python, JavaScript and Go is:
 - No Codex, Claude or any other AI client is invoked, and no provider keys,
   network calls or billing APIs are used. Go module fetch is forced OFF.
 
-The tool uses throwaway temporary directories, does not touch YFC/Hermes VPS
+The tool uses throwaway temporary directories, does not touch production hosts
 or real project folders, and emits only case IDs, fixture hashes and
 non-sensitive test outcomes. Its JSON always says
 `classification=SYNTHETIC_OFFLINE_HARNESS_SMOKE_NOT_MODEL_EVAL`,
