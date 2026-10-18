@@ -102,6 +102,11 @@ class QualityGateTests(unittest.TestCase):
         self.file(".agents/skills/implementation/SKILL.md", r"[private](C:\private\file.md)" + "\n")
         self.check("PATH001")
 
+    def test_percent_encoded_windows_separator_rejected(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "[encoded](..%5c..%5csecret.md)\n")
+        self.check("PATH001")
+
     def test_valid_anchor_duplicate_headings_and_encoded_path(self):
         self.file(".agents/skills/implementation/references/a b.md",
                   "# Some Heading\n# Some Heading\n")
