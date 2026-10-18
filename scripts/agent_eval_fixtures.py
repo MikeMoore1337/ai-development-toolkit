@@ -150,7 +150,9 @@ def init_git(workspace: Path) -> str:
     """Pin a real local Git commit, with no remote, hooks or inherited author."""
     no_hooks = workspace / ".empty-hooks"
     no_hooks.mkdir(exist_ok=True)
-    env = dict(os.environ, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+    env = dict(os.environ, GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull,
+               GIT_AUTHOR_DATE="2000-01-01T00:00:00+00:00",
+               GIT_COMMITTER_DATE="2000-01-01T00:00:00+00:00")
     commands = (
         ["git", "init", "-q", "-b", "main"],
         ["git", "-c", "core.hooksPath=.empty-hooks", "add", "."],
