@@ -1,13 +1,32 @@
-# Release checklist
+# Reproducible release procedure
 
-Before creating a public release:
+The repository follows PR-based delivery. CI on a PR is necessary, not a
+substitute for independently verifying a tagged public release.
 
-1. Run `python scripts/check_public_package.py`.
-2. Run `python scripts/validate_pack.py` and tests.
-3. Optionally run official `skills-ref` validation after installing it.
-4. Review staged changes: `git diff --cached --stat` and `git diff --cached`.
-5. Verify no personal archive, credentials, tokens, private data or third-party copies without redistribution rights.
-6. Commit on `main` only once the release content is reviewed and then push.
-7. Record CI results and a meaningful changelog entry.
+1. Work on a feature branch and document what changed and any migration risks.
+2. Run `python -m pip install -r requirements-dev.txt`.
+3. Run `python scripts/check_public_package.py` and
+   `python scripts/validate_pack.py`.
+4. Run `python -m unittest discover -s tests -v`.
+5. After reviewing the change, regenerate digests with
+   `python scripts/verify_checksums.py --write` and **review its diff**.
+   The inventory covers tracked files at the time of regeneration, except itself.
+   Do not regenerate blindly to conceal unexpected changes.
+6. Run `python scripts/verify_checksums.py` to verify recorded file bytes.
+7. If the upstream demo CLI is installed and trusted, run
+   `python scripts/validate_with_skills_ref.py --scope all`. Its installation
+   and test execution are separate from CI; no automatic network install occurs.
+8. Check no keys, tokens, private data, unlicensed material or unexpected
+   executables entered the diff. The built-in publication script is only a
+   basic safeguard, **not** a complete secrets or supply-chain scanner.
+9. Open a PR, require all CI matrix jobs (Linux 3.12/3.13, Windows 3.14),
+   resolve review discussions, then merge. Do not bypass owner approvals or
+   deploy gates. Ruleset settings live on GitHub, not in this repository.
+10. After successful CI on `main`, tag the exact validated SHA, publish
+    release notes describing changes and compatibility, and verify that the
+    public archive contains the expected artifacts. Never describe a tagged
+    release as tested on real agents without actual evaluation records.
 
-The initial build is prepared for publication; the project is not automatically published by these checks.
+For the current Ruleset configuration, see [branch protection](BRANCH_PROTECTION.md).
+Skills' structure is checked in CI, but real-agent portability and effectiveness
+are separate experimental claims.

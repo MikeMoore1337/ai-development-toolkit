@@ -1,3 +1,13 @@
+# Changelog
+
+## 5.3.0 (prepared, 2026-10-18)
+
+- Validates the declared inventory with the optional upstream Agent Skills reference CLI, including the QA and Make Feature extension packs; fail closed when an expected skill is missing.
+- Checks recorded package SHA256 digests in Linux/Windows CI, accounting for Git-normalized LF/CRLF endings; provides explicit regeneration for maintainers.
+- Adds regression tests for cross-platform text, malformed manifests, stale hashes, duplicates, and unsafe paths.
+- Updates maintained GitHub Actions and documents evidence requirements for releases.
+- Official GitHub Release and real-agent performance evaluation are separate work, not implied by these checks.
+
 ## 5.2.0 (2026-10-18)
 
 - Clear Voice: full, generic source skill with four portable domain profiles and 61 synthetic checks; removed private project identifiers from the public edition.
@@ -10,8 +20,6 @@
 - Added the `editorial` / `editorial-qa` installation profiles; retained lightweight `editorial-naturalness` compatibility.
 - Made optional personal Make Feature installation explicit; no proprietary files or personal license are redistributed.
 - Added regression coverage for Clear Voice packaging and Make Feature publication boundaries.
-
-# Changelog
 
 ## 5.0.0 (2026-10-18)
 
