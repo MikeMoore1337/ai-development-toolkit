@@ -91,11 +91,13 @@ def oracle_exit(case_id: str, workspace: Path, *, timeout: int = 45) -> dict:
         raise ValueError("Refusing unexpected oracle executable")
     # Synthetic source must not inherit provider credentials, CLI hooks or
     # Python/Node/Go injection options from the invoking user's environment.
+    runtime_tmp = workspace.parent / ".oracle-runtime-tmp"
+    runtime_tmp.mkdir(mode=0o700, exist_ok=True)
     env = {key: value for key in ("PATH", "SYSTEMROOT", "WINDIR", "PATHEXT")
            if (value := os.environ.get(key)) is not None}
     env.update({
         "HOME": str(workspace), "USERPROFILE": str(workspace),
-        "TMP": str(workspace), "TEMP": str(workspace), "TMPDIR": str(workspace),
+        "TMP": str(runtime_tmp), "TEMP": str(runtime_tmp), "TMPDIR": str(runtime_tmp),
         "PYTHONPATH": str(workspace), "PYTHONNOUSERSITE": "1",
         "PYTHONSAFEPATH": "1", "GOPROXY": "off", "GOSUMDB": "off",
         "GOTOOLCHAIN": "local", "GOWORK": "off",
