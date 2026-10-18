@@ -7,6 +7,7 @@ passing hidden oracle alone is not an independent acceptance verdict.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -51,6 +52,20 @@ def build_reports(observations: dict, reviews: dict, root: Path) -> dict[str, di
             if isinstance(value, bool) or not isinstance(value, int) or value < 0:
                 raise EvalInputError(f"Explicit non-negative {metric} required: {key}")
         trial = catalog[key]
+        hashes = trial.get("evidence_sha256")
+        if (not isinstance(hashes, dict) or
+                set(hashes) != set(trial.get("evidence", []))):
+            raise EvalInputError(f"Missing or incomplete evidence digests: {key}")
+        for relative, expected in hashes.items():
+            path = root / relative
+            if (not isinstance(relative, str) or
+                    not isinstance(expected, str) or len(expected) != 64 or
+                    Path(relative).is_absolute() or ".." in Path(relative).parts or
+                    not path.resolve().is_relative_to(root.resolve()) or
+                    not path.is_file() or path.is_symlink()):
+                raise EvalInputError(f"Invalid evidence digest or unsafe path: {key}")
+            if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                raise EvalInputError(f"Evidence altered since the agent run: {key}")
         if item["accepted"] and (trial["cli"]["returncode"] != 0
                                  or trial["cli"]["timed_out"]
                                  or trial["oracle"]["returncode"] != 0
