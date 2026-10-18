@@ -1,6 +1,14 @@
 # Changelog
 
-## 5.3.0 (prepared, 2026-10-18)
+## 5.4.0 (prepared, 2026-10-18)
+
+- Skill Manager v2: owned-only install/status/update/uninstall/rollback/recover, local backups, exclusive locking, drift checks, and deterministic file diff previews.
+- SHA256 inventory checks now reject omitted or extra Git-tracked files and support verification of GitHub-generated source archives.
+- Publication security and compatibility checks remain required across Ubuntu/Python 3.12/3.13 and Windows/Python 3.14.
+- Added a read-only GitHub Actions release workflow that downloads, extracts, and checks the published source archive and retains verification evidence.
+- No independent real-agent effectiveness benchmarks have been completed yet; Skill Evals #11 remains open.
+
+## 5.3.0 (2026-10-18)
 
 - Validates the declared inventory with the optional upstream Agent Skills reference CLI, including the QA and Make Feature extension packs; fail closed when an expected skill is missing.
 - Checks recorded package SHA256 digests in Linux/Windows CI, accounting for Git-normalized LF/CRLF endings; provides explicit regeneration for maintainers.
