@@ -142,6 +142,34 @@ def exclusive(target: Path):
                 fcntl.flock(lock, fcntl.LOCK_UN)
 
 
+def orphan_staging(target: Path) -> list[Path]:
+    """Recoverable: a crash before meta.json is durable cannot have changed skills."""
+    history = target / ".adt" / "history"
+    if not history.exists():
+        return []
+    if history.is_symlink() or history.is_junction():
+        raise ManagerError("Linked manager history is forbidden")
+    orphans = []
+    for folder in history.iterdir():
+        if (folder / "meta.json").exists():
+            continue
+        if not folder.is_dir() or folder.is_symlink() or folder.is_junction():
+            raise ManagerError(f"Unsafe transaction record: {folder}")
+        if not TX.fullmatch(folder.name) or (folder / "old").exists():
+            raise ManagerError(f"Unrecognized unfinished transaction: {folder}")
+        for entry in folder.iterdir():
+            if entry.is_symlink() or entry.is_junction():
+                raise ManagerError(f"Linked unfinished transaction: {entry}")
+            if entry.name == "staged" and entry.is_dir():
+                continue
+            if (entry.name.startswith("meta.json.") and
+                    entry.name.endswith(".tmp") and entry.is_file()):
+                continue
+            raise ManagerError(f"Unknown unfinished transaction content: {entry}")
+        orphans.append(folder)
+    return orphans
+
+
 def pending_transactions(target: Path) -> list[Path]:
     history = target / ".adt" / "history"
     if not history.exists():
@@ -154,6 +182,8 @@ def pending_transactions(target: Path) -> list[Path]:
             raise ManagerError(f"Unsafe transaction record: {folder}")
         metadata = folder / "meta.json"
         if not metadata.is_file() or metadata.is_symlink():
+            if folder in orphan_staging(target):
+                continue
             raise ManagerError(f"Incomplete transaction metadata: {folder}")
         details = json.loads(metadata.read_text(encoding="utf-8"))
         if details.get("status") == "pending":
@@ -164,7 +194,7 @@ def pending_transactions(target: Path) -> list[Path]:
 
 
 def no_pending(target: Path) -> None:
-    if pending_transactions(target):
+    if pending_transactions(target) or orphan_staging(target):
         raise ManagerError("Interrupted transaction detected: run recover --apply")
 
 
@@ -267,12 +297,16 @@ def operate(action: str, target: Path, *, names: list[str] | None = None,
     if action == "recover":
         if not apply:
             return {"action": action, "pending": len(pending_transactions(target)),
-                    "applied": False}
+                    "orphan_staging": len(orphan_staging(target)), "applied": False}
         with exclusive(target):
             pending = pending_transactions(target)
+            orphans = orphan_staging(target)
             for entry in sorted(pending):
                 _recover_one(target, entry)
-            return {"action": action, "recovered": len(pending), "applied": True}
+            for entry in sorted(orphans):
+                shutil.rmtree(entry)
+            return {"action": action, "recovered": len(pending),
+                    "discarded_incomplete_staging": len(orphans), "applied": True}
     if action == "status" and apply:
         raise ManagerError("status is always read-only; omit --apply")
     if apply:
