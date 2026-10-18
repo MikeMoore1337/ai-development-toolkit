@@ -71,7 +71,6 @@ class PairedPilotTests(unittest.TestCase):
         self.assertIn("dontAsk", claude)
         self.assertIn("Read,Edit,Write", claude)
         self.assertNotIn("--dangerously-skip-permissions", claude)
-        self.assertIn("No", "No") if False else None
         with self.assertRaises(ValueError):
             agent_command("unknown", "model", path, "hi", 3)
 
@@ -80,7 +79,7 @@ class PairedPilotTests(unittest.TestCase):
         self.assertTrue(check["no_agents_invoked"])
         self.assertEqual("python", check["cases"]["python-api"]["language"])
         self.assertFalse(any(self.root.iterdir()))
-        self.assertIn("no downloads", build_prompt("python-api").lower()) if False else None
+        self.assertIn("do not install dependencies", build_prompt("python-api").lower())
 
     def test_artifact_output_must_not_overwrite(self):
         existing = self.root / "exists"
