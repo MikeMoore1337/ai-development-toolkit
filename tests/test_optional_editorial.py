@@ -13,7 +13,7 @@ class OptionalSkillsTests(unittest.TestCase):
         self.assertEqual([],validate_skill(cv))
         for rel in ['LICENSE','SOURCES.md','THIRD_PARTY_NOTICES.md','evals/cases.json','evals/validate_package.py','profiles/general.md','profiles/product-ui.md','profiles/knowledge-base.md','profiles/research-digest.md','adapters/editorial-worker/EDITORIAL_STYLE_PROMPT.txt']:
             self.assertTrue((cv/rel).is_file(),rel)
-        result=subprocess.run([sys.executable,'evals/validate_package.py'],cwd=cv,capture_output=True,text=True)
+        result=subprocess.run([sys.executable,'evals/validate_package.py'],cwd=cv,capture_output=True,text=True,encoding='utf-8')
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
         self.assertIn('61',result.stdout)
     def test_make_feature_bundled_without_personal_issuance(self):
