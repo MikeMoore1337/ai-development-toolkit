@@ -1,5 +1,7 @@
 # Real-agent paired Skill Evals pilot (Issue #11)
 
+**Owner ZERO-SPEND hold (2026-10-18): actual agent execution is source-locked.** The owner does not authorize *any* incremental charges for model/provider API use, VM hosting or test infrastructure. `scripts/agent_eval_runner.py` now rejects `--execute` and direct Python `execute()` before touching the output directory, even with `--acknowledge-costs` and `--acknowledge-isolation`. No CLI/env flag, fake budget, or approved gate overrides this. Preflight, hidden-oracle unit tests and synthetic offline checks remain available. The real-run commands below are *historical examples*, intentionally blocked until a separate reviewed code change and explicit owner approval of a verified no-charge method.
+
 **Status: execution harness implemented; actual agent trials and independent verdicts NOT YET performed.**
 Do not cite synthetic fixture tests or successful CI as evidence that skills improve models.
 
