@@ -16,6 +16,17 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = re.compile(r"^([0-9a-f]{64})  (.+)$")
 
 
+def canonical_bytes(data: bytes) -> bytes:
+    """Match Git-normalized UTF-8 text blobs across LF and Windows CRLF checkouts."""
+    if b"\x00" in data:
+        return data
+    try:
+        data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data
+    return data.replace(b"\r\n", b"\n")
+
+
 def verify(root: Path = ROOT) -> list[str]:
     checksum_file = root / "SHA256SUMS.txt"
     errors: list[str] = []
@@ -43,7 +54,7 @@ def verify(root: Path = ROOT) -> list[str]:
         if not file.resolve().is_relative_to(root.resolve()):
             errors.append(f"line {number}: escaping path {name}")
             continue
-        actual = hashlib.sha256(file.read_bytes()).hexdigest()
+        actual = hashlib.sha256(canonical_bytes(file.read_bytes())).hexdigest()
         if actual != expected:
             errors.append(f"line {number}: checksum mismatch {name}")
     if not seen:
@@ -67,7 +78,7 @@ def write(root: Path = ROOT) -> int:
         if file.is_symlink() or not file.is_file():
             print(f"FAIL: missing or linked tracked file: {name}", file=sys.stderr)
             return 1
-        digests.append(f"{hashlib.sha256(file.read_bytes()).hexdigest()}  {name}")
+        digests.append(f"{hashlib.sha256(canonical_bytes(file.read_bytes())).hexdigest()}  {name}")
     (root / "SHA256SUMS.txt").write_text("\n".join(digests) + "\n", encoding="utf-8")
     print(f"WROTE: {len(digests)} SHA256 records")
     return 0
