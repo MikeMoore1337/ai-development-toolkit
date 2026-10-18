@@ -52,6 +52,30 @@ def tree_digest(root: Path) -> str:
     return hasher.hexdigest()
 
 
+def file_changes(before: Path | None, after: Path | None) -> list[dict]:
+    """Non-mutating per-file diff inventory. Never print private file contents."""
+    def files(root: Path | None) -> dict[str, str]:
+        if root is None:
+            return {}
+        tree_digest(root)  # Fail closed for symlinks, junctions and invalid folders.
+        return {
+            p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in root.rglob("*") if p.is_file()
+        }
+
+    previous = files(before)
+    proposed = files(after)
+    output = []
+    for name in sorted(previous.keys() | proposed.keys()):
+        old, new = previous.get(name), proposed.get(name)
+        if old != new:
+            output.append({"path": name,
+                           "change": ("added" if old is None else
+                                      "deleted" if new is None else "modified"),
+                           "before_sha256": old, "after_sha256": new})
+    return output
+
+
 def empty_state(layout: str) -> dict:
     return {"schema_version": VERSION, "layout": layout,
             "skills": {}, "last_transaction": None}
@@ -414,7 +438,13 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                 staged[name] = None
             changes.append(name)
     changes.sort()
-    summary = {"action": action, "changes": changes, "applied": False}
+    summary = {
+        "action": action, "changes": changes, "applied": False,
+        "file_diffs": {
+            name: file_changes(root / name if (root / name).exists() else None,
+                               staged[name]) for name in changes
+        },
+    }
     if apply and changes:
         _apply(target, state, new, changes, staged)
         summary["applied"] = True

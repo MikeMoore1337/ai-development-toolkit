@@ -75,3 +75,12 @@ Existing skills installed with the original `install.py` are not adopted.
 Back up and manually migrate them only after reviewing their contents, then
 install through the manager into free destinations. Do not delete user changes
 just to make a manager command pass.
+
+### File-level previews
+
+Every modifying preview now reports `file_diffs` with added, modified and
+deleted relative file names and before/after SHA256 values. These are local
+byte comparisons; they do not reveal file contents or bypass the ownership
+lock. Review this list before supplying `--apply`. A clean, unchanged update
+reports an empty change set. When a file contains local modifications outside
+the recorded lockfile digest, the operation stops rather than overwriting it.

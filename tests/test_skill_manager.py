@@ -46,6 +46,23 @@ class SkillManagerTests(unittest.TestCase):
         self.assertFalse((self.repo / ".adt").exists())
         self.assertFalse((self.repo / ".agents").exists())
 
+    def test_file_diff_preview_has_added_modified_and_deleted_paths(self):
+        installation = self.call("install", names=["test-skill"])
+        self.assertEqual("added", installation["file_diffs"]["test-skill"][0]["change"])
+        self.assertFalse((self.repo / ".adt").exists())
+        self.call("install", names=["test-skill"], apply=True)
+        source = self.source / ".agents" / "skills" / "test-skill" / "SKILL.md"
+        source.write_text("# Changed content\n", encoding="utf-8")
+        preview = self.call("update")
+        details = preview["file_diffs"]["test-skill"]
+        self.assertEqual(["SKILL.md"], [d["path"] for d in details])
+        self.assertEqual("modified", details[0]["change"])
+        self.assertNotEqual(details[0]["before_sha256"], details[0]["after_sha256"])
+        self.assertEqual("# Version one\n",
+                         (self.installed / "SKILL.md").read_text(encoding="utf-8"))
+        removal = self.call("uninstall", names=["test-skill"])
+        self.assertEqual("deleted", removal["file_diffs"]["test-skill"][0]["change"])
+
     def test_install_status_and_idempotent_no_update(self):
         self.assertTrue(self.call("install", names=["test-skill"], apply=True)["applied"])
         self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
