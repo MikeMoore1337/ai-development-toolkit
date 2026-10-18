@@ -125,6 +125,7 @@ These checks cover local structure, distribution safeguards and included unit te
 - [Adaptation guide](docs/ADAPTATION.md) - apply skills to an existing project
 - [Quality rubric](docs/QUALITY_RUBRIC.md) - evaluate usefulness and risk
 - [Skill Evals (experimental)](docs/SKILL_EVALS.md) - score paired trials without inventing outcomes
+- [Real-agent pilot protocol](docs/REAL_AGENT_PILOT.md) - opt-in Codex/Claude CLI experiments; no real results published yet
 - [Publication policy](docs/PUBLICATION_POLICY.md) - provenance, licensing and private data
 - [Roadmap](docs/ROADMAP.md) - planned improvements, not shipped features
 
