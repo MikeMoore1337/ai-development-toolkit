@@ -224,6 +224,10 @@ def execute(provider: str, model: str, cases: list[str], trials: int,
                         "prompt.txt", "source.diff", "agent.stdout.txt",
                         "agent.stderr.txt", "oracle.stdout.txt", "oracle.stderr.txt")],
                 }
+                record["evidence_sha256"] = {
+                    relative: hashlib.sha256((output / relative).read_bytes()).hexdigest()
+                    for relative in record["evidence"]
+                }
                 (entry / "observation.json").write_text(
                     json.dumps(record, ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8")
