@@ -82,6 +82,22 @@ class QualityGateTests(unittest.TestCase):
         self.file(".agents/skills/implementation/SKILL.md", "[private](../../../../outside.md)\n")
         self.check("PATH001")
 
+    def test_percent_encoded_escape_rejected(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "[escape](%2e%2e/%2e%2e/%2e%2e/%2e%2e/private.md)\n")
+        self.check("PATH001")
+
+    def test_internal_symlink_not_followed(self):
+        dest = self.file(".agents/skills/implementation/references/real.md", "# Real\n")
+        link = dest.parent / "linked.md"
+        try:
+            link.symlink_to(dest)
+        except (OSError, NotImplementedError):
+            self.skipTest("File symlinks unavailable for this runner")
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "[linked](references/linked.md)\n")
+        self.check("PATH001")
+
     def test_windows_style_local_path_rejected(self):
         self.file(".agents/skills/implementation/SKILL.md", r"[private](C:\private\file.md)" + "\n")
         self.check("PATH001")
