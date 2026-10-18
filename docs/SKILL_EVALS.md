@@ -68,9 +68,13 @@ statistical confidence or verify the content of evidence files. Treat even
 large deltas as hypotheses until multiple independent comparable trials are
 reviewed. Do not advertise the synthetic unit-test scores as real benchmarks.
 
-## Next research milestone
+## Controlled real-agent pilot harness (Issue #11)
 
-Implement opt-in adapters to collect real run artifacts from compatible
-clients, preserve budgets and tool permissions, and define task-specific
-acceptance oracles. Avoid ranking a skill from a tiny self-selected dataset.
-Make release claims only after independent review and reproducible runs.
+A strictly opt-in Codex/Claude CLI trial runner, three synthetic
+Python/JavaScript/Go demonstrators with hidden oracle tests, and a separate
+human-review gate are now described in [REAL_AGENT_PILOT.md](REAL_AGENT_PILOT.md).
+
+This does **not** mean real model runs have occurred. Model and tool costs,
+CLI authentication, an externally isolated runner, and independent review
+are required. Never treat a synthetic CI test or file-installed skill as
+proof of a model's effectiveness or of skill activation.
