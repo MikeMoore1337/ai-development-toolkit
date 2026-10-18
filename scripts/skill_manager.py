@@ -279,6 +279,18 @@ def operate(action: str, target: Path, *, names: list[str] | None = None,
     return _operate(action, target, names or [], layout, apply, source_root)
 
 
+def safe_source(name: str, sources: dict[str, Path], source_root: Path) -> Path:
+    """Disallow malformed manifests from escaping the toolkit checkout."""
+    relative = sources[name].relative_to(ROOT)
+    if ".." in relative.parts:
+        raise ManagerError(f"Source path escapes toolkit: {name}")
+    source = source_root / relative
+    if not source.resolve().is_relative_to(source_root.resolve()):
+        raise ManagerError(f"Source path escapes toolkit: {name}")
+    _ensure_no_symlink_chain(source)
+    return source
+
+
 def _operate(action: str, target: Path, names: list[str], layout: str,
              apply: bool, source_root: Path) -> dict:
     no_pending(target)
@@ -298,7 +310,10 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
             except ManagerError:
                 state_value = "missing_or_unsafe"
             source = sources.get(name)
-            candidate = tree_digest(source_root / source.relative_to(ROOT)) if source else None
+            try:
+                candidate = tree_digest(safe_source(name, sources, source_root)) if source else None
+            except (ManagerError, ValueError):
+                candidate = None
             report[name] = {"status": state_value, "source_update_available":
                             candidate is not None and candidate != old["digest"]}
         return {"action": "status", "layout": state["layout"], "skills": report}
@@ -316,7 +331,7 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                 raise ManagerError(f"Unknown skill: {name}")
             if name in state["skills"] or (root / name).exists():
                 raise ManagerError(f"Existing skill cannot be adopted or overwritten: {name}")
-            source = source_root / sources[name].relative_to(ROOT)
+            source = safe_source(name, sources, source_root)
             new["skills"][name] = {"digest": tree_digest(source), "source_version": version}
             staged[name] = source
             changes.append(name)
@@ -324,7 +339,7 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
         for name, old in state["skills"].items():
             if name not in sources:
                 raise ManagerError(f"Source removed for owned skill: {name}")
-            source = source_root / sources[name].relative_to(ROOT)
+            source = safe_source(name, sources, source_root)
             digest = tree_digest(source)
             if digest != old["digest"]:
                 new["skills"][name] = {"digest": digest, "source_version": version}
