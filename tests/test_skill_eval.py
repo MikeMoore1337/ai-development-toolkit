@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -82,6 +85,16 @@ class SkillEvalsTests(unittest.TestCase):
         self.data["runs"][0].pop("tokens")
         summary = module.evaluate(self.data, self.root)
         self.assertIsNone(summary["baseline"]["mean_tokens"])
+
+    def test_cli_json_output(self):
+        source = self.root / "runs.json"
+        source.write_text(json.dumps(self.data), encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "skill_eval.py"), str(source)],
+            capture_output=True, text=True, encoding="utf-8", check=False,
+        )
+        self.assertEqual(0, proc.returncode, proc.stderr)
+        self.assertEqual(2, json.loads(proc.stdout)["pairs"])
 
     def test_missing_pin_is_rejected(self):
         del self.data["repository_sha"]
