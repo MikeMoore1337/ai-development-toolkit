@@ -18,8 +18,8 @@ RULES = Path("docs/QUALITY_RULES.json")
 INLINE_LINK = re.compile(r"(?<!!)\[[^\]\n]+\]\(\s*(?:<([^>\n]+)>|([^\s)\n]+))(?:\s+['\"][^'\"]+['\"])?\s*\)|!\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s)\n]+))\s*\)")
 REFERENCE_DEF = re.compile(r"^\s{0,3}\[[^\]\n]+\]:\s*<?([^\s>]+)>?")
 HEADING = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$")
-FENCE = re.compile(r"^\s{0,3}(" + r"\x60{3,}|~{3,}" + r")")
-INLINE_CODE = re.compile(r"\x60[^\x60\n]*\x60")
+FENCE = re.compile(r"^[ ]{0,3}(" + r"\x60{3,}|~{3,}" + r")([^\r\n]*)$")
+INLINE_CODE = re.compile(r"(?<!\x60)(\x60+)(?!\x60)(.*?)\1(?!\x60)")
 EXPLICIT_ID = re.compile(r"<(?:a|span)\s+[^>]*id=['\"]([^'\"]+)['\"]", re.I)
 
 
@@ -133,19 +133,23 @@ def rules_config(root: Path, available: set[str]) -> list[tuple[str, frozenset[s
 
 
 def markdown_lines(text: str):
-    """Yield substantive text lines, excluding fenced blocks and inline code."""
+    """Yield substantive lines, excluding genuine fences and inline code spans."""
     marker, length = "", 0
     for number, line in enumerate(text.splitlines(), 1):
         fence = FENCE.match(line)
-        if fence:
-            char = fence.group(1)[0]
-            if not marker:
-                marker, length = char, len(fence.group(1))
-            elif marker == char and len(fence.group(1)) >= length:
+        if marker:
+            # A closing fence must be the same character, at least as long as
+            # the opener, and followed only by whitespace. An info string
+            # (e.g. ```python) inside a code sample does not close the fence.
+            if (fence and fence.group(1)[0] == marker
+                    and len(fence.group(1)) >= length
+                    and not fence.group(2).strip()):
                 marker, length = "", 0
             continue
-        if not marker:
-            yield number, INLINE_CODE.sub("", line)
+        if fence and (fence.group(1)[0] == "~" or "`" not in fence.group(2)):
+            marker, length = fence.group(1)[0], len(fence.group(1))
+            continue
+        yield number, INLINE_CODE.sub("", line)
 
 
 def anchors(text: str) -> set[str]:
