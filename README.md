@@ -116,7 +116,19 @@ python scripts/check_public_package.py
 python -m unittest discover -s tests -v
 ```
 
-These checks cover local structure, distribution safeguards and included unit tests. They **do not** replace independent execution testing, security review or the optional upstream `skills-ref` CLI.
+The existing required Ubuntu/Python 3.12 CI job additionally runs the official
+[Agent Skills reference validator](docs/AGENT_SKILLS_SPEC.md) on every
+manifest-declared skill (51 total), including QA and Make Feature. Local
+reproduction in an isolated virtual environment:
+
+```bash
+python -m pip install "git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379#subdirectory=skills-ref"
+python scripts/validate_with_skills_ref.py --scope all
+```
+
+The CLI is installed from the pinned upstream source, **not** the unrelated
+PyPI package. Neither metadata validation nor these tests proves real-agent
+effectiveness, execution safety or client compatibility.
 
 ## Documentation
 

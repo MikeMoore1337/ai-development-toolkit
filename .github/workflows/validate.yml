@@ -42,6 +42,19 @@ jobs:
         run: python scripts/verify_checksums.py
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Install official Agent Skills reference validator (pinned source)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: |
+          python -m pip install "git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379#subdirectory=skills-ref"
+          skills-ref --version
+      - name: Official Agent Skills validation (all declared packs)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        timeout-minutes: 8
+        run: python scripts/validate_with_skills_ref.py --scope all --timeout 15
+      - name: Official validator real-CLI integration regressions
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        timeout-minutes: 8
+        run: python -m unittest discover -s tests -p integration_skills_ref.py -v
       - name: Offline hidden-oracle discrimination (no agent, no API)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: python scripts/agent_eval_offline_smoke.py --strict-runtimes
