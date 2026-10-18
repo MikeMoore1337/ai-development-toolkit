@@ -118,6 +118,25 @@ def diff_snapshot(before: dict[str, str], workspace: Path, case_id: str) -> str:
                             f"sha256={hashlib.sha256(path.read_bytes()).hexdigest()}\n")
     return "".join(segments) or "(no changes to initial project files)\n"
 
+def prepare_oracle_destination(workspace: Path, case_id: str) -> Path:
+    """Fail closed if an agent has planted links or precreated oracle content.
+
+    An agent-modified workspace is untrusted even when the initial fixture was
+    safe. Never follow links while introducing the previously hidden oracle.
+    """
+    root = workspace.resolve()
+    for item in workspace.rglob("*"):
+        if item.is_symlink() or item.is_junction():
+            raise ValueError(f"Agent workspace contains unsafe link: {item}")
+    oracle = workspace / FIXTURES[case_id]["oracle_path"]
+    if oracle.exists() or oracle.is_symlink() or oracle.is_junction():
+        raise ValueError(f"Agent precreated oracle path, refusing overwrite: {oracle}")
+    if not oracle.resolve().is_relative_to(root):
+        raise ValueError("Oracle path escapes the disposable workspace")
+    oracle.parent.mkdir(parents=True, exist_ok=True)
+    return oracle
+
+
 def build_prompt(case_id: str) -> str:
     return (
         "Fix the following small repository task. Stay inside this scratch repo; "
@@ -200,8 +219,7 @@ def execute(provider: str, model: str, cases: list[str], trials: int,
                 diff = diff_snapshot(FIXTURES[case_id]["files"], workspace, case_id)
                 _evidence_file(entry, "source.diff", diff)
                 # Only expose oracle after agent has exited or hit the timeout.
-                oracle = workspace / FIXTURES[case_id]["oracle_path"]
-                oracle.parent.mkdir(parents=True, exist_ok=True)
+                oracle = prepare_oracle_destination(workspace, case_id)
                 oracle.write_text(FIXTURES[case_id]["oracle"], encoding="utf-8", newline="\n")
                 env = os.environ.copy()
                 env["PYTHONPATH"] = str(workspace)
