@@ -101,7 +101,7 @@ def run(scope: str = "all", root: Path = ROOT, timeout: float = DEFAULT_TIMEOUT)
         except OSError as exc:
             failures.append((folder, f"validator execution error: {exc}"))
     for folder, why in failures:
-        print(f"FAIL: {folder.relative_to(root)}: {why}", file=sys.stderr)
+        print(f"FAIL: {folder.relative_to(root.resolve())}: {why}", file=sys.stderr)
     passed = len(folders) - len(failures)
     print(f"UPSTREAM CHECKS: total={len(folders)} passed={passed} failed={len(failures)}")
     return 1 if failures else 0
