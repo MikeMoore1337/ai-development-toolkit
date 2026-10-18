@@ -101,7 +101,7 @@ class ReviewGateTests(unittest.TestCase):
 
     def test_missing_evidence_is_rejected(self):
         (self.root / "python-api-t1-baseline" / "oracle.stdout.txt").unlink()
-        with self.assertRaisesRegex(EvalInputError, "missing or linked evidence"):
+        with self.assertRaisesRegex(EvalInputError, "Invalid evidence digest or unsafe path"):
             self.build()
 
 
