@@ -45,6 +45,9 @@ class PairedPilotTests(unittest.TestCase):
         result = subprocess.run(["git", "rev-parse", "HEAD"], cwd=path,
                                 capture_output=True, text=True, check=True)
         self.assertEqual(sha, result.stdout.strip())
+        second = self.root / "second"
+        materialize("python-api", second)
+        self.assertEqual(sha, init_git(second), "Paired trials must start from identical Git SHA")
 
     def test_baseline_oracles_detect_preexisting_fault(self):
         for case_id, case in FIXTURES.items():
