@@ -273,6 +273,8 @@ def operate(action: str, target: Path, *, names: list[str] | None = None,
             for entry in sorted(pending):
                 _recover_one(target, entry)
             return {"action": action, "recovered": len(pending), "applied": True}
+    if action == "status" and apply:
+        raise ManagerError("status is always read-only; omit --apply")
     if apply:
         with exclusive(target):
             return _operate(action, target, names or [], layout, apply, source_root)
