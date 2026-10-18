@@ -1,6 +1,6 @@
 <div align="center">
 
-![AI Development Toolkit](assets/branding/hero.svg)
+![AI Development Toolkit](assets/branding/hero.png)
 
 **Разрабатывай с ИИ. Выпускай с доказательствами качества.**
 
