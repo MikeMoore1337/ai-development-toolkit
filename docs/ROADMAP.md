@@ -13,7 +13,7 @@
 - [ ] Evaluate the private optional skill inventory individually; publish only items with verified rights and project-neutral content.
 - [ ] Benchmark quick/normal/deep feature-delivery against a plain agent baseline.
 - [ ] Add structured skill quality metrics (correctness, context cost, reproducibility, regression risk).
-- [ ] Improve portable install/update/uninstall with explicit ownership and diff preview.
+- [x] Improve portable install/update/uninstall with explicit ownership, file-level diff previews, rollback and recovery (Skill Manager v2, #12; passed cross-platform CI).
 - [ ] Add optional adapters to real workflow runtimes; no forced framework dependency.
 
 ## Later
