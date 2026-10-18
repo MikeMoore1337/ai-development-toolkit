@@ -126,3 +126,38 @@ models as though they were one controlled population.**
 These are **pilot** results, not statistical proof, even after trials run.
 Source references: [Codex CLI reference](https://learn.chatgpt.com/docs/cli/reference),
 [Claude CLI flags](https://docs.anthropic.com/en/docs/claude-code/cli-usage).
+
+## Zero-cost end-to-end hidden-oracle smoke (no model calls)
+
+Run the explicitly **synthetic, reference-only** benchmark gate:
+
+```bash
+python scripts/agent_eval_offline_smoke.py --strict-runtimes
+python -m unittest tests.test_agent_eval_offline_smoke -v
+```
+
+This materializes two clean repositories per case: the intentionally buggy
+baseline and a fixed, **human-authored deterministic reference implementation**.
+Both get the same pinned initial Git SHA. The hidden acceptance oracle is
+injected only after the reference or baseline workspace has been prepared.
+The required result for each of Python, JavaScript and Go is:
+
+- Baseline oracle **FAIL** — the known defect is detectable;
+- Human reference oracle **PASS** — the expected correction is recognised;
+- Same pinned initial Git SHA for both variants;
+- No Codex, Claude or any other AI client is invoked, and no provider keys,
+  network calls or billing APIs are used. Go module fetch is forced OFF.
+
+The tool uses throwaway temporary directories, does not touch production hosts
+or real project folders, and emits only case IDs, fixture hashes and
+non-sensitive test outcomes. Its JSON always says
+`classification=SYNTHETIC_OFFLINE_HARNESS_SMOKE_NOT_MODEL_EVAL`,
+`real_agent_trials=0`, `real_agent_outcomes=NOT_MEASURED`, and
+`independent_review=NOT_PERFORMED`. Do not score its results as though a
+model used a skill; human reference edits are **not** agent attempts.
+
+Missing local Node or Go results in a rejected/explicitly incomplete check,
+not a false PASS. GitHub-hosted Ubuntu/Python 3.12 CI requires all three.
+The owner zero-spend runtime lock remains unchanged; `--execute` is still
+blocked and a separate explicit owner decision is required for any future
+real-agent experiment.

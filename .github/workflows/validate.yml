@@ -42,3 +42,6 @@ jobs:
         run: python scripts/verify_checksums.py
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Offline hidden-oracle discrimination (no agent, no API)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: python scripts/agent_eval_offline_smoke.py --strict-runtimes
