@@ -38,7 +38,7 @@ extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
 For example, on Windows (replace the tag for the release under review):
 
 ```powershell
-$tag = "v5.3.1"
+$tag = "v5.4.0"
 $zip = Join-Path $env:TEMP "adt-$tag.zip"
 $dest = Join-Path $env:TEMP "adt-$tag-source"
 if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
@@ -57,3 +57,9 @@ This does not authenticate the download or prove publisher identity: verify
 the intended tag commit and GitHub workflow results separately. Publication
 requires a real execution record for archive verification; merely documenting
 this procedure is not evidence that the archive was downloaded.
+
+After publication, the GitHub Actions `Verify release source archive` workflow
+runs automatically for `release: published`. It can also be triggered manually
+with a valid `vX.Y.Z` tag. Review the completed job and its
+`release-source-verification` artifact before declaring archive acceptance.
+This workflow checks actual downloaded bytes, unlike static Git tree checks.

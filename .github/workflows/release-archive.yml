@@ -1,0 +1,76 @@
+name: Verify release source archive
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing vX.Y.Z release tag to verify"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Check tag and retrieve GitHub-generated archive
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, re
+          tag = os.environ["RELEASE_TAG"]
+          if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", tag):
+              raise SystemExit("Expected vX.Y.Z release tag; refusing download")
+          print(f"Validating source archive for {tag}")
+          PY
+          mkdir -p "$RUNNER_TEMP/adt-release"
+          curl --fail --location --silent --show-error --retry 3 \
+            "https://github.com/${REPOSITORY}/archive/refs/tags/${RELEASE_TAG}.zip" \
+            --output "$RUNNER_TEMP/adt-release/source.zip"
+      - name: Extract clean archive and verify checksums
+        env:
+          ARCHIVE_DIR: ${{ runner.temp }}/adt-release
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, pathlib, stat, zipfile
+          out = pathlib.Path(os.environ["ARCHIVE_DIR"])
+          with zipfile.ZipFile(out / "source.zip") as archive:
+              roots = set()
+              for entry in archive.infolist():
+                  path = pathlib.PurePosixPath(entry.filename)
+                  if path.is_absolute() or ".." in path.parts or not path.parts:
+                      raise SystemExit(f"Unsafe archive path: {entry.filename}")
+                  if stat.S_IFMT(entry.external_attr >> 16) == stat.S_IFLNK:
+                      raise SystemExit(f"Symlink in archive: {entry.filename}")
+                  roots.add(path.parts[0])
+              if len(roots) != 1:
+                  raise SystemExit("Expected exactly one archive root")
+              archive.extractall(out / "extracted")
+              root = (out / "extracted" / next(iter(roots))).resolve()
+          (out / "root.txt").write_text(str(root), encoding="utf-8")
+          print(f"Archive extracted to {root}")
+          PY
+          archive_root="$(cat "$ARCHIVE_DIR/root.txt")"
+          python scripts/verify_checksums.py --archive-root "$archive_root" | tee release-archive-verification.log
+      - name: Publish verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-source-verification
+          path: release-archive-verification.log
+          if-no-files-found: ignore
