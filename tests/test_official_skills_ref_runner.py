@@ -54,7 +54,7 @@ class OfficialRunnerTests(unittest.TestCase):
             def fake_run(cmd, **kwargs):
                 visited.append(Path(cmd[-1]).name)
                 return subprocess.CompletedProcess(cmd, 0, f"Valid skill: {cmd[-1]}\n", "")
-            with patch.object(runner.shutil, "which", return_value="/fake/skills-ref"), \\
+            with patch.object(runner.shutil, "which", return_value="/fake/skills-ref"), \
                  patch.object(runner.subprocess, "run", side_effect=fake_run):
                 self.assertEqual(0, runner.run(root=root))
             self.assertEqual({"good-skill", "qa-skill", "make-feature"}, set(visited))
@@ -64,7 +64,7 @@ class OfficialRunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             make_pack(root)
-            with patch.object(runner.shutil, "which", return_value=None), \\
+            with patch.object(runner.shutil, "which", return_value=None), \
                  patch.object(runner.subprocess, "run") as invoke:
                 self.assertEqual(2, runner.run(root=root))
                 invoke.assert_not_called()
@@ -88,7 +88,7 @@ class OfficialRunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             make_pack(root)
-            with patch.object(runner.shutil, "which", return_value="/fake/skills-ref"), \\
+            with patch.object(runner.shutil, "which", return_value="/fake/skills-ref"), \
                  patch.object(runner.subprocess, "run", side_effect=[outcome] if isinstance(outcome, Exception) else None,
                               return_value=None if isinstance(outcome, Exception) else outcome):
                 self.assertEqual(1, runner.run(root=root))
@@ -108,18 +108,16 @@ class OfficialRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "inventory mismatch"):
                 runner.skill_directories(root)
 
-    def test_excluded_pack_fails_instead_of_partial_pass(self):
+    def test_removed_pack_skill_from_manifest_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             make_pack(root)
             manifest_path = root / "MANIFEST.json"
             data = json.loads(manifest_path.read_text(encoding="utf-8"))
-            del data["extension_packs"]["qa"]
+            data["extension_packs"]["qa"]["skills"] = []
             manifest_path.write_text(json.dumps(data), encoding="utf-8")
-            # The manifest cannot identify a removed pack unless independently
-            # registered. The fixed real manifest and core/QA/Make Feature
-            # coverage test below prevent accidental production omission.
-            self.assertEqual(2, len(runner.skill_directories(root)))
+            with self.assertRaisesRegex(ValueError, "inventory mismatch"):
+                runner.skill_directories(root)
 
     def test_real_manifest_contains_all_three_collections(self):
         paths = runner.skill_directories(ROOT)
