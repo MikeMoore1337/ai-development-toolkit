@@ -89,7 +89,7 @@ class OfficialRunnerTests(unittest.TestCase):
             root = Path(d)
             make_pack(root)
             with patch.object(runner.shutil, "which", return_value="/fake/skills-ref"), \
-                 patch.object(runner.subprocess, "run", side_effect=[outcome] if isinstance(outcome, Exception) else None,
+                 patch.object(runner.subprocess, "run", side_effect=outcome if isinstance(outcome, Exception) else None,
                               return_value=None if isinstance(outcome, Exception) else outcome):
                 self.assertEqual(1, runner.run(root=root))
 
