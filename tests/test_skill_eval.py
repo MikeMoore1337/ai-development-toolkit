@@ -73,6 +73,11 @@ class SkillEvalsTests(unittest.TestCase):
         with self.assertRaisesRegex(module.EvalInputError, "non-negative"):
             module.evaluate(self.data, self.root)
 
+    def test_missing_safety_metrics_are_rejected(self):
+        self.data["runs"][0].pop("unsafe_actions")
+        with self.assertRaisesRegex(module.EvalInputError, "missing required unsafe_actions"):
+            module.evaluate(self.data, self.root)
+
     def test_optional_telemetry_must_not_be_invented(self):
         self.data["runs"][0].pop("tokens")
         summary = module.evaluate(self.data, self.root)
