@@ -58,9 +58,14 @@ class QualityGateTests(unittest.TestCase):
     def test_real_package(self):
         actual = module.inspect(ROOT)
         self.assertEqual("PASS", actual["status"], actual["findings"][:15])
-        self.assertEqual(51, actual["counts"]["skills"])
-        self.assertEqual(16, actual["counts"]["roles"])
-        self.assertEqual(23, actual["counts"]["profiles"])
+        declared = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        skill_count = len(declared["core_skills"]) + len(declared.get("extension_skills", []))
+        skill_count += sum(len(p["skills"]) for p in declared.get("extension_packs", {}).values())
+        role_count = len(declared["core_roles"])
+        role_count += sum(len(p.get("roles", [])) for p in declared.get("extension_packs", {}).values())
+        self.assertEqual(skill_count, actual["counts"]["skills"])
+        self.assertEqual(role_count, actual["counts"]["roles"])
+        self.assertEqual(len(declared["profiles"]), actual["counts"]["profiles"])
 
     def test_valid_inventory_profile_and_allowed_workflow(self):
         self.check()
