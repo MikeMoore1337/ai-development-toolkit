@@ -132,6 +132,26 @@ class QualityGateTests(unittest.TestCase):
                   "Use " + chr(96) + "[sample](other.md)" + chr(96) + " inline.\n")
         self.check()
 
+    def test_multibacktick_inline_code_is_ignored(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "Example " + chr(96) * 2 + "[bad](missing.md)" + chr(96) * 2 + "\n")
+        self.check()
+
+    def test_info_string_inside_fence_is_not_closer(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "````md\n```python\n[example](missing.md)\n````\n")
+        self.check()
+
+    def test_wrong_fence_character_is_not_closer(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "~~~md\n```\n[example](missing.md)\n~~~\n")
+        self.check()
+
+    def test_real_fence_closes_and_next_link_is_validated(self):
+        self.file(".agents/skills/implementation/SKILL.md",
+                  "````md\n[example](missing.md)\n`````\n[bad](missing.md)\n")
+        self.check("LINK001")
+
     def test_reference_link_and_external_links(self):
         self.file(".agents/skills/implementation/SKILL.md",
                   "[doc][id]\n[id]: references/missing.md\n"
