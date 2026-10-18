@@ -135,6 +135,49 @@ class SkillManagerTests(unittest.TestCase):
             self.call("install", names=["test-skill"], apply=True)
         self.assertFalse(self.installed.exists())
 
+    def test_install_rollback_removes_only_owned_skill(self):
+        self.call("install", names=["test-skill"], apply=True)
+        self.call("rollback", apply=True)
+        self.assertFalse(self.installed.exists())
+        self.assertEqual("Private project rules.\n",
+                         (self.repo / "AGENTS.md").read_text(encoding="utf-8"))
+        self.call("rollback", apply=True)
+        self.assertTrue(self.installed.exists())
+
+    def test_explicit_recovery_of_interrupted_move(self):
+        self.call("install", names=["test-skill"], apply=True)
+        before = manager.read_state(self.repo)
+        tid = "c" * 32
+        base = self.repo / ".adt" / "history" / tid
+        (base / "old").mkdir(parents=True)
+        after = json.loads(json.dumps(before))
+        after["last_transaction"] = tid
+        manager.atomic_json(base / "meta.json", {
+            "status": "pending", "before": before,
+            "after": after, "changes": ["test-skill"],
+        })
+        manager.os.replace(self.installed, base / "old" / "test-skill")
+        with self.assertRaisesRegex(manager.ManagerError, "Interrupted"):
+            self.call("status")
+        self.assertEqual(1, self.call("recover")["pending"])
+        self.assertEqual(1, self.call("recover", apply=True)["recovered"])
+        self.assertTrue(self.installed.exists())
+        self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
+
+    def test_manifest_source_traversal_refused(self):
+        extension = self.source / "external"
+        extension.mkdir()
+        outside = extension.parent.parent / "untrusted"
+        outside.mkdir()
+        (outside / "SKILL.md").write_text("# unsafe\n", encoding="utf-8")
+        config = json.loads((self.source / "MANIFEST.json").read_text(encoding="utf-8"))
+        config["extension_packs"] = {
+            "unsafe": {"skill_root": "../../untrusted", "skills": ["bad-skill"]}
+        }
+        (self.source / "MANIFEST.json").write_text(json.dumps(config), encoding="utf-8")
+        with self.assertRaisesRegex(manager.ManagerError, "escapes toolkit"):
+            self.call("install", names=["bad-skill"], apply=True)
+
     def test_claude_layout_is_supported(self):
         self.call("install", names=["test-skill"], layout="claude", apply=True)
         self.assertTrue((self.repo / ".claude" / "skills" / "test-skill" / "SKILL.md").exists())
