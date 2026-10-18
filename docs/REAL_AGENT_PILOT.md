@@ -60,7 +60,7 @@ Do not run this with access to sensitive local data. Agent CLI versions vary;
 validate supported flags in your installed version before spending money.
 
 The tool alternates run order between trials, captures stdout/stderr, source
-diff, per-run start UTC, observed duration, CLI return code, hidden oracle
+diff, per-run start UTC, observed duration, CLI return code, SHA256 evidence digests, hidden oracle
 result, a local Git SHA and source snapshot digest. It does not infer token
 usage, safety counters, actual skill activation, acceptance or quality.
 Output is private local evidence: **do not commit it to this public repo**.
