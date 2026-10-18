@@ -24,6 +24,16 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / ".agents" / "skills" / "minimal-safe-change"
 MAX_OUTPUT = 1_000_000
 
+# OWNER POLICY (2026-10-18): zero incremental spending; not an environment,
+# command-line or untrusted task option. Future unfreezing requires a reviewed
+# code change and a new explicit owner decision backed by zero-charge evidence.
+OWNER_REAL_AGENT_EXECUTION_LOCKED = True
+
+
+def require_owner_real_execution_permission() -> None:
+    if OWNER_REAL_AGENT_EXECUTION_LOCKED:
+        raise ValueError("owner_zero_incremental_spend_execution_frozen")
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -175,6 +185,8 @@ def _evidence_file(run_path: Path, name: str, body: str) -> str:
 def execute(provider: str, model: str, cases: list[str], trials: int,
             output: Path, max_seconds: int, oracle_seconds: int,
             max_turns: int) -> dict:
+    # Guard direct Python calls as well as CLI --execute. Zero calls, zero writes.
+    require_owner_real_execution_permission()
     assert_safe_outdir(output)
     check = preflight(provider, cases)
     if not check["ready_to_attempt"]:
