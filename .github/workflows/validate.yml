@@ -11,12 +11,18 @@ on:
 permissions:
   contents: read
 
+# Superseded PR validations must not leave orphaned runs consuming runner time.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   PYTHONIOENCODING: utf-8
 
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -61,7 +67,9 @@ jobs:
       - name: Verify release checksums
         run: python scripts/verify_checksums.py
       - name: Unit tests
-        run: python -m unittest discover -s tests -v
+        # Typical runtime is <1 minute; bound hangs and preserve the last test in logs.
+        timeout-minutes: 5
+        run: python -u -m unittest discover -s tests -v
       - name: Check exported source archive before publication (offline)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         shell: bash
