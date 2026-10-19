@@ -14,7 +14,7 @@ from validate_provenance import validate  # noqa: E402
 
 def component(path: str, kind: str = "metadata", **overrides) -> dict:
     data = dict(
-        id="component-" + path.replace("/", "-").replace(".", "-"),
+        id="component-" + path.replace("/", "-").replace(".", "-").lower(),
         path=path, name=path.rsplit("/", 1)[-1], kind=kind,
         author="Fixture contributors", origin="original", source_url=None,
         source_reference=None, source_revision=None, license="MIT",
