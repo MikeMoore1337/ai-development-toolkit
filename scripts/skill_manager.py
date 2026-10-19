@@ -102,20 +102,41 @@ def validate_state(data: object) -> dict:
     return data
 
 
-def state_path(target: Path) -> Path:
-    return target / ".adt" / "skills-lock.json"
+def state_path(target: Path, layout: str = "codex") -> Path:
+    """Preserve the first client's v1 lock; isolate additional client ownership."""
+    if layout not in ("codex", "claude"):
+        raise ManagerError(f"Unsupported layout: {layout}")
+    directory = target / ".adt"
+    primary = directory / "skills-lock.json"
+    _ensure_no_symlink_chain(primary)
+    if primary.exists():
+        try:
+            original = validate_state(json.loads(primary.read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ManagerError(f"Unable to read lockfile: {exc}") from exc
+        if original["layout"] == layout:
+            return primary
+        return directory / f"skills-lock-{layout}.json"
+    # Do not silently create new ownership if someone removed the primary lock.
+    for other in ("codex", "claude"):
+        secondary = directory / f"skills-lock-{other}.json"
+        if secondary.exists() or secondary.is_symlink() or secondary.is_junction():
+            raise ManagerError("Primary manager lockfile missing; manual recovery needed")
+    return primary
 
 
 def read_state(target: Path, layout: str = "codex") -> dict:
-    path = state_path(target)
+    path = state_path(target, layout)
+    _ensure_no_symlink_chain(path)
     if not path.exists():
         return empty_state(layout)
-    if path.is_symlink():
-        raise ManagerError("Linked manager state is forbidden")
     try:
-        return validate_state(json.loads(path.read_text(encoding="utf-8")))
+        state = validate_state(json.loads(path.read_text(encoding="utf-8")))
     except (OSError, json.JSONDecodeError) as exc:
         raise ManagerError(f"Unable to read lockfile: {exc}") from exc
+    if state["layout"] != layout:
+        raise ManagerError(f"Lockfile layout mismatch: requested {layout}")
+    return state
 
 
 def atomic_json(path: Path, data: dict) -> None:
@@ -266,7 +287,7 @@ def _recover_one(target: Path, folder: Path) -> None:
             if candidate is None or tree_digest(dest) != candidate["digest"]:
                 raise ManagerError(f"Unrecognized newly-created skill {name}")
             shutil.rmtree(dest)
-    atomic_json(state_path(target), before)
+    atomic_json(state_path(target, before["layout"]), before)
     meta["status"] = "recovered"
     atomic_json(meta_path, meta)
 
@@ -299,7 +320,7 @@ def _apply(target: Path, before: dict, after: dict, changes: list[str],
             if sources[name] is not None:
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(base / "staged" / name, dest)
-        atomic_json(state_path(target), after)
+        atomic_json(state_path(target, before["layout"]), after)
         meta["status"] = "committed"
         atomic_json(base / "meta.json", meta)
     except BaseException:
@@ -312,12 +333,19 @@ def _apply(target: Path, before: dict, after: dict, changes: list[str],
 
 def operate(action: str, target: Path, *, names: list[str] | None = None,
             layout: str = "codex", apply: bool = False,
-            source_root: Path = ROOT) -> dict:
+            source_root: Path = ROOT, from_layout: str | None = None) -> dict:
     target = target.expanduser().absolute()
     if not target.is_dir():
         raise ManagerError("Target must be an existing directory")
     _ensure_no_symlink_chain(target)
     _ensure_no_symlink_chain(target / ".adt")
+    if action == "migrate":
+        if from_layout not in ("codex", "claude") or from_layout == layout:
+            raise ManagerError("migrate requires a different --from-layout")
+        if names:
+            raise ManagerError("migrate selects all owned source skills; omit --skills/--profile")
+    elif from_layout is not None:
+        raise ManagerError("--from-layout is supported only for migrate")
     if action == "recover":
         if not apply:
             return {"action": action, "pending": len(pending_transactions(target)),
@@ -335,8 +363,10 @@ def operate(action: str, target: Path, *, names: list[str] | None = None,
         raise ManagerError("status is always read-only; omit --apply")
     if apply:
         with exclusive(target):
-            return _operate(action, target, names or [], layout, apply, source_root)
-    return _operate(action, target, names or [], layout, apply, source_root)
+            return _operate(action, target, names or [], layout, apply, source_root,
+                            from_layout)
+    return _operate(action, target, names or [], layout, apply, source_root,
+                    from_layout)
 
 
 def safe_source(name: str, sources: dict[str, Path], source_root: Path) -> Path:
@@ -352,7 +382,7 @@ def safe_source(name: str, sources: dict[str, Path], source_root: Path) -> Path:
 
 
 def _operate(action: str, target: Path, names: list[str], layout: str,
-             apply: bool, source_root: Path) -> dict:
+             apply: bool, source_root: Path, from_layout: str | None) -> dict:
     no_pending(target)
     state = read_state(target, layout)
     root = skill_root(target, state["layout"])
@@ -376,20 +406,37 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                 candidate = None
             report[name] = {"status": state_value, "source_update_available":
                             candidate is not None and candidate != old["digest"]}
-        return {"action": "status", "layout": state["layout"], "skills": report}
-    if action not in ("install", "update", "uninstall", "rollback"):
+        return {"action": "status", "layout": state["layout"], "skills": report,
+                "skills_dir": str(root), "lockfile": str(state_path(target, layout))}
+    if action not in ("install", "migrate", "update", "uninstall", "rollback"):
         raise ManagerError(f"Unsupported operation {action}")
     verify_owned(target, state)
+    if action == "migrate":
+        source_state = read_state(target, from_layout)
+        verify_owned(target, source_state)
+        names = sorted(source_state["skills"])
+        if not names:
+            raise ManagerError("No managed source skills to migrate")
+        for name in names:
+            if name not in sources:
+                raise ManagerError(f"Source removed for managed skill: {name}")
+            source = safe_source(name, sources, source_root)
+            if tree_digest(source) != source_state["skills"][name]["digest"]:
+                raise ManagerError(
+                    f"Toolkit source differs from installed {name}; "
+                    "refusing a non-identical migration")
     new = deepcopy(state)
     changes: list[str] = []
     staged: dict[str, Path | None] = {}
-    if action == "install":
+    if action in ("install", "migrate"):
         if not names:
             raise ManagerError("Install requires --profile or --skills")
         for name in names:
             if name not in sources:
                 raise ManagerError(f"Unknown skill: {name}")
-            if name in state["skills"] or (root / name).exists():
+            dest = root / name
+            if (name in state["skills"] or dest.exists() or
+                    dest.is_symlink() or dest.is_junction()):
                 raise ManagerError(f"Existing skill cannot be adopted or overwritten: {name}")
             source = safe_source(name, sources, source_root)
             new["skills"][name] = {"digest": tree_digest(source), "source_version": version}
@@ -439,7 +486,7 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
             changes.append(name)
     changes.sort()
     summary = {
-        "action": action, "changes": changes, "applied": False,
+        "action": action, "layout": layout, "changes": changes, "applied": False,
         "file_diffs": {
             name: file_changes(root / name if (root / name).exists() else None,
                                staged[name]) for name in changes
@@ -453,16 +500,35 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["install", "status", "update", "uninstall",
-                                           "rollback", "recover"])
-    parser.add_argument("--target", type=Path, required=True)
+    parser.add_argument("action", choices=["catalog", "install", "migrate", "status",
+                                           "update", "uninstall", "rollback", "recover"])
+    parser.add_argument("--target", type=Path)
     parser.add_argument("--layout", choices=["codex", "claude"], default="codex")
+    parser.add_argument("--from-layout", choices=["codex", "claude"],
+                        help="Existing managed client to copy from (migrate only)")
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--profile")
     selection.add_argument("--skills", help="Comma-separated explicit skill names")
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     try:
+        if args.action == "catalog":
+            if args.target or args.skills or args.apply or args.from_layout:
+                raise ManagerError("catalog is read-only; use only optional --profile")
+            manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+            if args.profile:
+                if args.profile not in manifest["profiles"]:
+                    raise ManagerError(f"Unknown profile: {args.profile}")
+                result = {"action": "catalog", "profile": args.profile,
+                          "skills": manifest["profiles"][args.profile]}
+            else:
+                result = {"action": "catalog",
+                          "profiles": sorted(manifest["profiles"]),
+                          "skills": sorted(skill_sources(manifest))}
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0
+        if args.target is None:
+            raise ManagerError("--target is required except for catalog")
         chosen = []
         if args.profile:
             manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
@@ -474,7 +540,7 @@ def main() -> int:
         if len(chosen) != len(set(chosen)):
             raise ManagerError("Duplicate skill names are forbidden")
         result = operate(args.action, args.target, names=chosen, layout=args.layout,
-                         apply=args.apply)
+                         apply=args.apply, from_layout=args.from_layout)
     except (ManagerError, OSError, json.JSONDecodeError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
