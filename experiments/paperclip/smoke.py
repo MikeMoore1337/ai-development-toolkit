@@ -97,9 +97,18 @@ def main() -> None:
 
     # A GitHub-sourced import is an independent feature: a failure here must
     # not be misreported as a successful GitHub import via the managed API.
+    github_company = request("POST", "/api/companies", {
+        "name": "Paperclip GitHub Import CI Pilot",
+        "description": "Separate zero-spend organization to avoid a duplicate managed skill slug",
+        "budgetMonthlyCents": 0,
+        "requireBoardApprovalForNewAgents": True,
+    })
+    github_company_id = github_company.get("id") if isinstance(github_company, dict) else None
+    if not isinstance(github_company_id, str) or not github_company_id:
+        raise RuntimeError("Could not create separate GitHub skill import company")
     github_status = "PASS"
     try:
-        result = request("POST", f"/api/companies/{company_id}/skills/import", {
+        result = request("POST", f"/api/companies/{github_company_id}/skills/import", {
             "source": "https://github.com/MikeMoore1337/ai-development-toolkit/tree/main/.agents/skills/minimal-safe-change",
         })
         if not isinstance(result, dict) or not isinstance(result.get("imported"), list):
