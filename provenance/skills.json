@@ -791,17 +791,18 @@
       "author": "Not independently established",
       "origin": "unknown",
       "source_url": null,
-      "source_reference": null,
+      "source_reference": "Owner-reported publication permission ID1337 for exact bundled asset, source/creator not independently established",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Creation records and permission not independently reviewed",
+      "distribution_basis": "Creation records and permission not independently reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": false,
       "attribution_path": null,
-      "status": "unknown",
-      "evidence": "docs/PUBLICATION_POLICY.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Artwork belongs to public source archives; ask owner to confirm generation/source and downstream rights."
+      "distribution": "included",
+      "notes": "Owner reported permitted use under ID1337; origin and downstream sublicensing terms remain unverified. Release approval is frozen to this PNG's SHA256.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "asset-assets-branding-social-preview-png",
@@ -811,17 +812,18 @@
       "author": "Not independently established",
       "origin": "unknown",
       "source_url": null,
-      "source_reference": null,
+      "source_reference": "Owner-reported publication permission ID1337 for exact bundled asset, source/creator not independently established",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Creation records and permission not independently reviewed",
+      "distribution_basis": "Creation records and permission not independently reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": false,
       "attribution_path": null,
-      "status": "unknown",
-      "evidence": "docs/PUBLICATION_POLICY.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Artwork belongs to public source archives; ask owner to confirm generation/source and downstream rights."
+      "distribution": "included",
+      "notes": "Owner reported permitted use under ID1337; origin and downstream sublicensing terms remain unverified. Release approval is frozen to this PNG's SHA256.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "metadata-changelog-md",
@@ -1414,14 +1416,15 @@
       "source_reference": "Owner-provided 0.3.0 archive; private grant not on record",
       "source_revision": null,
       "license": "MIT",
-      "distribution_basis": "MIT notice in supplied source; personal license conflicts and asserted later grant not independently confirmed",
+      "distribution_basis": "MIT notice in supplied source; personal license conflicts and asserted later grant not independently confirmed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/make-feature/skills/make-feature/LICENSE",
-      "status": "requires_owner_review",
-      "evidence": "extensions/make-feature/skills/make-feature/PORTABILITY_NOTES.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Source scripts, templates, references and tests inherit this review gate; original upstream state helper revision does not establish a pinned Make Feature release."
+      "distribution": "included",
+      "notes": "Source scripts, templates, references and tests inherit this review gate; original upstream state helper revision does not establish a pinned Make Feature release. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "metadata-extensions-qa-readme-md",
@@ -1454,14 +1457,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "recipe-extensions-qa-recipes-qa-feature-md",
@@ -1474,14 +1478,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "recipe-extensions-qa-recipes-release-review-md",
@@ -1494,14 +1499,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-ci-investigator-md",
@@ -1514,14 +1520,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-coverage-analyst-md",
@@ -1534,14 +1541,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-flaky-analyst-md",
@@ -1554,14 +1562,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-qa-architect-md",
@@ -1574,14 +1583,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-quality-gatekeeper-md",
@@ -1594,14 +1604,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-requirement-analyst-md",
@@ -1614,14 +1625,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-security-reviewer-md",
@@ -1634,14 +1646,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-test-designer-md",
@@ -1654,14 +1667,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-test-implementer-md",
@@ -1674,14 +1688,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-test-management-analyst-md",
@@ -1694,14 +1709,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "role-extensions-qa-roles-test-reviewer-md",
@@ -1714,14 +1730,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-api-testing",
@@ -1734,14 +1751,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-change-impact-analysis",
@@ -1754,14 +1772,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-collaborative-development",
@@ -1774,14 +1793,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-contract-testing",
@@ -1794,14 +1814,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-coverage-analysis",
@@ -1814,14 +1835,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-database-validation",
@@ -1834,14 +1856,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-defect-management",
@@ -1854,14 +1877,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-e2e-testing",
@@ -1874,14 +1898,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-failure-triage",
@@ -1894,14 +1919,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-flaky-analysis",
@@ -1914,14 +1940,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-graphify-adapter",
@@ -1934,14 +1961,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-integration-testing",
@@ -1954,14 +1982,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-playwright-testing",
@@ -1974,14 +2003,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-pytest-test-design",
@@ -1994,14 +2024,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-qa-clear-voice",
@@ -2014,14 +2045,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-qa-code-review",
@@ -2034,14 +2066,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-qa-safe-change",
@@ -2054,14 +2087,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-quality-gate-assessment",
@@ -2074,14 +2108,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-requirement-analysis",
@@ -2094,14 +2129,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-requirements-traceability",
@@ -2114,14 +2150,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-security-review",
@@ -2134,14 +2171,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-security-testing",
@@ -2154,14 +2192,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-test-analysis-design",
@@ -2174,14 +2213,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-test-data-management",
@@ -2194,14 +2234,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-test-management",
@@ -2214,14 +2255,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-test-review",
@@ -2234,14 +2276,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "skill-extensions-qa-skills-test-strategy",
@@ -2254,14 +2297,15 @@
       "source_reference": "Owner-provided work-project methodology archive; not republished",
       "source_revision": null,
       "license": "NOASSERTION",
-      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed",
+      "distribution_basis": "Portable rewrite asserted by owner; employer-IP and confidentiality terms not reviewed; owner reports permission recorded under ID1337 for present published files, not independently inspected",
       "attribution_required": true,
       "attribution_path": "extensions/qa/SOURCE_MAPPING.md",
-      "status": "requires_owner_review",
-      "evidence": "extensions/qa/SOURCE_MAPPING.md",
+      "status": "documented",
+      "evidence": "docs/PROVENANCE_AUDIT.md",
       "last_reviewed": "2026-10-19",
-      "distribution": "owner_gate",
-      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison."
+      "distribution": "included",
+      "notes": "Generic workflow ideas and actual copyrighted expression are distinct; source archive not available for bytewise comparison. Owner reports permitted distribution per ID1337; approval bound to current files' recorded SHA256, not applicable after changes. Independent title/rights verification not performed.",
+      "owner_approval_id": "ID1337"
     },
     {
       "id": "metadata-extensions-qa-source-mapping-md",
@@ -3269,9 +3313,180 @@
     "reported_at": "2026-10-19",
     "source": "owner_reported",
     "storage": "outside_public_repository",
-    "confirmation_scope": "not_supplied",
-    "review_outcomes": "not_supplied",
-    "legal_clearance": "not_verified",
-    "note": "Reference supplied by owner. Does not by itself clear Make Feature, QA work-derived components, or branding for redistribution."
+    "review_outcomes": "permitted",
+    "confirmation_scope": "Owner replied 'permitted' to all three previously named groups. Reviewer conservatively limited technical approval to current repository file hashes; exact legal grant and scope NOT inspected.",
+    "legal_clearance": "not_independently_verified",
+    "scope_revision": "b81cd6dc8c60c2466242928e37b237de25eddd12",
+    "approved_groups": [
+      "make-feature-0.3.0",
+      "qa-engineering-pack-current-sources",
+      "branding-current-pngs"
+    ],
+    "approved_components": {
+      "assets/branding/hero.png": {
+        "assets/branding/hero.png": "be583e920284de35bbadcf3cabf2cf5754ada58fe91f229a1aeb1c4d7d6d2ed6"
+      },
+      "assets/branding/social-preview.png": {
+        "assets/branding/social-preview.png": "a627087ac1690a119becba0ff7983d61b91d5ba252301fefc21fcb4700251cdb"
+      },
+      "extensions/make-feature/skills/make-feature": {
+        "extensions/make-feature/skills/make-feature/INSTALL.md": "73b92ff203c213aa0b2e08194da9a036b425f5ea0515df23963dd925055d921b",
+        "extensions/make-feature/skills/make-feature/LICENSE": "3306ee3234f0db668c0ca3187ab72c5e9049b1e1d3ad775357364b02a17d9f66",
+        "extensions/make-feature/skills/make-feature/PORTABILITY_NOTES.md": "2d5debffa9d99168db2ffb80bea5a508b7951068304d72a36ee6e4d041f0c408",
+        "extensions/make-feature/skills/make-feature/README.md": "e50cbac62a67a005f8d4848a3fd92a701a875aaa94caf63c7e1fe374667cd9a8",
+        "extensions/make-feature/skills/make-feature/SKILL.md": "a31697a9fe01afcbb8ec388ba278a0a72db56c92ef4442fb0a393a9f6ee1411b",
+        "extensions/make-feature/skills/make-feature/SOURCES.md": "964e7a22223a2b9a8908c6f285fff1d78cdd97b48868d728d365f1e4c1a769f5",
+        "extensions/make-feature/skills/make-feature/TEST-REPORT.md": "4fc48e4e537d6ff2d129dfa1539fbf74aa577a5ad8ab2a3ed027c14e321e8577",
+        "extensions/make-feature/skills/make-feature/agents/openai.yaml": "c1e45aec682fa51bf44f892fbda785282f5bd751440032e62071b74dde95b851",
+        "extensions/make-feature/skills/make-feature/references/agents.md": "488969b2035afd3405b4aa1cdc5b73c1c23e7714fa54da2022324a454cb4b088",
+        "extensions/make-feature/skills/make-feature/references/documents.md": "01502819772cc8bd6b7384d97666b72eeed0fd7f72ae26edc2ebc988f43b23e5",
+        "extensions/make-feature/skills/make-feature/references/runtime.md": "668ba200f1dda62c81ebcb2185f72c7314a96a1c07a42bf8a1b4118123a9eaf9",
+        "extensions/make-feature/skills/make-feature/references/state-cli.md": "084c1536098fba69379ccf6d357b84941d0fa69bfb0c41502b120adcfae57776",
+        "extensions/make-feature/skills/make-feature/references/verification.md": "3cffffee732cbbecbfc2e7dc70696c5c5e345257e45bdad45f5013116834a4f3",
+        "extensions/make-feature/skills/make-feature/references/workflow.md": "dce42ed52c9107c1ef629d0151a4fc470190d3eee9ef2f8ee99513c00bdcdea1",
+        "extensions/make-feature/skills/make-feature/scripts/budget.py": "bc81dc7061039c981cfd1534454b941342597118d321572e10bef2b84d69d05e",
+        "extensions/make-feature/skills/make-feature/scripts/demo.py": "3369d06a2d9a466a0f105a8da8998386d86aee3a415234ffb141f5518c178ec7",
+        "extensions/make-feature/skills/make-feature/scripts/state.py": "08467c3cde9fb955399570316b0dd5ab501011674a9856d6168345ef1c8599da",
+        "extensions/make-feature/skills/make-feature/scripts/workspace.py": "6f822a7a39203fc844fc0b67ce33f6bbed635f1a2f0be54e80fc0faa00e77043",
+        "extensions/make-feature/skills/make-feature/templates/bind.json": "db55241b6751cf83fcf15238f1fc10840aad21d11c4154511473020f093ca1a7",
+        "extensions/make-feature/skills/make-feature/templates/claim.json": "d892ea17d500ff81e82b3097c8816827348a70e43475fa8599f19173c0f1cf22",
+        "extensions/make-feature/skills/make-feature/templates/init.json": "73b10c35df9313eec4ca835ef35b2b5145b89ee7b7da7db00cffe67bbb1fcf9a",
+        "extensions/make-feature/skills/make-feature/templates/review.json": "edad4e2d0ffb54e4389488416f2bc3f17fc266012cd32e1f8137faa43b5d3d93",
+        "extensions/make-feature/skills/make-feature/templates/review.md": "20d37a46ad469387603db729a33d294260c1434ea713bc2902f829cf35ad3b70",
+        "extensions/make-feature/skills/make-feature/templates/spec.json": "b5ebcf5b7dc9ca57a5c37d0feab10bf329ae896b701f1f45d24b6a33c896514e",
+        "extensions/make-feature/skills/make-feature/templates/task.md": "fe6da1eef5c0b529fc7f0811047bde0eb2107fe48d36317dd82bd5466e452244",
+        "extensions/make-feature/skills/make-feature/tests/test_budget.py": "e7067198846aa94f4413f5e819fc620e371c9477e98aa8dae9ebb1e75d1c798b",
+        "extensions/make-feature/skills/make-feature/tests/test_state.py": "d4accd9f4b69b1018dacf87a0b9446612e17c316ee98d01d8d680bcb49c4ce79",
+        "extensions/make-feature/skills/make-feature/tests/test_workspace.py": "22e2538d0566fa262050ba878cfb88efbee119a4e7f50237d463e5120b610fab"
+      },
+      "extensions/qa/recipes/ci-failure.md": {
+        "extensions/qa/recipes/ci-failure.md": "fbfcc3336262b6c08fbf3d4cc32d2171d3ea9b92d2c34af593564554a3395dae"
+      },
+      "extensions/qa/recipes/qa-feature.md": {
+        "extensions/qa/recipes/qa-feature.md": "e4c01e47c7e56d8df8b23f0d52d0b10557bd89e4d47469ceb98f3d14946b2aa8"
+      },
+      "extensions/qa/recipes/release-review.md": {
+        "extensions/qa/recipes/release-review.md": "105b6c8662037782a492ec6ccfa6b3508c28bdbc5e62951188b57729f28ce301"
+      },
+      "extensions/qa/roles/ci-investigator.md": {
+        "extensions/qa/roles/ci-investigator.md": "f84c7dce20462b3ccc938a5cc3e42232240ca607ca5a8bc13713ce208c2314d8"
+      },
+      "extensions/qa/roles/coverage-analyst.md": {
+        "extensions/qa/roles/coverage-analyst.md": "3c38c288e32ba609172c0d063cd18f7413c59d525a5192dcdd3e5b87ca30f0e3"
+      },
+      "extensions/qa/roles/flaky-analyst.md": {
+        "extensions/qa/roles/flaky-analyst.md": "75fdccd839b1c60712be4fba9677a9e0c0cad560862d0d5811ff954a62aa00de"
+      },
+      "extensions/qa/roles/qa-architect.md": {
+        "extensions/qa/roles/qa-architect.md": "b78df4de08710330c90ed4395823cba20bc60a7bc50921679d6b597e76030525"
+      },
+      "extensions/qa/roles/quality-gatekeeper.md": {
+        "extensions/qa/roles/quality-gatekeeper.md": "d77d10fbc64ed914d1fc6ecf10c4d03db8c562d60322ef8679c8479993c143ce"
+      },
+      "extensions/qa/roles/requirement-analyst.md": {
+        "extensions/qa/roles/requirement-analyst.md": "722c291562f944a61994cc6a4a700cd2152d8246d21566766a2ab701682dfd81"
+      },
+      "extensions/qa/roles/security-reviewer.md": {
+        "extensions/qa/roles/security-reviewer.md": "de2b8d621ebb6e20337299448fe58d72d08b11dd27be8076ccbd25b2b733cbeb"
+      },
+      "extensions/qa/roles/test-designer.md": {
+        "extensions/qa/roles/test-designer.md": "b2fd902c3b4183f42f4164a5fc39a6629614323105b5eb4d229f505926b086b8"
+      },
+      "extensions/qa/roles/test-implementer.md": {
+        "extensions/qa/roles/test-implementer.md": "4fe0648fe566b837fbbf04b97b6c7c7e6d6292a041480cadf1cefafd24b56421"
+      },
+      "extensions/qa/roles/test-management-analyst.md": {
+        "extensions/qa/roles/test-management-analyst.md": "689904d7e9752b39ce93e8517958512f3d8924b10ea0add49c625a368c6a6a56"
+      },
+      "extensions/qa/roles/test-reviewer.md": {
+        "extensions/qa/roles/test-reviewer.md": "56c2023b9b332dc22c6850e6e9c1c1c0b3e7f2ec89ac5de969de4d9ac2f57698"
+      },
+      "extensions/qa/skills/api-testing": {
+        "extensions/qa/skills/api-testing/SKILL.md": "d965dabc32356ad1ba07e937556758af10fe2b606595ed16e106b79c4d49cc87"
+      },
+      "extensions/qa/skills/change-impact-analysis": {
+        "extensions/qa/skills/change-impact-analysis/SKILL.md": "cb84a7e265f3863b8059e8aff4255f424d5eed848dd2522f2d371ded222d1efb"
+      },
+      "extensions/qa/skills/collaborative-development": {
+        "extensions/qa/skills/collaborative-development/SKILL.md": "40fd43d742eb8e6a561cece2d7bf501901e2e327a20431d68e40a04c5908be90"
+      },
+      "extensions/qa/skills/contract-testing": {
+        "extensions/qa/skills/contract-testing/SKILL.md": "683931fadf4cb854e93ebe127ba0e378a0cd1ade28c48fc594a6337f2c2126b4"
+      },
+      "extensions/qa/skills/coverage-analysis": {
+        "extensions/qa/skills/coverage-analysis/SKILL.md": "b5dff0d4b376b850527523fbb6ca171c50ee3c4d09595f1cde76414d86d8ed6f"
+      },
+      "extensions/qa/skills/database-validation": {
+        "extensions/qa/skills/database-validation/SKILL.md": "bd4d777a8b8e5f8a50647ec9e0d96054b3f191a2c7cc1797ee649e37a47f93e7"
+      },
+      "extensions/qa/skills/defect-management": {
+        "extensions/qa/skills/defect-management/SKILL.md": "99f57274734b62163b23f17ddd0f0f7ca00ed496e3bd481bcda2be166512c0e7"
+      },
+      "extensions/qa/skills/e2e-testing": {
+        "extensions/qa/skills/e2e-testing/SKILL.md": "34321860ad7e920a058f291802c34f32859b7e5e76252f5b2dc55a0e1d2dc100"
+      },
+      "extensions/qa/skills/failure-triage": {
+        "extensions/qa/skills/failure-triage/SKILL.md": "88d539fc0721d651c068e58e5af23d11ac0eccdccb463ae8e1ce7ea6e572a991",
+        "extensions/qa/skills/failure-triage/references/TRIAGE.md": "9a5745e3d6356e5e25975face94ca6ab1c38be55b7fb117e18d9690401cd7ec5"
+      },
+      "extensions/qa/skills/flaky-analysis": {
+        "extensions/qa/skills/flaky-analysis/SKILL.md": "65cecf0a496962eaef538ff6caffb0712c17c88d055a8e1a5988164b4832a07a"
+      },
+      "extensions/qa/skills/graphify-adapter": {
+        "extensions/qa/skills/graphify-adapter/SKILL.md": "47fdd9014626e8dfb67399fed26570bf295ce79b316045785856ec47bb8bddb4"
+      },
+      "extensions/qa/skills/integration-testing": {
+        "extensions/qa/skills/integration-testing/SKILL.md": "06b8b923d3e06aa9a8dc9e0e128e8969fb0923bbff6ff6c9c634578dba4326a0"
+      },
+      "extensions/qa/skills/playwright-testing": {
+        "extensions/qa/skills/playwright-testing/SKILL.md": "83eb308d1cf16f06398d726ff77050949ab5f254c546118d6f6b59e0ec2e978e"
+      },
+      "extensions/qa/skills/pytest-test-design": {
+        "extensions/qa/skills/pytest-test-design/SKILL.md": "f6b037f55e487133920a5d49191762d99d7cc8503f56d41486eb95f02ba09370"
+      },
+      "extensions/qa/skills/qa-clear-voice": {
+        "extensions/qa/skills/qa-clear-voice/SKILL.md": "b060becafa171d3f636775a249542e5e7787264790e6a8986a1abe6d09db13f5"
+      },
+      "extensions/qa/skills/qa-code-review": {
+        "extensions/qa/skills/qa-code-review/SKILL.md": "110bb80b39093a88d92458d0e9a711f291f8db70a83fcae48fa0b5e947ecc59a"
+      },
+      "extensions/qa/skills/qa-safe-change": {
+        "extensions/qa/skills/qa-safe-change/SKILL.md": "0d154adc0293d7806c8903922945a45459c76d60fb0801af1b7c2d2f34a223d5"
+      },
+      "extensions/qa/skills/quality-gate-assessment": {
+        "extensions/qa/skills/quality-gate-assessment/SKILL.md": "c3815090d928c3e9ff1e8ca40c1437c4f3848ef1d23026dfb472a971a66486ae",
+        "extensions/qa/skills/quality-gate-assessment/references/GATE.md": "d7ebca720795acf327f18479ad3bdf01672adde3268f5aae04d2de06b7f5730c"
+      },
+      "extensions/qa/skills/requirement-analysis": {
+        "extensions/qa/skills/requirement-analysis/SKILL.md": "b91b561a3e66788204d577c2d7d9209d0b518cc49cd28beabba86b35bbe56485"
+      },
+      "extensions/qa/skills/requirements-traceability": {
+        "extensions/qa/skills/requirements-traceability/SKILL.md": "97041d821cc4c7b168b912e887c2de55a29826fa631ea98aedc3a37c382dc2de",
+        "extensions/qa/skills/requirements-traceability/references/TRACEABILITY.md": "848c853963765dc590378f71725df1cfa0dbaabf757290d8a3f2f9365c89127b"
+      },
+      "extensions/qa/skills/security-review": {
+        "extensions/qa/skills/security-review/SKILL.md": "36567fc2eb2bdedf0550fad03f8cfe1a86103a7d4fa8bd5af81e351ccf695156"
+      },
+      "extensions/qa/skills/security-testing": {
+        "extensions/qa/skills/security-testing/SKILL.md": "ac43be4d5ce99a95cdca22518a583aefcb93b4e902317dd189b57256b963e001"
+      },
+      "extensions/qa/skills/test-analysis-design": {
+        "extensions/qa/skills/test-analysis-design/SKILL.md": "b45693519ffa5a2399c0a06346116b6a9c7d3163426d79c7391af4bfa844be44",
+        "extensions/qa/skills/test-analysis-design/references/TEST_DESIGN.md": "b0b622e52562b06b5a953b0fa9d9ca60d0015a9558eb664928b7793666e8021c"
+      },
+      "extensions/qa/skills/test-data-management": {
+        "extensions/qa/skills/test-data-management/SKILL.md": "9bab1b4f61d3b50776f40c709bb9669b0ebb908510c8df69036a24dfdbd3c52d"
+      },
+      "extensions/qa/skills/test-management": {
+        "extensions/qa/skills/test-management/SKILL.md": "12ff0e5a85c732064edf356991b390ee5dc99a4534d258dc2b0dde85f9d64562"
+      },
+      "extensions/qa/skills/test-review": {
+        "extensions/qa/skills/test-review/SKILL.md": "f82141c4755c15a93dd3e0d6f0988f3fb2e32b3f231a7351f7fa61c419371ab2"
+      },
+      "extensions/qa/skills/test-strategy": {
+        "extensions/qa/skills/test-strategy/SKILL.md": "b472f0f967f9152fbb7e302672960ce157c97d0990d7e562ff023a0fcdf39d0b"
+      }
+    },
+    "note": "Authorization is an OWNER ATTESTATION, not an independently substantiated third-party license or employer-IP determination. Any source-byte change invalidates its file approval; review next release separately."
   }
 }
