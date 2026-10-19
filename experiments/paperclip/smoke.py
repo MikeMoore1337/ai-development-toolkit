@@ -7,7 +7,6 @@ No agents are created or started. No model APIs are invoked.
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -58,7 +57,7 @@ def main() -> None:
         raise RuntimeError("Could not create an ephemeral pilot company")
 
     imported = request("POST", f"/api/companies/{company_id}/skills/import", {
-        "source": os.fspath(SKILL),
+        "source": "https://github.com/MikeMoore1337/ai-development-toolkit/tree/main/.agents/skills/minimal-safe-change",
     })
     skills = request("GET", f"/api/companies/{company_id}/skills")
     if not isinstance(skills, list):
