@@ -99,11 +99,16 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 ## Profiles
 
+See [Curated Skill Packs](CURATED_SKILL_PACKS.md) for task navigation, optional skills and safe transitions.
+
 A profile is simply a named selection of existing skills. Inspect before applying.
 
 | Profile | Skills |
 | :--- | :--- |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
+| `backend` | `task-scoping`, `architecture-decisions`, `implementation`, `qa-strategy`, `code-review` |
+| `frontend` | `task-scoping`, `design-system-consistency`, `implementation`, `qa-strategy`, `code-review` |
+| `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |
 | `editorial` | `clear-voice` |
