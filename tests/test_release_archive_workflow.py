@@ -31,6 +31,9 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
         self.assertIn("Confirm exact owner-reviewed release source snapshot", text)
         self.assertIn("scripts/validate_provenance.py --mode release", text)
         self.assertIn("provenance-release-preflight.json", text)
+        self.assertIn("git archive --format=zip", text)
+        self.assertIn("scripts/verify_checksums.py --archive-root", text)
+        self.assertIn("provenance-archive-preflight.json", text)
 
     def test_verification_uses_source_archive_and_no_privileged_token(self):
         text = WORKFLOW.read_text(encoding="utf-8")
