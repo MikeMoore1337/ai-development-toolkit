@@ -112,3 +112,16 @@ py -3 scripts/skill_manager.py status --target ..\toolkit-demo
 ## Что дальше
 
 Откройте [словарь](GLOSSARY.md) и [русский каталог навыков](SKILLS_CATALOG.md), вернитесь к [каталогу руководств](README.md) и выберите профиль под свою задачу. Для повторного использования выбирайте существующий проект только после ознакомления с его локальными инструкциями `AGENTS.md` / `CLAUDE.md`.
+
+## Быстрая проверка новым CLI
+
+Перед установкой можно посмотреть доступные профили, проверить окружение и получить безопасный план. Все эти команды выполняются без записи:
+
+~~~bash
+python scripts/adt.py profile list
+python scripts/adt.py doctor --target ../toolkit-demo
+python scripts/adt.py profile plan --target ../toolkit-demo --task qa
+python scripts/adt.py init --target ../toolkit-demo --profile general
+~~~
+
+После проверки предложенного списка файлов добавьте `--apply` к команде `init`, а затем проверьте `python scripts/adt.py status --target ../toolkit-demo`. Папка проекта уже должна существовать. Для Windows используйте `py -3` и путь к нужной папке. Подробности - в [руководстве по установке](INSTALLATION.md).
