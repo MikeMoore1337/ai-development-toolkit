@@ -193,7 +193,8 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                 fail("OWNER_SCOPE", f"{label}: owner approval must pin every distributed file")
             else:
                 owned_files = ([target] if target.is_file() else
-                               sorted(p for p in target.rglob("*") if p.is_file()))
+                               sorted(p for p in target.rglob("*") if p.is_file() and
+                                      not any(part in SKIP for part in p.relative_to(root).parts)))
                 relative = {p.relative_to(root).as_posix() for p in owned_files}
                 if set(snapshots) != relative:
                     fail("OWNER_SCOPE", f"{label}: reviewed file inventory changed")
