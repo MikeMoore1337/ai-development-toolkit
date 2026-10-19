@@ -211,6 +211,35 @@ class ProvenanceTests(unittest.TestCase):
         self.data["owner_review_record"]["approved_components"] = {}
         self.check("OWNER_SCOPE", mode="release")
 
+    def test_known_branding_path_requires_approval_even_if_labelled_original(self):
+        file_path = "assets/branding/hero.png"
+        self._put(file_path, "synthetic placeholder, not a real image")
+        self.data["components"].append(component(
+            file_path, "asset", origin="original", status="documented",
+            license="MIT", distribution="included",
+        ))
+        self.check("OWNER_APPROVAL", mode="release")
+
+    def test_known_branding_path_cannot_drop_owner_record_to_escape_gate(self):
+        self._approve_fixture()
+        file_path = "assets/branding/hero.png"
+        self._put(file_path, "synthetic test only")
+        self.data["components"].append(component(
+            file_path, "asset", origin="original",
+            status="documented", distribution="included",
+        ))
+        self.data["owner_review_record"] = None
+        self.check("OWNER_APPROVAL", mode="release")
+
+    def test_known_qa_role_path_requires_owner_review(self):
+        file_path = "extensions/qa/roles/fixture.md"
+        self._put(file_path, "# synthetic fixture\n")
+        self.data["components"].append(component(
+            file_path, "role", origin="original", status="documented",
+            distribution="included",
+        ))
+        self.check("OWNER_APPROVAL", mode="release")
+
     def test_unrecognised_owner_id_fails_closed(self):
         self._approve_fixture()
         self.data["components"][0]["owner_approval_id"] = "NOT_THE_APPROVAL"
