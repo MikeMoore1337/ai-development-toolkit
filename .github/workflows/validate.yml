@@ -42,6 +42,38 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Dependencies
         run: python -m pip install -r requirements-dev.txt
+      - name: Ruff Python correctness checks (pinned, Ubuntu only)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install "ruff==0.17.1"
+          ruff check --isolated --target-version py312 --select F821,F822,F823,E9 scripts tests
+          printf 'def example():\n    return undefined_identifier\n' > "$RUNNER_TEMP/ruff-negative.py"
+          if ruff check --isolated --select F821 "$RUNNER_TEMP/ruff-negative.py"; then
+            echo "FAIL: Ruff did not detect the synthetic undefined name"
+            exit 1
+          fi
+      - name: Validate Actions syntax and expressions (pinned, Ubuntu only)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/actionlint"
+          curl --fail --location --silent --show-error --retry 3 \
+            "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" \
+            --output "$RUNNER_TEMP/actionlint.tar.gz"
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check --status
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP/actionlint" actionlint
+          "$RUNNER_TEMP/actionlint/actionlint" -version
+          "$RUNNER_TEMP/actionlint/actionlint" -no-color -shellcheck= -pyflakes=
+          printf '%s\n' 'name: Negative fixture' 'on: push' 'jobs:' '  invalid:' \
+            '    needs: [missing_job]' '    runs-on: ubuntu-latest' \
+            '    steps:' '      - run: echo test' |
+            "$RUNNER_TEMP/actionlint/actionlint" -no-color -shellcheck= -pyflakes= -stdin-filename synthetic.yml - && {
+              echo "FAIL: actionlint missed a synthetic missing dependency"
+              exit 1
+            } || test "$?" -eq 1
       - name: Check public package
         run: python scripts/check_public_package.py
       - name: Validate provenance inventory (not release permission)
