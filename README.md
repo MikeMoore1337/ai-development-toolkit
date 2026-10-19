@@ -89,7 +89,7 @@ python scripts/install.py --target "C:\Work\my-app" --profile qa-python --apply
 | Improve documentation | `editorial` | Clear Voice only |
 | Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
 
-See [all 23 profiles and all 51 skills](docs/SKILLS_CATALOG.md).
+See [all 23 profiles and all 51 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
 
 ## How the parts fit
 
