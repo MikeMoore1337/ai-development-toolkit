@@ -156,13 +156,56 @@ class ProvenanceTests(unittest.TestCase):
         self.write()
         self.assertEqual(validate(self.root), validate(self.root))
 
-    def test_current_tree_release_is_owner_blocked(self):
+    def test_owner_approval_required_for_unverified_derivatives(self):
+        self.data["components"][0].update(
+            origin="adapted", source_reference="synthetic-work-source"
+        )
+        self.check("OWNER_APPROVAL")
+
+    def _approve_fixture(self):
+        import hashlib
+        path = ".agents/skills/original"
+        file_path = path + "/SKILL.md"
+        digest = hashlib.sha256((self.root / file_path).read_bytes()).hexdigest()
+        self.data["components"][0].update(
+            origin="adapted", source_reference="synthetic-work-source",
+            owner_approval_id="SYNTHETIC", status="documented",
+            distribution="included",
+        )
+        self.data["owner_review_record"] = {
+            "id": "SYNTHETIC", "source": "owner_reported",
+            "review_outcomes": "permitted",
+            "approved_components": {path: {file_path: digest}},
+        }
+        self.write()
+
+    def test_frozen_owner_scope_requires_matching_file_bytes(self):
+        self._approve_fixture()
+        self.assertTrue(validate(self.root, "release")["ok"])
+        file_path = ".agents/skills/original/SKILL.md"
+        self._put(file_path, (self.root / file_path).read_text(encoding="utf-8") + "modified\n")
+        result = validate(self.root, "release")
+        self.assertTrue(any(e.startswith("OWNER_FINGERPRINT:") for e in result["issues"]), result)
+
+    def test_frozen_owner_scope_rejects_new_files(self):
+        self._approve_fixture()
+        self._put(".agents/skills/original/extra.md", "New private fragment\n")
+        self.check("OWNER_SCOPE", mode="release")
+
+    def test_missing_frozen_review_snapshot_fails_closed(self):
+        self._approve_fixture()
+        self.data["owner_review_record"]["approved_components"] = {}
+        self.check("OWNER_SCOPE", mode="release")
+
+    def test_unrecognised_owner_id_fails_closed(self):
+        self._approve_fixture()
+        self.data["components"][0]["owner_approval_id"] = "NOT_THE_APPROVAL"
+        self.check("OWNER_APPROVAL", mode="release")
+
+    def test_current_tree_release_snapshot_is_eligible(self):
         result = validate(ROOT, "release")
-        self.assertFalse(result["ok"])
-        self.assertTrue(any("make-feature" in issue and "RELEASE_BLOCKED" in issue
-                            for issue in result["issues"]))
-        self.assertTrue(any("extensions-qa" in issue and "RELEASE_BLOCKED" in issue
-                            for issue in result["issues"]))
+        self.assertTrue(result["ok"], result["issues"][:15])
+        self.assertEqual(0, result["counts"].get("verified", 0))
 
     def test_real_repository_inventory(self):
         result = validate(ROOT)
