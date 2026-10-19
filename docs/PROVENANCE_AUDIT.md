@@ -8,6 +8,10 @@
 
 Initial review classifications: **0 verified, 118 documented, 42 requires_owner_review, 2 unknown, 0 restricted, 1 not_applicable**. `documented` is not a legal confirmation. Existing claims about authorship and license are attributed to their corresponding documents; they have not been independently authenticated. File-level cross-checks and similarity assessment against privately supplied source are unavailable.
 
+## Owner review record reference (2026-10-19)
+
+The owner supplied external review record ID **`ID1337`** and states supporting rights confirmations are retained privately. This identifier is non-secret tracking metadata only; this audit has **not** received the record's findings, the applicable files/revisions, the reviewed rights grant or restrictions. The relevant `owner_gate` statuses and next-release `BLOCKED` outcome remain unchanged pending component-scoped confirmation. No private evidence is included.
+
 ## Make Feature - OWNER GATE
 
 - Exact shipped scope: `extensions/make-feature/skills/make-feature/` (SKILL.md, scripts, references, templates, tests, license, installation/portability metadata).
