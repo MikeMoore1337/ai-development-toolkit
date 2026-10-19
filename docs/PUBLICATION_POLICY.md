@@ -1,5 +1,7 @@
 # Publication policy
 
+[Русская версия](ru/PUBLICATION_POLICY.md)
+
 The published Toolkit must contain no personal project names, private account IDs, signed individual license grants, credentials, internal paths, deployment targets or employee-only documents.
 
 - **Clear Voice:** user-authored generic edition with its own MIT license and third-party attributions. Source-specific profiles were rewritten to domain-generic profiles; only synthetic examples are retained.
