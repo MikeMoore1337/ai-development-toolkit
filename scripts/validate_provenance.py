@@ -198,10 +198,12 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         if isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed"}:
             if not item["source_url"] and not item["source_reference"]:
                 fail("SOURCE_MISSING", label)
-            if item["license"] in {"NONE", ""}:
+            if isinstance(item["license"], str) and item["license"] in {"NONE", ""}:
                 fail("LICENSE_MISSING", label)
         if item["status"] == "verified":
-            if item["origin"] == "unknown" or item["license"] in {"NOASSERTION", "NONE"}:
+            if item["origin"] == "unknown" or (
+                isinstance(item["license"], str) and item["license"] in {"NOASSERTION", "NONE"}
+            ):
                 fail("FALSE_VERIFIED", label)
             if not item["evidence"] or not item["last_reviewed"] or (
                 "independently confirmed" not in item["distribution_basis"].lower()
@@ -219,7 +221,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         needs_approval = (locked or (item["distribution"] == "included"
                           and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}))
         if needs_approval:
-            if approvals is None or item.get("owner_approval_id") != approvals.get("id"):
+            if not isinstance(approvals, dict) or item.get("owner_approval_id") != approvals.get("id"):
                 fail("OWNER_APPROVAL", f"{label}: explicit matching owner review required")
             if raw_path in approved:
                 frozen = classifications.get(raw_path)
