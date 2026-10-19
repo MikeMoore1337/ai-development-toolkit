@@ -149,6 +149,40 @@ The excerpt demonstrates the field hierarchy only; a real JSON report has
 additional fields, actual file hashes and measurements. A comparison contains
 baseline_revision, candidate_revision, changes[] and per-skill indicators.
 
+## Verified source inventory, 2026-10-19
+
+Repository tree analysis at commit
+`283e2f42ea773d4007cf914aa8b255035b0f4160` (after registration of
+the original tool and tests) found **51 declared SKILL.md files**, with
+**72,288 total bytes**, a **966-byte median** and largest file
+**clear-voice (11,698 bytes)**. This is a source-tree measurement,
+not a per-model token observation.
+
+| Skill | SKILL.md bytes | All folder bytes | Additional files |
+| --- | ---: | ---: | ---: |
+| clear-voice | 11,698 | 89,809 | 25 |
+| make-feature | 8,240 | 138,574 | 27 |
+| feature-delivery | 3,137 | 4,059 | 1 |
+| skill-portability | 2,087 | 2,807 | 1 |
+
+The larger directories carry licensed/snapshot-protected auxiliary material.
+No source changes or optimization assumptions follow from that fact.
+
+CI source-only validation on
+[run 39246121679](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/39246121679)
+confirmed all **51/51 static structural checks PASS** on Ubuntu 3.12,
+with **51/51 official skills-ref** validated separately. A successful
+Linux job does not establish per-client activation or execution.
+The Windows short-path normalization regression found in synthetic tests
+is addressed on the subsequent PR branch commit; consult final exact-HEAD
+CI rather than treating this earlier run as final acceptance.
+
+Prioritize manual review, not automatic rewrites, for the biggest
+instruction surfaces (clear-voice, make-feature, feature-delivery)
+and Python QA workflows (api-testing, pytest-test-design,
+database-validation, test-data-management, failure-triage).
+Source length is a review scheduling cue, not a quality score.
+
 ## Interpretation and follow-up
 
 Review confirmed broken local links, invalid frontmatter, missing files and
