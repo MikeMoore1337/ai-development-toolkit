@@ -291,6 +291,26 @@ class ProvenanceTests(unittest.TestCase):
         self.data["components"][0]["status"] = []
         self.check("STATUS")
 
+    def test_bad_license_type_on_adapted_entry_is_reported_not_crashed(self):
+        self.data["components"][0].update(
+            origin="adapted", source_reference="fixture-source", license=[]
+        )
+        self.check("LICENSE")
+
+    def test_bad_license_type_on_verified_entry_is_reported_not_crashed(self):
+        self.data["components"][0].update(
+            status="verified", license=[],
+            distribution_basis="independently confirmed by synthetic test",
+        )
+        self.check("LICENSE")
+
+    def test_bad_owner_record_type_is_reported_not_crashed(self):
+        self.data["owner_review_record"] = []
+        path = "assets/branding/hero.png"
+        self._put(path, "synthetic placeholder only")
+        self.data["components"].append(component(path, "asset"))
+        self.check("OWNER_RECORD", mode="release")
+
     @unittest.skipUnless(hasattr(Path, "symlink_to"), "symlinks unsupported")
     def test_nested_symlink_is_rejected(self):
         # Symlink permissions on Windows CI vary; skip only on OS refusal.
