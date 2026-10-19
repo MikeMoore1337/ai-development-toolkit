@@ -6,9 +6,9 @@ This experiment checks a **control-plane** smoke on an ephemeral GitHub-hosted U
 
 - Pinned upstream version: `paperclipai@2026.1012.0` (not `latest`, canary or `master`).
 - Supported Node runtime: `24.11.0`.
-- Paperclip binds to loopback `127.0.0.1:3100`, keeps data under `RUNNER_TEMP`, and does not install a system service.
+- Paperclip onboarding explicitly uses `--bind loopback`; health is queried only over `127.0.0.1:3100`. Instance data stays in `RUNNER_TEMP`; no system service is installed.
 - No API keys, GitHub credentials, model providers, agents, heartbeats, PR merge or deployment.
-- The company monthly budget is **zero**. No cost/usage data is assumed or fabricated.
+- Both companies' monthly budgets are **zero** and independently read back from the API. Both companies have `requireBoardApprovalForNewAgents=true`, set via PATCH and then verified with GET. No cost/usage data is assumed or fabricated.
 - `actions/checkout` does not persist credentials. Workflow permissions are `contents: read` only.
 - Logs from the Paperclip bootstrap are not published because onboarding can generate local secrets.
 - Import reads only the public Toolkit skill at the GitHub URL; no GitHub login or write token is given to Paperclip.
@@ -18,10 +18,11 @@ This experiment checks a **control-plane** smoke on an ephemeral GitHub-hosted U
 
 1. A stable pinned `paperclipai` package boots with embedded PostgreSQL.
 2. `GET /api/health` responds with non-error JSON.
-3. Two temporary zero-budget companies are created (separate to avoid duplicate skill slugs).
+3. Two temporary zero-budget companies are created (separate to avoid duplicate skill slugs). Both are PATCHed to require board approval for new agents and both settings are read back.
 4. The official managed-skill creation API preserves the exact bytes of the Toolkit's unchanged `.agents/skills/minimal-safe-change/SKILL.md`. The server's stored file must match source content exactly.
-5. **Independently**, the public GitHub skill URL is imported through Paperclip's GitHub-source API. Failures remain a hard CI failure with a minimal, sanitized error diagnostic; managed skill creation **never** counts as a substitute for GitHub import.
-6. The test emits `PAPERCLIP_CONTROL_PLANE_SMOKE_NOT_AGENT_EVAL`, `real_agent_trials=0`, `model_calls_requested_by_test=0`.
+5. **Independently**, the public GitHub repository is imported through Paperclip's documented skill selector parser (`npx skills add <pinned GitHub repository URL> --skill minimal-safe-change`, used only as a string input, never executed as a shell command). The reference is pinned to immutable commit `73688b472ff3cce8091914b3d1845c414d930c7a`. Failures remain a hard CI failure with a minimal, sanitized error diagnostic; managed skill creation **never** counts as a substitute for GitHub import.
+6. A separate zero-provider offline job validates Toolkit provenance inventory, release preflight, checksums, metadata and unit tests.
+7. The test emits `PAPERCLIP_CONTROL_PLANE_SMOKE_NOT_AGENT_EVAL`, `real_agent_trials=0`, `model_calls_requested_by_test=0`.
 
 This workflow intentionally **does not verify** correct runtime materialization, agent activation, GitHub source synchronisation, review/approval enforcement or improvement over ordinary Codex usage. Real model/agent experiments remain prohibited under the Toolkit's zero-spend hold documented in `docs/REAL_AGENT_PILOT.md`.
 
@@ -34,3 +35,13 @@ Passing means only that this specific control-plane setup, exact managed skill c
 The Draft PR uses an experimental-branch-only `push` trigger plus the existing restricted pull-request trigger, so the exact checksum-update HEAD can run without merging. Required toolkit CI continues independently. Branch-triggered workflow runs cannot be inferred from the pull-request-only commit-run listing tool; inspect the actual Actions page/run before claiming success.
 
 The GitHub import previously returned HTTP 422, reason not captured by the earlier run. Current smoke records only the sanitized HTTP code/reason and continues to independently test managed skill creation, but exits nonzero if GitHub import remains unavailable. It creates no agents and no model connections. Neither scenario proves runtime skill activation.
+
+## Investigation evidence (2026-10-20)
+
+- [Run 39325593342](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/39325593342): managed skill import/byte-for-byte file verification PASSED, public GitHub import returned `422 skill_source_github_read_failed`.
+- [Run 39326644332](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/39326644332): anonymous direct GitHub API probes returned HTTP 200 for the repository metadata and `commits/main`, while the original folder GitHub import again failed with upstream HTTP 422.
+- Source review identified a potential ref-resolution problem: Paperclip's GitHub folder importer initially tests candidate refs containing the appended folder path before the valid branch name. If GitHub returns 422 (rather than 404) for an invalid candidate ref, the import stops. This is a **hypothesis**, not proven root cause.
+- Replaced the folder URL with the parser-supported `npx skills add ... --skill minimal-safe-change` string, pinned to a full immutable commit, to avoid candidate-ref probing. No installer command is executed by the smoke.
+- Paperclip's `createCompanySchema` only accepts name, description, zero budget and responsible user; `requireBoardApprovalForNewAgents` defaults to `false` in the database and must be applied by supported `PATCH` and verified by `GET`. The updated smoke checks that explicitly.
+
+The next run, not this narrative, determines whether the changed import path and new safety checks actually PASS.
