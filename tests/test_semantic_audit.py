@@ -29,8 +29,14 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         qa = self.manifest["extension_packs"]["qa"]
         core.update({x: qa["role_root"] + "/" + x + ".md" for x in qa["roles"]})
         self.assertEqual(core, {x["role_id"]: x["path"] for x in self.inventory["roles"]})
-        self.assertEqual(self.manifest["profiles"],
-                         {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]})
+        # The Issue #44 inventory is a historical snapshot. New profiles must
+        # not be retroactively inserted into that pinned audit.
+        historical = {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]}
+        self.assertEqual(historical, {name: skills for name, skills
+                                      in self.manifest["profiles"].items()
+                                      if name != "docs-technical"})
+        self.assertEqual(["documentation-maintenance", "research-verification"],
+                         self.manifest["profiles"]["docs-technical"])
 
     def test_entries_and_paths(self):
         for group, key in (("skills", "skill_id"), ("roles", "role_id"), ("profiles", "profile_id")):
@@ -86,6 +92,17 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                     self.assertEqual("#51" if entry["id"] == "SQ44-007" else "#47",
                                      entry["target_issue"])
                     self.assertTrue(source.strip())
+                elif entry["id"] in {"SQ44-001", "SQ44-002", "SQ44-004", "SQ44-008"}:
+                    # Historical evidence stays pinned; verify the current
+                    # corrective behavior without rewriting old audit quotes.
+                    markers = {
+                        "SQ44-001": "if has_py and has_js and has_playwright:",
+                        "SQ44-002": '"pytest_installed": "NOT_VERIFIED"',
+                        "SQ44-004": '"docs": ("docs-technical"',
+                        "SQ44-008": '"qa-all": [',
+                    }
+                    self.assertEqual("#50", entry["target_issue"])
+                    self.assertIn(markers[entry["id"]], source)
                 else:
                     self.assertIn(entry["evidence"]["quote"], source)
                 self.assertTrue(entry["expected_behavior"])

@@ -47,7 +47,10 @@ class BeginnerCliTests(unittest.TestCase):
     def invoke(self, *args):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = adt.main(list(args))
+            try:
+                code = adt.main(list(args))
+            except SystemExit as exc:
+                code = exc.code
         self.assertNotIn("PRIVATE_NEVER_PRINT", out.getvalue() + err.getvalue())
         return code, out.getvalue(), err.getvalue()
 
