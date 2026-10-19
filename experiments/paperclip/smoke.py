@@ -31,7 +31,20 @@ def request(method: str, path: str, payload: dict | None = None):
                 raise RuntimeError(f"Unexpected status {response.status} on {method} {path}")
             return json.load(response)
     except HTTPError as exc:
-        raise RuntimeError(f"Paperclip {method} {path}: HTTP {exc.code}") from None
+        # Summarize only server-supplied error metadata. Never print response
+        # bodies or bootstrap logs; these may include environment-specific data.
+        try:
+            failure = json.load(exc)
+        except (ValueError, OSError):
+            failure = {}
+        if not isinstance(failure, dict):
+            failure = {}
+        detail = failure.get("details")
+        code = detail.get("code") if isinstance(detail, dict) else None
+        label = code if isinstance(code, str) and code.replace("_", "").isalnum() else "unknown"
+        raise RuntimeError(
+            f"Paperclip {method} {path}: HTTP {exc.code}, error_code={label}"
+        ) from None
     except URLError as exc:
         raise RuntimeError(f"Paperclip is not reachable at loopback: {exc.reason}") from None
 
