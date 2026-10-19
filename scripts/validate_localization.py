@@ -21,9 +21,16 @@ PAGES = (
     "docs/ru/INSTALLATION.md",
     "docs/ru/SKILLS_CATALOG.md",
     "docs/ru/CURATED_SKILL_PACKS.md",
+    "docs/ru/CLIENT_MIGRATION.md",
+    "docs/ru/CLIENT_COMPATIBILITY.md",
+    "docs/ru/PUBLICATION_POLICY.md",
+    "docs/ru/ACCEPTANCE.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
+    "docs/CLIENT_MIGRATION.md",
+    "docs/CLIENT_COMPATIBILITY.md",
+    "docs/PUBLICATION_POLICY.md",
 )
 RU_PAGES = tuple(page for page in PAGES if page.startswith("docs/ru/"))
 CATALOG_SKILLS = re.compile(r"^\| \[`([^`]+)`\]\([^)]+\) \|", re.M)
@@ -41,9 +48,15 @@ LANGUAGE_LINKS = {
     "docs/INSTALLATION.md": "(ru/INSTALLATION.md)",
     "docs/SKILLS_CATALOG.md": "(ru/SKILLS_CATALOG.md)",
     "docs/CURATED_SKILL_PACKS.md": "(ru/CURATED_SKILL_PACKS.md)",
+    "docs/CLIENT_MIGRATION.md": "(ru/CLIENT_MIGRATION.md)",
+    "docs/CLIENT_COMPATIBILITY.md": "(ru/CLIENT_COMPATIBILITY.md)",
+    "docs/PUBLICATION_POLICY.md": "(ru/PUBLICATION_POLICY.md)",
     "docs/ru/INSTALLATION.md": "(../INSTALLATION.md)",
     "docs/ru/SKILLS_CATALOG.md": "(../SKILLS_CATALOG.md)",
     "docs/ru/CURATED_SKILL_PACKS.md": "(../CURATED_SKILL_PACKS.md)",
+    "docs/ru/CLIENT_MIGRATION.md": "(../CLIENT_MIGRATION.md)",
+    "docs/ru/CLIENT_COMPATIBILITY.md": "(../CLIENT_COMPATIBILITY.md)",
+    "docs/ru/PUBLICATION_POLICY.md": "(../PUBLICATION_POLICY.md)",
 }
 
 
@@ -80,7 +93,8 @@ def validate(root: Path) -> list[str]:
     if russian_readme.is_file():
         content = russian_readme.read_text(encoding="utf-8")
         for path in ("docs/ru/README.md", "docs/ru/GETTING_STARTED.md",
-                     "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md"):
+                     "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md",
+                     "docs/ru/ACCEPTANCE.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -88,7 +102,9 @@ def validate(root: Path) -> list[str]:
     if intro.is_file():
         content = intro.read_text(encoding="utf-8")
         for path in ("GETTING_STARTED.md", "GLOSSARY.md", "INSTALLATION.md",
-                     "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md"):
+                     "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md",
+                     "CLIENT_MIGRATION.md", "CLIENT_COMPATIBILITY.md",
+                     "PUBLICATION_POLICY.md", "ACCEPTANCE.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -131,7 +147,7 @@ def validate(root: Path) -> list[str]:
             if len(after) != len(before) or sorted(after) != sorted(before):
                 errors.append(f"L10N005 docs/ru/SKILLS_CATALOG.md: {rule} differ from English")
 
-    for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md"):
+    for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md"):
         source = root / "docs" / name
         target = root / "docs/ru" / name
         if source.is_file() and target.is_file():
@@ -139,6 +155,29 @@ def validate(root: Path) -> list[str]:
             translated_commands = set(SAMPLE_COMMANDS.findall(target.read_text(encoding="utf-8")))
             if not original_commands.issubset(translated_commands):
                 errors.append(f"L10N006 docs/ru/{name}: executable examples differ from English")
+
+    # Examples and high-risk caveats must not disappear during translation.
+    source = root / "docs/CLIENT_COMPATIBILITY.md"
+    translation = root / "docs/ru/CLIENT_COMPATIBILITY.md"
+    cmd = re.compile(r"^\s*python scripts/verify_client_compatibility\.py(?: .*)?$", re.M)
+    if source.is_file() and translation.is_file():
+        before = {command.strip() for command in cmd.findall(source.read_text(encoding="utf-8"))}
+        after = {command.strip() for command in cmd.findall(translation.read_text(encoding="utf-8"))}
+        if not before.issubset(after):
+            errors.append("L10N006 docs/ru/CLIENT_COMPATIBILITY.md: executable examples differ from English")
+
+    required_tokens = {
+        "CLIENT_MIGRATION.md": ("--apply", "rollback", "recover", "AGENTS.md", "CLAUDE.md"),
+        "CLIENT_COMPATIBILITY.md": ("L4", "L5", "L6", "NOT_TESTED", "UNSUPPORTED"),
+        "PUBLICATION_POLICY.md": ("ID1337", "--mode release", "SHA256"),
+        "ACCEPTANCE.md": ("NOT_TESTED", "preview", "apply", "status"),
+    }
+    for name, tokens in required_tokens.items():
+        target = root / "docs/ru" / name
+        if target.is_file():
+            content = target.read_text(encoding="utf-8")
+            if any(token not in content for token in tokens):
+                errors.append(f"L10N009 docs/ru/{name}: missing safety or evidence boundary")
 
     return errors
 
