@@ -270,7 +270,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
             skill_file = target / "SKILL.md"
             if not target.is_dir() or not skill_file.is_file():
                 fail("SKILL_PATH", label)
-            elif item["license"] not in {"NOASSERTION", "NONE"}:
+            elif isinstance(item["license"], str) and item["license"] not in {"NOASSERTION", "NONE"}:
                 head = skill_file.read_text(encoding="utf-8").split("---", 2)
                 if len(head) >= 3:
                     match = re.search(r"(?m)^license:\s*['\"]?([^\s'\"#]+)", head[1])
