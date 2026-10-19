@@ -14,7 +14,7 @@
 
 [English](README.md) · **Русский**
 
-[Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков (EN)](docs/SKILLS_CATALOG.md) · [Установка и восстановление (EN)](docs/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
@@ -74,7 +74,7 @@ python scripts/skill_manager.py install --target /path/to/project --profile gene
 python scripts/skill_manager.py status --target /path/to/project
 ```
 
-Для Codex используется `.agents/skills/`, для Claude Code - `.claude/skills/` (добавь `--layout claude` к командам установки и проверки). Чужие навыки и `AGENTS.md` / `CLAUDE.md` не перезаписываются. Установка файлов не подтверждает их обнаружение или использование моделью. Подробнее об [установке, обновлении и откате](docs/INSTALLATION.md), а также о простом одноразовом `install.py`.
+Для Codex используется `.agents/skills/`, для Claude Code - `.claude/skills/` (добавь `--layout claude` к командам установки и проверки). Чужие навыки и `AGENTS.md` / `CLAUDE.md` не перезаписываются. Установка файлов не подтверждает их обнаружение или использование моделью. Подробнее об [установке, обновлении и откате](docs/ru/INSTALLATION.md), а также о простом одноразовом `install.py`.
 
 ## Какой профиль выбрать
 
@@ -92,7 +92,7 @@ python scripts/skill_manager.py status --target /path/to/project
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 65 навыков и 27 профилей](docs/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
+[Полный каталог из 65 навыков и 27 профилей](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 
@@ -120,8 +120,8 @@ python scripts/validate_with_skills_ref.py --scope all
 
 ## Документация и участие
 
-[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка (EN)](docs/INSTALLATION.md) · [Каталог (EN)](docs/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации (EN)](docs/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
+[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации (EN)](docs/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
 
 Ядро распространяется по MIT. Отдельные компоненты, включая Make Feature, имеют собственные сведения об авторах и лицензиях. См. [политику публикации](docs/PUBLICATION_POLICY.md). Проект не является официальным дистрибутивом Codex, Claude Code или Agent Skills.
 
-**Права на распространение:** см. [аудит происхождения](docs/PROVENANCE_AUDIT.md) и [реестр](provenance/skills.json). Владелец сообщил о разрешении ID1337 для текущих файлов Make Feature, QA Pack и графики. Их SHA256 закреплены в реестре, но независимая юридическая проверка **не заявляется**. Для нового релиза требуется отдельное согласование владельцем конкретного архива. Успешный CI не подтверждает права на публикацию.
+**Права на распространение:** см. [аудит происхождения (EN)](docs/PROVENANCE_AUDIT.md) и [реестр](provenance/skills.json). Владелец сообщил о разрешении ID1337 для текущих файлов Make Feature, QA Pack и графики. Их SHA256 закреплены в реестре, но независимая юридическая проверка **не заявляется**. Для нового релиза требуется отдельное согласование владельцем конкретного архива. Успешный CI не подтверждает права на публикацию.
