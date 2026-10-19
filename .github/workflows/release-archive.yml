@@ -85,5 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-source-verification
-          path: release-archive-verification.log
+          path: |
+            release-archive-verification.log
+            ${{ runner.temp }}/provenance-release.json
           if-no-files-found: ignore
