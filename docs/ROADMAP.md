@@ -7,6 +7,7 @@
 - [x] Record published component provenance and enforce inventory/release preflight (Issue #28). Owner reports ID1337 permission for exact snapshotted files; release still requires separate owner sign-off and independent legal verification is not asserted; see [audit](PROVENANCE_AUDIT.md).
 - [x] Add deterministic checks for broken local links, anchors, profile inventories and declared workflow exclusions (Issue #26). Semantic instruction conflicts and agent discovery behavior remain manual/live checks.
 - [x] Document CLI catalog and safe managed Codex/Claude migration (Issue #30; filesystem acceptance only, live client trials remain open).
+- [x] Add versioned Codex/Claude/Hermes source-contract matrix and offline compatibility checks (Issue #32; L1-L3 only, no live discovery or activation). See [client evidence](CLIENT_COMPATIBILITY.md).
 
 ## Medium term
 

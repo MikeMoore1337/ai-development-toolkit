@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "specification_url": "https://agentskills.io/specification",
+  "clients": [
+    {
+      "client_id": "codex",
+      "client_name": "OpenAI Codex",
+      "documentation_url": "https://learn.chatgpt.com/docs/build-skills",
+      "source_revision": "official-docs-reviewed-2026-10-19",
+      "supported_skill_layouts": [
+        ".agents/skills"
+      ],
+      "project_scope": "Repository ancestors from CWD to repo root; project skills use .agents/skills",
+      "global_scope": "$HOME/.agents/skills and /etc/codex/skills; client may disable skills",
+      "installer_support": "VERIFIED",
+      "manager_support": "VERIFIED",
+      "migration_support": "VERIFIED",
+      "filesystem_test_status": "VERIFIED",
+      "source_contract_status": "VERIFIED",
+      "notes": "Codex accepts symlink skill directories, but Toolkit refuses links for safe managed installs. Duplicate names may both appear. L4-L6 untested.",
+      "required_metadata": [
+        "name",
+        "description"
+      ],
+      "optional_metadata": [
+        "license",
+        "compatibility",
+        "metadata",
+        "allowed-tools"
+      ],
+      "reviewed_on": "2026-10-19",
+      "static_validation_status": "VERIFIED",
+      "client_discovery_status": "NOT_TESTED",
+      "live_activation_status": "NOT_TESTED",
+      "effectiveness_status": "NOT_TESTED"
+    },
+    {
+      "client_id": "claude-code",
+      "client_name": "Anthropic Claude Code",
+      "documentation_url": "https://code.claude.com/docs/en/skills",
+      "source_revision": "official-docs-reviewed-2026-10-19",
+      "supported_skill_layouts": [
+        ".claude/skills"
+      ],
+      "project_scope": "Project-local .claude/skills; Claude-specific frontmatter is distinct from Agent Skills portable subset",
+      "global_scope": "~/.claude/skills; additional enterprise/plugin sources are client-managed",
+      "installer_support": "VERIFIED",
+      "manager_support": "VERIFIED",
+      "migration_support": "VERIFIED",
+      "filesystem_test_status": "VERIFIED",
+      "source_contract_status": "VERIFIED",
+      "notes": "Claude may accept frontmatter without name and ignore unknown fields, but Toolkit requires Agent Skills name/description. CLAUDE.md must remain untouched. L4-L6 untested.",
+      "required_metadata": [
+        "name",
+        "description"
+      ],
+      "optional_metadata": [
+        "license",
+        "compatibility",
+        "metadata",
+        "allowed-tools"
+      ],
+      "reviewed_on": "2026-10-19",
+      "static_validation_status": "VERIFIED",
+      "client_discovery_status": "NOT_TESTED",
+      "live_activation_status": "NOT_TESTED",
+      "effectiveness_status": "NOT_TESTED"
+    },
+    {
+      "client_id": "hermes",
+      "client_name": "Hermes Agent",
+      "documentation_url": "https://github.com/NousResearch/hermes-agent/blob/2e83e2a935ee04f606aab58e498d34ca58d84c07/website/docs/user-guide/features/skills.md",
+      "source_revision": "2e83e2a935ee04f606aab58e498d34ca58d84c07",
+      "supported_skill_layouts": [
+        ".agents/skills",
+        ".hermes/skills"
+      ],
+      "project_scope": "Project-local .agents/skills and .hermes/skills require project trust and are subject to quarantine; no Hermes-specific installer",
+      "global_scope": "~/.hermes/skills plus configured external_dirs and create_dir; writable external skills can be modified via skill_manage",
+      "installer_support": "UNSUPPORTED",
+      "manager_support": "UNSUPPORTED",
+      "migration_support": "UNSUPPORTED",
+      "filesystem_test_status": "PARTIAL",
+      "source_contract_status": "VERIFIED",
+      "notes": "Pinned upstream docs, inspected read-only; project root defined by git; priority project > local > create_dir > external. Source/documentation contract only, discovery and execution not tested.",
+      "required_metadata": [
+        "name",
+        "description"
+      ],
+      "optional_metadata": [
+        "license",
+        "compatibility",
+        "metadata",
+        "allowed-tools"
+      ],
+      "reviewed_on": "2026-10-19",
+      "static_validation_status": "VERIFIED",
+      "client_discovery_status": "NOT_TESTED",
+      "live_activation_status": "NOT_TESTED",
+      "effectiveness_status": "NOT_TESTED"
+    }
+  ]
+}

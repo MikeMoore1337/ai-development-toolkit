@@ -218,6 +218,8 @@
     "NousResearch/hermes-agent": "edab579989a1680a6cbd2bb98ad30dc165c36c8b"
   },
   "private_make_feature_bundled": false,
+  "client_compatibility_registry": "compatibility/clients.json",
+  "client_compatibility_reviewed_on": "2026-10-19",
   "agent_skills_spec": {
     "url": "https://agentskills.io/specification",
     "reference_repository": "https://github.com/agentskills/agentskills",
