@@ -1,5 +1,7 @@
 # Installing skills safely
 
+Client layouts, pinned source evidence and offline verification: [CLIENT_COMPATIBILITY.md](CLIENT_COMPATIBILITY.md).
+
 1. Prepare the target repository and note its existing `AGENTS.md` / `CLAUDE.md`. The toolkit never overwrites them.
 2. Preview a profile:
 
