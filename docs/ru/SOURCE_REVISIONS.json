@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "description": "Pinned English source revisions last reviewed for Russian translations. Source text edits require human translation review; no semantic equivalence is claimed.",
+  "pairs": [
+    {
+      "source": "docs/INSTALLATION.md",
+      "translation": "docs/ru/INSTALLATION.md",
+      "source_sha256": "ff9d344d447fc6da2404008610390d58709150dfda8a8eac3c2e0b71761b3945"
+    },
+    {
+      "source": "docs/SKILLS_CATALOG.md",
+      "translation": "docs/ru/SKILLS_CATALOG.md",
+      "source_sha256": "e661dc1c34ec92103ae6582b5300bd16cadef7cc7810cd0b993521c7fe9be6ad"
+    },
+    {
+      "source": "docs/CURATED_SKILL_PACKS.md",
+      "translation": "docs/ru/CURATED_SKILL_PACKS.md",
+      "source_sha256": "b2ddef48feb2382155d1d46f5844f417bbfe3a3e522579c290818dd256912b17"
+    }
+  ]
+}
