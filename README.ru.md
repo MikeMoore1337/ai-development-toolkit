@@ -14,13 +14,15 @@
 
 [English](README.md) · **Русский**
 
-[Тематические наборы Backend, Frontend, QA, Agent Engineering и Research](docs/CURATED_SKILL_PACKS.md) · [Быстрый старт](#быстрый-старт) · [Каталог навыков](docs/SKILLS_CATALOG.md) · [Установка](docs/INSTALLATION.md) · [Участие](CONTRIBUTING.md) · [Планы](docs/ROADMAP.md)
+[Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков (EN)](docs/SKILLS_CATALOG.md) · [Установка и восстановление (EN)](docs/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
 ---
 
 ## Для чего нужен Toolkit
+
+**Впервые знакомишься с проектом?** Открой [пошаговый первый запуск](docs/ru/GETTING_STARTED.md) для Windows, Linux или macOS. Он использует отдельную учебную папку, показывает предварительный просмотр, явную установку и проверку состояния. [Все переведённые материалы](docs/ru/README.md).
 
 Задача не просто в том, чтобы агент быстрее написал код. Нужно понять требования, не затронуть лишнее, проверить реальные сценарии и отличать успешное выполнение теста от корректной работы функции.
 
@@ -118,7 +120,7 @@ python scripts/validate_with_skills_ref.py --scope all
 
 ## Документация и участие
 
-[Установка](docs/INSTALLATION.md) · [Каталог навыков](docs/SKILLS_CATALOG.md) · [Методика оценки](docs/QUALITY_RUBRIC.md) · [Политика публикации](docs/PUBLICATION_POLICY.md) · [Дорожная карта](docs/ROADMAP.md) · [Как помочь](CONTRIBUTING.md)
+[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка (EN)](docs/INSTALLATION.md) · [Каталог (EN)](docs/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации (EN)](docs/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
 
 Ядро распространяется по MIT. Отдельные компоненты, включая Make Feature, имеют собственные сведения об авторах и лицензиях. См. [политику публикации](docs/PUBLICATION_POLICY.md). Проект не является официальным дистрибутивом Codex, Claude Code или Agent Skills.
 
