@@ -177,6 +177,10 @@ class ProvenanceTests(unittest.TestCase):
             "id": "SYNTHETIC", "source": "owner_reported",
             "review_outcomes": "permitted",
             "approved_components": {path: {file_path: digest}},
+            "approved_metadata": {path: {
+                "origin": "adapted", "license": "MIT", "status": "documented",
+                "distribution": "included", "kind": "skill",
+            }},
         }
         self.write()
 
@@ -202,6 +206,63 @@ class ProvenanceTests(unittest.TestCase):
         self._approve_fixture()
         self.data["components"][0]["owner_approval_id"] = "NOT_THE_APPROVAL"
         self.check("OWNER_APPROVAL", mode="release")
+
+    def test_relabel_approved_adaptation_as_original_does_not_bypass(self):
+        self._approve_fixture()
+        self.data["components"][0]["origin"] = "original"
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_relabel_approved_item_verified_does_not_bypass(self):
+        self._approve_fixture()
+        self.data["components"][0]["status"] = "verified"
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_change_approved_license_must_be_reviewed(self):
+        self._approve_fixture()
+        self.data["components"][0]["license"] = "Apache-2.0"
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_relabelled_metadata_cannot_bypass_changed_content(self):
+        self._approve_fixture()
+        self.data["components"][0]["origin"] = "original"
+        file_path = ".agents/skills/original/SKILL.md"
+        self._put(file_path, (self.root / file_path).read_text() + "injection\n")
+        self.check("OWNER_FINGERPRINT", mode="release")
+
+    def test_owner_metadata_snapshot_is_required(self):
+        self._approve_fixture()
+        self.data["owner_review_record"].pop("approved_metadata")
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_owner_metadata_snapshot_cannot_be_partial(self):
+        self._approve_fixture()
+        self.data["owner_review_record"]["approved_metadata"] = {}
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_malformed_registry_entry_ids_and_paths_are_reported(self):
+        self.data["components"][0]["id"] = []
+        self.check("ID")
+        self.data["components"][0]["id"] = "fixture"
+        self.data["components"][0]["path"] = {}
+        self.check("SCHEMA")
+
+    def test_invalid_enum_values_are_reported_not_crashed(self):
+        self.data["components"][0]["origin"] = []
+        self.check("ORIGIN")
+        self.data["components"][0]["origin"] = "original"
+        self.data["components"][0]["status"] = []
+        self.check("STATUS")
+
+    @unittest.skipUnless(hasattr(Path, "symlink_to"), "symlinks unsupported")
+    def test_nested_symlink_is_rejected(self):
+        # Symlink permissions on Windows CI vary; skip only on OS refusal.
+        import os
+        alias = self.root / ".agents/skills/original/linked.md"
+        try:
+            alias.symlink_to(self.root / "NOTICE.md")
+        except (OSError, NotImplementedError):
+            self.skipTest("Symlinks are not permitted on this runner")
+        self.check("SYMLINK", mode="release")
 
     def test_current_tree_release_snapshot_is_eligible(self):
         result = validate(ROOT, "release")
