@@ -1,0 +1,233 @@
+#!/usr/bin/env python3
+"""Offline provenance inventory and release preflight. This is NOT legal verification."""
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+from datetime import date
+import json
+from pathlib import Path, PurePosixPath
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+REGISTER = "provenance/skills.json"
+ORIGINS = {"original", "adapted", "redistributed", "inspired_by", "unknown"}
+STATUSES = {"verified", "documented", "requires_owner_review", "restricted", "unknown", "not_applicable"}
+DISTRIBUTION = {"included", "owner_gate", "excluded"}
+KINDS = {"skill", "role", "recipe", "script", "template", "reference", "asset", "profile", "documentation", "test", "workflow", "metadata"}
+SKIP = {".git", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".venv", "venv", ".hermes-compat"}
+SHA = re.compile(r"[a-fA-F0-9]{40}\Z")
+SPDX = re.compile(r"(?:MIT|Apache-2\.0|BSD-2-Clause|BSD-3-Clause|CC0-1\.0|CC-BY-4\.0|ISC|MPL-2\.0|GPL-3\.0-only|NOASSERTION|NONE)\Z")
+FIELDS = {"id", "path", "name", "kind", "author", "origin", "source_url", "source_reference", "source_revision", "license", "distribution_basis", "attribution_required", "attribution_path", "status", "evidence", "last_reviewed", "distribution", "notes"}
+
+
+def safe_path(root: Path, name: object) -> Path | None:
+    if not isinstance(name, str) or not name or "\\" in name or name.startswith("/"):
+        return None
+    pure = PurePosixPath(name)
+    if any(part in {"", ".", ".."} for part in name.split("/")) or pure.is_absolute():
+        return None
+    target = root.joinpath(*pure.parts)
+    if not target.resolve().is_relative_to(root.resolve()):
+        return None
+    for node in [target, *list(target.parents)]:
+        if node == root.parent:
+            break
+        if node.is_symlink():
+            return None
+    return target
+
+
+def files_in_package(root: Path) -> set[str]:
+    results: set[str] = set()
+    for path in root.rglob("*"):
+        rel = path.relative_to(root)
+        if any(part in SKIP for part in rel.parts):
+            continue
+        if path.is_file() or path.is_symlink():
+            results.add(rel.as_posix())
+    return results
+
+
+def skill_dirs(root: Path, manifest: dict) -> set[str]:
+    found: set[str] = set()
+    roots = [manifest["skill_root"]] + [
+        config["skill_root"] for config in manifest.get("extension_packs", {}).values()
+    ]
+    for location in roots:
+        base = safe_path(root, location)
+        if base is None or not base.is_dir():
+            raise ValueError(f"Invalid skill root: {location}")
+        for directory in base.iterdir():
+            if directory.is_dir():
+                found.add(directory.relative_to(root).as_posix())
+    return found
+
+
+def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
+    root = root.resolve()
+    errors: list[str] = []
+    def fail(code: str, message: str) -> None:
+        errors.append(f"{code}: {message}")
+
+    register = safe_path(root, REGISTER)
+    try:
+        if register is None or not register.is_file():
+            raise ValueError("missing or unsafe registry")
+        data = json.loads(register.read_text(encoding="utf-8"))
+        if not isinstance(data, dict) or data.get("schema_version") != 1 or not isinstance(data.get("components"), list):
+            raise ValueError("expected schema_version=1 and components array")
+    except (OSError, UnicodeError, ValueError, TypeError) as exc:
+        return {"ok": False, "mode": mode, "counts": {}, "issues": [f"REGISTRY: {exc}"]}
+    try:
+        manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
+        expected_skills = skill_dirs(root, manifest)
+    except (ValueError, TypeError, KeyError, OSError) as exc:
+        return {"ok": False, "mode": mode, "counts": {}, "issues": [f"MANIFEST: {exc}"]}
+
+    records = data["components"]
+    covered: set[str] = set()
+    skill_records: set[str] = set()
+    ids: set[str] = set()
+    declared_paths: set[str] = set()
+    counts: Counter[str] = Counter()
+    for number, item in enumerate(records):
+        label = f"component[{number}]"
+        if not isinstance(item, dict):
+            fail("SCHEMA", f"{label}: expected object")
+            continue
+        missing = FIELDS - item.keys()
+        if missing:
+            fail("SCHEMA", f"{label}: missing fields {sorted(missing)}")
+            continue
+        ident, raw_path = item["id"], item["path"]
+        label = str(ident)
+        if not isinstance(ident, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", ident):
+            fail("ID", f"{label}: unsafe or invalid id")
+        if ident in ids:
+            fail("DUPLICATE_ID", label)
+        ids.add(ident)
+        if raw_path in declared_paths:
+            fail("DUPLICATE_PATH", str(raw_path))
+        declared_paths.add(raw_path)
+        target = safe_path(root, raw_path)
+        if target is None:
+            fail("UNSAFE_PATH", f"{label}: {raw_path}")
+            continue
+        if not target.exists():
+            fail("MISSING_PATH", f"{label}: {raw_path}")
+            continue
+        if not target.is_file() and not target.is_dir():
+            fail("PATH_TYPE", f"{label}: {raw_path}")
+            continue
+        if item["kind"] not in KINDS:
+            fail("KIND", label)
+        if item["origin"] not in ORIGINS:
+            fail("ORIGIN", label)
+        if item["status"] not in STATUSES:
+            fail("STATUS", label)
+        else:
+            counts[item["status"]] += 1
+        if item["distribution"] not in DISTRIBUTION:
+            fail("DISTRIBUTION", label)
+        if not isinstance(item["name"], str) or not item["name"].strip():
+            fail("NAME", label)
+        if not isinstance(item["author"], str) or not item["author"].strip():
+            fail("AUTHOR", label)
+        if not isinstance(item["distribution_basis"], str) or not item["distribution_basis"].strip():
+            fail("RIGHTS_BASIS", label)
+        if not isinstance(item["notes"], str):
+            fail("NOTES", label)
+        if not isinstance(item["license"], str) or not SPDX.fullmatch(item["license"]):
+            fail("LICENSE", f"{label}: SPDX identifier or NOASSERTION required")
+        if item["source_revision"] is not None and (
+            not isinstance(item["source_revision"], str) or not SHA.fullmatch(item["source_revision"])
+        ):
+            fail("REVISION", label)
+        if item["source_url"] is not None and (
+            not isinstance(item["source_url"], str) or not item["source_url"].startswith("https://")
+        ):
+            fail("SOURCE_URL", label)
+        if item["origin"] in {"adapted", "redistributed"}:
+            if not item["source_url"] and not item["source_reference"]:
+                fail("SOURCE_MISSING", label)
+            if item["license"] in {"NONE", ""}:
+                fail("LICENSE_MISSING", label)
+        if item["status"] == "verified":
+            if item["origin"] == "unknown" or item["license"] in {"NOASSERTION", "NONE"}:
+                fail("FALSE_VERIFIED", label)
+            if not item["evidence"] or not item["last_reviewed"] or (
+                "independently confirmed" not in item["distribution_basis"].lower()
+            ):
+                fail("FALSE_VERIFIED", f"{label}: verified needs independently confirmed rights evidence")
+        if item["status"] in {"unknown", "restricted", "requires_owner_review"} and item["distribution"] == "included":
+            fail("UNSAFE_DISTRIBUTION", label)
+        if not isinstance(item["attribution_required"], bool):
+            fail("ATTRIBUTION", f"{label}: boolean required")
+        if item["attribution_required"] and not item["attribution_path"]:
+            fail("ATTRIBUTION", f"{label}: required notice missing")
+        for field in ("attribution_path", "evidence"):
+            value = item[field]
+            if value is not None:
+                ref = safe_path(root, value)
+                if ref is None or not ref.is_file():
+                    fail("EVIDENCE_PATH", f"{label}: {field}={value}")
+        if item["last_reviewed"] is not None:
+            try:
+                review_day = date.fromisoformat(item["last_reviewed"])
+                if review_day > date.today():
+                    fail("REVIEW_DATE", label)
+            except (TypeError, ValueError):
+                fail("REVIEW_DATE", label)
+        if item["kind"] == "skill":
+            skill_records.add(raw_path)
+            skill_file = target / "SKILL.md"
+            if not target.is_dir() or not skill_file.is_file():
+                fail("SKILL_PATH", label)
+            elif item["license"] not in {"NOASSERTION", "NONE"}:
+                head = skill_file.read_text(encoding="utf-8").split("---", 2)
+                if len(head) >= 3:
+                    match = re.search(r"(?m)^license:\s*['\"]?([^\s'\"#]+)", head[1])
+                    if match and match.group(1) != item["license"]:
+                        fail("LICENSE_CONFLICT", label)
+        if target.is_file():
+            covered.add(raw_path)
+        else:
+            covered.update(p.relative_to(root).as_posix() for p in target.rglob("*") if p.is_file() or p.is_symlink())
+        if mode == "release" and (item["distribution"] != "included"
+                                  or item["status"] in {"restricted", "unknown", "requires_owner_review"}):
+            fail("RELEASE_BLOCKED", f"{label}: {item['status']}/{item['distribution']}")
+    for path in sorted(expected_skills - skill_records):
+        fail("UNDECLARED_SKILL", path)
+    for path in sorted(skill_records - expected_skills):
+        fail("EXTRA_SKILL", path)
+    actual = files_in_package(root)
+    for path in sorted(actual - covered):
+        fail("UNDECLARED_FILE", path)
+    for path in sorted(covered - actual):
+        fail("COVERAGE_MISMATCH", path)
+    if not records:
+        fail("EMPTY_REGISTRY", "no components")
+    return {"ok": not errors, "mode": mode, "counts": dict(sorted(counts.items())),
+            "total": len(records), "skills": len(skill_records), "issues": sorted(errors)}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--mode", choices=("inventory", "release"), default="inventory")
+    parser.add_argument("--report", type=Path)
+    args = parser.parse_args()
+    result = validate(args.root, args.mode)
+    if args.report:
+        args.report.write_text(json.dumps(result, sort_keys=True, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    for issue in result["issues"]:
+        print("FAIL:", issue)
+    print(f"{'PASS' if result['ok'] else 'FAIL'}: provenance {args.mode}; "
+          f"{result.get('total', 0)} components; {result.get('skills', 0)} skills")
+    return 0 if result["ok"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
