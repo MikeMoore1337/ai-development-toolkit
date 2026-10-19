@@ -80,6 +80,12 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                     self.assertEqual("#46" if entry["id"] == "SQ44-003" else "#45",
                                      entry["target_issue"])
                     self.assertNotIn(entry["evidence"]["quote"], source)
+                elif entry["id"] in {"SQ44-007", "SQ44-012", "SQ44-014"}:
+                    # Historical findings are pinned to audit source_revision.
+                    # The current text changed in #47; do not rewrite evidence.
+                    self.assertEqual("#51" if entry["id"] == "SQ44-007" else "#47",
+                                     entry["target_issue"])
+                    self.assertTrue(source.strip())
                 else:
                     self.assertIn(entry["evidence"]["quote"], source)
                 self.assertTrue(entry["expected_behavior"])

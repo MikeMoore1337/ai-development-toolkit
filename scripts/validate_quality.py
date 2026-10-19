@@ -364,6 +364,9 @@ def check_evidence(root: Path, skill_ids: set[str], findings: list[Finding]) -> 
 
 def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> None:
     """Check maintained current-state references; never rewrite historic audits."""
+    # Synthetic inventory/link fixtures have no maintained README or version.
+    if not (root / "README.md").is_file() and not (root / "README.ru.md").is_file():
+        return
     packs = manifest.get("extension_packs", {})
     sizes = {key: len(value["skills"]) for key, value in packs.items()}
     core = len(manifest["core_skills"]) + len(manifest.get("extension_skills", []))
