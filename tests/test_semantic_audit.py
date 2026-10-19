@@ -76,8 +76,9 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                 source = (ROOT / entry["component_path"]).read_text(encoding="utf-8")
                 # This audit is pinned to its source_revision; resolved quotes need
                 # not remain in today's file. Assert their removal instead.
-                if entry["id"] in {"SQ44-011", "SQ44-015"}:
-                    self.assertEqual("#45", entry["target_issue"])
+                if entry["id"] in {"SQ44-003", "SQ44-011", "SQ44-015"}:
+                    self.assertEqual("#46" if entry["id"] == "SQ44-003" else "#45",
+                                     entry["target_issue"])
                     self.assertNotIn(entry["evidence"]["quote"], source)
                 else:
                     self.assertIn(entry["evidence"]["quote"], source)

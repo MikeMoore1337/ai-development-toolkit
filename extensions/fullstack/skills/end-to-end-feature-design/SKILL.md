@@ -1,16 +1,21 @@
 ---
 name: end-to-end-feature-design
-description: "Use when designing a user-visible vertical feature slice through UI, API and persistence."
+description: "Use when designing a user-visible vertical feature across interface, API and data without assuming implementation."
 ---
 
-# end to end feature design
+# End-to-end feature design
 
-Inspect the existing project boundaries, technology and deployment constraints before proposing a change. Follow project approval gates.
+**Use for:** "Design authentication for an app", a feature blueprint or acceptance planning. **Do not use for:** debugging an existing defect, a single isolated API change or replacing an implementation workflow controller.
 
-1. Describe the user outcome, roles, primary interaction, acceptance examples and exclusions.
-2. Map the vertical slice across interface, transport, service and persisted state using existing architecture.
-3. Specify success, empty, loading, invalid, unauthorized, conflict and recovery paths where relevant.
-4. Determine contract compatibility and release ordering; do not introduce a new language or framework by default.
-5. Map each acceptance example to testable evidence, and use one existing feature-delivery controller for overall task orchestration.
+**Inputs:** user outcome, actors/permissions, current project architecture, known contracts, constraints, exclusions and desired deliverable. Inspect the actual project and approval gates.
 
-**Output:** Slice map, cross-layer contracts, acceptance-to-evidence map and open decisions.
+1. Define the user goal, scope, roles, edge cases and success/negative acceptance examples; state assumptions that need confirmation.
+2. Draw a minimal vertical slice: UI -> API -> backend logic -> persisted data -> response/event -> UI, naming responsibility and data at each seam.
+3. Specify contract shape, source of truth, loading/empty/error/unauthorized/conflict/recovery states, compatibility and release dependencies.
+4. Link each acceptance criterion to an observable test or review artifact; separate evidence already collected from proposed verification.
+5. **Design-only request:** deliver the blueprint and handoff directly. Do not start or require a delivery controller and do not claim code was implemented.
+6. **Implementation request:** use the implementation controller already chosen by the project/user, either feature-delivery OR make-feature, never both (WF001 in docs/QUALITY_RULES.json). If none is present, explain the optional choice and existing tool/profile route before implementation. Do not auto-install a controller or create another orchestrator.
+
+**Output:** component/ownership map, cross-layer contract table, error/recovery paths, acceptance-to-evidence matrix, decisions and implementation handoff; clearly label DESIGN ONLY vs IMPLEMENTATION results.
+
+See [design handoff and acceptance scenarios](references/design-handoff.md). Execution, merge, deploy and third-party operations remain subject to owner approval.

@@ -1,16 +1,20 @@
 ---
 name: cross-layer-debugging
-description: "Use when debugging a defect spanning user interface, API, worker, database or runtime environment."
+description: "Use when locating and fixing a reproduced defect across UI, API, service, worker or database boundaries."
 ---
 
-# cross layer debugging
+# Cross-layer debugging
 
-Inspect the existing project boundaries, technology and deployment constraints before proposing a change. Follow project approval gates.
+**Use for:** an observed cross-layer defect with traceable symptoms. **Do not use for:** speculative architecture design or general code review without a failing journey.
 
-1. Reproduce expected and observed behavior, including environment and timestamps, without recording secrets.
-2. Trace the operation through network, backend and persistence using correlation IDs or available logs.
-3. Identify the first layer diverging from an actual contract; separate product, cache, deployment and test harness issues.
-4. Form a falsifiable cause hypothesis and check confirming and contradicting evidence before editing.
-5. Fix the owning boundary minimally and repeat both failing and neighboring scenarios; label unsupported conclusions.
+**Inputs:** expected vs observed behavior, reproducible steps, environment, timestamps, safe logs/request IDs, known contracts and permission boundaries.
 
-**Output:** Evidence chain, proven or provisional root cause, change and regression checks.
+1. Reproduce the user-facing failure and record the precise input, expected outcome, actual outcome and environment without collecting secrets.
+2. Correlate each hop from UI through request, service, persistence and response/event. Identify the **first** mismatch against a verified contract, not merely the layer where the symptom is visible.
+3. State a falsifiable hypothesis, a confirming observation and an alternative explanation (cache, deployment drift, test harness or backend).
+4. Gather counterevidence. If the first mismatch or root cause cannot be proved, report it as a hypothesis and stop before speculative production changes.
+5. Apply the smallest fix at the owning layer, rerun the original failure and neighboring/negative cases; record which checks were actually executed.
+
+**Example:** the UI shows the previous value after PUT 200. Inspect response version, DB commit, cache invalidation and request order before assuming that the backend failed. A late GET may be the first mismatch.
+
+**Output:** sanitized evidence chain, first divergent seam, confirmed or provisional root cause, fix/diff (if authorized), verified regressions and NOT_MEASURED gaps. No production debugging writes without approval.

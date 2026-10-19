@@ -1,16 +1,18 @@
 ---
 name: authentication-authorization
-description: "Use when implementing protected backend operations, identities, sessions and resource permissions."
+description: "Use when implementing backend identity checks, resource permissions, session boundaries and tenant isolation."
 ---
 
-# authentication authorization
+# Authentication and authorization
 
-Discover the application's actual language, framework and infrastructure first. Reuse existing conventions and respect project approvals.
+**Use for:** backend access control implementation or correction. **Do not use for:** frontend visibility-only changes or an independent security audit (security-review/security-testing).
 
-1. Map actors, resources, trust boundaries, identity entry points and explicit permission matrix.
-2. Enforce permissions at trusted backend boundaries; client-side visibility is not authorization.
-3. Use existing token/session validation, expiry, revocation and tenant ownership mechanisms.
-4. Apply least privilege, safe error messages and logging without exposing credentials, personal data or session secrets.
-5. Verify allowed, denied, unauthenticated and cross-resource cases with safe test principals.
+**Inputs:** actors, identity/session mechanisms, resource ownership, tenant boundaries, available test principals and project approvals.
 
-**Output:** Permission matrix, enforcement points, negative tests and unresolved threats.
+1. Separate authentication (who is making the request) from authorization (whether this actor may perform this action on this resource).
+2. Build an actor x action x resource matrix, including tenant and ownership checks; enforce it at trusted backend boundaries, even when frontend hides controls.
+3. Reuse validated expiry, issuer/audience, revocation and permission resolution mechanisms; do not trust client-provided owner/tenant identifiers without server-side checks.
+4. Return safe errors, avoid leaking existence or sensitive fields to unauthorized users, and keep tokens, cookies and personal data out of logs.
+5. Test allowed, missing identity, insufficient role, foreign resource, cross-tenant and manipulated ID cases with isolated principals. Negative authorization tests must inspect denied side effects, not only response status.
+
+**Output:** permission matrix, enforcement locations, allowed/denied test results and remaining threat assumptions. Do not change production roles or access policies without explicit approval.

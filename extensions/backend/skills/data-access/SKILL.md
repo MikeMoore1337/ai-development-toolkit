@@ -1,16 +1,20 @@
 ---
 name: data-access
-description: "Use when designing backend data access queries, transaction scopes, storage integrity and concurrency."
+description: "Use when changing backend persistence queries, transaction invariants and concurrent writes."
 ---
 
-# data access
+# Data access
 
-Discover the application's actual language, framework and infrastructure first. Reuse existing conventions and respect project approvals.
+**Use for:** stored-data integrity, concurrent mutations, transaction scope or query bottlenecks. **Do not use for:** schema rollout plans (database-migrations) or service decomposition decisions.
 
-1. Discover storage engine and model, owner, consistency guarantees and transaction capabilities.
-2. Define invariants and where they are enforced; prevent duplicate and partially committed mutations.
-3. Use safe parameterized interfaces, check permissions and exposure, pagination and query shape.
-4. Check concurrency, conflict handling, rollback, retry behavior and representative data volumes.
-5. Measure slow paths and validate missing records, conflict and partial-failure handling using isolated data.
+**Inputs:** storage engine, isolation/transaction semantics, data model, invariant, access rights and realistic isolated data set. Follow repository approval gates; never assume a transaction spans external services.
 
-**Output:** Persistence contract, concurrency/integrity risks, query evidence and tests.
+1. Name a falsifiable invariant before implementation (e.g., at most one active reservation per resource and time slot).
+2. Identify the source of truth and enforce uniqueness at the storage boundary when supported; do not rely on a pre-insert read alone.
+3. Map atomic operations, isolation requirements, expected conflicts and rollback. Protect against lost updates with constraints, locks or version comparisons as appropriate.
+4. Define retry behavior for transient serialization failures; never blindly repeat a non-idempotent external side effect. Parameterize queries and prevent data exposure.
+5. Test two concurrent requests for the same slot, a failed partial update, duplicate invocation and a slow path on representative volume. Record affected rows and invariant checks, not only successful HTTP codes.
+
+**Output:** storage invariant, transaction/conflict policy, query and concurrency evidence, negative checks and untested limits.
+
+**Negative example:** read "slot free" twice then insert twice without a uniqueness constraint. Both reads can succeed. An atomic unique index or equivalent constraint must reject one competing insert. No production writes without approval.
