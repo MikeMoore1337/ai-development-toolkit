@@ -9,12 +9,12 @@
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
 ![Skills](https://img.shields.io/badge/skills-51-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-23-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-26-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 [English](README.md) · **Русский**
 
-[Быстрый старт](#быстрый-старт) · [Каталог навыков](docs/SKILLS_CATALOG.md) · [Установка](docs/INSTALLATION.md) · [Участие](CONTRIBUTING.md) · [Планы](docs/ROADMAP.md)
+[Тематические наборы Backend, Frontend, QA, Agent Engineering и Research](docs/CURATED_SKILL_PACKS.md) · [Быстрый старт](#быстрый-старт) · [Каталог навыков](docs/SKILLS_CATALOG.md) · [Установка](docs/INSTALLATION.md) · [Участие](CONTRIBUTING.md) · [Планы](docs/ROADMAP.md)
 
 </div>
 
@@ -41,7 +41,7 @@
 | **QA Engineering Pack** | 27 навыков API/UI/CI, надёжности тестирования и управления качеством | [QA-навыки](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 самостоятельный подключаемый навык работы над функциями | [Интеграция](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Роли** | 5 основных и 11 специализированных ролей QA | [Каталог ролей](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Профили** | 23 набора навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
+| **Профили** | 26 наборов навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
 
 Навыки оформлены по формату [Agent Skills](https://agentskills.io/specification). Наличие навыка не даёт агенту автоматически права менять файлы, подключаться к сервисам или выпускать изменения.
 
@@ -79,7 +79,7 @@ python scripts/install.py --target /path/to/project --profile general --apply
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 51 навыка и 23 профилей](docs/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
+[Полный каталог из 51 навыка и 26 профилей](docs/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 

@@ -20,7 +20,7 @@
 ## Later
 
 - [x] Document filesystem layouts and explicit client-support limitations for Codex, Claude Code, Hermes and custom clients (Issue #30; no live execution).
-- [ ] Publish curated packs for QA, frontend, backend, agent architecture and research.
+- [x] Curate task-based Backend, Frontend, QA, Agent Engineering and Research profiles (Issue #36, source-only; live-client activation unverified).
 - [ ] Add automated provenance and release verification to community submissions.
 
 Only checked items with actual results are marked complete.

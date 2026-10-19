@@ -55,9 +55,28 @@ class ProfileRecommendationTests(unittest.TestCase):
         for task, profile in {
             "feature": "codex-feature", "ui": "ui-fix", "ci": "qa-ci",
             "release": "qa-release", "docs": "editorial", "agent": "agent-architecture",
+            "backend": "backend", "frontend": "frontend",
+            "research": "research", "provider": "provider-research",
         }.items():
             with self.subTest(task=task):
                 self.check(task, profile)
+
+    def test_optional_suggestions_are_separate_and_stable(self):
+        result = self.check("frontend", "frontend")
+        self.assertEqual(result, mod.recommend(self.target, "frontend", MANIFEST))
+        self.assertIn("ui-motion", result["optional_profiles"])
+        self.assertIn("motion-quality", result["optional_skills"])
+        self.assertNotIn("motion-quality", result["skills"])
+        self.assertEqual(["qa-ci"], self.check("qa", "qa-core")["optional_profiles"])
+
+    def test_optional_suggestions_reference_known_names(self):
+        names = {skill for skills in MANIFEST["profiles"].values() for skill in skills}
+        for task in mod.TASKS:
+            with self.subTest(task=task):
+                result = mod.recommend(self.target, task, MANIFEST)
+                self.assertTrue(set(result["optional_skills"]) <= names)
+                self.assertFalse(set(result["skills"]) & set(result["optional_skills"]))
+                self.assertTrue(set(result["optional_profiles"]) <= set(MANIFEST["profiles"]))
 
     def test_unavailable_target_and_bad_task(self):
         with self.assertRaisesRegex(ValueError, "existing directory"):

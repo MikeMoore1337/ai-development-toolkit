@@ -12,7 +12,23 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent")
+TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent",
+         "backend", "frontend", "research", "provider")
+
+# Explicit, non-installing suggestions; the primary profile stays minimal.
+OPTIONAL_SKILLS = {
+    "backend": ("contract-testing", "database-validation", "release-safety"),
+    "frontend": ("screenshot-fidelity", "motion-quality", "playwright-testing"),
+    "agent": ("security-boundaries", "external-skill-review"),
+    "research": ("codebase-knowledge-map", "provider-reality-check"),
+    "provider": ("architecture-decisions",),
+}
+OPTIONAL_PROFILES = {
+    "qa": ("qa-ci",),
+    "frontend": ("ui-fix", "ui-motion"),
+    "agent": ("provider-research",),
+    "research": ("provider-research",),
+}
 
 
 def recommend(target: Path, task: str, manifest: dict) -> dict:
@@ -49,11 +65,22 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
             "release": ("qa-release", "User-selected release quality review"),
             "docs": ("editorial", "User-selected documentation editing"),
             "agent": ("agent-architecture", "User-selected agent architecture work"),
+            "backend": ("backend", "User-selected backend implementation and review"),
+            "frontend": ("frontend", "User-selected frontend implementation; no framework inferred"),
+            "research": ("research", "User-selected technical research and source verification"),
+            "provider": ("provider-research", "User-selected LLM API or provider comparison"),
         }[task]
     profiles = manifest.get("profiles", {})
     if chosen not in profiles:
         raise ValueError(f"Profile missing from MANIFEST.json: {chosen}")
+    available = {name for names in profiles.values() for name in names}
+    optional_skills = [name for name in OPTIONAL_SKILLS.get(task, ())
+                       if name not in profiles[chosen] and name in available]
+    optional_profiles = [name for name in OPTIONAL_PROFILES.get(task, ())
+                         if name in profiles and name != chosen]
     return {
+        "optional_skills": optional_skills,
+        "optional_profiles": optional_profiles,
         "task": task,
         "profile": chosen,
         "skills": profiles[chosen],

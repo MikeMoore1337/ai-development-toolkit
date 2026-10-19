@@ -203,6 +203,24 @@
     ],
     "make-feature": [
       "make-feature"
+    ],
+    "backend": [
+      "task-scoping",
+      "architecture-decisions",
+      "implementation",
+      "qa-strategy",
+      "code-review"
+    ],
+    "frontend": [
+      "task-scoping",
+      "design-system-consistency",
+      "implementation",
+      "qa-strategy",
+      "code-review"
+    ],
+    "research": [
+      "task-scoping",
+      "research-verification"
     ]
   },
   "third_party_runtime_bundled": false,
