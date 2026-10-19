@@ -24,6 +24,25 @@ SHA = re.compile(r"[a-fA-F0-9]{40}\Z")
 SPDX = re.compile(r"(?:MIT|Apache-2\.0|BSD-2-Clause|BSD-3-Clause|CC0-1\.0|CC-BY-4\.0|ISC|MPL-2\.0|GPL-3\.0-only|NOASSERTION|NONE)\Z")
 FIELDS = {"id", "path", "name", "kind", "author", "origin", "source_url", "source_reference", "source_revision", "license", "distribution_basis", "attribution_required", "attribution_path", "status", "evidence", "last_reviewed", "distribution", "notes"}
 
+# Project-specific sensitive distribution scopes. A missing approval or a
+# rewritten origin field must not turn the previously gated files into
+# automatically permitted "original" content. This is an anti-accident guard,
+# NOT tamper-proof approval authority: code, registry and CI must be reviewed.
+REVIEW_REQUIRED_PATH = "extensions/make-feature/skills/make-feature"
+REVIEW_REQUIRED_PREFIXES = (
+    "extensions/qa/skills/",
+    "extensions/qa/roles/",
+    "extensions/qa/recipes/",
+    "assets/branding/",
+)
+
+
+def requires_owner_review(path: str) -> bool:
+    return path == REVIEW_REQUIRED_PATH or any(
+        path.startswith(prefix) for prefix in REVIEW_REQUIRED_PREFIXES
+    )
+
+
 
 def safe_path(root: Path, name: object) -> Path | None:
     if not isinstance(name, str) or not name or "\\" in name or name.startswith("/"):
@@ -195,7 +214,8 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         # Freeze the exact reviewed file bytes to prevent the approval from
         # silently applying to later substitutions or new files.
         # An existing approval cannot be bypassed by changing origin/status.
-        locked = raw_path in approved or "owner_approval_id" in item
+        locked = (raw_path in approved or "owner_approval_id" in item
+                  or requires_owner_review(raw_path))
         needs_approval = (locked or (item["distribution"] == "included"
                           and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}))
         if needs_approval:
