@@ -48,6 +48,8 @@ Skills follow the [Agent Skills](https://agentskills.io/specification) directory
 
 ## Quick start
 
+**New to programming?** Start with [an idea to a first verified result](docs/BEGINNER_WORKFLOW.md). You can describe your goal without choosing a language, profile or architecture; execution still depends on your AI client's real tools.
+
 **What you need:** Python 3.12+ and an existing project folder. The Toolkit supplies reusable instructions for a separately installed AI coding client; it does not install the client or grant permissions. Choose a profile for your task rather than browsing every skill.
 
 **Release status:** [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0) is the latest published release. The `main` branch also includes **unreleased** changes; see [Changelog](CHANGELOG.md). For a reproducible published version, check out the release tag.
