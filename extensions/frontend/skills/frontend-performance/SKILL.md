@@ -1,16 +1,20 @@
 ---
 name: frontend-performance
-description: "Use when measuring or improving frontend responsiveness, rendering work, assets or network cost."
+description: "Use when diagnosing or improving frontend speed with repeatable baseline and candidate measurements."
 ---
 
-# frontend performance
+# Frontend performance
 
-Inspect the actual frontend stack and project conventions before choosing tools or patterns. Follow repository rules and approval gates.
+**Use for:** measurable slow rendering, interaction, payload or network paths. **Do not use for:** speculative optimization without a scenario or feature delivery orchestration.
 
-1. Reproduce the slow scenario with representative data, device, viewport and network; record baseline metrics.
-2. Identify measured costs: requests, payloads, rendering churn, long tasks, bundles, assets or third-party scripts.
-3. Remove unnecessary work before suggesting caches, global stores, preloading or extra infrastructure.
-4. Review freshness, accessibility and correctness trade-offs of deferral, memoization and loading changes.
-5. Re-measure under comparable conditions and recheck adjacent interactions; mark unmeasured claims as hypotheses.
+**Inputs:** exact interaction, representative content, device/viewport, build mode, network conditions, current metrics and permission to run safe benchmarks.
 
-**Output:** Baseline, observed outcome or missing measurement, bottleneck and trade-offs.
+1. Reproduce one slow user journey. Capture baseline metric definitions, runs, cache state, build/environment, variance and measurement tools; without baseline, report a hypothesis, not an improvement.
+2. Locate the cost with evidence (network, JavaScript, rendering, asset loading or third-party work), rather than assuming bundle size alone determines speed.
+3. Choose the smallest change first. Consider correctness, freshness, accessibility and failure behavior when deferring or caching work.
+4. Compare candidate against baseline using the same instrumentation and conditions, with enough repetitions to notice noise. Report all relevant trade-offs; avoid cherry-picking a run.
+5. Recheck the targeted interaction and adjacent functionality. When comparable measurements cannot be collected, mark performance benefit NOT_MEASURED.
+
+**Output:** baseline and candidate table (or explicit missing measurement), bottleneck evidence, environment, regressions and decision.
+
+See [comparable measurement example](references/baseline-comparison.md). Do not run live load against third-party or production services without approval.

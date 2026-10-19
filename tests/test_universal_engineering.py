@@ -77,6 +77,50 @@ class UniversalEngineeringTests(unittest.TestCase):
             self.assertEqual("project gates\n", (target / "AGENTS.md").read_text())
             self.assertEqual("project gates\n", (target / "CLAUDE.md").read_text())
 
+
+    def test_design_only_and_optional_single_controller(self):
+        """Static integration contract; does not establish real agent activation."""
+        manifest = M
+        names = set(skill_sources(manifest))
+        profile = set(manifest["profiles"]["fullstack"])
+        controllers = {"feature-delivery", "make-feature"}
+        self.assertFalse(profile & controllers)
+        self.assertTrue(controllers <= names)
+        design = (ROOT / "extensions/fullstack/skills/end-to-end-feature-design/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Design-only request:", design)
+        self.assertIn("Implementation request:", design)
+        self.assertIn("Do not start or require a delivery controller", design)
+        rules = json.loads((ROOT / "docs/QUALITY_RULES.json").read_text(encoding="utf-8"))
+        wf001 = next(rule for rule in rules["exclusive_workflows"] if rule["rule_id"] == "WF001")
+        self.assertEqual(controllers, set(wf001["skills"]))
+        for chosen in ({"feature-delivery"}, {"make-feature"}):
+            selected = profile | chosen
+            self.assertEqual(1, len(selected & controllers))
+        self.assertEqual(2, len(profile | controllers) - len(profile))
+
+    def test_optional_engineering_examples_are_packaged(self):
+        """Ensure references survive copy/install, rather than only existing in source."""
+        example = {
+            "state-management": "stale-response.md",
+            "frontend-performance": "baseline-comparison.md",
+            "api-design": "compatible-evolution.md",
+            "database-migrations": "expand-migrate-contract.md",
+            "fullstack-integration": "account-preferences.md",
+            "end-to-end-feature-design": "design-handoff.md",
+        }
+        sources = skill_sources(M)
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            install(target, sorted(example), True)
+            for skill, reference in example.items():
+                with self.subTest(skill=skill):
+                    src = sources[skill]
+                    ref = src / "references" / reference
+                    dest = target / ".agents" / "skills" / skill / "references" / reference
+                    self.assertTrue(ref.is_file())
+                    self.assertTrue(dest.is_file())
+                    self.assertEqual(ref.read_bytes(), dest.read_bytes())
+
     def test_fullstack_opt_in_is_selective(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)

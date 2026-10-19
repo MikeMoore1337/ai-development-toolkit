@@ -1,16 +1,20 @@
 ---
 name: fullstack-integration
-description: "Use when aligning frontend and backend contracts and coordinating deployments across layers."
+description: "Use when aligning actual UI, API, services and storage contracts across a vertical feature."
 ---
 
-# fullstack integration
+# Fullstack integration
 
-Inspect the existing project boundaries, technology and deployment constraints before proposing a change. Follow project approval gates.
+**Use for:** implementing or verifying cross-layer seams. **Do not use for:** design-only decomposition (end-to-end-feature-design) or serving as a top-level workflow controller.
 
-1. Trace a real user action through UI state, network, service, storage and response or event.
-2. Confirm field formats, nullable behavior, error mapping, credentials, cache rules and correlation identifiers at each seam.
-3. Plan rollout for old/new clients when frontend and backend can be deployed independently.
-4. Check timeouts, cancellation, duplicate requests, stale results and partial success end-to-end.
-5. Verify success and failure with a real seam where available; label mocks, local and staging evidence distinctly. Do not supersede a feature-delivery controller.
+**Inputs:** user journey, actual UI and API contracts, deployed consumers, service/storage boundaries, test environment and permission gates.
 
-**Output:** Cross-layer sequence, contracts, rollout order and verified seam behavior.
+1. Trace an observable journey: UI action -> request -> backend validation -> transaction -> response/event -> UI state; include identifiers and nullable fields at every hop.
+2. Define who owns each datum and how 2xx, validation, authentication, conflict, partial success, timeout and stale-result paths map back to the screen.
+3. Plan backward-compatible changes and deployment ordering for old and new clients before editing contracts.
+4. Verify one real seam when available, plus negative cases; label mocks vs local/staging/live evidence, and do not infer real behavior from source checks.
+5. Use an already selected feature controller for implementation if one is required; this skill never starts or replaces it and grants no merge/deploy approval.
+
+**Output:** cross-layer sequence, contract/ownership table, rollout order, tested seams, unsupported assumptions and recovery path.
+
+See [vertical feature example](references/account-preferences.md).
