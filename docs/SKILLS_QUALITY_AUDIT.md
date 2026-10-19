@@ -4,7 +4,7 @@
 
 Base reviewed: `main` at `655dbd5b9c93e3829a6e9428c680205f8db723d4` (2026-10-19).
 Declared inventory: **51 skills** (23 Core, 27 QA, 1 Make Feature), **16 reference roles**
-(5 Core, 11 QA), **23 profiles**. These counts are audit snapshots, not validator constants.
+(5 Core, 11 QA), **23 profiles** and **146 tracked Markdown documents**. These counts are audit snapshots, not validator constants.
 The structural `skills-ref` gate and Skill Manager remain independent and unchanged.
 
 Precedence: real target-project rules and owner approval always override reusable
@@ -79,8 +79,11 @@ Avoid presenting such recommendations as verified user intent.
 ## Offline checks and limitations
 
 `python scripts/validate_quality.py` examines declared inventory, profiles,
-the explicit exclusive-workflow rules and Markdown links under skills, roles,
-references, project documentation and root guides. It recognizes relative and
+the explicit exclusive-workflow rules and **all repository Markdown files**,
+including skill references, roles, CI templates, QA recipes, integrations and
+root guides. Generated directories (`.git`, `.venv`, `node_modules`, build
+artifacts and caches) are intentionally excluded. Previously scoped checks
+covered 135 of 146 tracked Markdown files; the broad scan closes that gap. It recognizes relative and
 percent-encoded paths, Markdown heading anchors (including duplicates), fenced
 code blocks with accurate closing delimiters, multi-backtick inline code,
 Markdown reference definitions and external HTTP links. This is not a full
