@@ -194,11 +194,15 @@ class BeginnerCliTests(unittest.TestCase):
 
     def test_concurrent_writer_cannot_be_bypassed(self):
         selected = self.selected("research")
+        # On Windows, an active msvcrt lock denies reading manager.lock.
+        # Capture snapshots only while no process owns that file handle.
         with manager.exclusive(self.target):
-            before = snapshot(self.target)
+            pass
+        before = snapshot(self.target)
+        with manager.exclusive(self.target):
             with self.assertRaisesRegex(manager.ManagerError, "Another"):
                 adt.preview(self.target, "codex", selected, apply=True)
-            self.assertEqual(before, snapshot(self.target))
+        self.assertEqual(before, snapshot(self.target))
 
     def test_doctor_python_and_write_access_are_not_overclaimed(self):
         result = adt.diagnose(self.target, "codex")
