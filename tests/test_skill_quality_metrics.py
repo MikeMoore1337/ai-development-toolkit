@@ -36,7 +36,7 @@ class QualityMetricsTests(unittest.TestCase):
 
     def test_valid_skill(self):
         report = self.report()
-        self.assertEqual(report["status"], "PASS")
+        self.assertEqual(report["status"], "PASS", report["skills"][0]["findings"])
         self.assertEqual(report["skill_count"], 1)
         self.assertEqual(report["structural_pass"], 1)
         one = report["skills"][0]
@@ -59,7 +59,7 @@ class QualityMetricsTests(unittest.TestCase):
 
     def test_broken_reference(self):
         self.file.write_text(GOOD + "\n[missing](references/nope.md)\n", encoding="utf-8")
-        self.assertTrue(any(f["rule_id"] == "LINK001" for f in self.report()["skills"][0]["findings"]))
+        self.assertTrue(any(f["rule_id"] == "LINK001" for f in self.report()["skills"][0]["findings"]), self.report()["skills"][0]["findings"])
 
     def test_unknown_skill_id(self):
         with self.assertRaisesRegex(metrics.MetricsError, "Unknown skill ID"):
@@ -182,7 +182,7 @@ class QualityMetricsTests(unittest.TestCase):
         before = self.report()
         self.file.write_text(GOOD + "\n[broken](missing.md)\n", encoding="utf-8")
         compared = metrics.compare(before, self.report(AFTER))
-        self.assertEqual(compared["status"], "FAIL")
+        self.assertEqual(compared["status"], "FAIL", compared["changes"])
         self.assertIn("new_structural_failure", str(compared))
 
     def test_no_empirical_fabrication(self):
@@ -241,7 +241,7 @@ class QualityMetricsTests(unittest.TestCase):
     def test_compatible_with_python_path_apis(self):
         self.assertTrue(metrics.safe_path(self.root, self.file))
         self.assertFalse(metrics.safe_path(self.root, self.root.parent / "elsewhere"))
-        self.assertEqual(self.report()["status"], "PASS")
+        self.assertEqual(self.report()["status"], "PASS", self.report()["skills"][0]["findings"])
 
 
 if __name__ == "__main__":
