@@ -4518,5 +4518,21 @@
         "kind": "skill"
       }
     }
-  }
+  },
+  "owner_review_amendments": [
+    {
+      "parent_review_id": "ID1337",
+      "reported_at": "2026-10-19",
+      "scope_issue": "#45",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_description": "Owner authorized necessary QA Engineering Pack and Make Feature updates for Issue #45 only. Not a merge, release, deployment or independent legal clearance.",
+      "approved_files": {
+        "extensions/qa/skills/api-testing/SKILL.md": "07e884a71fde9208c6c5c8eebb3075e7edbe5849abb07b1de0384f157d69947a",
+        "extensions/qa/skills/test-strategy/SKILL.md": "4de0fc16ade0112b80f7566b0154047175e71cd5f4d0a5003fe295baef55ae3f",
+        "extensions/make-feature/skills/make-feature/SKILL.md": "5a5a6b214cef9738240c1892e8958b359cb72c3534d16650172a1feea2c9f690",
+        "extensions/make-feature/skills/make-feature/references/agents.md": "3bfc4f18d5dfc19b213a688f4a5ef4cc52f2fe480de836a38e7787b39ea47ca8"
+      }
+    }
+  ]
 }
