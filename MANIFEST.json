@@ -1,7 +1,7 @@
 {
   "package": "ai-development-toolkit",
   "version": "5.4.0",
-  "scope": "Portable skill and QA library, including full generic Clear Voice and owner-authorized Make Feature 0.3.0 source; no personal project references or personal-issued license documents",
+  "scope": "Portable skill and QA library, including full generic Clear Voice and Make Feature 0.3.0 source with unresolved release authorization; no personal project references or personal-issued license documents",
   "skill_root": ".agents/skills",
   "core_skills": [
     "architecture-decisions",
