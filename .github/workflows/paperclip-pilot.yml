@@ -5,6 +5,8 @@ on:
   push:
     branches: [experiment/paperclip-zero-spend-smoke]
   pull_request:
+    # PR metadata edits can explicitly re-evaluate the experiment without merging.
+    types: [opened, synchronize, reopened, edited]
     branches: [main]
     paths:
       - '.github/workflows/paperclip-pilot.yml'
