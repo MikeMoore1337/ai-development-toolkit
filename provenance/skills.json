@@ -192,7 +192,7 @@
       "origin": "inspired_by",
       "source_url": "https://github.com/codemistake/human-writing",
       "source_reference": null,
-      "source_revision": null,
+      "source_revision": "3d06941d99d78bb495d11a98f6cd30eeec7a701b",
       "license": "MIT",
       "distribution_basis": "Project MIT notice and third-party idea attribution; no content-similarity audit",
       "attribution_required": true,
@@ -201,7 +201,7 @@
       "evidence": ".agents/skills/clear-voice/THIRD_PARTY_NOTICES.md",
       "last_reviewed": "2026-10-19",
       "distribution": "included",
-      "notes": "Two third-party MIT license notices are included; whether protected expression was adapted needs manual comparison."
+      "notes": "human-writing MIT notice matches upstream at 3d06941d99d78bb495d11a98f6cd30eeec7a701b (blob 2068fb4d84b6212043e26e2ac6f325801e2fc944); humanizer MIT notice matches upstream at 8c307f367c91bd974002f10f2be2965d642c13df (blob 625297fb778f32eb39d3a5b97e3e3b611b7304d6). Text similarity and independent Clear Voice ownership are NOT verified."
     },
     {
       "id": "skill-agents-skills-code-review",
