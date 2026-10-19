@@ -163,6 +163,15 @@ class ProvenanceTests(unittest.TestCase):
         )
         self.check("OWNER_APPROVAL")
 
+    def test_claiming_verified_external_code_cannot_avoid_owner_gate(self):
+        self.data["components"][0].update(
+            origin="redistributed",
+            source_reference="synthetic-external-source",
+            status="verified",
+            distribution_basis="independently confirmed via fixture notice",
+        )
+        self.check("OWNER_APPROVAL", mode="release")
+
     def _approve_fixture(self):
         import hashlib
         path = ".agents/skills/original"
