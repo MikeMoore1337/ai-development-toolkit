@@ -49,6 +49,8 @@ jobs:
           set -euo pipefail
           python -m pip install "ruff==0.17.1"
           ruff check --isolated --target-version py312 --select F821,F822,F823,E9 scripts tests
+          # Informational pilot: count unused imports and style findings without reformatting.
+          ruff check --isolated --target-version py312 --select F401,F811,F841,E4,E7 --statistics --exit-zero scripts tests
           printf 'def example():\n    return undefined_identifier\n' > "$RUNNER_TEMP/ruff-negative.py"
           if ruff check --isolated --select F821 "$RUNNER_TEMP/ruff-negative.py"; then
             echo "FAIL: Ruff did not detect the synthetic undefined name"
