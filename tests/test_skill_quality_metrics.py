@@ -234,6 +234,19 @@ class QualityMetricsTests(unittest.TestCase):
         self.assertFalse(marker.exists())
         self.assertIn("executable_source", str(report))
 
+    def test_repeat_attestation_requires_actual_check(self):
+        one = self.report()["skills"][0]["reproducibility"]
+        self.assertEqual(one["status"], "NOT_MEASURED")
+        from unittest.mock import patch
+        args = ["skill_quality_metrics.py", "--root", str(self.root),
+                "--revision", BEFORE, "--check-repeat", "--json-report",
+                str(self.root / "report.json")]
+        with patch("sys.argv", args):
+            self.assertEqual(metrics.main(), 0)
+        actual = json.loads((self.root / "report.json").read_text(encoding="utf-8"))
+        self.assertEqual(actual["skills"][0]["reproducibility"]["status"], "PASS")
+        self.assertEqual(actual["skills"][0]["reproducibility"]["repeat_measurement"], "PASS")
+
     def test_requires_valid_revision(self):
         with self.assertRaisesRegex(metrics.MetricsError, "full 40-hex"):
             metrics.collect(self.root, revision="HEAD")
