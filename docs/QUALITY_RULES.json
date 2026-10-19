@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "exclusive_workflows": [
+    {
+      "rule_id": "WF001",
+      "skills": ["feature-delivery", "make-feature"],
+      "reason": "Both skills control feature delivery; select exactly one controller per task."
+    },
+    {
+      "rule_id": "WF002",
+      "skills": ["adaptive-delivery", "feature-delivery"],
+      "reason": "adaptive-delivery is a legacy controller; do not combine it with its replacement."
+    },
+    {
+      "rule_id": "WF003",
+      "skills": ["adaptive-delivery", "make-feature"],
+      "reason": "A legacy feature controller must not run beside Make Feature."
+    }
+  ]
+}

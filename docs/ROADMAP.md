@@ -5,7 +5,7 @@
 - [x] Add pinned official upstream `skills-ref` validation in the existing required CI job (Issue #24). Structural validation only; see [specification](AGENT_SKILLS_SPEC.md).
 - [ ] Run controlled Codex/Claude/Hermes activation trials on independent demo repositories.
 - [ ] Define skill-level provenance (`source`, `license`, `revision`, `status`) and adoption workflow.
-- [ ] Add tests for stale/broken links, instructions conflicts, and skill discovery.
+- [x] Add deterministic checks for broken local links, anchors, profile inventories and declared workflow exclusions (Issue #26). Semantic instruction conflicts and agent discovery behavior remain manual/live checks.
 - [ ] Introduce public docs for CLI usage and migration between clients.
 
 ## Medium term
