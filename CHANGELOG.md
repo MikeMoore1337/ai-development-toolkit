@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
+
 Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
 
 - Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
