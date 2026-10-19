@@ -119,12 +119,15 @@ class OfficialRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "inventory mismatch"):
                 runner.skill_directories(root)
 
-    def test_real_manifest_contains_all_three_collections(self):
+    def test_real_manifest_contains_all_declared_packs(self):
         paths = runner.skill_directories(ROOT)
-        self.assertEqual(51, len(paths))
+        self.assertEqual(65, len(paths))
         self.assertEqual(23, sum(".agents/skills/" in p.as_posix() for p in paths))
         self.assertEqual(27, sum("extensions/qa/" in p.as_posix() for p in paths))
         self.assertEqual(1, sum("extensions/make-feature/" in p.as_posix() for p in paths))
+        self.assertEqual(5, sum("extensions/frontend/" in p.as_posix() for p in paths))
+        self.assertEqual(6, sum("extensions/backend/" in p.as_posix() for p in paths))
+        self.assertEqual(3, sum("extensions/fullstack/" in p.as_posix() for p in paths))
 
 
 if __name__ == "__main__":

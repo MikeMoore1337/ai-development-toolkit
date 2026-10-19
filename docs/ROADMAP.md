@@ -11,16 +11,18 @@
 
 ## Medium term
 
+- [x] Add technology-neutral Frontend, Backend and Fullstack engineering extensions with focused opt-in profiles (Issue #40, source-only; live agent outcomes not yet measured).
+
 - [ ] Evaluate the private optional skill inventory individually; publish only items with verified rights and project-neutral content.
 - [ ] Benchmark quick/normal/deep feature-delivery against a plain agent baseline.
-- [ ] Add structured skill quality metrics (correctness, context cost, reproducibility, regression risk).
+- [x] Add offline per-skill source quality metrics (structure, file bytes, repeatability, regression indicators) with independent empirical results still NOT_MEASURED (Issue #38; see [methodology](SKILL_QUALITY_METRICS.md)).
 - [x] Improve portable install/update/uninstall with explicit ownership, file-level diff previews, rollback and recovery (Skill Manager v2, #12; passed cross-platform CI).
 - [ ] Add optional adapters to real workflow runtimes; no forced framework dependency.
 
 ## Later
 
 - [x] Document filesystem layouts and explicit client-support limitations for Codex, Claude Code, Hermes and custom clients (Issue #30; no live execution).
-- [ ] Publish curated packs for QA, frontend, backend, agent architecture and research.
+- [x] Curate task-based Backend, Frontend, QA, Agent Engineering and Research profiles (Issue #36, source-only; live-client activation unverified).
 - [ ] Add automated provenance and release verification to community submissions.
 
 Only checked items with actual results are marked complete.

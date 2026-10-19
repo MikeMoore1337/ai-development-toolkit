@@ -30,9 +30,14 @@ python scripts/recommend_profile.py --target /path/to/repo --task feature
 ```
 
 Supported tasks: `feature`, `ui`, `qa`, `ci`, `release`, `docs`,
-`agent`. For QA, a Python configuration selects `qa-python`; Python plus
+`agent`, `backend`, `frontend`, `research`, `provider`. For QA, a Python configuration selects `qa-python`; Python plus
 JavaScript selects `qa-fullstack`; JavaScript plus Playwright selects
 `qa-ui`. Unknown stacks fall back to `qa-core`.
+
+The output includes a rationale, `read_only: true`, and separate `optional_skills`
+and `optional_profiles` suggestions (never installed). For the five curated
+areas and size/overlap metrics, see [Curated Skill Packs](CURATED_SKILL_PACKS.md).
+Run `python scripts/profile_metrics.py` for file-byte measurements (not model tokens).
 
 The output includes a rationale and `read_only: true`. Every recommendation
 is **heuristic** and must be reviewed against local project rules. Use the
