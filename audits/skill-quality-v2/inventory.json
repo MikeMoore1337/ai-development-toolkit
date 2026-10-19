@@ -37,7 +37,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "DEPRECATE"
+      "recommendation": "DEPRECATE",
+      "findings": []
     },
     {
       "skill_id": "agent-framework-fit",
@@ -65,7 +66,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "api-design",
@@ -96,7 +98,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "api-testing",
@@ -124,7 +127,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-009"
+      ]
     },
     {
       "skill_id": "architecture-decisions",
@@ -152,7 +158,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "authentication-authorization",
@@ -180,7 +187,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "background-processing",
@@ -208,7 +216,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "browser-workflow-evidence",
@@ -236,7 +245,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "change-impact-analysis",
@@ -267,7 +277,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "clear-voice",
@@ -298,7 +309,10 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-015"
+      ]
     },
     {
       "skill_id": "code-review",
@@ -326,7 +340,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "codebase-knowledge-map",
@@ -357,7 +372,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "collaborative-development",
@@ -385,7 +401,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "component-architecture",
@@ -413,7 +430,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "contract-testing",
@@ -444,7 +462,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "coverage-analysis",
@@ -472,7 +491,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "cross-layer-debugging",
@@ -500,7 +520,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "data-access",
@@ -528,7 +549,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "database-migrations",
@@ -556,7 +578,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "database-validation",
@@ -584,7 +607,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "defect-management",
@@ -612,7 +636,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "design-system-consistency",
@@ -640,7 +665,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "documentation-maintenance",
@@ -668,7 +694,10 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-004"
+      ]
     },
     {
       "skill_id": "e2e-testing",
@@ -699,7 +728,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "editorial-naturalness",
@@ -730,7 +760,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "end-to-end-feature-design",
@@ -762,7 +793,10 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-003"
+      ]
     },
     {
       "skill_id": "external-skill-review",
@@ -790,7 +824,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "failure-triage",
@@ -818,7 +853,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "feature-delivery",
@@ -854,7 +890,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "flaky-analysis",
@@ -882,7 +919,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "forms-validation",
@@ -910,7 +948,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "frontend-api-integration",
@@ -938,7 +977,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "frontend-performance",
@@ -966,7 +1006,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "fullstack-integration",
@@ -997,7 +1038,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": []
     },
     {
       "skill_id": "graphify-adapter",
@@ -1030,7 +1072,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-008"
+      ]
     },
     {
       "skill_id": "implementation",
@@ -1061,7 +1106,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "integration-testing",
@@ -1089,7 +1135,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "make-feature",
@@ -1125,7 +1172,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REVIEW"
+      "recommendation": "REVIEW",
+      "findings": [
+        "SQ44-011"
+      ]
     },
     {
       "skill_id": "minimal-safe-change",
@@ -1156,7 +1206,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "motion-quality",
@@ -1184,7 +1235,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "playwright-testing",
@@ -1217,7 +1269,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-001"
+      ]
     },
     {
       "skill_id": "provider-reality-check",
@@ -1245,7 +1300,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "pytest-test-design",
@@ -1275,7 +1331,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-002"
+      ]
     },
     {
       "skill_id": "qa-clear-voice",
@@ -1306,7 +1365,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": []
     },
     {
       "skill_id": "qa-code-review",
@@ -1337,7 +1397,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "qa-safe-change",
@@ -1365,7 +1426,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "qa-strategy",
@@ -1395,7 +1457,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "quality-gate-assessment",
@@ -1423,7 +1486,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "release-safety",
@@ -1451,7 +1515,10 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-006"
+      ]
     },
     {
       "skill_id": "requirement-analysis",
@@ -1479,7 +1546,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "requirements-traceability",
@@ -1507,7 +1575,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "research-verification",
@@ -1535,7 +1604,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "screenshot-fidelity",
@@ -1563,7 +1633,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "security-boundaries",
@@ -1594,7 +1665,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "security-review",
@@ -1625,7 +1697,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "security-testing",
@@ -1656,7 +1729,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "service-architecture",
@@ -1684,7 +1758,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "skill-portability",
@@ -1712,7 +1787,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "state-management",
@@ -1740,7 +1816,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "task-scoping",
@@ -1768,7 +1845,8 @@
       "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "test-analysis-design",
@@ -1796,7 +1874,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "test-data-management",
@@ -1824,7 +1903,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "test-management",
@@ -1852,7 +1932,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "test-review",
@@ -1883,7 +1964,8 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "findings": []
     },
     {
       "skill_id": "test-strategy",
@@ -1913,7 +1995,10 @@
       "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
       "review_status": "MANUALLY_REVIEWED_SOURCE",
       "observed_activation": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-010"
+      ]
     }
   ],
   "roles": [
@@ -1921,209 +2006,285 @@
       "role_id": "ci-investigator",
       "path": "extensions/qa/roles/ci-investigator.md",
       "pack": "qa",
-      "purpose": "ci investigator",
+      "purpose": "Ищет первую причинную ошибку в CI и отделяет продукт от инфраструктуры",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Первичная причина CI и минимальный следующий эксперимент",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "coverage-analyst",
       "path": "extensions/qa/roles/coverage-analyst.md",
       "pack": "qa",
-      "purpose": "coverage analyst",
+      "purpose": "Соотносит риски и требования с имеющимися тестами и отсутствующими наблюдениями",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Риск, evidence, пробел и проверка",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "flaky-analyst",
       "path": "extensions/qa/roles/flaky-analyst.md",
       "pack": "qa",
-      "purpose": "flaky analyst",
+      "purpose": "Определяет механизм недетерминированных тестов по повторам и окружению",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Гипотезы, частоты повторов, доказательства",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "implementer",
       "path": ".agents/roles/implementer.md",
       "pack": "core",
-      "purpose": "implementer",
+      "purpose": "Реализует ограниченное согласованное изменение и подтверждает локальные проверки",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Изменённые файлы, выполненные проверки, ограничения",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "reviewer",
+        "qa-verifier"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "orchestrator",
       "path": ".agents/roles/orchestrator.md",
       "pack": "core",
-      "purpose": "orchestrator",
+      "purpose": "Управляет задачами и зависимостями, назначает один контроллер процесса, сводит результаты",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Границы задачи, назначения и передача с критериями",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "implementer",
+        "reviewer",
+        "qa-verifier",
+        "researcher"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "qa-architect",
       "path": "extensions/qa/roles/qa-architect.md",
       "pack": "qa",
-      "purpose": "qa architect",
+      "purpose": "Выбирает уровни, ответственность и проверяемые качественные требования",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Стратегия тестирования и критерии",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-designer",
+        "coverage-analyst"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "qa-verifier",
       "path": ".agents/roles/qa-verifier.md",
       "pack": "core",
-      "purpose": "qa verifier",
+      "purpose": "Проверяет поведение по независимым наблюдениям, не выдавая самооценку за отдельного проверяющего",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Независимые наблюдения или явно отсутствие независимости",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
     },
     {
       "role_id": "quality-gatekeeper",
       "path": "extensions/qa/roles/quality-gatekeeper.md",
       "pack": "qa",
-      "purpose": "quality gatekeeper",
+      "purpose": "Делает evidence-based вывод о готовности к review/release без саморазрешения",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "READY_FOR_REVIEW, BLOCKED или INSUFFICIENT_EVIDENCE",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "qa-verifier",
+        "orchestrator"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
     },
     {
       "role_id": "requirement-analyst",
       "path": "extensions/qa/roles/requirement-analyst.md",
       "pack": "qa",
-      "purpose": "requirement analyst",
+      "purpose": "Переводит запрос в проверяемые требования и приоритизирует неизвестное",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Проверяемые критерии и неопределённости",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "researcher",
       "path": ".agents/roles/researcher.md",
       "pack": "core",
-      "purpose": "researcher",
+      "purpose": "Разрешает ограниченную неопределённость по проверяемым источникам без производственных правок",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Подтверждённые источниками альтернативы и неизвестное",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "reviewer",
       "path": ".agents/roles/reviewer.md",
       "pack": "core",
-      "purpose": "reviewer",
+      "purpose": "Проверяет diff на дефекты, регрессии и риски по конкретным путям",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Замечания с точными местами, severity и evidence",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
     },
     {
       "role_id": "security-reviewer",
       "path": "extensions/qa/roles/security-reviewer.md",
       "pack": "qa",
-      "purpose": "security reviewer",
+      "purpose": "Исследует секреты, CI-полномочия и безопасные границы автоматизации",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Сценарии угроз с evidence",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "test-designer",
       "path": "extensions/qa/roles/test-designer.md",
       "pack": "qa",
-      "purpose": "test designer",
+      "purpose": "Проектирует кейсы с независимыми оракулами до автоматизации",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Кейсы и объективные оракулы",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-implementer",
+        "test-reviewer"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "test-implementer",
       "path": "extensions/qa/roles/test-implementer.md",
       "pack": "qa",
-      "purpose": "test implementer",
+      "purpose": "Реализует тесты по заданным критериям и даёт реальные результаты",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Изменённые тесты и реальные результаты",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-reviewer",
+        "quality-gatekeeper"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "test-management-analyst",
       "path": "extensions/qa/roles/test-management-analyst.md",
       "pack": "qa",
-      "purpose": "test management analyst",
+      "purpose": "Сохраняет идентичности тестов и координирует опциональные трекеры",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Карта ID и план синхронизации",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Не гарантирует существование отдельного агента",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
     },
     {
       "role_id": "test-reviewer",
       "path": "extensions/qa/roles/test-reviewer.md",
       "pack": "qa",
-      "purpose": "test reviewer",
+      "purpose": "Выявляет ложные PASS и слабые тестовые оракулы независимой оценкой",
       "required_inputs": "Задание, границы, evidence и доступные полномочия",
       "output_contract": "Семантические findings и контрпримеры",
       "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
       "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
       "permissions": "Нет права на merge/deploy без явного разрешения",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-implementer",
+        "quality-gatekeeper"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
     }
   ],
   "profiles": [
@@ -2136,11 +2297,15 @@
         "codebase-knowledge-map",
         "qa-strategy"
       ],
-      "purpose": "Группа задач профиля agent-architecture",
+      "purpose": "Решение по оркестрации, фреймворку и границам агента",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Решение по оркестрации, фреймворку и границам агента",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "backend",
@@ -2154,11 +2319,15 @@
         "qa-strategy",
         "code-review"
       ],
-      "purpose": "Группа задач профиля backend",
+      "purpose": "Проектирование и реализация backend модулей и API",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Проектирование и реализация backend модулей и API",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "browser-task",
@@ -2167,11 +2336,15 @@
         "browser-workflow-evidence",
         "qa-strategy"
       ],
-      "purpose": "Группа задач профиля browser-task",
+      "purpose": "Выполнение браузерных действий с доказательствами",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Выполнение браузерных действий с доказательствами",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "codex-feature",
@@ -2184,11 +2357,17 @@
         "qa-strategy",
         "code-review"
       ],
-      "purpose": "Группа задач профиля codex-feature",
+      "purpose": "Разработка новой функции через feature-delivery и общие инженерные проверки",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "REVIEW",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Разработка новой функции через feature-delivery и общие инженерные проверки",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-013"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "editorial",
@@ -2196,11 +2375,17 @@
       "skills": [
         "clear-voice"
       ],
-      "purpose": "Группа задач профиля editorial",
+      "purpose": "Точная редактура текста; не подтверждает техническую актуальность документации",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Точная редактура текста; не подтверждает техническую актуальность документации",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-004"
+      ],
+      "overlap_and_dependency_note": "не включает documentation-maintenance"
     },
     {
       "profile_id": "editorial-qa",
@@ -2208,11 +2393,15 @@
       "skills": [
         "qa-clear-voice"
       ],
-      "purpose": "Группа задач профиля editorial-qa",
+      "purpose": "Редактура QA-доказательств без изменения тестов",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Редактура QA-доказательств без изменения тестов",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "feature-delivery",
@@ -2224,11 +2413,17 @@
         "qa-strategy",
         "release-safety"
       ],
-      "purpose": "Группа задач профиля feature-delivery",
+      "purpose": "Реализация функции одним основным контроллером feature-delivery",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Реализация функции одним основным контроллером feature-delivery",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "frontend",
@@ -2242,11 +2437,15 @@
         "qa-strategy",
         "code-review"
       ],
-      "purpose": "Группа задач профиля frontend",
+      "purpose": "Разработка UI-компонентов и frontend API без фиксации фреймворка",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Разработка UI-компонентов и frontend API без фиксации фреймворка",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "fullstack",
@@ -2259,11 +2458,18 @@
         "qa-strategy",
         "code-review"
       ],
-      "purpose": "Группа задач профиля fullstack",
+      "purpose": "Проектирование сквозной функции и проверка интерфейсов слоёв, без отдельного контроллера",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Проектирование сквозной функции и проверка интерфейсов слоёв, без отдельного контроллера",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-001",
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "end-to-end-feature-design ссылается на внешний controller, но профиль его не включает"
     },
     {
       "profile_id": "general",
@@ -2275,11 +2481,15 @@
         "code-review",
         "minimal-safe-change"
       ],
-      "purpose": "Группа задач профиля general",
+      "purpose": "Универсальная ограниченная правка в существующем проекте",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Универсальная ограниченная правка в существующем проекте",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "make-feature",
@@ -2287,11 +2497,17 @@
       "skills": [
         "make-feature"
       ],
-      "purpose": "Группа задач профиля make-feature",
+      "purpose": "Отдельный контроллер Make Feature, активируется явно, не параллельно feature-delivery",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "REVIEW",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Отдельный контроллер Make Feature, активируется явно, не параллельно feature-delivery",
+      "avoid_when": "Другой feature-delivery controller уже выбран",
+      "known_issue_ids": [
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "provider-research",
@@ -2300,11 +2516,15 @@
         "research-verification",
         "provider-reality-check"
       ],
-      "purpose": "Группа задач профиля provider-research",
+      "purpose": "Проверка актуальных возможностей и ограничений LLM API",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Проверка актуальных возможностей и ограничений LLM API",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-all",
@@ -2338,11 +2558,17 @@
         "test-review",
         "test-strategy"
       ],
-      "purpose": "Группа задач профиля qa-all",
+      "purpose": "Все 27 QA-навыков для осознанного широкого подключения; не минимальный профиль",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "REVIEW",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Все 27 QA-навыков для осознанного широкого подключения; не минимальный профиль",
+      "avoid_when": "Пользователю нужен узкий task profile, не вся QA-библиотека",
+      "known_issue_ids": [
+        "SQ44-008"
+      ],
+      "overlap_and_dependency_note": "условные навыки ставятся вместе; реальная активация NOT_MEASURED"
     },
     {
       "profile_id": "qa-ci",
@@ -2353,11 +2579,15 @@
         "test-data-management",
         "test-review"
       ],
-      "purpose": "Группа задач профиля qa-ci",
+      "purpose": "Триаж и устранение нестабильности CI",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Триаж и устранение нестабильности CI",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-collaboration",
@@ -2368,11 +2598,15 @@
         "qa-code-review",
         "test-review"
       ],
-      "purpose": "Группа задач профиля qa-collaboration",
+      "purpose": "Координация совместных изменений QA-инфраструктуры",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Координация совместных изменений QA-инфраструктуры",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-contract",
@@ -2383,11 +2617,15 @@
         "api-testing",
         "change-impact-analysis"
       ],
-      "purpose": "Группа задач профиля qa-contract",
+      "purpose": "Контрактные, интеграционные и API-проверки",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Контрактные, интеграционные и API-проверки",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-core",
@@ -2399,11 +2637,15 @@
         "change-impact-analysis",
         "quality-gate-assessment"
       ],
-      "purpose": "Группа задач профиля qa-core",
+      "purpose": "Базовые требования, тест-дизайн и оценка качества",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Базовые требования, тест-дизайн и оценка качества",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-fullstack",
@@ -2419,11 +2661,17 @@
         "e2e-testing",
         "playwright-testing"
       ],
-      "purpose": "Группа задач профиля qa-fullstack",
+      "purpose": "Тесты QA для UI и backend; Playwright лишь при фактической доступности",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "REVIEW",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Тесты QA для UI и backend; Playwright лишь при фактической доступности",
+      "avoid_when": "Без Playwright некоторые установленныe навыки неприменимы",
+      "known_issue_ids": [
+        "SQ44-001"
+      ],
+      "overlap_and_dependency_note": "playwright-testing устанавливается без обязательного обнаружения Playwright"
     },
     {
       "profile_id": "qa-management",
@@ -2434,11 +2682,15 @@
         "defect-management",
         "quality-gate-assessment"
       ],
-      "purpose": "Группа задач профиля qa-management",
+      "purpose": "Управление тестовыми кейсами, дефектами и трассировкой",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Управление тестовыми кейсами, дефектами и трассировкой",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-python",
@@ -2452,11 +2704,17 @@
         "test-data-management",
         "failure-triage"
       ],
-      "purpose": "Группа задач профиля qa-python",
+      "purpose": "Python-ориентированные QA-тесты, pytest лишь если установлен",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "REVIEW",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Python-ориентированные QA-тесты, pytest лишь если установлен",
+      "avoid_when": "Нет pytest для pytest-specific инструкций (остальные QA-навыки возможны)",
+      "known_issue_ids": [
+        "SQ44-002"
+      ],
+      "overlap_and_dependency_note": "pytest-test-design устанавливается при любом Python marker без подтверждения pytest"
     },
     {
       "profile_id": "qa-release",
@@ -2467,11 +2725,17 @@
         "requirements-traceability",
         "quality-gate-assessment"
       ],
-      "purpose": "Группа задач профиля qa-release",
+      "purpose": "Проверка достаточности доказательств качества перед выпуском, не деплой",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "REFINE"
+      "recommendation": "REFINE",
+      "suitable_when": "Проверка достаточности доказательств качества перед выпуском, не деплой",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-006"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-security",
@@ -2482,11 +2746,15 @@
         "test-review",
         "quality-gate-assessment"
       ],
-      "purpose": "Группа задач профиля qa-security",
+      "purpose": "QA-проверки авторизации и безопасности",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "QA-проверки авторизации и безопасности",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "qa-ui",
@@ -2498,11 +2766,15 @@
         "test-review",
         "quality-gate-assessment"
       ],
-      "purpose": "Группа задач профиля qa-ui",
+      "purpose": "UI-сценарии на Playwright, когда Playwright реально используется",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "UI-сценарии на Playwright, когда Playwright реально используется",
+      "avoid_when": "Нет Playwright в проекте",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "research",
@@ -2511,11 +2783,15 @@
         "task-scoping",
         "research-verification"
       ],
-      "purpose": "Группа задач профиля research",
+      "purpose": "Ограниченное техническое исследование",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Ограниченное техническое исследование",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "skill-import",
@@ -2525,11 +2801,15 @@
         "external-skill-review",
         "research-verification"
       ],
-      "purpose": "Группа задач профиля skill-import",
+      "purpose": "Безопасная оценка и перенос Agent Skills",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Безопасная оценка и перенос Agent Skills",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "ui-fix",
@@ -2540,11 +2820,15 @@
         "screenshot-fidelity",
         "qa-strategy"
       ],
-      "purpose": "Группа задач профиля ui-fix",
+      "purpose": "Исправление визуального расхождения и проверка UI",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Исправление визуального расхождения и проверка UI",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     },
     {
       "profile_id": "ui-motion",
@@ -2554,11 +2838,15 @@
         "motion-quality",
         "qa-strategy"
       ],
-      "purpose": "Группа задач профиля ui-motion",
+      "purpose": "Создание и проверка интерфейсной анимации",
       "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
       "beginner_clarity": "PARTIAL",
       "runtime_verified": "NOT_MEASURED",
-      "recommendation": "KEEP"
+      "recommendation": "KEEP",
+      "suitable_when": "Создание и проверка интерфейсной анимации",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
     }
   ],
   "overlaps": [
