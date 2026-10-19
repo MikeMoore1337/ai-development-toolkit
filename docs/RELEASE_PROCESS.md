@@ -5,8 +5,9 @@ substitute for independently verifying a tagged public release.
 
 1. Work on a feature branch and document what changed and any migration risks.
 2. Run `python -m pip install -r requirements-dev.txt`.
-3. Run `python scripts/check_public_package.py` and
-   `python scripts/validate_pack.py`.
+3. Run `python scripts/check_public_package.py`,
+   `python scripts/validate_pack.py` and
+   `python scripts/validate_provenance.py --mode inventory`.
 4. Run `python -m unittest discover -s tests -v`.
 5. After reviewing the change, regenerate digests with
    `python scripts/verify_checksums.py --write` and **review its diff**.
@@ -22,7 +23,13 @@ substitute for independently verifying a tagged public release.
 9. Open a PR, require all CI matrix jobs (Linux 3.12/3.13, Windows 3.14),
    resolve review discussions, then merge. Do not bypass owner approvals or
    deploy gates. Ruleset settings live on GitHub, not in this repository.
-10. After successful CI on `main`, tag the exact validated SHA, publish
+10. **Before creating any tag or publishing a GitHub Release**, run
+    `python scripts/validate_provenance.py --mode release` on the intended
+    source tree. If BLOCKED, do not publish: resolve each owner-gated item
+    based on private rights checks and a non-secret audit record, or obtain
+    explicit authorization for a reversible exclusion in a separate PR.
+    This is a mandatory manual publication step **even when the required PR CI has already passed inventory and release-preflight checks**. The CI additionally verifies a clean offline `git archive` export (Ubuntu 3.12); GitHub-generated archives of new tags must still be verified separately. The owner-reported decision ID1337 is tied to SHA256 fingerprints and classifications of 44 source units (75 files); any changed, added or relabeled files in that scope require fresh owner review. Passing the snapshot gate confirms only that the files match the recorded decision, NOT independent rightsholder or employer permission.
+11. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
     release notes describing changes and compatibility, and verify that the
     public archive contains the expected artifacts. Never describe a tagged
     release as tested on real agents without actual evaluation records.
@@ -59,7 +66,9 @@ requires a real execution record for archive verification; merely documenting
 this procedure is not evidence that the archive was downloaded.
 
 After publication, the GitHub Actions `Verify release source archive` workflow
-runs automatically for `release: published`. It can also be triggered manually
+runs for a pushed release tag and for `release: published`. It can also be triggered manually
 with a valid `vX.Y.Z` tag. Review the completed job and its
 `release-source-verification` artifact before declaring archive acceptance.
 This workflow checks actual downloaded bytes, unlike static Git tree checks.
+
+New tagged archives are checked against the provenance release gate after SHA verification. Historic archives without the provenance script are reported as `NOT_VERIFIED` for licensing while retaining their independent checksum verification; they are never retroactively considered cleared for redistribution.

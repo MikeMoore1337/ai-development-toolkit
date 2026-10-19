@@ -21,3 +21,7 @@ Thanks for improving AI Development Toolkit.
 ## Source material
 
 Include upstream repository, commit/tag, license and a clear explanation of what is copied versus independently adapted. Personal license grants and source repositories are not assumed to allow public redistribution. See `docs/PUBLICATION_POLICY.md`.
+
+## Third-party or work-derived material
+
+Before contributing a skill, role, template, script or reference copied/adapted from elsewhere, add its source and license facts to `provenance/skills.json`. Keep complete notices, review the exact upstream revision and record non-secret evidence of applicable rights. When rights are unresolved use `requires_owner_review` and `owner_gate`, not `verified`. Run `python scripts/validate_provenance.py --mode inventory`. See `docs/PROVENANCE_AUDIT.md` and `docs/PUBLICATION_POLICY.md` for scope and release controls.

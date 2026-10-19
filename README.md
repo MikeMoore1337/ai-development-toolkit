@@ -146,3 +146,5 @@ effectiveness, execution safety or client compatibility.
 Ideas, corrections, portability reports and focused skill contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR; report sensitive issues via [SECURITY.md](SECURITY.md).
 
 Core files are MIT-licensed. Some bundled material has separate author credits and notices, including Make Feature. See each component's license and [publication policy](docs/PUBLICATION_POLICY.md). This repository is community tooling and is **not** an official distribution of Codex, Claude Code or Agent Skills.
+
+**Distribution rights:** Provenance is recorded in [the audit](docs/PROVENANCE_AUDIT.md) and [registry](provenance/skills.json). Owner reports permission under ID1337 for the current Make Feature, QA and branding files; their byte hashes are frozen in the registry. Independent legal verification is **not claimed**. A new release requires separate owner sign-off for its exact artifact. A passing CI run does not establish publication rights.
