@@ -38,6 +38,8 @@ jobs:
         run: python scripts/check_public_package.py
       - name: Validate provenance inventory (not release permission)
         run: python scripts/validate_provenance.py --mode inventory --report "${{ runner.temp }}/provenance-inventory.json"
+      - name: Confirm exact owner-reviewed release source snapshot (technical gate)
+        run: python scripts/validate_provenance.py --mode release --report "${{ runner.temp }}/provenance-release-preflight.json"
       - name: Preserve provenance JSON report
         if: always()
         uses: actions/upload-artifact@v4
@@ -46,9 +48,8 @@ jobs:
           path: |
             ${{ runner.temp }}/provenance-inventory.json
             ${{ runner.temp }}/provenance-release-preflight.json
+            ${{ runner.temp }}/provenance-archive-preflight.json
           if-no-files-found: ignore
-      - name: Confirm exact owner-reviewed release source snapshot (technical gate)
-        run: python scripts/validate_provenance.py --mode release --report "${{ runner.temp }}/provenance-release-preflight.json"
       - name: Validate metadata
         run: python scripts/validate_pack.py
       - name: Validate links profiles and exclusive workflows (offline)
@@ -57,6 +58,32 @@ jobs:
         run: python scripts/verify_checksums.py
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Check exported source archive before publication (offline)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        shell: bash
+        run: |
+          set -euo pipefail
+          staging="$(mktemp -d)"
+          git archive --format=zip --output="$staging/source.zip" HEAD
+          mkdir "$staging/unpacked"
+          python - "$staging/source.zip" "$staging/unpacked" <<'PY'
+          import pathlib
+          import stat
+          import sys
+          import zipfile
+
+          root = pathlib.Path(sys.argv[2])
+          with zipfile.ZipFile(sys.argv[1]) as archive:
+              for entry in archive.infolist():
+                  path = pathlib.PurePosixPath(entry.filename)
+                  if (not entry.filename or path.is_absolute() or
+                          ".." in path.parts or "\\" in entry.filename or
+                          stat.S_IFMT(entry.external_attr >> 16) == stat.S_IFLNK):
+                      raise SystemExit("Unsafe source archive entry")
+              archive.extractall(root)
+          PY
+          python scripts/verify_checksums.py --archive-root "$staging/unpacked"
+          python scripts/validate_provenance.py --root "$staging/unpacked" --mode release --report "$RUNNER_TEMP/provenance-archive-preflight.json"
       - name: Install official Agent Skills reference validator (pinned source)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: |
