@@ -20,7 +20,7 @@ This experiment checks a **control-plane** smoke on an ephemeral GitHub-hosted U
 2. `GET /api/health` responds with non-error JSON.
 3. Two temporary zero-budget companies are created (separate to avoid duplicate skill slugs). Both are PATCHed to require board approval for new agents and both settings are read back.
 4. The official managed-skill creation API preserves the exact bytes of the Toolkit's unchanged `.agents/skills/minimal-safe-change/SKILL.md`. The server's stored file must match source content exactly.
-5. **Independently**, the public GitHub repository is imported through Paperclip's documented skill selector parser (`npx skills add <pinned GitHub repository URL> --skill minimal-safe-change`, used only as a string input, never executed as a shell command). The reference is pinned to immutable commit `73688b472ff3cce8091914b3d1845c414d930c7a`. Failures remain a hard CI failure with a minimal, sanitized error diagnostic; managed skill creation **never** counts as a substitute for GitHub import.
+5. **Independently**, the public GitHub repository is imported through Paperclip's documented skill selector parser (`npx skills add <pinned GitHub repository URL> --skill minimal-safe-change`, used only as a string input, never executed as a shell command). The reference is pinned to immutable commit `73688b472ff3cce8091914b3d1845c414d930c7a`. The stronger gate verifies exactly one imported skill, `sourceType=github`, the matching `sourceRef` SHA and exact read-back equality of the imported `SKILL.md`. Failures remain a hard CI failure with a minimal, sanitized error diagnostic; managed skill creation **never** counts as a substitute for GitHub import.
 6. A separate zero-provider offline job validates Toolkit provenance inventory, release preflight, checksums, metadata and unit tests.
 7. The test emits `PAPERCLIP_CONTROL_PLANE_SMOKE_NOT_AGENT_EVAL`, `real_agent_trials=0`, `model_calls_requested_by_test=0`.
 
@@ -55,3 +55,7 @@ commit `e7e77a69daaf306510c091b8d526e2ca5029d543`.
 - Anonymous GitHub API probes: HTTP 200 on repository metadata and `commits/main`.
 
 **Decision:** The controlled zero-spend control-plane/skill-compatibility smoke is technically accepted. This is evidence of importing the skill and enforcing the stated test-company settings — **not** proof that autonomous planning, GitHub issue ownership, reviews, model spending controls, throughput or task effectiveness improve. Leave the PR in Draft, do not deploy Paperclip on Hermes/YFC/VPS, do not merge into main or clear the owner ZERO-SPEND hold for agents. Any later real-agent or end-to-end orchestration comparison needs independently approved scope, permissions and measured benefit.
+
+## Follow-up stronger verification
+
+After the baseline PASS in run `39327290358`, the experiment was strengthened to assert the imported GitHub skill has the exact pinned `sourceRef` and matches the original `SKILL.md` on read-back, rather than checking only its slug. These stronger checks require their own final exact-head CI result; the baseline PASS alone does not prove them.
