@@ -64,6 +64,16 @@ class RealSkillsRefIntegrationTests(unittest.TestCase):
     def test_missing_required_description(self):
         self.check_fixture("no-description", "---\nname: no-description\n---\n", valid=False)
 
+    def test_quality_v2_template_with_official_cli(self):
+        """Check the copyable template using pinned upstream skills-ref."""
+        folder = ROOT / "templates" / "skill-quality-v2" / "example-skill"
+        result = subprocess.run(
+            [self.binary, "validate", str(folder)],
+            capture_output=True, text=True, timeout=15, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(f"Valid skill: {folder}", result.stdout.strip())
+
     def test_entire_manifest_with_real_official_cli(self):
         self.assertEqual(65, len(runner.skill_directories(ROOT, "all")))
         self.assertEqual(0, runner.run("all", ROOT))

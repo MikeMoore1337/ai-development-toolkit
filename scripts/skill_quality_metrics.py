@@ -246,6 +246,12 @@ def measure_skill(root: Path, skill_id: str, folder: Path, revision: str | None,
         },
         "portability": portability,
         "context_footprint": footprint,
+        "evidence_levels": {
+            "source_validated": {"status": "FAIL" if failed else "PASS",
+                                 "method": "Toolkit local static checks; official skills-ref separate"},
+            **{level: {"status": "NOT_MEASURED", "method": "No stage-specific evidence in offline source metrics"}
+               for level in ("packaged", "installed", "discovered", "activated", "effective")},
+        },
         "reproducibility": {"status": "NOT_MEASURED",
                             "repeat_measurement": "NOT_MEASURED",
                             "scope": "deterministic local static bytes and parsed Markdown; not AI behavior",

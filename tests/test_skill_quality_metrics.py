@@ -44,6 +44,10 @@ class QualityMetricsTests(unittest.TestCase):
         self.assertEqual(one["context_footprint"]["skill_md_words"]["value"], len(GOOD.split()))
         self.assertEqual(one["context_footprint"]["model_tokens"]["status"], "NOT_MEASURED")
         self.assertEqual(one["structural_validation"]["official_skills_ref"], "NOT_MEASURED")
+        self.assertEqual(one["evidence_levels"]["source_validated"]["status"], "PASS")
+        self.assertTrue(all(one["evidence_levels"][name]["status"] == "NOT_MEASURED"
+                            for name in ("packaged", "installed", "discovered", "activated", "effective")))
+
 
     def test_missing_skill_md(self):
         self.file.unlink()

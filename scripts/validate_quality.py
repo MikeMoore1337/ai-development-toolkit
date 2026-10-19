@@ -6,6 +6,7 @@ This is static integrity validation, not semantic review or an agent activation 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -256,6 +257,110 @@ def check_markdown(root: Path, paths: list[Path], findings: list[Finding]) -> No
                 check_link(root, path, number, link, findings, cache)
 
 
+
+# Optional owner-reviewed evidence documents; this check never performs AI trials.
+EVIDENCE_LEVELS = ("source_validated", "packaged", "installed",
+                   "discovered", "activated", "effective")
+EVIDENCE_STATUSES = frozenset(("PASS", "FAIL", "NOT_MEASURED", "NOT_APPLICABLE"))
+FULL_REVISION = re.compile(r"[0-9a-f]{40}\Z")
+SHA256 = re.compile(r"[0-9a-f]{64}\Z")
+
+
+def check_evidence(root: Path, skill_ids: set[str], findings: list[Finding]) -> None:
+    """Reject unsupported quality claims and unpinned/unsafe evidence artifacts."""
+    folder = root / "quality" / "evidence"
+    if not folder.exists() and not folder.is_symlink():
+        return  # Existing skills need no new declarations.
+    if not folder.is_dir() or folder.is_symlink():
+        add(findings, "EVIDENCE001", "quality/evidence", 1, "Unsafe evidence directory")
+        return
+    client_ids: set[str] = set()
+    registry = root / "compatibility" / "clients.json"
+    if registry.is_file():
+        try:
+            clients = load_json(registry)["clients"]
+            client_ids = {item["client_id"] for item in clients}
+        except (KeyError, TypeError, ValueError, OSError):
+            add(findings, "EVIDENCE001", "compatibility/clients.json", 1,
+                "Cannot verify client identifiers")
+            return
+    for source in sorted(folder.iterdir()):
+        path = location(source, root)
+        if source.is_symlink() or not source.is_file() or source.suffix != ".json":
+            add(findings, "EVIDENCE001", path, 1, "Expected an ordinary JSON evidence file")
+            continue
+        try:
+            record = load_json(source)
+            if set(record) != {"schema_version", "skill_id", "source_revision", "levels"}:
+                raise ValueError("Unexpected evidence fields")
+            skill = record["skill_id"]
+            if record["schema_version"] != 1 or skill != source.stem or skill not in skill_ids:
+                raise ValueError("Unknown skill or evidence schema")
+            revision = record["source_revision"]
+            if not isinstance(revision, str) or not FULL_REVISION.fullmatch(revision):
+                raise ValueError("Evidence must pin a full source revision")
+            levels = record["levels"]
+            if not isinstance(levels, dict) or set(levels) != set(EVIDENCE_LEVELS):
+                raise ValueError("Expected all six evidence levels")
+            previous_pass = False
+            for level in EVIDENCE_LEVELS:
+                entry = levels[level]
+                if not isinstance(entry, dict) or entry.get("status") not in EVIDENCE_STATUSES:
+                    raise ValueError(level + ": unknown/missing status")
+                status = entry["status"]
+                if status == "PASS":
+                    if level != EVIDENCE_LEVELS[0] and not previous_pass:
+                        raise ValueError(level + ": prerequisite level lacks explicit PASS")
+                    if not isinstance(entry.get("method"), str) or not entry["method"].strip():
+                        raise ValueError(level + ": PASS requires a method")
+                    artifacts = entry.get("artifacts")
+                    if not isinstance(artifacts, list) or not artifacts:
+                        raise ValueError(level + ": PASS requires pinned artifacts")
+                    for artifact in artifacts:
+                        if not isinstance(artifact, dict) or set(artifact) != {"path", "sha256"}:
+                            raise ValueError(level + ": malformed artifact")
+                        relative, expected = artifact["path"], artifact["sha256"]
+                        if (not isinstance(relative, str) or not relative or "\\" in relative
+                                or relative.startswith("/") or "//" in relative
+                                or any(part in ("..", ".") for part in relative.split("/"))
+                                or not isinstance(expected, str) or not SHA256.fullmatch(expected)):
+                            raise ValueError(level + ": unsafe artifact path/hash")
+                        target = root.joinpath(*relative.split("/"))
+                        if not target.resolve().is_relative_to(root.resolve()) or not target.is_file():
+                            raise ValueError(level + ": missing/escaping artifact")
+                        cursor = target
+                        while cursor != root.parent:
+                            if cursor.is_symlink() or (hasattr(cursor, "is_junction") and cursor.is_junction()):
+                                raise ValueError(level + ": linked artifact")
+                            if cursor == cursor.parent:
+                                break
+                            cursor = cursor.parent
+                        if hashlib.sha256(target.read_bytes()).hexdigest() != expected:
+                            raise ValueError(level + ": artifact digest mismatch")
+                    if level in EVIDENCE_LEVELS[2:]:
+                        for field in ("environment", "reviewed_by", "observed_at"):
+                            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                                raise ValueError(level + ": runtime PASS requires " + field)
+                        if not re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", entry["observed_at"]):
+                            raise ValueError(level + ": observed_at must be UTC ISO-8601")
+                    if level in EVIDENCE_LEVELS[3:]:
+                        if not client_ids or entry.get("client_id") not in client_ids:
+                            raise ValueError(level + ": unsupported/unknown client")
+                    if level == "effective" and not isinstance(entry.get("comparison"), dict):
+                        raise ValueError("effective: baseline-vs-candidate comparison required")
+                elif status == "FAIL":
+                    if not isinstance(entry.get("reason"), str) or not entry["reason"].strip():
+                        raise ValueError(level + ": FAIL requires a reason")
+                elif status == "NOT_APPLICABLE":
+                    if level in EVIDENCE_LEVELS[:2] or not isinstance(entry.get("reason"), str) or not entry["reason"].strip():
+                        raise ValueError(level + ": unsupported NOT_APPLICABLE")
+                elif set(entry) != {"status"}:
+                    raise ValueError(level + ": NOT_MEASURED cannot claim observations")
+                previous_pass = status == "PASS"
+        except (KeyError, TypeError, ValueError, OSError, UnicodeError) as exc:
+            add(findings, "EVIDENCE001", path, 1, str(exc))
+
+
 def inspect(root: Path = ROOT) -> dict:
     root = root.resolve()
     findings: list[Finding] = []
@@ -285,6 +390,7 @@ def inspect(root: Path = ROOT) -> dict:
         paths = markdown_files(root)
         counts["markdown_files"] = len(paths)
         check_markdown(root, paths, findings)
+        check_evidence(root, set(skills), findings)
     except (OSError, ValueError, KeyError, TypeError, UnicodeError) as exc:
         add(findings, "CONFIG001", ".", 1, type(exc).__name__ + ": " + str(exc))
     ordered = sorted(set(findings), key=lambda x: (x.file, x.line, x.rule_id, x.explanation))
