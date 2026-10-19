@@ -46,6 +46,16 @@ jobs:
         run: python scripts/verify_client_compatibility.py
       - name: Validate links profiles and exclusive workflows (offline)
         run: python scripts/validate_quality.py
+      - name: Verify per-skill quality metrics (offline source only)
+        run: python scripts/skill_quality_metrics.py --check-repeat --json-report "${{ runner.temp }}/skill-quality.json" --summary
+      - name: Preserve per-skill quality report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-quality-${{ matrix.os }}-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/skill-quality.json
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Verify release checksums
         run: python scripts/verify_checksums.py
       - name: Unit tests
