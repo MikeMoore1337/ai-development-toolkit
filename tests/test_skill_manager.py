@@ -333,6 +333,31 @@ class SkillManagerTests(unittest.TestCase):
         self.assertEqual({}, self.call("status", layout="claude")["skills"])
         self.assertEqual(0, len(manager.pending_transactions(self.repo)))
 
+    def test_concurrent_identical_unmanaged_destination_is_never_deleted(self):
+        self.call("install", names=["test-skill"], apply=True)
+        original_lock = (self.repo / ".adt" / "skills-lock.json").read_bytes()
+        other = self.repo / ".claude" / "skills" / "test-skill"
+        real_write = manager.atomic_json
+        injected = [False]
+
+        def collide_after_pending_metadata(path, payload):
+            real_write(path, payload)
+            if (path.name == "meta.json" and payload.get("status") == "pending"
+                    and not injected[0]):
+                injected[0] = True
+                manager.shutil.copytree(
+                    self.source / ".agents" / "skills" / "test-skill", other)
+
+        with patch.object(manager, "atomic_json", side_effect=collide_after_pending_metadata):
+            with self.assertRaisesRegex(manager.ManagerError, "manual recovery"):
+                manager.operate("migrate", self.repo, layout="claude",
+                                from_layout="codex", source_root=self.source, apply=True)
+        self.assertTrue(injected[0])
+        self.assertEqual("# Version one\n", (other / "SKILL.md").read_text())
+        self.assertEqual("# Version one\n", (self.installed / "SKILL.md").read_text())
+        self.assertEqual(original_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+        self.assertEqual(1, len(manager.pending_transactions(self.repo)))
+
     def test_catalog_and_migrate_cli_errors_are_read_only(self):
         import subprocess
         cmd = [sys.executable, str(ROOT / "scripts" / "skill_manager.py")]
