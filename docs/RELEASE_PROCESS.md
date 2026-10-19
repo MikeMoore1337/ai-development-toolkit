@@ -28,7 +28,7 @@ substitute for independently verifying a tagged public release.
     source tree. If BLOCKED, do not publish: resolve each owner-gated item
     based on private rights checks and a non-secret audit record, or obtain
     explicit authorization for a reversible exclusion in a separate PR.
-    This is a mandatory manual publication step **even when the required PR CI has already passed inventory and release-preflight checks**. The owner-reported decision ID1337 is tied to SHA256 fingerprints and classifications of 44 source units (75 files); any changed, added or relabeled files in that scope require fresh owner review. Passing the snapshot gate confirms only that the files match the recorded decision, NOT independent rightsholder or employer permission.
+    This is a mandatory manual publication step **even when the required PR CI has already passed inventory and release-preflight checks**. The CI additionally verifies a clean offline `git archive` export (Ubuntu 3.12); GitHub-generated archives of new tags must still be verified separately. The owner-reported decision ID1337 is tied to SHA256 fingerprints and classifications of 44 source units (75 files); any changed, added or relabeled files in that scope require fresh owner review. Passing the snapshot gate confirms only that the files match the recorded decision, NOT independent rightsholder or employer permission.
 11. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
     release notes describing changes and compatibility, and verify that the
     public archive contains the expected artifacts. Never describe a tagged
