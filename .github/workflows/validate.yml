@@ -38,6 +38,13 @@ jobs:
         run: python scripts/check_public_package.py
       - name: Validate provenance inventory (not release permission)
         run: python scripts/validate_provenance.py --mode inventory --report "${{ runner.temp }}/provenance-inventory.json"
+      - name: Preserve provenance JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: provenance-${{ matrix.os }}-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/provenance-inventory.json
+          if-no-files-found: ignore
       - name: Validate metadata
         run: python scripts/validate_pack.py
       - name: Validate links profiles and exclusive workflows (offline)
