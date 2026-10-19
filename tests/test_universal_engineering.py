@@ -63,10 +63,10 @@ class UniversalEngineeringTests(unittest.TestCase):
             (target / "CLAUDE.md").write_text("project gates\n", encoding="utf-8")
             for profile, layout in (("frontend", "codex"), ("backend", "claude")):
                 selected = M["profiles"][profile]
+                existing = sorted(p.name for p in target.iterdir())
                 planned = operate("install", target, names=selected, layout=layout)
                 self.assertFalse(planned["applied"])
-                self.assertEqual(sorted(p.name for p in target.iterdir()),
-                                 ["AGENTS.md", "CLAUDE.md"])
+                self.assertEqual(existing, sorted(p.name for p in target.iterdir()))
                 installed = operate("install", target, names=selected, layout=layout,
                                     apply=True)
                 self.assertTrue(installed["applied"])
