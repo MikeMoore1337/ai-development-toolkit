@@ -10,6 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_provenance import validate  # noqa: E402
+from verify_checksums import canonical_bytes  # noqa: E402
 
 
 def component(path: str, kind: str = "metadata", **overrides) -> dict:
@@ -166,7 +167,7 @@ class ProvenanceTests(unittest.TestCase):
         import hashlib
         path = ".agents/skills/original"
         file_path = path + "/SKILL.md"
-        digest = hashlib.sha256((self.root / file_path).read_bytes()).hexdigest()
+        digest = hashlib.sha256(canonical_bytes((self.root / file_path).read_bytes())).hexdigest()
         self.data["components"][0].update(
             origin="adapted", source_reference="synthetic-work-source",
             owner_approval_id="SYNTHETIC", status="documented",
