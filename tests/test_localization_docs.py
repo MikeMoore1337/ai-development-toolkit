@@ -151,6 +151,14 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(text.replace(command, "echo missing command", 1), encoding="utf-8")
         self.check("L10N006")
 
+    def test_missing_client_verification_command_fails(self):
+        page = self.root / "docs/ru/CLIENT_COMPATIBILITY.md"
+        text = page.read_text(encoding="utf-8")
+        command = "python scripts/verify_client_compatibility.py --project /tmp/demo --client codex --skills qa-strategy"
+        self.assertIn(command, text)
+        page.write_text(text.replace(command, "echo omitted", 1), encoding="utf-8")
+        self.check("L10N006")
+
     def test_removed_release_gate_fails(self):
         page = self.root / "docs/ru/PUBLICATION_POLICY.md"
         text = page.read_text(encoding="utf-8")
