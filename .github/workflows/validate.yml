@@ -40,16 +40,6 @@ jobs:
         run: python scripts/validate_provenance.py --mode inventory --report "${{ runner.temp }}/provenance-inventory.json"
       - name: Confirm exact owner-reviewed release source snapshot (technical gate)
         run: python scripts/validate_provenance.py --mode release --report "${{ runner.temp }}/provenance-release-preflight.json"
-      - name: Preserve provenance JSON report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: provenance-${{ matrix.os }}-${{ matrix.python-version }}
-          path: |
-            ${{ runner.temp }}/provenance-inventory.json
-            ${{ runner.temp }}/provenance-release-preflight.json
-            ${{ runner.temp }}/provenance-archive-preflight.json
-          if-no-files-found: ignore
       - name: Validate metadata
         run: python scripts/validate_pack.py
       - name: Validate links profiles and exclusive workflows (offline)
@@ -84,6 +74,16 @@ jobs:
           PY
           python scripts/verify_checksums.py --archive-root "$staging/unpacked"
           python scripts/validate_provenance.py --root "$staging/unpacked" --mode release --report "$RUNNER_TEMP/provenance-archive-preflight.json"
+      - name: Preserve provenance JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: provenance-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            ${{ runner.temp }}/provenance-inventory.json
+            ${{ runner.temp }}/provenance-release-preflight.json
+            ${{ runner.temp }}/provenance-archive-preflight.json
+          if-no-files-found: ignore
       - name: Install official Agent Skills reference validator (pinned source)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: |
