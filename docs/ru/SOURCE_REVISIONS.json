@@ -16,6 +16,21 @@
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
       "source_sha256": "b2ddef48feb2382155d1d46f5844f417bbfe3a3e522579c290818dd256912b17"
+    },
+    {
+      "source": "docs/CLIENT_MIGRATION.md",
+      "translation": "docs/ru/CLIENT_MIGRATION.md",
+      "source_sha256": "eb5be28cd5526885dd341db6ac632d6866931bce3210e15c02706a9b35f26c21"
+    },
+    {
+      "source": "docs/CLIENT_COMPATIBILITY.md",
+      "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
+      "source_sha256": "4b0f11b89574dc3ad31010afd934aa55767c2022ed7b362849484c5987f4daff"
+    },
+    {
+      "source": "docs/PUBLICATION_POLICY.md",
+      "translation": "docs/ru/PUBLICATION_POLICY.md",
+      "source_sha256": "d9421f183e17b4b8c75484c54e5f4ce7497a12564edf6093085965f36c1d8575"
     }
   ]
 }
