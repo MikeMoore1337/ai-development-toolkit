@@ -19,7 +19,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-20",
+      "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "Issue #50 offline beginner interface or synthetic safety regressions; no AI client activation measured."
     },
@@ -39,7 +39,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-20",
+      "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "Issue #50 offline beginner interface or synthetic safety regressions; no AI client activation measured."
     },
