@@ -25,7 +25,7 @@
   "original_skills_in_inventory": 52,
   "original_skills_not_bundled": "All third-party or project-specific original snapshots excluded from initial public publication pending provenance and license review.",
   "automatic_external_binary_installation": false,
-  "license_note": "Core/QA/Clear Voice include their own licenses and provenance. Make Feature code is MIT-labeled upstream; publication authorization beyond the personal-issued document is stated by the recipient but not independently verified. Personal-issued license file excluded.",
+  "license_note": "License identifiers are claims, not chain-of-title evidence. Make Feature 0.3.0 and QA work-derived adaptations have release owner-gates pending rights verification; see provenance/skills.json. The reported later Make Feature authorization is unverified.",
   "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
   "extension_skills": [
     "adaptive-delivery",
@@ -274,7 +274,7 @@
         "test-management-analyst",
         "test-reviewer"
       ],
-      "license": "MIT (new portable adaptation; work-derived provenance documented)",
+      "license": "MIT claimed for Toolkit adaptation; underlying work-derived material has unresolved redistribution clearance (NOASSERTION in provenance)",
       "auto_install": false
     },
     "make-feature": {
@@ -299,5 +299,7 @@
     "private_project_references": false
   },
   "optional_integrations": {},
-  "make_feature_source_bundled": true
+  "make_feature_source_bundled": true,
+  "provenance_registry": "provenance/skills.json",
+  "release_provenance_gate": "owner_approval_required"
 }
