@@ -1,0 +1,188 @@
+"""Deterministic acceptance-contract regression tests for beginner journeys (#49).
+
+These tests do not execute an AI model, application or human usability study.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURE = ROOT / "fixtures/beginner_journeys.json"
+STAGES = ["understand", "scope", "explain", "act", "verify", "report", "next"]
+PERSONAS = {"create-app", "repair-defect", "connect-toolkit"}
+GUARDS = {
+    "missing-project", "no-filesystem", "no-terminal", "unsupported-client",
+    "unclear-goal", "unmanaged-collision", "owner-lock", "no-test-environment",
+    "failed-test", "no-independent-review", "unapproved-publication",
+    "unapproved-payment", "plan-is-not-code",
+}
+STATUSES = {"PASS", "FAIL", "NOT_RUN", "BLOCKED", "NOT_APPLICABLE"}
+DECISIONS = {"REQUEST_INPUT", "PREPARE_ONLY", "STOP", "SAFE_ASSUMPTION", "REPORT_LIMIT"}
+METHODS = {"manual", "unit", "review", "integration", "command"}
+DANGEROUS = {
+    "unapproved-publication": "PUBLISH",
+    "unapproved-payment": "PURCHASE",
+    "unmanaged-collision": "OVERWRITE_UNMANAGED",
+    "owner-lock": "BYPASS_OWNER_LOCK",
+    "plan-is-not-code": "CLAIM_IMPLEMENTED",
+    "no-filesystem": "CLAIM_CHANGED",
+    "no-terminal": "CLAIM_TEST_PASS",
+    "no-test-environment": "CLAIM_VERIFIED",
+    "failed-test": "CLAIM_TEST_PASS",
+    "no-independent-review": "CLAIM_INDEPENDENT_PASS",
+    "unsupported-client": "CLAIM_ACTIVATED",
+    "missing-project": "CLAIM_ROOT_CAUSE",
+}
+
+
+def validate_contract(content: dict, root: Path = ROOT) -> list[str]:
+    issues: list[str] = []
+    if content.get("schema_version") != 1 or content.get("stages") != STAGES:
+        issues.append("invalid workflow schema or stage ordering")
+    personas = content.get("personas")
+    if not isinstance(personas, list):
+        return issues + ["missing personas"]
+    identifiers = [row.get("id") for row in personas if isinstance(row, dict)]
+    if len(identifiers) != len(personas) or set(identifiers) != PERSONAS or len(identifiers) != len(set(identifiers)):
+        issues.append("invalid persona coverage or duplicates")
+    for person in personas:
+        if not isinstance(person, dict):
+            continue
+        pid = person.get("id")
+        if not all(isinstance(person.get(x), str) and person[x].strip()
+                   for x in ("input", "goal", "no_runtime_result")):
+            issues.append(f"{pid}: incomplete user journey")
+        if person.get("no_runtime_result") not in {"PREPARED_ONLY", "BLOCKED"}:
+            issues.append(f"{pid}: false no-runtime outcome")
+        for field in ("minimal_inputs", "known_risks", "exclusions"):
+            if not isinstance(person.get(field), list) or not person[field]:
+                issues.append(f"{pid}: missing {field}")
+        skills = person.get("skill_paths", [])
+        if not skills or any(
+            not isinstance(name, str) or not name.startswith(".agents/skills/")
+            or not (root / name).is_file() or not (root / name).resolve().is_relative_to(root.resolve())
+            for name in skills
+        ):
+            issues.append(f"{pid}: nonexistent or escaping skill reference")
+        checks = person.get("acceptance", [])
+        expected_prefix = {"create-app": "A", "repair-defect": "B", "connect-toolkit": "C"}.get(pid, "?")
+        if len(checks) < 3 or len({c.get("id") for c in checks}) != len(checks):
+            issues.append(f"{pid}: missing or duplicate acceptance cases")
+        for check in checks:
+            if not isinstance(check, dict):
+                issues.append(f"{pid}: malformed acceptance case")
+                continue
+            if (not isinstance(check.get("id"), str)
+                    or not check["id"].startswith(expected_prefix)
+                    or check.get("method") not in METHODS
+                    or not isinstance(check.get("observable"), str)
+                    or len(check["observable"].strip()) < 12
+                    or check.get("status") != "NOT_RUN"):
+                issues.append(f"{pid}: acceptance fixture claims execution or is malformed")
+
+    guards = content.get("negative_cases", [])
+    if not isinstance(guards, list):
+        return issues + ["missing negative cases"]
+    gids = [x.get("id") for x in guards if isinstance(x, dict)]
+    if len(gids) != len(guards) or set(gids) != GUARDS or len(set(gids)) != len(gids):
+        issues.append("missing, unknown or duplicate negative guard")
+    for guard in guards:
+        if not isinstance(guard, dict):
+            continue
+        ident = guard["id"]
+        claims = guard.get("forbidden_claims")
+        if (guard.get("decision") not in DECISIONS
+                or guard.get("check_status") not in STATUSES
+                or not isinstance(guard.get("condition"), str)
+                or not isinstance(claims, list) or not claims
+                or (ident in DANGEROUS and DANGEROUS[ident] not in claims)):
+            issues.append(f"{ident}: unsafe negative guard")
+        if ident in {"unapproved-publication", "unapproved-payment", "owner-lock",
+                     "unmanaged-collision", "unsupported-client"} and guard.get("decision") != "STOP":
+            issues.append(f"{ident}: missing stop gate")
+        if ident == "failed-test" and guard.get("check_status") != "FAIL":
+            issues.append("failed test presented as success")
+        if ident in {"no-filesystem", "no-terminal", "plan-is-not-code"} and guard.get("check_status") != "NOT_RUN":
+            issues.append(f"{ident}: unexecuted check misreported")
+
+    boundaries = {row["client_id"]: row for row in content.get("client_boundaries", [])}
+    if set(boundaries) != {"codex", "claude-code", "hermes"}:
+        issues.append("incomplete client boundary matrix")
+    else:
+        for client, row in boundaries.items():
+            if row.get("live_discovery") != "NOT_TESTED" or row.get("effectiveness") != "NOT_MEASURED":
+                issues.append(f"{client}: invented activation/effectiveness evidence")
+            if row.get("manager") != ("UNSUPPORTED" if client == "hermes" else "VERIFIED"):
+                issues.append(f"{client}: manager contract mismatch")
+    report = content.get("example_report", {})
+    checks = report.get("checks", [])
+    if (report.get("result") != "PREPARED_ONLY" or report.get("changes_applied") is not False
+            or report.get("independent_acceptance") != "NOT_TESTED"
+            or not checks):
+        issues.append("example falsely claims implemented or independently reviewed")
+    for check in checks:
+        if check.get("status") not in STATUSES:
+            issues.append("invalid check status")
+        elif check["status"] == "PASS" and not check.get("evidence"):
+            issues.append("PASS without executed evidence")
+        elif check["status"] in {"NOT_RUN", "BLOCKED"} and check.get("evidence"):
+            issues.append("unexecuted check has claimed evidence")
+    return issues
+
+
+class BeginnerJourneyTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.data = json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+    def test_real_contract(self):
+        self.assertEqual(validate_contract(self.data), [])
+
+    def test_missing_persona_rejected(self):
+        case = copy.deepcopy(self.data)
+        case["personas"].pop()
+        self.assertTrue(validate_contract(case))
+
+    def test_broken_skill_reference_rejected(self):
+        case = copy.deepcopy(self.data)
+        case["personas"][0]["skill_paths"] = [".agents/skills/not-a-real-skill/SKILL.md"]
+        self.assertTrue(any("skill reference" in problem for problem in validate_contract(case)))
+
+    def test_claiming_executed_acceptance_rejected(self):
+        case = copy.deepcopy(self.data)
+        case["personas"][0]["acceptance"][0]["status"] = "PASS"
+        self.assertTrue(any("claims execution" in problem for problem in validate_contract(case)))
+
+    def test_removing_required_stop_gate_rejected(self):
+        case = copy.deepcopy(self.data)
+        guard = next(g for g in case["negative_cases"] if g["id"] == "unapproved-publication")
+        guard["decision"] = "PREPARE_ONLY"
+        self.assertTrue(any("missing stop gate" in problem for problem in validate_contract(case)))
+
+    def test_unmanaged_overwrite_claim_rejected(self):
+        case = copy.deepcopy(self.data)
+        guard = next(g for g in case["negative_cases"] if g["id"] == "unmanaged-collision")
+        guard["forbidden_claims"].remove("OVERWRITE_UNMANAGED")
+        self.assertTrue(any("unsafe negative guard" in problem for problem in validate_contract(case)))
+
+    def test_unrun_test_cannot_claim_pass(self):
+        case = copy.deepcopy(self.data)
+        case["example_report"]["checks"][0]["status"] = "PASS"
+        self.assertTrue(any("PASS without executed evidence" in problem for problem in validate_contract(case)))
+
+    def test_no_runtime_cannot_claim_implemented(self):
+        case = copy.deepcopy(self.data)
+        case["example_report"]["changes_applied"] = True
+        self.assertTrue(any("falsely claims" in problem for problem in validate_contract(case)))
+
+    def test_fake_client_activation_rejected(self):
+        case = copy.deepcopy(self.data)
+        case["client_boundaries"][0]["live_discovery"] = "VERIFIED"
+        self.assertTrue(any("invented activation" in problem for problem in validate_contract(case)))
+
+
+if __name__ == "__main__":
+    unittest.main()
