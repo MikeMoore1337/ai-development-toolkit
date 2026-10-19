@@ -361,6 +361,124 @@ def check_evidence(root: Path, skill_ids: set[str], findings: list[Finding]) -> 
             add(findings, "EVIDENCE001", path, 1, str(exc))
 
 
+
+def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> None:
+    """Check maintained current-state references; never rewrite historic audits."""
+    packs = manifest.get("extension_packs", {})
+    sizes = {key: len(value["skills"]) for key, value in packs.items()}
+    core = len(manifest["core_skills"]) + len(manifest.get("extension_skills", []))
+    skills = core + sum(sizes.values())
+    roles = len(manifest["core_roles"]) + sum(len(p.get("roles", [])) for p in packs.values())
+    profiles = set(manifest["profiles"])
+    version = manifest.get("version")
+    if not isinstance(version, str) or not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        add(findings, "DOC004", "MANIFEST.json", 1, "Invalid published baseline")
+        return
+
+    def count_match(path: str, body: str, pattern: str, expected: int) -> None:
+        found = re.search(pattern, body, re.M)
+        if not found or int(found.group(1)) != expected:
+            add(findings, "DOC001", path, 1, "Count mismatch: " + pattern)
+
+    def table_check(path: str, body: str) -> None:
+        table = []
+        def finish() -> None:
+            if len(table) >= 2 and re.fullmatch(r"[\s|:-]+", table[1][1]):
+                width = table[1][1].count("|") - 1
+                for number, line in table:
+                    if line.count("|") - 1 != width:
+                        add(findings, "DOC002", path, number, "Incorrect table cell count")
+        for number, line in markdown_lines(body):
+            if line.lstrip().startswith("|") and line.rstrip().endswith("|"):
+                table.append((number, line))
+            else:
+                finish()
+                table = []
+        finish()
+
+    for path in ("README.md", "README.ru.md"):
+        file = root / path
+        if not file.is_file():
+            continue
+        body = file.read_text(encoding="utf-8")
+        table_check(path, body)
+        for name, n in (("skills", skills), ("roles", roles), ("profiles", len(profiles))):
+            count_match(path, body, r"img\.shields\.io/badge/" + name + r"-(\d+)-", n)
+        for pattern, n in (
+            (r"\|\s*\*\*(?:Core skills|Core)\*\*\s*\|\s*(\d+)", core),
+            (r"\|\s*\*\*Frontend / Backend / Fullstack\*\*\s*\|\s*(\d+)",
+             sum(sizes.get(x, 0) for x in ("frontend", "backend", "fullstack"))),
+            (r"\|\s*\*\*QA Engineering Pack\*\*\s*\|\s*(\d+)", sizes.get("qa", 0)),
+        ):
+            count_match(path, body, pattern, n)
+        heading = "## Choose your workflow" if path == "README.md" else "## Какой профиль выбрать"
+        section = body.split(heading, 1)
+        if len(section) != 2:
+            add(findings, "DOC003", path, 1, "Missing profile selection table")
+        else:
+            for line in section[1].split("\n## ", 1)[0].splitlines():
+                selected = re.match(r"^\|\s*[^|]+\|\s*" + chr(96) + r"([^" + chr(96) + r"]+)" + chr(96) + r"\s*\|", line)
+                if selected and selected.group(1) not in profiles:
+                    add(findings, "DOC003", path, 1, "Unknown profile: " + selected.group(1))
+        start = "## Quick start" if path == "README.md" else "## Быстрый старт"
+        quick = body.split(start, 1)
+        if len(quick) != 2:
+            add(findings, "DOC005", path, 1, "Missing Quick Start")
+        else:
+            q = quick[1].split("\n## ", 1)[0]
+            for cmd in ("skill_manager.py catalog", "skill_manager.py install",
+                        "skill_manager.py status", "--apply"):
+                if cmd not in q:
+                    add(findings, "DOC005", path, 1, "Recommended command missing: " + cmd)
+            if "install.py --list-profiles" in q:
+                add(findings, "DOC005", path, 1, "Legacy installer recommended")
+        released = re.search(r"/releases/tag/v(\d+\.\d+\.\d+)", body)
+        if not released or released.group(1) != version or "CHANGELOG.md" not in body:
+            add(findings, "DOC004", path, 1, "Published release differs from baseline")
+
+    path = "docs/AGENT_SKILLS_SPEC.md"
+    if (root / path).is_file():
+        body = (root / path).read_text(encoding="utf-8")
+        found = re.search(r"(\d+) in the checked main snapshot:\s*(\d+) core/generic,\s*"
+                          r"(\d+) QA,\s*(\d+) Make Feature,\s*(\d+) Frontend,\s*"
+                          r"(\d+) Backend and\s*(\d+) Fullstack", body)
+        expected = [skills, core] + [sizes.get(x, 0) for x in
+                                     ("qa", "make-feature", "frontend", "backend", "fullstack")]
+        if not found or [int(x) for x in found.groups()] != expected:
+            add(findings, "DOC001", path, 1, "Official validator count mismatch")
+
+    path = "docs/UNIVERSAL_ENGINEERING.md"
+    if (root / path).is_file():
+        body = (root / path).read_text(encoding="utf-8")
+        for label, key in (("Frontend", "frontend"), ("Backend", "backend"),
+                           ("Fullstack", "fullstack"), ("QA (existing)", "qa")):
+            count_match(path, body, r"^\|\s*" + re.escape(label) +
+                        r"\s*\|[^|\n]*\|[^|\n]*\|\s*(\d+)\s*\|", sizes.get(key, 0))
+
+    path = "docs/SKILLS_CATALOG.md"
+    if (root / path).is_file():
+        body = (root / path).read_text(encoding="utf-8")
+        count_match(path, body, r"These (\d+) skills live under", core)
+        section = body.split("## Profiles", 1)
+        pattern = r"^\|\s*" + chr(96) + r"([^" + chr(96) + r"]+)" + chr(96) + r"\s*\|"
+        actual = set(re.findall(pattern, section[1], re.M)) if len(section) == 2 else set()
+        if actual != profiles:
+            add(findings, "DOC003", path, 1, "Catalog and manifest profiles differ")
+
+    path = "CHANGELOG.md"
+    if (root / path).is_file():
+        headings = re.findall(r"^##\s+(.+)$", (root / path).read_text(encoding="utf-8"), re.M)
+        if (len(headings) < 2 or headings[0] != "Unreleased (main after v" + version + ")"
+                or not re.fullmatch(re.escape(version) + r" \(released, \d{4}-\d{2}-\d{2}\)", headings[1])):
+            add(findings, "DOC004", path, 1, "Released/Unreleased section mismatch")
+    path = "docs/RELEASE_PROCESS.md"
+    if (root / path).is_file():
+        body = (root / path).read_text(encoding="utf-8")
+        if ("currently " + chr(96) + version + chr(96) not in body or
+                "/releases/tag/v" + version not in body or "Unreleased" not in body):
+            add(findings, "DOC004", path, 1, "Release process baseline mismatch")
+
+
 def inspect(root: Path = ROOT) -> dict:
     root = root.resolve()
     findings: list[Finding] = []
@@ -390,6 +508,7 @@ def inspect(root: Path = ROOT) -> dict:
         paths = markdown_files(root)
         counts["markdown_files"] = len(paths)
         check_markdown(root, paths, findings)
+        check_current_docs(root, manifest, findings)
         check_evidence(root, set(skills), findings)
     except (OSError, ValueError, KeyError, TypeError, UnicodeError) as exc:
         add(findings, "CONFIG001", ".", 1, type(exc).__name__ + ": " + str(exc))
