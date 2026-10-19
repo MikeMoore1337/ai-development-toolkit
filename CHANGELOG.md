@@ -2,6 +2,7 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added a single beginner journey contract with three personas, observable acceptance examples, 13 negative guard fixtures and deterministic offline regressions (#49). No live agent or human usability evidence is claimed.
 - Extended Russian documentation with client migration, compatibility evidence, publication rules and an offline first-run CLI acceptance smoke; human novice usability remains NOT_TESTED (#78).
 
 - Added non-blocking, pinned-source freshness warnings for Russian translations and negative regression fixtures (#78); strict review remains manual.
