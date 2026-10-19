@@ -62,7 +62,7 @@ class CuratedProfileTests(unittest.TestCase):
                        for skill in MANIFEST["profiles"]["research"]
                        for p in sources[skill].rglob("*") if p.is_file())
         self.assertEqual(expected, research["installed_file_bytes"])
-        self.assertEqual(2, result["profiles"]["frontend"]["overlap_skill_counts"]["ui-fix"])
+        self.assertEqual(3, result["profiles"]["frontend"]["overlap_skill_counts"]["ui-fix"])
         with self.assertRaisesRegex(ValueError, "Unknown profile"):
             measure(ROOT, MANIFEST, "absent")
 
