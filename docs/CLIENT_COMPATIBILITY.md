@@ -1,5 +1,7 @@
 # AI client compatibility: offline contracts
 
+[Русская версия](ru/CLIENT_COMPATIBILITY.md)
+
 Reviewed: **2026-10-19**. Machine-readable evidence: [compatibility/clients.json](../compatibility/clients.json), schema v1. The checks cover **contracts and filesystem structure**, not a real AI-client execution. Installed versions, trust decisions and configuration may change behavior.
 
 ## Levels and boundaries

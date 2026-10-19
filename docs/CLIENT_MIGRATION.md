@@ -1,5 +1,7 @@
 # Client skill installation and migration (offline)
 
+[Русская версия](ru/CLIENT_MIGRATION.md)
+
 This guide covers **file installation**, not guaranteed client activation or skill effectiveness. Commands run from the Toolkit checkout. All targets below are existing, trusted **disposable demo directories**; substitute a project path only after reviewing its own rules and user-owned skills.
 
 ## Support matrix

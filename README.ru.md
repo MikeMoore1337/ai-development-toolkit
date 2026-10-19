@@ -14,7 +14,7 @@
 
 [English](README.md) · **Русский**
 
-[Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
@@ -120,7 +120,7 @@ python scripts/validate_with_skills_ref.py --scope all
 
 ## Документация и участие
 
-[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации (EN)](docs/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
+[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации](docs/ru/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
 
 Ядро распространяется по MIT. Отдельные компоненты, включая Make Feature, имеют собственные сведения об авторах и лицензиях. См. [политику публикации](docs/PUBLICATION_POLICY.md). Проект не является официальным дистрибутивом Codex, Claude Code или Agent Skills.
 
