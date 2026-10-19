@@ -288,6 +288,12 @@ def _recover_one(target: Path, folder: Path) -> None:
             candidate = after["skills"].get(name)
             if candidate is None or tree_digest(dest) != candidate["digest"]:
                 raise ManagerError(f"Unrecognized newly-created skill {name}")
+            # Without a committed ownership lock an identical folder might
+            # have been created by the user between preview and mutation.
+            # Prefer manual recovery to deleting unverifiable user content.
+            if current != after:
+                raise ManagerError(
+                    f"Uncommitted new skill {name} requires manual recovery")
             shutil.rmtree(dest)
     atomic_json(state_path(target, before["layout"]), before)
     meta["status"] = "recovered"
