@@ -1,6 +1,8 @@
 name: Verify release source archive
 
 on:
+  push:
+    tags: ["v*"]
   release:
     types: [published]
   workflow_dispatch:
@@ -19,14 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+          ref: ${{ github.event_name == 'push' && github.ref_name || github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
           persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Check tag and retrieve GitHub-generated archive
         env:
-          RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
           REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
@@ -67,6 +69,17 @@ jobs:
           PY
           archive_root="$(cat "$ARCHIVE_DIR/root.txt")"
           python scripts/verify_checksums.py --archive-root "$archive_root" | tee release-archive-verification.log
+      - name: Provenance release gate for releases with a registry
+        env:
+          ARCHIVE_DIR: ${{ runner.temp }}/adt-release
+        run: |
+          set -euo pipefail
+          archive_root="$(cat "$ARCHIVE_DIR/root.txt")"
+          if [[ -f "$archive_root/scripts/validate_provenance.py" ]]; then
+            python "$archive_root/scripts/validate_provenance.py" --root "$archive_root" --mode release --report "$RUNNER_TEMP/provenance-release.json"
+          else
+            echo "NOT_VERIFIED: legacy archive has no provenance validator; checksum validation is not license clearance."
+          fi
       - name: Publish verification evidence
         if: always()
         uses: actions/upload-artifact@v4
