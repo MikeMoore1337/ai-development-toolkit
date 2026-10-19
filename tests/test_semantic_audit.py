@@ -74,7 +74,13 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                     self.assertNotIn("..", Path(path).parts)
                     self.assertTrue((ROOT / path).is_file(), path)
                 source = (ROOT / entry["component_path"]).read_text(encoding="utf-8")
-                self.assertIn(entry["evidence"]["quote"], source)
+                # This audit is pinned to its source_revision; resolved quotes need
+                # not remain in today's file. Assert their removal instead.
+                if entry["id"] in {"SQ44-011", "SQ44-015"}:
+                    self.assertEqual("#45", entry["target_issue"])
+                    self.assertNotIn(entry["evidence"]["quote"], source)
+                else:
+                    self.assertIn(entry["evidence"]["quote"], source)
                 self.assertTrue(entry["expected_behavior"])
                 self.assertTrue(entry["actual_document_behavior"])
 

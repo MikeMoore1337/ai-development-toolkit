@@ -62,3 +62,16 @@ The existing validate_quality.py checks records and artifact integrity as **EVID
 4. Existing catalog semantic inventory belongs to #44, Core/QA refactoring to #45, Frontend/Backend/Fullstack to #46, documentation/versioning to #47 and expanded CI to #48. Do not mass-update old or protected QA/Make Feature materials here.
 
 The existing CI matrix covers Ubuntu Python 3.12/3.13 and Windows Python 3.14, including checksum/provenance checks and the pinned upstream CLI where configured. No new dependency or live agent/API call is introduced. Without real trials, empirical quality, actual model token cost and agent effectiveness remain NOT_MEASURED.
+
+## Issue #45 - manual semantic acceptance cases
+
+These are **expected behaviors** for future client testing, not proof of actual Codex/Claude activation. Real agent discovery, selection and effectiveness remain **NOT_MEASURED**. Corresponding static checks are in `tests/test_skill_quality_v2.py`.
+
+| Skill | Positive scenarios - expected activation | Negative scenarios - expected exclusion | Required evidence |
+| --- | --- | --- | --- |
+| API Testing | HTTP success + read-back; documented negative HTTP 404/403; asynchronous event only when present | UI styling; mark unobserved event PASS | Actual response, state and optional event outcomes separated; no hidden skipped check |
+| Test Strategy | Small service without full E2E; multi-service boundaries; limited test budget | Run one known test; invent business-critical flows from no inputs | Selected/omitted layers, assumptions vs confirmed data, untested risk and revisit point |
+| Make Feature | Independent review available; delegation unavailable; local tests without review | Self-review presented as independent PASS; high-risk change without required review; delegation limit reset | Client capabilities, real reviewer identity when available, incomplete C*, budgets and stopped high-risk steps |
+| Clear Voice | Edit user prose; write UI microcopy | Fix Python; validate SQL; edit structured JSON | Original writing modes intact, no false technical trigger; legal-document edits don't certify legal correctness |
+
+A missing review agent may still allow reversible work with explicit `DONE_WITHOUT_INDEPENDENT_REVIEW` only when independent review is not mandatory; required review remains `INDEPENDENT_REVIEW_PENDING`. Tests of code/document strings are not behavioral AI-client evaluations. Do not claim model activation PASS from these fixtures.

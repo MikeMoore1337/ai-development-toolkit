@@ -120,6 +120,38 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         else:
             approved = approvals["approved_components"]
 
+    # Preserve the first owner approval byte snapshot. A later reported owner
+    # confirmation may amend only individual files already inside that scope.
+    # This is a technical owner assertion, not independent legal verification.
+    amended_files: dict[str, str] = {}
+    amendments = data.get("owner_review_amendments", [])
+    if not isinstance(amendments, list):
+        fail("OWNER_AMENDMENT", "owner_review_amendments must be an array")
+        amendments = []
+    original_files = {
+        file_name for snapshots in approved.values() if isinstance(snapshots, dict)
+        for file_name in snapshots
+    }
+    for index, amendment in enumerate(amendments):
+        if (not isinstance(amendment, dict)
+                or not isinstance(approvals, dict)
+                or amendment.get("parent_review_id") != approvals.get("id")
+                or amendment.get("source") != "owner_reported"
+                or amendment.get("review_outcomes") != "permitted"
+                or not isinstance(amendment.get("scope_issue"), str)
+                or not amendment["scope_issue"].startswith("#")
+                or not isinstance(amendment.get("approved_files"), dict)
+                or not amendment["approved_files"]):
+            fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid owner decision or scope")
+            continue
+        for file_name, digest in amendment["approved_files"].items():
+            if (not isinstance(file_name, str) or file_name not in original_files
+                    or file_name in amended_files or not isinstance(digest, str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", digest)):
+                fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid, duplicate or new scope {file_name!r}")
+            else:
+                amended_files[file_name] = digest
+
     # Approval claims, scope and classifications must agree even when a
     # previously adapted component is relabelled "original" or "verified".
     classifications = {}
@@ -243,7 +275,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                     fail("OWNER_SCOPE", f"{label}: reviewed file inventory changed")
                 for owner_file in owned_files:
                     relative_path = owner_file.relative_to(root).as_posix()
-                    expected = snapshots.get(relative_path)
+                    expected = amended_files.get(relative_path, snapshots.get(relative_path))
                     if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
                         fail("OWNER_FINGERPRINT", f"{label}: missing or malformed reviewed SHA256 for {relative_path}")
                     elif hashlib.sha256(canonical_bytes(owner_file.read_bytes())).hexdigest() != expected:

@@ -116,5 +116,45 @@ class EvidenceContractTests(unittest.TestCase):
         self.assertEqual([], failures)
 
 
+class Issue45SourceContractTests(unittest.TestCase):
+    """Deterministic, offline checks; real agent activations NOT_MEASURED."""
+
+    def read(self, path):
+        return (ROOT / path).read_text(encoding="utf-8")
+
+    def test_api_has_positive_negative_and_unverified_evidence(self):
+        src = self.read("extensions/qa/skills/api-testing/SKILL.md")
+        for token in ("POST /orders", "GET /orders/unknown", "read-back",
+                      "PASS", "FAIL", "SKIPPED", "NOT_VERIFIED", "INCOMPLETE",
+                      "bounded timeout"):
+            self.assertIn(token, src)
+
+    def test_strategy_has_explicit_choices_and_exclusions(self):
+        src = self.read("extensions/qa/skills/test-strategy/SKILL.md")
+        for token in ("unit", "contract", "integration", "API", "E2E", "exploratory",
+                      "Omit contract", "limited budget", "UNKNOWN", "Revisit"):
+            self.assertIn(token, src)
+
+    def test_make_feature_does_not_forge_independent_review(self):
+        src = self.read("extensions/make-feature/skills/make-feature/SKILL.md")
+        agents = self.read("extensions/make-feature/skills/make-feature/references/agents.md")
+        for token in ("SELF_CHECK", "TESTED", "INDEPENDENT_REVIEW",
+                      "INDEPENDENT_REVIEW_PENDING", "BLOCKED_REVIEW", "INCOMPLETE",
+                      "feature-delivery", "2 делегации", "до 6 делегаций", "до 12 делегаций"):
+            self.assertIn(token, src)
+        self.assertIn("не выдаёт самопроверку", agents)
+
+    def test_clear_voice_trigger_and_modes(self):
+        src = self.read(".agents/skills/clear-voice/SKILL.md")
+        description = src.split("---", 2)[1]
+        for token in ("база знаний", "демонстрационное приложение", "редакторский агент",
+                      "научных новостей"):
+            self.assertNotIn(token, description)
+        for token in ("Написать", "Отредактировать", "Проверить",
+                      "Точечно исправить", "Адаптировать стиль",
+                      "Python", "SQL", "JSON", "правовую экспертизу"):
+            self.assertIn(token, src)
+
+
 if __name__ == "__main__":
     unittest.main()
