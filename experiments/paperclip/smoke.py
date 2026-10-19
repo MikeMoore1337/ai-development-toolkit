@@ -56,6 +56,30 @@ def request(method: str, path: str, payload: dict | None = None):
         raise RuntimeError(f"Paperclip is not reachable at loopback: {exc.reason}") from None
 
 
+
+def make_restricted_company(name: str, description: str) -> str:
+    created = request("POST", "/api/companies", {
+        "name": name,
+        "description": description,
+        "budgetMonthlyCents": 0,
+    })
+    company_id = created.get("id") if isinstance(created, dict) else None
+    if not isinstance(company_id, str) or not company_id:
+        raise RuntimeError("Paperclip company creation did not return an ID")
+
+    # The create-company API does NOT accept requireBoardApprovalForNewAgents.
+    # Its database default is false; enforce the gate through the supported
+    # PATCH endpoint, then read back BOTH controls before importing anything.
+    request("PATCH", f"/api/companies/{company_id}", {
+        "requireBoardApprovalForNewAgents": True,
+    })
+    stored = request("GET", f"/api/companies/{company_id}")
+    if not isinstance(stored, dict) or stored.get("budgetMonthlyCents") != 0:
+        raise RuntimeError("Pilot company did not retain its zero budget")
+    if stored.get("requireBoardApprovalForNewAgents") is not True:
+        raise RuntimeError("Pilot company agent approval policy is not enabled")
+    return company_id
+
 def main() -> None:
     source = SKILL / "SKILL.md"
     if not source.is_file() or not source.read_text(encoding="utf-8").startswith("---\n"):
@@ -66,15 +90,10 @@ def main() -> None:
     companies_before = request("GET", "/api/companies")
     if not isinstance(companies_before, list):
         raise RuntimeError("Company listing has unexpected API schema")
-    company = request("POST", "/api/companies", {
-        "name": "Paperclip Toolkit CI Pilot",
-        "description": "Ephemeral zero-spend, no-agent skill compatibility smoke",
-        "budgetMonthlyCents": 0,
-        "requireBoardApprovalForNewAgents": True,
-    })
-    company_id = company.get("id") if isinstance(company, dict) else None
-    if not isinstance(company_id, str) or not company_id:
-        raise RuntimeError("Could not create an ephemeral pilot company")
+    company_id = make_restricted_company(
+        "Paperclip Toolkit CI Pilot",
+        "Ephemeral zero-spend, no-agent skill compatibility smoke",
+    )
 
     # First prove that the official managed-skill API can preserve the exact
     # Toolkit source bytes. This is a separate capability from GitHub import.
@@ -99,19 +118,14 @@ def main() -> None:
 
     # A GitHub-sourced import is an independent feature: a failure here must
     # not be misreported as a successful GitHub import via the managed API.
-    github_company = request("POST", "/api/companies", {
-        "name": "Paperclip GitHub Import CI Pilot",
-        "description": "Separate zero-spend organization to avoid a duplicate managed skill slug",
-        "budgetMonthlyCents": 0,
-        "requireBoardApprovalForNewAgents": True,
-    })
-    github_company_id = github_company.get("id") if isinstance(github_company, dict) else None
-    if not isinstance(github_company_id, str) or not github_company_id:
-        raise RuntimeError("Could not create separate GitHub skill import company")
+    github_company_id = make_restricted_company(
+        "Paperclip GitHub Import CI Pilot",
+        "Separate zero-spend organization to avoid a duplicate managed skill slug",
+    )
     github_status = "PASS"
     try:
         result = request("POST", f"/api/companies/{github_company_id}/skills/import", {
-            "source": "https://github.com/MikeMoore1337/ai-development-toolkit/tree/main/.agents/skills/minimal-safe-change",
+            "source": "npx skills add https://github.com/MikeMoore1337/ai-development-toolkit/tree/73688b472ff3cce8091914b3d1845c414d930c7a --skill minimal-safe-change",
         })
         if not isinstance(result, dict) or not isinstance(result.get("imported"), list):
             raise RuntimeError("GitHub import response has unexpected shape")
@@ -131,7 +145,8 @@ def main() -> None:
         "paperclip_version": "2026.1012.0",
         "health_http": 200,
         "company_created": True,
-        "budget_monthly_cents": 0,
+        "budget_monthly_cents_verified": 0,
+        "board_approval_required_verified": True,
         "managed_skill_created": "minimal-safe-change",
         "managed_skill_exact_source": True,
         "github_import": github_status,
