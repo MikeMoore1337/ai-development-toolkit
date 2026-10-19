@@ -1,6 +1,9 @@
 name: Paperclip isolated zero-spend smoke
 
 on:
+  # Temporary branch-only trigger to validate checksum-update commits.
+  push:
+    branches: [experiment/paperclip-zero-spend-smoke]
   pull_request:
     branches: [main]
     paths:
