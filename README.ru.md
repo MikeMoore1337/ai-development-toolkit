@@ -110,3 +110,5 @@ python scripts/validate_with_skills_ref.py --scope all
 [Установка](docs/INSTALLATION.md) · [Каталог навыков](docs/SKILLS_CATALOG.md) · [Методика оценки](docs/QUALITY_RUBRIC.md) · [Политика публикации](docs/PUBLICATION_POLICY.md) · [Дорожная карта](docs/ROADMAP.md) · [Как помочь](CONTRIBUTING.md)
 
 Ядро распространяется по MIT. Отдельные компоненты, включая Make Feature, имеют собственные сведения об авторах и лицензиях. См. [политику публикации](docs/PUBLICATION_POLICY.md). Проект не является официальным дистрибутивом Codex, Claude Code или Agent Skills.
+
+**Права на распространение:** см. [аудит происхождения](docs/PROVENANCE_AUDIT.md) и [реестр](provenance/skills.json). Make Feature, QA-материалы из рабочего проекта и графика **не допущены к новому публичному релизу** до проверки владельцем. Успешный CI не подтверждает права на публикацию.
