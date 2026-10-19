@@ -3487,6 +3487,316 @@
         "extensions/qa/skills/test-strategy/SKILL.md": "b472f0f967f9152fbb7e302672960ce157c97d0990d7e562ff023a0fcdf39d0b"
       }
     },
-    "note": "Authorization is an OWNER ATTESTATION, not an independently substantiated third-party license or employer-IP determination. Any source-byte change invalidates its file approval; review next release separately."
+    "note": "Authorization is an OWNER ATTESTATION, not an independently substantiated third-party license or employer-IP determination. Any source-byte change invalidates its file approval; review next release separately.",
+    "approved_metadata": {
+      "assets/branding/hero.png": {
+        "origin": "unknown",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "asset"
+      },
+      "assets/branding/social-preview.png": {
+        "origin": "unknown",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "asset"
+      },
+      "extensions/make-feature/skills/make-feature": {
+        "origin": "redistributed",
+        "license": "MIT",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/recipes/ci-failure.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "recipe"
+      },
+      "extensions/qa/recipes/qa-feature.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "recipe"
+      },
+      "extensions/qa/recipes/release-review.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "recipe"
+      },
+      "extensions/qa/roles/ci-investigator.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/coverage-analyst.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/flaky-analyst.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/qa-architect.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/quality-gatekeeper.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/requirement-analyst.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/security-reviewer.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/test-designer.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/test-implementer.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/test-management-analyst.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/roles/test-reviewer.md": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "role"
+      },
+      "extensions/qa/skills/api-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/change-impact-analysis": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/collaborative-development": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/contract-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/coverage-analysis": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/database-validation": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/defect-management": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/e2e-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/failure-triage": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/flaky-analysis": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/graphify-adapter": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/integration-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/playwright-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/pytest-test-design": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/qa-clear-voice": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/qa-code-review": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/qa-safe-change": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/quality-gate-assessment": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/requirement-analysis": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/requirements-traceability": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/security-review": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/security-testing": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/test-analysis-design": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/test-data-management": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/test-management": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/test-review": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      },
+      "extensions/qa/skills/test-strategy": {
+        "origin": "adapted",
+        "license": "NOASSERTION",
+        "status": "documented",
+        "distribution": "included",
+        "kind": "skill"
+      }
+    }
   }
 }
