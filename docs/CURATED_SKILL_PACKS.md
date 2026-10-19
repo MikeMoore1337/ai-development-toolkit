@@ -1,5 +1,7 @@
 # Curated Skill Packs
 
+[Русская версия](ru/CURATED_SKILL_PACKS.md)
+
 These packs reuse MANIFEST.json profiles and existing skill folders. No new
 package manager, skill runtime, dependencies or automatic installation is introduced.
 

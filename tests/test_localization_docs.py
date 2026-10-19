@@ -28,6 +28,9 @@ FIXTURE_FILES = (
     "docs/ru/README.md",
     "docs/ru/GETTING_STARTED.md",
     "docs/ru/GLOSSARY.md",
+    "docs/ru/INSTALLATION.md",
+    "docs/ru/SKILLS_CATALOG.md",
+    "docs/ru/CURATED_SKILL_PACKS.md",
 )
 
 
@@ -40,6 +43,24 @@ class RussianOnboardingTests(unittest.TestCase):
             destination = self.root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, destination)
+
+        # The expanded catalog links to every SKILL.md and QA role. Populate
+        # the fixture with existing link targets, without copying the whole
+        # repository or suppressing missing-link detection in the validator.
+        for name in FIXTURE_FILES:
+            if not name.startswith("docs/ru/"):
+                continue
+            original = ROOT / name
+            for raw in validator.LINK.findall(original.read_text(encoding="utf-8")):
+                parsed = validator.urlsplit(raw)
+                if parsed.scheme or parsed.netloc or raw.startswith("#"):
+                    continue
+                target = (original.parent / validator.unquote(parsed.path)).resolve()
+                if target.is_file() and target.is_relative_to(ROOT):
+                    destination = self.root / target.relative_to(ROOT)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    if not destination.exists():
+                        shutil.copyfile(target, destination)
 
     def check(self, expected: str | None = None):
         findings = validator.validate(self.root)
@@ -80,6 +101,30 @@ class RussianOnboardingTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.check("L10N004")
+
+    def test_stale_skills_catalog_fails(self):
+        page = self.root / "docs/ru/SKILLS_CATALOG.md"
+        content = page.read_text(encoding="utf-8")
+        marker = "| [`adaptive-delivery`]"
+        self.assertIn(marker, content)
+        page.write_text(content.replace(marker, "| [`unlisted-skill`]", 1), encoding="utf-8")
+        self.check("L10N005")
+
+    def test_missing_cli_command_fails(self):
+        page = self.root / "docs/ru/INSTALLATION.md"
+        content = page.read_text(encoding="utf-8")
+        command = "python scripts/skill_manager.py status --target /path/to/repo"
+        self.assertIn(command, content)
+        page.write_text(content.replace(command, "python scripts/skill_manager.py --help", 1), encoding="utf-8")
+        self.check("L10N006")
+
+    def test_missing_reverse_guide_link_fails(self):
+        page = self.root / "docs/INSTALLATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/INSTALLATION.md)", content)
+        page.write_text(content.replace("(ru/INSTALLATION.md)", "(INSTALLATION.md)", 1), encoding="utf-8")
+        self.check("L10N004")
+
 
 
 if __name__ == "__main__":

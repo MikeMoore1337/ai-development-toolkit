@@ -18,13 +18,32 @@ PAGES = (
     "docs/ru/README.md",
     "docs/ru/GETTING_STARTED.md",
     "docs/ru/GLOSSARY.md",
+    "docs/ru/INSTALLATION.md",
+    "docs/ru/SKILLS_CATALOG.md",
+    "docs/ru/CURATED_SKILL_PACKS.md",
+    "docs/INSTALLATION.md",
+    "docs/SKILLS_CATALOG.md",
+    "docs/CURATED_SKILL_PACKS.md",
 )
-RU_PAGES = PAGES[2:]
+RU_PAGES = tuple(page for page in PAGES if page.startswith("docs/ru/"))
+CATALOG_SKILLS = re.compile(r"^\| \[`([^`]+)`\]\([^)]+\) \|", re.M)
+CATALOG_PROFILES = re.compile(r"^\| `([a-z][a-z0-9-]*)` \|", re.M)
+CATALOG_ROLES = re.compile(r"^\| (?:Core|QA) \| `([a-z][a-z0-9-]*)` \|", re.M)
+SAMPLE_COMMANDS = re.compile(
+    r"^\s*(?:python|py -3) scripts/(?:skill_manager|recommend_profile|profile_metrics|install)\.py(?: .*)?$",
+    re.M,
+)
 LINK = re.compile(r"(?<!!)\[[^\]\n]+\]\(([^)\s]+)")
 LANGUAGE_LINKS = {
     "README.md": "(README.ru.md)",
     "README.ru.md": "(README.md)",
     "docs/ru/README.md": "(../../README.md)",
+    "docs/INSTALLATION.md": "(ru/INSTALLATION.md)",
+    "docs/SKILLS_CATALOG.md": "(ru/SKILLS_CATALOG.md)",
+    "docs/CURATED_SKILL_PACKS.md": "(ru/CURATED_SKILL_PACKS.md)",
+    "docs/ru/INSTALLATION.md": "(../INSTALLATION.md)",
+    "docs/ru/SKILLS_CATALOG.md": "(../SKILLS_CATALOG.md)",
+    "docs/ru/CURATED_SKILL_PACKS.md": "(../CURATED_SKILL_PACKS.md)",
 }
 
 
@@ -60,14 +79,16 @@ def validate(root: Path) -> list[str]:
     russian_readme = root / "README.ru.md"
     if russian_readme.is_file():
         content = russian_readme.read_text(encoding="utf-8")
-        for path in ("docs/ru/README.md", "docs/ru/GETTING_STARTED.md"):
+        for path in ("docs/ru/README.md", "docs/ru/GETTING_STARTED.md",
+                     "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
     intro = root / "docs/ru/README.md"
     if intro.is_file():
         content = intro.read_text(encoding="utf-8")
-        for path in ("GETTING_STARTED.md", "GLOSSARY.md"):
+        for path in ("GETTING_STARTED.md", "GLOSSARY.md", "INSTALLATION.md",
+                     "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -90,6 +111,35 @@ def validate(root: Path) -> list[str]:
         for token in ("Python", "Codex", "Claude Code", "AGENTS.md", "CLAUDE.md", "--layout claude"):
             if token not in content:
                 errors.append(f"L10N003 docs/ru/GETTING_STARTED.md: missing safety/context token {token}")
+    # Inventories are canonical in English. This checks presence of every
+    # documented identifier, not whether its Russian description is accurate.
+    source = root / "docs/SKILLS_CATALOG.md"
+    translated = root / "docs/ru/SKILLS_CATALOG.md"
+    if source.is_file() and translated.is_file():
+        en = source.read_text(encoding="utf-8")
+        ru = translated.read_text(encoding="utf-8")
+        for rule, pattern in (
+            ("skills", CATALOG_SKILLS),
+            ("roles", CATALOG_ROLES),
+            ("profiles", CATALOG_PROFILES),
+        ):
+            # Profile names appear exclusively in the profiles section.
+            section_en = en.split("## Profiles", 1)[-1] if rule == "profiles" else en
+            section_ru = ru.split("## Профили", 1)[-1] if rule == "profiles" else ru
+            before = pattern.findall(section_en)
+            after = pattern.findall(section_ru)
+            if len(after) != len(before) or sorted(after) != sorted(before):
+                errors.append(f"L10N005 docs/ru/SKILLS_CATALOG.md: {rule} differ from English")
+
+    for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md"):
+        source = root / "docs" / name
+        target = root / "docs/ru" / name
+        if source.is_file() and target.is_file():
+            original_commands = set(SAMPLE_COMMANDS.findall(source.read_text(encoding="utf-8")))
+            translated_commands = set(SAMPLE_COMMANDS.findall(target.read_text(encoding="utf-8")))
+            if not original_commands.issubset(translated_commands):
+                errors.append(f"L10N006 docs/ru/{name}: executable examples differ from English")
+
     return errors
 
 

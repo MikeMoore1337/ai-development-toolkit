@@ -1,5 +1,7 @@
 # Skills, roles & profiles
 
+[Русская версия](ru/SKILLS_CATALOG.md)
+
 A maintained reference based on `MANIFEST.json` and the actual `SKILL.md` files in this distribution. The current quantities are checked against the manifest by the offline quality gate. Descriptions summarize source metadata; availability depends on the selected client and installation profile.
 
 ## Core skills
