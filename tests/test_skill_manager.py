@@ -214,7 +214,168 @@ class SkillManagerTests(unittest.TestCase):
     def test_claude_layout_is_supported(self):
         self.call("install", names=["test-skill"], layout="claude", apply=True)
         self.assertTrue((self.repo / ".claude" / "skills" / "test-skill" / "SKILL.md").exists())
-        self.assertEqual("claude", self.call("status")["layout"])
+        self.assertEqual("claude", self.call("status", layout="claude")["layout"])
+        self.assertEqual({}, self.call("status")["skills"])
+
+    def test_dual_client_migration_preserves_both_independent_installs(self):
+        (self.repo / "CLAUDE.md").write_bytes(b"Private Claude rules\r\n")
+        self.call("install", names=["test-skill"], apply=True)
+        first_lock = (self.repo / ".adt" / "skills-lock.json").read_bytes()
+        preview = manager.operate("migrate", self.repo, layout="claude",
+                                  from_layout="codex", source_root=self.source)
+        self.assertFalse(preview["applied"])
+        self.assertEqual(["test-skill"], preview["changes"])
+        self.assertFalse((self.repo / ".claude").exists())
+        self.assertFalse((self.repo / ".adt" / "skills-lock-claude.json").exists())
+        result = manager.operate("migrate", self.repo, layout="claude",
+                                 from_layout="codex", source_root=self.source, apply=True)
+        self.assertTrue(result["applied"])
+        other = self.repo / ".claude" / "skills" / "test-skill"
+        self.assertEqual(self.installed.joinpath("SKILL.md").read_bytes(),
+                         other.joinpath("SKILL.md").read_bytes())
+        self.assertEqual(first_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+        self.assertEqual(b"Private Claude rules\r\n",
+                         (self.repo / "CLAUDE.md").read_bytes())
+        self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
+        self.assertEqual("clean", self.call("status", layout="claude")
+                         ["skills"]["test-skill"]["status"])
+        self.call("uninstall", names=["test-skill"], layout="claude", apply=True)
+        self.assertTrue(self.installed.exists())
+        self.assertFalse(other.exists())
+        self.call("rollback", layout="claude", apply=True)
+        self.assertTrue(other.exists())
+        self.assertEqual(first_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+
+    def test_claude_first_uses_legacy_lock_and_codex_uses_secondary(self):
+        self.call("install", names=["test-skill"], layout="claude", apply=True)
+        first_lock = (self.repo / ".adt" / "skills-lock.json").read_bytes()
+        self.call("install", names=["test-skill"], layout="codex", apply=True)
+        self.assertEqual(first_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+        self.assertEqual("codex", manager.read_state(self.repo, "codex")["layout"])
+        self.assertEqual("claude", manager.read_state(self.repo, "claude")["layout"])
+        self.assertTrue((self.repo / ".adt" / "skills-lock-codex.json").is_file())
+
+    def test_migrate_is_idempotent_via_update_not_silent_reinstall(self):
+        self.call("install", names=["test-skill"], apply=True)
+        manager.operate("migrate", self.repo, layout="claude",
+                        from_layout="codex", apply=True, source_root=self.source)
+        with self.assertRaisesRegex(manager.ManagerError, "Existing skill"):
+            manager.operate("migrate", self.repo, layout="claude",
+                            from_layout="codex", apply=True, source_root=self.source)
+        self.assertEqual([], self.call("update", layout="claude")["changes"])
+        self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
+
+    def test_migrate_refuses_modified_source_or_changed_toolkit_version(self):
+        self.call("install", names=["test-skill"], apply=True)
+        self.installed.joinpath("SKILL.md").write_text("user changed", encoding="utf-8")
+        with self.assertRaisesRegex(manager.ManagerError, "Local modifications"):
+            manager.operate("migrate", self.repo, layout="claude",
+                            from_layout="codex", source_root=self.source, apply=True)
+        self.assertFalse((self.repo / ".claude").exists())
+        self.installed.joinpath("SKILL.md").write_text("# Version one\n", encoding="utf-8")
+        self.source.joinpath(".agents/skills/test-skill/SKILL.md").write_text(
+            "# Different upstream\n", encoding="utf-8")
+        with self.assertRaisesRegex(manager.ManagerError, "non-identical migration"):
+            manager.operate("migrate", self.repo, layout="claude",
+                            from_layout="codex", source_root=self.source, apply=True)
+        self.assertFalse((self.repo / ".claude").exists())
+
+    def test_migrate_refuses_collision_with_unmanaged_claude_skill(self):
+        self.call("install", names=["test-skill"], apply=True)
+        unmanaged = self.repo / ".claude" / "skills" / "test-skill"
+        unmanaged.mkdir(parents=True)
+        unmanaged.joinpath("SKILL.md").write_text("# user-owned\n", encoding="utf-8")
+        with self.assertRaisesRegex(manager.ManagerError, "Existing skill"):
+            manager.operate("migrate", self.repo, layout="claude",
+                            from_layout="codex", source_root=self.source, apply=True)
+        self.assertEqual("# user-owned\n", unmanaged.joinpath("SKILL.md").read_text())
+        self.assertTrue(self.installed.exists())
+
+    def test_separate_state_corruption_and_dangling_links_fail_closed(self):
+        self.call("install", names=["test-skill"], apply=True)
+        other = self.repo / ".adt" / "skills-lock-claude.json"
+        other.write_text("{broken", encoding="utf-8")
+        with self.assertRaisesRegex(manager.ManagerError, "Unable to read lockfile"):
+            self.call("install", names=["test-skill"], layout="claude", apply=True)
+        self.assertTrue(self.installed.exists())
+        other.unlink()
+        collision = self.repo / ".claude" / "skills" / "test-skill"
+        collision.parent.mkdir(parents=True)
+        try:
+            collision.symlink_to(self.repo / "missing", target_is_directory=True)
+        except OSError:
+            self.skipTest("Platform disallows creating symlinks")
+        with self.assertRaisesRegex(manager.ManagerError, "Existing skill"):
+            self.call("install", names=["test-skill"], layout="claude", apply=True)
+
+    def test_deleted_primary_lock_does_not_reassign_secondary(self):
+        self.call("install", names=["test-skill"], apply=True)
+        self.call("install", names=["test-skill"], layout="claude", apply=True)
+        (self.repo / ".adt" / "skills-lock.json").unlink()
+        with self.assertRaisesRegex(manager.ManagerError, "Primary manager lockfile missing"):
+            self.call("status", layout="claude")
+        self.assertTrue(self.installed.exists())
+
+    def test_migration_interruption_recovers_without_affecting_source(self):
+        self.call("install", names=["test-skill"], apply=True)
+        first_lock = (self.repo / ".adt" / "skills-lock.json").read_bytes()
+        real_replace = manager.os.replace
+        def fail_destination_once(old, new):
+            if "staged" in str(old) and ".claude" in str(new):
+                raise OSError("synthetic migrate failure")
+            return real_replace(old, new)
+        with patch.object(manager.os, "replace", side_effect=fail_destination_once):
+            with self.assertRaises(OSError):
+                manager.operate("migrate", self.repo, layout="claude",
+                                from_layout="codex", source_root=self.source, apply=True)
+        self.assertEqual(first_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+        self.assertEqual("clean", self.call("status")["skills"]["test-skill"]["status"])
+        self.assertEqual({}, self.call("status", layout="claude")["skills"])
+        self.assertEqual(0, len(manager.pending_transactions(self.repo)))
+
+    def test_concurrent_identical_unmanaged_destination_is_never_deleted(self):
+        self.call("install", names=["test-skill"], apply=True)
+        original_lock = (self.repo / ".adt" / "skills-lock.json").read_bytes()
+        other = self.repo / ".claude" / "skills" / "test-skill"
+        real_write = manager.atomic_json
+        injected = [False]
+
+        def collide_after_pending_metadata(path, payload):
+            real_write(path, payload)
+            if (path.name == "meta.json" and payload.get("status") == "pending"
+                    and not injected[0]):
+                injected[0] = True
+                other.parent.mkdir(parents=True, exist_ok=True)
+                manager.shutil.copytree(
+                    self.source / ".agents" / "skills" / "test-skill", other)
+
+        with patch.object(manager, "atomic_json", side_effect=collide_after_pending_metadata):
+            with self.assertRaisesRegex(manager.ManagerError, "manual recovery"):
+                manager.operate("migrate", self.repo, layout="claude",
+                                from_layout="codex", source_root=self.source, apply=True)
+        self.assertTrue(injected[0])
+        self.assertEqual("# Version one\n", (other / "SKILL.md").read_text())
+        self.assertEqual("# Version one\n", (self.installed / "SKILL.md").read_text())
+        self.assertEqual(original_lock, (self.repo / ".adt" / "skills-lock.json").read_bytes())
+        self.assertEqual(1, len(manager.pending_transactions(self.repo)))
+
+    def test_catalog_and_migrate_cli_errors_are_read_only(self):
+        import subprocess
+        cmd = [sys.executable, str(ROOT / "scripts" / "skill_manager.py")]
+        profile = subprocess.run(cmd + ["catalog", "--profile", "qa-python"],
+                                 capture_output=True, text=True)
+        self.assertEqual(0, profile.returncode, profile.stderr)
+        self.assertIn("pytest-test-design", json.loads(profile.stdout)["skills"])
+        missing = subprocess.run(cmd + ["catalog", "--profile", "nonexistent"],
+                                 capture_output=True, text=True)
+        self.assertEqual(2, missing.returncode)
+        no_target = subprocess.run(cmd + ["status"], capture_output=True, text=True)
+        self.assertEqual(2, no_target.returncode)
+        bad_migrate = subprocess.run(cmd + ["migrate", "--target", str(self.repo),
+                                           "--layout", "claude", "--from-layout", "claude"],
+                                     capture_output=True, text=True)
+        self.assertEqual(2, bad_migrate.returncode)
+        self.assertFalse((self.repo / ".adt").exists())
 
 
 if __name__ == "__main__":

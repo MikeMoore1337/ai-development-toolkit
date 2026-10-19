@@ -79,7 +79,7 @@ python scripts/install.py --target /path/to/project --profile general --apply
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 51 навыка и 23 профилей](docs/SKILLS_CATALOG.md)
+[Полный каталог из 51 навыка и 23 профилей](docs/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 
