@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "skill_id": "implementation",
+  "source_revision": "0000000000000000000000000000000000000000",
+  "levels": {
+    "source_validated": {
+      "status": "NOT_MEASURED"
+    },
+    "packaged": {
+      "status": "NOT_MEASURED"
+    },
+    "installed": {
+      "status": "NOT_MEASURED"
+    },
+    "discovered": {
+      "status": "NOT_MEASURED"
+    },
+    "activated": {
+      "status": "NOT_MEASURED"
+    },
+    "effective": {
+      "status": "NOT_MEASURED"
+    }
+  }
+}
