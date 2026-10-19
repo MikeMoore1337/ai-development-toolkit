@@ -1,5 +1,7 @@
 # Installing skills safely
 
+[Русская версия](ru/INSTALLATION.md) | [Русский первый запуск](ru/GETTING_STARTED.md)
+
 Client layouts, pinned source evidence and offline verification: [CLIENT_COMPATIBILITY.md](CLIENT_COMPATIBILITY.md).
 
 **New project? Start with Skill Manager v2.** You need Python 3.12+, a clone of this Toolkit and an existing target project. The Toolkit does not install an AI client. Choose a profile with `python scripts/skill_manager.py catalog`, then:
