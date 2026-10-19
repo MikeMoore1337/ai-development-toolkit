@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "source_revision": "084ed2ad053cff6caf8ffaebb6283789906a425e",
+  "method": "Manually confirmed document/configuration facts; model impacts NOT_MEASURED",
+  "findings": [
+    {
+      "id": "SQ44-001",
+      "title": "QA Fullstack предлагается без Playwright",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json",
+        "extensions/qa/skills/playwright-testing/SKILL.md"
+      ],
+      "issue_type": "PROFILE_SELECTION",
+      "evidence": {
+        "quote": "if has_py and has_js:",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "При подборе QA-профиля проверять технологические условия зависимых навыков либо показывать предупреждение",
+      "actual_document_behavior": "Наличие файлов Python и JS выбирает qa-fullstack даже без Playwright; профиль содержит playwright-testing",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#50",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_STATIC_MISMATCH",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-002",
+      "title": "QA Python предлагается без проверки pytest",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json",
+        "extensions/qa/skills/pytest-test-design/SKILL.md"
+      ],
+      "issue_type": "PROFILE_SELECTION",
+      "evidence": {
+        "quote": "elif has_py:",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Показывать проверку наличия pytest либо понятное исключение для навыка pytest-test-design",
+      "actual_document_behavior": "Любой Python marker выбирает qa-python, в котором pytest-test-design требует установленный pytest",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#50",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_STATIC_MISMATCH",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-003",
+      "title": "Fullstack-профиль не содержит контроллер, который требует его навык",
+      "component_path": "extensions/fullstack/skills/end-to-end-feature-design/SKILL.md",
+      "related_paths": [
+        "MANIFEST.json"
+      ],
+      "issue_type": "WORKFLOW_HANDOFF",
+      "evidence": {
+        "quote": "use one existing feature-delivery controller for overall task orchestration",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Входной путь должен ясно отличать проектирование от выполнения и объяснять, когда подключать контроллер",
+      "actual_document_behavior": "Встроенный профиль fullstack содержит end-to-end-feature-design, но не feature-delivery или make-feature; рекомендация не доведена до маршрута пользователя",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#46",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_SOURCE_INCONSISTENCY",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-004",
+      "title": "Задача docs предлагает лишь редакторский навык",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json",
+        ".agents/skills/documentation-maintenance/SKILL.md"
+      ],
+      "issue_type": "PROFILE_SELECTION",
+      "evidence": {
+        "quote": "\"docs\": (\"editorial\", \"User-selected documentation editing\")",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Техническая документация должна направляться к навыку фактической сверки поведения, а текстовая редактура остаться опциональной",
+      "actual_document_behavior": "docs -> editorial -> clear-voice; documentation-maintenance не входит в профиль и не указан как дополнение",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#50",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_STATIC_MISMATCH",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-005",
+      "title": "Отсутствует прямой путь для типовых задач новичка",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "README.md"
+      ],
+      "issue_type": "BEGINNER_EXPERIENCE",
+      "evidence": {
+        "quote": "TASKS = (\"feature\", \"ui\", \"qa\", \"ci\", \"release\", \"docs\", \"agent\",",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Предлагать понятные сценарии нового приложения, исправления ошибки и проверки проекта без знания внутренней терминологии",
+      "actual_document_behavior": "Список TASKS не имеет bug, app, quality-audit; для пользователя требуется предварительное сопоставление с техническими категориями",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#49",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-006",
+      "title": "Слово release может означать запуск вместо QA-проверки",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json",
+        ".agents/skills/release-safety/SKILL.md"
+      ],
+      "issue_type": "BEGINNER_EXPERIENCE",
+      "evidence": {
+        "quote": "\"release\": (\"qa-release\", \"User-selected release quality review\")",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Ясно разделять проверку готовности и действие выпуска, не обещать деплой",
+      "actual_document_behavior": "Задача release всегда рекомендует qa-release, а навык release-safety не входит в выбранную конфигурацию",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#49",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_AMBIGUITY",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-007",
+      "title": "Первый путь требует Git и Python CLI",
+      "component_path": "README.md",
+      "related_paths": [],
+      "issue_type": "BEGINNER_EXPERIENCE",
+      "evidence": {
+        "quote": "# 1. Clone after publishing the repository on GitHub",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Показать новичку диалоговый или безтерминальный путь с честными ограничениями клиента и подтверждением записи",
+      "actual_document_behavior": "Текущий Quick start начинается с git clone и команд Python; нет эквивалентной простой последовательности для человека без терминала",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#51",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-008",
+      "title": "Профиль qa-all включает 27 разных по назначению навыков",
+      "component_path": "MANIFEST.json",
+      "related_paths": [
+        "extensions/qa/skills/graphify-adapter/SKILL.md"
+      ],
+      "issue_type": "CONTEXT_EFFICIENCY",
+      "evidence": {
+        "quote": "\"qa-all\": [",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Объяснить цену широкого выбора и рекомендовать минимальные профили/условные навыки, не выдавая размер за затраты токенов",
+      "actual_document_behavior": "qa-all содержит все 27 QA-навыков, включая условный graphify-adapter и редакторский qa-clear-voice; сама активация клиентом не измерена",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#50",
+      "provenance_gate": "QA_OWNER_GATE_IF_SKILL_SOURCES_EDITED",
+      "confirmation_status": "DOCUMENTED_POTENTIAL_NO_RUNTIME_EFFECT_CLAIM",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-009",
+      "title": "API Testing не задаёт форму evidence и критерий завершения",
+      "component_path": "extensions/qa/skills/api-testing/SKILL.md",
+      "related_paths": [],
+      "issue_type": "OUTPUT_VERIFIABILITY",
+      "evidence": {
+        "quote": "Use contract fixtures; prefer targeted response assertions",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "При адресной доработке дать один пример входа, теста, наблюдаемого побочного эффекта и статуса выполнения",
+      "actual_document_behavior": "Процедура охватывает проверки, но не задаёт самостоятельный контракт выдачи выполненных/не выполненных результатов",
+      "severity": "MEDIUM",
+      "recommendation": "REFINE",
+      "target_issue": "#45",
+      "provenance_gate": "REQUIRES_NEW_OWNER_APPROVAL_ID1337",
+      "confirmation_status": "SOURCE_OBSERVED_EFFECT_NOT_MEASURED",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-010",
+      "title": "Test Strategy даёт процедуры, но не формат проверяемого результата",
+      "component_path": "extensions/qa/skills/test-strategy/SKILL.md",
+      "related_paths": [],
+      "issue_type": "OUTPUT_VERIFIABILITY",
+      "evidence": {
+        "quote": "Define measurable goals: failure detection, meaningful test oracles",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Показывать пример стратегии: ограничения, риски, выбранные уровни, критерии пересмотра и неизвестное",
+      "actual_document_behavior": "Источник определяет элементы стратегии, но оставляет форму итогового deliverable неявной",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#45",
+      "provenance_gate": "REQUIRES_NEW_OWNER_APPROVAL_ID1337",
+      "confirmation_status": "SOURCE_OBSERVED_EFFECT_NOT_MEASURED",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-011",
+      "title": "Make Feature рассчитывает на отдельного приёмщика",
+      "component_path": "extensions/make-feature/skills/make-feature/SKILL.md",
+      "related_paths": [
+        "extensions/make-feature/skills/make-feature/references/agents.md"
+      ],
+      "issue_type": "CLIENT_PORTABILITY",
+      "evidence": {
+        "quote": "свежий агент принимает;",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Сделать явным маршрут при недоступной делегации, не подменяя независимую проверку самооценкой",
+      "actual_document_behavior": "Quick/normal/deep предусматривают отдельного агента; реальная доступность агентной делегации и поведение без неё не проверены",
+      "severity": "MEDIUM",
+      "recommendation": "REVIEW",
+      "target_issue": "#45",
+      "provenance_gate": "REQUIRES_NEW_OWNER_APPROVAL_ID1337",
+      "confirmation_status": "SOURCE_OBSERVED_RUNTIME_NOT_MEASURED",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-012",
+      "title": "В таблице README нарушена ширина строк",
+      "component_path": "README.md",
+      "related_paths": [],
+      "issue_type": "DOCUMENTATION_CONSISTENCY",
+      "evidence": {
+        "quote": "| Implement a change | `codex-feature` |",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "В таблице выбора профилей каждая строка должна иметь три ячейки",
+      "actual_document_behavior": "Есть строка с двумя ячейками, а у Integrate UI and API - четыре ячейки вместо трёх",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#47",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-013",
+      "title": "Общее feature ведёт к профилю с именем Codex",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json"
+      ],
+      "issue_type": "BEGINNER_EXPERIENCE",
+      "evidence": {
+        "quote": "\"feature\": (\"codex-feature\", \"General-purpose implementation workflow\")",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Разъяснить, что имя профиля не означает доказанную совместимость со всеми клиентами, и предложить выбор controller",
+      "actual_document_behavior": "feature -> codex-feature независимо от выбранного клиента; выбора клиента в аргументах рекомендателя нет",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#49",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-014",
+      "title": "В матрице универсальных интеграций осталась предметная формулировка",
+      "component_path": "docs/INTEGRATION_MATRIX.md",
+      "related_paths": [],
+      "issue_type": "DOCUMENTATION_CONSISTENCY",
+      "evidence": {
+        "quote": "медико-спортивные выводы из сторонних дизайн-навыков",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Универсальные примеры не должны выглядеть обязательными отраслевыми правилами",
+      "actual_document_behavior": "Строка Domain backend содержит медицинско-спортивный частный пример без указания, что это только иллюстрация",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#47",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-015",
+      "title": "В описании Clear Voice остались нечёткие проектные примеры",
+      "component_path": ".agents/skills/clear-voice/SKILL.md",
+      "related_paths": [],
+      "issue_type": "TRIGGER_PRECISION",
+      "evidence": {
+        "quote": "заметок база знаний, материалов демонстрационное приложение",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Сделать frontmatter кратким и task-specific; частные случаи вынести в optional reference",
+      "actual_document_behavior": "Общее описание смешивает редактирование, медицинские новости и специфичные демонстрационные домены; риск ложной широкой активации не измерен",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#45",
+      "provenance_gate": "STANDARD_PROVENANCE_REVIEW",
+      "confirmation_status": "SOURCE_OBSERVED_EFFECT_NOT_MEASURED",
+      "real_agent_behavior": "NOT_MEASURED"
+    },
+    {
+      "id": "SQ44-016",
+      "title": "Рекомендации по новым Backend/Frontend навыкам скрыты в дополнительном поле",
+      "component_path": "scripts/recommend_profile.py",
+      "related_paths": [
+        "MANIFEST.json"
+      ],
+      "issue_type": "BEGINNER_EXPERIENCE",
+      "evidence": {
+        "quote": "OPTIONAL_SKILLS = {",
+        "method": "Manual source comparison at pinned main commit"
+      },
+      "expected_behavior": "Для пользователя без технического опыта расшифровать необязательные навыки на уровне задачи",
+      "actual_document_behavior": "Backend и Frontend профиль минимальны, а auth/forms/state выводятся в optional_skills без объяснения, какую задачу решают",
+      "severity": "LOW",
+      "recommendation": "REFINE",
+      "target_issue": "#49",
+      "provenance_gate": "NONE",
+      "confirmation_status": "DEMONSTRATED_DOCUMENTED_GAP",
+      "real_agent_behavior": "NOT_MEASURED"
+    }
+  ]
+}

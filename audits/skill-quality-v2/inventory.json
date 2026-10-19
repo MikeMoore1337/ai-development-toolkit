@@ -1,0 +1,2962 @@
+{
+  "schema_version": 1,
+  "source_revision": "084ed2ad053cff6caf8ffaebb6283789906a425e",
+  "method": "Manual source-semantic review of manifest SKILL.md and role files with static catalog corroboration; examples are expected choices, NOT real-client trials",
+  "real_client_activation": "NOT_MEASURED",
+  "effectiveness": "NOT_MEASURED",
+  "skills": [
+    {
+      "skill_id": "adaptive-delivery",
+      "path": ".agents/skills/adaptive-delivery/SKILL.md",
+      "pack": "extension",
+      "purpose": "Совместимость со старым процессом v3",
+      "positive_triggers": [
+        "Поддержи старый проект, где прямо указан adaptive-delivery",
+        "Разбери архивный v3-процесс и предложи путь миграции"
+      ],
+      "negative_triggers": [
+        "Начни новую функцию с feature-delivery",
+        "Запусти make-feature как основной контроллер"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Маршрут исполнения и статус",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "feature-delivery",
+        "make-feature"
+      ],
+      "overlap_class": "HARD_EXCLUSIVE_CONTROLLER",
+      "hard_conflicts": [
+        "WF002",
+        "WF003"
+      ],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "DEPRECATE",
+      "findings": []
+    },
+    {
+      "skill_id": "agent-framework-fit",
+      "path": ".agents/skills/agent-framework-fit/SKILL.md",
+      "pack": "extension",
+      "purpose": "Обоснование агентного фреймворка",
+      "positive_triggers": [
+        "Нужен ли LangGraph для многошагового процесса",
+        "Сравни готовый агентный runtime и простой планировщик"
+      ],
+      "negative_triggers": [
+        "Напиши один изолированный SQL-запрос",
+        "Исправь опечатку в заголовке"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Матрица требований и альтернатив",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "api-design",
+      "path": "extensions/backend/skills/api-design/SKILL.md",
+      "pack": "backend",
+      "purpose": "Проектирование API",
+      "positive_triggers": [
+        "Спроектируй новый HTTP API с совместимостью",
+        "Опиши изменение контрактов очереди"
+      ],
+      "negative_triggers": [
+        "Проверь CSS-анимацию",
+        "Создай бенчмарк frontend"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контракт API с совместимостью",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "contract-testing",
+        "api-testing"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "api-testing",
+      "path": "extensions/qa/skills/api-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Контрактные и поведенческие API-проверки",
+      "positive_triggers": [
+        "Покрой тестами ответы и побочные эффекты HTTP API",
+        "Проверь API-ошибки, идемпотентность и авторизацию"
+      ],
+      "negative_triggers": [
+        "Разработай визуальную систему приложения",
+        "Напиши текст рассылки"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Набор API-проверок и наблюдаемая семантика",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-009"
+      ]
+    },
+    {
+      "skill_id": "architecture-decisions",
+      "path": ".agents/skills/architecture-decisions/SKILL.md",
+      "pack": "core",
+      "purpose": "Архитектурные альтернативы и риски",
+      "positive_triggers": [
+        "Выбери между монолитом и разделением сервисов при росте нагрузки",
+        "Оцени варианты перехода на событийную архитектуру"
+      ],
+      "negative_triggers": [
+        "Переименуй локальную переменную без изменения поведения",
+        "Напиши пользовательское уведомление"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Сравнение вариантов и решение с проверкой",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "authentication-authorization",
+      "path": "extensions/backend/skills/authentication-authorization/SKILL.md",
+      "pack": "backend",
+      "purpose": "Авторизация и аутентификация backend",
+      "positive_triggers": [
+        "Проверь межобъектный доступ в backend",
+        "Добавь корректную проверку сессии"
+      ],
+      "negative_triggers": [
+        "Исправь отступ в UI",
+        "Сравни цены на облачное хранилище"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Матрица прав и отрицательные проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "background-processing",
+      "path": "extensions/backend/skills/background-processing/SKILL.md",
+      "pack": "backend",
+      "purpose": "Очереди и фоновые задачи",
+      "positive_triggers": [
+        "Спроектируй обработку сообщений очереди с дедупликацией",
+        "Исправь retry и завершение worker"
+      ],
+      "negative_triggers": [
+        "Напиши информационный лендинг",
+        "Проверь статическую форму"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Состояния задач и политика повторов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "browser-workflow-evidence",
+      "path": ".agents/skills/browser-workflow-evidence/SKILL.md",
+      "pack": "extension",
+      "purpose": "Проверяемый браузерный процесс",
+      "positive_triggers": [
+        "Пройди браузерный сценарий с проверкой сохранения",
+        "Проверь результат операции агентом через интерфейс"
+      ],
+      "negative_triggers": [
+        "Сравни две базы данных без браузера",
+        "Спроектируй информационную архитектуру сайта без запуска UI"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Действия браузера и независимые проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "change-impact-analysis",
+      "path": "extensions/qa/skills/change-impact-analysis/SKILL.md",
+      "pack": "qa",
+      "purpose": "Влияние изменения на систему",
+      "positive_triggers": [
+        "Найди затронутых потребителей изменённого API",
+        "Оцени регрессии после изменения общей схемы"
+      ],
+      "negative_triggers": [
+        "Создай заглушку без анализа влияния при явно изолированной задаче",
+        "Измени стиль объявления"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Карта влияния и регрессионные проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "codebase-knowledge-map",
+        "graphify-adapter"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "clear-voice",
+      "path": ".agents/skills/clear-voice/SKILL.md",
+      "pack": "extension",
+      "purpose": "Фактосохраняющая редактура",
+      "positive_triggers": [
+        "Отредактируй русскую статью без потери фактов",
+        "Сократи техническое объяснение для читателей"
+      ],
+      "negative_triggers": [
+        "Исправь SQL-миграцию как код",
+        "Проверь медицинский диагноз без текстовой редакции"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Текст или адресные редакторские findings",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "editorial-naturalness",
+        "qa-clear-voice"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-015"
+      ]
+    },
+    {
+      "skill_id": "code-review",
+      "path": ".agents/skills/code-review/SKILL.md",
+      "pack": "core",
+      "purpose": "Независимый разбор diff",
+      "positive_triggers": [
+        "Проверь PR на регрессии и утечки данных",
+        "Найди ошибки в представленном diff"
+      ],
+      "negative_triggers": [
+        "Напиши новую функциональность с нуля",
+        "Подготовь маркетинговый текст"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Findings по severity и evidence",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "codebase-knowledge-map",
+      "path": ".agents/skills/codebase-knowledge-map/SKILL.md",
+      "pack": "extension",
+      "purpose": "Карта сложных зависимостей кода",
+      "positive_triggers": [
+        "Найди цепочку зависимостей между пакетами",
+        "Построй карту вызовов в большом репозитории"
+      ],
+      "negative_triggers": [
+        "Исправь одну понятную функцию по прямому пути",
+        "Выбери цвета дизайн-системы"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Пути и подтверждённые связи",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "graphify-adapter",
+        "change-impact-analysis"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "collaborative-development",
+      "path": "extensions/qa/skills/collaborative-development/SKILL.md",
+      "pack": "qa",
+      "purpose": "Разделение работ QA",
+      "positive_triggers": [
+        "Раздели тестовые файлы между несколькими исполнителями",
+        "Согласуй независимые ветки при общих фикстурах"
+      ],
+      "negative_triggers": [
+        "Один разработчик меняет один независимый файл",
+        "Проверь орфографию"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Распределение владения файлами и handoff",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "component-architecture",
+      "path": "extensions/frontend/skills/component-architecture/SKILL.md",
+      "pack": "frontend",
+      "purpose": "Границы UI компонентов",
+      "positive_triggers": [
+        "Спроектируй повторно используемые компоненты UI",
+        "Упорядочи состояния и контракты сложного компонента"
+      ],
+      "negative_triggers": [
+        "Спланируй миграцию SQL",
+        "Проверь очереди задач"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контракты UI компонентов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "contract-testing",
+      "path": "extensions/qa/skills/contract-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Проверка совместимости межсервисных контрактов",
+      "positive_triggers": [
+        "Проверь совместимость нового события с потребителями",
+        "Построй контрактные проверки после смены схемы API"
+      ],
+      "negative_triggers": [
+        "Сверь только визуальный отступ",
+        "Сделай локальный unit-тест без межсервисного контракта"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Проверенные контракты и совместимость",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "api-design",
+        "api-testing"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "coverage-analysis",
+      "path": "extensions/qa/skills/coverage-analysis/SKILL.md",
+      "pack": "qa",
+      "purpose": "Риски покрытия тестами",
+      "positive_triggers": [
+        "Проверь пробелы тестового покрытия требований",
+        "Оцени готовность проверок по критическим рискам"
+      ],
+      "negative_triggers": [
+        "Подсчитай только строки кода",
+        "Подбери тему оформления"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Карта рисков и недостатков покрытия",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "cross-layer-debugging",
+      "path": "extensions/fullstack/skills/cross-layer-debugging/SKILL.md",
+      "pack": "fullstack",
+      "purpose": "Диагностика межслойных ошибок",
+      "positive_triggers": [
+        "Найди причину дефекта UI-API-БД",
+        "Протрассируй сбой через backend и UI"
+      ],
+      "negative_triggers": [
+        "Исправь орфографию кнопки",
+        "Оптимизируй только тестовую фикстуру"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Цепочка evidence и первопричина",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "data-access",
+      "path": "extensions/backend/skills/data-access/SKILL.md",
+      "pack": "backend",
+      "purpose": "Хранилище, запросы и транзакции",
+      "positive_triggers": [
+        "Исправь конкурентную запись в хранилище",
+        "Спроектируй безопасные транзакционные запросы"
+      ],
+      "negative_triggers": [
+        "Отредактируй UI подписи",
+        "Выбери палитру"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Инварианты и доказательства запросов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "database-migrations",
+      "path": "extensions/backend/skills/database-migrations/SKILL.md",
+      "pack": "backend",
+      "purpose": "Эволюция схемы и данных",
+      "positive_triggers": [
+        "Планируй схему БД с возможностью отката",
+        "Проверь план безопасной миграции большого набора данных"
+      ],
+      "negative_triggers": [
+        "Исправь frontend кнопку",
+        "Напиши API документацию без изменения схемы"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "План миграции и восстановления",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "database-validation",
+      "path": "extensions/qa/skills/database-validation/SKILL.md",
+      "pack": "qa",
+      "purpose": "Инварианты хранилища",
+      "positive_triggers": [
+        "Проверь ограничения целостности после миграции",
+        "Проверь сохранение состояния и откат транзакции"
+      ],
+      "negative_triggers": [
+        "Проверь только текст кнопки",
+        "Сверь внешний API без базы"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Проверенные инварианты и состояние БД",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "defect-management",
+      "path": "extensions/qa/skills/defect-management/SKILL.md",
+      "pack": "qa",
+      "purpose": "Оформление воспроизведённых дефектов",
+      "positive_triggers": [
+        "Оформи подтверждённый дефект с воспроизведением",
+        "Проверь дубликаты бага перед созданием issue"
+      ],
+      "negative_triggers": [
+        "Придумай новую функцию без наблюдаемой ошибки",
+        "Спроектируй интерфейс"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Дефект с воспроизведением и доказательством",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "design-system-consistency",
+      "path": ".agents/skills/design-system-consistency/SKILL.md",
+      "pack": "extension",
+      "purpose": "Соблюдение дизайн-системы",
+      "positive_triggers": [
+        "Проверь соблюдение токенов в новых экранах",
+        "Сверь компоненты мобильной версии с дизайн-системой"
+      ],
+      "negative_triggers": [
+        "Исследуй стоимость LLM",
+        "Проверь сериализацию в очереди сообщений"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Расхождения и снимки до/после",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "documentation-maintenance",
+      "path": ".agents/skills/documentation-maintenance/SKILL.md",
+      "pack": "core",
+      "purpose": "Актуализация технических документов",
+      "positive_triggers": [
+        "Обнови README после изменения API",
+        "Проверь runbook после изменения настройки сервиса"
+      ],
+      "negative_triggers": [
+        "Улучши тон личного письма без технической документации",
+        "Протестируй форму авторизации"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Обновлённые документы и сверенные примеры",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-004"
+      ]
+    },
+    {
+      "skill_id": "e2e-testing",
+      "path": "extensions/qa/skills/e2e-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Сквозные пользовательские проверки",
+      "positive_triggers": [
+        "Проверь сквозной пользовательский путь в браузере и API",
+        "Автоматизируй ключевую бизнес-цепочку UI-бэкенд"
+      ],
+      "negative_triggers": [
+        "Проверь отдельную функцию парсера",
+        "Оцени лицензии зависимостей"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Сквозные сценарии и фактические прогоны",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "playwright-testing",
+        "integration-testing"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "editorial-naturalness",
+      "path": ".agents/skills/editorial-naturalness/SKILL.md",
+      "pack": "extension",
+      "purpose": "Редактура коротких текстов",
+      "positive_triggers": [
+        "Убери шаблонные обороты в коротком объявлении",
+        "Исправь стиль текста кнопок без изменения смысла"
+      ],
+      "negative_triggers": [
+        "Проверь истинность научных утверждений без редактуры",
+        "Перепиши JSON-структуру"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Отредактированный текст без подмены фактов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "clear-voice",
+        "qa-clear-voice"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "end-to-end-feature-design",
+      "path": "extensions/fullstack/skills/end-to-end-feature-design/SKILL.md",
+      "pack": "fullstack",
+      "purpose": "Проектирование вертикальной функции",
+      "positive_triggers": [
+        "Спроектируй функцию от UI до хранилища",
+        "Определи сквозные контракты новой пользовательской функции"
+      ],
+      "negative_triggers": [
+        "Оцени только оформление письма",
+        "Исправь локальную переменную без функционального изменения"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Вертикальный срез и критерии",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "feature-delivery",
+        "make-feature",
+        "fullstack-integration"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-003"
+      ]
+    },
+    {
+      "skill_id": "external-skill-review",
+      "path": ".agents/skills/external-skill-review/SKILL.md",
+      "pack": "extension",
+      "purpose": "Аудит внешних Agent Skills и инструментов",
+      "positive_triggers": [
+        "Проверь безопасность стороннего Agent Skill до установки",
+        "Сравни внешнюю MCP-интеграцию с имеющейся"
+      ],
+      "negative_triggers": [
+        "Реализуй обычный обработчик ошибок",
+        "Напиши SQL-запрос без стороннего инструмента"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Оценка прав, угроз и решений об установке",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "failure-triage",
+      "path": "extensions/qa/skills/failure-triage/SKILL.md",
+      "pack": "qa",
+      "purpose": "Диагностика падений CI",
+      "positive_triggers": [
+        "Разбери первый причинный сбой GitHub Actions",
+        "Определи природу провала тестов из логов"
+      ],
+      "negative_triggers": [
+        "Напиши компонент формы",
+        "Проверь текст лендинга"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Классификация, evidence и следующий шаг",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "feature-delivery",
+      "path": ".agents/skills/feature-delivery/SKILL.md",
+      "pack": "extension",
+      "purpose": "Управление доставкой функции",
+      "positive_triggers": [
+        "Реализуй новую функцию с критериями и проверками",
+        "Скоординируй изменение нескольких модулей без лишних этапов"
+      ],
+      "negative_triggers": [
+        "Используй отдельно make-feature как контроллер",
+        "Проведи только редактуру письма"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "C* критерии, изменения, проверки и handoff",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "make-feature",
+        "adaptive-delivery",
+        "implementation",
+        "minimal-safe-change"
+      ],
+      "overlap_class": "HARD_EXCLUSIVE_CONTROLLER",
+      "hard_conflicts": [
+        "WF001",
+        "WF002"
+      ],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "flaky-analysis",
+      "path": "extensions/qa/skills/flaky-analysis/SKILL.md",
+      "pack": "qa",
+      "purpose": "Диагностика нестабильных тестов",
+      "positive_triggers": [
+        "Найди причину непостоянного падения теста",
+        "Проверь race condition в параллельных прогонах"
+      ],
+      "negative_triggers": [
+        "Исправь стабильно воспроизводимый бизнес-дефект без признаков нестабильности",
+        "Выбери библиотеку иконок"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Причины нестабильности и повторяемость",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "forms-validation",
+      "path": "extensions/frontend/skills/forms-validation/SKILL.md",
+      "pack": "frontend",
+      "purpose": "Валидация и отправка форм",
+      "positive_triggers": [
+        "Исправь валидацию формы и отображение ошибок",
+        "Настрой обработку серверного отказа при отправке"
+      ],
+      "negative_triggers": [
+        "Создай очередь сообщений",
+        "Проверь доступ к объектам API"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контракт полей и ошибки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "frontend-api-integration",
+      "path": "extensions/frontend/skills/frontend-api-integration/SKILL.md",
+      "pack": "frontend",
+      "purpose": "Интеграция frontend и API",
+      "positive_triggers": [
+        "Свяжи API-ошибки с состояниями экрана",
+        "Исправь дублирующие запросы интерфейса"
+      ],
+      "negative_triggers": [
+        "Сделай unit-тест SQL",
+        "Проверь сетевую безопасность CI"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контракт взаимодействия API с экраном",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "frontend-performance",
+      "path": "extensions/frontend/skills/frontend-performance/SKILL.md",
+      "pack": "frontend",
+      "purpose": "Измерение производительности frontend",
+      "positive_triggers": [
+        "Замерь медленную отрисовку формы",
+        "Ускорь frontend после определения реального bottleneck"
+      ],
+      "negative_triggers": [
+        "Улучши художественный стиль письма",
+        "Оформи схему БД"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Замеры до/после и ограничения",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "fullstack-integration",
+      "path": "extensions/fullstack/skills/fullstack-integration/SKILL.md",
+      "pack": "fullstack",
+      "purpose": "Согласование слоёв UI и backend",
+      "positive_triggers": [
+        "Согласуй контракты UI и backend между версиями",
+        "Проверь ошибку передачи полей через несколько слоёв"
+      ],
+      "negative_triggers": [
+        "Сделай unit-тест чистой функции",
+        "Выбери типографику"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Сквозные контракты и порядок внедрения",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "end-to-end-feature-design",
+        "frontend-api-integration"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": []
+    },
+    {
+      "skill_id": "graphify-adapter",
+      "path": "extensions/qa/skills/graphify-adapter/SKILL.md",
+      "pack": "qa",
+      "purpose": "Вспомогательный анализ графа",
+      "positive_triggers": [
+        "Проверь зависимости в уже установленном Graphify",
+        "Используй одобренный граф вызовов для проверки влияния правки"
+      ],
+      "negative_triggers": [
+        "Установи Graphify без разрешения",
+        "Создай базовый проект без графа"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Зависимости кода с подтверждениями",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [
+        "Граф необязателен; допустим обычный поиск"
+      ],
+      "related_skills": [
+        "codebase-knowledge-map",
+        "change-impact-analysis"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-008"
+      ]
+    },
+    {
+      "skill_id": "implementation",
+      "path": ".agents/skills/implementation/SKILL.md",
+      "pack": "core",
+      "purpose": "Реализация ограниченных изменений",
+      "positive_triggers": [
+        "Исправь ошибку в исходниках и добавь тест",
+        "Реализуй согласованный метод в текущем проекте"
+      ],
+      "negative_triggers": [
+        "Только сравни архитектурные варианты без правок",
+        "Перепиши объявление для сайта"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Изменённые файлы и реальные результаты проверок",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "minimal-safe-change",
+        "qa-safe-change"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "integration-testing",
+      "path": "extensions/qa/skills/integration-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Проверка интеграционных границ",
+      "positive_triggers": [
+        "Проверь взаимодействие воркера с реальной БД и очередью",
+        "Протестируй передачу события между сервисами"
+      ],
+      "negative_triggers": [
+        "Проверь только локальный метод без зависимостей",
+        "Оцени визуальный стиль"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Список реальных и имитированных границ",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "make-feature",
+      "path": "extensions/make-feature/skills/make-feature/SKILL.md",
+      "pack": "make-feature",
+      "purpose": "Контроллер реализации функции Make Feature",
+      "positive_triggers": [
+        "Сделай новую функцию целиком через Make Feature",
+        "Проработай сложную функцию с отдельной приёмкой через Make Feature"
+      ],
+      "negative_triggers": [
+        "Выполни quick fix под активным feature-delivery",
+        "Сделай простую редактуру текста"
+      ],
+      "edge_case": "Нет отдельного доступного агента: независимая приёмка остаётся NOT_MEASURED",
+      "required_context": "Цель, правила проекта, бюджет, доступная делегация, подтверждения",
+      "output_contract": "C*/T*, решения, независимая приёмка либо явно недоступная",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [
+        "Отдельная агентная делегация только при доступной поддержке клиента"
+      ],
+      "related_skills": [
+        "feature-delivery",
+        "adaptive-delivery"
+      ],
+      "overlap_class": "HARD_EXCLUSIVE_CONTROLLER",
+      "hard_conflicts": [
+        "WF001",
+        "WF003"
+      ],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Делегация и state-cli зависят от реально доступного клиента; исполнения не наблюдалось",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REVIEW",
+      "findings": [
+        "SQ44-011"
+      ]
+    },
+    {
+      "skill_id": "minimal-safe-change",
+      "path": ".agents/skills/minimal-safe-change/SKILL.md",
+      "pack": "extension",
+      "purpose": "Минимальная безопасная правка",
+      "positive_triggers": [
+        "Предложи минимальное исправление регрессии",
+        "Сократи объём безопасного рефакторинга"
+      ],
+      "negative_triggers": [
+        "Оцени только рыночную цену API",
+        "Подготовь релизный план без изменений кода"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Обоснование минимальной правки и тесты",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "implementation",
+        "qa-safe-change"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "motion-quality",
+      "path": ".agents/skills/motion-quality/SKILL.md",
+      "pack": "extension",
+      "purpose": "Качество анимации",
+      "positive_triggers": [
+        "Проверь замедления интерфейсной анимации",
+        "Добавь анимацию с reduced-motion"
+      ],
+      "negative_triggers": [
+        "Разработай контракт авторизации API",
+        "Проверь чистоту тестовых данных"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Поведение движения, измерения и fallback",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "playwright-testing",
+      "path": "extensions/qa/skills/playwright-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Тесты Playwright",
+      "positive_triggers": [
+        "Напиши браузерные тесты в проекте с Playwright",
+        "Исправь flaky локаторы в существующем Playwright-suite"
+      ],
+      "negative_triggers": [
+        "Автоматизируй UI в проекте только с Selenium",
+        "Спроектируй API без браузера"
+      ],
+      "edge_case": "Только Selenium в проекте: не активировать",
+      "required_context": "Фактически установленный Playwright, версия и настройки проекта",
+      "output_contract": "Браузерные проверки и трассы",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [
+        "Playwright в целевом проекте"
+      ],
+      "related_skills": [
+        "e2e-testing",
+        "screenshot-fidelity"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-001"
+      ]
+    },
+    {
+      "skill_id": "provider-reality-check",
+      "path": ".agents/skills/provider-reality-check/SKILL.md",
+      "pack": "extension",
+      "purpose": "Фактические возможности LLM API",
+      "positive_triggers": [
+        "Сравни бесплатные лимиты LLM API по официальным данным",
+        "Проверь реальные требования провайдера Vision API"
+      ],
+      "negative_triggers": [
+        "Отредактируй письмо без API-фактов",
+        "Оптимизируй SQL-транзакцию"
+      ],
+      "edge_case": null,
+      "required_context": "Провайдер, текущие официальные условия, регион, лимит расходов и разрешённые ключи",
+      "output_contract": "Таблица актуальных данных по провайдерам",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "pytest-test-design",
+      "path": "extensions/qa/skills/pytest-test-design/SKILL.md",
+      "pack": "qa",
+      "purpose": "Тесты pytest",
+      "positive_triggers": [
+        "Оптимизируй fixtures в тестах с pytest",
+        "Добавь параметризацию тестов в pytest-проекте"
+      ],
+      "negative_triggers": [
+        "Разработай тесты в проекте без pytest",
+        "Проверь контраст цветов"
+      ],
+      "edge_case": null,
+      "required_context": "Фактическая установка pytest и фикстуры проекта",
+      "output_contract": "Проверяемые тесты pytest",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [
+        "pytest в целевом проекте"
+      ],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-002"
+      ]
+    },
+    {
+      "skill_id": "qa-clear-voice",
+      "path": "extensions/qa/skills/qa-clear-voice/SKILL.md",
+      "pack": "qa",
+      "purpose": "Фактосохраняющая редактура QA-отчётов",
+      "positive_triggers": [
+        "Сделай QA-отчёт понятным, сохранив точные ошибки",
+        "Отредактируй инцидентную заметку QA без домыслов"
+      ],
+      "negative_triggers": [
+        "Улучши художественный рассказ",
+        "Измени тестовую логику"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Понятный точный QA-отчёт",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "clear-voice",
+        "editorial-naturalness"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": []
+    },
+    {
+      "skill_id": "qa-code-review",
+      "path": "extensions/qa/skills/qa-code-review/SKILL.md",
+      "pack": "qa",
+      "purpose": "Проверка кода автотестов",
+      "positive_triggers": [
+        "Проверь PR с тестовыми фикстурами и CI-хелперами",
+        "Найди утечку состояния в коде автотестов"
+      ],
+      "negative_triggers": [
+        "Оцени бизнес-требования без реализации тестов",
+        "Редактируй тексты интерфейса"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Findings по тестовому коду",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "code-review",
+        "test-review"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "qa-safe-change",
+      "path": "extensions/qa/skills/qa-safe-change/SKILL.md",
+      "pack": "qa",
+      "purpose": "Безопасная правка тестовой инфраструктуры",
+      "positive_triggers": [
+        "Измени общую тестовую инфраструктуру безопасно",
+        "Сделай минимальную правку нескольких модулей автотестов"
+      ],
+      "negative_triggers": [
+        "Опубликуй release",
+        "Составь научный обзор"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Минимальные изменения QA и проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "qa-strategy",
+      "path": ".agents/skills/qa-strategy/SKILL.md",
+      "pack": "core",
+      "purpose": "Проверки по рискам",
+      "positive_triggers": [
+        "Подбери проверки для рискованной миграции",
+        "Составь план проверки нового API"
+      ],
+      "negative_triggers": [
+        "Измени одну CSS-переменную без запроса тест-плана",
+        "Проверь права на сторонний шрифт"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Матрица рисков и проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "test-strategy"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "quality-gate-assessment",
+      "path": "extensions/qa/skills/quality-gate-assessment/SKILL.md",
+      "pack": "qa",
+      "purpose": "Оценка готовности по evidence",
+      "positive_triggers": [
+        "Оцени достаточность доказательств перед merge",
+        "Сопоставь критерии релиза с выполненными тестами"
+      ],
+      "negative_triggers": [
+        "Задеплой без отдельного решения",
+        "Разработай визуальную анимацию"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "READY_FOR_REVIEW, BLOCKED либо INSUFFICIENT_EVIDENCE",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "release-safety",
+      "path": ".agents/skills/release-safety/SKILL.md",
+      "pack": "core",
+      "purpose": "Подготовка релиза по полномочиям",
+      "positive_triggers": [
+        "Оцени готовность конкретного релиза",
+        "Подготовь контрольные проверки перед разрешённым деплоем"
+      ],
+      "negative_triggers": [
+        "Разработай UI-компонент без релиза",
+        "Сделай исследование стороннего API"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Статус готовности и доказательства",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": [
+        "SQ44-006"
+      ]
+    },
+    {
+      "skill_id": "requirement-analysis",
+      "path": "extensions/qa/skills/requirement-analysis/SKILL.md",
+      "pack": "qa",
+      "purpose": "Анализ требований для тестирования",
+      "positive_triggers": [
+        "Преврати расплывчатую функцию в критерии приёмки",
+        "Раздели факты и гипотезы в пользовательском требовании"
+      ],
+      "negative_triggers": [
+        "Запусти ранее составленные тесты без новых требований",
+        "Сделай релиз после готовой приёмки"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Критерии и карта требований",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "requirements-traceability",
+      "path": "extensions/qa/skills/requirements-traceability/SKILL.md",
+      "pack": "qa",
+      "purpose": "Трассировка требований и тестов",
+      "positive_triggers": [
+        "Свяжи требования, тесты и результаты прогонов",
+        "Обнови матрицу трассировки после правки требований"
+      ],
+      "negative_triggers": [
+        "Проверь один CSS стиль без требований к аудиту",
+        "Улучши рекламный слоган"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Цепочка требование-тест-прогон",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "research-verification",
+      "path": ".agents/skills/research-verification/SKILL.md",
+      "pack": "core",
+      "purpose": "Проверка внешних фактов",
+      "positive_triggers": [
+        "Сверь актуальные возможности API по официальным источникам",
+        "Проверь спорный технологический факт перед выбором решения"
+      ],
+      "negative_triggers": [
+        "Исправь очевидную опечатку в коде",
+        "Запусти уже готовые локальные тесты"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Источники, факты, неопределённость и рекомендация",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "screenshot-fidelity",
+      "path": ".agents/skills/screenshot-fidelity/SKILL.md",
+      "pack": "extension",
+      "purpose": "Сверка с визуальным эталоном",
+      "positive_triggers": [
+        "Сверь страницу с эталонным скриншотом",
+        "Исправь мобильную верстку по снимку"
+      ],
+      "negative_triggers": [
+        "Сгенерируй тесты для Kafka",
+        "Сравни лицензии программ"
+      ],
+      "edge_case": null,
+      "required_context": "Эталонный снимок и его размер, текущее приложение, состояние экрана",
+      "output_contract": "Сверка UI со снимком и функциональные проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "security-boundaries",
+      "path": ".agents/skills/security-boundaries/SKILL.md",
+      "pack": "core",
+      "purpose": "Границы доверия и доступа",
+      "positive_triggers": [
+        "Проверь модель доступа между арендаторами",
+        "Оцени риск передачи токенов стороннему сервису"
+      ],
+      "negative_triggers": [
+        "Подбери палитру интерфейса",
+        "Сделай обычное форматирование README"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Сценарии доверия и проверяемые уязвимости",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "security-review",
+        "security-testing"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "security-review",
+      "path": "extensions/qa/skills/security-review/SKILL.md",
+      "pack": "qa",
+      "purpose": "Аудит безопасности QA/CI",
+      "positive_triggers": [
+        "Проверь права CI-токена и артефакты автотестов",
+        "Оцени риски внешнего агента в QA-репозитории"
+      ],
+      "negative_triggers": [
+        "Добавь одиночный UI-тест без вопросов безопасности",
+        "Оптимизируй анимацию"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Проверенные риски QA/CI",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "security-boundaries",
+        "security-testing"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "security-testing",
+      "path": "extensions/qa/skills/security-testing/SKILL.md",
+      "pack": "qa",
+      "purpose": "Негативные проверки безопасности",
+      "positive_triggers": [
+        "Спроектируй негативные проверки IDOR",
+        "Протестируй доступ к защищённым объектам под разными ролями"
+      ],
+      "negative_triggers": [
+        "Запусти атаку на чужой сайт без разрешения",
+        "Отредактируй текст кнопки"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Негативные тесты по угрозам",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "security-review",
+        "security-boundaries"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "service-architecture",
+      "path": "extensions/backend/skills/service-architecture/SKILL.md",
+      "pack": "backend",
+      "purpose": "Архитектура backend-сервисов",
+      "positive_triggers": [
+        "Определи границы backend-сервисов",
+        "Оцени разделение монолита на модули"
+      ],
+      "negative_triggers": [
+        "Исправь цвет иконки",
+        "Напиши тест для одного UI поля"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Карта границ и решения",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "skill-portability",
+      "path": ".agents/skills/skill-portability/SKILL.md",
+      "pack": "extension",
+      "purpose": "Переносимость Agent Skills",
+      "positive_triggers": [
+        "Перенеси SKILL.md из Codex в Claude Code",
+        "Проверь переносимость импортируемого навыка"
+      ],
+      "negative_triggers": [
+        "Измени логику бизнес-сервиса",
+        "Рассчитай стоимость хостинга"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контракты упаковки и проверки",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "state-management",
+      "path": "extensions/frontend/skills/state-management/SKILL.md",
+      "pack": "frontend",
+      "purpose": "Управление состоянием frontend",
+      "positive_triggers": [
+        "Исправь гонку состояний frontend",
+        "Спроектируй владельца кэша и derived state"
+      ],
+      "negative_triggers": [
+        "Проверь лицензии",
+        "Сверь докер-образ backend"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Владение состоянием и переходы",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "task-scoping",
+      "path": ".agents/skills/task-scoping/SKILL.md",
+      "pack": "core",
+      "purpose": "Постановка задачи и критерии",
+      "positive_triggers": [
+        "Разбей неясную функцию на проверяемые критерии",
+        "Уточни границы и зависимости перед большой правкой"
+      ],
+      "negative_triggers": [
+        "Отчитайся о уже выполненной однозначной проверке",
+        "Скопируй текст без изменения содержания"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Границы, критерии, зависимости",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "See provenance/skills.json; документированное происхождение не равняется правовой верификации",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "test-analysis-design",
+      "path": "extensions/qa/skills/test-analysis-design/SKILL.md",
+      "pack": "qa",
+      "purpose": "Техники тест-дизайна и оракулы",
+      "positive_triggers": [
+        "Подбери граничные значения и тестовые оракулы",
+        "Составь матрицу переходов состояний для проверки"
+      ],
+      "negative_triggers": [
+        "Просто выполни уже готовую команду тестов",
+        "Подготовь рекламный баннер"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Матрица кейсов и оракулов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "test-data-management",
+      "path": "extensions/qa/skills/test-data-management/SKILL.md",
+      "pack": "qa",
+      "purpose": "Управление тестовыми данными",
+      "positive_triggers": [
+        "Обеспечь изоляцию тестовых записей параллельных прогонов",
+        "Настрой очищаемые синтетические фикстуры"
+      ],
+      "negative_triggers": [
+        "Измени только текст подсказки",
+        "Сравни цены LLM API"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Жизненный цикл тестовых данных",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "test-management",
+      "path": "extensions/qa/skills/test-management/SKILL.md",
+      "pack": "qa",
+      "purpose": "Интеграция с системами управления тестами",
+      "positive_triggers": [
+        "Свяжи тесты с ID в системе управления тестированием",
+        "Подготовь безопасную синхронизацию test cases в трекер"
+      ],
+      "negative_triggers": [
+        "Запиши одно локальное утверждение",
+        "Сделай визуальный макет"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Связи тестов и опционального трекера",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [],
+      "overlap_class": "NONE_CONFIRMED",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "test-review",
+      "path": "extensions/qa/skills/test-review/SKILL.md",
+      "pack": "qa",
+      "purpose": "Семантическая ревизия тестов",
+      "positive_triggers": [
+        "Найди ложноположительные assert в тестах",
+        "Проверь, что тест упадёт при намеренной регрессии"
+      ],
+      "negative_triggers": [
+        "Напиши новую реализацию сервиса",
+        "Подбери анимацию перехода"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Контрпримеры ложноположительных тестов",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "qa-code-review",
+        "code-review"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "findings": []
+    },
+    {
+      "skill_id": "test-strategy",
+      "path": "extensions/qa/skills/test-strategy/SKILL.md",
+      "pack": "qa",
+      "purpose": "Архитектура тестирования",
+      "positive_triggers": [
+        "Выбери уровни тестирования для проекта",
+        "Пересмотри тестовую стратегию после отказа сервиса"
+      ],
+      "negative_triggers": [
+        "Исправь одну строку Python",
+        "Подготовь юридическое письмо"
+      ],
+      "edge_case": null,
+      "required_context": "Исходная задача, ограничения, соответствующие файлы/контракты и доступные инструменты",
+      "output_contract": "Тестовая стратегия по слоям",
+      "acceptance_criteria": "Сопоставить результат с задачей и наблюдаемым подтверждением; невыбранные/незапущенные проверки пометить NOT_MEASURED",
+      "dependencies": [],
+      "related_skills": [
+        "qa-strategy"
+      ],
+      "overlap_class": "SOFT_OVERLAP_OR_COMPOSITION",
+      "hard_conflicts": [],
+      "permissions": "Не даёт прав на merge, deploy, секреты, платные вызовы или сторонние изменения; правила владельца выше",
+      "portability": "Source contract only; клиентское обнаружение и активация NOT_MEASURED",
+      "provenance": "Owner-reviewed exact-byte snapshot ID1337; изменение требует нового разрешения",
+      "review_status": "MANUALLY_REVIEWED_SOURCE",
+      "observed_activation": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "findings": [
+        "SQ44-010"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "ci-investigator",
+      "path": "extensions/qa/roles/ci-investigator.md",
+      "pack": "qa",
+      "purpose": "Ищет первую причинную ошибку в CI и отделяет продукт от инфраструктуры",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Первичная причина CI и минимальный следующий эксперимент",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "coverage-analyst",
+      "path": "extensions/qa/roles/coverage-analyst.md",
+      "pack": "qa",
+      "purpose": "Соотносит риски и требования с имеющимися тестами и отсутствующими наблюдениями",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Риск, evidence, пробел и проверка",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "flaky-analyst",
+      "path": "extensions/qa/roles/flaky-analyst.md",
+      "pack": "qa",
+      "purpose": "Определяет механизм недетерминированных тестов по повторам и окружению",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Гипотезы, частоты повторов, доказательства",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "implementer",
+      "path": ".agents/roles/implementer.md",
+      "pack": "core",
+      "purpose": "Реализует ограниченное согласованное изменение и подтверждает локальные проверки",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Изменённые файлы, выполненные проверки, ограничения",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "reviewer",
+        "qa-verifier"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "orchestrator",
+      "path": ".agents/roles/orchestrator.md",
+      "pack": "core",
+      "purpose": "Управляет задачами и зависимостями, назначает один контроллер процесса, сводит результаты",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Границы задачи, назначения и передача с критериями",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "implementer",
+        "reviewer",
+        "qa-verifier",
+        "researcher"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "qa-architect",
+      "path": "extensions/qa/roles/qa-architect.md",
+      "pack": "qa",
+      "purpose": "Выбирает уровни, ответственность и проверяемые качественные требования",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Стратегия тестирования и критерии",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-designer",
+        "coverage-analyst"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "qa-verifier",
+      "path": ".agents/roles/qa-verifier.md",
+      "pack": "core",
+      "purpose": "Проверяет поведение по независимым наблюдениям, не выдавая самооценку за отдельного проверяющего",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Независимые наблюдения или явно отсутствие независимости",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
+    },
+    {
+      "role_id": "quality-gatekeeper",
+      "path": "extensions/qa/roles/quality-gatekeeper.md",
+      "pack": "qa",
+      "purpose": "Делает evidence-based вывод о готовности к review/release без саморазрешения",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "READY_FOR_REVIEW, BLOCKED или INSUFFICIENT_EVIDENCE",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "qa-verifier",
+        "orchestrator"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
+    },
+    {
+      "role_id": "requirement-analyst",
+      "path": "extensions/qa/roles/requirement-analyst.md",
+      "pack": "qa",
+      "purpose": "Переводит запрос в проверяемые требования и приоритизирует неизвестное",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Проверяемые критерии и неопределённости",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "researcher",
+      "path": ".agents/roles/researcher.md",
+      "pack": "core",
+      "purpose": "Разрешает ограниченную неопределённость по проверяемым источникам без производственных правок",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Подтверждённые источниками альтернативы и неизвестное",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "reviewer",
+      "path": ".agents/roles/reviewer.md",
+      "pack": "core",
+      "purpose": "Проверяет diff на дефекты, регрессии и риски по конкретным путям",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Замечания с точными местами, severity и evidence",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator",
+        "implementer"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
+    },
+    {
+      "role_id": "security-reviewer",
+      "path": "extensions/qa/roles/security-reviewer.md",
+      "pack": "qa",
+      "purpose": "Исследует секреты, CI-полномочия и безопасные границы автоматизации",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Сценарии угроз с evidence",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "test-designer",
+      "path": "extensions/qa/roles/test-designer.md",
+      "pack": "qa",
+      "purpose": "Проектирует кейсы с независимыми оракулами до автоматизации",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Кейсы и объективные оракулы",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-implementer",
+        "test-reviewer"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "test-implementer",
+      "path": "extensions/qa/roles/test-implementer.md",
+      "pack": "qa",
+      "purpose": "Реализует тесты по заданным критериям и даёт реальные результаты",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Изменённые тесты и реальные результаты",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-reviewer",
+        "quality-gatekeeper"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "test-management-analyst",
+      "path": "extensions/qa/roles/test-management-analyst.md",
+      "pack": "qa",
+      "purpose": "Сохраняет идентичности тестов и координирует опциональные трекеры",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Карта ID и план синхронизации",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Не гарантирует существование отдельного агента",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "separation_of_duties": "Роль не может самостоятельно назначать независимого проверяющего."
+    },
+    {
+      "role_id": "test-reviewer",
+      "path": "extensions/qa/roles/test-reviewer.md",
+      "pack": "qa",
+      "purpose": "Выявляет ложные PASS и слабые тестовые оракулы независимой оценкой",
+      "required_inputs": "Задание, границы, evidence и доступные полномочия",
+      "output_contract": "Семантические findings и контрпримеры",
+      "handoff": "Передавать точные пути, фактические проверки, неизвестное и ответственного",
+      "independence": "Только при реально отдельном проверяющем и самостоятельном evidence; не подтверждено клиентом",
+      "permissions": "Нет права на merge/deploy без явного разрешения",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "handoff_to": [
+        "test-implementer",
+        "quality-gatekeeper"
+      ],
+      "separation_of_duties": "Фактическая независимость зависит от отдельного контекста/проверки. Только роль недостаточна."
+    }
+  ],
+  "profiles": [
+    {
+      "profile_id": "agent-architecture",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "architecture-decisions",
+        "agent-framework-fit",
+        "codebase-knowledge-map",
+        "qa-strategy"
+      ],
+      "purpose": "Решение по оркестрации, фреймворку и границам агента",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Решение по оркестрации, фреймворку и границам агента",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "backend",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "architecture-decisions",
+        "service-architecture",
+        "api-design",
+        "implementation",
+        "qa-strategy",
+        "code-review"
+      ],
+      "purpose": "Проектирование и реализация backend модулей и API",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Проектирование и реализация backend модулей и API",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "browser-task",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "browser-workflow-evidence",
+        "qa-strategy"
+      ],
+      "purpose": "Выполнение браузерных действий с доказательствами",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Выполнение браузерных действий с доказательствами",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "codex-feature",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "feature-delivery",
+        "minimal-safe-change",
+        "implementation",
+        "qa-strategy",
+        "code-review"
+      ],
+      "purpose": "Разработка новой функции через feature-delivery и общие инженерные проверки",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "REVIEW",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Разработка новой функции через feature-delivery и общие инженерные проверки",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-013"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "editorial",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "clear-voice"
+      ],
+      "purpose": "Точная редактура текста; не подтверждает техническую актуальность документации",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Точная редактура текста; не подтверждает техническую актуальность документации",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-004"
+      ],
+      "overlap_and_dependency_note": "не включает documentation-maintenance"
+    },
+    {
+      "profile_id": "editorial-qa",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "qa-clear-voice"
+      ],
+      "purpose": "Редактура QA-доказательств без изменения тестов",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Редактура QA-доказательств без изменения тестов",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "feature-delivery",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "feature-delivery",
+        "minimal-safe-change",
+        "implementation",
+        "qa-strategy",
+        "release-safety"
+      ],
+      "purpose": "Реализация функции одним основным контроллером feature-delivery",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Реализация функции одним основным контроллером feature-delivery",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "frontend",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "design-system-consistency",
+        "component-architecture",
+        "frontend-api-integration",
+        "implementation",
+        "qa-strategy",
+        "code-review"
+      ],
+      "purpose": "Разработка UI-компонентов и frontend API без фиксации фреймворка",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Разработка UI-компонентов и frontend API без фиксации фреймворка",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "fullstack",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "end-to-end-feature-design",
+        "fullstack-integration",
+        "implementation",
+        "qa-strategy",
+        "code-review"
+      ],
+      "purpose": "Проектирование сквозной функции и проверка интерфейсов слоёв, без отдельного контроллера",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Проектирование сквозной функции и проверка интерфейсов слоёв, без отдельного контроллера",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-001",
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "end-to-end-feature-design ссылается на внешний controller, но профиль его не включает"
+    },
+    {
+      "profile_id": "general",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "implementation",
+        "qa-strategy",
+        "code-review",
+        "minimal-safe-change"
+      ],
+      "purpose": "Универсальная ограниченная правка в существующем проекте",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Универсальная ограниченная правка в существующем проекте",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "make-feature",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "make-feature"
+      ],
+      "purpose": "Отдельный контроллер Make Feature, активируется явно, не параллельно feature-delivery",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "REVIEW",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Отдельный контроллер Make Feature, активируется явно, не параллельно feature-delivery",
+      "avoid_when": "Другой feature-delivery controller уже выбран",
+      "known_issue_ids": [
+        "SQ44-003"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "provider-research",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "research-verification",
+        "provider-reality-check"
+      ],
+      "purpose": "Проверка актуальных возможностей и ограничений LLM API",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Проверка актуальных возможностей и ограничений LLM API",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-all",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "api-testing",
+        "change-impact-analysis",
+        "collaborative-development",
+        "contract-testing",
+        "coverage-analysis",
+        "database-validation",
+        "defect-management",
+        "e2e-testing",
+        "failure-triage",
+        "flaky-analysis",
+        "graphify-adapter",
+        "integration-testing",
+        "playwright-testing",
+        "pytest-test-design",
+        "qa-clear-voice",
+        "qa-code-review",
+        "qa-safe-change",
+        "quality-gate-assessment",
+        "requirement-analysis",
+        "requirements-traceability",
+        "security-review",
+        "security-testing",
+        "test-analysis-design",
+        "test-data-management",
+        "test-management",
+        "test-review",
+        "test-strategy"
+      ],
+      "purpose": "Все 27 QA-навыков для осознанного широкого подключения; не минимальный профиль",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "REVIEW",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Все 27 QA-навыков для осознанного широкого подключения; не минимальный профиль",
+      "avoid_when": "Пользователю нужен узкий task profile, не вся QA-библиотека",
+      "known_issue_ids": [
+        "SQ44-008"
+      ],
+      "overlap_and_dependency_note": "условные навыки ставятся вместе; реальная активация NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-ci",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "failure-triage",
+        "flaky-analysis",
+        "test-data-management",
+        "test-review"
+      ],
+      "purpose": "Триаж и устранение нестабильности CI",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Триаж и устранение нестабильности CI",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-collaboration",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "collaborative-development",
+        "qa-safe-change",
+        "qa-code-review",
+        "test-review"
+      ],
+      "purpose": "Координация совместных изменений QA-инфраструктуры",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Координация совместных изменений QA-инфраструктуры",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-contract",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "contract-testing",
+        "integration-testing",
+        "api-testing",
+        "change-impact-analysis"
+      ],
+      "purpose": "Контрактные, интеграционные и API-проверки",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Контрактные, интеграционные и API-проверки",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-core",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "requirement-analysis",
+        "test-analysis-design",
+        "test-review",
+        "change-impact-analysis",
+        "quality-gate-assessment"
+      ],
+      "purpose": "Базовые требования, тест-дизайн и оценка качества",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Базовые требования, тест-дизайн и оценка качества",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-fullstack",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "requirement-analysis",
+        "test-analysis-design",
+        "test-review",
+        "change-impact-analysis",
+        "api-testing",
+        "contract-testing",
+        "integration-testing",
+        "e2e-testing",
+        "playwright-testing"
+      ],
+      "purpose": "Тесты QA для UI и backend; Playwright лишь при фактической доступности",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "REVIEW",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Тесты QA для UI и backend; Playwright лишь при фактической доступности",
+      "avoid_when": "Без Playwright некоторые установленныe навыки неприменимы",
+      "known_issue_ids": [
+        "SQ44-001"
+      ],
+      "overlap_and_dependency_note": "playwright-testing устанавливается без обязательного обнаружения Playwright"
+    },
+    {
+      "profile_id": "qa-management",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "requirements-traceability",
+        "test-management",
+        "defect-management",
+        "quality-gate-assessment"
+      ],
+      "purpose": "Управление тестовыми кейсами, дефектами и трассировкой",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Управление тестовыми кейсами, дефектами и трассировкой",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-python",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "test-analysis-design",
+        "test-review",
+        "api-testing",
+        "pytest-test-design",
+        "database-validation",
+        "test-data-management",
+        "failure-triage"
+      ],
+      "purpose": "Python-ориентированные QA-тесты, pytest лишь если установлен",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "REVIEW",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Python-ориентированные QA-тесты, pytest лишь если установлен",
+      "avoid_when": "Нет pytest для pytest-specific инструкций (остальные QA-навыки возможны)",
+      "known_issue_ids": [
+        "SQ44-002"
+      ],
+      "overlap_and_dependency_note": "pytest-test-design устанавливается при любом Python marker без подтверждения pytest"
+    },
+    {
+      "profile_id": "qa-release",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "change-impact-analysis",
+        "coverage-analysis",
+        "requirements-traceability",
+        "quality-gate-assessment"
+      ],
+      "purpose": "Проверка достаточности доказательств качества перед выпуском, не деплой",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "REFINE",
+      "suitable_when": "Проверка достаточности доказательств качества перед выпуском, не деплой",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [
+        "SQ44-006"
+      ],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-security",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "security-testing",
+        "test-data-management",
+        "test-review",
+        "quality-gate-assessment"
+      ],
+      "purpose": "QA-проверки авторизации и безопасности",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "QA-проверки авторизации и безопасности",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "qa-ui",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "test-analysis-design",
+        "e2e-testing",
+        "playwright-testing",
+        "test-review",
+        "quality-gate-assessment"
+      ],
+      "purpose": "UI-сценарии на Playwright, когда Playwright реально используется",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "UI-сценарии на Playwright, когда Playwright реально используется",
+      "avoid_when": "Нет Playwright в проекте",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "research",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "research-verification"
+      ],
+      "purpose": "Ограниченное техническое исследование",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Ограниченное техническое исследование",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "skill-import",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "skill-portability",
+        "external-skill-review",
+        "research-verification"
+      ],
+      "purpose": "Безопасная оценка и перенос Agent Skills",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Безопасная оценка и перенос Agent Skills",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "ui-fix",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "task-scoping",
+        "design-system-consistency",
+        "screenshot-fidelity",
+        "qa-strategy"
+      ],
+      "purpose": "Исправление визуального расхождения и проверка UI",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Исправление визуального расхождения и проверка UI",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    },
+    {
+      "profile_id": "ui-motion",
+      "source_path": "MANIFEST.json",
+      "skills": [
+        "design-system-consistency",
+        "motion-quality",
+        "qa-strategy"
+      ],
+      "purpose": "Создание и проверка интерфейсной анимации",
+      "source_selection": "Статическая конфигурация, не доказанное распознавание намерения",
+      "beginner_clarity": "PARTIAL",
+      "runtime_verified": "NOT_MEASURED",
+      "recommendation": "KEEP",
+      "suitable_when": "Создание и проверка интерфейсной анимации",
+      "avoid_when": "Предметная задача вне перечисленных skills или контекст/разрешения не позволяют",
+      "known_issue_ids": [],
+      "overlap_and_dependency_note": "Отдельные навыки активируются AI-клиентом, факт активации NOT_MEASURED"
+    }
+  ],
+  "overlaps": [
+    {
+      "skills": [
+        "feature-delivery",
+        "make-feature"
+      ],
+      "class": "HARD_EXCLUSIVE_CONTROLLER",
+      "source_rule": "WF001"
+    },
+    {
+      "skills": [
+        "adaptive-delivery",
+        "feature-delivery"
+      ],
+      "class": "HARD_EXCLUSIVE_CONTROLLER",
+      "source_rule": "WF002"
+    },
+    {
+      "skills": [
+        "adaptive-delivery",
+        "make-feature"
+      ],
+      "class": "HARD_EXCLUSIVE_CONTROLLER",
+      "source_rule": "WF003"
+    },
+    {
+      "skills": [
+        "implementation",
+        "minimal-safe-change"
+      ],
+      "class": "INTENTIONAL_COMPOSITION"
+    },
+    {
+      "skills": [
+        "qa-strategy",
+        "test-strategy"
+      ],
+      "class": "SOFT_OVERLAP"
+    },
+    {
+      "skills": [
+        "security-boundaries",
+        "security-review",
+        "security-testing"
+      ],
+      "class": "INTENTIONAL_COMPOSITION"
+    },
+    {
+      "skills": [
+        "clear-voice",
+        "editorial-naturalness",
+        "qa-clear-voice"
+      ],
+      "class": "SOFT_OVERLAP"
+    },
+    {
+      "skills": [
+        "api-design",
+        "contract-testing",
+        "api-testing"
+      ],
+      "class": "INTENTIONAL_COMPOSITION"
+    },
+    {
+      "skills": [
+        "end-to-end-feature-design",
+        "fullstack-integration",
+        "feature-delivery"
+      ],
+      "class": "INTENTIONAL_COMPOSITION"
+    }
+  ],
+  "beginner_scenarios": [
+    {
+      "request": "Создать приложение",
+      "candidate_profile": "codex-feature",
+      "limitation": "Проект, стек и целевой AI-клиент неизвестны; task=feature - эвристика, а не понимание естественного языка"
+    },
+    {
+      "request": "Исправить ошибку",
+      "candidate_profile": "general",
+      "limitation": "Выбор зависит от уровня ошибки; текущий рекомендатель не имеет отдельного task=bug"
+    },
+    {
+      "request": "Добавить функцию",
+      "candidate_profile": "codex-feature",
+      "limitation": "Нужно явно выбрать один controller; название codex-feature не универсально для всех клиентов"
+    },
+    {
+      "request": "Проверить качество проекта",
+      "candidate_profile": "qa-core",
+      "limitation": "Нет отдельного task=quality-audit, по маркерам может выбрать узкий qa-python/qa-fullstack"
+    },
+    {
+      "request": "Разработать API",
+      "candidate_profile": "backend",
+      "limitation": "Дополнительные навыки auth/data/migrations выбираются по задаче и не входят в короткий профиль"
+    },
+    {
+      "request": "Создать интерфейс",
+      "candidate_profile": "frontend",
+      "limitation": "State/form/performance skills опциональны, пользователь без опыта может не знать об этом"
+    }
+  ],
+  "limitations": [
+    "Ни один из 65 навыков не запускался в реальном клиенте в рамках этого аудита",
+    "Семантические выборы примеров - ручное ожидание; actual activation = NOT_MEASURED",
+    "Успех исходных тестов и модельная эффективность не подтверждаются этим файлом",
+    "Точные права на повторную публикацию ограничены owner-reviewed snapshot; независимое доказательство прав не получено"
+  ]
+}
