@@ -4,7 +4,7 @@
 |---|---|---|
 | Любой новый проект, Codex | task-scoping, implementation, qa-strategy, minimal-safe-change | Все hooks, серверы и сторонние зависимости |
 | Mobile/web UI | design-system-consistency, screenshot-fidelity, motion-quality по задаче | Новые дизайн-системы, другие наборы иконок, изменение релизных правил |
-| Domain backend | feature-delivery, qa-strategy, research-verification | Непроверенные формулы и медико-спортивные выводы из сторонних дизайн-навыков |
+| Domain backend | feature-delivery, qa-strategy, research-verification | Непроверенные предметно-специфичные формулы, правила и выводы из внешних навыков (например, медицинские, финансовые или инженерные утверждения без источников) |
 | Agent runtime | agent-framework-fit, codebase-knowledge-map, provider-reality-check, external-skill-review | NousResearch/hermes-agent целиком, непроверенные хранилища cookies, autopilot/deploy hooks |
 | knowledge base | codebase-knowledge-map при масштабном импорте, editorial-naturalness, qa-strategy | Ненужные браузерные движки, LLM-провайдеры и дизайн-генераторы |
 | Research Scout | provider-reality-check, research-verification | Бесплатность/качество API без проверки условий и реальных запросов |

@@ -37,8 +37,11 @@ python scripts/validate_with_skills_ref.py --scope all
 python -m unittest discover -s tests -p integration_skills_ref.py -v
 ```
 
-The default `--scope all` covers the **51** skills declared in `MANIFEST.json`:
-23 core (.agents/skills), 27 QA, and 1 Make Feature. The runner compares
+The default `--scope all` covers **all skills currently declared** in
+`MANIFEST.json` (65 in the checked main snapshot: 23 core/generic,
+27 QA, 1 Make Feature, 5 Frontend, 6 Backend and 3 Fullstack).
+These counts are a current inventory, not a historic validation result.
+The runner compares
 the manifest with directories, rejects missing or unlisted entries and requires
 an explicit success response from the reference CLI for every skill. A missing
 binary, non-zero exit, unexpected/no output, subprocess error or per-skill

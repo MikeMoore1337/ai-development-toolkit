@@ -48,31 +48,39 @@ Skills follow the [Agent Skills](https://agentskills.io/specification) directory
 
 ## Quick start
 
-**Requirements:** Python 3.12+ for the toolkit's validation workflow; an existing project directory to receive skills. Agent compatibility depends on the client version.
+**What you need:** Python 3.12+ and an existing project folder. The Toolkit supplies reusable instructions for a separately installed AI coding client; it does not install the client or grant permissions. Choose a profile for your task rather than browsing every skill.
+
+**Release status:** [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0) is the latest published release. The `main` branch also includes **unreleased** changes; see [Changelog](CHANGELOG.md). For a reproducible published version, check out the release tag.
+
+For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 
 ```bash
-# 1. Clone after publishing the repository on GitHub
+# 1. Clone the existing repository
 git clone https://github.com/MikeMoore1337/ai-development-toolkit.git
 cd ai-development-toolkit
 
-# 2. List curated profiles
-python scripts/install.py --list-profiles
+# 2. Browse profiles (read-only)
+python scripts/skill_manager.py catalog
 
-# 3. Preview changes (does not write files)
-python scripts/install.py --target /path/to/your-project --profile general
+# 3. Preview changes (no files written)
+python scripts/skill_manager.py install --target /path/to/your-project --profile general
 
-# 4. Apply only after reviewing the preview
-python scripts/install.py --target /path/to/your-project --profile general --apply
+# 4. Apply after reviewing the preview
+python scripts/skill_manager.py install --target /path/to/your-project --profile general --apply
+
+# 5. Inspect the managed installation
+python scripts/skill_manager.py status --target /path/to/your-project
 ```
 
-The default destination is `.agents/skills/` (Codex layout). For Claude Code, add `--layout claude`; for a custom client, use `--skills-dir`. The installer **refuses to overwrite an existing skill** and does not edit the target project's `AGENTS.md`.
+The default layout is Codex (`.agents/skills/`). For Claude Code, add `--layout claude` to install and status commands (`.claude/skills/`). Existing unmanaged skills and project `AGENTS.md` / `CLAUDE.md` are preserved. Install success proves a filesystem copy, **not** live client discovery or skill activation. Read [installation and safe updates](docs/INSTALLATION.md) for the legacy one-time copier, custom paths, diff previews, rollback and recovery.
 
 <details>
 <summary><strong>Windows / PowerShell example</strong></summary>
 
 ```powershell
-python scripts/install.py --target "C:\Work\my-app" --profile qa-python
-python scripts/install.py --target "C:\Work\my-app" --profile qa-python --apply
+python scripts/skill_manager.py install --target "C:\Work\my-app" --profile qa-python
+python scripts/skill_manager.py install --target "C:\Work\my-app" --profile qa-python --apply
+python scripts/skill_manager.py status --target "C:\Work\my-app"
 ```
 
 </details>
@@ -81,10 +89,10 @@ python scripts/install.py --target "C:\Work\my-app" --profile qa-python --apply
 
 | Your task | Recommended profile | Why |
 | :--- | :--- | :--- |
-| Implement a change | `codex-feature` |
+| Implement a change | `codex-feature` | Scope, implementation and review |
 | Build a frontend component | `frontend` | Stack-neutral component/API guidance |
 | Design a backend service | `backend` | Service and API contract guidance |
-| Integrate UI and API | `fullstack` | Cross-layer contract guidance | Scope, implementation, review and validation |
+| Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
 | Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
@@ -122,7 +130,7 @@ python -m unittest discover -s tests -v
 
 The existing required Ubuntu/Python 3.12 CI job additionally runs the official
 [Agent Skills reference validator](docs/AGENT_SKILLS_SPEC.md) on every
-manifest-declared skill (65 total), including QA and Make Feature. Local
+manifest-declared skill (the current manifest-defined inventory), including QA, Make Feature and engineering extensions. Local
 reproduction in an isolated virtual environment:
 
 ```bash

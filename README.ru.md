@@ -48,24 +48,31 @@
 
 ## Быстрый старт
 
-**Для локальной валидации нужен Python 3.12+** и существующая папка проекта для установки навыков.
+**Что понадобится:** Python 3.12+, папка своего проекта и отдельно установленный ИИ-клиент. Toolkit предоставляет инструкции для агента, а не самого агента. Выбери профиль под задачу - не нужно разбирать все навыки.
+
+**Версии:** последний опубликованный релиз - [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0). В `main` есть **ещё не выпущенные** изменения; см. [историю изменений](CHANGELOG.md). Для воспроизводимой установки конкретного релиза переключись на его тег.
+
+Для новой установки рекомендуется **Skill Manager v2**: предпросмотр, учёт установленных им файлов, безопасное обновление и восстановление.
 
 ```bash
-# После публикации проекта на GitHub
+# 1. Клонировать существующий репозиторий
 git clone https://github.com/MikeMoore1337/ai-development-toolkit.git
 cd ai-development-toolkit
 
-# Посмотреть профили
-python scripts/install.py --list-profiles
+# 2. Посмотреть профили без установки
+python scripts/skill_manager.py catalog
 
-# Сначала посмотреть план без изменений
-python scripts/install.py --target /path/to/project --profile general
+# 3. Предпросмотр без записи файлов
+python scripts/skill_manager.py install --target /path/to/project --profile general
 
-# Применить после проверки
-python scripts/install.py --target /path/to/project --profile general --apply
+# 4. Установить после проверки изменений
+python scripts/skill_manager.py install --target /path/to/project --profile general --apply
+
+# 5. Проверить состояние
+python scripts/skill_manager.py status --target /path/to/project
 ```
 
-По умолчанию навыки устанавливаются в `.agents/skills/`. Для Claude Code используй `--layout claude`, для других клиентов - `--skills-dir`. Существующие навыки не перезаписываются, `AGENTS.md` целевого проекта не изменяется.
+Для Codex используется `.agents/skills/`, для Claude Code - `.claude/skills/` (добавь `--layout claude` к командам установки и проверки). Чужие навыки и `AGENTS.md` / `CLAUDE.md` не перезаписываются. Установка файлов не подтверждает их обнаружение или использование моделью. Подробнее об [установке, обновлении и откате](docs/INSTALLATION.md), а также о простом одноразовом `install.py`.
 
 ## Какой профиль выбрать
 
@@ -95,7 +102,7 @@ python -m unittest discover -s tests -v
 ```
 
 В обязательном CI на Ubuntu/Python 3.12 также работает официальный
-[валидатор Agent Skills](docs/AGENT_SKILLS_SPEC.md): все 65 навыков
+[валидатор Agent Skills](docs/AGENT_SKILLS_SPEC.md): все навыки из актуального MANIFEST.json
 из реестра, включая QA и Make Feature. Локальный запуск в изолированном
 виртуальном окружении:
 

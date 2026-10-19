@@ -3,6 +3,17 @@
 The repository follows PR-based delivery. CI on a PR is necessary, not a
 substitute for independently verifying a tagged public release.
 
+## Version and release state
+
+- `MANIFEST.json.version` identifies the **last published baseline release** (currently `5.4.0`), not the version of every subsequent `main` commit.
+- `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
+- Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
+- Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
+- Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
+
+Current baseline: [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0) at `4bec16fc6ded5796f765210f77c78e4567e2fb6a` (2026-10-18). Compare [v5.4.0...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main) for changes not yet released.
+
+
 1. Work on a feature branch and document what changed and any migration risks.
 2. Run `python -m pip install -r requirements-dev.txt`.
 3. Run `python scripts/check_public_package.py`,

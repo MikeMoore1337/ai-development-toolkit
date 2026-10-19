@@ -2,18 +2,19 @@
 
 Client layouts, pinned source evidence and offline verification: [CLIENT_COMPATIBILITY.md](CLIENT_COMPATIBILITY.md).
 
-1. Prepare the target repository and note its existing `AGENTS.md` / `CLAUDE.md`. The toolkit never overwrites them.
-2. Preview a profile:
+**New project? Start with Skill Manager v2.** You need Python 3.12+, a clone of this Toolkit and an existing target project. The Toolkit does not install an AI client. Choose a profile with `python scripts/skill_manager.py catalog`, then:
 
-   ```bash
-   python scripts/install.py --target /path/to/repo --profile qa-core
-   ```
+```bash
+python scripts/skill_manager.py install --target /path/to/repo --profile qa-core
+python scripts/skill_manager.py install --target /path/to/repo --profile qa-core --apply
+python scripts/skill_manager.py status --target /path/to/repo
+```
 
-3. Review all `DRY-RUN` lines, then apply explicitly with `--apply`. No hidden downloads or local execution of bundled skill code occurs.
-4. Read the actual installed `SKILL.md` and verify that your agent client discovers it. Paths vary by version and configuration.
-5. Run relevant project checks. Installing an instruction is not proof of its benefit.
+The first command previews file-level changes; only `--apply` writes. Review the target project's existing `AGENTS.md`, `CLAUDE.md` and skill folders first; these files are never automatically rewritten. For Claude Code, use `--layout claude` consistently. Manager ownership and backups apply only to its own installations.
 
-Example `--layout claude` installs to `.claude/skills`; `--skills-dir PATH` sets the destination directly (trusted local paths only). Unknown names and duplicate destination skill names fail before applying. QA roles are documentation; they do not auto-create agents.
+**One-time copy without managed updates:** `python scripts/install.py --target /path/to/repo --profile qa-core`, then repeat with `--apply`. This legacy installer is still supported, refuses to overwrite existing skills and allows custom trusted `--skills-dir PATH` destinations. It does **not** create manager ownership or rollback history. Do not assume the Manager can adopt a legacy installation.
+
+**Verify:** use `status` for Manager-owned skills, inspect the copied `SKILL.md`, then separately check whether your installed, configured AI client actually discovers and activates the skill. Copying files, source-format compliance and real client activation are different claims. QA reference roles are documentation, not auto-created agents.
 
 **When moving to a public repository:** run validation and publication checks; review `extensions/qa/SOURCE_MAPPING.md`, licenses and all credential-like strings.
 
@@ -41,9 +42,9 @@ Run `python scripts/profile_metrics.py` for file-byte measurements (not model to
 
 The output includes a rationale and `read_only: true`. Every recommendation
 is **heuristic** and must be reviewed against local project rules. Use the
-existing installer for preview and explicit `--apply` after deciding.
+recommended Skill Manager for preview and explicit `--apply` after deciding.
 
-## Skill Manager v2 (opt-in)
+## Skill Manager v2 (recommended for managed installs)
 
 The existing `install.py` remains supported for simple one-time copies. The
 new `skill_manager.py` maintains an **ownership lockfile** and local history
