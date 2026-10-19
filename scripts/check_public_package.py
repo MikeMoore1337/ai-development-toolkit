@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import re
+import stat
 import sys
 from pathlib import Path
 
@@ -76,6 +77,14 @@ def scan(root: Path = ROOT) -> list[str]:
             relative = path.relative_to(root).as_posix()
             if _linked(path):
                 findings.append(f"Linked file: {relative}")
+                continue
+            try:
+                mode = path.lstat().st_mode
+            except OSError:
+                findings.append(f"Unreadable file: {relative}")
+                continue
+            if not stat.S_ISREG(mode):
+                findings.append(f"Unexpected special file: {relative}")
                 continue
             if path.name in FORBIDDEN_NAMES or path.suffix.lower() in FORBIDDEN_SUFFIXES:
                 findings.append(f"Forbidden file type: {relative}")
