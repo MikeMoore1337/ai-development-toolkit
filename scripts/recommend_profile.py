@@ -13,12 +13,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent",
-         "backend", "frontend", "research", "provider")
+         "backend", "frontend", "fullstack", "research", "provider")
 
 # Explicit, non-installing suggestions; the primary profile stays minimal.
 OPTIONAL_SKILLS = {
-    "backend": ("contract-testing", "database-validation", "release-safety"),
-    "frontend": ("screenshot-fidelity", "motion-quality", "playwright-testing"),
+    "backend": ("data-access", "database-migrations", "background-processing",
+                "authentication-authorization", "contract-testing",
+                "database-validation", "release-safety"),
+    "frontend": ("state-management", "forms-validation", "frontend-performance",
+                 "screenshot-fidelity", "motion-quality", "playwright-testing"),
+    "fullstack": ("cross-layer-debugging", "contract-testing", "e2e-testing"),
     "agent": ("security-boundaries", "external-skill-review"),
     "research": ("codebase-knowledge-map", "provider-reality-check"),
     "provider": ("architecture-decisions",),
@@ -26,6 +30,7 @@ OPTIONAL_SKILLS = {
 OPTIONAL_PROFILES = {
     "qa": ("qa-ci",),
     "frontend": ("ui-fix", "ui-motion"),
+    "fullstack": ("qa-fullstack",),
     "agent": ("provider-research",),
     "research": ("provider-research",),
 }
@@ -67,13 +72,16 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
             "agent": ("agent-architecture", "User-selected agent architecture work"),
             "backend": ("backend", "User-selected backend implementation and review"),
             "frontend": ("frontend", "User-selected frontend implementation; no framework inferred"),
+            "fullstack": ("fullstack", "User-selected cross-layer feature work; no technology inferred"),
             "research": ("research", "User-selected technical research and source verification"),
             "provider": ("provider-research", "User-selected LLM API or provider comparison"),
         }[task]
     profiles = manifest.get("profiles", {})
     if chosen not in profiles:
         raise ValueError(f"Profile missing from MANIFEST.json: {chosen}")
-    available = {name for names in profiles.values() for name in names}
+    available = set(manifest["core_skills"]) | set(manifest.get("extension_skills", ()))
+    for cfg in manifest.get("extension_packs", {}).values():
+        available.update(cfg["skills"])
     optional_skills = [name for name in OPTIONAL_SKILLS.get(task, ())
                        if name not in profiles[chosen] and name in available]
     optional_profiles = [name for name in OPTIONAL_PROFILES.get(task, ())

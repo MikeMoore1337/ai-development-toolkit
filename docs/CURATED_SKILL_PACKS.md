@@ -7,8 +7,9 @@ package manager, skill runtime, dependencies or automatic installation is introd
 
 | Task | Primary profile | Skills | Optional additions, never installed automatically |
 | --- | --- | ---: | --- |
-| Backend services, REST APIs | `backend` | 5 | `contract-testing`, `database-validation`, `release-safety` |
-| Frontend components / UI | `frontend` | 5 | `screenshot-fidelity`, `motion-quality`, `playwright-testing` |
+| Backend services, REST APIs | `backend` | 7 | `data-access`, `database-migrations`, `background-processing`, `authentication-authorization` |
+| Frontend components / UI | `frontend` | 7 | `state-management`, `forms-validation`, `frontend-performance` |
+| Fullstack feature integration | `fullstack` | 6 | `cross-layer-debugging`, `contract-testing`, `e2e-testing` |
 | Python API autotests | `qa-python` | 7 | `qa-ci` profile for CI failures |
 | Playwright UI tests | `qa-ui` | 5 | Separate `qa-ci` when relevant |
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
@@ -20,21 +21,34 @@ package manager, skill runtime, dependencies or automatic installation is introd
 
 ## Backend Development
 
-**Primary:** `backend` = `task-scoping`, `architecture-decisions`, `implementation`,
-`qa-strategy`, `code-review`. Suitable for architecture, source modifications,
-refactoring and tests for API/services. Optional contract and database validation
-are needed only when those boundaries exist. Do not assume Python, FastAPI,
-Django, SQLAlchemy or PostgreSQL. For QA-only work choose a QA profile instead.
+**Primary:** `backend` includes existing implementation and review guidance,
+plus `service-architecture` and `api-design`. Add `data-access`,
+`database-migrations`, `background-processing` and
+`authentication-authorization` only when the change touches those boundaries.
+These skills do not assume Python, Go, Java, .NET, any framework or database.
+For QA-only work choose an existing QA profile.
 
 ## Frontend Development
 
-**Primary:** `frontend` = `task-scoping`, `design-system-consistency`,
-`implementation`, `qa-strategy`, `code-review`. For existing design-system UI
-components and frontend review without assuming React, Next.js or Tailwind.
-For a narrow task prefer existing `ui-fix` or `ui-motion` instead.
-Add `screenshot-fidelity` only with reference evidence, `motion-quality` only
-for animation, and `playwright-testing` only with a usable Playwright stack.
-Not for backend work or inventing a new design system.
+**Primary:** `frontend` includes existing UI design, implementation and review
+guidance, plus `component-architecture` and `frontend-api-integration`.
+Add `state-management`, `forms-validation` or `frontend-performance`
+only for those concerns. No React, Vue, Angular, Svelte, TypeScript or CSS
+framework is mandated. For narrow visual work prefer `ui-fix` or
+`ui-motion`; use screenshot and motion checks when there is relevant evidence.
+
+## Fullstack Development
+
+**Primary:** `fullstack` includes `end-to-end-feature-design` and
+`fullstack-integration` alongside general planning, coding and review.
+Add `cross-layer-debugging` for failures crossing layers, plus specific
+Frontend, Backend or QA skills only where the task needs them. This is a
+cross-layer contract profile, **not** a replacement for a feature-delivery
+controller. Choose only one of `feature-delivery` or `make-feature` when
+a separate orchestrated feature workflow is desired.
+
+[Universal engineering skill inventory](UNIVERSAL_ENGINEERING.md) explains
+activation boundaries, stack-neutrality and acceptance examples.
 
 ## QA Engineering
 
@@ -65,6 +79,7 @@ profile requires paid LLM/search API calls. No unverifiable freshness claims.
 ```bash
 python scripts/recommend_profile.py --target /path/to/project --task backend
 python scripts/recommend_profile.py --target /path/to/project --task frontend
+python scripts/recommend_profile.py --target /path/to/project --task fullstack
 python scripts/recommend_profile.py --target /path/to/project --task research
 python scripts/recommend_profile.py --target /path/to/project --task provider
 python scripts/skill_manager.py catalog --profile backend
