@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from dataclasses import asdict, dataclass
@@ -215,19 +216,29 @@ def check_link(root: Path, source: Path, line: int, raw: str,
             add(findings, "ANCHOR001", location(source, root), line, "Unresolved heading anchor: " + raw)
 
 
-def markdown_files(root: Path, skills: dict[str, Path], roles: dict[str, Path]) -> list[Path]:
-    sources: set[Path] = set(roles.values())
-    for folder in skills.values():
-        if folder.is_dir():
-            sources.update(folder.rglob("*.md"))
-    sources.update((root / "docs").rglob("*.md"))
-    sources.update((root / "extensions/qa").glob("*.md"))
-    for path in (root / "README.md", root / "README.ru.md", root / "AGENTS.md",
-                 root / "CONTRIBUTING.md"):
-        if path.is_file():
-            sources.add(path)
-    return sorted(sources)
+# Generated environments can contain Markdown from untracked dependencies.
+# Only scan repository sources, not caches, VCS internals or temporary artifacts.
+IGNORED_MARKDOWN_DIRS = frozenset({
+    ".git", ".venv", "venv", "node_modules", ".tox", ".mypy_cache",
+    ".pytest_cache", ".ruff_cache", "__pycache__", ".hermes-compat",
+    ".artifacts",
+})
 
+
+def markdown_files(root: Path) -> list[Path]:
+    """Find every repository Markdown file, including templates and recipes."""
+    sources: list[Path] = []
+
+    def raise_walk_error(exc: OSError) -> None:
+        raise exc
+
+    for parent, dirs, files in os.walk(root, topdown=True, followlinks=False,
+                                       onerror=raise_walk_error):
+        dirs[:] = sorted(d for d in dirs if d not in IGNORED_MARKDOWN_DIRS)
+        for name in sorted(files):
+            if name.lower().endswith(".md"):
+                sources.append(Path(parent) / name)
+    return sorted(sources)
 
 def check_markdown(root: Path, paths: list[Path], findings: list[Finding]) -> None:
     cache: dict[Path, set[str]] = {}
@@ -271,7 +282,7 @@ def inspect(root: Path = ROOT) -> dict:
             for rule, combination, reason in exclusions:
                 if combination.issubset(chosen):
                     add(findings, rule, "MANIFEST.json", 1, name + ": " + reason)
-        paths = markdown_files(root, skills, roles)
+        paths = markdown_files(root)
         counts["markdown_files"] = len(paths)
         check_markdown(root, paths, findings)
     except (OSError, ValueError, KeyError, TypeError, UnicodeError) as exc:
