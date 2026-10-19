@@ -11,10 +11,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-from profile_metrics import skill_paths
-from validate_pack import parse_metadata, validate_skill
-from validate_quality import check_markdown
-from verify_client_compatibility import load_registry
+try:
+    from scripts.profile_metrics import skill_paths
+    from scripts.validate_pack import parse_metadata, validate_skill
+    from scripts.validate_quality import check_markdown
+    from scripts.verify_client_compatibility import load_registry
+except ModuleNotFoundError:
+    from profile_metrics import skill_paths
+    from validate_pack import parse_metadata, validate_skill
+    from validate_quality import check_markdown
+    from verify_client_compatibility import load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_VERSION = 1
