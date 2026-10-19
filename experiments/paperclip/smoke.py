@@ -129,11 +129,25 @@ def main() -> None:
         })
         if not isinstance(result, dict) or not isinstance(result.get("imported"), list):
             raise RuntimeError("GitHub import response has unexpected shape")
-        if not any(
-            isinstance(item, dict) and item.get("slug") == "minimal-safe-change"
-            for item in result["imported"]
-        ):
-            raise RuntimeError("GitHub import returned no matching skill")
+        matches = result["imported"]
+        if len(matches) != 1 or not isinstance(matches[0], dict):
+            raise RuntimeError("GitHub import must select exactly one skill")
+        imported_skill = matches[0]
+        expected_ref = "73688b472ff3cce8091914b3d1845c414d930c7a"
+        if imported_skill.get("slug") != "minimal-safe-change":
+            raise RuntimeError("GitHub import returned the wrong skill slug")
+        if imported_skill.get("sourceType") != "github":
+            raise RuntimeError("GitHub imported skill was not recorded as GitHub-sourced")
+        if imported_skill.get("sourceRef") != expected_ref:
+            raise RuntimeError("GitHub import did not retain the pinned commit SHA")
+        github_skill_id = imported_skill.get("id")
+        if not isinstance(github_skill_id, str) or not github_skill_id:
+            raise RuntimeError("GitHub import did not return the imported skill ID")
+        github_stored = request(
+            "GET", f"/api/companies/{github_company_id}/skills/{github_skill_id}/files?path=SKILL.md"
+        )
+        if not isinstance(github_stored, dict) or github_stored.get("content") != source_markdown:
+            raise RuntimeError("GitHub imported SKILL.md differs from pinned Toolkit source")
     except RuntimeError as exc:
         github_status = "BLOCKED"
         # The exception contains only HTTP status, error code and a restricted
@@ -150,6 +164,8 @@ def main() -> None:
         "managed_skill_created": "minimal-safe-change",
         "managed_skill_exact_source": True,
         "github_import": github_status,
+        "github_import_exact_source_verified": github_status == "PASS",
+        "github_import_commit_pinned_verified": github_status == "PASS",
         "skill_count": len(skills),
         "real_agent_trials": 0,
         "model_calls_requested_by_test": 0,
