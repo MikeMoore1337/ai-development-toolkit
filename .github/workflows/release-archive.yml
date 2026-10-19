@@ -78,7 +78,12 @@ jobs:
           if [[ -f "$archive_root/scripts/validate_provenance.py" ]]; then
             python "$archive_root/scripts/validate_provenance.py" --root "$archive_root" --mode release --report "$RUNNER_TEMP/provenance-release.json"
           else
-            echo "NOT_VERIFIED: legacy archive has no provenance validator; checksum validation is not license clearance."
+            echo "NOT_VERIFIED: archive has no provenance validator; checksums do not establish distribution rights."
+            if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+              echo "BLOCKED: refusing a new release tag without a provenance validator."
+              exit 1
+            fi
+            echo "Historical release/manual check: report NOT_VERIFIED; no retroactive clearance."
           fi
       - name: Publish verification evidence
         if: always()
