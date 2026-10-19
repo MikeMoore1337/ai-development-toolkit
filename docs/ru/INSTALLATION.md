@@ -1,5 +1,22 @@
 # Безопасная установка навыков
 
+## Простой CLI поверх Skill Manager v2
+
+Нужны Python 3.12+, копия Toolkit и **существующая** папка проекта. Новый интерфейс не скачивает и не устанавливает ИИ-клиенты. Команды запускаются из корня Toolkit:
+
+~~~bash
+python scripts/adt.py profile list
+python scripts/adt.py doctor --target /path/to/repo
+python scripts/adt.py profile plan --target /path/to/repo --task qa
+python scripts/adt.py init --target /path/to/repo --profile general
+python scripts/adt.py init --target /path/to/repo --profile general --apply
+python scripts/adt.py status --target /path/to/repo
+~~~
+
+В Windows можно использовать `py -3` и путь к проекту Windows. Для папок Claude Code укажите `--layout claude`. Наличие этой папки **не подтверждает** установку или активацию клиента. Все команды, кроме `init --apply`, выполняются **без записи**. Перед `--apply` изучите план изменений файлов. Несуществующий проект CLI не создаёт. `doctor` обнаруживает проблемы состояния, дрейф, ссылки, прерванные операции и чужие навыки, но сам ничего не исправляет; права записи и активация клиента могут остаться NOT_VERIFIED. После прерванной операции проверьте `python scripts/skill_manager.py recover --target /path/to/repo` и только после проверки выполняйте восстановление с `--apply`. Обновление и откат управляемых навыков выполняет старый `skill_manager.py`. Повторный `init` не дублирует уже управляемые чистые навыки, чужие каталоги не переписываются, `AGENTS.md` и `CLAUDE.md` сохраняются.
+
+Для технической документации используйте `--task docs` (профиль `docs-technical`), для редактуры текста - `--task docs-edit` (`editorial`), для фактической сверки - `--task docs-verify`. Подбор QA эвристический: наличие Python/JavaScript не доказывает установку pytest или Playwright. Широкий `qa-all` содержит 27 QA-навыков; обычно достаточно узкого профиля. Число файлов не равно расходу токенов.
+
 [Русская документация](README.md) | [Начало работы](GETTING_STARTED.md) | [English source](../INSTALLATION.md)
 
 Это перевод [исходного руководства по установке](../INSTALLATION.md). Технические названия, команды и значения флагов оставлены без изменений. О фактически проверенной совместимости клиентов и ограничениях см. [CLIENT_COMPATIBILITY.md (EN)](../CLIENT_COMPATIBILITY.md).
