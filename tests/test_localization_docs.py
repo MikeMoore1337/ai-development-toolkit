@@ -23,6 +23,9 @@ FIXTURE_FILES = (
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
+    "docs/CLIENT_MIGRATION.md",
+    "docs/CLIENT_COMPATIBILITY.md",
+    "docs/PUBLICATION_POLICY.md",
     "docs/ADAPTATION.md",
     "docs/PUBLICATION_POLICY.md",
     "docs/ru/README.md",
@@ -31,6 +34,10 @@ FIXTURE_FILES = (
     "docs/ru/INSTALLATION.md",
     "docs/ru/SKILLS_CATALOG.md",
     "docs/ru/CURATED_SKILL_PACKS.md",
+    "docs/ru/CLIENT_MIGRATION.md",
+    "docs/ru/CLIENT_COMPATIBILITY.md",
+    "docs/ru/PUBLICATION_POLICY.md",
+    "docs/ru/ACCEPTANCE.md",
 )
 
 
@@ -125,6 +132,32 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(content.replace("(ru/INSTALLATION.md)", "(INSTALLATION.md)", 1), encoding="utf-8")
         self.check("L10N004")
 
+
+
+
+    def test_advanced_guide_language_link_fails(self):
+        page = self.root / "docs/CLIENT_MIGRATION.md"
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/CLIENT_MIGRATION.md)", text)
+        page.write_text(text.replace("(ru/CLIENT_MIGRATION.md)", "(CLIENT_MIGRATION.md)", 1),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_missing_migration_command_fails(self):
+        page = self.root / "docs/ru/CLIENT_MIGRATION.md"
+        text = page.read_text(encoding="utf-8")
+        command = "python scripts/skill_manager.py migrate --target /tmp/adt-cli-python-demo --from-layout codex --layout claude --apply"
+        self.assertIn(command, text)
+        page.write_text(text.replace(command, "echo missing command", 1), encoding="utf-8")
+        self.check("L10N006")
+
+    def test_removed_release_gate_fails(self):
+        page = self.root / "docs/ru/PUBLICATION_POLICY.md"
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("--mode release", text)
+        page.write_text(text.replace("--mode release", "--mode inventory", 1),
+                        encoding="utf-8")
+        self.check("L10N009")
 
 
 if __name__ == "__main__":
