@@ -42,8 +42,13 @@ def request(method: str, path: str, payload: dict | None = None):
         detail = failure.get("details")
         code = detail.get("code") if isinstance(detail, dict) else None
         label = code if isinstance(code, str) and code.replace("_", "").isalnum() else "unknown"
+        message = failure.get("error")
+        if not isinstance(message, str):
+            message = failure.get("message")
+        # Safe local error context only, never raw bodies, URLs or credentials.
+        safe = "".join(ch for ch in message[:120] if ch.isalpha() or ch in " -_.:,") if isinstance(message, str) else ""
         raise RuntimeError(
-            f"Paperclip {method} {path}: HTTP {exc.code}, error_code={label}"
+            f"Paperclip {method} {path}: HTTP {exc.code}, error_code={label}, reason={safe!r}"
         ) from None
     except URLError as exc:
         raise RuntimeError(f"Paperclip is not reachable at loopback: {exc.reason}") from None
