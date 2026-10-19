@@ -345,6 +345,7 @@ class SkillManagerTests(unittest.TestCase):
             if (path.name == "meta.json" and payload.get("status") == "pending"
                     and not injected[0]):
                 injected[0] = True
+                other.parent.mkdir(parents=True, exist_ok=True)
                 manager.shutil.copytree(
                     self.source / ".agents" / "skills" / "test-skill", other)
 
