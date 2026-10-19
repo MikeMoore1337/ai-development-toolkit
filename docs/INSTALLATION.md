@@ -62,8 +62,11 @@ py -3 scripts/skill_manager.py recover --target $project
 py -3 scripts/skill_manager.py recover --target $project --apply
 ```
 
-The manager stores `.adt/skills-lock.json`, `.adt/manager.lock` and verified
-transaction snapshots in `.adt/history/` **inside the target project**.
+The manager stores the first client's schema-v1 lock in `.adt/skills-lock.json`.
+For a second client it uses the independently owned
+`.adt/skills-lock-codex.json` or `.adt/skills-lock-claude.json`. Shared
+`.adt/manager.lock` and transaction snapshots in `.adt/history/` remain
+**inside the target project**.
 Backups may include copies of installed skill files: exclude `.adt/` from
 commits where appropriate. The manager does not edit `.gitignore` automatically.
 
@@ -84,3 +87,24 @@ byte comparisons; they do not reveal file contents or bypass the ownership
 lock. Review this list before supplying `--apply`. A clean, unchanged update
 reports an empty change set. When a file contains local modifications outside
 the recorded lockfile digest, the operation stops rather than overwriting it.
+
+### Discover profiles and copy managed skills between clients
+
+```bash
+python scripts/skill_manager.py catalog
+python scripts/skill_manager.py catalog --profile qa-python
+python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude
+python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude --apply
+python scripts/skill_manager.py status --target /path/to/repo --layout claude
+```
+
+Migrate **copies**, never removes, the clean, Manager-owned source skills,
+with exact SHA256 match to the current Toolkit source. It refuses collisions,
+drift, legacy/unmanaged folders and different source bytes. `status`,
+`update`, `uninstall` and `rollback` use `--layout` to select the
+independent client; `recover` handles pending transactions across both.
+
+See [full Windows/Linux migration scenarios and limitations](CLIENT_MIGRATION.md).
+File installation alone is not proof of client discovery, model activation or
+effectiveness. For arbitrary custom `--skills-dir` locations continue to use
+legacy `install.py`; Skill Manager does not claim ownership of them.
