@@ -40,6 +40,16 @@ jobs:
           node --version
           command -v python3
           test -f .agents/skills/minimal-safe-change/SKILL.md
+          # Diagnose anonymous GitHub API access without ever passing a token.
+          # Only HTTP codes are logged, never payloads or authorization.
+          for endpoint in \
+            "https://api.github.com/repos/MikeMoore1337/ai-development-toolkit" \
+            "https://api.github.com/repos/MikeMoore1337/ai-development-toolkit/commits/main"; do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              --max-time 15 --header 'Accept: application/vnd.github+json' \
+              "$endpoint" || true)"
+            echo "ANONYMOUS_GITHUB_API: status=$status endpoint=$endpoint"
+          done
           mkdir -p "$RUNNER_TEMP/paperclip-pilot"
           timeout 700s npx --yes --registry https://registry.npmjs.org "paperclipai@${PAPERCLIP_VERSION}" onboard \
             --yes --no-install-service --data-dir "$RUNNER_TEMP/paperclip-pilot" \
