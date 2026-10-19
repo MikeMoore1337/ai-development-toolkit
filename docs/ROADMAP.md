@@ -6,7 +6,7 @@
 - [ ] Run controlled Codex/Claude/Hermes activation trials on independent demo repositories.
 - [x] Record published component provenance and enforce inventory/release preflight (Issue #28). Owner reports ID1337 permission for exact snapshotted files; release still requires separate owner sign-off and independent legal verification is not asserted; see [audit](PROVENANCE_AUDIT.md).
 - [x] Add deterministic checks for broken local links, anchors, profile inventories and declared workflow exclusions (Issue #26). Semantic instruction conflicts and agent discovery behavior remain manual/live checks.
-- [ ] Introduce public docs for CLI usage and migration between clients.
+- [x] Document CLI catalog and safe managed Codex/Claude migration (Issue #30; filesystem acceptance only, live client trials remain open).
 
 ## Medium term
 
@@ -18,7 +18,7 @@
 
 ## Later
 
-- [ ] Maintain compatibility matrix for Codex, Claude Code, Hermes and other clients.
+- [x] Document filesystem layouts and explicit client-support limitations for Codex, Claude Code, Hermes and custom clients (Issue #30; no live execution).
 - [ ] Publish curated packs for QA, frontend, backend, agent architecture and research.
 - [ ] Add automated provenance and release verification to community submissions.
 
