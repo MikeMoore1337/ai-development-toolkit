@@ -185,6 +185,29 @@ class QualityGateTests(unittest.TestCase):
         self.file("MANIFEST.json", json.dumps(self.manifest))
         self.check("WF001")
 
+    def test_fullstack_design_without_controller_and_reject_dual_controller(self):
+        """Integration regression for SQ44-003, using the real quality gate."""
+        design = "end-to-end-feature-design"
+        self.skills.append(design)
+        self.manifest["core_skills"] = self.skills
+        self.file(f".agents/skills/{design}/SKILL.md", "# Design only\\n")
+        self.manifest["profiles"]["fullstack"] = [design]
+        self.file("MANIFEST.json", json.dumps(self.manifest))
+        self.check()  # Design-only has no controller and is valid.
+        for selected in ("feature-delivery", "make-feature"):
+            self.manifest["profiles"]["fullstack"] = [design, selected]
+            self.file("MANIFEST.json", json.dumps(self.manifest))
+            self.check()  # Exactly one controller is allowed.
+        self.manifest["profiles"]["fullstack"] = [
+            design, "feature-delivery", "make-feature",
+        ]
+        self.file("MANIFEST.json", json.dumps(self.manifest))
+        report = self.check("WF001")  # Both controllers are rejected.
+        self.assertTrue(any(
+            item["rule_id"] == "WF001" and "fullstack" in item["explanation"]
+            for item in report["findings"]
+        ), report)
+
     def test_legacy_conflict(self):
         self.manifest["profiles"]["feature"].append("adaptive-delivery")
         self.file("MANIFEST.json", json.dumps(self.manifest))
