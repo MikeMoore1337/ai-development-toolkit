@@ -101,6 +101,14 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         else:
             approved = approvals["approved_components"]
 
+    # Approval claims, scope and classifications must agree even when a
+    # previously adapted component is relabelled "original" or "verified".
+    classifications = {}
+    if approvals is not None and approved:
+        classifications = approvals.get("approved_metadata")
+        if not isinstance(classifications, dict) or set(classifications) != set(approved):
+            fail("OWNER_CLASSIFICATION", "approved_metadata must match approved component paths")
+            classifications = {}
     records = data["components"]
     covered: set[str] = set()
     skill_records: set[str] = set()
@@ -120,6 +128,10 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         label = str(ident)
         if not isinstance(ident, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", ident):
             fail("ID", f"{label}: unsafe or invalid id")
+            continue
+        if not isinstance(raw_path, str):
+            fail("SCHEMA", f"{label}: path must be a string")
+            continue
         if ident in ids:
             fail("DUPLICATE_ID", label)
         ids.add(ident)
@@ -136,15 +148,15 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         if not target.is_file() and not target.is_dir():
             fail("PATH_TYPE", f"{label}: {raw_path}")
             continue
-        if item["kind"] not in KINDS:
+        if not isinstance(item["kind"], str) or item["kind"] not in KINDS:
             fail("KIND", label)
-        if item["origin"] not in ORIGINS:
+        if not isinstance(item["origin"], str) or item["origin"] not in ORIGINS:
             fail("ORIGIN", label)
-        if item["status"] not in STATUSES:
+        if not isinstance(item["status"], str) or item["status"] not in STATUSES:
             fail("STATUS", label)
         else:
             counts[item["status"]] += 1
-        if item["distribution"] not in DISTRIBUTION:
+        if not isinstance(item["distribution"], str) or item["distribution"] not in DISTRIBUTION:
             fail("DISTRIBUTION", label)
         if not isinstance(item["name"], str) or not item["name"].strip():
             fail("NAME", label)
@@ -164,7 +176,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
             not isinstance(item["source_url"], str) or not item["source_url"].startswith("https://")
         ):
             fail("SOURCE_URL", label)
-        if item["origin"] in {"adapted", "redistributed"}:
+        if isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed"}:
             if not item["source_url"] and not item["source_reference"]:
                 fail("SOURCE_MISSING", label)
             if item["license"] in {"NONE", ""}:
@@ -182,12 +194,22 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         # copy; that does NOT make its copyright/permission independently verified.
         # Freeze the exact reviewed file bytes to prevent the approval from
         # silently applying to later substitutions or new files.
-        needs_approval = (item["distribution"] == "included"
+        # An existing approval cannot be bypassed by changing origin/status.
+        locked = raw_path in approved or "owner_approval_id" in item
+        needs_approval = (locked or (item["distribution"] == "included"
                           and item["origin"] in {"adapted", "redistributed", "unknown"}
-                          and item["status"] != "verified")
+                          and item["status"] != "verified"))
         if needs_approval:
             if approvals is None or item.get("owner_approval_id") != approvals.get("id"):
                 fail("OWNER_APPROVAL", f"{label}: explicit matching owner review required")
+            if raw_path in approved:
+                frozen = classifications.get(raw_path)
+                fields = ("origin", "license", "status", "distribution", "kind")
+                if (not isinstance(frozen, dict) or
+                        any(item.get(field) != frozen.get(field) for field in fields)):
+                    fail("OWNER_CLASSIFICATION", f"{label}: reviewed metadata changed")
+            elif locked:
+                fail("OWNER_SCOPE", f"{label}: approval reference has no matching reviewed path")
             snapshots = approved.get(raw_path)
             if not isinstance(snapshots, dict) or not snapshots:
                 fail("OWNER_SCOPE", f"{label}: owner approval must pin every distributed file")
@@ -243,6 +265,13 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
     for path in sorted(approved):
         if path not in declared_paths:
             fail("OWNER_SCOPE", f"approval references unknown component: {path}")
+    # A release archive must be link-free even if the link is nested inside
+    # a registered skill directory (rather than at the directory root).
+    for path in root.rglob("*"):
+        if any(part in SKIP for part in path.relative_to(root).parts):
+            continue
+        if path.is_symlink():
+            fail("SYMLINK", path.relative_to(root).as_posix())
     for path in sorted(expected_skills - skill_records):
         fail("UNDECLARED_SKILL", path)
     for path in sorted(skill_records - expected_skills):
