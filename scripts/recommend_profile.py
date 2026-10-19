@@ -13,7 +13,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent",
-         "backend", "frontend", "fullstack", "research", "provider")
+         "backend", "frontend", "fullstack", "research", "provider",
+         "docs-edit", "docs-verify")
 
 # Explicit, non-installing suggestions; the primary profile stays minimal.
 OPTIONAL_SKILLS = {
@@ -26,6 +27,8 @@ OPTIONAL_SKILLS = {
     "agent": ("security-boundaries", "external-skill-review"),
     "research": ("codebase-knowledge-map", "provider-reality-check"),
     "provider": ("architecture-decisions",),
+    "docs": ("clear-voice",),
+    "docs-verify": ("clear-voice",),
 }
 OPTIONAL_PROFILES = {
     "qa": ("qa-ci",),
@@ -47,28 +50,47 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
     has_py = any((target / marker).is_file() for marker in python_markers)
     has_js = any((target / marker).is_file() for marker in js_markers)
     has_playwright = any((target / marker).is_file() for marker in playwright_markers)
+    has_pytest_config = (target / "pytest.ini").is_file()
     observed = {
         "python": has_py,
         "javascript": has_js,
         "playwright_config": has_playwright,
+        "pytest_config": has_pytest_config,
+        "pytest_installed": "NOT_VERIFIED",
+        "playwright_installed": "NOT_VERIFIED",
         "go": (target / "go.mod").is_file(),
     }
+    warnings = []
+    alternatives = []
     if task == "qa":
-        if has_py and has_js:
-            chosen, why = "qa-fullstack", "Python and JavaScript configuration detected"
+        if has_py and has_js and has_playwright:
+            chosen, why = "qa-fullstack", "Python, JavaScript and Playwright config markers detected"
+            warnings.append("Playwright configuration does not confirm that Playwright is installed.")
+            warnings.append("pytest availability is NOT_VERIFIED; a Python marker alone is insufficient.")
+            alternatives.append("qa-core")
         elif has_py:
-            chosen, why = "qa-python", "Python configuration detected"
+            chosen, why = "qa-python", "Python project markers detected; browser QA not assumed"
+            warnings.append("pytest availability is NOT_VERIFIED; pytest-test-design needs pytest.")
+            alternatives.append("qa-core")
+            if has_js:
+                warnings.append("JavaScript does not prove Playwright support; qa-fullstack was not selected.")
         elif has_js and has_playwright:
-            chosen, why = "qa-ui", "JavaScript and Playwright configuration detected"
+            chosen, why = "qa-ui", "JavaScript and Playwright config markers detected"
+            warnings.append("Playwright config does not prove that the dependency is installed.")
+            alternatives.append("qa-core")
         else:
             chosen, why = "qa-core", "No supported language-specific QA stack confidently detected"
+            if has_js:
+                warnings.append("JavaScript project alone is not evidence of Playwright.")
     else:
         chosen, why = {
             "feature": ("codex-feature", "General-purpose implementation workflow"),
             "ui": ("ui-fix", "User-selected interface work"),
             "ci": ("qa-ci", "User-selected CI or flaky-test diagnosis"),
             "release": ("qa-release", "User-selected release quality review"),
-            "docs": ("editorial", "User-selected documentation editing"),
+            "docs": ("docs-technical", "Technical documentation maintenance and factual checks"),
+            "docs-edit": ("editorial", "Language editing only; not technical verification"),
+            "docs-verify": ("docs-technical", "Verify technical documentation against source evidence"),
             "agent": ("agent-architecture", "User-selected agent architecture work"),
             "backend": ("backend", "User-selected backend implementation and review"),
             "frontend": ("frontend", "User-selected frontend implementation; no framework inferred"),
@@ -93,10 +115,12 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
         "profile": chosen,
         "skills": profiles[chosen],
         "reason": why,
+        "warnings": warnings,
+        "alternatives": alternatives,
         "detected": observed,
         "read_only": True,
         "confidence": "heuristic",
-        "note": "Verify project rules and choose explicitly before running install.py --apply.",
+        "note": "Heuristic only. Inspect the manager preview before explicit --apply; no dependency was installed or executed.",
     }
 
 
