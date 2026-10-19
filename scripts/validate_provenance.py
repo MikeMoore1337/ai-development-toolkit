@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from collections import Counter
 from datetime import date
 import json
 from pathlib import Path, PurePosixPath
 import re
 import sys
+
+from verify_checksums import canonical_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTER = "provenance/skills.json"
@@ -85,6 +88,18 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         expected_skills = skill_dirs(root, manifest)
     except (ValueError, TypeError, KeyError, OSError) as exc:
         return {"ok": False, "mode": mode, "counts": {}, "issues": [f"MANIFEST: {exc}"]}
+
+    approvals = data.get("owner_review_record")
+    approved = {}
+    if approvals is not None:
+        if not isinstance(approvals, dict) or not isinstance(approvals.get("id"), str) or (
+            approvals.get("review_outcomes") != "permitted"
+        ) or approvals.get("source") != "owner_reported" or (
+            not isinstance(approvals.get("approved_components"), dict)
+        ):
+            fail("OWNER_RECORD", "invalid approval record or missing explicit owner decision")
+        else:
+            approved = approvals["approved_components"]
 
     records = data["components"]
     covered: set[str] = set()
@@ -163,6 +178,32 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                 fail("FALSE_VERIFIED", f"{label}: verified needs independently confirmed rights evidence")
         if item["status"] in {"unknown", "restricted", "requires_owner_review"} and item["distribution"] == "included":
             fail("UNSAFE_DISTRIBUTION", label)
+        # An owner can authorize publication of a documented, externally derived
+        # copy; that does NOT make its copyright/permission independently verified.
+        # Freeze the exact reviewed file bytes to prevent the approval from
+        # silently applying to later substitutions or new files.
+        needs_approval = (item["distribution"] == "included"
+                          and item["origin"] in {"adapted", "redistributed", "unknown"}
+                          and item["status"] != "verified")
+        if needs_approval:
+            if approvals is None or item.get("owner_approval_id") != approvals.get("id"):
+                fail("OWNER_APPROVAL", f"{label}: explicit matching owner review required")
+            snapshots = approved.get(raw_path)
+            if not isinstance(snapshots, dict) or not snapshots:
+                fail("OWNER_SCOPE", f"{label}: owner approval must pin every distributed file")
+            else:
+                owned_files = ([target] if target.is_file() else
+                               sorted(p for p in target.rglob("*") if p.is_file()))
+                relative = {p.relative_to(root).as_posix() for p in owned_files}
+                if set(snapshots) != relative:
+                    fail("OWNER_SCOPE", f"{label}: reviewed file inventory changed")
+                for owner_file in owned_files:
+                    relative_path = owner_file.relative_to(root).as_posix()
+                    expected = snapshots.get(relative_path)
+                    if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
+                        fail("OWNER_FINGERPRINT", f"{label}: missing or malformed reviewed SHA256 for {relative_path}")
+                    elif hashlib.sha256(canonical_bytes(owner_file.read_bytes())).hexdigest() != expected:
+                        fail("OWNER_FINGERPRINT", f"{label}: source contents changed: {relative_path}")
         if not isinstance(item["attribution_required"], bool):
             fail("ATTRIBUTION", f"{label}: boolean required")
         if item["attribution_required"] and not item["attribution_path"]:
@@ -198,6 +239,9 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         if mode == "release" and (item["distribution"] != "included"
                                   or item["status"] in {"restricted", "unknown", "requires_owner_review"}):
             fail("RELEASE_BLOCKED", f"{label}: {item['status']}/{item['distribution']}")
+    for path in sorted(approved):
+        if path not in declared_paths:
+            fail("OWNER_SCOPE", f"approval references unknown component: {path}")
     for path in sorted(expected_skills - skill_records):
         fail("UNDECLARED_SKILL", path)
     for path in sorted(skill_records - expected_skills):
