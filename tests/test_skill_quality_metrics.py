@@ -40,7 +40,7 @@ class QualityMetricsTests(unittest.TestCase):
         self.assertEqual(report["skill_count"], 1)
         self.assertEqual(report["structural_pass"], 1)
         one = report["skills"][0]
-        self.assertEqual(one["context_footprint"]["skill_md_bytes"]["value"], len(GOOD.encode()))
+        self.assertEqual(one["context_footprint"]["skill_md_bytes"]["value"], self.file.stat().st_size)
         self.assertEqual(one["context_footprint"]["skill_md_words"]["value"], len(GOOD.split()))
         self.assertEqual(one["context_footprint"]["model_tokens"]["status"], "NOT_MEASURED")
         self.assertEqual(one["structural_validation"]["official_skills_ref"], "NOT_MEASURED")
