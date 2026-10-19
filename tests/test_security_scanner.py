@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import subprocess
 import tempfile
 import unittest
@@ -137,6 +138,12 @@ class SecurityScannerTests(unittest.TestCase):
     def test_scripts_are_read_only_and_cannot_execute_payload(self):
         self.put("sample.py", "raise RuntimeError('must not execute')\n")
         self.assertEqual([], module.scan(self.root))
+
+    def test_named_pipe_is_rejected_without_opening_it(self):
+        if not hasattr(os, "mkfifo"):
+            self.skipTest("Named pipes unavailable on this OS")
+        os.mkfifo(self.root / "socket-like.pipe")
+        self.assertIn("Unexpected special file: socket-like.pipe", module.scan(self.root))
 
     def test_local_cache_does_not_get_read(self):
         self.put(".venv/config.txt", "ghp_" + "V" * 36)
