@@ -12,13 +12,13 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 
 ## Другие руководства
 
-Следующие страницы пока доступны **на английском языке**. Перевод будет добавляться поэтапно, а не обозначаться завершённым заранее.
+Документация переводится поэтапно. Для каждой страницы ниже указан язык; английский оригинал остаётся техническим источником.
 
 | Тема | Исходное руководство |
 | --- | --- |
-| Установка, обновление и восстановление | [Installation (EN)](../INSTALLATION.md) |
-| Каталог навыков и профилей | [Skills catalog (EN)](../SKILLS_CATALOG.md) |
-| Наборы для Backend, Frontend и QA | [Curated skill packs (EN)](../CURATED_SKILL_PACKS.md) |
+| Установка, обновление и восстановление | [Установка (RU)](INSTALLATION.md) |
+| Каталог навыков и профилей | [Каталог (RU)](SKILLS_CATALOG.md) |
+| Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
 | Адаптация навыков под проект | [Adaptation (EN)](../ADAPTATION.md) |
 | Правила публикации и права | [Publication policy (EN)](../PUBLICATION_POLICY.md) |
 | Участие в разработке | [Contributing (EN)](../../CONTRIBUTING.md) |
