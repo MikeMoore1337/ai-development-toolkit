@@ -44,4 +44,14 @@ The GitHub import previously returned HTTP 422, reason not captured by the earli
 - Replaced the folder URL with the parser-supported `npx skills add ... --skill minimal-safe-change` string, pinned to a full immutable commit, to avoid candidate-ref probing. No installer command is executed by the smoke.
 - Paperclip's `createCompanySchema` only accepts name, description, zero budget and responsible user; `requireBoardApprovalForNewAgents` defaults to `false` in the database and must be applied by supported `PATCH` and verified by `GET`. The updated smoke checks that explicitly.
 
-The next run, not this narrative, determines whether the changed import path and new safety checks actually PASS.
+## Confirmed acceptance result (2026-10-20)
+
+The exact-head verification completed **PASS**:
+[GitHub Actions #39327290358](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/39327290358),
+commit `e7e77a69daaf306510c091b8d526e2ca5029d543`.
+
+- `local-control-plane: success` — `github_import=PASS`, `managed_skill_exact_source=true`, `board_approval_required_verified=true`, `budget_monthly_cents_verified=0`, `real_agent_trials=0`, and `model_calls_requested_by_test=0`.
+- `toolkit-source-integrity: success` — inventory and release provenance PASS (203 components, 65 skills), all SHA256 checks PASS, Toolkit metadata PASS and **323 unittest cases OK**.
+- Anonymous GitHub API probes: HTTP 200 on repository metadata and `commits/main`.
+
+**Decision:** The controlled zero-spend control-plane/skill-compatibility smoke is technically accepted. This is evidence of importing the skill and enforcing the stated test-company settings — **not** proof that autonomous planning, GitHub issue ownership, reviews, model spending controls, throughput or task effectiveness improve. Leave the PR in Draft, do not deploy Paperclip on Hermes/YFC/VPS, do not merge into main or clear the owner ZERO-SPEND hold for agents. Any later real-agent or end-to-end orchestration comparison needs independently approved scope, permissions and measured benefit.
