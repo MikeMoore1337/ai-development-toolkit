@@ -193,6 +193,44 @@ class ProvenanceTests(unittest.TestCase):
         }
         self.write()
 
+    def test_owner_amendment_pins_new_bytes_and_preserves_original(self):
+        import hashlib
+        self._approve_fixture()
+        path = ".agents/skills/original/SKILL.md"
+        original_hash = self.data["owner_review_record"]["approved_components"][
+            ".agents/skills/original"][path]
+        self._put(path, (self.root / path).read_text(encoding="utf-8") + "reapproved revision\n")
+        changed_hash = hashlib.sha256(canonical_bytes((self.root / path).read_bytes())).hexdigest()
+        self.data["owner_review_amendments"] = [{
+            "parent_review_id": "SYNTHETIC", "scope_issue": "#45",
+            "source": "owner_reported", "review_outcomes": "permitted",
+            "approved_files": {path: changed_hash},
+        }]
+        self.write()
+        self.assertTrue(validate(self.root, "release")["ok"])
+        self.assertEqual(original_hash, self.data["owner_review_record"][
+            "approved_components"][".agents/skills/original"][path])
+        self._put(path, (self.root / path).read_text(encoding="utf-8") + "unapproved\n")
+        self.check("OWNER_FINGERPRINT", mode="release")
+
+    def test_owner_amendment_cannot_expand_path_scope(self):
+        self._approve_fixture()
+        self.data["owner_review_amendments"] = [{
+            "parent_review_id": "SYNTHETIC", "scope_issue": "#45",
+            "source": "owner_reported", "review_outcomes": "permitted",
+            "approved_files": {".agents/skills/original/extra.md": "0" * 64},
+        }]
+        self.check("OWNER_AMENDMENT", mode="release")
+
+    def test_owner_amendment_cannot_invent_permission(self):
+        self._approve_fixture()
+        self.data["owner_review_amendments"] = [{
+            "parent_review_id": "OTHER", "scope_issue": "#45",
+            "source": "owner_reported", "review_outcomes": "pending",
+            "approved_files": {".agents/skills/original/SKILL.md": "0" * 64},
+        }]
+        self.check("OWNER_AMENDMENT", mode="release")
+
     def test_frozen_owner_scope_requires_matching_file_bytes(self):
         self._approve_fixture()
         self.assertTrue(validate(self.root, "release")["ok"])
