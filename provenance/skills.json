@@ -4026,6 +4026,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "New original Issue #44 semantic audit data or offline integrity test; not a protected QA/Make Feature source modification."
+    },
+    {
+      "id": "issue47-tests-test-documentation-consistency-py",
+      "path": "tests/test_documentation_consistency.py",
+      "name": "test_documentation_consistency.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-19",
+      "distribution": "included",
+      "notes": "New original Issue #47 offline regression tests for documentation and release consistency; protected QA and Make Feature snapshots unchanged."
     }
   ],
   "owner_review_record": {
