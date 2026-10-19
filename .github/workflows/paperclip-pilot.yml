@@ -1,0 +1,62 @@
+name: Paperclip isolated zero-spend smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/paperclip-pilot.yml'
+      - 'experiments/paperclip/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paperclip-pilot-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  local-control-plane:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - name: Verify isolated Paperclip server and Toolkit skill import
+        env:
+          PAPERCLIP_VERSION: '2026.1012.0'
+          CI: 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version
+          command -v python3
+          test -f .agents/skills/minimal-safe-change/SKILL.md
+          mkdir -p "$RUNNER_TEMP/paperclip-pilot"
+          timeout 700s npx --yes --registry https://registry.npmjs.org "paperclipai@${PAPERCLIP_VERSION}" onboard \
+            --yes --no-install-service --data-dir "$RUNNER_TEMP/paperclip-pilot" \
+            > "$RUNNER_TEMP/paperclip-pilot-boot.log" 2>&1 &
+          bootstrap_pid=$!
+          trap 'kill "$bootstrap_pid" 2>/dev/null || true' EXIT
+          up=0
+          for i in $(seq 1 120); do
+            if curl --noproxy '*' --silent --show-error --fail \
+              --max-time 2 http://127.0.0.1:3100/api/health \
+              > "$RUNNER_TEMP/paperclip-health.json" 2>/dev/null; then
+              up=1
+              break
+            fi
+            if ! kill -0 "$bootstrap_pid" 2>/dev/null; then
+              echo 'Paperclip bootstrap exited before readiness (logs withheld to protect local keys)'
+              exit 1
+            fi
+            sleep 2
+          done
+          if [ "$up" != '1' ]; then
+            echo 'Paperclip did not become ready on 127.0.0.1:3100 (logs withheld)'
+            exit 1
+          fi
+          python3 experiments/paperclip/smoke.py
