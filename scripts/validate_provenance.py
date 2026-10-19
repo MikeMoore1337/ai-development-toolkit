@@ -188,7 +188,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                 "independently confirmed" not in item["distribution_basis"].lower()
             ):
                 fail("FALSE_VERIFIED", f"{label}: verified needs independently confirmed rights evidence")
-        if item["status"] in {"unknown", "restricted", "requires_owner_review"} and item["distribution"] == "included":
+        if isinstance(item["status"], str) and item["status"] in {"unknown", "restricted", "requires_owner_review"} and item["distribution"] == "included":
             fail("UNSAFE_DISTRIBUTION", label)
         # An owner can authorize publication of a documented, externally derived
         # copy; that does NOT make its copyright/permission independently verified.
@@ -197,7 +197,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         # An existing approval cannot be bypassed by changing origin/status.
         locked = raw_path in approved or "owner_approval_id" in item
         needs_approval = (locked or (item["distribution"] == "included"
-                          and item["origin"] in {"adapted", "redistributed", "unknown"}
+                          and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}
                           and item["status"] != "verified"))
         if needs_approval:
             if approvals is None or item.get("owner_approval_id") != approvals.get("id"):
@@ -260,7 +260,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         else:
             covered.update(p.relative_to(root).as_posix() for p in target.rglob("*") if p.is_file() or p.is_symlink())
         if mode == "release" and (item["distribution"] != "included"
-                                  or item["status"] in {"restricted", "unknown", "requires_owner_review"}):
+                                  or (isinstance(item["status"], str) and item["status"] in {"restricted", "unknown", "requires_owner_review"})):
             fail("RELEASE_BLOCKED", f"{label}: {item['status']}/{item['distribution']}")
     for path in sorted(approved):
         if path not in declared_paths:
