@@ -10,6 +10,6 @@
 - **Происхождение:** источники, лицензии, версия и ограничения сторонних компонентов указаны.
 - **Согласованность:** нет противоречий проектным AGENTS.md и другим активным навыкам.
 
-Offline quality gate: `python scripts/validate_quality.py` checks declared skill/role inventories, local Markdown links and anchors, path containment, profiles and explicit mutually exclusive workflows in `docs/QUALITY_RULES.json`. It does not infer semantic contradictions from keywords. `BLOCKER` findings break CI; `WARNING`/`INFO` denote manual observations outside the required gate. See [audit](SKILLS_QUALITY_AUDIT.md).
+Offline quality gate: `python scripts/validate_quality.py` checks declared skill/role inventories, links and anchors across repository Markdown (including templates and recipes), path containment, profiles and explicit mutually exclusive workflows in `docs/QUALITY_RULES.json`. It does not infer semantic contradictions from keywords. `BLOCKER` findings break CI; `WARNING`/`INFO` denote manual observations outside the required gate. See [audit](SKILLS_QUALITY_AUDIT.md).
 
 Статусы: `verified` (проверено статически/тестом), `manual` (требует эксперта), `not-applicable`, `unknown`, `failed`. Не называйте пакет полностью проверенным по итогам одного статического анализа.
