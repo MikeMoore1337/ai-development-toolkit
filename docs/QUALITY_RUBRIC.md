@@ -13,3 +13,5 @@
 Offline quality gate: `python scripts/validate_quality.py` checks declared skill/role inventories, links and anchors across repository Markdown (including templates and recipes), path containment, profiles and explicit mutually exclusive workflows in `docs/QUALITY_RULES.json`. It does not infer semantic contradictions from keywords. `BLOCKER` findings break CI; `WARNING`/`INFO` denote manual observations outside the required gate. See [audit](SKILLS_QUALITY_AUDIT.md).
 
 Статусы: `verified` (проверено статически/тестом), `manual` (требует эксперта), `not-applicable`, `unknown`, `failed`. Не называйте пакет полностью проверенным по итогам одного статического анализа.
+
+Provenance statuses (`verified`, `documented`, `requires_owner_review`, `restricted`, `unknown`, `not_applicable`) are **separate** from quality-gate statuses. `python scripts/validate_provenance.py --mode inventory` checks metadata and inventory in CI; `--mode release` also blocks owner-gated and restricted material. Neither certifies title, permissions or legal compliance. See [PROVENANCE_AUDIT.md](PROVENANCE_AUDIT.md).
