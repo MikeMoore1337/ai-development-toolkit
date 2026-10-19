@@ -44,6 +44,24 @@ class RussianOnboardingTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, destination)
 
+        # The expanded catalog links to every SKILL.md and QA role. Populate
+        # the fixture with existing link targets, without copying the whole
+        # repository or suppressing missing-link detection in the validator.
+        for name in FIXTURE_FILES:
+            if not name.startswith("docs/ru/"):
+                continue
+            original = ROOT / name
+            for raw in validator.LINK.findall(original.read_text(encoding="utf-8")):
+                parsed = validator.urlsplit(raw)
+                if parsed.scheme or parsed.netloc or raw.startswith("#"):
+                    continue
+                target = (original.parent / validator.unquote(parsed.path)).resolve()
+                if target.is_file() and target.is_relative_to(ROOT):
+                    destination = self.root / target.relative_to(ROOT)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    if not destination.exists():
+                        shutil.copyfile(target, destination)
+
     def check(self, expected: str | None = None):
         findings = validator.validate(self.root)
         if expected:
