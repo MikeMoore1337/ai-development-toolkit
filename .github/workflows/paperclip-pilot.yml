@@ -20,6 +20,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  toolkit-source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Install offline validator dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Verify provenance registry
+        run: python scripts/validate_provenance.py --mode inventory
+      - name: Verify publication gate
+        run: python scripts/validate_provenance.py --mode release
+      - name: Verify complete checksum inventory
+        run: python scripts/verify_checksums.py
+      - name: Validate Toolkit metadata
+        run: python scripts/validate_pack.py
+      - name: Verify Toolkit regression tests
+        timeout-minutes: 5
+        run: python -m unittest discover -s tests -v
+
   local-control-plane:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -52,7 +76,7 @@ jobs:
           done
           mkdir -p "$RUNNER_TEMP/paperclip-pilot"
           timeout 700s npx --yes --registry https://registry.npmjs.org "paperclipai@${PAPERCLIP_VERSION}" onboard \
-            --yes --no-install-service --data-dir "$RUNNER_TEMP/paperclip-pilot" \
+            --yes --bind loopback --no-install-service --data-dir "$RUNNER_TEMP/paperclip-pilot" \
             > "$RUNNER_TEMP/paperclip-pilot-boot.log" 2>&1 &
           bootstrap_pid=$!
           trap 'kill "$bootstrap_pid" 2>/dev/null || true' EXIT
