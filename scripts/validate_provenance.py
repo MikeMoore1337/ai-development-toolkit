@@ -197,8 +197,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         # An existing approval cannot be bypassed by changing origin/status.
         locked = raw_path in approved or "owner_approval_id" in item
         needs_approval = (locked or (item["distribution"] == "included"
-                          and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}
-                          and item["status"] != "verified"))
+                          and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}))
         if needs_approval:
             if approvals is None or item.get("owner_approval_id") != approvals.get("id"):
                 fail("OWNER_APPROVAL", f"{label}: explicit matching owner review required")
