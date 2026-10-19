@@ -246,7 +246,8 @@ def measure_skill(root: Path, skill_id: str, folder: Path, revision: str | None,
         },
         "portability": portability,
         "context_footprint": footprint,
-        "reproducibility": {"status": "PASS" if revision else "NOT_MEASURED",
+        "reproducibility": {"status": "NOT_MEASURED",
+                            "repeat_measurement": "NOT_MEASURED",
                             "scope": "deterministic local static bytes and parsed Markdown; not AI behavior",
                             "content_fingerprint_sha256": digest(json_bytes(entries)),
                             "revision_pinned": revision is not None,
@@ -262,7 +263,9 @@ def measure_skill(root: Path, skill_id: str, folder: Path, revision: str | None,
 
 def collect(root: Path = ROOT, skill: str | None = None,
             revision: str | None = None) -> dict:
-    root = root.absolute()
+    # Resolve Windows 8.3 short-name aliases before the shared Markdown scanner;
+    # it compares resolved paths with the supplied repository root.
+    root = root.resolve()
     if not root.is_dir():
         raise MetricsError("Repository root does not exist")
     if revision is not None and not SHA.fullmatch(revision):
@@ -382,8 +385,12 @@ def main() -> int:
     args = p.parse_args()
     try:
         report = collect(args.root, args.skill, args.revision)
-        if args.check_repeat and json_bytes(report) != json_bytes(collect(args.root, args.skill, args.revision)):
-            raise MetricsError("Static metrics changed between repeat measurements")
+        if args.check_repeat:
+            if json_bytes(report) != json_bytes(collect(args.root, args.skill, args.revision)):
+                raise MetricsError("Static metrics changed between repeat measurements")
+            for entry in report["skills"]:
+                entry["reproducibility"]["status"] = "PASS"
+                entry["reproducibility"]["repeat_measurement"] = "PASS"
         if args.baseline is not None:
             base = json.loads(args.baseline.read_text(encoding="utf-8"))
             report["comparison"] = compare(base, report)
