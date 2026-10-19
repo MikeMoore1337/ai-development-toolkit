@@ -1,7 +1,7 @@
 {
   "package": "ai-development-toolkit",
   "version": "5.4.0",
-  "scope": "Portable skill and QA library, including full generic Clear Voice and Make Feature 0.3.0 source with unresolved release authorization; no personal project references or personal-issued license documents",
+  "scope": "Portable skill and QA library, including full generic Clear Voice and Make Feature 0.3.0 source with recorded owner-reported permission ID1337 (independent rights verification pending); no personal project references or personal-issued license documents",
   "skill_root": ".agents/skills",
   "core_skills": [
     "architecture-decisions",
@@ -25,7 +25,7 @@
   "original_skills_in_inventory": 52,
   "original_skills_not_bundled": "All third-party or project-specific original snapshots excluded from initial public publication pending provenance and license review.",
   "automatic_external_binary_installation": false,
-  "license_note": "License identifiers are claims, not chain-of-title evidence. Make Feature 0.3.0 and QA work-derived adaptations have release owner-gates pending rights verification; see provenance/skills.json. The reported later Make Feature authorization is unverified.",
+  "license_note": "Owner reports ID1337 permits distribution of the exact currently bundled Make Feature 0.3.0, QA adaptation and branding sources, SHA256-pinned in provenance. This is not independent rightsholder, employer-IP or creator verification. Existing third-party or work-derived licenses are not inferred.",
   "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
   "extension_skills": [
     "adaptive-delivery",
@@ -274,7 +274,7 @@
         "test-management-analyst",
         "test-reviewer"
       ],
-      "license": "MIT claimed for Toolkit adaptation; underlying work-derived material has unresolved redistribution clearance (NOASSERTION in provenance)",
+      "license": "MIT claimed for Toolkit adaptation; source-derived licenses remain NOASSERTION, owner reports permitted distribution of currently pinned files under ID1337",
       "auto_install": false
     },
     "make-feature": {
@@ -301,5 +301,5 @@
   "optional_integrations": {},
   "make_feature_source_bundled": true,
   "provenance_registry": "provenance/skills.json",
-  "release_provenance_gate": "owner_approval_required"
+  "release_provenance_gate": "owner_approval_ID1337_snapshots_plus_new_release_signoff"
 }
