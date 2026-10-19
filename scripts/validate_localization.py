@@ -161,8 +161,8 @@ def validate(root: Path) -> list[str]:
     translation = root / "docs/ru/CLIENT_COMPATIBILITY.md"
     cmd = re.compile(r"^\s*python scripts/verify_client_compatibility\.py(?: .*)?$", re.M)
     if source.is_file() and translation.is_file():
-        before = set(cmd.findall(source.read_text(encoding="utf-8")))
-        after = set(cmd.findall(translation.read_text(encoding="utf-8")))
+        before = {command.strip() for command in cmd.findall(source.read_text(encoding="utf-8"))}
+        after = {command.strip() for command in cmd.findall(translation.read_text(encoding="utf-8"))}
         if not before.issubset(after):
             errors.append("L10N006 docs/ru/CLIENT_COMPATIBILITY.md: executable examples differ from English")
 
