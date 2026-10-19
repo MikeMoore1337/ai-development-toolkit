@@ -156,6 +156,14 @@ class ProvenanceTests(unittest.TestCase):
         self.write()
         self.assertEqual(validate(self.root), validate(self.root))
 
+    def test_current_tree_release_is_owner_blocked(self):
+        result = validate(ROOT, "release")
+        self.assertFalse(result["ok"])
+        self.assertTrue(any("make-feature" in issue and "RELEASE_BLOCKED" in issue
+                            for issue in result["issues"]))
+        self.assertTrue(any("extensions-qa" in issue and "RELEASE_BLOCKED" in issue
+                            for issue in result["issues"]))
+
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
