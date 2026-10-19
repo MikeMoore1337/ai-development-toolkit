@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added non-blocking, pinned-source freshness warnings for Russian translations and negative regression fixtures (#78); strict review remains manual.
+
 - Added Russian installation, curated profile guide and catalog covering 65 skills, 16 roles and 27 profiles, with cross-language navigation and coverage checks (#78).
 
 - Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
