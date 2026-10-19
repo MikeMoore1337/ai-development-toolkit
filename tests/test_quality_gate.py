@@ -79,6 +79,28 @@ class QualityGateTests(unittest.TestCase):
         (self.root / ".agents/roles/orchestrator.md").unlink()
         self.check("INV001")
 
+    def test_markdown_in_templates_recipes_and_root_is_checked(self):
+        for path in (
+            ".github/pull_request_template.md",
+            "extensions/qa/recipes/qa-feature.md",
+            "CHANGELOG.md",
+            "integrations/make-feature/README.md",
+        ):
+            with self.subTest(path=path):
+                self.file(path, "[broken](not-here.md)\n")
+                report = module.inspect(self.root)
+                self.assertTrue(any(
+                    item["rule_id"] == "LINK001" and item["file"] == path
+                    for item in report["findings"]
+                ), report)
+                (self.root / path).unlink()
+        self.check()
+
+    def test_generated_environment_markdown_is_not_scanned(self):
+        self.file(".venv/lib/site-packages/README.md", "[broken](not-here.md)\n")
+        self.file(".artifacts/docs/README.md", "[broken](not-here.md)\n")
+        self.check()
+
     def test_broken_link(self):
         self.file(".agents/skills/implementation/SKILL.md", "[doc](references/missing.md)\n")
         self.check("LINK001")
