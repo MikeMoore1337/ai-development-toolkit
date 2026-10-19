@@ -269,6 +269,8 @@ def _recover_one(target: Path, folder: Path) -> None:
     root = skill_root(target, before["layout"])
     for name in reversed(changes):
         dest, old = root / name, folder / "old" / name
+        _ensure_no_symlink_chain(dest)
+        _ensure_no_symlink_chain(old)
         if old.exists():
             if dest.exists():
                 fingerprint = tree_digest(dest)
@@ -314,6 +316,12 @@ def _apply(target: Path, before: dict, after: dict, changes: list[str],
         atomic_json(base / "meta.json", meta)
         for name in changes:
             dest, old = root / name, base / "old" / name
+            _ensure_no_symlink_chain(dest)
+            if name in before["skills"]:
+                if tree_digest(dest) != before["skills"][name]["digest"]:
+                    raise ManagerError(f"Local modifications during staging: {name}")
+            elif dest.exists() or dest.is_symlink() or dest.is_junction():
+                raise ManagerError(f"Destination occupied during staging: {dest}")
             if dest.exists():
                 old.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(dest, old)
