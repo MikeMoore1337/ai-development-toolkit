@@ -74,17 +74,46 @@ def main() -> None:
     if not isinstance(company_id, str) or not company_id:
         raise RuntimeError("Could not create an ephemeral pilot company")
 
-    imported = request("POST", f"/api/companies/{company_id}/skills/import", {
-        "source": "https://github.com/MikeMoore1337/ai-development-toolkit/tree/main/.agents/skills/minimal-safe-change",
+    # First prove that the official managed-skill API can preserve the exact
+    # Toolkit source bytes. This is a separate capability from GitHub import.
+    source_markdown = source.read_text(encoding="utf-8")
+    managed = request("POST", f"/api/companies/{company_id}/skills", {
+        "name": "minimal-safe-change",
+        "slug": "minimal-safe-change",
+        "markdown": source_markdown,
     })
+    skill_id = managed.get("id") if isinstance(managed, dict) else None
+    if not isinstance(skill_id, str) or not skill_id:
+        raise RuntimeError("Managed skill creation did not return an ID")
     skills = request("GET", f"/api/companies/{company_id}/skills")
-    if not isinstance(skills, list):
-        raise RuntimeError("Skills listing has unexpected API schema")
-    names = [s.get("slug") for s in skills if isinstance(s, dict)]
-    if "minimal-safe-change" not in names:
-        raise RuntimeError("Toolkit skill not found after Paperclip import")
-    if not isinstance(imported, dict):
-        raise RuntimeError("Skill import did not return a JSON object")
+    if not isinstance(skills, list) or not any(
+        isinstance(item, dict) and item.get("slug") == "minimal-safe-change"
+        for item in skills
+    ):
+        raise RuntimeError("Managed skill is missing from the company inventory")
+    detail = request("GET", f"/api/companies/{company_id}/skills/{skill_id}/files?path=SKILL.md")
+    if not isinstance(detail, dict) or detail.get("content") != source_markdown:
+        raise RuntimeError("Managed skill differs from Toolkit's exact SKILL.md")
+
+    # A GitHub-sourced import is an independent feature: a failure here must
+    # not be misreported as a successful GitHub import via the managed API.
+    github_status = "PASS"
+    try:
+        result = request("POST", f"/api/companies/{company_id}/skills/import", {
+            "source": "https://github.com/MikeMoore1337/ai-development-toolkit/tree/main/.agents/skills/minimal-safe-change",
+        })
+        if not isinstance(result, dict) or not isinstance(result.get("imported"), list):
+            raise RuntimeError("GitHub import response has unexpected shape")
+        if not any(
+            isinstance(item, dict) and item.get("slug") == "minimal-safe-change"
+            for item in result["imported"]
+        ):
+            raise RuntimeError("GitHub import returned no matching skill")
+    except RuntimeError as exc:
+        github_status = "BLOCKED"
+        # The exception contains only HTTP status, error code and a restricted
+        # reason string, as enforced by request(). No payloads are logged.
+        print(f"PAPERCLIP_GITHUB_IMPORT_DIAGNOSTIC: {exc}")
 
     print(json.dumps({
         "classification": "PAPERCLIP_CONTROL_PLANE_SMOKE_NOT_AGENT_EVAL",
@@ -92,13 +121,17 @@ def main() -> None:
         "health_http": 200,
         "company_created": True,
         "budget_monthly_cents": 0,
-        "skill_imported": "minimal-safe-change",
+        "managed_skill_created": "minimal-safe-change",
+        "managed_skill_exact_source": True,
+        "github_import": github_status,
         "skill_count": len(skills),
         "real_agent_trials": 0,
         "model_calls_requested_by_test": 0,
         "skill_activation_observed": False,
         "model_comparison": "NOT_PERFORMED",
     }, ensure_ascii=False, sort_keys=True))
+    if github_status != "PASS":
+        raise RuntimeError("GitHub source import not verified: see sanitized diagnostic above")
 
 
 if __name__ == "__main__":
