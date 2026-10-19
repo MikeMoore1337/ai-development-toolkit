@@ -1,6 +1,17 @@
 # Changelog
 
-## 5.4.0 (prepared, 2026-10-18)
+## Unreleased (main after v5.4.0)
+
+Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
+
+- Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
+- Added pinned official Agent Skills validation, source quality/link/profile checks, provenance inventory and release preflight (#25, #27, #28).
+- Added managed Codex/Claude migration, offline client contract checks, curated task profiles and reproducible static quality metrics (#31, #33, #37, #38).
+- Added optional, framework-neutral Frontend, Backend and Fullstack skills, then improved their quality contracts and documentation (#41, #75).
+- Added Skill Quality v2 templates, negative fixtures and evidence rules; recorded the semantic audit and resolved identified quality issues (#43, #44, #45).
+- Bounded and de-duplicated superseded PR validation runs; these changes do not establish real-client activation or effectiveness (#72).
+
+## 5.4.0 (released, 2026-10-18)
 
 - Skill Manager v2: owned-only install/status/update/uninstall/rollback/recover, local backups, exclusive locking, drift checks, and deterministic file diff previews.
 - SHA256 inventory checks now reject omitted or extra Git-tracked files and support verification of GitHub-generated source archives.

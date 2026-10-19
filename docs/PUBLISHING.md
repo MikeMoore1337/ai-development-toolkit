@@ -1,15 +1,22 @@
-# Publish on GitHub
+# Publishing AI Development Toolkit
 
-Target: `https://github.com/MikeMoore1337/ai-development-toolkit` (proposed, **not yet created**).
+The official repository [MikeMoore1337/ai-development-toolkit](https://github.com/MikeMoore1337/ai-development-toolkit) **already exists**. It has published [v5.3.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.3.0) and [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0). Do not recreate the official repository or rerun the first-publication script for maintenance.
 
-Use an authenticated machine with `gh` and `git` available. The owner can run from PowerShell:
+## Maintaining this repository
 
-```powershell
-.\scripts\publish_github.ps1
-```
+1. Create a branch from current `main` and submit a reviewed PR. Keep release history and existing tags unchanged.
+2. Run validation, quality, provenance inventory, tests and checksum verification; regenerate the tracked SHA256 inventory through `python scripts/verify_checksums.py --write` only after reviewing the exact diff.
+3. Require the existing Linux/Windows GitHub Actions checks on the **exact PR HEAD** before asking for merge approval.
+4. Treat merged, untagged `main` work as **Unreleased**. `MANIFEST.json.version` remains the last published baseline until an explicitly approved next release.
 
-The script validates the package, prepares a commit, asks for an explicit `PUBLISH` confirmation, then creates the **public** repository and pushes `main`. It does **not** run automatically in a pipeline. If the target repository was created beforehand, use the standard `git remote add origin ...; git push -u origin main` workflow instead of re-running repository creation.
+## Publishing a new version
 
-Previous toolkit distribution archives and private Make Feature tarball must not be included in the upload. Do not commit the containing directory of this toolkit.
+Follow the complete [release process](RELEASE_PROCESS.md), including the release-mode provenance gate, owner sign-off for the exact source, checksums, archive verification and tagged SHA checks. CI passing is **not** itself permission to publish. Do not automatically select a future version, create a tag or issue a GitHub Release.
 
-After publication, follow [GitHub appearance and topics](GITHUB_SETUP.md) to set the social preview, description and community settings.
+After publication, verify the actual downloaded GitHub-generated archive, inspect the [release workflow](RELEASE_PROCESS.md#independent-verification-of-a-github-source-archive) and retain its evidence.
+
+## Initial publication of a separate fork or new repository only
+
+The legacy `scripts/publish_github.ps1` script was designed for first publication: it validates files, requests an explicit `PUBLISH` confirmation, creates a **public** GitHub repository and pushes `main`. This conditional workflow is **not appropriate** for the already-published official repository. Review its behavior and licensing boundaries separately before using it for a new independent project. Never publish private licenses, credentials or prior distribution archives.
+
+For repository appearance settings, see [GitHub setup](GITHUB_SETUP.md).
