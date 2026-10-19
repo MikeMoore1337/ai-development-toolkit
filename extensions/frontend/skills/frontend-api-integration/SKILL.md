@@ -17,4 +17,4 @@ description: "Use when connecting frontend screens to existing API contracts, in
 
 **Output:** request/response-to-UI mapping, retry/authorization policy, client compatibility assumptions, actual evidence and NOT_MEASURED gaps.
 
-Use [API compatibility example](../../../../backend/skills/api-design/references/compatible-evolution.md) for shared contracts. Do not add a new HTTP library without a justified need and approval.
+For producer schema changes, coordinate with the separately selected api-design skill; keep the client contract and UI mapping here. Do not add a new HTTP library without a justified need and approval.
