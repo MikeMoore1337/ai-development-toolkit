@@ -11,6 +11,8 @@
 
 ## Medium term
 
+- [x] Add technology-neutral Frontend, Backend and Fullstack engineering extensions with focused opt-in profiles (Issue #40, source-only; live agent outcomes not yet measured).
+
 - [ ] Evaluate the private optional skill inventory individually; publish only items with verified rights and project-neutral content.
 - [ ] Benchmark quick/normal/deep feature-delivery against a plain agent baseline.
 - [x] Add offline per-skill source quality metrics (structure, file bytes, repeatability, regression indicators) with independent empirical results still NOT_MEASURED (Issue #38; see [methodology](SKILL_QUALITY_METRICS.md)).

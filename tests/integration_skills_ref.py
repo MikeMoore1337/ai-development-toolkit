@@ -65,7 +65,7 @@ class RealSkillsRefIntegrationTests(unittest.TestCase):
         self.check_fixture("no-description", "---\nname: no-description\n---\n", valid=False)
 
     def test_entire_manifest_with_real_official_cli(self):
-        self.assertEqual(51, len(runner.skill_directories(ROOT, "all")))
+        self.assertEqual(65, len(runner.skill_directories(ROOT, "all")))
         self.assertEqual(0, runner.run("all", ROOT))
 
 

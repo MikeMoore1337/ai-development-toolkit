@@ -207,6 +207,8 @@
     "backend": [
       "task-scoping",
       "architecture-decisions",
+      "service-architecture",
+      "api-design",
       "implementation",
       "qa-strategy",
       "code-review"
@@ -214,6 +216,8 @@
     "frontend": [
       "task-scoping",
       "design-system-consistency",
+      "component-architecture",
+      "frontend-api-integration",
       "implementation",
       "qa-strategy",
       "code-review"
@@ -221,6 +225,14 @@
     "research": [
       "task-scoping",
       "research-verification"
+    ],
+    "fullstack": [
+      "task-scoping",
+      "end-to-end-feature-design",
+      "fullstack-integration",
+      "implementation",
+      "qa-strategy",
+      "code-review"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -301,6 +313,38 @@
       "skill_root": "extensions/make-feature/skills",
       "skills": [
         "make-feature"
+      ],
+      "auto_install": false
+    },
+    "frontend": {
+      "skill_root": "extensions/frontend/skills",
+      "skills": [
+        "component-architecture",
+        "state-management",
+        "frontend-api-integration",
+        "forms-validation",
+        "frontend-performance"
+      ],
+      "auto_install": false
+    },
+    "backend": {
+      "skill_root": "extensions/backend/skills",
+      "skills": [
+        "service-architecture",
+        "api-design",
+        "data-access",
+        "database-migrations",
+        "background-processing",
+        "authentication-authorization"
+      ],
+      "auto_install": false
+    },
+    "fullstack": {
+      "skill_root": "extensions/fullstack/skills",
+      "skills": [
+        "fullstack-integration",
+        "cross-layer-debugging",
+        "end-to-end-feature-design"
       ],
       "auto_install": false
     }

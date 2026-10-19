@@ -32,6 +32,41 @@ These 23 skills live under `.agents/skills/`.
 | [`skill-portability`](../.agents/skills/skill-portability/SKILL.md) | Use when creating, evaluating, importing or migrating an Agent Skills SKILL.md folder. Validate metadata, links, client compatibility, provenance and activation boundarie… |
 | [`task-scoping`](../.agents/skills/task-scoping/SKILL.md) | Define the scope, constraints, acceptance criteria and dependencies of a change. Use before implementing a task with incomplete or competing requirements. |
 
+## Frontend engineering extension
+
+Optional, technology-neutral skills under `extensions/frontend/skills/`.
+
+| Skill | When to use it |
+| :--- | :--- |
+| [`component-architecture`](../extensions/frontend/skills/component-architecture/SKILL.md) | Design component boundaries without selecting a framework. |
+| [`state-management`](../extensions/frontend/skills/state-management/SKILL.md) | Track state source of truth and concurrency. |
+| [`frontend-api-integration`](../extensions/frontend/skills/frontend-api-integration/SKILL.md) | Map actual API contracts to UI states. |
+| [`forms-validation`](../extensions/frontend/skills/forms-validation/SKILL.md) | Build form state and validation feedback. |
+| [`frontend-performance`](../extensions/frontend/skills/frontend-performance/SKILL.md) | Measure and improve real frontend bottlenecks. |
+
+## Backend engineering extension
+
+Optional, technology-neutral skills under `extensions/backend/skills/`.
+
+| Skill | When to use it |
+| :--- | :--- |
+| [`service-architecture`](../extensions/backend/skills/service-architecture/SKILL.md) | Define bounded services and dependencies. |
+| [`api-design`](../extensions/backend/skills/api-design/SKILL.md) | Specify compatible producer-side API contracts. |
+| [`data-access`](../extensions/backend/skills/data-access/SKILL.md) | Protect persistence integrity and query behavior. |
+| [`database-migrations`](../extensions/backend/skills/database-migrations/SKILL.md) | Plan schema evolution and recovery. |
+| [`background-processing`](../extensions/backend/skills/background-processing/SKILL.md) | Define worker delivery and retry semantics. |
+| [`authentication-authorization`](../extensions/backend/skills/authentication-authorization/SKILL.md) | Enforce trusted resource permissions. |
+
+## Fullstack engineering extension
+
+Optional, technology-neutral skills under `extensions/fullstack/skills/`.
+
+| Skill | When to use it |
+| :--- | :--- |
+| [`fullstack-integration`](../extensions/fullstack/skills/fullstack-integration/SKILL.md) | Coordinate contracts and cross-layer rollout. |
+| [`cross-layer-debugging`](../extensions/fullstack/skills/cross-layer-debugging/SKILL.md) | Trace faults through interface and backend. |
+| [`end-to-end-feature-design`](../extensions/fullstack/skills/end-to-end-feature-design/SKILL.md) | Design a vertical feature slice with testable acceptance. |
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -106,8 +141,9 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | Profile | Skills |
 | :--- | :--- |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
-| `backend` | `task-scoping`, `architecture-decisions`, `implementation`, `qa-strategy`, `code-review` |
-| `frontend` | `task-scoping`, `design-system-consistency`, `implementation`, `qa-strategy`, `code-review` |
+| `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
+| `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
+| `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |

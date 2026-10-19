@@ -56,6 +56,7 @@ class ProfileRecommendationTests(unittest.TestCase):
             "feature": "codex-feature", "ui": "ui-fix", "ci": "qa-ci",
             "release": "qa-release", "docs": "editorial", "agent": "agent-architecture",
             "backend": "backend", "frontend": "frontend",
+            "fullstack": "fullstack",
             "research": "research", "provider": "provider-research",
         }.items():
             with self.subTest(task=task):
@@ -66,11 +67,15 @@ class ProfileRecommendationTests(unittest.TestCase):
         self.assertEqual(result, mod.recommend(self.target, "frontend", MANIFEST))
         self.assertIn("ui-motion", result["optional_profiles"])
         self.assertIn("motion-quality", result["optional_skills"])
+        self.assertIn("state-management", result["optional_skills"])
+        self.assertIn("cross-layer-debugging", self.check("fullstack", "fullstack")["optional_skills"])
         self.assertNotIn("motion-quality", result["skills"])
         self.assertEqual(["qa-ci"], self.check("qa", "qa-core")["optional_profiles"])
 
     def test_optional_suggestions_reference_known_names(self):
-        names = {skill for skills in MANIFEST["profiles"].values() for skill in skills}
+        names = set(MANIFEST["core_skills"]) | set(MANIFEST.get("extension_skills", ()))
+        for pack in MANIFEST["extension_packs"].values():
+            names.update(pack["skills"])
         for task in mod.TASKS:
             with self.subTest(task=task):
                 result = mod.recommend(self.target, task, MANIFEST)
