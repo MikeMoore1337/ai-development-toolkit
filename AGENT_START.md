@@ -2,21 +2,21 @@
 
 [Русский](AGENT_START.ru.md) | [Home](README.md) | [Technical installation](docs/INSTALLATION.md)
 
-This is an **agent-facing entry point**, not an executable agent or installer. A user makes an ordinary request in project A and references the Toolkit URL within that request. **Project A is the work target; Toolkit is a separate, read-only guidance source.** No extra prompt, installation, target GitHub URL, profile choice or terminal use is required of the user. Execution depends on actual client capabilities.
+This is an **agent-facing entry point**, not an executable agent or installer. A user makes an ordinary request in their project and references the Toolkit URL within that request. **The user's project is the work target; Toolkit is a separate, read-only guidance source.** No extra prompt, installation, target GitHub URL, profile choice or terminal use is required of the user. Execution depends on actual client capabilities.
 
 ## Primary path: open IDE project + Toolkit URL, without installation
 
-**Project A is the user's work target; Toolkit is a reference source, never a destination for user outputs.** No manual installation, special command, prompt template, skill selection or target project URL is required.
+The user opens their project in an IDE with Codex and makes **an ordinary request**, including a Toolkit repository link. No special template, project label or installation is required.
 
-For example, the user writes to Codex in an IDE chat:
+For example:
 
-> In my project A, use https://github.com/MikeMoore1337/ai-development-toolkit to fix the bugs and produce a report.
+> Use https://github.com/MikeMoore1337/ai-development-toolkit to find and fix bugs in my current project and prepare a report.
 
-**That is the entire request.** Codex identifies project A from the available workspace, reads relevant instructions from the referenced Toolkit and performs the authorized task in A. When the request asks for implementation, code changes, tests and appropriate new files **in A are allowed within task scope**; when it asks only for analysis, the default result is a chat response.
+**That is the entire request.** Codex resolves the target from the available workspace, reads relevant Toolkit instructions and works within the permissions for the user's project. When implementation is requested, appropriate new source files, tests and reports **may be created in the user's project** under its rules. For analysis-only tasks, chat output is the default.
 
-**Strict separation:** user A's code, reports, screenshots, logs, test results, scratch files, branches, commits and PRs must **never be placed in AI Development Toolkit**, whether the public GitHub repository or a local checkout/copy. Do not mutate or configure Toolkit to complete another user's task. An explicitly authorized task to contribute to Toolkit itself is a **separate workflow**.
+**Strict separation:** Toolkit is a reference source. Another user's code, reports, logs, test artifacts, temporary files, commits and pull requests **must never be placed in the Toolkit repository or any local Toolkit copy**. Modifying Toolkit itself requires a separate, explicitly authorized contribution task.
 
-Use the verified [MikeMoore1337/ai-development-toolkit](https://github.com/MikeMoore1337/ai-development-toolkit) source and record a revision where possible. If the agent cannot read the source URL, ask for minimal permitted materials/access instead of substituting an unverified source. Reading guidance does **not** prove client skill activation (`GUIDANCE_ONLY`, `NOT_VERIFIED`).
+Verify the [AI Development Toolkit source](https://github.com/MikeMoore1337/ai-development-toolkit) and record its revision when possible. If the client cannot read the source, report the limitation instead of silently substituting another package. External guidance is `GUIDANCE_ONLY`, not verified skill invocation (`NOT_VERIFIED`).
 
 ## Optional path: remote repository links
 
@@ -33,18 +33,18 @@ When the project is already open, the Toolkit URL is optional, and no repository
 
 ## Keep Toolkit source and user project outputs separate
 
-**Toolkit source (read-only for other users' tasks).** Read the supplied URL as a library of guidance, never as the destination for project A's work. Never place user reports, scratch files, caches, logs, test output, screenshots, code, branches or commits in **any Toolkit checkout**. Do not run writes, `git add`, `commit`, `push` or open a PR **against Toolkit** to complete a task for A. If you need a local Toolkit copy, treat it as a **read-only** source outside A, never an output directory. A reference URL never grants write authority. If Toolkit is inaccessible, report `BLOCKED` or use only actually available guidance. Reading guidance is `GUIDANCE_ONLY`, not verified client skill installation/invocation (`NOT_VERIFIED`).
+**Toolkit is a read-only source for other users' tasks.** Consult its skills and instructions, but **never save** another user's reports, screenshots, source code, test artifacts, logs, caches, scratch files or other outputs into the Toolkit repository or any local Toolkit checkout. Do not create branches, commits or PRs against Toolkit to complete someone else's task. A local Toolkit copy is still a reference, not the working directory or report destination. An explicitly authorized contribution to Toolkit itself is a separate task. Reading guidance is `GUIDANCE_ONLY`, not verified skill activation (`NOT_VERIFIED`).
 
-**User's project A (authorized work target).** Code changes, new features, tests, app files, configuration changes and their appropriate outputs belong **in A**, subject to the user's actual request and A's rules. Do not impose an arbitrary blanket prohibition on new project files: a development task can legitimately require them. Pure analysis defaults to `READ_ONLY` with chat output. Installing Toolkit skills **into A** is a separate optional operation requiring explicit approval; never create `.agents/skills/`, `.claude/skills/` or `.adt/` in A merely because a Toolkit URL was supplied.
+**The user's project is the work target.** Development, testing and permitted output files belong in the target project as the task, its rules and user authorization require. Do not prohibit new code or tests merely because Toolkit guidance was used. Analysis-only tasks default to `READ_ONLY` and chat output. Installing `.agents/skills/`, `.claude/skills/` or `.adt/` into the user's project is optional and needs separate explicit approval; merely sharing the Toolkit URL grants no installation permission.
 
 ### Where generated results and reports belong
 
-1. **Default:** respond in chat - never save another user's report in Toolkit.
-2. **If the user requests a report inside project A**, save it to an appropriate location in A under its policies and the user's authorization, e.g. A's `reports/`, `docs/`, `tmp/` or `artifacts/`.
-3. **If the user requests external storage**, use an expressly chosen external directory or a real supported exportable client artifact. Do not claim temporary files are durable.
-4. **Never save another user's output under any Toolkit directory**, including through symbolic links, relative paths, cloned checkouts or shared workspaces. If an output destination is ambiguous, answer in chat and ask for its location rather than writing to Toolkit.
+1. **By default**, return the report in chat.
+2. **If a report file is requested inside the user's project**, save it to an authorized location there, such as `reports/`, `docs/`, `tmp/` or `artifacts/`, following the project's rules.
+3. **For external storage**, use a user-selected destination or a real exportable client attachment. Temporary files are not durable storage.
+4. **Never direct another user's outputs into any Toolkit path**, including symbolic links, relative paths, local clones or shared workspaces. If the destination is ambiguous, provide the report in chat and ask where to put the file.
 
-**Boundary checks:** resolve the intended project A workspace and any Toolkit source checkout separately. Never treat the process current directory as proof of the work target. If multiple workspace roots are ambiguous, ask which is A. Where possible, verify that Toolkit stayed unchanged, including untracked and ignored files. `git status` does not show changes to ignored files; compare file snapshots or checksums when relevant. **These are documented agent instructions, not enforced filesystem isolation in Codex; actual permissions still matter.**
+**Boundary checks:** distinguish the target project root from any Toolkit checkout; do not assume the process current directory is the target. Ask which project is intended when multiple workspace roots are ambiguous. Where possible, verify Toolkit remained unchanged, including ignored files: `git status` alone does not prove the absence of ignored additions. These instructions are **not an enforced sandbox** and do not guarantee client behavior without appropriate permissions.
 
 ## Contract for the receiving coding agent
 
@@ -54,8 +54,8 @@ When the project is already open, the Toolkit URL is optional, and no repository
 4. **Select guidance based on intent, not keywords.** Read only relevant documents/skills from MANIFEST.json and docs/SKILLS_CATALOG.md as external context. **Do not run `adt.py init` or `--apply` by default.** Only after separate approval to install may you use the existing manager (Python 3.12+, `python scripts/adt.py profile list` or `python scripts/adt.py profile plan --target TARGET --task feature`; task categories are fixed, not free-text). Avoid loading everything or invoking competing controllers.
 5. **Installation requires separate opt-in.** The default path writes no Toolkit files to the project. Only when the user **explicitly asks for local installation**, check the target rules/permissions and preview `python scripts/adt.py doctor --target TARGET` and `python scripts/adt.py init --target TARGET --task feature` (appropriate category; for Claude Code add `--layout claude`). Disclose planned paths. `--apply` requires separately granted file-write permission; never overwrite unmanaged skills or project instructions.
 6. **Distinguish reading guidance from skill installation and invocation.** Default is `GUIDANCE_ONLY`, activation `NOT_VERIFIED`. Only in separately authorized install mode may `python scripts/adt.py status --target TARGET` verify managed copies. Never equate read, copy, discovery, invocation or measured effects.
-7. **Perform the task in project A, never in Toolkit.** Work in A's authorized directory under its rules; create source files or tests in A when the request requires them. Existing task-scoping, feature-delivery, QA, UI, security and review skills are *guidance*, not extra agents. Never run feature-delivery, make-feature or adaptive-delivery as competing controllers. Do not let a general task override the repository's merge, deployment, publication, licensing or payment gates.
-8. **Verify and report.** Default to chat output. If a file is requested, place it in A or another authorized destination - **never Toolkit**. For code changes, list files changed in A and actual checks with PASS/FAIL/NOT_RUN/BLOCKED. Deployment, purchases and irreversible actions require separate authorization.
+7. **Perform the task in the user's project, not Toolkit.** Work in its authorized directory and follow its rules; create source files and tests there when the request requires them. Existing task-scoping, feature-delivery, QA, UI, security and review skills are *guidance*, not extra agents. Never run feature-delivery, make-feature or adaptive-delivery as competing controllers. Do not let a general task override the repository's merge, deployment, publication, licensing or payment gates.
+8. **Verify and report.** Default to chat output. If a file is requested, place it in the target project or another authorized destination - **never Toolkit**. For code changes, list files changed in the user's project and actual checks with PASS/FAIL/NOT_RUN/BLOCKED. Deployment, purchases and irreversible actions require separate authorization.
 
 ### Suggested starting routes, not hard-coded limitations
 

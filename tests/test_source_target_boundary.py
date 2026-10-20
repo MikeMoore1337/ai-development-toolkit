@@ -1,7 +1,7 @@
 """Issue #103: source-vs-target boundary contract for third-party Toolkit use.
 
 These tests validate documented routing, not real autonomous Codex behavior.
-Toolkit is a read-only source when assisting project A; A owns requested outputs.
+Toolkit is read-only guidance for user work; generated results belong to the user's project.
 """
 from __future__ import annotations
 
@@ -34,35 +34,55 @@ class SourceTargetBoundaryTests(unittest.TestCase):
 
     def test_upstream_source_must_not_receive_third_party_outputs(self):
         policies = {
-            "AGENTS.md": ("read-only source", "reports", "project A"),
-            "AGENT_START.md": ("**Toolkit source", "reports", "commits",
-                               "**User's project A", "A's `reports/`"),
-            "AGENT_START.ru.md": ("**Источник", "отчёты", "коммиты",
-                                  "**Рабочая область", "`reports/`"),
+            "AGENTS.md": ("read-only sources", "reports", "user\'s project"),
+            "AGENT_START.md": ("**Toolkit is a read-only source", "reports", "commits",
+                               "**The user\'s project is the work target", "`reports/`"),
+            "AGENT_START.ru.md": ("**Toolkit - источник", "отчёты", "коммиты",
+                                  "**Проект пользователя - рабочая область", "`reports/`"),
         }
         for name, markers in policies.items():
             content = (ROOT / name).read_text(encoding="utf-8")
             for marker in markers:
                 with self.subTest(name=name, marker=marker):
                     self.assertIn(marker, content)
-        self.assertIn("**never be placed in AI Development Toolkit**",
+        self.assertIn("must never be placed in the Toolkit repository",
                       (ROOT / "AGENT_START.md").read_text(encoding="utf-8"))
-        self.assertIn("не должны попадать в AI Development Toolkit",
+        self.assertIn("никогда не должны попадать в репозиторий Toolkit",
                       (ROOT / "AGENT_START.ru.md").read_text(encoding="utf-8"))
 
-    def test_no_blanket_ban_on_outputs_in_project_a(self):
+    def test_outputs_belong_to_users_project_not_toolkit(self):
         en = (ROOT / "AGENT_START.md").read_text(encoding="utf-8")
         ru = (ROOT / "AGENT_START.ru.md").read_text(encoding="utf-8")
-        self.assertIn("If the user requests a report inside project A", en)
-        self.assertIn("Если пользователь просит файл в **проекте A**", ru)
+        self.assertIn("If a report file is requested inside the user\'s project", en)
+        self.assertIn("Если пользователь просит файл **в своём проекте**", ru)
         for content in (en, ru):
             self.assertIn("GUIDANCE_ONLY", content)
             self.assertIn("NOT_VERIFIED", content)
             self.assertIn("READ_ONLY", content)
 
+    def test_public_guides_do_not_use_example_project_name_as_user_requirement(self):
+        import re
+
+        public_guides = (
+            "AGENT_START.ru.md", "AGENT_START.md", "README.ru.md", "README.md",
+            "docs/ru/BEGINNER_START.md", "docs/BEGINNER_START.md",
+            "docs/ru/README.md",
+        )
+        for relpath in public_guides:
+            text = (ROOT / relpath).read_text(encoding="utf-8")
+            with self.subTest(path=relpath):
+                self.assertIsNone(re.search(r"\b[Pp]roject A\b|проект[аеуом]* [AА]\b", text))
+                self.assertIn("Toolkit", text)
+        en = (ROOT / "AGENT_START.md").read_text(encoding="utf-8")
+        ru = (ROOT / "AGENT_START.ru.md").read_text(encoding="utf-8")
+        for content in (en, ru):
+            self.assertIn("https://github.com/MikeMoore1337/ai-development-toolkit", content)
+            self.assertIn("GUIDANCE_ONLY", content)
+            self.assertIn("NOT_VERIFIED", content)
+
     def test_optional_install_targets_separate_disposable_project_not_toolkit(self):
         with tempfile.TemporaryDirectory() as tmp:
-            target = Path(tmp) / "project-a"
+            target = Path(tmp) / "sample-project"
             target.mkdir()
             evidence_paths = [ROOT / "AGENTS.md", ROOT / "AGENT_START.md",
                               ROOT / "AGENT_START.ru.md", ROOT / "MANIFEST.json"]

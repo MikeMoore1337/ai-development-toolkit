@@ -22,7 +22,7 @@ A curated, portable collection of agent skills, specialist roles and practical w
 
 ## Why this toolkit?
 
-**Already have project A open in an IDE with Codex?** Simply ask: "In project A, use https://github.com/MikeMoore1337/ai-development-toolkit to complete my task." The [Toolkit is a reference source](AGENT_START.md), **never a storage destination for another user's files or reports**. Code, tests and requested report files belong in A or another user-chosen destination, never in Toolkit. Installing Toolkit in A is optional.
+**Already have a project open in an IDE with Codex?** Simply ask: "Use https://github.com/MikeMoore1337/ai-development-toolkit to complete this task in my current project." [Toolkit is a reference source](AGENT_START.md), **never a storage destination for another user's files or reports**. Code, tests and requested report files belong in the user's project or another chosen destination, never in Toolkit. Installing Toolkit in the user's project is optional.
 
 AI can produce code quickly. Getting the **right change**, validating its behaviour and delivering it safely still requires a repeatable process. This toolkit supplies reusable instructions and focused workflows - without imposing a whole framework on your application.
 
