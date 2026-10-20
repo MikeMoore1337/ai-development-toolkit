@@ -14,7 +14,7 @@ A curated, portable collection of agent skills, specialist roles and practical w
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
 
-[Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
+[Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
