@@ -40,7 +40,7 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "d354db926a3a4b261f6a85ecea13567fc6923d0a52c6f1f5352d8b22db320134"
+      "source_sha256": "446b78df1dc4f50053da78e218eacef575bb2f216de7b89a0e4b9c89308540b8"
     },
     {
       "source": "docs/ADAPTATION.md",
@@ -80,6 +80,22 @@
       "source": "docs/CLEAR_VOICE_INTEGRATION.md",
       "translation": "docs/ru/CLEAR_VOICE_INTEGRATION.md",
       "source_sha256": "0724ac206a4c363b72d8e365501dbf970a357dc8a70e215a3e39eacb45ab311c"
+    },
+    {
+      "source": "docs/UNIVERSAL_ENGINEERING.md",
+      "translation": "docs/ru/UNIVERSAL_ENGINEERING.md",
+      "source_sha256": "34443f5c45fcf3e88a0e56f1057d17ce44241b438dfce6797a7a927c9b3ed806"
+    },
+    {
+      "source": "docs/SKILL_QUALITY_V2.md",
+      "translation": "docs/ru/SKILL_QUALITY_V2.md",
+      "source_sha256": "2697c69905f76e54515a2b386809bf02fe7f56b8bb20c1646c2bfc6ca7873dd6"
+    },
+    {
+      "source": "docs/SOURCE_EVALUATION.md",
+      "translation": "docs/en/SOURCE_EVALUATION.md",
+      "source_language": "ru",
+      "source_sha256": "acba418f1e040f7c750c4f27c71d705a92fc8f15706200c2cafca4fcb0bde041"
     }
   ]
 }
