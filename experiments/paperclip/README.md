@@ -73,3 +73,12 @@ This non-agent exercise extends the accepted skill-import smoke to the **control
 The private receipt storing only test IDs remains under `RUNNER_TEMP` and is not uploaded. No model providers, agents, credentials, heartbeats or issue checkout are created/invoked. The code deliberately performs **no mock board acceptance**, to avoid misrepresenting a simulated decision as real owner approval.
 
 **Interpretation limits:** This tests the API's board-controlled issue storage, revision conflict handling and interaction state; it does **not** demonstrate enforcement against an authenticated agent (none exist), database recovery after server restart, end-to-end GitHub task synchronization, automatic agent coordination, actual human UI decision flow, speed advantage or model costs. The test is not authorization to activate autonomous work or deploy Paperclip.
+
+
+## Phase 3: GitHub + Codex workflow fit (structural comparison only)
+
+The evidence-based outcome is recorded in [COMPARISON.md](COMPARISON.md). An additional `comparison.py` script performs **anonymous GET only** against the real public GitHub Issue #80 and unmerged Draft PR #81, and verifies that the ephemeral Paperclip parent/child, latest plan and pending human-only interaction from Phase 2 remain accessible.
+
+This is deliberately **not** a matched-task A/B benchmark: there are **zero Codex/Claude/other agent runs**, no GitHub Issue/PR writes by the experiment and no evidence about saved operator time, correctness improvements, human workload, or billable provider costs. The test labels all of these limitations in its machine-readable output.
+
+**Architecture decision:** Prefer the existing GitHub source of truth plus Codex/Toolkit rather than add a second issue store and persistent Node/PostgreSQL control plane until a separate independently approved zero-spend real agent test can demonstrate a net benefit and ownership/conflict gates. `docs/REAL_AGENT_PILOT.md` continues to prohibit actual agent execution. PR remains a disposable Draft experiment; merging the new CI into main is **not** the default disposition.
