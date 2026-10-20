@@ -22,7 +22,7 @@ Activate framework-dependent skills only in compatible projects. Do not require 
 
 Start with one **focused profile**, not `qa-all`. A profile makes its skills available; it does not prove they were loaded or activated. When the target project does not use pytest/Playwright, omit those framework-specific skills and apply the stack-neutral methods instead. The installer copies skills, including `references/`, but **does not install or start role agents**.
 
-Each of the [11 QA reference roles](roles/) now declares inputs, applicable skills, an observable outcome, negative cases and an evidence handoff. Use the smallest set that can verify the request:
+Each of the [QA role contracts](roles/qa-architect.md) now declares inputs, applicable skills, an observable outcome, negative cases and an evidence handoff. Use the smallest set that can verify the request:
 
 | Request | Suggested role flow | Focused skills |
 | --- | --- | --- |
