@@ -15,7 +15,7 @@ class OptionalSkillsTests(unittest.TestCase):
             self.assertTrue((cv/rel).is_file(),rel)
         result=subprocess.run([sys.executable,'evals/validate_package.py'],cwd=cv,capture_output=True,text=True,encoding='utf-8')
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
-        self.assertIn('61',result.stdout)
+        self.assertIn('72',result.stdout)
     def test_make_feature_bundled_without_personal_issuance(self):
         m=json.loads((ROOT/'MANIFEST.json').read_text('utf8'))
         self.assertTrue(m['make_feature_source_bundled'])
