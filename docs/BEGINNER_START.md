@@ -8,7 +8,7 @@ AI Development Toolkit is a library of reusable task instructions and selected s
 
 ## Already have a local project open in an IDE with Codex?
 
-This is the shortest route for an **existing project**: open its folder in your IDE, give the agent `https://github.com/MikeMoore1337/ai-development-toolkit`, and describe your task. The [agent entry guide](../AGENT_START.md) describes **using guidance without installing Toolkit files into the project**. Analysis and reports default to chat; a requested file needs an external destination. Before source edits, the agent discloses planned paths. No target GitHub URL or terminal commands are needed. Reading guidance does not prove skill activation.
+The shortest route: open project A in your IDE and ask "In project A, use https://github.com/MikeMoore1337/ai-development-toolkit to do this task." No special prompt, installation or target repo URL is required. The [agent guide](../AGENT_START.md) makes the boundary clear: Toolkit is **read-only guidance**; requested code, tests and reports go to project A, chat or another authorized location. **Other users' results never belong in Toolkit.**
 
 ## First four actions
 

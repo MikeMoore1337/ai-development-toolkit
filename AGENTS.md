@@ -3,6 +3,7 @@
 This is a portable collection of AI development skills and reference agent roles.
 
 - Do not mutate third-party repositories, merge PRs or deploy as part of toolkit maintenance.
+- When this repository is referenced as a toolkit for someone else's project A, treat **all copies of Toolkit as read-only source**: never write A's reports, generated code, logs, caches, scratch files, test results, new branches, commits, or PRs into Toolkit. Work and outputs belong in A, chat, or a user-authorized destination. Only an explicitly authorized task to develop Toolkit itself may change this repository.
 - Existing task approval gates always take precedence over skills.
 - New skills must follow https://agentskills.io/specification (`SKILL.md` frontmatter with correct name and description).
 - Keep descriptions concise and trigger-specific; move lengthy references to `references/`.
