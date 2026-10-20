@@ -111,6 +111,10 @@
 
 Опциональный навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) проверяет версии наборов LLM, регрессию промптов, поиск и обоснованность RAG-ответов, права инструментов на синтетических офлайн-примерах. [Руководство](AI_ENGINEERING_QA.md). Без второго исполнителя моделей и платных API.
 
+## Performance & Load Testing
+
+Опциональный [performance-load-testing](../../extensions/performance/skills/performance-load-testing/SKILL.md) описывает ограниченные модели нагрузки, метрики задержек, пропускную способность, ошибки, бюджеты и честное сравнение baseline/candidate. [Руководство](PERFORMANCE_LOAD_TESTING.md). Без внешней нагрузки.
+
 ## Reliability Testing
 
 Опциональный [reliability-testing](../../extensions/reliability/skills/reliability-testing/SKILL.md) проверяет инварианты при отказах, ограниченные повторы, гонки, порядок событий и восстановление. Девять офлайн-пар эталон/дефект используют условную SQLite-модель. [Руководство](RELIABILITY_TESTING.md). Не доказывает свойства реального брокера.
@@ -191,6 +195,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |

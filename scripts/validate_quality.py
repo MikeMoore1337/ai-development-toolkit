@@ -444,9 +444,9 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
         body = (root / path).read_text(encoding="utf-8")
         found = re.search(r"(\d+) in the checked revision:\s*(\d+) core/generic,\s*"
                           r"(\d+) QA,\s*(\d+) Make Feature,\s*(\d+) Frontend,\s*"
-                          r"(\d+) Backend,\s*(\d+) Fullstack and\s*(\d+) Product,\s*(\d+) Management,\s*(\d+) Analysis,\s*(\d+) Design,\s*(\d+) AI and\s*(\d+) Reliability", body)
+                          r"(\d+) Backend,\s*(\d+) Fullstack and\s*(\d+) Product,\s*(\d+) Management,\s*(\d+) Analysis,\s*(\d+) Design,\s*(\d+) AI,\s*(\d+) Reliability and\s*(\d+) Performance", body)
         expected = [skills, core] + [sizes.get(x, 0) for x in
-                                     ("qa", "make-feature", "frontend", "backend", "fullstack", "product", "management", "analysis", "design", "ai", "reliability")]
+                                     ("qa", "make-feature", "frontend", "backend", "fullstack", "product", "management", "analysis", "design", "ai", "reliability", "performance")]
         if not found or [int(x) for x in found.groups()] != expected:
             add(findings, "DOC001", path, 1, "Official validator count mismatch")
 

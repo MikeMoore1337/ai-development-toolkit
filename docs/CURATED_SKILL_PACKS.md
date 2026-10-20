@@ -17,6 +17,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
+| Bounded load, performance budgets and regressions | `performance-load-testing` | 3 | Synthetic local tests only; no external traffic |
 | Stateful reliability, retry, duplicates and recovery | `reliability-testing` | 4 | Invariants, bounded synthetic fault tests; no production chaos |
 | AI evaluation, RAG or prompt/tool-use regression | `ai-engineering-qa` | 5 | Reuse QA contracts and security guidance; no real model call |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
@@ -38,6 +39,10 @@ Optional `ux-design` composes one process skill with existing design-system and 
 ## AI Engineering & QA
 
 The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
+
+## Performance & Load Testing
+
+The optional `performance-load-testing` profile adds one specialist skill and reuses `test-strategy` and `failure-triage`. It checks bounded workload models, metrics, budgets, functional oracles and cross-version comparability. [Guide](PERFORMANCE_LOAD_TESTING.md). Local synthetic example only, no production traffic or paid services.
 
 ## Reliability Testing
 

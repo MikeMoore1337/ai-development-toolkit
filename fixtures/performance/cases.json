@@ -1,0 +1,131 @@
+{
+  "fixture_version": "1.0.0",
+  "nature": "SYNTHETIC_ASSUMPTION",
+  "external_targets": "FORBIDDEN",
+  "positive": [
+    {
+      "id": "constant-virtual",
+      "profile": "constant",
+      "operations": 12,
+      "rps": 5,
+      "duration": 5,
+      "concurrency": 1,
+      "expected": "PASS"
+    },
+    {
+      "id": "step-virtual",
+      "profile": "step",
+      "operations": 12,
+      "rps": 5,
+      "duration": 5,
+      "concurrency": 1,
+      "expected": "PASS"
+    },
+    {
+      "id": "mixed-virtual",
+      "profile": "mixed",
+      "operations": 12,
+      "rps": 5,
+      "duration": 5,
+      "concurrency": 1,
+      "expected": "PASS"
+    }
+  ],
+  "negative": [
+    {
+      "id": "too-high-rps",
+      "input": {
+        "rps": 6
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "unbounded-duration",
+      "input": {
+        "duration": "inf"
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "too-high-concurrency",
+      "input": {
+        "concurrency": 3
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "too-many-operations",
+      "input": {
+        "operations": 51
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "duration-too-short",
+      "input": {
+        "operations": 30,
+        "duration": 1
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "public-url",
+      "input": {
+        "url": "https://example.invalid"
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "production-url",
+      "input": {
+        "url": "https://production.example.invalid"
+      },
+      "expected": "REJECT_BEFORE_LOAD"
+    },
+    {
+      "id": "no-baseline",
+      "mutant": "missing-baseline",
+      "expected": "NOT_MEASURED"
+    },
+    {
+      "id": "unfair-environment",
+      "mutant": "environment-mismatch",
+      "expected": "COMPARISON_INVALID"
+    },
+    {
+      "id": "tiny-sample",
+      "mutant": "insufficient-observations",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "fast-wrong-result",
+      "mutant": "broken-fast",
+      "expected": "BLOCKED"
+    },
+    {
+      "id": "increased-errors",
+      "mutant": "timeouts-added",
+      "expected": "REGRESSION"
+    },
+    {
+      "id": "hidden-timeout",
+      "mutant": "raw-aggregate-mismatch",
+      "expected": "COMPARISON_INVALID"
+    },
+    {
+      "id": "dropped-outlier",
+      "mutant": "removed-sample",
+      "expected": "COMPARISON_INVALID"
+    },
+    {
+      "id": "threshold-after-run",
+      "mutant": "changed-budget",
+      "expected": "COMPARISON_INVALID"
+    },
+    {
+      "id": "corrupt-report",
+      "mutant": "missing-fields",
+      "expected": "COMPARISON_INVALID"
+    }
+  ]
+}
