@@ -5008,7 +5008,7 @@
       "notes": "Original zero-cost lexical skill routing diagnostic; no third-party source imported, no model calls or protected skill edits."
     },
     {
-      "id": "documentation-docs-md",
+      "id": "documentation-docs-skill-routing-evals-md",
       "path": "docs/SKILL_ROUTING_EVALS.md",
       "name": "SKILL_ROUTING_EVALS.md",
       "kind": "documentation",
@@ -5028,7 +5028,7 @@
       "notes": "Original zero-cost lexical skill routing diagnostic; no third-party source imported, no model calls or protected skill edits."
     },
     {
-      "id": "documentation-docs-ru-md",
+      "id": "documentation-docs-ru-skill-routing-evals-md",
       "path": "docs/ru/SKILL_ROUTING_EVALS.md",
       "name": "SKILL_ROUTING_EVALS.md",
       "kind": "documentation",
