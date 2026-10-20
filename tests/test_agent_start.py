@@ -1,4 +1,4 @@
-"""Offline contract for IDE-local-first and optional-URL agent onboarding (#52/#95).
+"""Offline contract for external-reference Toolkit onboarding (#52/#95/#100).
 
 This checks actual managed CLI behavior in disposable target folders, not a live
 Codex/Claude session, URL retrieval or empirical model effectiveness.
@@ -109,7 +109,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
         protocol = (ROOT / "docs/ru/ACCEPTANCE.md").read_text(encoding="utf-8")
         self.assertIn("## Сценарий открытого проекта в IDE и необязательных ссылок (Issue #52)", protocol)
         for token in ("AGENT_START.ru.md", "NOT_TESTED", "BLOCKED", "preview",
-                      "rollback/recover", "10 минут", "двух необходимых уточнений", "локально открытым проектом"):
+                      "GUIDANCE_ONLY", "10 минут", "двух необходимых уточнений", "локально открытый"):
             self.assertIn(token, protocol)
         self.assertIn("(docs/ru/ACCEPTANCE.md#", EN.read_text(encoding="utf-8"))
         self.assertIn("(docs/ru/ACCEPTANCE.md#", RU.read_text(encoding="utf-8"))
@@ -168,9 +168,9 @@ class UniversalAgentEntryTests(unittest.TestCase):
     def test_local_ide_is_primary_and_remote_urls_optional(self):
         for path, header, footer, wording in (
             (RU, "## Основной сценарий: проект открыт в IDE",
-             "## Дополнительный сценарий: ссылки на репозитории", "Используй AI Development Toolkit"),
-            (EN, "## Primary path: project already open in your IDE",
-             "## Optional path: remote repository links", "Use AI Development Toolkit"),
+             "## Дополнительный сценарий: ссылки на репозитории", "Toolkit"),
+            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+             "## Optional path: remote repository links", "Toolkit"),
         ):
             text = path.read_text(encoding="utf-8")
             primary = text.split(header, 1)[1].split(footer, 1)[0]
@@ -206,6 +206,69 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2)
             self.assertEqual(json.loads(result.stdout)["result"], "BLOCKED")
             self.assertFalse(missing.exists())
+
+
+    def test_primary_prompt_uses_toolkit_url_without_installation(self):
+        for source, first, later in (
+            (RU, "## Основной сценарий: проект открыт в IDE",
+             "## Дополнительный сценарий: ссылки на репозитории"),
+            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+             "## Optional path: remote repository links"),
+        ):
+            text = source.read_text(encoding="utf-8")
+            primary = text.split(first, 1)[1].split(later, 1)[0]
+            self.assertIn("https://github.com/MikeMoore1337/ai-development-toolkit", primary)
+            self.assertNotIn("https://github.com/OWNER/PROJECT", primary)
+            self.assertNotIn("adt.py init", primary, "No setup instructions in default prompt")
+            self.assertNotIn("--apply", primary)
+            self.assertIn("GUIDANCE_ONLY", text)
+            self.assertIn("READ_ONLY", text)
+            self.assertIn("NOT_VERIFIED", text)
+            for forbidden in (".agents/skills/", ".claude/skills/", ".adt/", "reports/", "tmp/"):
+                self.assertIn(forbidden, text)
+
+    def test_report_destinations_are_external_by_contract(self):
+        en = EN.read_text(encoding="utf-8")
+        ru = RU.read_text(encoding="utf-8")
+        protocol = (ROOT / "docs/ru/ACCEPTANCE.md").read_text(encoding="utf-8")
+        for doc in (en, ru):
+            self.assertIn("GUIDANCE_ONLY", doc)
+            self.assertIn("NOT_VERIFIED", doc)
+            self.assertIn("BLOCKED", doc)
+            self.assertIn("git status", doc)
+            self.assertIn("AGENTS.md", doc)
+            self.assertIn("CLAUDE.md", doc)
+        for marker in ("GUIDANCE_ONLY", "Отчёт: чат", "игнорируемые",
+                       "без установки", "URL Toolkit", "NOT_TESTED"):
+            self.assertIn(marker, protocol)
+        self.assertIn("https://github.com/MikeMoore1337/ai-development-toolkit",
+                      (ROOT / "docs/ru/BEGINNER_START.md").read_text(encoding="utf-8"))
+        self.assertIn("https://github.com/MikeMoore1337/ai-development-toolkit",
+                      (ROOT / "docs/BEGINNER_START.md").read_text(encoding="utf-8"))
+
+    def test_cli_read_only_preflights_preserve_ignored_and_hidden_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "my-project"
+            target.mkdir()
+            (target / ".gitignore").write_text("reports/\\n.cache/\\n", encoding="utf-8")
+            existing_report = target / "reports" / "user-report.md"
+            existing_report.parent.mkdir()
+            existing_report.write_text("pre-existing report\\n", encoding="utf-8")
+            existing_cache = target / ".cache" / "keep"
+            existing_cache.parent.mkdir()
+            existing_cache.write_bytes(b"private user data")
+            def snapshot():
+                return {p.relative_to(target).as_posix(): p.read_bytes()
+                        for p in target.rglob("*") if p.is_file()}
+            before = snapshot()
+            for args in (
+                ("doctor", "--target", str(target)),
+                ("profile", "plan", "--target", str(target), "--task", "qa"),
+                ("init", "--target", str(target), "--task", "qa"),
+            ):
+                result = run_cli(*args)
+                self.assertIn(result.returncode, (0, 2), result.stderr)
+                self.assertEqual(before, snapshot(), "Read-only preflight wrote project files")
 
 
 if __name__ == "__main__":
