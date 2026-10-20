@@ -29,6 +29,24 @@
   событий и незавершённых операций, а не одним запуском процесса.
   Статусы: RECOVERED, RECOVERY_PENDING, RECOVERY_BLOCKED, STATE_UNKNOWN.
 
+## Матрица повторного использования
+
+| Свойство | Что уже есть | Дополнение и решение |
+| --- | --- | --- |
+| Timeout | `background-processing`, `integration-testing` | NEW: отказ до/после эффекта и проверка состояния |
+| Retry и backoff | `background-processing` | REFINE: лимит попыток и виртуальные задержки |
+| Идемпотентность | `background-processing` | NEW: проверка итогового бизнес-эффекта после повтора |
+| Конкурентные изменения | `database-validation`, `integration-testing` | NEW: управляемые lost update и конфликт версий |
+| Частичные транзакции | `database-validation`, `integration-testing` | NEW: прерывание после первого изменения и откат |
+| Дубликаты событий | `background-processing`, `contract-testing` | NEW: инвариант общего результата, а не только маркера |
+| Нарушение порядка | `contract-testing`, `background-processing` | NEW: проверка монотонности версии |
+| Восстановление | `background-processing`, `failure-triage` | REFINE: повторное открытие SQLite и проверка ключа |
+| Управляемые отказы | Общая методика QA | NEW: ограниченные точки отказа и расписания |
+| Доказательства надёжности | `failure-triage`, `quality-gate-assessment` | NEW: контракт сценария и проверяемого результата |
+
+Новый навык дополняет имеющиеся методики, не создавая второй обработчик,
+брокер или управляющий процесс.
+
 ## Проверки без доступа к сети
 
 В разрешённой рабочей копии Toolkit:

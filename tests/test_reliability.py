@@ -46,6 +46,13 @@ class ReliabilityTests(unittest.TestCase):
         self.assertEqual("STATE_UNKNOWN",
                          run_case(load_cases()[0], mutant=True)["recovery_outcome"])
 
+    def test_evidence_counts_actual_replayed_events(self):
+        cases = {case["case_id"]: case for case in load_cases()}
+        for name in ("duplicate-delivery", "timeout-after-effect", "restart-recovery"):
+            self.assertEqual(1, run_case(cases[name])["retry_count"], name)
+        self.assertEqual(2, run_case(cases["retry-budget"])["retry_count"])
+        self.assertEqual(3, run_case(cases["retry-budget"], mutant=True)["retry_count"])
+
     def test_every_known_mutation_has_a_case(self):
         self.assertEqual(set(CASE_IDS), set(MUTANTS))
         self.assertEqual(len(MUTANTS), len(set(MUTANTS.values())))

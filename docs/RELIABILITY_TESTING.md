@@ -26,6 +26,24 @@ automatic QA Pack install or a new controller.
   pending work after restart. Distinguish RECOVERED, RECOVERY_PENDING,
   RECOVERY_BLOCKED and STATE_UNKNOWN.
 
+## Reuse-first decision matrix
+
+| Property | Existing skill coverage | Added gap / decision |
+| --- | --- | --- |
+| Timeout | `background-processing`, `integration-testing` | NEW: distinguish before/after-effect failure and prove state invariants |
+| Retry & backoff | `background-processing` | REFINE: bounded attempts and virtual-delay failure oracle |
+| Idempotency | `background-processing` | NEW: independent persisted business-effect replay oracle |
+| Concurrent updates | `database-validation`, `integration-testing` | NEW: deterministic lost-update and version-conflict schedules |
+| Partial transactions | `database-validation`, `integration-testing` | NEW: injected partial debit and rollback verification |
+| Duplicate event | `background-processing`, `contract-testing` | NEW: invariant on the aggregate result, not only a processed marker |
+| Out-of-order event | `contract-testing`, `background-processing` | NEW: monotonic version-state oracle |
+| Recovery | `background-processing`, `failure-triage` | REFINE: reopen synthetic SQLite and check persisted dedup state |
+| Deterministic failure injection | General QA test-design methods | NEW: bounded named checkpoints and interleaving model |
+| Reliability evidence | `failure-triage`, `quality-gate-assessment` | NEW: per-case failure/state/oracle/recovery evidence contract |
+
+These decisions reuse existing engineering guidance without copying it into a
+second worker implementation, broker or workflow controller.
+
 ## Safe offline checks
 
 From an authorized Toolkit development checkout:

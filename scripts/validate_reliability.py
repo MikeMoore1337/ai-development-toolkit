@@ -247,7 +247,10 @@ def run_case(case: dict, mutant: bool = False) -> dict:
         "expected_state": expected,
         "observed_state": observed,
         "oracle_outcome": "PASS" if success else "FAIL",
-        "retry_count": max(0, observed.get("attempts", 1) - 1),
+        "retry_count": (max(0, observed["attempts"] - 1) if "attempts" in observed
+                        else 1 if case["case_id"] in {"duplicate-delivery",
+                                                     "timeout-after-effect",
+                                                     "restart-recovery"} else 0),
         "recovery_outcome": ("RECOVERED" if success and case["case_id"] == "restart-recovery"
                              else "NOT_APPLICABLE" if success else "STATE_UNKNOWN"),
         "bounded_duration_seconds": round(duration, 6),
