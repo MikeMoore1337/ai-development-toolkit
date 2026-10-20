@@ -16,8 +16,8 @@ The source tree has 34 Markdown pages immediately under `docs/` (excluding `docs
 | --- | --- |
 | EN → RU available | `INSTALLATION`, `SKILLS_CATALOG`, `CURATED_SKILL_PACKS`, `CLIENT_MIGRATION`, `CLIENT_COMPATIBILITY`, `PUBLICATION_POLICY` |
 | Originally Russian; English translations now available in `docs/en/` | [Adaptation](en/ADAPTATION.md), [Integration matrix](en/INTEGRATION_MATRIX.md), [Portability scenarios](en/PORTABILITY_EVAL_SCENARIOS.md), [Task template](en/TASK_PROMPT_TEMPLATE.md) |
-| Mixed Russian and English, still needs editorial treatment | `SOURCE_EVALUATION.md`; `QUALITY_RUBRIC.md` is now English with a [Russian peer](ru/QUALITY_RUBRIC.md) |
-| Priority EN → RU completed / remaining | [Beginner workflow](ru/BEGINNER_WORKFLOW.md) translated; `UNIVERSAL_ENGINEERING.md` and `SKILL_QUALITY_V2.md` remain English-only |
+| Formerly mixed-language guide | [Source evaluation (RU)](SOURCE_EVALUATION.md) now has an [English counterpart](en/SOURCE_EVALUATION.md); [Quality rubric (EN)](QUALITY_RUBRIC.md) / [RU](ru/QUALITY_RUBRIC.md) |
+| More EN → RU guides | [Universal engineering](ru/UNIVERSAL_ENGINEERING.md), [Skill Quality v2](ru/SKILL_QUALITY_V2.md) and [Beginner workflow](ru/BEGINNER_WORKFLOW.md) have Russian counterparts |
 | English-only specialized/audit/history | Remaining docs such as `PROVENANCE_AUDIT.md`, `RELEASE_PROCESS.md`, `SKILLS_QUALITY_AUDIT.md` and archived release/evaluation notes |
 | Canonical skill with Russian instructions | Make Feature and Clear Voice; **no parallel installable English `SKILL.md`** |
 | Bilingual human guides for Russian-primary skills | [Make Feature EN](MAKE_FEATURE_INTEGRATION.md) / [RU](ru/MAKE_FEATURE_INTEGRATION.md); [Clear Voice EN](CLEAR_VOICE_INTEGRATION.md) / [RU](ru/CLEAR_VOICE_INTEGRATION.md). Original skills remain unchanged. |
@@ -29,8 +29,8 @@ Read existing [Russian docs index](ru/README.md) for actual currently translated
 1. Every human guide identifies its counterpart language, canonical source and **truthful scope**: full translation, summary or instructions about a Russian original.
 2. Keep code snippets, file paths, task IDs, CLI flags, status constants and approval requirements semantically identical. Provide Windows-specific commands only if supported.
 3. Pin source revisions when a file has an EN→RU translated peer, using [SOURCE_REVISIONS.json](ru/SOURCE_REVISIONS.json) and the existing offline freshness check. A checksum verifies the **original version**, not equivalence or translation quality.
-4. Translations of originally Russian guides into English must use the same review discipline; automatic hashing in the existing script is currently **one-directional**, and bidirectional checking is tracked in #87. Do not claim both directions are already automated.
+4. Translations of originally Russian guides into English must use the same review discipline; the source-revision checker now accepts pinned translations under both `docs/ru/` and `docs/en/`. It warns about changes in either original; it does **not** verify meaning or writing quality.
 5. Do not edit protected Make Feature or QA source snapshots, personal licenses or bundled third-party material merely to change language. A new version of source text needs a separate origin/rights review and actual client-compatibility assessment.
 6. Maintain clear distinctions: file installation ≠ live client discovery, self-check ≠ independent review, CI PASS ≠ legal distribution permission, docs update ≠ release/deploy.
 
-**Next in sequence:** additional high-value EN-only user docs and an editorial EN/RU separation of `SOURCE_EVALUATION.md`. Broader specialist/audit pages are P2/P3, based on user value. No claim of full bilingual translation until both directions and actual documentation are reviewed.
+**Next in sequence:** additional high-value EN-only user docs and specialized and historical documents based on practical demand. Broader specialist/audit pages are P2/P3, based on user value. No claim of full bilingual translation until both directions and actual documentation are reviewed.
