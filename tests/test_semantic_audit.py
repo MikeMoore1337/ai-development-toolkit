@@ -28,7 +28,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         # was reviewed in its original source snapshot.
         self.assertEqual({name: path for name, path in self.expected.items()
                           if name in actual}, actual)
-        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure"},
+        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing"},
                          set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
