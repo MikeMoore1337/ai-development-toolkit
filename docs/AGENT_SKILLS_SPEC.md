@@ -1,5 +1,7 @@
 # Agent Skills specification and official CLI validation
 
+[Русская версия](ru/AGENT_SKILLS_SPEC.md)
+
 Authoritative sources:
 
 - Specification: https://agentskills.io/specification
