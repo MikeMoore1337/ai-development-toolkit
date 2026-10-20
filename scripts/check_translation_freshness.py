@@ -2,6 +2,8 @@
 """Report stale Russian documentation sources without blocking unrelated changes.
 
 Only exact, safe, repository-local source/translation pairs are accepted.
+Existing entries default to an English source; source_language='ru' selects
+a Russian original and its docs/en/ counterpart.
 This checks revision age, not translation meaning, skill activation, or rights.
 """
 from __future__ import annotations
@@ -39,8 +41,11 @@ def check(root: Path = ROOT) -> tuple[list[str], list[str]]:
         source = entry.get("source")
         translated = entry.get("translation")
         expected = entry.get("source_sha256")
+        source_language = entry.get("source_language", "en")
+        destination_language = {"en": "ru", "ru": "en"}.get(source_language)
         if (not isinstance(source, str) or not EN_PATH.fullmatch(source)
-                or translated != source.replace("docs/", "docs/ru/", 1)
+                or destination_language is None
+                or translated != source.replace("docs/", f"docs/{destination_language}/", 1)
                 or not isinstance(expected, str) or not CHECKSUM.fullmatch(expected)
                 or source in seen):
             errors.append("L10N007: unsafe, duplicate or malformed revision entry")
