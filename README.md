@@ -14,7 +14,7 @@ A curated, portable collection of agent skills, specialist roles and practical w
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
 
-[Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
+[Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
@@ -48,7 +48,7 @@ Skills follow the [Agent Skills](https://agentskills.io/specification) directory
 
 ## Quick start
 
-**New to programming?** Start with [an idea to a first verified result](docs/BEGINNER_WORKFLOW.md). You can describe your goal without choosing a language, profile or architecture; execution still depends on your AI client's real tools.
+**New to programming or avoiding the terminal?** Open [Start without a terminal](docs/BEGINNER_START.md), choose your AI client and copy one of five requests. No Python or Git is needed just to discuss an idea. The deeper [beginner conversation workflow](docs/BEGINNER_WORKFLOW.md) explains how to scope and verify work; actual file edits and tests still require suitable tools and permission.
 
 **What you need:** Python 3.12+ and an existing project folder. The Toolkit supplies reusable instructions for a separately installed AI coding client; it does not install the client or grant permissions. Choose a profile for your task rather than browsing every skill.
 
@@ -146,6 +146,7 @@ effectiveness, execution safety or client compatibility.
 
 ## Documentation
 
+- [Start without a terminal](docs/BEGINNER_START.md) - choose Codex, ChatGPT, Claude Code or Claude and copy a request
 - [Full skills & roles catalog](docs/SKILLS_CATALOG.md) - discover exactly what's included
 - [Installation](docs/INSTALLATION.md) - safety, options and client layouts
 - [Adaptation guide](docs/ADAPTATION.md) - apply skills to an existing project

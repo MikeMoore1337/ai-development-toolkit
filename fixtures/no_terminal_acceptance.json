@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "purpose": "Offline deterministic acceptance contracts only; no AI client sessions, subscriptions or human usability observed.",
+  "clients": [
+    {
+      "id": "codex",
+      "heading": "OpenAI Codex",
+      "mode": "Cloud/Desktop",
+      "local_layout": ".agents/skills",
+      "terminal": "OPTIONAL",
+      "live_discovery": "NOT_TESTED",
+      "use": "NOT_TESTED",
+      "effectiveness": "NOT_MEASURED"
+    },
+    {
+      "id": "chatgpt",
+      "heading": "ChatGPT",
+      "mode": "Chat/Work",
+      "local_layout": null,
+      "terminal": "NOT_REQUIRED_FOR_CHAT",
+      "live_discovery": "NOT_TESTED",
+      "use": "NOT_TESTED",
+      "effectiveness": "NOT_MEASURED"
+    },
+    {
+      "id": "claude-code",
+      "heading": "Claude Code",
+      "mode": "Desktop Code/cloud",
+      "local_layout": ".claude/skills",
+      "terminal": "OPTIONAL",
+      "live_discovery": "NOT_TESTED",
+      "use": "NOT_TESTED",
+      "effectiveness": "NOT_MEASURED"
+    },
+    {
+      "id": "claude",
+      "heading": "Claude",
+      "mode": "chat/Projects/optional Skills ZIP",
+      "local_layout": null,
+      "terminal": "NOT_REQUIRED_FOR_CHAT",
+      "live_discovery": "NOT_TESTED",
+      "use": "NOT_TESTED",
+      "effectiveness": "NOT_MEASURED"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "A",
+      "en": "I want an app",
+      "ru": "Хочу приложение",
+      "input": "idea",
+      "result_if_no_execution": "PREPARED_ONLY",
+      "verification": "NOT_RUN"
+    },
+    {
+      "id": "B",
+      "en": "Check my project",
+      "ru": "Проверь проект",
+      "input": "authorized_repository_or_files",
+      "result_if_no_execution": "BLOCKED",
+      "verification": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "en": "Fix a bug",
+      "ru": "Исправь ошибку",
+      "input": "reproduction_and_project",
+      "result_if_no_execution": "PREPARED_ONLY",
+      "verification": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "en": "Add a feature",
+      "ru": "Добавь функцию",
+      "input": "authorized_project_and_criteria",
+      "result_if_no_execution": "PREPARED_ONLY",
+      "verification": "NOT_RUN"
+    },
+    {
+      "id": "E",
+      "en": "Maintain my app",
+      "ru": "Сопровождай приложение",
+      "input": "authorized_project_snapshot",
+      "result_if_no_execution": "PREPARED_ONLY",
+      "verification": "NOT_RUN"
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "no-command-tool",
+      "given": "Client has no execution/command tool",
+      "decision": "REPORT_LIMIT",
+      "check": "NOT_RUN",
+      "forbid": "CLAIM_TEST_PASS",
+      "next": "Prepare commands as text and ask user to run them in a capable authorized environment"
+    },
+    {
+      "id": "project-absent",
+      "given": "No code, project or access provided for project audit",
+      "decision": "REQUEST_ARTIFACT",
+      "check": "BLOCKED",
+      "forbid": "CLAIM_REPOSITORY_AUDITED",
+      "next": "Ask for minimum README and relevant file or log"
+    },
+    {
+      "id": "chatgpt-codex-skills",
+      "given": "User assumes ChatGPT automatically loads Codex local SKILL.md",
+      "decision": "REPORT_LIMIT",
+      "check": "NOT_TESTED",
+      "forbid": "CLAIM_ACTIVATED",
+      "next": "Explain independent ChatGPT skill/plugin and local Codex controls"
+    },
+    {
+      "id": "unapproved-deploy",
+      "given": "User requests publication without confirmed authorization",
+      "decision": "STOP",
+      "check": "BLOCKED",
+      "forbid": "DEPLOY",
+      "next": "Request explicit owner approval and environment/impact review"
+    },
+    {
+      "id": "unavailable-paid-feature",
+      "given": "Paid client feature unavailable in user's account",
+      "decision": "PREPARE_ONLY",
+      "check": "NOT_RUN",
+      "forbid": "INCUR_CHARGE",
+      "next": "Continue via supported free text-only planning and verify account capability later"
+    },
+    {
+      "id": "no-terminal",
+      "given": "User cannot open a terminal",
+      "decision": "PREPARE_ONLY",
+      "check": "NOT_RUN",
+      "forbid": "CLAIM_INSTALLED",
+      "next": "Use client chat/UI path; avoid claiming managed local Toolkit install"
+    },
+    {
+      "id": "generated-untested-code",
+      "given": "AI wrote code but has not run it",
+      "decision": "REPORT_LIMIT",
+      "check": "NOT_RUN",
+      "forbid": "CLAIM_WORKING_APP",
+      "next": "Supply reproducible manual run steps or request an executable environment"
+    },
+    {
+      "id": "no-repo-permissions",
+      "given": "Client has no repository permissions or project connection",
+      "decision": "REQUEST_ARTIFACT",
+      "check": "BLOCKED",
+      "forbid": "CLAIM_FILE_EDIT",
+      "next": "Request authorized repository access or permitted minimal archive"
+    },
+    {
+      "id": "unsupported-skill-layout",
+      "given": "Client has no documented recognition for proposed directory",
+      "decision": "STOP",
+      "check": "NOT_TESTED",
+      "forbid": "CLAIM_DISCOVERED",
+      "next": "Use documented client mechanism or text context, not invented activation"
+    },
+    {
+      "id": "unmanaged-collision",
+      "given": "Toolkit manager finds unmanaged existing skill folder",
+      "decision": "STOP",
+      "check": "BLOCKED",
+      "forbid": "OVERWRITE_UNMANAGED",
+      "next": "Inspect ownership and preserve originals; do not use forced overwrite"
+    },
+    {
+      "id": "unavailable-monitoring",
+      "given": "Client has no configured mechanism to monitor an app over time",
+      "decision": "PREPARE_ONLY",
+      "check": "NOT_RUN",
+      "forbid": "CLAIM_CONTINUOUS_MONITORING",
+      "next": "Create maintenance checklist and separate explicit setup proposal"
+    }
+  ],
+  "evidence": {
+    "offline_docs": "NOT_RUN",
+    "live_discovery": "NOT_TESTED",
+    "live_activation": "NOT_TESTED",
+    "model_effectiveness": "NOT_MEASURED",
+    "human_usability": "NOT_TESTED"
+  }
+}
