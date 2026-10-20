@@ -46,7 +46,7 @@
 | **QA Engineering Pack** | 27 навыков API/UI/CI, надёжности тестирования и управления качеством | [QA-навыки](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 самостоятельный подключаемый навык работы над функциями | [Интеграция](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Роли** | 5 основных и 11 специализированных ролей QA | [Каталог ролей](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Профили** | 31 набор навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
+| **Профили** | 34 набора навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
 
 Навыки оформлены по формату [Agent Skills](https://agentskills.io/specification). Наличие навыка не даёт агенту автоматически права менять файлы, подключаться к сервисам или выпускать изменения.
 
@@ -94,7 +94,7 @@ python scripts/skill_manager.py status --target /path/to/project
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 68 навыков и 31 профиль](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
+[Полный каталог из 71 навыка и 34 профилей](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 
