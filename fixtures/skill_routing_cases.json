@@ -120,6 +120,30 @@
         "Fix a failing Python backend API endpoint and add unit tests.",
         "Implement an existing approved REST API contract with integration tests."
       ]
+    },
+    {
+      "id": "qa-failure-triage-versus-generic-tests",
+      "target": "failure-triage",
+      "positive": [
+        "Use failure triage to classify a failing CI test and identify its cause from run logs.",
+        "Perform failure triage on failed test logs and determine the next diagnostic check."
+      ],
+      "negative": [
+        "Write focused unit tests for this validation function.",
+        "Implement a responsive frontend component."
+      ]
+    },
+    {
+      "id": "qa-test-oracle-review-versus-code-review",
+      "target": "test-review",
+      "positive": [
+        "Perform test review of assertions and oracles to find false-green automated tests.",
+        "Use test review to identify weak test oracles that could hide a broken requirement."
+      ],
+      "negative": [
+        "Use code review to inspect a production implementation diff for regressions.",
+        "Design a database migration with a rollback plan."
+      ]
     }
   ]
 }
