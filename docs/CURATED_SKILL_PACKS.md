@@ -61,6 +61,23 @@ Use one focused profile per task. Avoid `qa-all` in ordinary projects.
 QA sources remain subject to existing provenance/owner-snapshot constraints.
 Don't assume every project has Playwright or pytest.
 
+### Optional advanced QA methods
+
+Keep using existing `test-analysis-design`, `test-management` and `database-validation` skills. These techniques are **conditional guidance**, not new skills, profiles or dependencies.
+
+| Situation | Useful technique | Independent check / limit |
+| --- | --- | --- |
+| Large input domain with clear invariants | **Property-based testing** | Generate varied inputs and assert a specified invariant (e.g. parse/serialize round-trip); ensure the invariant comes from the contract, not the implementation. No Hypothesis dependency is assumed. |
+| Exact expected output is hard to enumerate | **Metamorphic testing** | Apply a transformation with a known relation: reordering independent records should not change an aggregate; first confirm independence is a business rule. |
+| Stateful workflow with many allowed/forbidden sequences | **Model-based testing** | Build a small reference state machine; compare system transitions, including retries, denied actions and recovery. Avoid a duplicate model derived blindly from the same product code. |
+| Critical deterministic logic has tests but may still be weak | **Mutation testing** | Change one rule in a disposable copy; a meaningful existing assertion should fail. Use sparingly, never mutate production or set a universal mutation-score threshold. |
+
+For managed automated tests, **identity follows the tested behavior**: preserve a stable external ID for rename/move with the same oracle; after a split only the successor covering the original behavior may retain that ID; on merge, reconcile retired IDs against the external tracker without deleting history or creating duplicates. Jira, Test IT and test synchronizers remain optional and require explicit write authorization.
+
+For database audits, distinguish **read-only metadata queries** from calling user-defined functions or procedures. `SELECT some_function()` may have side effects; a later `ROLLBACK` does not undo every sequence allocation or external effect. Examine permissions, environment, function bodies and downstream effects before execution. PostgreSQL-specific catalog queries belong only in PostgreSQL tasks. Prefer an authorized isolated test environment and independently observed state, never production credentials.
+
+These are decision aids: keep routine tests small and risk-driven. Compare **actual agent behavior and evidence**, not a keyword score, using [bilingual QA scenarios](SKILL_ROUTING_EVALS.md#manual-qa-behavior-checks-ruen-prompts).
+
 ## Agent Engineering
 
 Reuse `agent-architecture` = `architecture-decisions`, `agent-framework-fit`,
