@@ -80,6 +80,11 @@
       "source": "docs/CLEAR_VOICE_INTEGRATION.md",
       "translation": "docs/ru/CLEAR_VOICE_INTEGRATION.md",
       "source_sha256": "0724ac206a4c363b72d8e365501dbf970a357dc8a70e215a3e39eacb45ab311c"
+    },
+    {
+      "source": "docs/BEGINNER_START.md",
+      "translation": "docs/ru/BEGINNER_START.md",
+      "source_sha256": "7a7cf6a3b08d960dc4eeb8b28cf9948254bbbe86d49842fa019040ce87ce8ee9"
     }
   ]
 }
