@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "review-not-commit-message",
+      "target": "code-review",
+      "positive": [
+        "Review a proposed code diff for correctness, regressions, security and maintainability.",
+        "Perform an independent code review of this pull request before merge."
+      ],
+      "negative": [
+        "Write a short commit message describing this patch.",
+        "Rewrite the welcome email to sound natural."
+      ]
+    },
+    {
+      "id": "contract-versus-api-design",
+      "target": "contract-testing",
+      "positive": [
+        "Create contract tests for API event payload schema compatibility between consumers and producers.",
+        "Test backwards compatibility when a provider changes its response fields and event versions."
+      ],
+      "negative": [
+        "Design a new REST API endpoint with authentication.",
+        "Build a responsive landing page."
+      ]
+    },
+    {
+      "id": "playwright-versus-generic-e2e",
+      "target": "playwright-testing",
+      "positive": [
+        "Write stable Playwright browser UI tests with assertions, network waits and traces.",
+        "Fix flaky Playwright tests using semantic locators and screenshot traces."
+      ],
+      "negative": [
+        "Choose an overall QA testing strategy for a service.",
+        "Implement an API database transaction."
+      ]
+    },
+    {
+      "id": "database-migration",
+      "target": "database-migrations",
+      "positive": [
+        "Plan a compatible database schema migration with backfill, rollback and validation.",
+        "Implement a safe database migration and recovery plan for existing persisted records."
+      ],
+      "negative": [
+        "Optimize the component animation on a frontend page.",
+        "Improve the wording of an app description."
+      ]
+    },
+    {
+      "id": "state-races",
+      "target": "state-management",
+      "positive": [
+        "Fix stale asynchronous frontend state when overlapping requests return out of order.",
+        "Handle optimistic UI state updates, synchronization and caching after failed writes."
+      ],
+      "negative": [
+        "Review a software license for importing an external skill.",
+        "Create a Python CLI tool."
+      ]
+    },
+    {
+      "id": "feature-delivery-boundary",
+      "target": "feature-delivery",
+      "positive": [
+        "Implement a new feature, track acceptance criteria and verify changed behavior.",
+        "Deliver a significant feature with risk-based workflow and acceptance checks."
+      ],
+      "negative": [
+        "Research whether a third-party service offers free API access.",
+        "Rewrite the README introduction for a friendly tone."
+      ]
+    },
+    {
+      "id": "skill-import",
+      "target": "skill-portability",
+      "positive": [
+        "Import an Agent Skills SKILL.md folder and validate metadata, links and client portability.",
+        "Migrate a portable skill to another AI client, checking activation boundaries."
+      ],
+      "negative": [
+        "Optimize a slow database query.",
+        "Run browser accessibility testing on a form."
+      ]
+    },
+    {
+      "id": "editorial-not-implementation",
+      "target": "clear-voice",
+      "positive": [
+        "Rewrite this newsletter introduction with clear natural language and a human voice.",
+        "Нужны естественные русские тексты для писем и статей, без проверки кода."
+      ],
+      "negative": [
+        "Fix a failing backend API endpoint.",
+        "Investigate a flaky CI test."
+      ]
+    },
+    {
+      "id": "qa-strategy",
+      "target": "test-strategy",
+      "positive": [
+        "Choose a test strategy and coverage layers for a new service based on risk.",
+        "Revise the project test architecture: choose unit, API, contract, integration and exploratory tests by risk."
+      ],
+      "negative": [
+        "Write a React component with motion transitions.",
+        "Prepare a deployment changelog."
+      ]
+    }
+  ]
+}

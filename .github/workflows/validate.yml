@@ -88,6 +88,8 @@ jobs:
         run: python scripts/verify_client_compatibility.py
       - name: Validate links profiles and exclusive workflows (offline)
         run: python scripts/validate_quality.py
+      - name: Check skill selection descriptions with offline lexical fixtures
+        run: python scripts/skill_routing_eval.py --strict
       - name: Check Russian translation source revisions (warnings do not block unrelated PRs)
         run: python scripts/check_translation_freshness.py
       - name: Verify per-skill quality metrics (offline source only)

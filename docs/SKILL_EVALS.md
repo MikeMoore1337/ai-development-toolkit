@@ -78,3 +78,7 @@ This does **not** mean real model runs have occurred. Model and tool costs,
 CLI authentication, an externally isolated runner, and independent review
 are required. Never treat a synthetic CI test or file-installed skill as
 proof of a model's effectiveness or of skill activation.
+
+## Free lexical routing regressions
+
+[Offline skill routing regression checks](SKILL_ROUTING_EVALS.md) test curated positive and negative prompts against the descriptions of all 65 declared skills. This is a deterministic **source-only** approximation, not actual model discovery, activation or effectiveness. Real Codex/Claude comparisons remain separately restricted by Issue #11.
