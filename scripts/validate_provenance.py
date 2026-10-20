@@ -120,37 +120,63 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         else:
             approved = approvals["approved_components"]
 
-    # Preserve the first owner approval byte snapshot. A later reported owner
-    # confirmation may amend only individual files already inside that scope.
-    # This is a technical owner assertion, not independent legal verification.
-    amended_files: dict[str, str] = {}
+    # The baseline remains immutable. Later user-approved changes must be
+    # exact-file pinned. New scope is limited to Markdown QA skill references.
+    amended_files = {}
+    added_files = {}
     amendments = data.get("owner_review_amendments", [])
     if not isinstance(amendments, list):
         fail("OWNER_AMENDMENT", "owner_review_amendments must be an array")
         amendments = []
-    original_files = {
-        file_name for snapshots in approved.values() if isinstance(snapshots, dict)
-        for file_name in snapshots
-    }
+    original = {name: digest for snapshot in approved.values()
+                if isinstance(snapshot, dict) for name, digest in snapshot.items()}
     for index, amendment in enumerate(amendments):
-        if (not isinstance(amendment, dict)
-                or not isinstance(approvals, dict)
+        if not isinstance(amendment, dict):
+            fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid map")
+            continue
+        changes = amendment.get("approved_files")
+        additions = amendment.get("added_files", {})
+        predecessors = amendment.get("supersedes_files", {})
+        if (not isinstance(approvals, dict)
                 or amendment.get("parent_review_id") != approvals.get("id")
                 or amendment.get("source") != "owner_reported"
                 or amendment.get("review_outcomes") != "permitted"
                 or not isinstance(amendment.get("scope_issue"), str)
                 or not amendment["scope_issue"].startswith("#")
-                or not isinstance(amendment.get("approved_files"), dict)
-                or not amendment["approved_files"]):
-            fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid owner decision or scope")
+                or not isinstance(changes, dict) or not isinstance(additions, dict)
+                or not isinstance(predecessors, dict) or not (changes or additions)):
+            fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid owner decision/scope")
             continue
-        for file_name, digest in amendment["approved_files"].items():
-            if (not isinstance(file_name, str) or file_name not in original_files
-                    or file_name in amended_files or not isinstance(digest, str)
+        if set(predecessors) - set(changes):
+            fail("OWNER_CHAIN", f"amendment[{index}]: orphan supersession")
+        if additions and (not isinstance(amendment.get("scope_description"), str)
+                          or not amendment["scope_description"].strip()
+                          or not isinstance(amendment.get("reported_at"), str)
+                          or not re.fullmatch(r"20[0-9]{2}-[0-9]{2}-[0-9]{2}", amendment["reported_at"])):
+            fail("OWNER_AMENDMENT", f"amendment[{index}]: addition lacks review context")
+            continue
+        for name, digest in changes.items():
+            if name not in original or not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+                fail("OWNER_AMENDMENT", f"amendment[{index}]: unexpected changed path: {name!r}")
+                continue
+            if name in amended_files and predecessors.get(name) != amended_files[name]:
+                fail("OWNER_CHAIN", f"amendment[{index}]: wrong prior hash: {name}")
+                continue
+            if name not in amended_files and name in predecessors:
+                fail("OWNER_CHAIN", f"amendment[{index}]: unnecessary prior hash: {name}")
+                continue
+            amended_files[name] = digest
+        for name, digest in additions.items():
+            match = re.fullmatch(
+                r"extensions/qa/skills/([a-z0-9]+(?:-[a-z0-9]+)*)/references/[A-Za-z0-9_-]+[.]md",
+                name) if isinstance(name, str) else None
+            parent = f"extensions/qa/skills/{match.group(1)}" if match else None
+            if (not match or parent not in approved or name in original
+                    or name in added_files or not isinstance(digest, str)
                     or not re.fullmatch(r"[0-9a-f]{64}", digest)):
-                fail("OWNER_AMENDMENT", f"amendment[{index}]: invalid, duplicate or new scope {file_name!r}")
-            else:
-                amended_files[file_name] = digest
+                fail("OWNER_AMENDMENT", f"amendment[{index}]: unreviewed added path: {name!r}")
+                continue
+            added_files[name] = digest
 
     # Approval claims, scope and classifications must agree even when a
     # previously adapted component is relabelled "original" or "verified".
@@ -271,11 +297,12 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                                sorted(p for p in target.rglob("*") if p.is_file() and
                                       not any(part in SKIP for part in p.relative_to(root).parts)))
                 relative = {p.relative_to(root).as_posix() for p in owned_files}
-                if set(snapshots) != relative:
+                approved_additions = {p for p in added_files if p.startswith(raw_path + "/")}
+                if set(snapshots) | approved_additions != relative:
                     fail("OWNER_SCOPE", f"{label}: reviewed file inventory changed")
                 for owner_file in owned_files:
                     relative_path = owner_file.relative_to(root).as_posix()
-                    expected = amended_files.get(relative_path, snapshots.get(relative_path))
+                    expected = amended_files.get(relative_path, added_files.get(relative_path, snapshots.get(relative_path)))
                     if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
                         fail("OWNER_FINGERPRINT", f"{label}: missing or malformed reviewed SHA256 for {relative_path}")
                     elif hashlib.sha256(canonical_bytes(owner_file.read_bytes())).hexdigest() != expected:

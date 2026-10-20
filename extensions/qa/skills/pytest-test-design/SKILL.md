@@ -15,3 +15,7 @@ metadata:
 5. Keep focused tests fast; mark integration/external-resource tests according to the repository's test organization.
 
 Use project-supported plugins only; do not install or introduce dependencies without explaining their value.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

@@ -197,3 +197,7 @@ can be inferred. No live Codex, Claude or Hermes discovery is claimed.
 ## Project & Delivery Management
 
 The optional `project-delivery-management` profile maps an existing PRD to work, dependencies, risks and observed status while reusing scoping/QA skills. No new tracker, workflow controller or automatic GitHub writes. [Guide](PROJECT_DELIVERY_MANAGEMENT.md).
+
+### QA v2: examples and role handoffs
+
+All 27 QA skills now ship with task-local `references/` (lazy-load only when the case calls for examples, failure oracles and handoff templates). The 11 QA roles have explicit input/output and exclusion contracts. Roles are **reference instructions**: the installer does not provision subagents. Pick the smallest task-specific profile; `qa-ui` uses Playwright only if the project actually uses it, and `qa-python` does not require pytest in other frameworks. For trivial work use one agent serially; delegate only if the client has genuinely distinct workers and file ownership does not conflict. Never call self-review independent. Reports stay in chat by default; no external API or paid runtime. See [QA Pack](../extensions/qa/README.md), [portability](QA_PORTABILITY.md), and [role contracts](../extensions/qa/roles/).

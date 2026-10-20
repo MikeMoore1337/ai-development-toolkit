@@ -86,5 +86,45 @@ class QAExtensionTests(unittest.TestCase):
         self.assertFalse((ROOT/'extensions/qa/ai/onboarding.md').exists())
         self.assertFalse((ROOT/'extensions/qa/ai/workflows.md').exists())
 
+    def test_all_qa_skills_have_referenced_field_guides(self):
+        base = ROOT / 'extensions/qa/skills'
+        for name in self.qa['skills']:
+            with self.subTest(skill=name):
+                folder = base / name
+                main = (folder / 'SKILL.md').read_text(encoding='utf-8')
+                references = sorted((folder / 'references').glob('*.md'))
+                self.assertTrue(references, f'no worked reference for {name}')
+                self.assertTrue(any(f'references/{path.name}' in main
+                                    for path in references), f'unlinked guide: {name}')
+                for path in references:
+                    self.assertTrue(path.read_text(encoding='utf-8').strip())
+                if (folder / 'references/FIELD_GUIDE.md').exists():
+                    guide = (folder / 'references/FIELD_GUIDE.md').read_text(encoding='utf-8')
+                    for heading in ('## Worked situation', '## Observable oracle',
+                                    '## Failure or exclusion', '## Handoff contract'):
+                        self.assertIn(heading, guide, f'{name}: {heading}')
+
+    def test_roles_have_focused_contracts_and_valid_skill_links(self):
+        base = ROOT / 'extensions/qa/roles'
+        for role in self.qa['roles']:
+            with self.subTest(role=role):
+                content = (base / f'{role}.md').read_text(encoding='utf-8')
+                for heading in ('## Activation and exclusions', '## Required inputs',
+                                '## Procedure', '## Output and handoff',
+                                '## Boundaries and recovery'):
+                    self.assertIn(heading, content, f'{role}: {heading}')
+                self.assertIn('not an executable subagent', content)
+                self.assertIn('NOT_PERFORMED', content)
+                self.assertIn('../skills/', content)
+        self.assertEqual([], inspect())
+
+    def test_reference_resources_survive_selective_installation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            install(tmp, ['playwright-testing', 'test-review'], True, layout='claude')
+            root = Path(tmp) / '.claude' / 'skills'
+            self.assertTrue((root / 'playwright-testing/references/FIELD_GUIDE.md').is_file())
+            self.assertTrue((root / 'test-review/references/FIELD_GUIDE.md').is_file())
+            self.assertFalse((Path(tmp) / '.claude' / 'agents').exists())
+
 if __name__ == '__main__':
     unittest.main()

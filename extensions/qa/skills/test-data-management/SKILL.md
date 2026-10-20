@@ -15,3 +15,7 @@ metadata:
 5. For retries, make setup idempotent or detect and isolate leftovers; ensure tests can rerun safely.
 
 Output fixture plan with creation, ownership, isolation, cleanup and permissions. A global cleanup script requires separate approval.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

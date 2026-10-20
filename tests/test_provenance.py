@@ -213,6 +213,73 @@ class ProvenanceTests(unittest.TestCase):
         self._put(path, (self.root / path).read_text(encoding="utf-8") + "unapproved\n")
         self.check("OWNER_FINGERPRINT", mode="release")
 
+    def test_chained_owner_reapproval_requires_previous_sha(self):
+        import hashlib
+        self._approve_fixture()
+        path = ".agents/skills/original/SKILL.md"
+        self._put(path, "first approved revision\n")
+        first = hashlib.sha256(canonical_bytes((self.root / path).read_bytes())).hexdigest()
+        self._put(path, "second approved revision\n")
+        second = hashlib.sha256(canonical_bytes((self.root / path).read_bytes())).hexdigest()
+        initial = {"parent_review_id": "SYNTHETIC", "scope_issue": "#45",
+                   "source": "owner_reported", "review_outcomes": "permitted",
+                   "approved_files": {path: first}}
+        repeat = {"parent_review_id": "SYNTHETIC", "scope_issue": "#124",
+                  "source": "owner_reported", "review_outcomes": "permitted",
+                  "approved_files": {path: second},
+                  "supersedes_files": {path: first}}
+        self.data["owner_review_amendments"] = [initial, repeat]
+        self.write()
+        self.assertTrue(validate(self.root, "release")["ok"])
+        repeat["supersedes_files"][path] = "0" * 64
+        self.check("OWNER_CHAIN", mode="release")
+
+    def test_reviewed_qa_reference_addition_and_scope_guard(self):
+        import hashlib
+        self._approve_fixture()
+        folder = "extensions/qa/skills/qa-fixture"
+        main = folder + "/SKILL.md"
+        guide = folder + "/references/FIELD_GUIDE.md"
+        self._put(main, "---\nname: qa-fixture\ndescription: Synthetic skill\n---\n")
+        self._put(guide, "# Synthetic reference\n")
+        manifest = json.loads((self.root / "MANIFEST.json").read_text())
+        manifest["extension_packs"]["qa"] = {"skill_root": "extensions/qa/skills"}
+        self._put("MANIFEST.json", json.dumps(manifest))
+        item = component(folder, "skill", name="qa-fixture", origin="adapted",
+                         license="NOASSERTION", source_reference="synthetic",
+                         owner_approval_id="SYNTHETIC")
+        self.data["components"].append(item)
+        review = self.data["owner_review_record"]
+        review["approved_components"][folder] = {
+            main: hashlib.sha256(canonical_bytes((self.root / main).read_bytes())).hexdigest()
+        }
+        review["approved_metadata"][folder] = {
+            "origin": "adapted", "license": "NOASSERTION",
+            "status": "documented", "distribution": "included", "kind": "skill"}
+        self.data["owner_review_amendments"] = [{
+            "parent_review_id": "SYNTHETIC", "scope_issue": "#124",
+            "source": "owner_reported", "review_outcomes": "permitted",
+            "reported_at": "2026-10-21", "scope_description": "Synthetic review",
+            "approved_files": {}, "added_files": {
+                guide: hashlib.sha256(canonical_bytes((self.root / guide).read_bytes())).hexdigest()}}]
+        self.write()
+        self.assertTrue(validate(self.root, "release")["ok"])
+        self._put(guide, "# changed without review\n")
+        self.check("OWNER_FINGERPRINT", mode="release")
+        self._put(guide, "# Synthetic reference\n")
+        self._put(folder + "/references/UNKNOWN.md", "# unapproved\n")
+        self.check("OWNER_SCOPE", mode="release")
+
+    def test_reference_scope_cannot_add_new_role(self):
+        self._approve_fixture()
+        self.data["owner_review_amendments"] = [{
+            "parent_review_id": "SYNTHETIC", "scope_issue": "#124",
+            "source": "owner_reported", "review_outcomes": "permitted",
+            "reported_at": "2026-10-21", "scope_description": "Synthetic attempted expansion",
+            "approved_files": {}, "added_files": {
+                "extensions/qa/roles/new-executable.md": "0" * 64}}]
+        self.check("OWNER_AMENDMENT", mode="release")
+
     def test_owner_amendment_cannot_expand_path_scope(self):
         self._approve_fixture()
         self.data["owner_review_amendments"] = [{
