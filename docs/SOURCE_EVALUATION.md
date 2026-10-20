@@ -1,35 +1,37 @@
 # Источники и решения по интеграции (17.10.2026)
 
+[English translation](en/SOURCE_EVALUATION.md) | [Политика языков](ru/LANGUAGE_POLICY.md)
+
 Проверено чтением README через GitHub; приведённые SHA взяты из GitHub API для указанных репозиториев.
 Остальные ссылки фиксируют URL, но **не конкретную версию**. Оценка P1/P2/P3 - приоритет для набора, не оценка качества всего проекта.
 
 | Репозиторий | Приоритет | Что даёт | Решение |
 |---|---|---|---|
-| [artemiimillier/bulletproof](https://github.com/artemiimillier/bulletproof) | P1 | 12-step adaptive engineering | Inspire adaptive-delivery, no wholesale hooks; prefer S/M/L sizing |
-| [artemiimillier/claude-code-starter](https://github.com/artemiimillier/claude-code-starter) | P2 | project onboarding template | Read for starter project only; avoid overriding project AGENTS.md |
-| [artemiimillier/anti-ai-skill](https://github.com/artemiimillier/anti-ai-skill) | P2 | Russian copy style | Editorial-naturalness for Russian, optional and not technical QA |
-| [blader/humanizer](https://github.com/blader/humanizer) | P2 | English AI prose cleanup | Editorial-naturalness only; overlaps anti-ai/clear-voice |
-| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | P1 | premium frontend style/design taste | Use for landing/redesign where appropriate; product dashboards use incumbent design |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | P1 | UI design pattern reference | Selective lookup, no generic palette mandates |
-| [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | P2 | social/web platform reach | External tool if needed; cookie and dependency setup need separate approval |
-| [WorldFlowAI/everything-claude-code](https://github.com/WorldFlowAI/everything-claude-code) | P1 | Claude Code agents/rules/hooks library | Extract selective verification/checkpoint patterns; do not copy Claude hooks into Codex |
-| [browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast) | P2 | prototype fast browser agent | Browser-workflow-evidence design inspiration, NOT Playwright replacement |
-| [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | P1 | security scanner for agent skills | Adopt as optional external scanner; static analysis cannot prove safe |
-| [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | P2 | durable stateful agent framework | Architecture option only if task requires durable workflows |
-| [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | P2 | agents and flow orchestration framework | Alternative to LangGraph; not a reusable coding skill |
-| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | P1 | codebase knowledge graphs | Potential optional CLI for large repos; graph edges require evidence |
-| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | simple maintainable code decisions | Minimal-safe-change; do not import every-session overrides or hooks |
-| [iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir) | P3 | icon library | Choose one consistent project family, not four simultaneously |
-| [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | icon family / website | For React package use phosphor-icons/react; styles may differ |
-| [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | large icon library | Icon choice only when relevant to design system |
-| [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | P2 | icon toolkit | Prefer incumbent Lucide when already used, avoid wholesale swap |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | animation and design critique | Motion-quality; originals already partly present in source archive |
-| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | frontend audits and styling command set | Original archive already contained skill and EXE: avoid duplicates and binary |
-| [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | screenshot-to-UI application | Screenshot-fidelity workflow only; app requires API keys |
-| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | standalone agent runtime and skills | Architectural reference for Hermes, NOT same project or drop-in update |
-| [mnfst/awesome-free-llm-apis](https://github.com/mnfst/awesome-free-llm-apis) | P2 | community listing of provider free tiers | Provider-reality-check: verify official quota/terms each time |
-| [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | P2 | LLM free-tier router | External runtime candidate; free quota claims not verified |
-| [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | P2 | full agent harness | Alternative product architecture only; rework of 1.x not drop-in |
+| [artemiimillier/bulletproof](https://github.com/artemiimillier/bulletproof) | P1 | 12-шаговая адаптивная разработка | Идеи для adaptive-delivery без копирования всех хуков; предпочтительна оценка S/M/L |
+| [artemiimillier/claude-code-starter](https://github.com/artemiimillier/claude-code-starter) | P2 | Шаблон подготовки нового проекта | Изучить только для шаблона проекта; не перезаписывать проектный AGENTS.md |
+| [artemiimillier/anti-ai-skill](https://github.com/artemiimillier/anti-ai-skill) | P2 | Стиль естественного текста на русском | Только необязательный editorial-naturalness; не заменяет технический QA |
+| [blader/humanizer](https://github.com/blader/humanizer) | P2 | Редактура англоязычного AI-текста | Только editorial-naturalness; пересекается с anti-ai и Clear Voice |
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | P1 | Выразительный стиль frontend-дизайна | Использовать для лендингов и редизайна; в продуктовых интерфейсах сохранять действующую дизайн-систему |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | P1 | Справочник паттернов UI-дизайна | Выборочное использование; не навязывать общую цветовую палитру |
+| [Panniantong/Agent-Reach](https://github.com/Panniantong/Agent-Reach) | P2 | Доступ к социальным и веб-платформам | Внешний инструмент только по необходимости; cookies и зависимости требуют отдельного разрешения |
+| [WorldFlowAI/everything-claude-code](https://github.com/WorldFlowAI/everything-claude-code) | P1 | Библиотека агентов, правил и хуков Claude Code | Заимствовать только идеи проверки и контрольных точек; не копировать Claude-хуки в Codex |
+| [browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast) | P2 | Прототип быстрого браузерного агента | Вдохновение для browser-workflow-evidence, но не замена Playwright |
+| [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | P1 | Сканер безопасности навыков агентов | Рассматривать как необязательный внешний сканер; статический анализ не доказывает безопасность |
+| [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | P2 | Фреймворк для агентов с долговечным состоянием | Архитектурный вариант только при необходимости устойчивых workflow |
+| [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | P2 | Фреймворк оркестрации агентов и процессов | Альтернатива LangGraph, но не готовый навык программирования |
+| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | P1 | Граф знаний о кодовой базе | Потенциальная необязательная CLI для больших репозиториев; рёбра графа требуют доказательств |
+| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Принципы простых сопровождаемых изменений | Использовать идеи minimal-safe-change; не переносить постоянные переопределения и хуки |
+| [iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir) | P3 | Набор иконок | Выбирать одну согласованную библиотеку, не четыре одновременно |
+| [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Семейство иконок и сайт | Для React использовать соответствующий пакет; стили могут отличаться |
+| [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Большая библиотека иконок | Использовать только при соответствии существующей дизайн-системе |
+| [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | P2 | Набор инструментов иконок | Предпочитать уже используемый Lucide; не заменять библиотеку целиком без причины |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Критика анимации и дизайна | Использовать motion-quality; исходные материалы частично есть в архиве |
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | Команды для аудита и оформления frontend | В исходном архиве уже были навык и EXE; избегать дубликатов и бинарного файла |
+| [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | Приложение для переноса скриншота в UI | Только идеи screenshot-fidelity; самому приложению нужны ключи API |
+| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Отдельный агентный runtime и навыки | Архитектурный пример для Hermes, не тот же продукт и не готовое обновление |
+| [mnfst/awesome-free-llm-apis](https://github.com/mnfst/awesome-free-llm-apis) | P2 | Общественный список бесплатных тарифов LLM API | В provider-reality-check каждый раз проверять официальные лимиты и условия |
+| [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | P2 | Маршрутизатор бесплатных тарифов LLM | Внешний кандидат для runtime; заявления о бесплатных квотах не проверены |
+| [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | P2 | Полноценная среда работы агентов | Только альтернативная архитектура продукта; переработка 1.x не является готовой заменой |
 
 ## Закреплённые SHA проверенных HEAD
 
