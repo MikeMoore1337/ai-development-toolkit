@@ -20,7 +20,7 @@
 | Переведено / ещё на английском | [Маршрут новичка](BEGINNER_WORKFLOW.md) переведён; `UNIVERSAL_ENGINEERING.md`, `SKILL_QUALITY_V2.md` пока только на английском |
 | Другие EN-only страницы | `PROVENANCE_AUDIT.md`, `RELEASE_PROCESS.md`, `SKILLS_QUALITY_AUDIT.md`, исторические аудиты и специальные инструкции |
 | Русскоязычные устанавливаемые исходники | Make Feature и Clear Voice. **Вторые английские `SKILL.md` не создаются** |
-| В этой поставке | [Руководство Make Feature (RU)](MAKE_FEATURE_INTEGRATION.md) и [руководство (EN)](../MAKE_FEATURE_INTEGRATION.md) |
+| Двуязычные руководства к русскоязычным навыкам | [Make Feature RU](MAKE_FEATURE_INTEGRATION.md) / [EN](../MAKE_FEATURE_INTEGRATION.md); [Clear Voice RU](CLEAR_VOICE_INTEGRATION.md) / [EN](../CLEAR_VOICE_INTEGRATION.md). Исходники навыков не менялись. |
 
 Текущий список готовых переводов - в [индексе документации](README.md). Ссылка не гарантирует точности или актуальности перевода.
 
