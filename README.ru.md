@@ -14,13 +14,15 @@
 
 [English](README.md) · **Русский**
 
-[Любая задача по двум ссылкам](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Работа с открытым проектом в IDE](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
 ---
 
 ## Для чего нужен Toolkit
+
+**Проект уже открыт в IDE с Codex?** Просто напиши «Используй AI Development Toolkit в этом проекте и выполни мою задачу». [Основной сценарий](AGENT_START.ru.md) не требует ссылки на целевой репозиторий, выбора профиля или ввода команд пользователем; агент подключает только доступные ему проверенные навыки в пределах разрешений. URL нужны лишь как дополнительный способ указать источник или удалённый проект.
 
 **Впервые знакомишься с проектом или не хочешь использовать терминал?** Открой [«Начните без терминала»](docs/ru/BEGINNER_START.md): выбери клиента, скопируй один из пяти запросов и пойми, что ИИ реально сможет сделать. Python и Git для обсуждения идеи не нужны. Если требуется установить навыки в локальный проект, используй [технический первый запуск](docs/ru/GETTING_STARTED.md) с предварительным просмотром и проверкой. [Все русские материалы](docs/ru/README.md).
 

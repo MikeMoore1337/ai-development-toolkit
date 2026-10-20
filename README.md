@@ -22,6 +22,8 @@ A curated, portable collection of agent skills, specialist roles and practical w
 
 ## Why this toolkit?
 
+**Already working in an IDE with Codex?** Ask it to "Use AI Development Toolkit in this project and complete my task." The [primary workflow](AGENT_START.md) requires no target repository URL, manually selected profile or user-entered terminal commands; authorized agents may prepare verified skills when the environment supports it. URLs are optional for finding Toolkit or a remote target.
+
 AI can produce code quickly. Getting the **right change**, validating its behaviour and delivering it safely still requires a repeatable process. This toolkit supplies reusable instructions and focused workflows - without imposing a whole framework on your application.
 
 | What you need | What you get |

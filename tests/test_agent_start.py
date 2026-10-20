@@ -1,4 +1,4 @@
-"""Offline contract for universal URL-based agent onboarding (#95).
+"""Offline contract for IDE-local-first and optional-URL agent onboarding (#52/#95).
 
 This checks actual managed CLI behavior in disposable target folders, not a live
 Codex/Claude session, URL retrieval or empirical model effectiveness.
@@ -30,11 +30,11 @@ def run_cli(*arguments: str) -> subprocess.CompletedProcess[str]:
 
 
 class UniversalAgentEntryTests(unittest.TestCase):
-    def test_source_and_target_are_explicit_for_both_languages(self):
+    def test_source_and_target_discovery_for_both_languages(self):
         for guide in (EN, RU):
             text = guide.read_text(encoding="utf-8")
             self.assertIn("https://github.com/MikeMoore1337/ai-development-toolkit", text)
-            self.assertIn("https://github.com/OWNER/PROJECT", text)
+            self.assertIn("https://github.com/OWNER/PROJECT", text)  # optional remote path
             self.assertIn("AGENTS.md", text)
             self.assertIn("CLAUDE.md", text)
             self.assertIn("MANIFEST.json", text)
@@ -107,9 +107,9 @@ class UniversalAgentEntryTests(unittest.TestCase):
 
     def test_beginner_acceptance_links_and_human_status(self):
         protocol = (ROOT / "docs/ru/ACCEPTANCE.md").read_text(encoding="utf-8")
-        self.assertIn("## Сценарий двух ссылок и произвольной задачи (Issue #52)", protocol)
+        self.assertIn("## Сценарий открытого проекта в IDE и необязательных ссылок (Issue #52)", protocol)
         for token in ("AGENT_START.ru.md", "NOT_TESTED", "BLOCKED", "preview",
-                      "rollback/recover", "10 минут", "двух необходимых уточнений"):
+                      "rollback/recover", "10 минут", "двух необходимых уточнений", "локально открытым проектом"):
             self.assertIn(token, protocol)
         self.assertIn("(docs/ru/ACCEPTANCE.md#", EN.read_text(encoding="utf-8"))
         self.assertIn("(docs/ru/ACCEPTANCE.md#", RU.read_text(encoding="utf-8"))
@@ -163,6 +163,49 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertEqual(attempt.returncode, 2, attempt.stderr)
             self.assertEqual(json.loads(attempt.stdout)["result"], "BLOCKED")
             self.assertEqual(skill.read_bytes(), before)
+
+
+    def test_local_ide_is_primary_and_remote_urls_optional(self):
+        for path, header, footer, wording in (
+            (RU, "## Основной сценарий: проект открыт в IDE",
+             "## Дополнительный сценарий: ссылки на репозитории", "Используй AI Development Toolkit"),
+            (EN, "## Primary path: project already open in your IDE",
+             "## Optional path: remote repository links", "Use AI Development Toolkit"),
+        ):
+            text = path.read_text(encoding="utf-8")
+            primary = text.split(header, 1)[1].split(footer, 1)[0]
+            remote = text.split(footer, 1)[1]
+            self.assertIn(wording, primary)
+            self.assertIn("Codex", primary)
+            self.assertNotIn("https://github.com/OWNER/PROJECT", primary,
+                             "Local workspace must not require target repo URL")
+            self.assertIn("https://github.com/OWNER/PROJECT", remote)
+            self.assertIn("NOT_TESTED", text)
+        for path, link in (
+            (ROOT / "README.ru.md", "(AGENT_START.ru.md)"),
+            (ROOT / "README.md", "(AGENT_START.md)"),
+            (ROOT / "docs/ru/BEGINNER_START.md", "(../../AGENT_START.ru.md)"),
+            (ROOT / "docs/BEGINNER_START.md", "(../AGENT_START.md)"),
+        ):
+            contents = path.read_text(encoding="utf-8")
+            self.assertIn("Codex", contents)
+            self.assertIn(link, contents)
+
+    def test_workspace_ambiguity_and_missing_access_not_faked(self):
+        for path in (EN, RU):
+            contents = path.read_text(encoding="utf-8")
+            self.assertIn("Git", contents)
+            self.assertIn("NOT_VERIFIED", contents)
+            self.assertIn("BLOCKED", contents)
+            self.assertIn("AGENTS.md", contents)
+        # A documented workspace-first contract does not change core CLI:
+        # the caller must still resolve an actual, existing target directory.
+        with tempfile.TemporaryDirectory() as directory:
+            missing = Path(directory) / "unselected-root"
+            result = run_cli("init", "--target", str(missing), "--task", "feature", "--apply")
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(json.loads(result.stdout)["result"], "BLOCKED")
+            self.assertFalse(missing.exists())
 
 
 if __name__ == "__main__":
