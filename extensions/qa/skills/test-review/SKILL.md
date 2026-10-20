@@ -15,3 +15,7 @@ metadata:
 5. Run an intentional negative check or mutation where feasible. If not done, call this review static only.
 
 Output findings with file/line, defect mechanism, realistic counterexample, severity and suggested verification. Distinguish critical semantic gaps from style preferences.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

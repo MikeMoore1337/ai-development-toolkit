@@ -15,3 +15,7 @@ metadata:
 5. Test responsive layout, focus/keyboard and offline/error states when applicable.
 
 Inspect the project's Playwright version and conventions before suggesting API calls. Do not require Playwright in non-browser repos.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

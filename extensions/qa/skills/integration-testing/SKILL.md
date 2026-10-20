@@ -15,3 +15,7 @@ metadata:
 5. Ensure test data isolation and restore the environment after failures.
 
 Record exactly which dependencies were real, simulated or inaccessible. Do not call a mock-only test end-to-end integration evidence.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

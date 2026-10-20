@@ -27,3 +27,7 @@ Mark each assertion `PASS` when executed and satisfied, `FAIL` when executed and
 Illustration, **not executed evidence**: `POST /orders` with authorized `order=A` expects `201`, an ID and read-back state `created`; one `order.created` event is expected **only if documented**. Example report: response `PASS (201, id observed)`; DB read-back `PASS (created)`; event `NOT_VERIFIED (no subscriber or event log access)`; overall `INCOMPLETE`. For `GET /orders/unknown`, expected `404` and documented error shape are a passing negative test when the assertions succeed. Where appropriate verify no unexpected mutation.
 
 For asynchronous side effects, poll with a correlation key and a **bounded timeout** only when such a channel exists; report timeout vs inaccessible observer accurately. Do not invent events, arbitrary sleeps or a successful assertion for anything not observed.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

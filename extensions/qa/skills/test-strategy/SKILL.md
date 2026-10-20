@@ -19,3 +19,7 @@ Deliver a concise table or equivalent: `risk/business path -> selected test leve
 Example (**hypothetical**): one-service CRUD tool with limited CI minutes. CONFIRMED: one service, no external consumer. ASSUMED: write/read consistency matters. UNKNOWN: actual business failure impact. Choose unit validation, API create/read/auth checks, and one real database integration scenario. Omit contract tests (no independent consumer) and full E2E (no proven critical cross-system path); add occasional exploratory smoke. Explain to a beginner what will be checked and what remains at risk. Ask owner to clarify business criticality before claiming sufficient coverage.
 
 For multiple services, prioritize interface contract and real integration checks at changing boundaries, adding only justified end-to-end journeys. With limited budget, defer low-risk coverage explicitly: untested does not mean covered. Revisit strategy after incidents, material architectural/consumer changes, new failure impact, changing release risks or unsustainable execution cost.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

@@ -9,3 +9,7 @@ metadata:
 # Security Review
 
 Inspect secret handling, logging, CI permissions, dependency provenance, shell and code execution, artifact exposure and third-party uploads. Look for unintended access to production data and broad tokens. Compare findings with actual threat model and least-privilege controls. Reference the precise file and abuse path and propose a minimally scoped fix. Do not fetch or display secret values; use approved scanning tools with secure outputs and protect incident evidence.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

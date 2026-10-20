@@ -15,3 +15,7 @@ metadata:
 5. Separate a real browser run from generated test code or a manual visual inspection.
 
 Include environment, build/commit, browser/version and evidence links in the handoff.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

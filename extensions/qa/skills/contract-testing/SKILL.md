@@ -15,3 +15,7 @@ metadata:
 5. Track consumer evidence, not just provider assumptions.
 
 Use `contract -> consumer -> compatibility claim -> observed verification -> rollout constraint`. For event systems, cover duplicate/reordered delivery where the contract promises tolerance.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

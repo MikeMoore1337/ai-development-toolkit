@@ -15,3 +15,7 @@ metadata:
 5. Prioritize gaps by impact, likelihood and detectability; identify a targeted next test rather than demanding arbitrary percentages.
 
 Output `risk | test/evidence | uncovered behavior | priority | next action`. Do not extrapolate from sampled tests to full confidence.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.

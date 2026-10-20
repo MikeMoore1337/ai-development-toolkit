@@ -15,3 +15,7 @@ metadata:
 5. Check that failures are observable without leaking sensitive details. Record which scenarios were not executed.
 
 Evidence must tie each test to an explicitly documented policy or threat. No automated red-team activity without authorization.
+
+## Worked example and failure checks
+
+Use the [task-specific field guide](references/FIELD_GUIDE.md) when the case involves multiple states, boundaries, missing evidence or an independent handoff. Its scenarios are synthetic, not proof of executed tests. For a simple case, apply the procedure above and do not load extra material.
