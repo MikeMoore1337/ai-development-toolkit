@@ -1,5 +1,11 @@
 # Clear Voice change history
 
+
+## Unreleased - scoped editorial patterns (2026-10-21)
+
+- Added original, context-sensitive review rules inspired by MIT `stop-slop` to existing Clear Voice; retained four profiles and factual-fidelity checks.
+- Expanded synthetic positive and negative evaluation cases from 61 to 72; no separate skill, installer, model call or effectiveness claim.
+
 ## 1.1.0-portable (2026-10-18)
 
 - Replaced three application-specific profiles with `product-ui`, `knowledge-base` and `research-digest`.
