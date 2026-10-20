@@ -55,6 +55,8 @@ FIXTURE_FILES = (
     "docs/SKILL_QUALITY_METRICS.md",
     "docs/ru/SKILL_QUALITY_METRICS.md",
     "docs/AGENT_SKILLS_SPEC.md",
+    "docs/UX_UI_DESIGN.md",
+    "docs/ru/UX_UI_DESIGN.md",
     "docs/BUSINESS_SYSTEM_ANALYSIS.md",
     "docs/ru/BUSINESS_SYSTEM_ANALYSIS.md",
     "docs/PRODUCT_DISCOVERY.md",

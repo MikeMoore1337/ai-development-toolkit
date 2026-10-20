@@ -1,0 +1,24 @@
+# Third-party UX/UI method review (Issue #56)
+
+**Review date:** 2026-10-20. Sources are external design guidance, not embedded Toolkit dependencies. The explanations and procedure in this pack are original summaries derived from a comparison, **not copied instructions**. No third-party code, binaries, screenshots, design presets, fonts, CLI tools, generated datasets or vendored skills are distributed by this change. License summaries below do not assert the chain of title or relicensing of source text.
+
+| Source and pinned revision | License declared in repository | Useful idea selected | Integration decision | Explicit exclusions |
+| --- | --- | --- | --- | --- |
+| [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/dad8dbb3aac21ad1fa236c110315ef4abece23e8) | [Apache-2.0](https://github.com/pbakaus/impeccable/blob/dad8dbb3aac21ad1fa236c110315ef4abece23e8/LICENSE) | Distinguish enduring product facts from visual direction; design brief and scope before implementation; critique separately from deterministic technical checks; harden data/error/localization behavior | REFINE via [REVIEW_AND_STRESS.md](REVIEW_AND_STRESS.md), no code import | Installer, external binary, auto-created PRODUCT.md/DESIGN.md, hooks, mandatory subagents, global aesthetic bans, 24 commands |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills/tree/2d228630ba1446365f614a108cb8252f1feda202) | [MIT](https://github.com/emilkowalski/skills/blob/2d228630ba1446365f614a108cb8252f1feda202/LICENSE) | Plausible boundary stress data, testing the same component via data inputs; real-device distinction for touch/PWA; variants differing in interaction/layout rather than shade | REFINE existing QA guidance and add optional decision checks | Copying break-ui/animate/mobile-native/prototype skills, dev-only toggles in production, library mandates, animation durations as universal laws |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/56ea9cf174ed86786187daa9de0e6247cb0747e4) | [MIT](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/56ea9cf174ed86786187daa9de0e6247cb0747e4/LICENSE) | Check important defects before styling; state inventories and token hierarchy when a design system is genuinely needed | REFINE component handoff and prioritization; no second design-system skill | Style/font/color databases, blanket '44px' policy regardless of platform, third-party assets, auto-generated branding, 192-rule engine |
+
+## Conflicts and resolution
+
+- **Product truth before visuals:** established screens, approved decisions and assets prevail. Do not write design summaries into a Toolkit clone or automatically create root files in the user's project. A design brief in chat can capture durable facts, hypotheses and open choices without side effects.
+- **Technical gate vs expert design judgment:** contrast, overflow, focus, responsiveness and functional state changes can be checked; "looks premium" cannot be converted to automatic PASS. Keep findings in separate evidence categories.
+- **Practical hardening vs synthetic fiction:** use actual data contracts where possible; hypothetical long names and errors are proposed fixtures, not incidents seen in production. Exercise component input boundaries, not hand-edited markup.
+- **Components/tokens:** if existing tokens suffice, don't create a three-layer system just because a source shows one; document the mapping only when a team benefits from primitive/semantic/component separation.
+- **Motion and mobile:** mobile website is not automatically a native app; prefer capability-based interaction checks and real hardware evidence, never promise 60 FPS or native behavior without measurement.
+- **Accessibility:** apply platform-specific requirements and WCAG 2.2 criteria where applicable; do not blindly use one touch target number for every platform.
+
+## Rights and supply-chain decision
+
+All three upstream repositories advertise permissive licenses, but copying substantive source text/code can still require attribution and license/NOTICE handling. This PR does **not copy** their skill content; it creates Toolkit-authored task guidance, with explicit pointers to the original sources. Therefore no new upstream runtime, license file or bundled third-party asset is added. If future work vendors actual content, first assess upstream file-level licensing, attribution, dependencies, security and owner permission through the existing provenance gate. Citation here identifies intellectual inspiration only; it does not independently verify upstream authorship.
+
+**Verification scope:** source files and declared licenses inspected. External project effectiveness, security of installers, performance claims and use inside real AI clients remain NOT_MEASURED.

@@ -97,6 +97,16 @@
 
 [Руководство для новичков и специалистов](BUSINESS_SYSTEM_ANALYSIS.md).
 
+## Расширение UX/UI Design
+
+Необязательный процесс от требований к экранам и передаче в разработку с использованием существующих навыков.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`ux-design-process`](../../extensions/design/skills/ux-design-process/SKILL.md) | Связать пользовательские сценарии, навигацию, прототип и проверяемый контракт разработчика. |
+
+[Руководство по UX/UI](UX_UI_DESIGN.md).
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -175,6 +185,7 @@
 | :--- | :--- |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
+| `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |

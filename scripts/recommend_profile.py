@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent",
          "backend", "frontend", "fullstack", "research", "provider", "product",
-         "docs-edit", "docs-verify")
+         "docs-edit", "docs-verify", "ux")
 
 # Explicit, non-installing suggestions; the primary profile stays minimal.
 OPTIONAL_SKILLS = {
@@ -33,6 +33,7 @@ OPTIONAL_SKILLS = {
 OPTIONAL_PROFILES = {
     "qa": ("qa-ci",),
     "frontend": ("ui-fix", "ui-motion"),
+    "ux": ("ui-fix", "ui-motion"),
     "fullstack": ("qa-fullstack",),
     "agent": ("provider-research",),
     "research": ("provider-research",),
@@ -86,6 +87,7 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
         chosen, why = {
             "feature": ("codex-feature", "General-purpose implementation workflow"),
             "ui": ("ui-fix", "User-selected interface work"),
+            "ux": ("ux-design", "User-selected UX/UI design planning and handoff"),
             "ci": ("qa-ci", "User-selected CI or flaky-test diagnosis"),
             "release": ("qa-release", "User-selected release quality review"),
             "docs": ("docs-technical", "Technical documentation maintenance and factual checks"),

@@ -19,6 +19,7 @@
 | Архитектура ИИ-агентов | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Проверка идеи, MVP и PRD | `product-discovery` | 3 | Формальный анализ QA-требований только при необходимости |
 | Бизнес-правила, сценарии и системные требования | `business-system-analysis` | 4 | `api-design` добавлять только для реальных API-контрактов |
+| Проектирование UX/UI, каркасы, handoff | `ux-design` | 4 | `screenshot-fidelity` и `motion-quality` - по соответствующей задаче |
 | Планирование проекта, зависимости, риски | `project-delivery-management` | 4 | Исполнение функции - отдельным навыком по необходимости |
 | Техническое исследование | `research` | 2 | `codebase-knowledge-map` для больших репозиториев |
 | Изучение условий LLM API | `provider-research` | 2 | Платный API не требуется |
@@ -33,6 +34,10 @@
 ## Бизнес- и системный анализ
 
 Профиль business-system-analysis содержит один новый навык и существующие task-scoping, requirement-analysis, requirements-traceability. Сохраняет исходные R-ID/AC-ID, явно обозначает неизвестные условия и передаёт результат UX/UI, Frontend, Backend и QA. [Инструкция](BUSINESS_SYSTEM_ANALYSIS.md). Без нового контроллера и полного набора QA.
+
+## UX/UI Design
+
+Профиль `ux-design` использует новый процессный навык вместе с текущими правилами дизайн-системы и проектирования компонентов. Он сохраняет R/AC/UC и не объявляет макет реализованным UI. Figma необязательна. [Руководство](UX_UI_DESIGN.md).
 
 ## Backend - серверная разработка
 
