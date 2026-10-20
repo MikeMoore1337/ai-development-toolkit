@@ -27,6 +27,8 @@ PAGES = (
     "docs/ru/ACCEPTANCE.md",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md",
     "docs/ru/LANGUAGE_POLICY.md",
+    "docs/ru/BEGINNER_WORKFLOW.md",
+    "docs/ru/QUALITY_RUBRIC.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
@@ -35,6 +37,8 @@ PAGES = (
     "docs/PUBLICATION_POLICY.md",
     "docs/MAKE_FEATURE_INTEGRATION.md",
     "docs/LANGUAGE_POLICY.md",
+    "docs/BEGINNER_WORKFLOW.md",
+    "docs/QUALITY_RUBRIC.md",
     "docs/ADAPTATION.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
@@ -65,6 +69,8 @@ LANGUAGE_LINKS = {
     "docs/PUBLICATION_POLICY.md": "(ru/PUBLICATION_POLICY.md)",
     "docs/MAKE_FEATURE_INTEGRATION.md": "(ru/MAKE_FEATURE_INTEGRATION.md)",
     "docs/LANGUAGE_POLICY.md": "(ru/LANGUAGE_POLICY.md)",
+    "docs/BEGINNER_WORKFLOW.md": "(ru/BEGINNER_WORKFLOW.md)",
+    "docs/QUALITY_RUBRIC.md": "(ru/QUALITY_RUBRIC.md)",
     "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
     "docs/INTEGRATION_MATRIX.md": "(en/INTEGRATION_MATRIX.md)",
     "docs/PORTABILITY_EVAL_SCENARIOS.md": "(en/PORTABILITY_EVAL_SCENARIOS.md)",
@@ -81,6 +87,8 @@ LANGUAGE_LINKS = {
     "docs/ru/PUBLICATION_POLICY.md": "(../PUBLICATION_POLICY.md)",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md": "(../MAKE_FEATURE_INTEGRATION.md)",
     "docs/ru/LANGUAGE_POLICY.md": "(../LANGUAGE_POLICY.md)",
+    "docs/ru/BEGINNER_WORKFLOW.md": "(../BEGINNER_WORKFLOW.md)",
+    "docs/ru/QUALITY_RUBRIC.md": "(../QUALITY_RUBRIC.md)",
 }
 
 
@@ -119,7 +127,8 @@ def validate(root: Path) -> list[str]:
         for path in ("docs/ru/README.md", "docs/ru/GETTING_STARTED.md",
                      "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md",
                      "docs/ru/ACCEPTANCE.md", "docs/ru/MAKE_FEATURE_INTEGRATION.md",
-                     "docs/ru/LANGUAGE_POLICY.md"):
+                     "docs/ru/LANGUAGE_POLICY.md",
+                     "docs/ru/BEGINNER_WORKFLOW.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -130,7 +139,8 @@ def validate(root: Path) -> list[str]:
                      "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md",
                      "CLIENT_MIGRATION.md", "CLIENT_COMPATIBILITY.md",
                      "PUBLICATION_POLICY.md", "ACCEPTANCE.md",
-                     "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md"):
+                     "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md",
+                     "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -174,7 +184,7 @@ def validate(root: Path) -> list[str]:
                 errors.append(f"L10N005 docs/ru/SKILLS_CATALOG.md: {rule} differ from English")
 
     for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md",
-                 "MAKE_FEATURE_INTEGRATION.md"):
+                 "MAKE_FEATURE_INTEGRATION.md", "BEGINNER_WORKFLOW.md"):
         source = root / "docs" / name
         target = root / "docs/ru" / name
         if source.is_file() and target.is_file():
@@ -201,6 +211,12 @@ def validate(root: Path) -> list[str]:
         "MAKE_FEATURE_INTEGRATION.md": ("--apply", "feature-delivery", "NOT_TESTED",
                                         "INDEPENDENT_REVIEW", "Artemiy Miller"),
         "LANGUAGE_POLICY.md": ("SKILL.md", "Make Feature", "SOURCE_REVISIONS.json"),
+        "BEGINNER_WORKFLOW.md": ("NOT_RUN", "BLOCKED", "NOT_TESTED", "NOT_MEASURED",
+                               "feature-delivery", "make-feature", "--apply", "EXTERNAL",
+                               "UNSUPPORTED", "NOT_DONE"),
+        "QUALITY_RUBRIC.md": ("verified", "unknown", "failed", "BLOCKER", "WARNING",
+                              "NOT_MEASURED", "--mode inventory", "--mode release",
+                              "0.17.1", "1.7.12"),
     }
     for name, tokens in required_tokens.items():
         target = root / "docs/ru" / name
