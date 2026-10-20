@@ -45,7 +45,7 @@ python scripts/install.py --target /path/to/repo --profile editorial --apply
 python .agents/skills/clear-voice/evals/validate_package.py
 ~~~
 
-Never mix unmanaged copies with manager-owned files. `--apply` is an **explicit write** step, and neither installer should overwrite existing project instructions or user-owned skills. A successful `status` only establishes local file state: separately verify whether your actual Codex, Claude Code or other AI client discovers and uses this Russian-described skill. No such live evaluation is asserted here.
+Never mix unmanaged copies with manager-owned files. `--apply` is an **explicit write** step, and neither installer should overwrite existing project instructions or user-owned skills. A successful `status` only establishes local file state: separately verify whether your actual Codex, Claude Code or other AI client discovers and uses this Russian-described skill. No live client activation evidence is available here (**NOT_TESTED**).
 
 After client discovery has been independently verified, a sample *task* is:
 
