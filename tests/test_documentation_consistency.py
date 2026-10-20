@@ -50,7 +50,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check()
 
     def test_stale_badge(self):
-        self.replace("README.md", "badge/skills-70-", "badge/skills-51-")
+        self.replace("README.md", "badge/skills-71-", "badge/skills-51-")
         self.check("DOC001")
 
     def test_new_skills_require_doc_refresh(self):
