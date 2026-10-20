@@ -9,7 +9,7 @@ A portable, Russian-first editorial Agent Skill for clear writing, fact-preservi
 - `profiles/knowledge-base.md` - factual notes and structured knowledge
 - `profiles/research-digest.md` - cautious summaries of research and news
 
-The skill also has on-demand `references/`, a compact `adapters/editorial-worker/` prompt, and 61 synthetic checks in `evals/`.
+The skill also has on-demand `references/`, a compact `adapters/editorial-worker/` prompt, and 72 synthetic checks in `evals/`.
 
 ## Use
 
