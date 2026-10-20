@@ -271,5 +271,62 @@ class UniversalAgentEntryTests(unittest.TestCase):
                 self.assertEqual(before, snapshot(), "Read-only preflight wrote project files")
 
 
+    def test_optional_local_install_does_not_leave_unrequested_reports(self):
+        """Opt-in CLI writes managed files only; an unrelated local project has no Git remote."""
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "standalone"
+            target.mkdir()
+            (target / "README.md").write_bytes(b"Independent README\\n")
+            (target / ".gitignore").write_text(".cache/\\nreports/\\n", encoding="utf-8")
+            private = target / ".cache" / "keep.bin"
+            private.parent.mkdir()
+            private.write_bytes(b"existing ignored file")
+            def outside_managed():
+                return {p.relative_to(target).as_posix(): p.read_bytes()
+                        for p in target.rglob("*") if p.is_file()
+                        and p.relative_to(target).parts[0] not in (".adt", ".agents")}
+            untouched = outside_managed()
+            preview = run_cli("init", "--target", str(target), "--task", "feature")
+            self.assertEqual(preview.returncode, 0, preview.stderr)
+            self.assertEqual(outside_managed(), untouched)
+            self.assertFalse((target / ".adt").exists())
+            installed = run_cli("init", "--target", str(target), "--task", "feature", "--apply")
+            self.assertEqual(installed.returncode, 0, installed.stderr)
+            self.assertTrue(json.loads(installed.stdout)["applied"])
+            self.assertEqual(outside_managed(), untouched)
+            self.assertFalse((target / ".git").exists())
+            self.assertTrue((target / ".agents/skills/task-scoping/SKILL.md").is_file())
+            self.assertTrue((target / ".adt/skills-lock.json").is_file())
+            managed = {p.relative_to(target).as_posix(): p.read_bytes()
+                       for p in target.rglob("*") if p.is_file()}
+            for step in (("status", "--target", str(target)),
+                         ("init", "--target", str(target), "--task", "feature", "--apply")):
+                result = run_cli(*step)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(managed,
+                                 {p.relative_to(target).as_posix(): p.read_bytes()
+                                  for p in target.rglob("*") if p.is_file()})
+            self.assertFalse(any("report" in p.lower() or "audit" in p.lower()
+                                 for p in managed if p not in untouched))
+
+    def test_status_of_missing_local_project_never_creates_a_folder(self):
+        with tempfile.TemporaryDirectory() as directory:
+            missing = Path(directory) / "missing-local-workspace"
+            status = run_cli("status", "--target", str(missing))
+            self.assertEqual(status.returncode, 2)
+            self.assertFalse(missing.exists())
+
+    def test_human_protocol_tracks_distinct_evidence_and_measured_metrics(self):
+        protocol = (ROOT / "docs/ru/ACCEPTANCE.md").read_text(encoding="utf-8")
+        for phrase in ("Матрица независимых доказательств", "Независимое освоение новичком",
+                       "Время до первого осмысленного действия", "Время до результата",
+                       "Число вопросов агента", "Число ошибок",
+                       "самостоятельных восстановлений", "NOT_MEASURED",
+                       "Клиент только с чатом", "Понял ли участник разницу"):
+            self.assertIn(phrase, protocol)
+        self.assertIn("NOT_TESTED", protocol)
+        self.assertIn("NOT_RUN", protocol)
+
+
 if __name__ == "__main__":
     unittest.main()
