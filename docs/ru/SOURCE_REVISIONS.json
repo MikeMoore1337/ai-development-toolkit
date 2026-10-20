@@ -15,7 +15,7 @@
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "55bf529274610b43261da05daa4aa219609756582d575dfd8a4011d58cf87b10"
+      "source_sha256": "f8e7d9c3e7313618c7368ab5829eac7c36b3d22df51ec27aaaa78de46fdeda86"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -121,6 +121,11 @@
       "source": "docs/PRODUCT_DISCOVERY.md",
       "translation": "docs/ru/PRODUCT_DISCOVERY.md",
       "source_sha256": "04a0e372054a8204427628dfdbd00ddc00031f92ea7f0d8e128dad147b025d08"
+    },
+    {
+      "source": "docs/SKILL_ROUTING_EVALS.md",
+      "translation": "docs/ru/SKILL_ROUTING_EVALS.md",
+      "source_sha256": "9a3ff96ed5b3f1c8c271c49e440237945c2943a9713a37477425866b264ed856"
     }
   ]
 }
