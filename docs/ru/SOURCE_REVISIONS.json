@@ -96,6 +96,11 @@
       "translation": "docs/en/SOURCE_EVALUATION.md",
       "source_language": "ru",
       "source_sha256": "acba418f1e040f7c750c4f27c71d705a92fc8f15706200c2cafca4fcb0bde041"
+    },
+    {
+      "source": "docs/BEGINNER_START.md",
+      "translation": "docs/ru/BEGINNER_START.md",
+      "source_sha256": "7a7cf6a3b08d960dc4eeb8b28cf9948254bbbe86d49842fa019040ce87ce8ee9"
     }
   ]
 }
