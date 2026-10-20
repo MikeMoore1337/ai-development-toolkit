@@ -260,6 +260,13 @@
       "design-system-consistency",
       "component-architecture",
       "task-scoping"
+    ],
+    "ai-engineering-qa": [
+      "ai-engineering-qa",
+      "research-verification",
+      "security-boundaries",
+      "test-analysis-design",
+      "contract-testing"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -400,6 +407,13 @@
       "skill_root": "extensions/design/skills",
       "skills": [
         "ux-design-process"
+      ],
+      "auto_install": false
+    },
+    "ai": {
+      "skill_root": "extensions/ai/skills",
+      "skills": [
+        "ai-engineering-qa"
       ],
       "auto_install": false
     }

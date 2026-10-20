@@ -7,9 +7,9 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-69-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-70-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-32-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-33-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
@@ -99,6 +99,7 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
 | Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
+| Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
 | Investigate flaky CI | `qa-ci` | Distinguish product defects from infrastructure/test failures |
 | Evaluate a release | `qa-release` | Coverage, traceability and quality gates |

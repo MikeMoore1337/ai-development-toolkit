@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "5f1cd5237a6429fa47bd1ec8a7372f231b6d7590dab202736a0055d19a4f7f6f"
+      "source_sha256": "f6206ba14a469760d4212c14e96434faf8bea1c3c0093ea6e45e6223e994d8ce"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "3c4d442359a154de99fd64feb1416eb6e2674746f0b58e311bd5102ccf47dd47"
+      "source_sha256": "49a4ccaf47ec03172c573c6b8b44bc9218de40463b0c00c701eca396ed5d6e7b"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "861487c5ab1a526219315d51ba451f4485046bb9d040fdba8eb72133d54479ab"
+      "source_sha256": "980dc190a011149d0458f1b254067f859c4ae5945b178b82555255ae77bdf393"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -141,6 +141,11 @@
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
       "source_sha256": "3995ab29e7c3ffc10ca78c249dcf2142b5cfc40b25ae962fbb666aa6322e8d3a"
+    },
+    {
+      "source": "docs/AI_ENGINEERING_QA.md",
+      "translation": "docs/ru/AI_ENGINEERING_QA.md",
+      "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
     }
   ]
 }

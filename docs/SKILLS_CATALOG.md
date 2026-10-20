@@ -109,6 +109,10 @@ Optional requirements-to-screen planning with existing design-system and compone
 
 [UX/UI Design guide](UX_UI_DESIGN.md).
 
+## AI Engineering & QA extension
+
+Optional [ai-engineering-qa](../extensions/ai/skills/ai-engineering-qa/SKILL.md) checks versioned LLM datasets, prompt regression, RAG retrieval/grounding and AI tool-call authorization with offline fixtures. [Guide](AI_ENGINEERING_QA.md). No second model runner or live API calls.
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -185,6 +189,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
