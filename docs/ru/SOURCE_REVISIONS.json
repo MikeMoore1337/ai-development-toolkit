@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "e36c97abef36654f8fd09df7a3bb872224c43dae4cc7b823d1ac007f81ae45f1"
+      "source_sha256": "f2d996ba6ffe06bd4ed4731b01e94079cf4024893f4efa4a8225c86b7820c2cd"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "b2ddef48feb2382155d1d46f5844f417bbfe3a3e522579c290818dd256912b17"
+      "source_sha256": "55bf529274610b43261da05daa4aa219609756582d575dfd8a4011d58cf87b10"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "0574f5eb6bf6339fad4559f8c0c85e62b31e870548c05e89390781ebebb5446f"
+      "source_sha256": "c8e18730f838b02f107ac4cc92ec108f02d116f0c2c1c31834ba28d176679b95"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -116,6 +116,11 @@
       "source": "docs/SKILL_QUALITY_METRICS.md",
       "translation": "docs/ru/SKILL_QUALITY_METRICS.md",
       "source_sha256": "0a007abdf7594e653fe799e5881bf70a6ec8cd9edc38393d0a90eff9a6b78c72"
+    },
+    {
+      "source": "docs/PRODUCT_DISCOVERY.md",
+      "translation": "docs/ru/PRODUCT_DISCOVERY.md",
+      "source_sha256": "04a0e372054a8204427628dfdbd00ddc00031f92ea7f0d8e128dad147b025d08"
     }
   ]
 }

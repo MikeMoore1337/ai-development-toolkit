@@ -24,7 +24,11 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
 
     def test_full_manifest_coverage(self):
         actual = {x["skill_id"]: x["path"] for x in self.inventory["skills"]}
-        self.assertEqual(self.expected, actual)
+        # Historical Issue #44 audit is pinned; do not pretend this new skill
+        # was reviewed in its original source snapshot.
+        self.assertEqual({name: path for name, path in self.expected.items()
+                          if name in actual}, actual)
+        self.assertEqual({"product-discovery"}, set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
         core.update({x: qa["role_root"] + "/" + x + ".md" for x in qa["roles"]})
@@ -34,9 +38,11 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         historical = {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]}
         self.assertEqual(historical, {name: skills for name, skills
                                       in self.manifest["profiles"].items()
-                                      if name != "docs-technical"})
+                                      if name not in {"docs-technical", "product-discovery"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
+        self.assertEqual(["product-discovery", "task-scoping", "research-verification"],
+                         self.manifest["profiles"]["product-discovery"])
 
     def test_entries_and_paths(self):
         for group, key in (("skills", "skill_id"), ("roles", "role_id"), ("profiles", "profile_id")):

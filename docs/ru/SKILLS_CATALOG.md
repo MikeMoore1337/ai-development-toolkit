@@ -67,6 +67,16 @@
 | [`cross-layer-debugging`](../../extensions/fullstack/skills/cross-layer-debugging/SKILL.md) | Диагностируйте неисправности на границе интерфейса и серверных компонентов. |
 | [`end-to-end-feature-design`](../../extensions/fullstack/skills/end-to-end-feature-design/SKILL.md) | Проектируйте сквозную функцию с проверяемыми критериями приёмки. |
 
+## Расширение Product Discovery
+
+Необязательный навык для проверки продуктовых решений до разработки.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`product-discovery`](../../extensions/product/skills/product-discovery/SKILL.md) | Выделить проблему и гипотезы, границы MVP, проверяемый PRD и метрики до разработки. |
+
+[Руководство Product Discovery для новичков и экспертов](PRODUCT_DISCOVERY.md).
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -144,6 +154,7 @@
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
+| `product-discovery` | `product-discovery`, `task-scoping`, `research-verification` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |

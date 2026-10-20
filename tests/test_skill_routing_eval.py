@@ -76,7 +76,7 @@ class SkillRoutingTests(unittest.TestCase):
 
     def test_catalog_is_manifest_driven(self):
         from_manifest = routing.read_catalog(ROOT)
-        self.assertEqual(65, len(from_manifest))
+        self.assertEqual(66, len(from_manifest))
         self.assertIn("feature-delivery", from_manifest)
         self.assertIn("make-feature", from_manifest)
 
@@ -84,7 +84,7 @@ class SkillRoutingTests(unittest.TestCase):
         catalog = routing.read_catalog(ROOT)
         cases = routing.load_cases(ROOT / "fixtures/skill_routing_cases.json", catalog)
         report = routing.evaluate(catalog, cases)
-        self.assertEqual(18, report["prompt_count"] * 0 + len(cases) * 2)
+        self.assertEqual(20, report["prompt_count"] * 0 + len(cases) * 2)
         self.assertEqual(len(cases) * 4, report["prompt_count"])
         self.assertEqual("offline_source_diagnostic", report["classification"])
 
