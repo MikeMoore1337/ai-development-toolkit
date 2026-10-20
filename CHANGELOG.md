@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added full Russian beginner workflow and quality rubric, normalized the canonical rubric to English, with translation consistency checks (#87).
+
 - Added English counterparts to four Russian-first guides (adaptation, integration matrix, portability trials, task prompt), with reversible source revision tracking (#87).
 
 - Audited two-way RU/EN documentation coverage; added a bilingual Make Feature *human* guide and explicit language policy, preserving the Russian canonical source skill and owner-gated snapshots (#87).
