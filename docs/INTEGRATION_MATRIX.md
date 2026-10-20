@@ -1,5 +1,7 @@
 # Матрица подключения по проектам
 
+[English translation](en/INTEGRATION_MATRIX.md) | [Языковая политика](ru/LANGUAGE_POLICY.md)
+
 | Контекст | Навыки | Что не включать автоматически |
 |---|---|---|
 | Любой новый проект, Codex | task-scoping, implementation, qa-strategy, minimal-safe-change | Все hooks, серверы и сторонние зависимости |
