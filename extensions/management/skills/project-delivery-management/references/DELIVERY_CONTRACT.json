@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "document_type": "DELIVERY_PLAN",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "source_labels": [
+    "USER_PROVIDED",
+    "SOURCE_BACKED",
+    "OBSERVED",
+    "ASSUMPTION",
+    "UNKNOWN"
+  ],
+  "task_required": [
+    "id",
+    "title",
+    "goal",
+    "requirement_ids",
+    "acceptance_ids",
+    "outcome",
+    "scope",
+    "dependencies",
+    "priority",
+    "verification",
+    "owner",
+    "status",
+    "evidence",
+    "blockers",
+    "approvals",
+    "risk_ids"
+  ],
+  "dependency_types": [
+    "BLOCKS",
+    "RELATED",
+    "REQUIRES_DECISION",
+    "REQUIRES_APPROVAL",
+    "OPTIONAL"
+  ],
+  "statuses": [
+    "DRAFT",
+    "PLANNED",
+    "IN_PROGRESS",
+    "BLOCKED",
+    "READY_FOR_REVIEW",
+    "VERIFIED",
+    "MERGED",
+    "RELEASED",
+    "CANCELLED",
+    "NOT_APPLICABLE"
+  ],
+  "evidence_types": [
+    "STARTED",
+    "TEST_PASS",
+    "REVIEW",
+    "ARTIFACT",
+    "GITHUB_MERGE",
+    "DEPLOY",
+    "RELEASE"
+  ],
+  "risk_required": [
+    "id",
+    "description",
+    "cause",
+    "impact",
+    "probability",
+    "severity",
+    "detection",
+    "mitigation",
+    "contingency",
+    "owner",
+    "state"
+  ],
+  "change_required": [
+    "id",
+    "type",
+    "affected_requirements",
+    "affected_tasks",
+    "dependency_impact",
+    "verification_impact",
+    "risk_impact",
+    "approval"
+  ],
+  "change_types": [
+    "NEW_REQUIREMENT",
+    "CLARIFICATION",
+    "BUG_FIX",
+    "REPRIORITIZE",
+    "CANCEL",
+    "DEFER",
+    "AC_CHANGE"
+  ],
+  "unknown_value": "UNKNOWN",
+  "notes": [
+    "Requirements and acceptance_criteria contain IDs from the source PRD, not a new ID namespace.",
+    "BLOCKS.task_id identifies the prerequisite task; REQUIRES_DECISION and REQUIRES_APPROVAL use reference and resolved.",
+    "Evidence links and statuses must be independently verified against real source; offline structural validation cannot do this.",
+    "No automatic issue creation, merge, deployment, or status advancement."
+  ]
+}

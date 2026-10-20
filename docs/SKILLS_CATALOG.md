@@ -79,6 +79,16 @@ Optional, stack-independent guidance for shaping product value before implementa
 
 [Beginner and expert Product Discovery guide](PRODUCT_DISCOVERY.md).
 
+## Project & Delivery Management extension
+
+Optional planning, dependencies, risks and evidence-backed status guidance; does not replace `feature-delivery`, `make-feature` or GitHub Issues.
+
+| Skill | When to use |
+| :--- | :--- |
+| [`project-delivery-management`](../extensions/management/skills/project-delivery-management/SKILL.md) | Turn an existing PRD into traceable tasks, dependencies, risks and verified project status. |
+
+[User guide](PROJECT_DELIVERY_MANAGEMENT.md).
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -144,6 +154,9 @@ Roles are reference instructions, not separately running programs. Installers cu
 | QA | `test-management-analyst` | [Role](../extensions/qa/roles/test-management-analyst.md) |
 | QA | `test-reviewer` | [Role](../extensions/qa/roles/test-reviewer.md) |
 
+
+[Project & Delivery Management](PROJECT_DELIVERY_MANAGEMENT.md): optional planning skill, not a task tracker or feature controller.
+
 ## Profiles
 
 See [Curated Skill Packs](CURATED_SKILL_PACKS.md) for task navigation, optional skills and safe transitions.
@@ -157,6 +170,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `product-discovery` | `product-discovery`, `task-scoping`, `research-verification` |
+| `project-delivery-management` | `project-delivery-management`, `task-scoping`, `requirements-traceability`, `quality-gate-assessment` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |

@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "f2d996ba6ffe06bd4ed4731b01e94079cf4024893f4efa4a8225c86b7820c2cd"
+      "source_sha256": "6fc157822207d4550197a1cfb157b27e322c5e9595f3eae0d2cfa84bf9180cdf"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "f8e7d9c3e7313618c7368ab5829eac7c36b3d22df51ec27aaaa78de46fdeda86"
+      "source_sha256": "b1216a48a7ba4949e97465462253d6fb6310e0ecb56c4a5fd15b79042d173b6b"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "c8e18730f838b02f107ac4cc92ec108f02d116f0c2c1c31834ba28d176679b95"
+      "source_sha256": "bd2040c73f33a7e76e52deae3a5e0e81ba7ad66416a98023d03afcb58cbb5823"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -126,6 +126,11 @@
       "source": "docs/SKILL_ROUTING_EVALS.md",
       "translation": "docs/ru/SKILL_ROUTING_EVALS.md",
       "source_sha256": "9a3ff96ed5b3f1c8c271c49e440237945c2943a9713a37477425866b264ed856"
+    },
+    {
+      "source": "docs/PROJECT_DELIVERY_MANAGEMENT.md",
+      "translation": "docs/ru/PROJECT_DELIVERY_MANAGEMENT.md",
+      "source_sha256": "730a6f614a7ee28a880df8c10820707a71dd2b4a31378a8ad46928c56a588978"
     }
   ]
 }

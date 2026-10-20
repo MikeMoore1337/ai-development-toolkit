@@ -368,7 +368,7 @@ class ProvenanceTests(unittest.TestCase):
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
-        self.assertEqual(66, result["skills"])
+        self.assertEqual(67, result["skills"])
         self.assertGreater(result["total"], 100)
 
 

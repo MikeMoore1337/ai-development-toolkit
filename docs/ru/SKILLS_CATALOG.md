@@ -77,6 +77,16 @@
 
 [Руководство Product Discovery для новичков и экспертов](PRODUCT_DISCOVERY.md).
 
+## Расширение Project & Delivery Management
+
+Необязательное управление планом, зависимостями, рисками и доказательствами готовности. Не заменяет `feature-delivery`, `make-feature` или существующие GitHub Issues.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`project-delivery-management`](../../extensions/management/skills/project-delivery-management/SKILL.md) | Превратить PRD в проверяемый план задач, зависимостей, рисков и статусов. |
+
+[Руководство](PROJECT_DELIVERY_MANAGEMENT.md).
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -142,6 +152,9 @@
 | QA | `test-management-analyst` | [Роль](../../extensions/qa/roles/test-management-analyst.md) |
 | QA | `test-reviewer` | [Роль](../../extensions/qa/roles/test-reviewer.md) |
 
+
+[Управление планом разработки](PROJECT_DELIVERY_MANAGEMENT.md): опциональный Management-навык, не контроллер и не отдельный трекер задач.
+
 ## Профили
 
 См. [тематические наборы навыков](CURATED_SKILL_PACKS.md) для выбора по задаче, дополнительных навыков и безопасного переключения.
@@ -155,6 +168,7 @@
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `product-discovery` | `product-discovery`, `task-scoping`, `research-verification` |
+| `project-delivery-management` | `project-delivery-management`, `task-scoping`, `requirements-traceability`, `quality-gate-assessment` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |
