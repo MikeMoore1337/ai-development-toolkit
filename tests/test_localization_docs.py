@@ -201,7 +201,7 @@ class RussianOnboardingTests(unittest.TestCase):
         content = page.read_text(encoding="utf-8")
         self.assertIn("(ru/CLEAR_VOICE_INTEGRATION.md)", content)
         page.write_text(content.replace("(ru/CLEAR_VOICE_INTEGRATION.md)",
-                                        "(CLEAR_VOICE_INTEGRATION.md)", 1),
+                                        "(CLEAR_VOICE_INTEGRATION.md)"),
                         encoding="utf-8")
         self.check("L10N004")
 
