@@ -113,6 +113,10 @@ Optional requirements-to-screen planning with existing design-system and compone
 
 Optional [ai-engineering-qa](../extensions/ai/skills/ai-engineering-qa/SKILL.md) checks versioned LLM datasets, prompt regression, RAG retrieval/grounding and AI tool-call authorization with offline fixtures. [Guide](AI_ENGINEERING_QA.md). No second model runner or live API calls.
 
+## Performance & Load Testing extension
+
+Optional [performance-load-testing](../extensions/performance/skills/performance-load-testing/SKILL.md) adds bounded workload models, latency/throughput/errors, performance budgets and comparable baseline/candidate reports. [Guide](PERFORMANCE_LOAD_TESTING.md). No external load.
+
 ## Reliability Testing extension
 
 Optional [reliability-testing](../extensions/reliability/skills/reliability-testing/SKILL.md) adds invariant-first fault testing, bounded retries, replay, version conflicts and recovery checks. Nine offline reference/mutant pairs use fictional SQLite state. [Guide](RELIABILITY_TESTING.md). No real broker or production claim.
@@ -193,6 +197,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
