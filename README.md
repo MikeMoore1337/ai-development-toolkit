@@ -44,7 +44,7 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 | **QA Engineering Pack** | 27 optional skills for API, UI, contract and integration tests, CI, reliability and release evaluation | [Browse QA pack](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 optional, self-contained workflow skill for feature delivery | [Integration](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Agent roles** | 5 core + 11 specialist QA reference roles | [Browse roles](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Install profiles** | 31 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
+| **Install profiles** | 32 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
 
 Skills follow the [Agent Skills](https://agentskills.io/specification) directory convention. They are task-specific guidance, **not** autonomous agents with default access to your files, accounts or deployment infrastructure.
 
