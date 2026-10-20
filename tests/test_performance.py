@@ -172,6 +172,36 @@ class PerformanceContracts(unittest.TestCase):
         corrupted["samples"].pop()
         self.assertEqual("COMPARISON_INVALID", compare(base, corrupted)["status"])
 
+    def test_recomputed_report_cannot_hide_dropped_slow_sample(self):
+        base = run(Workload())
+        forged = copy.deepcopy(run(Workload(), "candidate"))
+        forged["samples"].pop()
+        forged["metrics"] = aggregate(forged["samples"],
+                                      forged["measurement_interval_s"])
+        self.assertEqual("COMPARISON_INVALID", compare(base, forged)["status"])
+
+    def test_scenario_identity_and_target_cannot_change(self):
+        base = run(Workload())
+        for field, value in {
+            "test_id": "other-test", "scenario_id": "other-scenario",
+            "source_requirement": "unrelated", "target_component": "other-service",
+        }.items():
+            with self.subTest(field=field):
+                changed = copy.deepcopy(run(Workload(), "candidate"))
+                changed[field] = value
+                self.assertEqual("COMPARISON_INVALID", compare(base, changed)["status"])
+
+    def test_forged_latencies_and_invalid_budget_fail_closed(self):
+        base = run(Workload())
+        changed = copy.deepcopy(run(Workload(), "candidate"))
+        changed["samples"][0]["latency_ms"] = .0001
+        changed["metrics"] = aggregate(changed["samples"],
+                                       changed["measurement_interval_s"])
+        self.assertEqual("COMPARISON_INVALID", compare(base, changed)["status"])
+        changed = copy.deepcopy(run(Workload(), "candidate"))
+        changed["budget"]["threshold"] = "unbounded"
+        self.assertEqual("COMPARISON_INVALID", compare(base, changed)["status"])
+
     def test_budget_cannot_change_after_measurement(self):
         w = Workload()
         a = run(w, budget_ms=10, budget_approved=True)
