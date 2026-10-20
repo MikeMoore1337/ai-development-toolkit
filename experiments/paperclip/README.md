@@ -59,3 +59,17 @@ commit `e7e77a69daaf306510c091b8d526e2ca5029d543`.
 ## Follow-up stronger verification
 
 After the baseline PASS in run `39327290358`, the experiment was strengthened to assert the imported GitHub skill has the exact pinned `sourceRef` and matches the original `SKILL.md` on read-back, rather than checking only its slug. These stronger checks require their own final exact-head CI result; the baseline PASS alone does not prove them.
+
+## Phase 2: Board-only task/context verification
+
+This non-agent exercise extends the accepted skill-import smoke to the **control plane**, using an additional disposable company in the same ephemeral runner.
+
+1. The board creates a synthetic parent issue and child issue, both with **no agent assignee**, and updates the child priority using the server's change receipt.
+2. The board appends a synthetic checkpoint comment, creates and updates a `plan` Markdown document, and verifies an update against an obsolete `baseRevisionId` is rejected with HTTP **409**.
+3. The board creates a `request_confirmation` interaction, targeted at the latest plan revision, with `resolverPolicy=human_only` and `continuationPolicy=none`. **No acceptance or rejection is performed.** The card must remain `pending` and the effective policy must remain `human_only`.
+4. A separate Python interpreter process reads the parent/child relation, comment, latest plan revision, revision history and pending human-only interaction via the local HTTP API.
+5. Before and after, the board verifies there are **zero agents**, a zero monthly company budget, and `requireBoardApprovalForNewAgents=true`.
+
+The private receipt storing only test IDs remains under `RUNNER_TEMP` and is not uploaded. No model providers, agents, credentials, heartbeats or issue checkout are created/invoked. The code deliberately performs **no mock board acceptance**, to avoid misrepresenting a simulated decision as real owner approval.
+
+**Interpretation limits:** This tests the API's board-controlled issue storage, revision conflict handling and interaction state; it does **not** demonstrate enforcement against an authenticated agent (none exist), database recovery after server restart, end-to-end GitHub task synchronization, automatic agent coordination, actual human UI decision flow, speed advantage or model costs. The test is not authorization to activate autonomous work or deploy Paperclip.
