@@ -99,6 +99,20 @@ Optional stakeholder needs, business rules, use cases, domain boundaries, select
 
 [Beginner and expert guide](BUSINESS_SYSTEM_ANALYSIS.md).
 
+## UX/UI Design extension
+
+Optional requirements-to-screen planning with existing design-system and component skills.
+
+| Skill | When to use |
+| :--- | :--- |
+| [`ux-design-process`](../extensions/design/skills/ux-design-process/SKILL.md) | Connect user flows, screen inventory, prototypes and evidence-aware developer handoff without implementing UI. |
+
+[UX/UI Design guide](UX_UI_DESIGN.md).
+
+## AI Engineering & QA extension
+
+Optional [ai-engineering-qa](../extensions/ai/skills/ai-engineering-qa/SKILL.md) checks versioned LLM datasets, prompt regression, RAG retrieval/grounding and AI tool-call authorization with offline fixtures. [Guide](AI_ENGINEERING_QA.md). No second model runner or live API calls.
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -178,6 +192,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
+| `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
@@ -209,7 +224,3 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `ui-motion` | `design-system-consistency`, `motion-quality`, `qa-strategy` |
 
 See [installation](INSTALLATION.md) for dry-run, client layouts and compatibility.
-
-## Optional AI pack
-
-The optional [ai-engineering-qa](../extensions/ai/skills/ai-engineering-qa/SKILL.md) skill and profile are described in the [guide](AI_ENGINEERING_QA.md). Not included in general.

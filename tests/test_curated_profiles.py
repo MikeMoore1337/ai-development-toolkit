@@ -33,6 +33,8 @@ NEW = {
                                  "requirement-analysis", "requirements-traceability"],
     "project-delivery-management": ["project-delivery-management", "task-scoping",
                                     "requirements-traceability", "quality-gate-assessment"],
+    "ux-design": ["ux-design-process", "design-system-consistency",
+                  "component-architecture", "task-scoping"],
 }
 
 
@@ -47,7 +49,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(32, len(MANIFEST["profiles"]))
+        self.assertEqual(33, len(MANIFEST["profiles"]))
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))
         for name, expected in NEW.items():

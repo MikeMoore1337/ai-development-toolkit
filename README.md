@@ -7,14 +7,14 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-69-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-70-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-32-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-33-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
 
-[Use Toolkit for any task](AGENT_START.md) · [Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Business & System Analysis](docs/BUSINESS_SYSTEM_ANALYSIS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
+[Use Toolkit for any task](AGENT_START.md) · [Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Business & System Analysis](docs/BUSINESS_SYSTEM_ANALYSIS.md) · [UX/UI Design](docs/UX_UI_DESIGN.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
@@ -44,7 +44,7 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 | **QA Engineering Pack** | 27 optional skills for API, UI, contract and integration tests, CI, reliability and release evaluation | [Browse QA pack](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 optional, self-contained workflow skill for feature delivery | [Integration](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Agent roles** | 5 core + 11 specialist QA reference roles | [Browse roles](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Install profiles** | 32 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
+| **Install profiles** | 31 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
 
 Skills follow the [Agent Skills](https://agentskills.io/specification) directory convention. They are task-specific guidance, **not** autonomous agents with default access to your files, accounts or deployment infrastructure.
 
@@ -99,13 +99,14 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
 | Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
+| Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
 | Investigate flaky CI | `qa-ci` | Distinguish product defects from infrastructure/test failures |
 | Evaluate a release | `qa-release` | Coverage, traceability and quality gates |
 | Improve documentation | `editorial` | Clear Voice only |
 | Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
 
-See [all 32 profiles and all 69 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
+See [all 31 profiles and all 68 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
 
 ## How the parts fit
 

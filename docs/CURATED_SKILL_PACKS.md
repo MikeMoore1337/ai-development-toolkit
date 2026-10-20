@@ -17,9 +17,11 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
+| AI evaluation, RAG or prompt/tool-use regression | `ai-engineering-qa` | 5 | Reuse QA contracts and security guidance; no real model call |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Idea validation, MVP scope and PRD | `product-discovery` | 3 | Formal QA requirements analysis only when needed |
 | Business rules, use cases and system requirements | `business-system-analysis` | 4 | Add `api-design` only for actual interface contracts |
+| UX/UI flows, wireframes and handoff | `ux-design` | 4 | `screenshot-fidelity` / `motion-quality` for actual visual or motion tasks |
 | Delivery plan, dependencies and risk review | `project-delivery-management` | 4 | Add a feature controller separately only when implementing |
 | Technical research | `research` | 2 | `codebase-knowledge-map` for large repositories |
 | LLM API provider research | `provider-research` | 2 | No paid API required |
@@ -28,9 +30,13 @@ package manager, skill runtime, dependencies or automatic installation is introd
 
 Optional business/system profile: one new skill plus task-scoping, requirement-analysis and requirements-traceability. It keeps source R/AC identifiers, represents unknowns explicitly, and hands off to UX/UI, Backend, Frontend and QA. [Guide](BUSINESS_SYSTEM_ANALYSIS.md). No second controller or full QA Pack.
 
+## UX/UI Design
+
+Optional `ux-design` composes one process skill with existing design-system and component architecture guidance. It preserves R/AC/UC links, describes reachable screens and prepares a verifiable handoff, not implemented code. [Guide](UX_UI_DESIGN.md).
+
 ## AI Engineering & QA
 
-Optional ai-engineering-qa profile handles LLM contract probes, versioned prompt regression, RAG retrieval/grounding and tool authorization while reusing QA test-analysis-design, contract-testing and security-boundaries. It is not a task controller. [Guide](AI_ENGINEERING_QA.md). No user data may be stored in Toolkit.
+The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
 
 ## Backend Development
 

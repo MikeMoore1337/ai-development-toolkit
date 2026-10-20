@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "document_type": "UX_UI_SPECIFICATION",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "goal": "Synthetic household expenses: plan screens only; no implementation or user study",
+  "source_requirements": [
+    {
+      "id": "R1",
+      "behavior": "Add an expense",
+      "source": "USER_PROVIDED"
+    },
+    {
+      "id": "R2",
+      "behavior": "Show expense totals",
+      "source": "USER_PROVIDED"
+    },
+    {
+      "id": "R3",
+      "behavior": "Edit and delete an expense",
+      "source": "USER_PROVIDED"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "expectation": "Added expense appears in list and totals",
+      "requirement_ids": [
+        "R1"
+      ]
+    },
+    {
+      "id": "AC2",
+      "expectation": "Invalid amount does not create a record",
+      "requirement_ids": [
+        "R1"
+      ]
+    },
+    {
+      "id": "AC3",
+      "expectation": "Totals equal the visible expenses",
+      "requirement_ids": [
+        "R2"
+      ]
+    },
+    {
+      "id": "AC4",
+      "expectation": "Deleting an expense updates totals",
+      "requirement_ids": [
+        "R3"
+      ]
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC1",
+      "goal": "Add expense",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ]
+    },
+    {
+      "id": "UC2",
+      "goal": "See total",
+      "requirement_ids": [
+        "R2"
+      ],
+      "acceptance_ids": [
+        "AC3"
+      ]
+    },
+    {
+      "id": "UC3",
+      "goal": "Delete expense",
+      "requirement_ids": [
+        "R3"
+      ],
+      "acceptance_ids": [
+        "AC4"
+      ]
+    }
+  ],
+  "research": {
+    "task": "Quickly record an expense and see updated totals",
+    "context": "UNKNOWN",
+    "sources": [
+      {
+        "type": "ASSUMPTION",
+        "note": "Assumed individual household user, no interviews"
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "H1",
+        "claim": "A first-time user can add an expense without instructions",
+        "setup": "Moderated first use with a representative participant",
+        "success": "Record appears and total updates",
+        "disproof": "Needs help or cannot complete",
+        "tool": "Usability observation",
+        "status": "NOT_TESTED"
+      }
+    ]
+  },
+  "flows": [
+    {
+      "id": "FLOW-1",
+      "goal": "Add an expense",
+      "actor": "Hypothetical expense keeper",
+      "start_node": "entry",
+      "nodes": [
+        {
+          "id": "entry",
+          "screen_id": "SCREEN-1",
+          "action": "Open add form",
+          "next": [
+            "input"
+          ]
+        },
+        {
+          "id": "input",
+          "screen_id": "SCREEN-2",
+          "action": "Enter amount and submit",
+          "next": [
+            "saved",
+            "invalid"
+          ]
+        },
+        {
+          "id": "invalid",
+          "screen_id": "SCREEN-2",
+          "action": "See validation error",
+          "next": [
+            "input",
+            "cancelled"
+          ]
+        },
+        {
+          "id": "saved",
+          "screen_id": "SCREEN-1",
+          "action": "See expense and updated total",
+          "next": []
+        },
+        {
+          "id": "cancelled",
+          "screen_id": "SCREEN-1",
+          "action": "Cancel without storing record",
+          "next": []
+        }
+      ],
+      "end_nodes": [
+        "saved",
+        "cancelled"
+      ],
+      "error_nodes": [
+        "invalid"
+      ],
+      "recovery": "Correct the amount without losing other fields (ASSUMPTION, confirmation required)",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ],
+      "use_case_ids": [
+        "UC1"
+      ],
+      "verification": "Check accepted and rejected amounts against AC1 and AC2"
+    },
+    {
+      "id": "FLOW-2",
+      "goal": "View totals",
+      "actor": "Hypothetical expense keeper",
+      "start_node": "overview",
+      "nodes": [
+        {
+          "id": "overview",
+          "screen_id": "SCREEN-1",
+          "action": "Read total and entries",
+          "next": [
+            "done"
+          ]
+        },
+        {
+          "id": "done",
+          "screen_id": "SCREEN-1",
+          "action": "Total visible",
+          "next": []
+        }
+      ],
+      "end_nodes": [
+        "done"
+      ],
+      "error_nodes": [],
+      "recovery": "Retry when data cannot load; design assumption",
+      "requirement_ids": [
+        "R2"
+      ],
+      "acceptance_ids": [
+        "AC3"
+      ],
+      "use_case_ids": [
+        "UC2"
+      ],
+      "verification": "Compare total and displayed entries"
+    },
+    {
+      "id": "FLOW-3",
+      "goal": "Delete expense",
+      "actor": "Hypothetical expense keeper",
+      "start_node": "select",
+      "nodes": [
+        {
+          "id": "select",
+          "screen_id": "SCREEN-1",
+          "action": "Select existing expense",
+          "next": [
+            "delete"
+          ]
+        },
+        {
+          "id": "delete",
+          "screen_id": "SCREEN-1",
+          "action": "Request delete",
+          "next": [
+            "done",
+            "missing"
+          ]
+        },
+        {
+          "id": "missing",
+          "screen_id": "SCREEN-1",
+          "action": "Explain missing record",
+          "next": [
+            "select"
+          ]
+        },
+        {
+          "id": "done",
+          "screen_id": "SCREEN-1",
+          "action": "Expense removed and totals changed",
+          "next": []
+        }
+      ],
+      "end_nodes": [
+        "done"
+      ],
+      "error_nodes": [
+        "missing"
+      ],
+      "recovery": "Reload records then retry; proposed, confirmation required",
+      "requirement_ids": [
+        "R3"
+      ],
+      "acceptance_ids": [
+        "AC4"
+      ],
+      "use_case_ids": [
+        "UC3"
+      ],
+      "verification": "Check list and total after delete"
+    }
+  ],
+  "information_architecture": {
+    "sections": [
+      "Overview",
+      "Add expense"
+    ],
+    "navigation": [
+      {
+        "from": "SCREEN-1",
+        "to": "SCREEN-2",
+        "action": "Add expense"
+      },
+      {
+        "from": "SCREEN-2",
+        "to": "SCREEN-1",
+        "action": "Save or cancel"
+      }
+    ],
+    "roles": [
+      "Expense keeper (hypothetical)"
+    ]
+  },
+  "screens": [
+    {
+      "id": "SCREEN-1",
+      "goal": "Review entries, totals and available actions",
+      "flow_ids": [
+        "FLOW-1",
+        "FLOW-2",
+        "FLOW-3"
+      ],
+      "requirement_ids": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "states": [
+        "empty",
+        "loaded",
+        "loading",
+        "error"
+      ],
+      "navigation": [
+        "SCREEN-2"
+      ],
+      "actions": [
+        "COMP-ADD",
+        "COMP-LIST"
+      ]
+    },
+    {
+      "id": "SCREEN-2",
+      "goal": "Enter expense",
+      "flow_ids": [
+        "FLOW-1"
+      ],
+      "requirement_ids": [
+        "R1"
+      ],
+      "states": [
+        "idle",
+        "invalid",
+        "saving",
+        "saved"
+      ],
+      "navigation": [
+        "SCREEN-1"
+      ],
+      "actions": [
+        "COMP-FORM"
+      ]
+    }
+  ],
+  "wireframes": [
+    {
+      "screen_id": "SCREEN-1",
+      "representation": "TEXT_SPEC",
+      "regions": [
+        "Header + total",
+        "Expense list with edit/delete",
+        "Add action"
+      ],
+      "states": [
+        "empty",
+        "loading",
+        "error",
+        "loaded"
+      ],
+      "responsive_notes": "One column on narrow screens; long amounts must not clip"
+    },
+    {
+      "screen_id": "SCREEN-2",
+      "representation": "TEXT_SPEC",
+      "regions": [
+        "Amount input",
+        "Validation feedback",
+        "Save / Cancel"
+      ],
+      "states": [
+        "idle",
+        "invalid",
+        "saving"
+      ],
+      "responsive_notes": "Keyboard must not hide Save"
+    }
+  ],
+  "prototype": {
+    "level": "LOW",
+    "status": "PREPARED",
+    "artifact_kind": "TEXT_SPEC",
+    "artifact_ref": null,
+    "evidence": null,
+    "interactions": [
+      {
+        "component_id": "COMP-FORM",
+        "action": "Submit",
+        "from_state": "idle",
+        "to_state": "saved",
+        "error_state": "invalid",
+        "target_screen": "SCREEN-1",
+        "acceptance_ids": [
+          "AC1",
+          "AC2"
+        ],
+        "accessibility": "Field label and error announcement"
+      }
+    ]
+  },
+  "visual_design": {
+    "direction": "Proposed high legibility, content-first. No visual mockup rendered.",
+    "source": "ASSUMPTION",
+    "approval": "NOT_REQUESTED",
+    "alternatives": [
+      "Compact totals first",
+      "Entries first"
+    ],
+    "decisions": [
+      "Use existing product tokens if app exists"
+    ]
+  },
+  "design_tokens": {
+    "strategy": "REUSE_IF_EXISTING",
+    "source": "UNKNOWN",
+    "colors": {
+      "foreground": "TBD",
+      "background": "TBD"
+    },
+    "typography": "TBD",
+    "spacing": "TBD",
+    "icons": "Single existing icon family if available"
+  },
+  "components": [
+    {
+      "id": "COMP-ADD",
+      "screen_ids": [
+        "SCREEN-1"
+      ],
+      "variants": [
+        "default"
+      ],
+      "states": [
+        "idle"
+      ],
+      "inputs": [],
+      "actions": [
+        "Open new expense form"
+      ],
+      "outputs": [
+        "Navigate SCREEN-2"
+      ],
+      "validation": [],
+      "error_states": [],
+      "loading_states": [],
+      "empty_states": [],
+      "disabled_states": [],
+      "accessibility": "Focusable, discernible label",
+      "responsive": "No clipped button",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC1"
+      ]
+    },
+    {
+      "id": "COMP-LIST",
+      "screen_ids": [
+        "SCREEN-1"
+      ],
+      "variants": [
+        "filled",
+        "empty"
+      ],
+      "states": [
+        "loaded",
+        "empty",
+        "loading",
+        "error"
+      ],
+      "inputs": [
+        "expense entries"
+      ],
+      "actions": [
+        "Open or delete existing entry"
+      ],
+      "outputs": [
+        "Delete request and updated list"
+      ],
+      "validation": [],
+      "error_states": [
+        "load failure"
+      ],
+      "loading_states": [
+        "fetching"
+      ],
+      "empty_states": [
+        "zero entries"
+      ],
+      "disabled_states": [],
+      "accessibility": "Readable row actions",
+      "responsive": "Wrap long descriptions",
+      "requirement_ids": [
+        "R2",
+        "R3"
+      ],
+      "acceptance_ids": [
+        "AC3",
+        "AC4"
+      ]
+    },
+    {
+      "id": "COMP-FORM",
+      "screen_ids": [
+        "SCREEN-2"
+      ],
+      "variants": [
+        "new"
+      ],
+      "states": [
+        "idle",
+        "invalid",
+        "saving",
+        "saved"
+      ],
+      "inputs": [
+        "amount"
+      ],
+      "actions": [
+        "Save",
+        "Cancel"
+      ],
+      "outputs": [
+        "Saved entry or validation error"
+      ],
+      "validation": [
+        "Invalid amount rejected (AC2)"
+      ],
+      "error_states": [
+        "invalid amount"
+      ],
+      "loading_states": [
+        "saving"
+      ],
+      "empty_states": [],
+      "disabled_states": [
+        "saving"
+      ],
+      "accessibility": "Label, keyboard focus, announced error",
+      "responsive": "Visible above virtual keyboard",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ]
+    }
+  ],
+  "responsive": [
+    {
+      "screen_id": "SCREEN-1",
+      "viewports": [
+        {
+          "name": "mobile",
+          "width": 360,
+          "tested": false,
+          "evidence": null
+        },
+        {
+          "name": "desktop",
+          "width": 1280,
+          "tested": false,
+          "evidence": null
+        }
+      ],
+      "navigation": "Add action remains reachable",
+      "overflow": "No horizontal scrolling of main content",
+      "long_text": "Amounts and labels wrap or truncate accessibly",
+      "forms": "No form on this screen",
+      "empty_error_states": "Keep add action in empty and error states",
+      "verification": "Render at sample widths and keyboard zoom; NOT_TESTED"
+    },
+    {
+      "screen_id": "SCREEN-2",
+      "viewports": [
+        {
+          "name": "mobile",
+          "width": 360,
+          "tested": false,
+          "evidence": null
+        },
+        {
+          "name": "desktop",
+          "width": 1280,
+          "tested": false,
+          "evidence": null
+        }
+      ],
+      "navigation": "Cancel returns to overview",
+      "overflow": "No clipped controls",
+      "long_text": "Error message wraps",
+      "forms": "Inputs and submit visible with virtual keyboard",
+      "empty_error_states": "Field error announcement",
+      "verification": "Render and submit on phone/emulator; NOT_TESTED"
+    }
+  ],
+  "accessibility": [
+    {
+      "id": "A11Y-1",
+      "screen_ids": [
+        "SCREEN-1",
+        "SCREEN-2"
+      ],
+      "criterion": "Applicable WCAG 2.2 keyboard navigation and focus visible",
+      "method": "MANUAL",
+      "status": "NOT_TESTED",
+      "evidence": null
+    },
+    {
+      "id": "A11Y-2",
+      "screen_ids": [
+        "SCREEN-2"
+      ],
+      "criterion": "Clear label and validation feedback for amount",
+      "method": "MANUAL",
+      "status": "PROPOSED",
+      "evidence": null
+    }
+  ],
+  "handoff": {
+    "status": "PROPOSED",
+    "requirement_source": "Synthetic Business & System Analysis example from Issue #55",
+    "asset_inventory": [],
+    "targets": [
+      "frontend",
+      "qa"
+    ],
+    "implementation_status": "NOT_IMPLEMENTED",
+    "open_questions": [
+      "Amount format/currency and edit-flow details require confirmation",
+      "Error recovery and empty-state behavior not approved"
+    ]
+  },
+  "traceability": [
+    {
+      "requirement_id": "R1",
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ],
+      "use_case_ids": [
+        "UC1"
+      ],
+      "flow_ids": [
+        "FLOW-1"
+      ],
+      "screen_ids": [
+        "SCREEN-1",
+        "SCREEN-2"
+      ],
+      "component_ids": [
+        "COMP-FORM",
+        "COMP-ADD"
+      ],
+      "verification": "Add accepted; invalid rejected"
+    },
+    {
+      "requirement_id": "R2",
+      "acceptance_ids": [
+        "AC3"
+      ],
+      "use_case_ids": [
+        "UC2"
+      ],
+      "flow_ids": [
+        "FLOW-2"
+      ],
+      "screen_ids": [
+        "SCREEN-1"
+      ],
+      "component_ids": [
+        "COMP-LIST"
+      ],
+      "verification": "Displayed total equals entries"
+    },
+    {
+      "requirement_id": "R3",
+      "acceptance_ids": [
+        "AC4"
+      ],
+      "use_case_ids": [
+        "UC3"
+      ],
+      "flow_ids": [
+        "FLOW-3"
+      ],
+      "screen_ids": [
+        "SCREEN-1"
+      ],
+      "component_ids": [
+        "COMP-LIST"
+      ],
+      "verification": "Deletion updates total"
+    }
+  ],
+  "open_decisions": [
+    "Currency and amount parsing",
+    "Edit flow details",
+    "Recovery and empty-state copy"
+  ]
+}

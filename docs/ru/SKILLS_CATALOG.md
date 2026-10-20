@@ -97,6 +97,20 @@
 
 [Руководство для новичков и специалистов](BUSINESS_SYSTEM_ANALYSIS.md).
 
+## Расширение UX/UI Design
+
+Необязательный процесс от требований к экранам и передаче в разработку с использованием существующих навыков.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`ux-design-process`](../../extensions/design/skills/ux-design-process/SKILL.md) | Связать пользовательские сценарии, навигацию, прототип и проверяемый контракт разработчика. |
+
+[Руководство по UX/UI](UX_UI_DESIGN.md).
+
+## AI Engineering & QA
+
+Опциональный навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) проверяет версии наборов LLM, регрессию промптов, поиск и обоснованность RAG-ответов, права инструментов на синтетических офлайн-примерах. [Руководство](AI_ENGINEERING_QA.md). Без второго исполнителя моделей и платных API.
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -176,6 +190,7 @@
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
+| `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
@@ -207,7 +222,3 @@
 | `ui-motion` | `design-system-consistency`, `motion-quality`, `qa-strategy` |
 
 См. [инструкции по установке](INSTALLATION.md) для предварительного просмотра, расположения навыков и ограничений совместимости.
-
-## Опциональный набор AI
-
-Навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) и профиль описаны в [руководстве](AI_ENGINEERING_QA.md). Он не входит в основной general.

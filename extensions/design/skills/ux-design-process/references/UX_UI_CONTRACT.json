@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "document_type": "UX_UI_SPECIFICATION",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "source_labels": [
+    "USER_PROVIDED",
+    "SOURCE_BACKED",
+    "OBSERVED",
+    "ASSUMPTION",
+    "UNKNOWN"
+  ],
+  "prototype_levels": [
+    "LOW",
+    "MID",
+    "HIGH",
+    "INTERACTIVE"
+  ],
+  "prototype_statuses": [
+    "PROPOSED",
+    "PREPARED",
+    "RENDERED",
+    "INTERACTIVE_VERIFIED",
+    "NOT_TESTED",
+    "BLOCKED"
+  ],
+  "a11y_statuses": [
+    "PROPOSED",
+    "AUTO_CHECKED",
+    "MANUALLY_CHECKED",
+    "ASSISTIVE_TECH_CHECKED",
+    "NOT_TESTED"
+  ],
+  "required_sections": [
+    "goal",
+    "source_requirements",
+    "acceptance_criteria",
+    "use_cases",
+    "research",
+    "flows",
+    "information_architecture",
+    "screens",
+    "wireframes",
+    "prototype",
+    "visual_design",
+    "design_tokens",
+    "components",
+    "responsive",
+    "accessibility",
+    "handoff",
+    "traceability",
+    "open_decisions"
+  ],
+  "required_fields": {
+    "source_requirements": [
+      "id",
+      "behavior",
+      "source"
+    ],
+    "acceptance_criteria": [
+      "id",
+      "expectation",
+      "requirement_ids"
+    ],
+    "use_cases": [
+      "id",
+      "goal",
+      "requirement_ids",
+      "acceptance_ids"
+    ],
+    "flows": [
+      "id",
+      "goal",
+      "actor",
+      "start_node",
+      "nodes",
+      "end_nodes",
+      "error_nodes",
+      "recovery",
+      "requirement_ids",
+      "acceptance_ids",
+      "use_case_ids",
+      "verification"
+    ],
+    "screens": [
+      "id",
+      "goal",
+      "flow_ids",
+      "requirement_ids",
+      "states",
+      "navigation",
+      "actions"
+    ],
+    "wireframes": [
+      "screen_id",
+      "representation",
+      "regions",
+      "states",
+      "responsive_notes"
+    ],
+    "components": [
+      "id",
+      "screen_ids",
+      "variants",
+      "states",
+      "inputs",
+      "actions",
+      "outputs",
+      "validation",
+      "error_states",
+      "loading_states",
+      "empty_states",
+      "disabled_states",
+      "accessibility",
+      "responsive",
+      "requirement_ids",
+      "acceptance_ids"
+    ],
+    "responsive": [
+      "screen_id",
+      "viewports",
+      "navigation",
+      "overflow",
+      "long_text",
+      "forms",
+      "empty_error_states",
+      "verification"
+    ],
+    "accessibility": [
+      "id",
+      "screen_ids",
+      "criterion",
+      "method",
+      "status",
+      "evidence"
+    ],
+    "traceability": [
+      "requirement_id",
+      "acceptance_ids",
+      "use_case_ids",
+      "flow_ids",
+      "screen_ids",
+      "component_ids",
+      "verification"
+    ]
+  },
+  "notes": [
+    "Proposed specs and unverified research do not prove observed usability, visual quality or compliant implementation.",
+    "Original R-ID/AC-ID/UC-ID preserved; existing SR-ID/BR-ID included in source mapping if provided.",
+    "Rendered/interactive statuses require actual artifact and verification evidence; a static PNG is not interactive.",
+    "Existing product design systems take precedence; Figma and visual tooling are optional.",
+    "Validator operates without filesystem writes and does not run a browser or contact third parties."
+  ]
+}

@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "c0a7faa78a43d88a88d0a169b573e834eb7647d7c19c40ba567ad135e4516b01"
+      "source_sha256": "f6206ba14a469760d4212c14e96434faf8bea1c3c0093ea6e45e6223e994d8ce"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "c6b6b07745886b3493ce748f7d157755beb0c083ad4203f56f141645d418dc7c"
+      "source_sha256": "49a4ccaf47ec03172c573c6b8b44bc9218de40463b0c00c701eca396ed5d6e7b"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "a8b24a0b6d36bfbe4f2f073bb4f6f5c092d15770a72a1fe4cbdb1e416865a019"
+      "source_sha256": "980dc190a011149d0458f1b254067f859c4ae5945b178b82555255ae77bdf393"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -136,6 +136,16 @@
       "source": "docs/BUSINESS_SYSTEM_ANALYSIS.md",
       "translation": "docs/ru/BUSINESS_SYSTEM_ANALYSIS.md",
       "source_sha256": "5eb2a3faf3fe1155deb14ecac28df8cc155a06094fd25177c548aa1bd555f38d"
+    },
+    {
+      "source": "docs/UX_UI_DESIGN.md",
+      "translation": "docs/ru/UX_UI_DESIGN.md",
+      "source_sha256": "3995ab29e7c3ffc10ca78c249dcf2142b5cfc40b25ae962fbb666aa6322e8d3a"
+    },
+    {
+      "source": "docs/AI_ENGINEERING_QA.md",
+      "translation": "docs/ru/AI_ENGINEERING_QA.md",
+      "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",

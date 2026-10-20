@@ -1,0 +1,443 @@
+{
+  "schema_version": 1,
+  "document_type": "UX_UI_SPECIFICATION",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "goal": "Synthetic multi-role workflow console: only design specification, not a deployed product",
+  "source_requirements": [
+    {
+      "id": "R-W1",
+      "behavior": "Operator reviews work items",
+      "source": "ASSUMPTION"
+    },
+    {
+      "id": "R-W2",
+      "behavior": "Supervisor filters and assigns work items",
+      "source": "ASSUMPTION"
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-W1",
+      "expectation": "Operator can inspect assigned items",
+      "requirement_ids": [
+        "R-W1"
+      ]
+    },
+    {
+      "id": "AC-W2",
+      "expectation": "Supervisor can filter and assign with explicit permission",
+      "requirement_ids": [
+        "R-W2"
+      ]
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC-W1",
+      "goal": "View assigned items",
+      "requirement_ids": [
+        "R-W1"
+      ],
+      "acceptance_ids": [
+        "AC-W1"
+      ]
+    },
+    {
+      "id": "UC-W2",
+      "goal": "Filter and assign",
+      "requirement_ids": [
+        "R-W2"
+      ],
+      "acceptance_ids": [
+        "AC-W2"
+      ]
+    }
+  ],
+  "research": {
+    "task": "Review or assign workflow items by role",
+    "context": "UNKNOWN",
+    "sources": [
+      {
+        "type": "ASSUMPTION",
+        "note": "Roles, work items and permissions are entirely fictional"
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "H-W1",
+        "claim": "Supervisor locates a work item using filter without help",
+        "setup": "Observe fictional scenario in a usable prototype",
+        "success": "Item found",
+        "disproof": "Cannot find item",
+        "tool": "Moderated observation",
+        "status": "NOT_TESTED"
+      }
+    ]
+  },
+  "flows": [
+    {
+      "id": "FLOW-W1",
+      "goal": "Inspect assigned items",
+      "actor": "Operator",
+      "start_node": "list",
+      "nodes": [
+        {
+          "id": "list",
+          "screen_id": "SCREEN-W1",
+          "action": "Open assigned list",
+          "next": [
+            "details"
+          ]
+        },
+        {
+          "id": "details",
+          "screen_id": "SCREEN-W1",
+          "action": "Review item details",
+          "next": []
+        }
+      ],
+      "end_nodes": [
+        "details"
+      ],
+      "error_nodes": [],
+      "recovery": "Proposed retry if loading fails",
+      "requirement_ids": [
+        "R-W1"
+      ],
+      "acceptance_ids": [
+        "AC-W1"
+      ],
+      "use_case_ids": [
+        "UC-W1"
+      ],
+      "verification": "Confirm role-specific listing"
+    },
+    {
+      "id": "FLOW-W2",
+      "goal": "Filter and assign an item",
+      "actor": "Supervisor",
+      "start_node": "filters",
+      "nodes": [
+        {
+          "id": "filters",
+          "screen_id": "SCREEN-W1",
+          "action": "Filter work items",
+          "next": [
+            "assign",
+            "forbidden"
+          ]
+        },
+        {
+          "id": "forbidden",
+          "screen_id": "SCREEN-W1",
+          "action": "Access denied state",
+          "next": [
+            "filters"
+          ]
+        },
+        {
+          "id": "assign",
+          "screen_id": "SCREEN-W1",
+          "action": "Assign chosen item",
+          "next": [
+            "done",
+            "failed"
+          ]
+        },
+        {
+          "id": "failed",
+          "screen_id": "SCREEN-W1",
+          "action": "See retryable failure",
+          "next": [
+            "assign"
+          ]
+        },
+        {
+          "id": "done",
+          "screen_id": "SCREEN-W1",
+          "action": "See updated assignee",
+          "next": []
+        }
+      ],
+      "end_nodes": [
+        "done"
+      ],
+      "error_nodes": [
+        "forbidden",
+        "failed"
+      ],
+      "recovery": "Return to filter or retry without duplicating assignment; proposal",
+      "requirement_ids": [
+        "R-W2"
+      ],
+      "acceptance_ids": [
+        "AC-W2"
+      ],
+      "use_case_ids": [
+        "UC-W2"
+      ],
+      "verification": "Permission and error paths observable"
+    }
+  ],
+  "information_architecture": {
+    "sections": [
+      "Assigned work",
+      "All work (supervisor only)"
+    ],
+    "roles": [
+      "Operator",
+      "Supervisor"
+    ],
+    "navigation": [
+      {
+        "from": "SCREEN-W1",
+        "to": "SCREEN-W1",
+        "action": "Switch allowed view"
+      }
+    ]
+  },
+  "screens": [
+    {
+      "id": "SCREEN-W1",
+      "goal": "Review table, filters, item states and role-aware actions",
+      "flow_ids": [
+        "FLOW-W1",
+        "FLOW-W2"
+      ],
+      "requirement_ids": [
+        "R-W1",
+        "R-W2"
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "loaded"
+      ],
+      "navigation": [],
+      "actions": [
+        "COMP-WTABLE"
+      ]
+    }
+  ],
+  "wireframes": [
+    {
+      "screen_id": "SCREEN-W1",
+      "representation": "TEXT_SPEC",
+      "regions": [
+        "Role-aware navigation",
+        "Filters",
+        "Responsive work table",
+        "Assignment dialog"
+      ],
+      "states": [
+        "loaded",
+        "empty",
+        "loading",
+        "error",
+        "forbidden"
+      ],
+      "responsive_notes": "Mobile table uses a card/list substitute; no invented desktop-only columns"
+    }
+  ],
+  "prototype": {
+    "level": "MID",
+    "status": "NOT_TESTED",
+    "artifact_kind": "TEXT_SPEC",
+    "artifact_ref": null,
+    "evidence": null,
+    "interactions": [
+      {
+        "component_id": "COMP-WTABLE",
+        "action": "Assign",
+        "from_state": "loaded",
+        "to_state": "assigned",
+        "error_state": "forbidden",
+        "target_screen": "SCREEN-W1",
+        "acceptance_ids": [
+          "AC-W2"
+        ],
+        "accessibility": "Keyboard filter and dialog focus management"
+      }
+    ]
+  },
+  "visual_design": {
+    "direction": "Existing organization tokens if available; none supplied",
+    "source": "UNKNOWN",
+    "approval": "NOT_REQUESTED",
+    "alternatives": [
+      "Dense table",
+      "Mobile card list"
+    ],
+    "decisions": [
+      "Do not reveal supervisor actions to operator"
+    ]
+  },
+  "design_tokens": {
+    "strategy": "REUSE_IF_EXISTING",
+    "source": "UNKNOWN",
+    "colors": {
+      "foreground": "TBD"
+    },
+    "typography": "TBD",
+    "spacing": "TBD",
+    "icons": "TBD"
+  },
+  "components": [
+    {
+      "id": "COMP-WTABLE",
+      "screen_ids": [
+        "SCREEN-W1"
+      ],
+      "variants": [
+        "operator",
+        "supervisor",
+        "mobile"
+      ],
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "loaded"
+      ],
+      "inputs": [
+        "role",
+        "filters",
+        "items"
+      ],
+      "actions": [
+        "Filter",
+        "Open details",
+        "Assign (supervisor)"
+      ],
+      "outputs": [
+        "Filtered list",
+        "Assignment request"
+      ],
+      "validation": [
+        "Role has assignment rights (unconfirmed system rule)"
+      ],
+      "error_states": [
+        "forbidden",
+        "network failure"
+      ],
+      "loading_states": [
+        "loading"
+      ],
+      "empty_states": [
+        "no matches"
+      ],
+      "disabled_states": [
+        "saving"
+      ],
+      "accessibility": "Semantic table/card list, labeled filters, focus on dialog close",
+      "responsive": "Mobile list replaces wide table when necessary",
+      "requirement_ids": [
+        "R-W1",
+        "R-W2"
+      ],
+      "acceptance_ids": [
+        "AC-W1",
+        "AC-W2"
+      ]
+    }
+  ],
+  "responsive": [
+    {
+      "screen_id": "SCREEN-W1",
+      "viewports": [
+        {
+          "name": "mobile",
+          "width": 390,
+          "tested": false,
+          "evidence": null
+        },
+        {
+          "name": "desktop",
+          "width": 1440,
+          "tested": false,
+          "evidence": null
+        }
+      ],
+      "navigation": "Role-aware navigation accessible",
+      "overflow": "Mobile list instead of clipped wide table",
+      "long_text": "Long workflow names wrap",
+      "forms": "Filter and assignment remain keyboard-operable",
+      "empty_error_states": "Empty/no-access/loading distinguishable",
+      "verification": "Render states by role at multiple sizes; NOT_TESTED"
+    }
+  ],
+  "accessibility": [
+    {
+      "id": "A11Y-W1",
+      "screen_ids": [
+        "SCREEN-W1"
+      ],
+      "criterion": "Keyboard table/filter/dialog interaction",
+      "method": "MANUAL",
+      "status": "NOT_TESTED",
+      "evidence": null
+    }
+  ],
+  "handoff": {
+    "status": "PROPOSED",
+    "requirement_source": "Entirely hypothetical multi-role console",
+    "asset_inventory": [],
+    "targets": [
+      "frontend",
+      "qa"
+    ],
+    "implementation_status": "NOT_IMPLEMENTED",
+    "open_questions": [
+      "Who may assign?",
+      "Filters and data retention?",
+      "How failed assignments recover?"
+    ]
+  },
+  "traceability": [
+    {
+      "requirement_id": "R-W1",
+      "acceptance_ids": [
+        "AC-W1"
+      ],
+      "use_case_ids": [
+        "UC-W1"
+      ],
+      "flow_ids": [
+        "FLOW-W1"
+      ],
+      "screen_ids": [
+        "SCREEN-W1"
+      ],
+      "component_ids": [
+        "COMP-WTABLE"
+      ],
+      "verification": "Role-based assigned list"
+    },
+    {
+      "requirement_id": "R-W2",
+      "acceptance_ids": [
+        "AC-W2"
+      ],
+      "use_case_ids": [
+        "UC-W2"
+      ],
+      "flow_ids": [
+        "FLOW-W2"
+      ],
+      "screen_ids": [
+        "SCREEN-W1"
+      ],
+      "component_ids": [
+        "COMP-WTABLE"
+      ],
+      "verification": "Supervisor filters, permission gate and error recovery"
+    }
+  ],
+  "open_decisions": [
+    "Exact permissions not specified",
+    "Dataset and workflow states unknown"
+  ]
+}
