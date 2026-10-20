@@ -267,6 +267,12 @@
       "security-boundaries",
       "test-analysis-design",
       "contract-testing"
+    ],
+    "reliability-testing": [
+      "reliability-testing",
+      "background-processing",
+      "integration-testing",
+      "failure-triage"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -414,6 +420,13 @@
       "skill_root": "extensions/ai/skills",
       "skills": [
         "ai-engineering-qa"
+      ],
+      "auto_install": false
+    },
+    "reliability": {
+      "skill_root": "extensions/reliability/skills",
+      "skills": [
+        "reliability-testing"
       ],
       "auto_install": false
     }

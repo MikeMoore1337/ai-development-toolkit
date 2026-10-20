@@ -16,6 +16,7 @@
 | Контрактные и интеграционные тесты | `qa-contract` | 4 | Дополнения по задаче |
 | Анализ ошибок CI | `qa-ci` | 4 | Нет |
 | Проверка перед выпуском | `qa-release` | 4 | Нет |
+| Отказоустойчивость, повторы, гонки и восстановление | `reliability-testing` | 4 | Локальные инварианты, без тестирования production |
 | Оценка AI, RAG, регрессия промптов и инструментов | `ai-engineering-qa` | 5 | Проверки контракта и прав, без реальных запусков моделей |
 | Архитектура ИИ-агентов | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Проверка идеи, MVP и PRD | `product-discovery` | 3 | Формальный анализ QA-требований только при необходимости |
@@ -43,6 +44,10 @@
 ## AI Engineering & QA
 
 Необязательный профиль `ai-engineering-qa` использует один новый навык и существующие `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing`. Синтетические офлайн-проверки не доказывают эффективность реальной модели или смысловую обоснованность RAG-ответов. [Руководство](AI_ENGINEERING_QA.md).
+
+## Reliability Testing
+
+Необязательный профиль `reliability-testing` дополняет `background-processing`, `integration-testing` и `failure-triage` одной методикой проверки инвариантов. Локальные проверки отклоняют заведомо неисправные варианты, но не подтверждают гарантии настоящего брокера или exactly-once. [Руководство](RELIABILITY_TESTING.md).
 
 ## Backend - серверная разработка
 
