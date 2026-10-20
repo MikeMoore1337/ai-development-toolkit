@@ -100,6 +100,14 @@ required here; verify current licensing and features from official vendor
 sources before recommending a particular deployment. Distributed generators,
 paid clouds and dedicated infrastructure are not part of this issue.
 
+### Optional tools checked against official projects (2026-10-20)
+
+- [k6](https://github.com/grafana/k6): JavaScript-based load testing, AGPL-3.0. Consider for approved programmable protocol tests.
+- [Locust](https://github.com/locustio/locust): Python user-behavior scenarios, MIT. Consider if Python-defined flows are useful.
+- [Apache JMeter](https://github.com/apache/jmeter): Java load/functional testing and reports, Apache-2.0. Consider for existing JMeter workflows.
+
+No tool above is installed, mandatory, invoked or connected to an online service. A license does not grant target-testing permission.
+
 **Beginner prompt:** "Check whether my local application has slowed down.
 First identify one safe scenario and compare old/new versions fairly; do not
 test any public site or save results inside the Toolkit repository."
