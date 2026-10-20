@@ -1,5 +1,22 @@
 # Installing skills safely
 
+## Beginner CLI (Skill Manager v2)
+
+Use the same managed install engine through a smaller entrypoint. Python 3.12+ and an **existing** target project are required. The CLI never downloads or installs an AI client. Run these commands from the Toolkit checkout:
+
+~~~bash
+python scripts/adt.py profile list
+python scripts/adt.py doctor --target /path/to/repo
+python scripts/adt.py profile plan --target /path/to/repo --task qa
+python scripts/adt.py init --target /path/to/repo --profile general
+python scripts/adt.py init --target /path/to/repo --profile general --apply
+python scripts/adt.py status --target /path/to/repo
+~~~
+
+On Windows, replace `python` with `py -3` and use a Windows project path. Select `--layout claude` for a Claude Code skills folder; this does **not** confirm that Claude Code is installed or detects skills. All commands except `init --apply` are read-only. Inspect the per-file plan **before** granting `--apply`. A missing project is never created automatically. `doctor` reports damaged state, drift, linked paths, transactions and unmanaged skills without attempting repair; filesystem permissions and client activation can remain NOT_VERIFIED. For a recoverable interruption, preview `python scripts/skill_manager.py recover --target /path/to/repo`; apply recovery only after explicit review. For managed updates and rollback, continue using `skill_manager.py`. A repeat `init` skips already managed clean skills; unrelated unmanaged folders remain untouched. Existing `AGENTS.md` and `CLAUDE.md` are not rewritten.
+
+For technical documentation use `--task docs` (profile `docs-technical`, source verification), for wording only use `--task docs-edit` (`editorial`); `--task docs-verify` requests factual cross-checks. QA selection is heuristic: Python/JavaScript files do not establish that pytest or Playwright are installed. Wide `qa-all` includes 27 QA skills and should normally be replaced with a focused profile; the number of files does not measure model tokens.
+
 [Русская версия](ru/INSTALLATION.md) | [Русский первый запуск](ru/GETTING_STARTED.md)
 
 Client layouts, pinned source evidence and offline verification: [CLIENT_COMPATIBILITY.md](CLIENT_COMPATIBILITY.md).

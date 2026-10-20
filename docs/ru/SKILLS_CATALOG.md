@@ -147,6 +147,7 @@
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |
+| `docs-technical` | `documentation-maintenance`, `research-verification` |
 | `editorial` | `clear-voice` |
 | `editorial-qa` | `qa-clear-voice` |
 | `feature-delivery` | `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `release-safety` |

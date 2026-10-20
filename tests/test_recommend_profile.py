@@ -35,12 +35,23 @@ class ProfileRecommendationTests(unittest.TestCase):
 
     def test_python_qa(self):
         (self.target / "pyproject.toml").touch()
-        self.check("qa", "qa-python")
+        result = self.check("qa", "qa-python")
+        self.assertEqual("NOT_VERIFIED", result["detected"]["pytest_installed"])
+        self.assertIn("pytest", " ".join(result["warnings"]))
 
     def test_fullstack_qa(self):
         (self.target / "pyproject.toml").touch()
         (self.target / "package.json").touch()
-        self.check("qa", "qa-fullstack")
+        result = self.check("qa", "qa-python")
+        self.assertIn("qa-fullstack was not selected", " ".join(result["warnings"]))
+
+    def test_fullstack_with_playwright_config_is_heuristic(self):
+        (self.target / "pyproject.toml").touch()
+        (self.target / "package.json").touch()
+        (self.target / "playwright.config.ts").touch()
+        result = self.check("qa", "qa-fullstack")
+        self.assertEqual("NOT_VERIFIED", result["detected"]["playwright_installed"])
+        self.assertIn("qa-core", result["alternatives"])
 
     def test_playwright_qa(self):
         (self.target / "package.json").touch()
@@ -54,13 +65,20 @@ class ProfileRecommendationTests(unittest.TestCase):
     def test_explicit_workflow_tasks(self):
         for task, profile in {
             "feature": "codex-feature", "ui": "ui-fix", "ci": "qa-ci",
-            "release": "qa-release", "docs": "editorial", "agent": "agent-architecture",
+            "release": "qa-release", "docs": "docs-technical", "docs-edit": "editorial",
+            "docs-verify": "docs-technical", "agent": "agent-architecture",
             "backend": "backend", "frontend": "frontend",
             "fullstack": "fullstack",
             "research": "research", "provider": "provider-research",
         }.items():
             with self.subTest(task=task):
                 self.check(task, profile)
+
+    def test_docs_routes_technical_work_to_documentation_maintenance(self):
+        selected = self.check("docs", "docs-technical")
+        self.assertIn("documentation-maintenance", selected["skills"])
+        self.assertIn("clear-voice", selected["optional_skills"])
+        self.assertEqual(["clear-voice"], self.check("docs-edit", "editorial")["skills"])
 
     def test_optional_suggestions_are_separate_and_stable(self):
         result = self.check("frontend", "frontend")
