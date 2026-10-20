@@ -33,3 +33,7 @@ python -m unittest tests.test_devops -v
 ```
 
 The Python-standard-library-only `fixtures/devops/cases.json` represents a fictional pipeline with 18 deliberately broken cases, validated by identical rules against the passing reference. No actual deployment, Docker execution, IaC plan/apply, migration, server access, cloud access, restore or paid service. Real AI activation is NOT_MEASURED. Toolkit copies used for another project remain read-only; return reports in chat unless the user explicitly requests another destination.
+
+## Optional static Dockerfile examples
+
+The fictional `fixtures/devops/docker/good/` and `fixtures/devops/docker/bad/` directories contain a valid-for-declared-contract reference and an intentionally inconsistent Dockerfile. An independent unit-test oracle checks runtime identity, COPY scope, startup paths and health-port consistency. No image is built; provenance and runtime are NOT_TESTED.

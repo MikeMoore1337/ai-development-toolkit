@@ -83,6 +83,46 @@ class DevOpsContracts(unittest.TestCase):
             self.assertEqual("PASS", devops.run_cases()["result"])
             self.assertEqual(initial, list(Path(folder).iterdir()))
 
+    def test_dockerfile_positive_and_negative_static_contract(self):
+        """Inspect Dockerfile text only; never build or execute either fixture."""
+        base = ROOT / "fixtures/devops/docker"
+
+        def assess(path):
+            directory = base / path
+            text = (directory / "Dockerfile").read_text(encoding="utf-8")
+            instructions = [line.strip() for line in text.splitlines()
+                            if line.strip() and not line.lstrip().startswith("#")]
+            issues = set()
+            if "USER 10001" not in instructions:
+                issues.add("REQUIRED_NON_ROOT")
+            if "COPY . /srv" in instructions and (
+                directory / "fixture_debug_config.txt"
+            ).exists():
+                issues.add("UNSCOPED_BUILD_CONTEXT")
+            command = next((line[4:].strip() for line in instructions
+                            if line.startswith("CMD ")), "")
+            try:
+                argv = json.loads(command)
+            except json.JSONDecodeError:
+                argv = []
+            if argv != ["python", "/srv/app.py"] or not (
+                directory / "app.py"
+            ).is_file():
+                issues.add("INVALID_STARTUP")
+            health = next((line for line in instructions
+                           if line.startswith("HEALTHCHECK CMD ")), "")
+            if ("EXPOSE 8080" not in instructions or
+                    "127.0.0.1:8080/health" not in health):
+                issues.add("INVALID_HEALTH_CONTRACT")
+            return issues
+
+        self.assertEqual(set(), assess("good"))
+        self.assertEqual(
+            {"REQUIRED_NON_ROOT", "UNSCOPED_BUILD_CONTEXT",
+             "INVALID_STARTUP", "INVALID_HEALTH_CONTRACT"},
+            assess("bad"),
+        )
+
     def test_optional_profile_preview_apply_and_source_boundary(self):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         names = manifest["profiles"]["devops-infrastructure"]
