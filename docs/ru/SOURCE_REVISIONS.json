@@ -40,7 +40,7 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "6cf9dcaf5badde15b76fd977b1c16619c0b49f413f5c97937652a3b343c1ecad"
+      "source_sha256": "5459eb7697fecd79be5d7e63fb954600618baf23c8cf73e61b329c3fefee7b52"
     },
     {
       "source": "docs/ADAPTATION.md",
@@ -65,6 +65,16 @@
       "translation": "docs/en/TASK_PROMPT_TEMPLATE.md",
       "source_language": "ru",
       "source_sha256": "eae0492a911fb0a1bb1e70a1b79f1e05e9c4a1b0b24bf144396e7452a29b989e"
+    },
+    {
+      "source": "docs/BEGINNER_WORKFLOW.md",
+      "translation": "docs/ru/BEGINNER_WORKFLOW.md",
+      "source_sha256": "02dc352e7b1848d865c4d71148f7054b1b45e4f150696abe3240d9cce16f11fa"
+    },
+    {
+      "source": "docs/QUALITY_RUBRIC.md",
+      "translation": "docs/ru/QUALITY_RUBRIC.md",
+      "source_sha256": "7d83a819411ef6d349c52e21c88157674aa12b3573e0af308e5594106b414ef6"
     }
   ]
 }

@@ -42,6 +42,10 @@ FIXTURE_FILES = (
     "docs/LANGUAGE_POLICY.md",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md",
     "docs/ru/LANGUAGE_POLICY.md",
+    "docs/BEGINNER_WORKFLOW.md",
+    "docs/QUALITY_RUBRIC.md",
+    "docs/ru/BEGINNER_WORKFLOW.md",
+    "docs/ru/QUALITY_RUBRIC.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
     "docs/TASK_PROMPT_TEMPLATE.md",
@@ -161,6 +165,34 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(content.replace("(../TASK_PROMPT_TEMPLATE.md)",
                                         "(../LANGUAGE_POLICY.md)", 1), encoding="utf-8")
         self.check("L10N004")
+
+    def test_russian_beginner_workflow_missing_fails(self):
+        (self.root / "docs/ru/BEGINNER_WORKFLOW.md").unlink()
+        self.check("L10N001")
+
+    def test_quality_rubric_missing_language_link_fails(self):
+        page = self.root / "docs/QUALITY_RUBRIC.md"
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/QUALITY_RUBRIC.md)", text)
+        page.write_text(text.replace("(ru/QUALITY_RUBRIC.md)", "(QUALITY_RUBRIC.md)", 1),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_beginner_missing_critical_gate_fails(self):
+        page = self.root / "docs/ru/BEGINNER_WORKFLOW.md"
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("EXTERNAL", text)
+        page.write_text(text.replace("EXTERNAL", "UNRESTRICTED", 100),
+                        encoding="utf-8")
+        self.check("L10N009")
+
+    def test_rubric_missing_release_gate_fails(self):
+        page = self.root / "docs/ru/QUALITY_RUBRIC.md"
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("--mode release", text)
+        page.write_text(text.replace("--mode release", "--mode casual", 100),
+                        encoding="utf-8")
+        self.check("L10N009")
 
     def test_make_feature_missing_reverse_link_fails(self):
         page = self.root / "docs/MAKE_FEATURE_INTEGRATION.md"
