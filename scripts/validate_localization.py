@@ -282,7 +282,7 @@ def validate(root: Path) -> list[str]:
                                 "source_revision", "reviewed_by", "observed_at",
                                 "INDEPENDENT_REVIEW_PENDING", "Issue #11"),
         "AGENT_SKILLS_SPEC.md": ("skills-ref", "--scope all", "MANIFEST.json",
-                                 "68", "0.1.0", "3.11"),
+                                 "69", "0.1.0", "3.11"),
         "RELEASE_PROCESS.md": ("ID1337", "--mode release", "BLOCKED",
                                "NOT_VERIFIED", "SHA256SUMS.txt", "v5.4.0"),
         "QUALITY_RUBRIC.md": ("verified", "unknown", "failed", "BLOCKER", "WARNING",
