@@ -40,8 +40,8 @@ python -m unittest discover -s tests -p integration_skills_ref.py -v
 ```
 
 The default `--scope all` covers **all skills currently declared** in
-`MANIFEST.json` (68 in the checked revision: 23 core/generic,
-27 QA, 1 Make Feature, 5 Frontend, 6 Backend, 3 Fullstack and 1 Product, 1 Management and 1 Analysis).
+`MANIFEST.json` (69 in the checked revision: 23 core/generic,
+27 QA, 1 Make Feature, 5 Frontend, 6 Backend, 3 Fullstack and 1 Product, 1 Management and 1 Analysis and 1 AI).
 These counts are a current inventory, not a historic validation result.
 The runner compares
 the manifest with directories, rejects missing or unlisted entries and requires

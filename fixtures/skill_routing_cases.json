@@ -156,6 +156,18 @@
         "Fix a Python bug and implement the code change",
         "Write a unit test for this backend function"
       ]
+    },
+    {
+      "id": "ai-llm-quality-versus-api",
+      "target": "ai-engineering-qa",
+      "positive": [
+        "Design an AI engineering QA evaluation dataset for LLM prompt regression, RAG retrieval and grounded answers.",
+        "Prepare AI engineering QA tests for tool-call authorization and independent oracles."
+      ],
+      "negative": [
+        "Fix a Python import error in a web service.",
+        "Write ordinary unit tests for REST API response validation."
+      ]
     }
   ]
 }
