@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added English counterparts to four Russian-first guides (adaptation, integration matrix, portability trials, task prompt), with reversible source revision tracking (#87).
+
 - Audited two-way RU/EN documentation coverage; added a bilingual Make Feature *human* guide and explicit language policy, preserving the Russian canonical source skill and owner-gated snapshots (#87).
 
 - Added a single beginner journey contract with three personas, observable acceptance examples, 13 negative guard fixtures and deterministic offline regressions (#49). No live agent or human usability evidence is claimed.
