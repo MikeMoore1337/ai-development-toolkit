@@ -48,6 +48,12 @@ FIXTURE_FILES = (
     "docs/ru/QUALITY_RUBRIC.md",
     "docs/CLEAR_VOICE_INTEGRATION.md",
     "docs/ru/CLEAR_VOICE_INTEGRATION.md",
+    "docs/UNIVERSAL_ENGINEERING.md",
+    "docs/ru/UNIVERSAL_ENGINEERING.md",
+    "docs/SKILL_QUALITY_V2.md",
+    "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/SOURCE_EVALUATION.md",
+    "docs/en/SOURCE_EVALUATION.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
     "docs/TASK_PROMPT_TEMPLATE.md",
@@ -72,7 +78,7 @@ class RussianOnboardingTests(unittest.TestCase):
         # the fixture with existing link targets, without copying the whole
         # repository or suppressing missing-link detection in the validator.
         for name in FIXTURE_FILES:
-            if not name.startswith("docs/ru/"):
+            if not name.startswith(("docs/ru/", "docs/en/")):
                 continue
             original = ROOT / name
             for raw in validator.LINK.findall(original.read_text(encoding="utf-8")):
@@ -195,6 +201,39 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(text.replace("--mode release", "--mode casual", 100),
                         encoding="utf-8")
         self.check("L10N009")
+
+    def test_missing_engineering_translation_fails(self):
+        (self.root / "docs/ru/UNIVERSAL_ENGINEERING.md").unlink()
+        self.check("L10N001")
+
+    def test_engineering_wrong_language_link_fails(self):
+        page = self.root / "docs/UNIVERSAL_ENGINEERING.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/UNIVERSAL_ENGINEERING.md)", data)
+        page.write_text(data.replace("(ru/UNIVERSAL_ENGINEERING.md)",
+                                     "(UNIVERSAL_ENGINEERING.md)"), encoding="utf-8")
+        self.check("L10N004")
+
+    def test_quality_missing_evidence_gate_fails(self):
+        page = self.root / "docs/ru/SKILL_QUALITY_V2.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("EVIDENCE001", data)
+        page.write_text(data.replace("EVIDENCE001", "REMOVED"), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_english_source_evaluation_bad_link_fails(self):
+        page = self.root / "docs/en/SOURCE_EVALUATION.md"
+        page.write_text(page.read_text(encoding="utf-8") +
+                        "\n[missing](nonexistent.md)\n", encoding="utf-8")
+        self.check("L10N002")
+
+    def test_source_evaluation_missing_reverse_link_fails(self):
+        page = self.root / "docs/SOURCE_EVALUATION.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("(en/SOURCE_EVALUATION.md)", data)
+        page.write_text(data.replace("(en/SOURCE_EVALUATION.md)",
+                                     "(SOURCE_EVALUATION.md)"), encoding="utf-8")
+        self.check("L10N004")
 
     def test_clear_voice_missing_reverse_link_fails(self):
         page = self.root / "docs/CLEAR_VOICE_INTEGRATION.md"
