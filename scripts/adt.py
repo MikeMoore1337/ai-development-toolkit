@@ -209,6 +209,10 @@ def run(args: argparse.Namespace, root: Path = ROOT) -> dict:
     if args.command == "profile" and args.profile_command == "list":
         return {"action": "profile list", "profiles": dict(sorted(manifest["profiles"].items()))}
     target = args.target.expanduser().absolute()
+    # Route missing projects through the same structured BLOCKED diagnostic, even
+    # when a task-based profile would otherwise fail during selection.
+    if args.command in ("doctor", "init", "profile") and not target.is_dir():
+        return diagnose(target, args.layout)
     if args.command == "doctor":
         selection = choose(target, manifest, args.profile, args.task) if (args.profile or args.task) else None
         return diagnose(target, args.layout, selection)
