@@ -14,7 +14,7 @@ For example, the user writes to Codex in an IDE chat:
 
 **That is the entire request.** Codex identifies project A from the available workspace, reads relevant instructions from the referenced Toolkit and performs the authorized task in A. When the request asks for implementation, code changes, tests and appropriate new files **in A are allowed within task scope**; when it asks only for analysis, the default result is a chat response.
 
-**Strict separation:** user A's code, reports, screenshots, logs, test results, scratch files, branches, commits and PRs **must never be placed in AI Development Toolkit**, whether the public GitHub repository or a local checkout/copy. Do not mutate or configure Toolkit to complete another user's task. An explicitly authorized task to contribute to Toolkit itself is a **separate workflow**.
+**Strict separation:** user A's code, reports, screenshots, logs, test results, scratch files, branches, commits and PRs must **never be placed in AI Development Toolkit**, whether the public GitHub repository or a local checkout/copy. Do not mutate or configure Toolkit to complete another user's task. An explicitly authorized task to contribute to Toolkit itself is a **separate workflow**.
 
 Use the verified [MikeMoore1337/ai-development-toolkit](https://github.com/MikeMoore1337/ai-development-toolkit) source and record a revision where possible. If the agent cannot read the source URL, ask for minimal permitted materials/access instead of substituting an unverified source. Reading guidance does **not** prove client skill activation (`GUIDANCE_ONLY`, `NOT_VERIFIED`).
 
