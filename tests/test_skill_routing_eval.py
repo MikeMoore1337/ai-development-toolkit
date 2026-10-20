@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -84,9 +85,40 @@ class SkillRoutingTests(unittest.TestCase):
         catalog = routing.read_catalog(ROOT)
         cases = routing.load_cases(ROOT / "fixtures/skill_routing_cases.json", catalog)
         report = routing.evaluate(catalog, cases)
-        self.assertEqual(20, report["prompt_count"] * 0 + len(cases) * 2)
+        self.assertGreaterEqual(len(cases), 12)
+        self.assertTrue({"qa-failure-triage-versus-generic-tests",
+                         "qa-test-oracle-review-versus-code-review"} <=
+                        {case["id"] for case in cases})
         self.assertEqual(len(cases) * 4, report["prompt_count"])
         self.assertEqual("offline_source_diagnostic", report["classification"])
+
+
+    def test_bilingual_qa_behavior_check_ids(self):
+        """Manual cases are parallel in EN/RU; do not mistake them for executed trials."""
+        expected_routes = {f"QA-R{i:02d}" for i in range(1, 15)}
+        expected_negative = {f"QA-N{i:02d}" for i in range(1, 8)}
+        ids = []
+        for path in ("docs/SKILL_ROUTING_EVALS.md",
+                     "docs/ru/SKILL_ROUTING_EVALS.md"):
+            content = (ROOT / path).read_text(encoding="utf-8")
+            route_ids = re.findall(r"^\\| (QA-R\\d{2}) \\|", content, re.MULTILINE)
+            negative_ids = re.findall(r"^\\| (QA-N\\d{2}) \\|", content, re.MULTILINE)
+            self.assertEqual(expected_routes, set(route_ids), path)
+            self.assertEqual(expected_negative, set(negative_ids), path)
+            self.assertEqual(len(route_ids), len(expected_routes), path)
+            self.assertEqual(len(negative_ids), len(expected_negative), path)
+            ids.append((route_ids, negative_ids))
+        self.assertEqual(ids[0], ids[1])
+
+    def test_qa_advanced_methods_have_bilingual_guidance(self):
+        for path in ("docs/CURATED_SKILL_PACKS.md",
+                     "docs/ru/CURATED_SKILL_PACKS.md"):
+            content = (ROOT / path).read_text(encoding="utf-8")
+            for technique in ("Property-based", "Metamorphic",
+                              "Model-based", "Mutation"):
+                self.assertIn(technique, content, path)
+            self.assertIn("ROLLBACK", content, path)
+            self.assertIn("test-management", content, path)
 
     def test_cli_strict_in_synced_checkout(self):
         proc = subprocess.run(
