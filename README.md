@@ -7,14 +7,14 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-68-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-69-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-31-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-32-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
 
-[Use Toolkit for any task](AGENT_START.md) · [Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Business & System Analysis](docs/BUSINESS_SYSTEM_ANALYSIS.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
+[Use Toolkit for any task](AGENT_START.md) · [Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Business & System Analysis](docs/BUSINESS_SYSTEM_ANALYSIS.md) · [UX/UI Design](docs/UX_UI_DESIGN.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 

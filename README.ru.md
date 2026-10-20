@@ -7,14 +7,14 @@
 Переносимая библиотека навыков, ролей и рабочих процессов для разработки программного обеспечения с ИИ-агентами.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-68-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-69-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-31-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-32-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 [English](README.md) · **Русский**
 
-[Toolkit по ссылке - без установки](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Бизнес- и системный анализ](docs/ru/BUSINESS_SYSTEM_ANALYSIS.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Toolkit по ссылке - без установки](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Бизнес- и системный анализ](docs/ru/BUSINESS_SYSTEM_ANALYSIS.md) · [Проектирование UX/UI](docs/ru/UX_UI_DESIGN.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
