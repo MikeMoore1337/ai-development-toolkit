@@ -2,7 +2,7 @@
 
 [Русская версия](ru/SKILL_ROUTING_EVALS.md) | [Agent Skills specification](AGENT_SKILLS_SPEC.md) | [Real-agent evaluation](SKILL_EVALS.md)
 
-This **zero-cost lexical diagnostic** compares natural-language requests against the `name` and `description` frontmatter of **all 65 declared skills** in `MANIFEST.json`. It is inspired by the layered evaluation methodology in [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills), not a copy of that implementation. No external repository code was imported.
+This **zero-cost lexical diagnostic** compares natural-language requests against the `name` and `description` frontmatter of **all 66 declared skills** in `MANIFEST.json`. It is inspired by the layered evaluation methodology in [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills), not a copy of that implementation. No external repository code was imported.
 
 ```bash
 python scripts/skill_routing_eval.py --strict

@@ -2,7 +2,7 @@
 
 [English](../SKILL_ROUTING_EVALS.md) | [Спецификация Agent Skills](AGENT_SKILLS_SPEC.md) | [Проверка качества](SKILL_QUALITY_V2.md)
 
-Бесплатная **лексическая диагностика** сопоставляет запросы обычным языком с полями `name` и `description` всех 65 навыков из `MANIFEST.json`. За основу взят подход к многоуровневой оценке из [agent-skills Addy Osmani](https://github.com/addyosmani/agent-skills), но сторонний код не копируется.
+Бесплатная **лексическая диагностика** сопоставляет запросы обычным языком с полями `name` и `description` всех 66 навыков из `MANIFEST.json`. За основу взят подход к многоуровневой оценке из [agent-skills Addy Osmani](https://github.com/addyosmani/agent-skills), но сторонний код не копируется.
 
 ```bash
 python scripts/skill_routing_eval.py --strict

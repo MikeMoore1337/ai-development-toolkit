@@ -129,6 +129,10 @@
 | :--- | :--- |
 | [`devops-infrastructure`](../../extensions/devops/skills/devops-infrastructure/SKILL.md) | Проверяйте реальные CI/CD, контейнеры, IaC, окружения и планы развёртывания, не выполняя публикацию. [Руководство](DEVOPS_INFRASTRUCTURE.md). |
 
+## Accessibility QA - проверка доступности
+
+Необязательный навык [accessibility-testing](../../extensions/accessibility/skills/accessibility-testing/SKILL.md) связывает применимые критерии WCAG 2.2 с проверками клавиатуры, фокуса, форм, семантики, контраста и экранных дикторов. [Руководство](ACCESSIBILITY_QA.md). Автономные проверки не подтверждают соответствие.
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -205,6 +209,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |

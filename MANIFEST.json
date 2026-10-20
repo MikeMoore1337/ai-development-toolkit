@@ -290,6 +290,12 @@
       "release-safety",
       "security-boundaries",
       "architecture-decisions"
+    ],
+    "accessibility-qa": [
+      "accessibility-testing",
+      "test-analysis-design",
+      "playwright-testing",
+      "quality-gate-assessment"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -465,6 +471,13 @@
       "skill_root": "extensions/devops/skills",
       "skills": [
         "devops-infrastructure"
+      ],
+      "auto_install": false
+    },
+    "accessibility": {
+      "skill_root": "extensions/accessibility/skills",
+      "skills": [
+        "accessibility-testing"
       ],
       "auto_install": false
     }
