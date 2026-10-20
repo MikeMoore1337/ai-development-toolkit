@@ -32,6 +32,7 @@ PAGES = (
     "docs/ru/CLEAR_VOICE_INTEGRATION.md",
     "docs/ru/UNIVERSAL_ENGINEERING.md",
     "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/ru/SKILL_QUALITY_METRICS.md",
     "docs/ru/AGENT_SKILLS_SPEC.md",
     "docs/ru/RELEASE_PROCESS.md",
     "docs/en/SOURCE_EVALUATION.md",
@@ -48,6 +49,7 @@ PAGES = (
     "docs/CLEAR_VOICE_INTEGRATION.md",
     "docs/UNIVERSAL_ENGINEERING.md",
     "docs/SKILL_QUALITY_V2.md",
+    "docs/SKILL_QUALITY_METRICS.md",
     "docs/AGENT_SKILLS_SPEC.md",
     "docs/RELEASE_PROCESS.md",
     "docs/SOURCE_EVALUATION.md",
@@ -86,6 +88,7 @@ LANGUAGE_LINKS = {
     "docs/CLEAR_VOICE_INTEGRATION.md": "(ru/CLEAR_VOICE_INTEGRATION.md)",
     "docs/UNIVERSAL_ENGINEERING.md": "(ru/UNIVERSAL_ENGINEERING.md)",
     "docs/SKILL_QUALITY_V2.md": "(ru/SKILL_QUALITY_V2.md)",
+    "docs/SKILL_QUALITY_METRICS.md": "(ru/SKILL_QUALITY_METRICS.md)",
     "docs/AGENT_SKILLS_SPEC.md": "(ru/AGENT_SKILLS_SPEC.md)",
     "docs/RELEASE_PROCESS.md": "(ru/RELEASE_PROCESS.md)",
     "docs/SOURCE_EVALUATION.md": "(en/SOURCE_EVALUATION.md)",
@@ -111,6 +114,7 @@ LANGUAGE_LINKS = {
     "docs/ru/CLEAR_VOICE_INTEGRATION.md": "(../CLEAR_VOICE_INTEGRATION.md)",
     "docs/ru/UNIVERSAL_ENGINEERING.md": "(../UNIVERSAL_ENGINEERING.md)",
     "docs/ru/SKILL_QUALITY_V2.md": "(../SKILL_QUALITY_V2.md)",
+    "docs/ru/SKILL_QUALITY_METRICS.md": "(../SKILL_QUALITY_METRICS.md)",
     "docs/ru/AGENT_SKILLS_SPEC.md": "(../AGENT_SKILLS_SPEC.md)",
     "docs/ru/RELEASE_PROCESS.md": "(../RELEASE_PROCESS.md)",
 }
@@ -171,6 +175,7 @@ def validate(root: Path) -> list[str]:
                      "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md",
                      "CLEAR_VOICE_INTEGRATION.md",
                      "UNIVERSAL_ENGINEERING.md", "SKILL_QUALITY_V2.md",
+                     "SKILL_QUALITY_METRICS.md",
                      "AGENT_SKILLS_SPEC.md", "RELEASE_PROCESS.md",
                      "../en/SOURCE_EVALUATION.md"):
             if f"({path})" not in content:
@@ -226,6 +231,17 @@ def validate(root: Path) -> list[str]:
             if not original_commands.issubset(translated_commands):
                 errors.append(f"L10N006 docs/ru/{name}: executable examples differ from English")
 
+    # The metrics guide has its own read-only CLI examples, not covered by
+    # the general installer command matcher. Compare their exact shapes.
+    metrics_source = root / "docs/SKILL_QUALITY_METRICS.md"
+    metrics_ru = root / "docs/ru/SKILL_QUALITY_METRICS.md"
+    if metrics_source.is_file() and metrics_ru.is_file():
+        regex = re.compile(r"^\\s*python scripts/skill_quality_metrics\\.py(?: .*)?$", re.M)
+        before = set(regex.findall(metrics_source.read_text(encoding="utf-8")))
+        after = set(regex.findall(metrics_ru.read_text(encoding="utf-8")))
+        if not before.issubset(after):
+            errors.append("L10N006 docs/ru/SKILL_QUALITY_METRICS.md: metrics CLI examples differ from English")
+
     # Examples and high-risk caveats must not disappear during translation.
     source = root / "docs/CLIENT_COMPATIBILITY.md"
     translation = root / "docs/ru/CLIENT_COMPATIBILITY.md"
@@ -251,6 +267,9 @@ def validate(root: Path) -> list[str]:
                                        "ru-primary-en-secondary", "права"),
         "UNIVERSAL_ENGINEERING.md": ("NOT_MEASURED", "WF001", "feature-delivery",
                                       "make-feature", "--apply", "AGENTS.md", "CLAUDE.md"),
+        "SKILL_QUALITY_METRICS.md": ("NOT_MEASURED", "NOT_APPLICABLE",
+                                     "--check-repeat", "--json-report",
+                                     "model_tokens", "51/51", "skills-ref"),
         "SKILL_QUALITY_V2.md": ("NOT_MEASURED", "NOT_APPLICABLE", "EVIDENCE001",
                                 "source_revision", "reviewed_by", "observed_at",
                                 "INDEPENDENT_REVIEW_PENDING", "Issue #11"),
