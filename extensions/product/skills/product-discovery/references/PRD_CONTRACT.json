@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "document_type": "PRD",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "required_sections": [
+    "title",
+    "context_problem",
+    "target_users",
+    "user_jobs",
+    "evidence",
+    "objective",
+    "mvp_in",
+    "mvp_out",
+    "functional_requirements",
+    "nonfunctional_constraints",
+    "acceptance_criteria",
+    "metrics",
+    "risks_dependencies_questions",
+    "next_action"
+  ],
+  "evidence_statuses": [
+    "USER_PROVIDED",
+    "SOURCE_BACKED",
+    "OBSERVED",
+    "ASSUMPTION",
+    "UNKNOWN"
+  ],
+  "hypothesis_fields": [
+    "segment",
+    "problem",
+    "change",
+    "expected_outcome",
+    "metric",
+    "minimum_test",
+    "falsifier",
+    "status"
+  ],
+  "requirement_fields": [
+    "id",
+    "behavior",
+    "acceptance_id"
+  ],
+  "metric_fields": [
+    "name",
+    "definition",
+    "unit",
+    "event_or_source",
+    "baseline",
+    "target",
+    "actual",
+    "period",
+    "verification",
+    "owner",
+    "data_limitations"
+  ],
+  "missing_data": {
+    "baseline": "UNKNOWN",
+    "target": "PROPOSED",
+    "actual": "NOT_MEASURED"
+  },
+  "handoff_targets": {
+    "54": [
+      "objective",
+      "scope",
+      "priorities",
+      "dependencies",
+      "acceptance",
+      "constraints",
+      "open_decisions"
+    ],
+    "55": [
+      "requirements",
+      "journeys",
+      "entities",
+      "rules",
+      "ambiguities",
+      "acceptance"
+    ],
+    "56": [
+      "users",
+      "goals",
+      "journeys",
+      "constraints",
+      "scope",
+      "interaction_success"
+    ]
+  }
+}
