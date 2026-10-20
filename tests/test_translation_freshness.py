@@ -45,6 +45,43 @@ class TranslationSourceFreshnessTests(unittest.TestCase):
         self.assertIn("L10N008", warnings[0])
         self.assertNotIn("Editorial update", warnings[0])
 
+    def test_russian_source_change_warns_for_english_translation(self):
+        source = self.root / "docs/ADAPTATION.md"
+        source.write_text(source.read_text(encoding="utf-8") + "\nРедакторская правка.\n",
+                          encoding="utf-8")
+        errors, warnings = mod.check(self.root)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(warnings), 1)
+        self.assertIn("docs/en/ADAPTATION.md", warnings[0])
+        self.assertNotIn("Редакторская правка", warnings[0])
+
+    def test_missing_english_translation_blocks(self):
+        (self.root / "docs/en/INTEGRATION_MATRIX.md").unlink()
+        errors, warnings = mod.check(self.root)
+        self.assertTrue(any(x.startswith("L10N007") for x in errors))
+        self.assertEqual(warnings, [])
+
+    def test_source_to_bad_english_path_rejected(self):
+        import json
+        path = self.root / "docs/ru/SOURCE_REVISIONS.json"
+        info = json.loads(path.read_text(encoding="utf-8"))
+        entry = next(item for item in info["pairs"] if item["source"] == "docs/ADAPTATION.md")
+        entry["translation"] = "docs/en/../INTEGRATION_MATRIX.md"
+        path.write_text(json.dumps(info), encoding="utf-8")
+        errors, warnings = mod.check(self.root)
+        self.assertTrue(any(x.startswith("L10N007") for x in errors))
+        self.assertEqual(warnings, [])
+
+    def test_duplicate_translated_target_rejected(self):
+        import json
+        path = self.root / "docs/ru/SOURCE_REVISIONS.json"
+        info = json.loads(path.read_text(encoding="utf-8"))
+        entry = next(item for item in info["pairs"] if item["source"] == "docs/ADAPTATION.md")
+        info["pairs"].append(dict(entry))
+        path.write_text(json.dumps(info), encoding="utf-8")
+        errors, _ = mod.check(self.root)
+        self.assertTrue(any(x.startswith("L10N007") for x in errors))
+
     def test_missing_translation_blocks(self):
         (self.root / "docs/ru/INSTALLATION.md").unlink()
         errors, warnings = mod.check(self.root)
