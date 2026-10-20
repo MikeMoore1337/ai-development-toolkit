@@ -254,6 +254,12 @@
       "task-scoping",
       "requirement-analysis",
       "requirements-traceability"
+    ],
+    "ux-design": [
+      "ux-design-process",
+      "design-system-consistency",
+      "component-architecture",
+      "task-scoping"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -387,6 +393,13 @@
       "skill_root": "extensions/analysis/skills",
       "skills": [
         "business-system-analysis"
+      ],
+      "auto_install": false
+    },
+    "design": {
+      "skill_root": "extensions/design/skills",
+      "skills": [
+        "ux-design-process"
       ],
       "auto_install": false
     }
