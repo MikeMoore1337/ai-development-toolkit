@@ -27,6 +27,15 @@ PAGES = (
     "docs/ru/ACCEPTANCE.md",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md",
     "docs/ru/LANGUAGE_POLICY.md",
+    "docs/en/README.md",
+    "docs/en/ADAPTATION.md",
+    "docs/en/INTEGRATION_MATRIX.md",
+    "docs/en/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/en/TASK_PROMPT_TEMPLATE.md",
+    "docs/ADAPTATION.md",
+    "docs/INTEGRATION_MATRIX.md",
+    "docs/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/TASK_PROMPT_TEMPLATE.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
@@ -36,7 +45,7 @@ PAGES = (
     "docs/MAKE_FEATURE_INTEGRATION.md",
     "docs/LANGUAGE_POLICY.md",
 )
-RU_PAGES = tuple(page for page in PAGES if page.startswith("docs/ru/"))
+TRANSLATED_PAGES = tuple(page for page in PAGES if page.startswith(("docs/ru/", "docs/en/")))
 CATALOG_SKILLS = re.compile(r"^\| \[`([^`]+)`\]\([^)]+\) \|", re.M)
 CATALOG_PROFILES = re.compile(r"^\| `([a-z][a-z0-9-]*)` \|", re.M)
 CATALOG_ROLES = re.compile(r"^\| (?:Core|QA) \| `([a-z][a-z0-9-]*)` \|", re.M)
@@ -57,6 +66,14 @@ LANGUAGE_LINKS = {
     "docs/PUBLICATION_POLICY.md": "(ru/PUBLICATION_POLICY.md)",
     "docs/MAKE_FEATURE_INTEGRATION.md": "(ru/MAKE_FEATURE_INTEGRATION.md)",
     "docs/LANGUAGE_POLICY.md": "(ru/LANGUAGE_POLICY.md)",
+    "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
+    "docs/INTEGRATION_MATRIX.md": "(en/INTEGRATION_MATRIX.md)",
+    "docs/PORTABILITY_EVAL_SCENARIOS.md": "(en/PORTABILITY_EVAL_SCENARIOS.md)",
+    "docs/TASK_PROMPT_TEMPLATE.md": "(en/TASK_PROMPT_TEMPLATE.md)",
+    "docs/en/ADAPTATION.md": "(../ADAPTATION.md)",
+    "docs/en/INTEGRATION_MATRIX.md": "(../INTEGRATION_MATRIX.md)",
+    "docs/en/PORTABILITY_EVAL_SCENARIOS.md": "(../PORTABILITY_EVAL_SCENARIOS.md)",
+    "docs/en/TASK_PROMPT_TEMPLATE.md": "(../TASK_PROMPT_TEMPLATE.md)",
     "docs/ru/INSTALLATION.md": "(../INSTALLATION.md)",
     "docs/ru/SKILLS_CATALOG.md": "(../SKILLS_CATALOG.md)",
     "docs/ru/CURATED_SKILL_PACKS.md": "(../CURATED_SKILL_PACKS.md)",
@@ -76,7 +93,7 @@ def validate(root: Path) -> list[str]:
         if not (root / relative).is_file():
             errors.append(f"L10N001 {relative}: missing required page")
 
-    for relative in RU_PAGES:
+    for relative in TRANSLATED_PAGES:
         page = root / relative
         if not page.is_file():
             continue
@@ -114,7 +131,10 @@ def validate(root: Path) -> list[str]:
                      "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md",
                      "CLIENT_MIGRATION.md", "CLIENT_COMPATIBILITY.md",
                      "PUBLICATION_POLICY.md", "ACCEPTANCE.md",
-                     "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md"):
+                     "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md",
+                     "../en/ADAPTATION.md", "../en/INTEGRATION_MATRIX.md",
+                     "../en/PORTABILITY_EVAL_SCENARIOS.md",
+                     "../en/TASK_PROMPT_TEMPLATE.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
