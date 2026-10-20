@@ -42,6 +42,13 @@ FIXTURE_FILES = (
     "docs/LANGUAGE_POLICY.md",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md",
     "docs/ru/LANGUAGE_POLICY.md",
+    "docs/INTEGRATION_MATRIX.md",
+    "docs/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/TASK_PROMPT_TEMPLATE.md",
+    "docs/en/ADAPTATION.md",
+    "docs/en/INTEGRATION_MATRIX.md",
+    "docs/en/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/en/TASK_PROMPT_TEMPLATE.md",
 )
 
 
@@ -138,6 +145,22 @@ class RussianOnboardingTests(unittest.TestCase):
 
 
 
+
+    def test_russian_original_missing_english_link_fails(self):
+        page = self.root / "docs/ADAPTATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(en/ADAPTATION.md)", content)
+        page.write_text(content.replace("(en/ADAPTATION.md)", "(ADAPTATION.md)", 1),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_english_companion_missing_original_link_fails(self):
+        page = self.root / "docs/en/TASK_PROMPT_TEMPLATE.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(../TASK_PROMPT_TEMPLATE.md)", content)
+        page.write_text(content.replace("(../TASK_PROMPT_TEMPLATE.md)",
+                                        "(../LANGUAGE_POLICY.md)", 1), encoding="utf-8")
+        self.check("L10N004")
 
     def test_make_feature_missing_reverse_link_fails(self):
         page = self.root / "docs/MAKE_FEATURE_INTEGRATION.md"

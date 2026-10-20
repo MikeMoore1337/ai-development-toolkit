@@ -40,7 +40,31 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "88c45dc5229f58792163443c1a5702014cc00eb64c9d3c759baef8fe618c2247"
+      "source_sha256": "6cf9dcaf5badde15b76fd977b1c16619c0b49f413f5c97937652a3b343c1ecad"
+    },
+    {
+      "source": "docs/ADAPTATION.md",
+      "translation": "docs/en/ADAPTATION.md",
+      "source_language": "ru",
+      "source_sha256": "06b1e9f899b36d60ecbd630c07cc66e486a469ed965553d6a7370fe94e051bea"
+    },
+    {
+      "source": "docs/INTEGRATION_MATRIX.md",
+      "translation": "docs/en/INTEGRATION_MATRIX.md",
+      "source_language": "ru",
+      "source_sha256": "454a224dbe3cfac47cf83f240bb93cee6fa27f58b208892828727bef829c4d32"
+    },
+    {
+      "source": "docs/PORTABILITY_EVAL_SCENARIOS.md",
+      "translation": "docs/en/PORTABILITY_EVAL_SCENARIOS.md",
+      "source_language": "ru",
+      "source_sha256": "d620c6f70c33b225aeb232db2d8df9f65547dde3e2760e3f113b8dcdb3e85f31"
+    },
+    {
+      "source": "docs/TASK_PROMPT_TEMPLATE.md",
+      "translation": "docs/en/TASK_PROMPT_TEMPLATE.md",
+      "source_language": "ru",
+      "source_sha256": "eae0492a911fb0a1bb1e70a1b79f1e05e9c4a1b0b24bf144396e7452a29b989e"
     }
   ]
 }

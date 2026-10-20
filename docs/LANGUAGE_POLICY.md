@@ -15,7 +15,7 @@ The source tree has 34 Markdown pages immediately under `docs/` (excluding `docs
 | Direction / case | Pages and status |
 | --- | --- |
 | EN → RU available | `INSTALLATION`, `SKILLS_CATALOG`, `CURATED_SKILL_PACKS`, `CLIENT_MIGRATION`, `CLIENT_COMPATIBILITY`, `PUBLICATION_POLICY` |
-| Originally Russian; English missing | `ADAPTATION.md`, `INTEGRATION_MATRIX.md`, `PORTABILITY_EVAL_SCENARIOS.md`, `TASK_PROMPT_TEMPLATE.md` |
+| Originally Russian; English translations now available in `docs/en/` | [Adaptation](en/ADAPTATION.md), [Integration matrix](en/INTEGRATION_MATRIX.md), [Portability scenarios](en/PORTABILITY_EVAL_SCENARIOS.md), [Task template](en/TASK_PROMPT_TEMPLATE.md) |
 | Mixed Russian and English, requires editorial treatment | `QUALITY_RUBRIC.md`, `SOURCE_EVALUATION.md` |
 | English-only high priority | `BEGINNER_WORKFLOW.md`, `UNIVERSAL_ENGINEERING.md`, `SKILL_QUALITY_V2.md` |
 | English-only specialized/audit/history | Remaining docs such as `PROVENANCE_AUDIT.md`, `RELEASE_PROCESS.md`, `SKILLS_QUALITY_AUDIT.md` and archived release/evaluation notes |
@@ -33,4 +33,4 @@ Read existing [Russian docs index](ru/README.md) for actual currently translated
 5. Do not edit protected Make Feature or QA source snapshots, personal licenses or bundled third-party material merely to change language. A new version of source text needs a separate origin/rights review and actual client-compatibility assessment.
 6. Maintain clear distinctions: file installation ≠ live client discovery, self-check ≠ independent review, CI PASS ≠ legal distribution permission, docs update ≠ release/deploy.
 
-**Next in sequence:** English companion guides for Russian originals, Russian [beginner workflow](BEGINNER_WORKFLOW.md), and an editorial EN/RU separation of mixed-language pages. Broader specialist/audit pages are P2/P3, based on user value. No claim of full bilingual translation until both directions and actual documentation are reviewed.
+**Next in sequence:** Russian [beginner workflow](BEGINNER_WORKFLOW.md), and an editorial EN/RU separation of mixed-language pages. Broader specialist/audit pages are P2/P3, based on user value. No claim of full bilingual translation until both directions and actual documentation are reviewed.

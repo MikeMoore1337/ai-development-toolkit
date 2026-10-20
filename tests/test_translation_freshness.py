@@ -58,6 +58,36 @@ class TranslationSourceFreshnessTests(unittest.TestCase):
         errors, _ = mod.check(self.root)
         self.assertTrue(any(x.startswith("L10N007") for x in errors))
 
+    def test_russian_original_change_warns_not_blocks(self):
+        source = self.root / "docs/ADAPTATION.md"
+        self.assertTrue(source.is_file())
+        source.write_text(source.read_text(encoding="utf-8") + "\nEditorial RU update.\n",
+                          encoding="utf-8")
+        errors, warnings = mod.check(self.root)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("docs/en/ADAPTATION.md" in w for w in warnings), warnings)
+        self.assertFalse(any("Editorial RU update" in w for w in warnings))
+
+    def test_unsupported_source_language_rejected(self):
+        path = self.root / "docs/ru/SOURCE_REVISIONS.json"
+        content = path.read_text(encoding="utf-8")
+        self.assertIn('"source_language": "ru"', content)
+        path.write_text(content.replace('"source_language": "ru"',
+                                        '"source_language": "unknown"', 1),
+                        encoding="utf-8")
+        errors, _ = mod.check(self.root)
+        self.assertTrue(any(x.startswith("L10N007") for x in errors), errors)
+
+    def test_reverse_unsafe_translation_path_rejected(self):
+        path = self.root / "docs/ru/SOURCE_REVISIONS.json"
+        content = path.read_text(encoding="utf-8")
+        self.assertIn('"translation": "docs/en/ADAPTATION.md"', content)
+        path.write_text(content.replace('"translation": "docs/en/ADAPTATION.md"',
+                                        '"translation": "../unsafe.md"', 1),
+                        encoding="utf-8")
+        errors, _ = mod.check(self.root)
+        self.assertTrue(any(x.startswith("L10N007") for x in errors), errors)
+
     def test_malformed_metadata_blocks(self):
         (self.root / "docs/ru/SOURCE_REVISIONS.json").write_text("{", encoding="utf-8")
         errors, _ = mod.check(self.root)
