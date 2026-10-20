@@ -175,6 +175,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
@@ -208,3 +209,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `ui-motion` | `design-system-consistency`, `motion-quality`, `qa-strategy` |
 
 See [installation](INSTALLATION.md) for dry-run, client layouts and compatibility.
+
+## Optional AI pack
+
+The optional [ai-engineering-qa](../extensions/ai/skills/ai-engineering-qa/SKILL.md) skill and profile are described in the [guide](AI_ENGINEERING_QA.md). Not included in general.

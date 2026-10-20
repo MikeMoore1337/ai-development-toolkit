@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "6d6750eb0225ab131a282f14a005ec45b45c25a9abda325814a3842b46f86465"
+      "source_sha256": "c0a7faa78a43d88a88d0a169b573e834eb7647d7c19c40ba567ad135e4516b01"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "325f26989937a85682895eb4dd16bd66d5046a7dafdef977168bf7e5f668e1f1"
+      "source_sha256": "c6b6b07745886b3493ce748f7d157755beb0c083ad4203f56f141645d418dc7c"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -136,6 +136,11 @@
       "source": "docs/BUSINESS_SYSTEM_ANALYSIS.md",
       "translation": "docs/ru/BUSINESS_SYSTEM_ANALYSIS.md",
       "source_sha256": "5eb2a3faf3fe1155deb14ecac28df8cc155a06094fd25177c548aa1bd555f38d"
+    },
+    {
+      "source": "docs/AI_ENGINEERING_QA.md",
+      "translation": "docs/ru/AI_ENGINEERING_QA.md",
+      "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
     }
   ]
 }

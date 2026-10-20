@@ -173,6 +173,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
@@ -206,3 +207,7 @@
 | `ui-motion` | `design-system-consistency`, `motion-quality`, `qa-strategy` |
 
 См. [инструкции по установке](INSTALLATION.md) для предварительного просмотра, расположения навыков и ограничений совместимости.
+
+## Опциональный набор AI
+
+Навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) и профиль описаны в [руководстве](AI_ENGINEERING_QA.md). Он не входит в основной general.

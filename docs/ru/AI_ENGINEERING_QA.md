@@ -23,3 +23,21 @@ python scripts/skill_routing_eval.py --strict
 См. [Evaluation](../../extensions/ai/skills/ai-engineering-qa/references/EVALUATION.md), [Prompts](../../extensions/ai/skills/ai-engineering-qa/references/PROMPTS.md), [RAG](../../extensions/ai/skills/ai-engineering-qa/references/RAG.md), [Tool-use](../../extensions/ai/skills/ai-engineering-qa/references/TOOLS.md). Переиспользуются QA contract-testing, test-analysis-design, security-boundaries и agent_eval_review.py. Пользовательские результаты по умолчанию выдаются в чате, в явно разрешённом месте - только с согласия. Хранение чужих данных в Toolkit запрещено.
 
 Границы доказательств: PASS офлайн-эталона не подтверждает эффективность модели; действительный ID источника не подтверждает смысл утверждения; валидный tool contract не доказывает безопасное реальное выполнение. Реальная эффективность и активация - NOT_MEASURED.
+
+## Повторное использование существующих инструментов
+
+| Возможность | Основа | Решение #57 |
+| --- | --- | --- |
+| Baseline/candidate | Issue #11 skill_eval.py, agent_eval_runner.py | REUSE, платные вызовы запрещены |
+| Проверка доказательств | agent_eval_review.py | REUSE |
+| Офлайн-примеры | agent_eval_fixtures.py, agent_eval_offline_smoke.py | REUSE, NEW синтетические наборы |
+| Регрессия промптов | QA test-analysis-design, contract-testing | REFINE: структурные инварианты |
+| Версии набора | Идентификаторы Issue #11 | NEW: SHA и схема |
+| RAG-поиск | research-verification | NEW: размеченные метрики |
+| Обоснованность ответа | research-verification | REFINE: структура отдельно от смысла |
+| Вызовы инструментов | api-design, contract-testing | REFINE: параметры и повторы |
+| Авторизация | security-boundaries | REUSE и негативные тесты |
+| Выдуманные ответы | research-verification | REFINE: отсутствие источника |
+| Токены и стоимость | Доказательства Issue #11 | REUSE: без данных UNKNOWN/NOT_MEASURED |
+
+Один необязательный AI-навык, без второго исполнителя моделей, нового контроллера или обязательной зависимости.

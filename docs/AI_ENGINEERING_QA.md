@@ -23,3 +23,21 @@ All fixtures are invented. Offline checks can validate dataset hashes, missing I
 Use [Evaluation](../extensions/ai/skills/ai-engineering-qa/references/EVALUATION.md), [Prompts](../extensions/ai/skills/ai-engineering-qa/references/PROMPTS.md), [RAG](../extensions/ai/skills/ai-engineering-qa/references/RAG.md), and [Tool-use](../extensions/ai/skills/ai-engineering-qa/references/TOOLS.md). Reuse existing QA contract-testing, test-analysis-design, security-boundaries and agent_eval_review.py. User-generated artifacts stay in chat or a destination explicitly authorized by the user, **never** in Toolkit sources. Do not copy private user data or run provider APIs.
 
 Technical evidence boundaries: offline oracle PASS is not model effectiveness; citation membership PASS is not semantic grounding; tool contract PASS is not actual authorized execution. Effectiveness and real-client activation are NOT_MEASURED.
+
+## Reuse-first decision record
+
+| Concern | Existing foundation | Issue #57 result |
+| --- | --- | --- |
+| Paired skill evaluation | Issue #11 skill_eval.py, agent_eval_runner.py | REUSE, execution remains locked |
+| Evidence review | agent_eval_review.py | REUSE, no second review runner |
+| Offline fixtures | agent_eval_fixtures.py, agent_eval_offline_smoke.py | REUSE approach, NEW synthetic AI cases |
+| Prompt regression | QA test-analysis-design, contract-testing | REFINE structured versioned invariants |
+| Dataset versioning | Issue #11 fixture identifiers | NEW portable dataset SHA and metadata |
+| RAG retrieval quality | research-verification | NEW labelled offline metrics |
+| Grounded answering | research-verification | REFINE citation checks; semantics NOT_MEASURED |
+| Tool-call contracts | api-design, contract-testing | REFINE permission and retry contracts |
+| Tool authorization | security-boundaries | REUSE with synthetic negative tests |
+| Hallucination handling | research-verification | REFINE missing-evidence checks |
+| Cost/token reporting | Issue #11 evidence reports | REUSE evidence discipline: UNKNOWN/NOT_MEASURED |
+
+One optional AI skill, no new controller, retriever, runner, model judge or mandatory dependency.

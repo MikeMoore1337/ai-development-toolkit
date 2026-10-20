@@ -28,6 +28,10 @@ package manager, skill runtime, dependencies or automatic installation is introd
 
 Optional business/system profile: one new skill plus task-scoping, requirement-analysis and requirements-traceability. It keeps source R/AC identifiers, represents unknowns explicitly, and hands off to UX/UI, Backend, Frontend and QA. [Guide](BUSINESS_SYSTEM_ANALYSIS.md). No second controller or full QA Pack.
 
+## AI Engineering & QA
+
+Optional ai-engineering-qa profile handles LLM contract probes, versioned prompt regression, RAG retrieval/grounding and tool authorization while reusing QA test-analysis-design, contract-testing and security-boundaries. It is not a task controller. [Guide](AI_ENGINEERING_QA.md). No user data may be stored in Toolkit.
+
 ## Backend Development
 
 **Primary:** `backend` includes existing implementation and review guidance,
