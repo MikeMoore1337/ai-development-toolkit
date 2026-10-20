@@ -248,7 +248,8 @@ def run_case(case: dict, mutant: bool = False) -> dict:
         "observed_state": observed,
         "oracle_outcome": "PASS" if success else "FAIL",
         "retry_count": max(0, observed.get("attempts", 1) - 1),
-        "recovery_outcome": "RECOVERED" if success else "STATE_UNKNOWN",
+        "recovery_outcome": ("RECOVERED" if success and case["case_id"] == "restart-recovery"
+                             else "NOT_APPLICABLE" if success else "STATE_UNKNOWN"),
         "bounded_duration_seconds": round(duration, 6),
         "reproduction": {"case_id": case["case_id"], "mutant": mutant,
                          "failure_point": case["failure_point"], "seed": None},

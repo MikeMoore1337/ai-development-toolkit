@@ -38,6 +38,14 @@ class ReliabilityTests(unittest.TestCase):
                 self.assertEqual(case["business_invariant"], good["tested_invariant"])
                 self.assertEqual(len(good["input_sha256"]), 64)
 
+    def test_recovery_status_is_not_invented_for_other_cases(self):
+        records = {case["case_id"]: run_case(case) for case in load_cases()}
+        self.assertEqual("RECOVERED", records["restart-recovery"]["recovery_outcome"])
+        self.assertEqual("NOT_APPLICABLE",
+                         records["duplicate-delivery"]["recovery_outcome"])
+        self.assertEqual("STATE_UNKNOWN",
+                         run_case(load_cases()[0], mutant=True)["recovery_outcome"])
+
     def test_every_known_mutation_has_a_case(self):
         self.assertEqual(set(CASE_IDS), set(MUTANTS))
         self.assertEqual(len(MUTANTS), len(set(MUTANTS.values())))
