@@ -4608,7 +4608,7 @@
       "notes": "Original English editorial translation of Toolkit-maintained Russian documentation (#87), with canonical Russian source preserved."
     },
     {
-      "id": "documentation-docs-ru-md",
+      "id": "documentation-docs-ru-beginner-workflow-md",
       "path": "docs/ru/BEGINNER_WORKFLOW.md",
       "name": "BEGINNER_WORKFLOW.md",
       "kind": "documentation",
@@ -4628,7 +4628,7 @@
       "notes": "Original Russian translation of Toolkit beginner workflow and quality rubric (#87). No runnable skill files or rights gates changed."
     },
     {
-      "id": "documentation-docs-ru-md",
+      "id": "documentation-docs-ru-quality-rubric-md",
       "path": "docs/ru/QUALITY_RUBRIC.md",
       "name": "QUALITY_RUBRIC.md",
       "kind": "documentation",
