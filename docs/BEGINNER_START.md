@@ -6,6 +6,10 @@
 
 AI Development Toolkit is a library of reusable task instructions and selected skill profiles. It is **not** an AI app, one-click app builder, hosting service, or a set of permissions. Reading this page does not install or activate its skills. The [canonical beginner workflow](BEGINNER_WORKFLOW.md) governs the conversation; this page tells you **where to start**. For terminology see the [Russian glossary](ru/GLOSSARY.md).
 
+## Already have a local project open in an IDE with Codex?
+
+This is the shortest route for an **existing project**: open the folder in your IDE and say "Use AI Development Toolkit in this project to complete my task." No target GitHub URL, publication or user-entered installation commands are required. The [agent entry guide](../AGENT_START.md) describes authorized Toolkit setup: the agent still needs actual workspace and verified source access; copying a skill does not prove activation. Two links are an optional route for a remote project.
+
 ## First four actions
 
 1. **Choose where you want to work** in the [client table](#choose-your-ai-client). If unsure, use ChatGPT or Claude in the browser to discuss your goal first.
