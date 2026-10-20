@@ -4,6 +4,26 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
+      "id": "script-experiments-paperclip-control-plane-py",
+      "path": "experiments/paperclip/control_plane.py",
+      "name": "control_plane.py",
+      "kind": "script",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "experiments/paperclip/README.md",
+      "last_reviewed": "2026-10-20",
+      "distribution": "included",
+      "notes": "First-party disposable board-only issue, revision, interaction and fresh-process context smoke. No agent execution or real approvals."
+    },
+    {
       "id": "workflow-github-workflows-paperclip-pilot-yml",
       "path": ".github/workflows/paperclip-pilot.yml",
       "name": "paperclip-pilot.yml",
