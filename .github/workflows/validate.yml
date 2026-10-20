@@ -104,6 +104,8 @@ jobs:
           retention-days: 7
       - name: Verify release checksums
         run: python scripts/verify_checksums.py
+      - name: Offline AI contracts (synthetic only, zero provider calls)
+        run: python scripts/validate_ai_contracts.py
       - name: Unit tests
         # Typical runtime is <1 minute; bound hangs and preserve the last test in logs.
         timeout-minutes: 5

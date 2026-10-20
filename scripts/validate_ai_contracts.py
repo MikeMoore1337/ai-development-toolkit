@@ -102,7 +102,7 @@ def validate_evaluation(record: dict, dataset: dict) -> list[str]:
         errors.append("invalid prompt_version")
     if record["result_status"] not in STATUS:
         errors.append("invalid result_status")
-    if set(record["lifecycle"]) != set(STAGES) or any(x not in STATUS for x in record["lifecycle"].values()):
+    if not isinstance(record["lifecycle"], dict) or set(record["lifecycle"]) != set(STAGES) or any(x not in STATUS for x in record["lifecycle"].values()):
         errors.append("invalid lifecycle")
     if record["execution_type"] != "real":
         for stage in STAGES[3:]:
@@ -120,7 +120,7 @@ def validate_evaluation(record: dict, dataset: dict) -> list[str]:
     else:
         for key in ("latency_seconds", "tokens", "cost"):
             item = record["metrics"].get(key)
-            if item is None or item.get("status") not in STATUS:
+            if not isinstance(item, dict) or item.get("status") not in STATUS:
                 errors.append("missing metric evidence status: " + key)
             elif item["status"] == "PASS" and (item.get("value") is None or not item.get("source")):
                 errors.append("invented " + key + " measurement")
@@ -204,7 +204,9 @@ def check_tool_call(spec: dict, call: dict, grant: dict, seen: set[str]) -> list
             errors.append("incorrect argument type: " + name)
     if call.get("scope") != grant.get("scope"):
         errors.append("cross-scope operation")
-    if operation.get("effect") != "read" and grant.get("access") == "read-only":
+    if grant.get("access") not in {"read-only", "write"}:
+        errors.append("authorization denied")
+    elif operation.get("effect") != "read" and grant.get("access") != "write":
         errors.append("write in read-only scope")
     if operation.get("effect") == "irreversible" and not call.get("approval"):
         errors.append("missing approval")
@@ -213,7 +215,7 @@ def check_tool_call(spec: dict, call: dict, grant: dict, seen: set[str]) -> list
         errors.append("unsafe retry or duplicate side effect")
     if call.get("retry") and call.get("prior_outcome") == "authorization_denied":
         errors.append("retry after authorization failure")
-    if any(isinstance(v, str) and ("sk-proj-" in v or "PRIVATE KEY" in v) for v in arguments.values()):
+    if any(isinstance(v, str) and ("SYNTHETIC_SECRET_DO_NOT_USE" in v or "PRIVATE KEY" in v) for v in arguments.values()):
         errors.append("secret in arguments")
     if call.get("step", 0) < grant.get("minimum_step", 0):
         errors.append("incorrect call order")
@@ -228,7 +230,11 @@ def validate_fixture(fixture: dict) -> list[str]:
     for record in fixture.get("evaluations", []):
         errors.extend(validate_evaluation(record, dataset))
     kind = fixture.get("kind")
-    for case in fixture.get("checks", []):
+    dataset_ids = {c.get("id") for c in dataset.get("cases", []) if isinstance(c, dict)}
+    checks = fixture.get("checks", [])
+    if not isinstance(checks, list) or {c.get("id") for c in checks if isinstance(c, dict)} != dataset_ids:
+        errors.append("check/Case ID coverage mismatch")
+    for case in checks:
         if kind == "feature":
             actual = check_prompt_regression(case["contract"], case["observation"])
         elif kind == "rag":
@@ -236,6 +242,9 @@ def validate_fixture(fixture: dict) -> list[str]:
             measured = retrieval_metrics(case["retrieved"], case["gold"], case["k"])
             if measured["status"] != case["expected_metrics_status"]:
                 actual.append("wrong metric status")
+            if ("minimum_recall" in case and measured["status"] == "PASS"
+                    and measured["recall_at_k"] < case["minimum_recall"]):
+                actual.append("retrieval below required recall")
         elif kind == "tool":
             actual = check_tool_call(fixture["tool_spec"], case["call"], case["grant"], set(case.get("seen", [])))
         else:

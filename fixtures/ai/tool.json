@@ -3,7 +3,7 @@
   "dataset": {
     "dataset_id": "synthetic_note_tools",
     "version": "1.0.0",
-    "sha256": "51e6b0cf13a9d9a2bb6176f625edf49871dfed8dabb5950b6b483fe3c5f843c6",
+    "sha256": "45c56fc9623ac3a7b989699e3409014d1927a0d2e1729df6f05b965de53a93a7",
     "categories": [
       "read",
       "write",
@@ -261,6 +261,70 @@
         "category": "security",
         "source": "Original fictional issue-57 example",
         "input": "Retry after a prior denial.",
+        "expected_properties": [
+          "Contract respects required fields, permissions and uncertainty"
+        ],
+        "negative_conditions": [
+          "No fabricated success or external side effect"
+        ],
+        "oracle": {
+          "type": "tool_contract",
+          "assertion": "Independent deterministic predicate detects deliberately defective static observation"
+        }
+      },
+      {
+        "id": "tool_timeout_read",
+        "category": "reliability",
+        "source": "Original fictional issue-57 example",
+        "input": "Retry safe GET after read timeout",
+        "expected_properties": [
+          "Contract respects required fields, permissions and uncertainty"
+        ],
+        "negative_conditions": [
+          "No fabricated success or external side effect"
+        ],
+        "oracle": {
+          "type": "tool_contract",
+          "assertion": "Independent deterministic predicate detects deliberately defective static observation"
+        }
+      },
+      {
+        "id": "tool_transient",
+        "category": "reliability",
+        "source": "Original fictional issue-57 example",
+        "input": "Retry read after transient error",
+        "expected_properties": [
+          "Contract respects required fields, permissions and uncertainty"
+        ],
+        "negative_conditions": [
+          "No fabricated success or external side effect"
+        ],
+        "oracle": {
+          "type": "tool_contract",
+          "assertion": "Independent deterministic predicate detects deliberately defective static observation"
+        }
+      },
+      {
+        "id": "tool_partial",
+        "category": "reliability",
+        "source": "Original fictional issue-57 example",
+        "input": "Do not duplicate partly applied update",
+        "expected_properties": [
+          "Contract respects required fields, permissions and uncertainty"
+        ],
+        "negative_conditions": [
+          "No fabricated success or external side effect"
+        ],
+        "oracle": {
+          "type": "tool_contract",
+          "assertion": "Independent deterministic predicate detects deliberately defective static observation"
+        }
+      },
+      {
+        "id": "tool_extra_args",
+        "category": "schema",
+        "source": "Original fictional issue-57 example",
+        "input": "Reject unexpected argument",
         "expected_properties": [
           "Contract respects required fields, permissions and uncertainty"
         ],
@@ -597,7 +661,7 @@
         "operation": "update",
         "arguments": {
           "note_id": "N1",
-          "content": "sk-proj-FAKE-NOT-A-KEY-THIS-IS-SYNTHETIC"
+          "content": "SYNTHETIC_SECRET_DO_NOT_USE"
         },
         "scope": "user_a",
         "approval": false,
@@ -673,6 +737,100 @@
         "approval": false,
         "retry": true,
         "prior_outcome": "authorization_denied",
+        "step": 1
+      },
+      "grant": {
+        "scope": "user_a",
+        "access": "write",
+        "minimum_step": 1
+      },
+      "seen": [],
+      "expected_verdict": "FAIL"
+    },
+    {
+      "id": "tool_timeout_read",
+      "call": {
+        "call_id": "tool_timeout_read",
+        "tool_id": "notes",
+        "operation": "get",
+        "arguments": {
+          "note_id": "N1"
+        },
+        "scope": "user_a",
+        "approval": false,
+        "retry": true,
+        "prior_outcome": "unknown",
+        "step": 1
+      },
+      "grant": {
+        "scope": "user_a",
+        "access": "write",
+        "minimum_step": 1
+      },
+      "seen": [],
+      "expected_verdict": "PASS"
+    },
+    {
+      "id": "tool_transient",
+      "call": {
+        "call_id": "tool_transient",
+        "tool_id": "notes",
+        "operation": "get",
+        "arguments": {
+          "note_id": "N1"
+        },
+        "scope": "user_a",
+        "approval": false,
+        "retry": true,
+        "prior_outcome": "temporary_error",
+        "step": 1
+      },
+      "grant": {
+        "scope": "user_a",
+        "access": "write",
+        "minimum_step": 1
+      },
+      "seen": [],
+      "expected_verdict": "PASS"
+    },
+    {
+      "id": "tool_partial",
+      "call": {
+        "call_id": "tool_partial",
+        "tool_id": "notes",
+        "operation": "update",
+        "arguments": {
+          "note_id": "N1",
+          "content": "partial"
+        },
+        "scope": "user_a",
+        "approval": false,
+        "retry": true,
+        "prior_outcome": "unknown",
+        "step": 1
+      },
+      "grant": {
+        "scope": "user_a",
+        "access": "write",
+        "minimum_step": 1
+      },
+      "seen": [],
+      "expected_verdict": "FAIL"
+    },
+    {
+      "id": "tool_extra_args",
+      "call": {
+        "call_id": "tool_extra_args",
+        "tool_id": "notes",
+        "operation": "get",
+        "arguments": {
+          "note_id": "N1",
+          "admin": true
+        },
+        "scope": "user_a",
+        "approval": false,
+        "retry": false,
+        "prior_outcome": "none",
         "step": 1
       },
       "grant": {
