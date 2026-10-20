@@ -103,3 +103,6 @@ jobs:
           python3 experiments/paperclip/control_plane.py create "$RUNNER_TEMP/paperclip-board-receipt.json"
           # A fresh Python process independently reads the persisted API state.
           python3 experiments/paperclip/control_plane.py recover "$RUNNER_TEMP/paperclip-board-receipt.json"
+          # Compare against existing GitHub records using anonymous GET only.
+          # This is a structural verification, never a model or productivity A/B.
+          python3 experiments/paperclip/comparison.py "$RUNNER_TEMP/paperclip-board-receipt.json"
