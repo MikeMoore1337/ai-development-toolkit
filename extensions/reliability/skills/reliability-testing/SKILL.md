@@ -1,6 +1,6 @@
 ---
 name: reliability-testing
-description: "Test failure resilience of stateful services with explicit invariants, bounded timeout/retry, duplicate delivery, concurrency, transaction rollback and recovery oracles. Use for fault injection and reliability regression, not ordinary unit tests, load testing, security scans or production chaos."
+description: "Verify state invariants under injected timeouts, retries, duplicate events, lost updates, partial commits and recovery. Use for deterministic failure reproduction and replay safety; exclude performance, security, UI implementation and deployment."
 metadata:
   pack: "reliability"
   version: "1.0.0"
