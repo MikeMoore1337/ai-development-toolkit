@@ -262,6 +262,41 @@ def validate_report(report: object) -> None:
         raise ValueError("functional oracle mismatch")
     if not isinstance(report["conditions"], dict) or not isinstance(report["budget"], dict):
         raise ValueError("invalid conditions/budget")
+    for key in ("test_id", "scenario_id", "source_requirement", "target_component", "revision"):
+        if not isinstance(report.get(key), str) or not report[key]:
+            raise ValueError(f"missing {key} identity")
+    conditions = report["conditions"]
+    required = ("profile", "operations", "rps", "duration", "concurrency",
+                "warmup", "dataset", "cache_state", "environment", "mode",
+                "method", "percentile")
+    if any(key not in conditions for key in required):
+        raise ValueError("incomplete comparison conditions")
+    count = conditions["operations"]
+    if type(count) is not int or count <= 0 or len(samples) != count:
+        raise ValueError("raw sample count does not match workload")
+    ids = [sample["id"] for sample in samples]
+    if any(type(value) is not int for value in ids) or sorted(ids) != list(range(count)):
+        raise ValueError("missing, duplicated or invalid raw sample ID")
+    for sample in samples:
+        if type(sample["functional_ok"]) is not bool:
+            raise ValueError("functional oracle must be boolean")
+        if sample.get("end_ms") is not None:
+            start, end, latency = (sample.get("start_ms"), sample["end_ms"],
+                                   sample.get("latency_ms"))
+            if (any(isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not math.isfinite(value) for value in (start, end, latency))
+                    or end < start or abs((end - start) - latency) > .001):
+                raise ValueError("raw timestamps contradict reported latency")
+    budget = report["budget"]
+    if budget.get("metric") != "median_latency_ms" or budget.get("approval") not in {
+        "PROPOSED", "APPROVED"
+    }:
+        raise ValueError("invalid budget metric or approval status")
+    threshold = budget.get("threshold")
+    if threshold is not None:
+        _number(threshold, "budget threshold", 60000)
+    if budget["approval"] == "APPROVED" and threshold is None:
+        raise ValueError("approved budget has no threshold")
 
 
 def compare(baseline: dict | None, candidate: dict | None) -> dict:
@@ -272,6 +307,9 @@ def compare(baseline: dict | None, candidate: dict | None) -> dict:
         validate_report(candidate)
     except (ValueError, TypeError, KeyError, ZeroDivisionError) as exc:
         return {"status": "COMPARISON_INVALID", "reason": f"invalid report: {exc}"}
+    if any(baseline[field] != candidate[field] for field in
+           ("test_id", "scenario_id", "source_requirement", "target_component")):
+        return {"status": "COMPARISON_INVALID", "reason": "test/scenario/target mismatch"}
     if baseline["conditions"] != candidate["conditions"]:
         return {"status": "COMPARISON_INVALID", "reason": "environment/workload/method mismatch"}
     if baseline["budget"] != candidate["budget"]:
