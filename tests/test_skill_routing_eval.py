@@ -92,7 +92,6 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual(len(cases) * 4, report["prompt_count"])
         self.assertEqual("offline_source_diagnostic", report["classification"])
 
-
     def test_bilingual_qa_behavior_check_ids(self):
         """Manual cases are parallel in EN/RU; do not mistake them for executed trials."""
         expected_routes = {f"QA-R{i:02d}" for i in range(1, 15)}
@@ -101,8 +100,8 @@ class SkillRoutingTests(unittest.TestCase):
         for path in ("docs/SKILL_ROUTING_EVALS.md",
                      "docs/ru/SKILL_ROUTING_EVALS.md"):
             content = (ROOT / path).read_text(encoding="utf-8")
-            route_ids = re.findall(r"^\\| (QA-R\\d{2}) \\|", content, re.MULTILINE)
-            negative_ids = re.findall(r"^\\| (QA-N\\d{2}) \\|", content, re.MULTILINE)
+            route_ids = re.findall(r"^\| (QA-R\d{2}) \|", content, re.MULTILINE)
+            negative_ids = re.findall(r"^\| (QA-N\d{2}) \|", content, re.MULTILINE)
             self.assertEqual(expected_routes, set(route_ids), path)
             self.assertEqual(expected_negative, set(negative_ids), path)
             self.assertEqual(len(route_ids), len(expected_routes), path)
