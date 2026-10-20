@@ -52,6 +52,8 @@ FIXTURE_FILES = (
     "docs/ru/UNIVERSAL_ENGINEERING.md",
     "docs/SKILL_QUALITY_V2.md",
     "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/SKILL_QUALITY_METRICS.md",
+    "docs/ru/SKILL_QUALITY_METRICS.md",
     "docs/AGENT_SKILLS_SPEC.md",
     "docs/ru/AGENT_SKILLS_SPEC.md",
     "docs/RELEASE_PROCESS.md",
@@ -238,6 +240,34 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("(en/SOURCE_EVALUATION.md)",
                                      "(SOURCE_EVALUATION.md)"), encoding="utf-8")
         self.check("L10N004")
+
+    def test_missing_metrics_translation_fails(self):
+        (self.root / "docs/ru/SKILL_QUALITY_METRICS.md").unlink()
+        self.check("L10N001")
+
+    def test_metrics_reverse_link_fails(self):
+        page = self.root / "docs/SKILL_QUALITY_METRICS.md"
+        original = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/SKILL_QUALITY_METRICS.md)", original)
+        page.write_text(original.replace("(ru/SKILL_QUALITY_METRICS.md)",
+                                         "(SKILL_QUALITY_METRICS.md)"), encoding="utf-8")
+        self.check("L10N004")
+
+    def test_missing_metrics_cli_command_fails(self):
+        page = self.root / "docs/ru/SKILL_QUALITY_METRICS.md"
+        original = page.read_text(encoding="utf-8")
+        command = "python scripts/skill_quality_metrics.py --summary --check-repeat"
+        self.assertIn(command, original)
+        page.write_text(original.replace(command, "echo no-metrics", 1), encoding="utf-8")
+        self.check("L10N006")
+
+    def test_metrics_observation_guard_fails(self):
+        page = self.root / "docs/ru/SKILL_QUALITY_METRICS.md"
+        original = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_MEASURED", original)
+        page.write_text(original.replace("NOT_MEASURED", "PASS", 200),
+                        encoding="utf-8")
+        self.check("L10N009")
 
     def test_missing_release_translation_fails(self):
         (self.root / "docs/ru/RELEASE_PROCESS.md").unlink()
