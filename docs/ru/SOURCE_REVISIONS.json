@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "6fc157822207d4550197a1cfb157b27e322c5e9595f3eae0d2cfa84bf9180cdf"
+      "source_sha256": "6d6750eb0225ab131a282f14a005ec45b45c25a9abda325814a3842b46f86465"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "b1216a48a7ba4949e97465462253d6fb6310e0ecb56c4a5fd15b79042d173b6b"
+      "source_sha256": "325f26989937a85682895eb4dd16bd66d5046a7dafdef977168bf7e5f668e1f1"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "bd2040c73f33a7e76e52deae3a5e0e81ba7ad66416a98023d03afcb58cbb5823"
+      "source_sha256": "d6e4ea46c6e68d022e5e02d675e55712dc6d567057eee696f45930bcf56059a3"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -131,6 +131,11 @@
       "source": "docs/PROJECT_DELIVERY_MANAGEMENT.md",
       "translation": "docs/ru/PROJECT_DELIVERY_MANAGEMENT.md",
       "source_sha256": "730a6f614a7ee28a880df8c10820707a71dd2b4a31378a8ad46928c56a588978"
+    },
+    {
+      "source": "docs/BUSINESS_SYSTEM_ANALYSIS.md",
+      "translation": "docs/ru/BUSINESS_SYSTEM_ANALYSIS.md",
+      "source_sha256": "5eb2a3faf3fe1155deb14ecac28df8cc155a06094fd25177c548aa1bd555f38d"
     }
   ]
 }

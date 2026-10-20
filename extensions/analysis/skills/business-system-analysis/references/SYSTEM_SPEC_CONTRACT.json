@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "document_type": "SYSTEM_SPECIFICATION",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "source_labels": [
+    "USER_PROVIDED",
+    "SOURCE_BACKED",
+    "OBSERVED",
+    "ASSUMPTION",
+    "UNKNOWN"
+  ],
+  "confirmation_statuses": [
+    "CONFIRMED",
+    "PROPOSED",
+    "UNKNOWN"
+  ],
+  "business_rule_statuses": [
+    "CONFIRMED",
+    "ASSUMPTION",
+    "UNRESOLVED"
+  ],
+  "integration_statuses": [
+    "KNOWN",
+    "CONTRACT_PENDING",
+    "UNVERIFIED_DEPENDENCY"
+  ],
+  "decision_statuses": [
+    "PROPOSED",
+    "APPROVED",
+    "REJECTED",
+    "UNRESOLVED"
+  ],
+  "test_statuses": [
+    "NOT_WRITTEN",
+    "DESIGNED",
+    "IMPLEMENTED",
+    "NOT_RUN",
+    "PASS",
+    "FAIL"
+  ],
+  "required_sections": [
+    "goal",
+    "mvp_in",
+    "mvp_out",
+    "stakeholders",
+    "source_requirements",
+    "acceptance_criteria",
+    "business_rules",
+    "use_cases",
+    "processes",
+    "domain_entities",
+    "system_requirements",
+    "nonfunctional_requirements",
+    "integrations",
+    "decisions",
+    "conflicts",
+    "traceability",
+    "handoff",
+    "open_questions"
+  ],
+  "requirement_fields": [
+    "id",
+    "behavior",
+    "source",
+    "acceptance_ids"
+  ],
+  "acceptance_fields": [
+    "id",
+    "expectation",
+    "requirement_ids"
+  ],
+  "rule_fields": [
+    "id",
+    "description",
+    "source",
+    "status",
+    "conditions",
+    "exceptions",
+    "violation",
+    "reaction",
+    "requirement_ids",
+    "acceptance_ids"
+  ],
+  "use_case_fields": [
+    "id",
+    "actor",
+    "goal",
+    "preconditions",
+    "main_path",
+    "alternative_or_error_path",
+    "observable_result",
+    "verification",
+    "requirement_ids",
+    "acceptance_ids",
+    "rule_ids"
+  ],
+  "system_requirement_fields": [
+    "id",
+    "parent_requirement_id",
+    "behavior",
+    "source",
+    "status",
+    "scope",
+    "preconditions",
+    "inputs",
+    "expected_result",
+    "error_conditions",
+    "rule_ids",
+    "use_case_ids",
+    "acceptance_ids"
+  ],
+  "nfr_fields": [
+    "id",
+    "attribute",
+    "condition",
+    "constraint",
+    "verification",
+    "source",
+    "status"
+  ],
+  "integration_fields": [
+    "id",
+    "provider",
+    "consumer",
+    "purpose",
+    "data",
+    "contract",
+    "status",
+    "error_handling",
+    "security",
+    "compatibility",
+    "open_questions"
+  ],
+  "decision_fields": [
+    "id",
+    "question",
+    "context",
+    "options",
+    "selected",
+    "rationale",
+    "approval_ref",
+    "affected_requirements",
+    "status"
+  ],
+  "trace_fields": [
+    "requirement_id",
+    "system_requirement_id",
+    "acceptance_id",
+    "business_rule_ids",
+    "use_case_ids",
+    "integration_ids",
+    "test_case_id",
+    "test_status",
+    "execution_evidence"
+  ],
+  "handoff_targets": [
+    "ux_ui",
+    "backend",
+    "frontend",
+    "qa"
+  ],
+  "notes": [
+    "Original source R-ID and AC-ID are preserved; system requirements use SR-ID with parent_requirement_id.",
+    "Missing or proposed source claims are not validated as real evidence by the offline script.",
+    "Business rules and architectural decisions cannot be invented or auto-approved.",
+    "Offline validator checks referential/structural consistency, not semantic truth or external test results.",
+    "Traceability supplements, never replaces, the QA requirements-traceability skill."
+  ]
+}

@@ -19,9 +19,14 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Release QA | `qa-release` | 4 | None |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Idea validation, MVP scope and PRD | `product-discovery` | 3 | Formal QA requirements analysis only when needed |
+| Business rules, use cases and system requirements | `business-system-analysis` | 4 | Add `api-design` only for actual interface contracts |
 | Delivery plan, dependencies and risk review | `project-delivery-management` | 4 | Add a feature controller separately only when implementing |
 | Technical research | `research` | 2 | `codebase-knowledge-map` for large repositories |
 | LLM API provider research | `provider-research` | 2 | No paid API required |
+
+## Business & System Analysis
+
+Optional business/system profile: one new skill plus task-scoping, requirement-analysis and requirements-traceability. It keeps source R/AC identifiers, represents unknowns explicitly, and hands off to UX/UI, Backend, Frontend and QA. [Guide](BUSINESS_SYSTEM_ANALYSIS.md). No second controller or full QA Pack.
 
 ## Backend Development
 

@@ -89,6 +89,16 @@ Optional planning, dependencies, risks and evidence-backed status guidance; does
 
 [User guide](PROJECT_DELIVERY_MANAGEMENT.md).
 
+## Business & System Analysis extension
+
+Optional stakeholder needs, business rules, use cases, domain boundaries, selective NFRs and traceable system specification. Reuses Product, Delivery, QA traceability and Backend API Design rather than duplicating them.
+
+| Skill | When to use |
+| :--- | :--- |
+| [`business-system-analysis`](../extensions/analysis/skills/business-system-analysis/SKILL.md) | Refine sourced R-ID and AC-ID into testable system specifications with explicit conflicts, missing contracts, decisions and UX/engineering/QA handoffs. |
+
+[Beginner and expert guide](BUSINESS_SYSTEM_ANALYSIS.md).
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -166,6 +176,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | Profile | Skills |
 | :--- | :--- |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
+| `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |

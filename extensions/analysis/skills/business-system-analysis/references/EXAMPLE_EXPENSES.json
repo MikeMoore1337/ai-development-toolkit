@@ -1,0 +1,447 @@
+{
+  "schema_version": 1,
+  "document_type": "SYSTEM_SPECIFICATION",
+  "artifact_status": "PROPOSED_NOT_IMPLEMENTED",
+  "goal": "Synthetic home-expense journal; illustrate mapping, not implemented software",
+  "mvp_in": [
+    "Record expense",
+    "View totals",
+    "Edit/delete expense"
+  ],
+  "mvp_out": [
+    "Bank sync",
+    "Payments",
+    "Cloud login"
+  ],
+  "stakeholders": [
+    {
+      "role": "Person tracking household expenses",
+      "goal": "Know what was spent",
+      "need": "Enter and review expenses",
+      "source": "ASSUMPTION",
+      "constraints": [
+        "Unknown ownership"
+      ],
+      "open_questions": [
+        "Does the journal handle refunds?"
+      ]
+    }
+  ],
+  "source_requirements": [
+    {
+      "id": "R1",
+      "behavior": "Add an expense",
+      "source": "USER_PROVIDED",
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ]
+    },
+    {
+      "id": "R2",
+      "behavior": "Show expense totals",
+      "source": "USER_PROVIDED",
+      "acceptance_ids": [
+        "AC3"
+      ]
+    },
+    {
+      "id": "R3",
+      "behavior": "Edit and delete an expense",
+      "source": "USER_PROVIDED",
+      "acceptance_ids": [
+        "AC4"
+      ]
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "expectation": "Added expense appears in list and totals",
+      "requirement_ids": [
+        "R1"
+      ]
+    },
+    {
+      "id": "AC2",
+      "expectation": "Invalid amount does not create a record",
+      "requirement_ids": [
+        "R1"
+      ]
+    },
+    {
+      "id": "AC3",
+      "expectation": "Totals equal the visible expenses",
+      "requirement_ids": [
+        "R2"
+      ]
+    },
+    {
+      "id": "AC4",
+      "expectation": "Deleting an expense updates totals",
+      "requirement_ids": [
+        "R3"
+      ]
+    }
+  ],
+  "business_rules": [
+    {
+      "id": "BR1",
+      "description": "Invalid amount does not create an expense",
+      "source": "USER_PROVIDED",
+      "status": "CONFIRMED",
+      "conditions": "When submitting an expense amount",
+      "exceptions": "How refunds and negative adjustments work is UNKNOWN",
+      "violation": "Invalid value supplied",
+      "reaction": "Do not create a record",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC2"
+      ],
+      "subject": "expense.invalid-amount",
+      "polarity": "DENY"
+    },
+    {
+      "id": "BR2",
+      "description": "Totals reflect displayed expenses",
+      "source": "USER_PROVIDED",
+      "status": "CONFIRMED",
+      "conditions": "When viewing totals",
+      "exceptions": "Filtering and reporting periods UNKNOWN",
+      "violation": "Shown total differs from visible amounts",
+      "reaction": "Correct totals before acceptance",
+      "requirement_ids": [
+        "R2"
+      ],
+      "acceptance_ids": [
+        "AC3"
+      ],
+      "subject": "expense.total-consistency",
+      "polarity": "REQUIRE"
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC1",
+      "actor": "Expense keeper (hypothetical)",
+      "goal": "Add expense",
+      "preconditions": "Journal available",
+      "main_path": [
+        "Enter amount",
+        "Submit",
+        "Show record and updated total"
+      ],
+      "alternative_or_error_path": [
+        "Invalid amount -> reject without storage"
+      ],
+      "observable_result": "Valid entry visible; invalid entry not created",
+      "verification": "Check AC1 and AC2",
+      "requirement_ids": [
+        "R1"
+      ],
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ],
+      "rule_ids": [
+        "BR1"
+      ]
+    },
+    {
+      "id": "UC2",
+      "actor": "Expense keeper (hypothetical)",
+      "goal": "See total",
+      "preconditions": "Expenses exist or list is empty",
+      "main_path": [
+        "Open overview",
+        "Compare total to visible expenses"
+      ],
+      "alternative_or_error_path": [
+        "Empty list -> show zero; assumption pending confirmation"
+      ],
+      "observable_result": "Displayed total matches visible entries",
+      "verification": "Check AC3",
+      "requirement_ids": [
+        "R2"
+      ],
+      "acceptance_ids": [
+        "AC3"
+      ],
+      "rule_ids": [
+        "BR2"
+      ]
+    },
+    {
+      "id": "UC3",
+      "actor": "Expense keeper (hypothetical)",
+      "goal": "Delete expense",
+      "preconditions": "Expense exists",
+      "main_path": [
+        "Select expense",
+        "Delete",
+        "See updated list and totals"
+      ],
+      "alternative_or_error_path": [
+        "Record already missing -> report unresolved behavior"
+      ],
+      "observable_result": "Deleted record absent, total recomputed",
+      "verification": "Check AC4",
+      "requirement_ids": [
+        "R3"
+      ],
+      "acceptance_ids": [
+        "AC4"
+      ],
+      "rule_ids": [
+        "BR2"
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "id": "P1",
+      "name": "Add expense",
+      "notation": "TEXT_FLOW_NOT_BPMN_2_0",
+      "actors": [
+        "Expense keeper",
+        "Journal"
+      ],
+      "start": "User opens add form",
+      "steps": [
+        "Enter amount",
+        "Validate against confirmed invalid-amount acceptance",
+        "Valid -> create record, update total",
+        "Invalid -> reject, do not create record"
+      ],
+      "decisions": [
+        "Amount valid?"
+      ],
+      "errors": [
+        "Invalid -> rejection"
+      ],
+      "cancellation": "Cancel -> no record",
+      "end": "Created and displayed, or rejected/cancelled"
+    }
+  ],
+  "domain_entities": [
+    {
+      "id": "Expense",
+      "purpose": "Record of a household expense",
+      "relationships": [
+        "ReportingPeriod (proposed)"
+      ],
+      "lifecycle": "created -> edited or deleted",
+      "invariants": [
+        "Invalid entry never persisted"
+      ],
+      "owner": "UNKNOWN"
+    },
+    {
+      "id": "ReportingPeriod",
+      "purpose": "Scope of displayed totals, if periods are needed",
+      "relationships": [
+        "Expense"
+      ],
+      "lifecycle": "UNKNOWN",
+      "invariants": [],
+      "owner": "UNKNOWN"
+    }
+  ],
+  "system_requirements": [
+    {
+      "id": "SR1",
+      "parent_requirement_id": "R1",
+      "behavior": "Accept valid entry and show it",
+      "source": "USER_PROVIDED",
+      "status": "CONFIRMED",
+      "scope": "IN",
+      "preconditions": "Entry form available",
+      "inputs": [
+        "Expense amount"
+      ],
+      "expected_result": "Entry appears in list and total",
+      "error_conditions": [
+        "Invalid amount -> no record"
+      ],
+      "rule_ids": [
+        "BR1"
+      ],
+      "use_case_ids": [
+        "UC1"
+      ],
+      "acceptance_ids": [
+        "AC1",
+        "AC2"
+      ]
+    },
+    {
+      "id": "SR2",
+      "parent_requirement_id": "R2",
+      "behavior": "Show totals derived from visible records",
+      "source": "USER_PROVIDED",
+      "status": "CONFIRMED",
+      "scope": "IN",
+      "preconditions": "Journal loaded",
+      "inputs": [
+        "Visible expense list"
+      ],
+      "expected_result": "Correct total displayed",
+      "error_conditions": [
+        "No expenses -> behavior needs confirmation"
+      ],
+      "rule_ids": [
+        "BR2"
+      ],
+      "use_case_ids": [
+        "UC2"
+      ],
+      "acceptance_ids": [
+        "AC3"
+      ]
+    },
+    {
+      "id": "SR3",
+      "parent_requirement_id": "R3",
+      "behavior": "Delete expense and update totals",
+      "source": "USER_PROVIDED",
+      "status": "CONFIRMED",
+      "scope": "IN",
+      "preconditions": "Expense exists",
+      "inputs": [
+        "Selected expense"
+      ],
+      "expected_result": "Record no longer in view; totals updated",
+      "error_conditions": [
+        "Missing expense -> behavior UNKNOWN"
+      ],
+      "rule_ids": [],
+      "use_case_ids": [
+        "UC3"
+      ],
+      "acceptance_ids": [
+        "AC4"
+      ]
+    }
+  ],
+  "nonfunctional_requirements": [
+    {
+      "id": "NFR1",
+      "attribute": "Usability",
+      "condition": "When a value is invalid",
+      "constraint": "Show an understandable rejection instead of silently writing",
+      "verification": "Manual AC2 usability check",
+      "source": "ASSUMPTION",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "NFR2",
+      "attribute": "Performance",
+      "condition": "Totals display",
+      "constraint": "UNKNOWN",
+      "verification": "UNKNOWN",
+      "source": "UNKNOWN",
+      "status": "UNKNOWN"
+    }
+  ],
+  "integrations": [],
+  "decisions": [
+    {
+      "id": "D1",
+      "question": "Are refunds and negative values permitted?",
+      "context": "AC2 defines invalid amount but not refund semantics",
+      "options": [
+        "Refund is separate operation",
+        "Negative adjustment allowed"
+      ],
+      "selected": "UNKNOWN",
+      "rationale": "Source lacks rule",
+      "approval_ref": "",
+      "affected_requirements": [
+        "R1"
+      ],
+      "status": "UNRESOLVED"
+    }
+  ],
+  "conflicts": [],
+  "traceability": [
+    {
+      "requirement_id": "R1",
+      "system_requirement_id": "SR1",
+      "acceptance_id": "AC1",
+      "business_rule_ids": [
+        "BR1"
+      ],
+      "use_case_ids": [
+        "UC1"
+      ],
+      "integration_ids": [],
+      "test_case_id": "",
+      "test_status": "NOT_WRITTEN",
+      "execution_evidence": ""
+    },
+    {
+      "requirement_id": "R1",
+      "system_requirement_id": "SR1",
+      "acceptance_id": "AC2",
+      "business_rule_ids": [
+        "BR1"
+      ],
+      "use_case_ids": [
+        "UC1"
+      ],
+      "integration_ids": [],
+      "test_case_id": "",
+      "test_status": "NOT_WRITTEN",
+      "execution_evidence": ""
+    },
+    {
+      "requirement_id": "R2",
+      "system_requirement_id": "SR2",
+      "acceptance_id": "AC3",
+      "business_rule_ids": [
+        "BR2"
+      ],
+      "use_case_ids": [
+        "UC2"
+      ],
+      "integration_ids": [],
+      "test_case_id": "",
+      "test_status": "NOT_WRITTEN",
+      "execution_evidence": ""
+    },
+    {
+      "requirement_id": "R3",
+      "system_requirement_id": "SR3",
+      "acceptance_id": "AC4",
+      "business_rule_ids": [],
+      "use_case_ids": [
+        "UC3"
+      ],
+      "integration_ids": [],
+      "test_case_id": "",
+      "test_status": "NOT_WRITTEN",
+      "execution_evidence": ""
+    }
+  ],
+  "handoff": {
+    "ux_ui": [
+      "UC1-UC3: entry/list/total states and invalid inputs; confirm empty state"
+    ],
+    "backend": [
+      "Expense invariants; data storage unspecified; no API defined"
+    ],
+    "frontend": [
+      "Form validation, list states and total updates; no framework specified"
+    ],
+    "qa": [
+      "R1-R3, AC1-AC4, UC1-UC3, BR1-BR2; tests NOT_WRITTEN"
+    ]
+  },
+  "open_questions": [
+    "What is an invalid sum beyond the supplied acceptance?",
+    "Are refunds permitted?",
+    "Are reporting periods needed?"
+  ]
+}

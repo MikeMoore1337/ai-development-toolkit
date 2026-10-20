@@ -18,6 +18,7 @@
 | Проверка перед выпуском | `qa-release` | 4 | Нет |
 | Архитектура ИИ-агентов | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Проверка идеи, MVP и PRD | `product-discovery` | 3 | Формальный анализ QA-требований только при необходимости |
+| Бизнес-правила, сценарии и системные требования | `business-system-analysis` | 4 | `api-design` добавлять только для реальных API-контрактов |
 | Планирование проекта, зависимости, риски | `project-delivery-management` | 4 | Исполнение функции - отдельным навыком по необходимости |
 | Техническое исследование | `research` | 2 | `codebase-knowledge-map` для больших репозиториев |
 | Изучение условий LLM API | `provider-research` | 2 | Платный API не требуется |
@@ -28,6 +29,10 @@
 с существующими `task-scoping` и `research-verification`.
 Выход - PRD с проверяемыми гипотезами, а не готовое приложение или доказанный спрос.
 [Руководство на русском](PRODUCT_DISCOVERY.md). Платный API и новый установщик не нужны.
+
+## Бизнес- и системный анализ
+
+Профиль business-system-analysis содержит один новый навык и существующие task-scoping, requirement-analysis, requirements-traceability. Сохраняет исходные R-ID/AC-ID, явно обозначает неизвестные условия и передаёт результат UX/UI, Frontend, Backend и QA. [Инструкция](BUSINESS_SYSTEM_ANALYSIS.md). Без нового контроллера и полного набора QA.
 
 ## Backend - серверная разработка
 
