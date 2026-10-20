@@ -28,7 +28,8 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         # was reviewed in its original source snapshot.
         self.assertEqual({name: path for name, path in self.expected.items()
                           if name in actual}, actual)
-        self.assertEqual({"product-discovery"}, set(self.expected) - set(actual))
+        self.assertEqual({"product-discovery", "project-delivery-management"},
+                         set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
         core.update({x: qa["role_root"] + "/" + x + ".md" for x in qa["roles"]})
@@ -38,7 +39,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         historical = {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]}
         self.assertEqual(historical, {name: skills for name, skills
                                       in self.manifest["profiles"].items()
-                                      if name not in {"docs-technical", "product-discovery"}})
+                                      if name not in {"docs-technical", "product-discovery", "project-delivery-management"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
         self.assertEqual(["product-discovery", "task-scoping", "research-verification"],

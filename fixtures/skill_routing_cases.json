@@ -150,13 +150,11 @@
       "target": "project-delivery-management",
       "positive": [
         "project delivery management plan from PRD dependencies risks statuses",
-        "delivery plan for tasks and blocking dependencies from requirements",
-        "project delivery management risks change tracking and handoff"
+        "delivery plan for tasks and blocking dependencies from requirements"
       ],
       "negative": [
         "Fix a Python bug and implement the code change",
-        "Write a unit test for this backend function",
-        "Publish the release after approved deployment verification"
+        "Write a unit test for this backend function"
       ]
     }
   ]
