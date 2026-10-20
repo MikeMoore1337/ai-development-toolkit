@@ -99,3 +99,7 @@ jobs:
             exit 1
           fi
           python3 experiments/paperclip/smoke.py
+          # Board-only API flow: no agents, LLM providers or production data.
+          python3 experiments/paperclip/control_plane.py create "$RUNNER_TEMP/paperclip-board-receipt.json"
+          # A fresh Python process independently reads the persisted API state.
+          python3 experiments/paperclip/control_plane.py recover "$RUNNER_TEMP/paperclip-board-receipt.json"
