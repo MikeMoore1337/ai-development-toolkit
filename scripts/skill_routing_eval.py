@@ -14,7 +14,7 @@ from profile_metrics import skill_paths
 from validate_pack import parse_metadata
 
 ROOT = Path(__file__).resolve().parents[1]
-WORD = re.compile(r"[a-z0-9]+")
+WORD = re.compile(r"[a-zа-яё0-9]+")
 
 
 class RoutingInputError(ValueError):

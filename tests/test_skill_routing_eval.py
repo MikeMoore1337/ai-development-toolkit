@@ -36,6 +36,9 @@ class SkillRoutingTests(unittest.TestCase):
         self.path.write_text(json.dumps({"schema_version": 1, "cases": self.cases}),
                              encoding="utf-8")
 
+    def test_cyrillic_description_tokens(self):
+        self.assertIn("естественные", routing.terms("Нужны естественные русские тексты"))
+
     def test_positive_and_negative_separation(self):
         report = routing.evaluate(self.catalog, self.cases, top_k=1)
         self.assertEqual(2, report["prompt_count"])

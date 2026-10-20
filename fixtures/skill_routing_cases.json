@@ -90,7 +90,7 @@
       "target": "clear-voice",
       "positive": [
         "Rewrite this newsletter introduction with clear natural language and a human voice.",
-        "Improve this product announcement wording and remove robotic phrasing."
+        "Нужны естественные русские тексты для писем и статей, без проверки кода."
       ],
       "negative": [
         "Fix a failing backend API endpoint.",
@@ -102,7 +102,7 @@
       "target": "test-strategy",
       "positive": [
         "Choose a test strategy and coverage layers for a new service based on risk.",
-        "Plan efficient QA testing levels for a backend service without duplicating end-to-end checks."
+        "Revise the project test architecture: choose unit, API, contract, integration and exploratory tests by risk."
       ],
       "negative": [
         "Write a React component with motion transitions.",
