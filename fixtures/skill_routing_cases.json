@@ -168,6 +168,18 @@
         "Fix a Python import error in a web service.",
         "Write ordinary unit tests for REST API response validation."
       ]
+    },
+    {
+      "id": "reliability-vs-ordinary-unit-test",
+      "target": "reliability-testing",
+      "positive": [
+        "Reliability testing of idempotent events, retry backoff and recovery after commit.",
+        "Test duplicate event delivery, lost acknowledgements and timeout-after-effect invariants."
+      ],
+      "negative": [
+        "Implement a responsive React component.",
+        "Write ordinary unit tests for a string formatting function."
+      ]
     }
   ]
 }
