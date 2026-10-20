@@ -1,5 +1,7 @@
 # Skill quality metrics (Issue #38)
 
+[Русский перевод](ru/SKILL_QUALITY_METRICS.md)
+
 ## Purpose and scope
 
 Run **read-only offline source metrics** for each skill declared by MANIFEST.json. This is an
