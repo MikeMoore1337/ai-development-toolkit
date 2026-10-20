@@ -87,6 +87,16 @@
 
 [Руководство](PROJECT_DELIVERY_MANAGEMENT.md).
 
+## Расширение Business & System Analysis
+
+Необязательный анализ потребностей, бизнес-правил, сценариев, границ предметной области и NFR с передачей в UX/UI, разработку и QA. Не дублирует Product Discovery, Delivery Management и QA.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [business-system-analysis](../../extensions/analysis/skills/business-system-analysis/SKILL.md) | Превратить исходные R-ID и AC-ID в проверяемую системную спецификацию с конфликтами, неизвестными контрактами и трассировкой. |
+
+[Руководство для новичков и специалистов](BUSINESS_SYSTEM_ANALYSIS.md).
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -164,6 +174,7 @@
 | Профиль | Навыки |
 | :--- | :--- |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
+| `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
