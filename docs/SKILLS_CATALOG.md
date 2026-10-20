@@ -131,6 +131,10 @@ Optional [reliability-testing](../extensions/reliability/skills/reliability-test
 | :--- | :--- |
 | [`devops-infrastructure`](../extensions/devops/skills/devops-infrastructure/SKILL.md) | Discover actual CI/CD, container and IaC contracts, plan verified deployment and recovery without execution. [Guide](DEVOPS_INFRASTRUCTURE.md). |
 
+## Accessibility QA extension
+
+Optional [accessibility-testing](../extensions/accessibility/skills/accessibility-testing/SKILL.md) maps applicable WCAG 2.2 criteria to keyboard, focus, forms, semantic, contrast, responsive and screen-reader test evidence. [Guide](ACCESSIBILITY_QA.md). Offline checks do not establish conformance.
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -207,6 +211,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |

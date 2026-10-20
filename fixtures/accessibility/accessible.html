@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Доступная синтетическая форма</title></head>
+<body>
+<main>
+  <h1>Добавление записи</h1>
+  <form id="entry" action="#">
+    <label for="amount">Сумма</label>
+    <p id="amount-help">Введите сумму больше нуля.</p>
+    <input id="amount" name="amount" type="number" min="1" required aria-describedby="amount-help amount-error">
+    <p id="amount-error" class="error" role="alert">Введите положительное число.</p>
+    <button type="submit">Сохранить запись</button>
+    <p id="result" role="status">Запись сохранена.</p>
+  </form>
+</main>
+<!-- Synthetic static example. Focus, announce and submit behavior NOT_TESTED. -->
+</body>
+</html>
+
