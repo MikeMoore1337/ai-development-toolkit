@@ -38,6 +38,10 @@ FIXTURE_FILES = (
     "docs/ru/CLIENT_COMPATIBILITY.md",
     "docs/ru/PUBLICATION_POLICY.md",
     "docs/ru/ACCEPTANCE.md",
+    "docs/MAKE_FEATURE_INTEGRATION.md",
+    "docs/LANGUAGE_POLICY.md",
+    "docs/ru/MAKE_FEATURE_INTEGRATION.md",
+    "docs/ru/LANGUAGE_POLICY.md",
 )
 
 
@@ -134,6 +138,29 @@ class RussianOnboardingTests(unittest.TestCase):
 
 
 
+
+    def test_make_feature_missing_reverse_link_fails(self):
+        page = self.root / "docs/MAKE_FEATURE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/MAKE_FEATURE_INTEGRATION.md)", content)
+        page.write_text(content.replace("(ru/MAKE_FEATURE_INTEGRATION.md)", "(INSTALLATION.md)", 1),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_make_feature_missing_preview_fails(self):
+        page = self.root / "docs/ru/MAKE_FEATURE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        original = "python scripts/skill_manager.py install --target /path/to/project --profile make-feature"
+        self.assertIn(original, content)
+        page.write_text(content.replace(original, "echo no preview", 1), encoding="utf-8")
+        self.check("L10N006")
+
+    def test_make_feature_missing_safety_gate_fails(self):
+        page = self.root / "docs/ru/MAKE_FEATURE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("INDEPENDENT_REVIEW", content)
+        page.write_text(content.replace("INDEPENDENT_REVIEW", "own-approval", 100), encoding="utf-8")
+        self.check("L10N009")
 
     def test_advanced_guide_language_link_fails(self):
         page = self.root / "docs/CLIENT_MIGRATION.md"

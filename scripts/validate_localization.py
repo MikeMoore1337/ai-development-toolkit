@@ -25,12 +25,16 @@ PAGES = (
     "docs/ru/CLIENT_COMPATIBILITY.md",
     "docs/ru/PUBLICATION_POLICY.md",
     "docs/ru/ACCEPTANCE.md",
+    "docs/ru/MAKE_FEATURE_INTEGRATION.md",
+    "docs/ru/LANGUAGE_POLICY.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
     "docs/CLIENT_MIGRATION.md",
     "docs/CLIENT_COMPATIBILITY.md",
     "docs/PUBLICATION_POLICY.md",
+    "docs/MAKE_FEATURE_INTEGRATION.md",
+    "docs/LANGUAGE_POLICY.md",
 )
 RU_PAGES = tuple(page for page in PAGES if page.startswith("docs/ru/"))
 CATALOG_SKILLS = re.compile(r"^\| \[`([^`]+)`\]\([^)]+\) \|", re.M)
@@ -51,12 +55,16 @@ LANGUAGE_LINKS = {
     "docs/CLIENT_MIGRATION.md": "(ru/CLIENT_MIGRATION.md)",
     "docs/CLIENT_COMPATIBILITY.md": "(ru/CLIENT_COMPATIBILITY.md)",
     "docs/PUBLICATION_POLICY.md": "(ru/PUBLICATION_POLICY.md)",
+    "docs/MAKE_FEATURE_INTEGRATION.md": "(ru/MAKE_FEATURE_INTEGRATION.md)",
+    "docs/LANGUAGE_POLICY.md": "(ru/LANGUAGE_POLICY.md)",
     "docs/ru/INSTALLATION.md": "(../INSTALLATION.md)",
     "docs/ru/SKILLS_CATALOG.md": "(../SKILLS_CATALOG.md)",
     "docs/ru/CURATED_SKILL_PACKS.md": "(../CURATED_SKILL_PACKS.md)",
     "docs/ru/CLIENT_MIGRATION.md": "(../CLIENT_MIGRATION.md)",
     "docs/ru/CLIENT_COMPATIBILITY.md": "(../CLIENT_COMPATIBILITY.md)",
     "docs/ru/PUBLICATION_POLICY.md": "(../PUBLICATION_POLICY.md)",
+    "docs/ru/MAKE_FEATURE_INTEGRATION.md": "(../MAKE_FEATURE_INTEGRATION.md)",
+    "docs/ru/LANGUAGE_POLICY.md": "(../LANGUAGE_POLICY.md)",
 }
 
 
@@ -94,7 +102,8 @@ def validate(root: Path) -> list[str]:
         content = russian_readme.read_text(encoding="utf-8")
         for path in ("docs/ru/README.md", "docs/ru/GETTING_STARTED.md",
                      "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md",
-                     "docs/ru/ACCEPTANCE.md"):
+                     "docs/ru/ACCEPTANCE.md", "docs/ru/MAKE_FEATURE_INTEGRATION.md",
+                     "docs/ru/LANGUAGE_POLICY.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -104,7 +113,8 @@ def validate(root: Path) -> list[str]:
         for path in ("GETTING_STARTED.md", "GLOSSARY.md", "INSTALLATION.md",
                      "SKILLS_CATALOG.md", "CURATED_SKILL_PACKS.md",
                      "CLIENT_MIGRATION.md", "CLIENT_COMPATIBILITY.md",
-                     "PUBLICATION_POLICY.md", "ACCEPTANCE.md"):
+                     "PUBLICATION_POLICY.md", "ACCEPTANCE.md",
+                     "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -147,7 +157,8 @@ def validate(root: Path) -> list[str]:
             if len(after) != len(before) or sorted(after) != sorted(before):
                 errors.append(f"L10N005 docs/ru/SKILLS_CATALOG.md: {rule} differ from English")
 
-    for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md"):
+    for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md",
+                 "MAKE_FEATURE_INTEGRATION.md"):
         source = root / "docs" / name
         target = root / "docs/ru" / name
         if source.is_file() and target.is_file():
@@ -171,6 +182,9 @@ def validate(root: Path) -> list[str]:
         "CLIENT_COMPATIBILITY.md": ("L4", "L5", "L6", "NOT_TESTED", "UNSUPPORTED"),
         "PUBLICATION_POLICY.md": ("ID1337", "--mode release", "SHA256"),
         "ACCEPTANCE.md": ("NOT_TESTED", "preview", "apply", "status"),
+        "MAKE_FEATURE_INTEGRATION.md": ("--apply", "feature-delivery", "NOT_TESTED",
+                                        "INDEPENDENT_REVIEW", "Artemiy Miller"),
+        "LANGUAGE_POLICY.md": ("SKILL.md", "Make Feature", "SOURCE_REVISIONS.json"),
     }
     for name, tokens in required_tokens.items():
         target = root / "docs/ru" / name
