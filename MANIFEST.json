@@ -278,6 +278,12 @@
       "performance-load-testing",
       "test-strategy",
       "failure-triage"
+    ],
+    "security-engineering": [
+      "security-engineering",
+      "security-boundaries",
+      "security-review",
+      "security-testing"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -439,6 +445,13 @@
       "skill_root": "extensions/performance/skills",
       "skills": [
         "performance-load-testing"
+      ],
+      "auto_install": false
+    },
+    "security": {
+      "skill_root": "extensions/security/skills",
+      "skills": [
+        "security-engineering"
       ],
       "auto_install": false
     }

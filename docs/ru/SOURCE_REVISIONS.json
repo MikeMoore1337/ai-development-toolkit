@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "fcccc9b1e19c80c1067b02819c84e1a8b15f071a8479f4d00ec5dfe318808f12"
+      "source_sha256": "6f2d884cfaa8a2c44d32464cecb5bd5b0a796d0cd35c75c0b775f393c5ea1ee4"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "af1065bdfce0349fffa7e593f1edabece756eec56f33b38f50e3f655ca25a77b"
+      "source_sha256": "a37177be3f6a44b6fb160daf5af29e85c88aa624f59b8a54093e24519ee8b152"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "9e740ac956c7288e93961b8e1c43d2de4a1a322f6a71e8018426fbe9e2f813d8"
+      "source_sha256": "b75b3d338d0ea08141830e8bd2a105bd1b0a23d4486018a94f3a2e7bccafb0b5"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -156,6 +156,11 @@
       "source": "docs/PERFORMANCE_LOAD_TESTING.md",
       "translation": "docs/ru/PERFORMANCE_LOAD_TESTING.md",
       "source_sha256": "d6331eb30953dd15d72b7f0d636b53b253c90c145a99aad1770c104edf3d6ad6"
+    },
+    {
+      "source": "docs/SECURITY_DEVSECOPS.md",
+      "translation": "docs/ru/SECURITY_DEVSECOPS.md",
+      "source_sha256": "e3f03dad3537cff829a664e51dfde16a30ead8cf77b305c9e3f7becaef3b4416"
     }
   ]
 }
