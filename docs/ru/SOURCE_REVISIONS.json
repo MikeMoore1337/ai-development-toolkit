@@ -31,6 +31,16 @@
       "source": "docs/PUBLICATION_POLICY.md",
       "translation": "docs/ru/PUBLICATION_POLICY.md",
       "source_sha256": "d9421f183e17b4b8c75484c54e5f4ce7497a12564edf6093085965f36c1d8575"
+    },
+    {
+      "source": "docs/MAKE_FEATURE_INTEGRATION.md",
+      "translation": "docs/ru/MAKE_FEATURE_INTEGRATION.md",
+      "source_sha256": "d8e376ab9592f080b5cc4b9361bf192297a14d0a254cfd3d1dfa1eb736d35d2b"
+    },
+    {
+      "source": "docs/LANGUAGE_POLICY.md",
+      "translation": "docs/ru/LANGUAGE_POLICY.md",
+      "source_sha256": "88c45dc5229f58792163443c1a5702014cc00eb64c9d3c759baef8fe618c2247"
     }
   ]
 }
