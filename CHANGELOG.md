@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added Russian specification validation and reproducible release guides with unchanged official CLI commands and owner rights gates (#87).
+
 - Added bilingual Universal Engineering, Skill Quality v2 and historical Source Evaluation guides without changing canonical skills; extended reverse-link and drift checks (#87).
 
 - Added bilingual Clear Voice human-use guides with exact offline install examples and explicit limits; the Russian-primary canonical SKILL.md remains unchanged (#87).
