@@ -36,7 +36,7 @@ For each meaningful component, derive boundaries from a schema or plausible user
 
 ## D. Compare real design alternatives only when valuable
 
-Generate 2-3 variants **only if a material decision is open**. Each candidate must address the same source R/AC, while differing on a named design axis (navigation model, hierarchy, information density, interaction sequence) rather than changing minor colors. Record benefits, risks, accessibility, implementation complexity and which goal it optimizes. A screenshot collage is a STATIC_RENDER; if no actual prototypes were built, explicitly state TEXT_SPEC. Do not silently pick a winner when owner approval is required.
+Generate 2-3 genuinely distinct variants **only if a material decision is open**. Each candidate must address the same source R/AC, while differing on a named design axis (navigation model, hierarchy, information density, interaction sequence) rather than changing minor colors. Record benefits, risks, accessibility, implementation complexity and which goal it optimizes. A screenshot collage is a STATIC_RENDER; if no actual prototypes were built, explicitly state TEXT_SPEC. Do not silently pick a winner when owner approval is required.
 
 | Candidate | Distinguishing decision | Main benefit | Main risk | Verification |
 | --- | --- | --- | --- | --- |
