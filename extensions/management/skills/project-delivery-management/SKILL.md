@@ -14,7 +14,7 @@ metadata:
 
 ## Inputs and authority
 
-Take an existing PRD, repository task list or natural-language goal. Reuse source identifiers `R-ID`, `AC-ID`, priorities, dependencies, exclusions, constraints and open decisions. Use [the existing Product Discovery contract](../../../product/skills/product-discovery/references/PRD_CONTRACT.json) if supplied; never demand a new PRD. A hypothesis remains `UNTESTED` until validated and is not automatically an approved task. Label facts `USER_PROVIDED`, `SOURCE_BACKED`, `OBSERVED`, assumptions `ASSUMPTION`, and gaps `UNKNOWN`. Ask only blocking questions; keep independent tasks moving.
+Take an existing PRD, repository task list or natural-language goal. Reuse source identifiers `R-ID`, `AC-ID`, priorities, dependencies, exclusions, constraints and open decisions. Use the existing Product Discovery contract (`extensions/product/skills/product-discovery/references/PRD_CONTRACT.json`) if supplied; never demand a new PRD. A hypothesis remains `UNTESTED` until validated and is not automatically an approved task. Label facts `USER_PROVIDED`, `SOURCE_BACKED`, `OBSERVED`, assumptions `ASSUMPTION`, and gaps `UNKNOWN`. Ask only blocking questions; keep independent tasks moving.
 
 **GitHub is source of truth** when used. Inspect live Issue/PR, branch HEAD and checks before stating current status; otherwise report the snapshot date and `NOT_VERIFIED`. For projects without GitHub, return a chat plan or an explicitly authorized document. Do not create Issues, edit trackers, deploy, merge or close Issues without the necessary authorization. Owner permissions and project instructions prevail.
 

@@ -79,6 +79,16 @@ Optional, stack-independent guidance for shaping product value before implementa
 
 [Beginner and expert Product Discovery guide](PRODUCT_DISCOVERY.md).
 
+## Project & Delivery Management extension
+
+Optional planning, dependencies, risks and evidence-backed status guidance; does not replace `feature-delivery`, `make-feature` or GitHub Issues.
+
+| Skill | When to use |
+| :--- | :--- |
+| [`project-delivery-management`](../extensions/management/skills/project-delivery-management/SKILL.md) | Turn an existing PRD into traceable tasks, dependencies, risks and verified project status. |
+
+[User guide](PROJECT_DELIVERY_MANAGEMENT.md).
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.

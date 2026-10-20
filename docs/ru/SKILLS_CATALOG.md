@@ -77,6 +77,16 @@
 
 [Руководство Product Discovery для новичков и экспертов](PRODUCT_DISCOVERY.md).
 
+## Расширение Project & Delivery Management
+
+Необязательное управление планом, зависимостями, рисками и доказательствами готовности. Не заменяет `feature-delivery`, `make-feature` или существующие GitHub Issues.
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`project-delivery-management`](../../extensions/management/skills/project-delivery-management/SKILL.md) | Превратить PRD в проверяемый план задач, зависимостей, рисков и статусов. |
+
+[Руководство](PROJECT_DELIVERY_MANAGEMENT.md).
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.

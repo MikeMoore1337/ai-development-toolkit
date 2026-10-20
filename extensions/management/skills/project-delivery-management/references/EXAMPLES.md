@@ -2,7 +2,7 @@
 
 ## Beginner: home expenses
 
-Source: [Product Discovery synthetic PRD](../../../product/skills/product-discovery/references/EXAMPLES.md). All task statuses are `PLANNED`. User value and technologies are **assumptions**, no implementation, real users, timings or CI are observed.
+Source: [Product Discovery synthetic PRD](../../../../product/skills/product-discovery/references/EXAMPLES.md). All task statuses are `PLANNED`. User value and technologies are **assumptions**, no implementation, real users, timings or CI are observed.
 
 **Plain language:** Start by agreeing how one expense is stored, then implement the first entry, then show totals, finally allow correction. Check the result before claiming it works.
 
