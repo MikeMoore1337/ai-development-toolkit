@@ -4646,6 +4646,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "Original Russian translation of Toolkit beginner workflow and quality rubric (#87). No runnable skill files or rights gates changed."
+    },
+    {
+      "id": "documentation-docs-ru-clear-voice-integration-md",
+      "path": "docs/ru/CLEAR_VOICE_INTEGRATION.md",
+      "name": "CLEAR_VOICE_INTEGRATION.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-19",
+      "distribution": "included",
+      "notes": "Human-readable Russian companion to English Clear Voice user guidance (#87), separate from canonical source SKILL.md and unaffected owner-gated rights."
     }
   ],
   "owner_review_record": {

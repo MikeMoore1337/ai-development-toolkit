@@ -29,6 +29,7 @@ PAGES = (
     "docs/ru/LANGUAGE_POLICY.md",
     "docs/ru/BEGINNER_WORKFLOW.md",
     "docs/ru/QUALITY_RUBRIC.md",
+    "docs/ru/CLEAR_VOICE_INTEGRATION.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
@@ -39,6 +40,7 @@ PAGES = (
     "docs/LANGUAGE_POLICY.md",
     "docs/BEGINNER_WORKFLOW.md",
     "docs/QUALITY_RUBRIC.md",
+    "docs/CLEAR_VOICE_INTEGRATION.md",
     "docs/ADAPTATION.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
@@ -71,6 +73,7 @@ LANGUAGE_LINKS = {
     "docs/LANGUAGE_POLICY.md": "(ru/LANGUAGE_POLICY.md)",
     "docs/BEGINNER_WORKFLOW.md": "(ru/BEGINNER_WORKFLOW.md)",
     "docs/QUALITY_RUBRIC.md": "(ru/QUALITY_RUBRIC.md)",
+    "docs/CLEAR_VOICE_INTEGRATION.md": "(ru/CLEAR_VOICE_INTEGRATION.md)",
     "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
     "docs/INTEGRATION_MATRIX.md": "(en/INTEGRATION_MATRIX.md)",
     "docs/PORTABILITY_EVAL_SCENARIOS.md": "(en/PORTABILITY_EVAL_SCENARIOS.md)",
@@ -89,6 +92,7 @@ LANGUAGE_LINKS = {
     "docs/ru/LANGUAGE_POLICY.md": "(../LANGUAGE_POLICY.md)",
     "docs/ru/BEGINNER_WORKFLOW.md": "(../BEGINNER_WORKFLOW.md)",
     "docs/ru/QUALITY_RUBRIC.md": "(../QUALITY_RUBRIC.md)",
+    "docs/ru/CLEAR_VOICE_INTEGRATION.md": "(../CLEAR_VOICE_INTEGRATION.md)",
 }
 
 
@@ -128,7 +132,8 @@ def validate(root: Path) -> list[str]:
                      "docs/ru/INSTALLATION.md", "docs/ru/SKILLS_CATALOG.md",
                      "docs/ru/ACCEPTANCE.md", "docs/ru/MAKE_FEATURE_INTEGRATION.md",
                      "docs/ru/LANGUAGE_POLICY.md",
-                     "docs/ru/BEGINNER_WORKFLOW.md"):
+                     "docs/ru/BEGINNER_WORKFLOW.md",
+                     "docs/ru/CLEAR_VOICE_INTEGRATION.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -140,7 +145,8 @@ def validate(root: Path) -> list[str]:
                      "CLIENT_MIGRATION.md", "CLIENT_COMPATIBILITY.md",
                      "PUBLICATION_POLICY.md", "ACCEPTANCE.md",
                      "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md",
-                     "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md"):
+                     "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md",
+                     "CLEAR_VOICE_INTEGRATION.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -184,7 +190,8 @@ def validate(root: Path) -> list[str]:
                 errors.append(f"L10N005 docs/ru/SKILLS_CATALOG.md: {rule} differ from English")
 
     for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md",
-                 "MAKE_FEATURE_INTEGRATION.md", "BEGINNER_WORKFLOW.md"):
+                 "MAKE_FEATURE_INTEGRATION.md", "BEGINNER_WORKFLOW.md",
+                 "CLEAR_VOICE_INTEGRATION.md"):
         source = root / "docs" / name
         target = root / "docs/ru" / name
         if source.is_file() and target.is_file():
@@ -214,6 +221,8 @@ def validate(root: Path) -> list[str]:
         "BEGINNER_WORKFLOW.md": ("NOT_RUN", "BLOCKED", "NOT_TESTED", "NOT_MEASURED",
                                "feature-delivery", "make-feature", "--apply", "EXTERNAL",
                                "UNSUPPORTED", "NOT_DONE"),
+        "CLEAR_VOICE_INTEGRATION.md": ("--apply", "NOT_TESTED", "SKILL.md",
+                                       "ru-primary-en-secondary", "права"),
         "QUALITY_RUBRIC.md": ("verified", "unknown", "failed", "BLOCKER", "WARNING",
                               "NOT_MEASURED", "--mode inventory", "--mode release",
                               "0.17.1", "1.7.12"),

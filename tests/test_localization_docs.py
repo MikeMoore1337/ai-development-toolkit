@@ -46,6 +46,8 @@ FIXTURE_FILES = (
     "docs/QUALITY_RUBRIC.md",
     "docs/ru/BEGINNER_WORKFLOW.md",
     "docs/ru/QUALITY_RUBRIC.md",
+    "docs/CLEAR_VOICE_INTEGRATION.md",
+    "docs/ru/CLEAR_VOICE_INTEGRATION.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
     "docs/TASK_PROMPT_TEMPLATE.md",
@@ -192,6 +194,30 @@ class RussianOnboardingTests(unittest.TestCase):
         self.assertIn("--mode release", text)
         page.write_text(text.replace("--mode release", "--mode casual", 100),
                         encoding="utf-8")
+        self.check("L10N009")
+
+    def test_clear_voice_missing_reverse_link_fails(self):
+        page = self.root / "docs/CLEAR_VOICE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/CLEAR_VOICE_INTEGRATION.md)", content)
+        page.write_text(content.replace("(ru/CLEAR_VOICE_INTEGRATION.md)",
+                                        "(CLEAR_VOICE_INTEGRATION.md)"),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_clear_voice_missing_install_preview_fails(self):
+        page = self.root / "docs/ru/CLEAR_VOICE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        command = "python scripts/skill_manager.py install --target /path/to/repo --profile editorial"
+        self.assertIn(command, content)
+        page.write_text(content.replace(command, "echo no-preview", 1), encoding="utf-8")
+        self.check("L10N006")
+
+    def test_clear_voice_missing_not_tested_fails(self):
+        page = self.root / "docs/ru/CLEAR_VOICE_INTEGRATION.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_TESTED", content)
+        page.write_text(content.replace("NOT_TESTED", "PASS", 100), encoding="utf-8")
         self.check("L10N009")
 
     def test_make_feature_missing_reverse_link_fails(self):

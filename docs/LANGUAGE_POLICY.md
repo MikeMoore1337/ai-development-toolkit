@@ -20,7 +20,7 @@ The source tree has 34 Markdown pages immediately under `docs/` (excluding `docs
 | Priority EN → RU completed / remaining | [Beginner workflow](ru/BEGINNER_WORKFLOW.md) translated; `UNIVERSAL_ENGINEERING.md` and `SKILL_QUALITY_V2.md` remain English-only |
 | English-only specialized/audit/history | Remaining docs such as `PROVENANCE_AUDIT.md`, `RELEASE_PROCESS.md`, `SKILLS_QUALITY_AUDIT.md` and archived release/evaluation notes |
 | Canonical skill with Russian instructions | Make Feature and Clear Voice; **no parallel installable English `SKILL.md`** |
-| This change | [Make Feature user guide (EN)](MAKE_FEATURE_INTEGRATION.md) and [guide (RU)](ru/MAKE_FEATURE_INTEGRATION.md) |
+| Bilingual human guides for Russian-primary skills | [Make Feature EN](MAKE_FEATURE_INTEGRATION.md) / [RU](ru/MAKE_FEATURE_INTEGRATION.md); [Clear Voice EN](CLEAR_VOICE_INTEGRATION.md) / [RU](ru/CLEAR_VOICE_INTEGRATION.md). Original skills remain unchanged. |
 
 Read existing [Russian docs index](ru/README.md) for actual currently translated pages. Never infer the accuracy or freshness of a translation from the presence of a link.
 

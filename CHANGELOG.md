@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added bilingual Clear Voice human-use guides with exact offline install examples and explicit limits; the Russian-primary canonical SKILL.md remains unchanged (#87).
+
 - Added full Russian beginner workflow and quality rubric, normalized the canonical rubric to English, with translation consistency checks (#87).
 
 - Added English counterparts to four Russian-first guides (adaptation, integration matrix, portability trials, task prompt), with reversible source revision tracking (#87).
