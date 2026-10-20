@@ -1,5 +1,7 @@
 # From an idea to a first verified result
 
+[Русская версия](ru/BEGINNER_WORKFLOW.md)
+
 **Start here if you do not code.** Describe what you want in ordinary language. You do not need to choose Python, a database, a frontend, a skill name or a role first. The AI client can explain and plan; changing files, running commands and publishing depend on the client's actual tools and your permissions.
 
 This is one **conversation contract**, not an installer, autonomous agent, extra skill, CLI or guarantee of execution. Existing [task-scoping](../.agents/skills/task-scoping/SKILL.md), [feature-delivery](../.agents/skills/feature-delivery/SKILL.md), [minimal-safe-change](../.agents/skills/minimal-safe-change/SKILL.md), [implementation](../.agents/skills/implementation/SKILL.md), and [QA strategy](../.agents/skills/qa-strategy/SKILL.md) remain the engineering sources. Select one feature controller if needed; never stack `feature-delivery` and `make-feature` by default.
