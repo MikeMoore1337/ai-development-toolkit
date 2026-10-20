@@ -236,9 +236,9 @@ def validate(root: Path) -> list[str]:
     metrics_source = root / "docs/SKILL_QUALITY_METRICS.md"
     metrics_ru = root / "docs/ru/SKILL_QUALITY_METRICS.md"
     if metrics_source.is_file() and metrics_ru.is_file():
-        regex = re.compile(r"^\\s*python scripts/skill_quality_metrics\\.py(?: .*)?$", re.M)
-        before = set(regex.findall(metrics_source.read_text(encoding="utf-8")))
-        after = set(regex.findall(metrics_ru.read_text(encoding="utf-8")))
+        regex = re.compile(r"^\s*python scripts/skill_quality_metrics\.py(?: .*)?$", re.M)
+        before = {line.strip() for line in regex.findall(metrics_source.read_text(encoding="utf-8"))}
+        after = {line.strip() for line in regex.findall(metrics_ru.read_text(encoding="utf-8"))}
         if not before.issubset(after):
             errors.append("L10N006 docs/ru/SKILL_QUALITY_METRICS.md: metrics CLI examples differ from English")
 
