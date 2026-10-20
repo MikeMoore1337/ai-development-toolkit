@@ -111,6 +111,10 @@
 
 Опциональный навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) проверяет версии наборов LLM, регрессию промптов, поиск и обоснованность RAG-ответов, права инструментов на синтетических офлайн-примерах. [Руководство](AI_ENGINEERING_QA.md). Без второго исполнителя моделей и платных API.
 
+## Security Engineering
+
+Опциональный [security-engineering](../../extensions/security/skills/security-engineering/SKILL.md) связывает угрозы, границы доверия, риски и проверяемые защитные меры. [Руководство](SECURITY_DEVSECOPS.md). Один новый навык без сканера.
+
 ## Performance & Load Testing
 
 Опциональный [performance-load-testing](../../extensions/performance/skills/performance-load-testing/SKILL.md) описывает ограниченные модели нагрузки, метрики задержек, пропускную способность, ошибки, бюджеты и честное сравнение baseline/candidate. [Руководство](PERFORMANCE_LOAD_TESTING.md). Без внешней нагрузки.
@@ -195,6 +199,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |

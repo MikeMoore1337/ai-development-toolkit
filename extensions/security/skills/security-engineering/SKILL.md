@@ -21,4 +21,4 @@ metadata:
 7. **Review secrets and CI:** never print real secret values. Examine secret creation, storage, rotation, revocation and redacted findings; examine untrusted PR workflows, permissions, injections, downloads and artifacts. See [CI and secrets](references/OPERATIONS.md).
 8. **Report and hand off:** prioritize confirmed or plausible risk with a minimal fix and regression test, retain uncertainty, identify residual risk and the responsible human decision. Do not claim regulatory compliance, SLSA level, or safety without evidence.
 
-[English guide](../../../../../docs/SECURITY_DEVSECOPS.md) · [Русское руководство](../../../../../docs/ru/SECURITY_DEVSECOPS.md). Demonstration: `python scripts/validate_security.py` from the Toolkit root (offline synthetic evidence only).
+User guides: `docs/SECURITY_DEVSECOPS.md` and `docs/ru/SECURITY_DEVSECOPS.md`. Demonstration: `python scripts/validate_security.py` from the Toolkit root (offline synthetic evidence only).

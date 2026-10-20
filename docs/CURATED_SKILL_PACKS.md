@@ -17,6 +17,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
+| Threat modeling, security architecture and DevSecOps | `security-engineering` | 4 | Offline synthetic tests; no external scans |
 | Bounded load, performance budgets and regressions | `performance-load-testing` | 3 | Synthetic local tests only; no external traffic |
 | Stateful reliability, retry, duplicates and recovery | `reliability-testing` | 4 | Invariants, bounded synthetic fault tests; no production chaos |
 | AI evaluation, RAG or prompt/tool-use regression | `ai-engineering-qa` | 5 | Reuse QA contracts and security guidance; no real model call |
@@ -39,6 +40,10 @@ Optional `ux-design` composes one process skill with existing design-system and 
 ## AI Engineering & QA
 
 The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
+
+## Security Engineering
+
+Optional `security-engineering` profile combines one threat-modeling skill with `security-boundaries`, `security-review` and `security-testing`. It maps boundaries to risks, testable controls and residual risk. [Guide](SECURITY_DEVSECOPS.md). No scanner or live network calls.
 
 ## Performance & Load Testing
 
