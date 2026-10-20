@@ -1,5 +1,7 @@
 # Reproducible release procedure
 
+[Русская версия](ru/RELEASE_PROCESS.md)
+
 The repository follows PR-based delivery. CI on a PR is necessary, not a
 substitute for independently verifying a tagged public release.
 
