@@ -52,6 +52,10 @@ FIXTURE_FILES = (
     "docs/ru/UNIVERSAL_ENGINEERING.md",
     "docs/SKILL_QUALITY_V2.md",
     "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/AGENT_SKILLS_SPEC.md",
+    "docs/ru/AGENT_SKILLS_SPEC.md",
+    "docs/RELEASE_PROCESS.md",
+    "docs/ru/RELEASE_PROCESS.md",
     "docs/SOURCE_EVALUATION.md",
     "docs/en/SOURCE_EVALUATION.md",
     "docs/INTEGRATION_MATRIX.md",
@@ -234,6 +238,26 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("(en/SOURCE_EVALUATION.md)",
                                      "(SOURCE_EVALUATION.md)"), encoding="utf-8")
         self.check("L10N004")
+
+    def test_missing_release_translation_fails(self):
+        (self.root / "docs/ru/RELEASE_PROCESS.md").unlink()
+        self.check("L10N001")
+
+    def test_spec_missing_language_link_fails(self):
+        page = self.root / "docs/AGENT_SKILLS_SPEC.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/AGENT_SKILLS_SPEC.md)", data)
+        page.write_text(data.replace("(ru/AGENT_SKILLS_SPEC.md)", "(AGENT_SKILLS_SPEC.md)"),
+                        encoding="utf-8")
+        self.check("L10N004")
+
+    def test_release_owner_gate_cannot_disappear(self):
+        page = self.root / "docs/ru/RELEASE_PROCESS.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("ID1337", data)
+        page.write_text(data.replace("ID1337", "generic-approval"),
+                        encoding="utf-8")
+        self.check("L10N009")
 
     def test_clear_voice_missing_reverse_link_fails(self):
         page = self.root / "docs/CLEAR_VOICE_INTEGRATION.md"
