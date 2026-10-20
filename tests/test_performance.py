@@ -28,6 +28,27 @@ def record(value: float, status: str = "SUCCESS", i: int = 0) -> dict:
 
 
 class PerformanceContracts(unittest.TestCase):
+    def test_versioned_positive_negative_fixture_catalog(self):
+        fixture = json.loads(
+            (ROOT / "fixtures/performance/cases.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("1.0.0", fixture["fixture_version"])
+        self.assertEqual("SYNTHETIC_ASSUMPTION", fixture["nature"])
+        self.assertEqual("FORBIDDEN", fixture["external_targets"])
+        self.assertEqual(3, len(fixture["positive"]))
+        self.assertEqual(16, len(fixture["negative"]))
+        for case in fixture["positive"]:
+            with self.subTest(positive=case["id"]):
+                config = {k: case[k] for k in
+                          ("profile", "operations", "rps", "duration", "concurrency")}
+                self.assertEqual("PASS", compare(run(Workload(**config)),
+                                                run(Workload(**config), "candidate"))["status"])
+        for case in fixture["negative"]:
+            if "input" in case:
+                with self.subTest(negative=case["id"]):
+                    with self.assertRaises((UnsafeWorkload, TypeError)):
+                        Workload(**case["input"]).slots()
+
     def test_percentile_known_type7_data(self):
         points = [1., 2., 3., 4., 5.]
         self.assertEqual(3, percentile(points, .5))
