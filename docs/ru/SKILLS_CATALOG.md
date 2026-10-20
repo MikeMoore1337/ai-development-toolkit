@@ -123,6 +123,12 @@
 
 Опциональный [reliability-testing](../../extensions/reliability/skills/reliability-testing/SKILL.md) проверяет инварианты при отказах, ограниченные повторы, гонки, порядок событий и восстановление. Девять офлайн-пар эталон/дефект используют условную SQLite-модель. [Руководство](RELIABILITY_TESTING.md). Не доказывает свойства реального брокера.
 
+## DevOps и инфраструктура
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`devops-infrastructure`](../../extensions/devops/skills/devops-infrastructure/SKILL.md) | Проверяйте реальные CI/CD, контейнеры, IaC, окружения и планы развёртывания, не выполняя публикацию. [Руководство](DEVOPS_INFRASTRUCTURE.md). |
+
 ## QA Engineering Pack
 
 Расширение QA необязательно и не устанавливается автоматически вместе с Core.
@@ -199,6 +205,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |

@@ -180,6 +180,18 @@
         "Implement a responsive React component.",
         "Write ordinary unit tests for a string formatting function."
       ]
+    },
+    {
+      "id": "devops-infrastructure-not-ci-triage",
+      "target": "devops-infrastructure",
+      "positive": [
+        "Review the DevOps infrastructure CI/CD pipeline, container and IaC configurations.",
+        "Design a deployment infrastructure plan with source provenance and approval gates."
+      ],
+      "negative": [
+        "Build a responsive React component with forms and UI animations.",
+        "Investigate a single failing pytest unit test using failure triage."
+      ]
     }
   ]
 }

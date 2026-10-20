@@ -17,6 +17,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
+| CI/CD, containers, infrastructure and deployment planning | `devops-infrastructure` | 4 | Offline synthetic checks only; no cloud or Docker required |
 | Threat modeling, security architecture and DevSecOps | `security-engineering` | 4 | Offline synthetic tests; no external scans |
 | Bounded load, performance budgets and regressions | `performance-load-testing` | 3 | Synthetic local tests only; no external traffic |
 | Stateful reliability, retry, duplicates and recovery | `reliability-testing` | 4 | Invariants, bounded synthetic fault tests; no production chaos |
@@ -40,6 +41,10 @@ Optional `ux-design` composes one process skill with existing design-system and 
 ## AI Engineering & QA
 
 The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
+
+## DevOps & Infrastructure
+
+The optional `devops-infrastructure` profile combines one specialized skill with existing release, security-boundary and architecture guidance. It prepares CI/CD and IaC plans without running deployments. [Guide](DEVOPS_INFRASTRUCTURE.md).
 
 ## Security Engineering
 

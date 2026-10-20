@@ -1,0 +1,232 @@
+{
+  "fixture_version": "1.0.0",
+  "nature": "SYNTHETIC_CONTRACT_ONLY",
+  "reference": {
+    "pipeline_id": "fictional-python-app-61",
+    "repository": "synthetic/example",
+    "trigger": "pull_request",
+    "trust": "untrusted",
+    "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "build_environment": "python-stdlib-offline",
+    "dependencies": [
+      "python-standard-library"
+    ],
+    "stages": [
+      {
+        "id": "checkout",
+        "inputs": "revision",
+        "success": "source available",
+        "failure": "checkout fails",
+        "depends_on": [],
+        "permissions": "contents:read",
+        "evidence": "synthetic-source"
+      },
+      {
+        "id": "checks",
+        "inputs": "source",
+        "success": "all required checks pass",
+        "failure": "test fails",
+        "depends_on": [
+          "checkout"
+        ],
+        "permissions": "contents:read",
+        "evidence": "synthetic-tests"
+      },
+      {
+        "id": "build",
+        "inputs": "checked source",
+        "success": "checksum matches",
+        "failure": "checksum differs",
+        "depends_on": [
+          "checks"
+        ],
+        "permissions": "contents:read",
+        "evidence": "synthetic-artifact"
+      },
+      {
+        "id": "readiness",
+        "inputs": "artifact",
+        "success": "plan review",
+        "failure": "blocked",
+        "depends_on": [
+          "build"
+        ],
+        "permissions": "contents:read",
+        "evidence": "synthetic-plan"
+      }
+    ],
+    "required_checks": {
+      "unit": true,
+      "contract": true,
+      "static": true
+    },
+    "artifact": {
+      "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "synthetic_bytes": "abc",
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      "provenance": "SYNTHETIC_KNOWN_SOURCE"
+    },
+    "permissions": {
+      "contents": "read",
+      "id_token": false
+    },
+    "secrets": {
+      "available": false,
+      "embedded_value": null
+    },
+    "environment": {
+      "name": "ci",
+      "endpoint_environment": "ci"
+    },
+    "approval": {
+      "scoped": false,
+      "target": null,
+      "evidence": null
+    },
+    "migration": {
+      "compatible": true,
+      "complete": true,
+      "partial": false
+    },
+    "recovery": {
+      "procedure": "Review forward-fix for fictional app",
+      "data_rollback": false,
+      "restore_tested": false
+    },
+    "config": {
+      "port": 8080,
+      "debug": false
+    },
+    "container": {
+      "enabled": false,
+      "startup": null,
+      "expected_startup": null,
+      "healthcheck": null
+    },
+    "iac": {
+      "deletions": [],
+      "approved_deletions": []
+    },
+    "deployment": {
+      "state": "PLAN_VALIDATED",
+      "mode": "synthetic",
+      "apply_evidence": null,
+      "verification_evidence": null,
+      "evidence": "PLAN_VALIDATED"
+    }
+  },
+  "negative": [
+    {
+      "id": "missing-check",
+      "path": "required_checks.unit",
+      "value": false,
+      "code": "MISSING_REQUIRED_CHECK"
+    },
+    {
+      "id": "artifact-source-mismatch",
+      "path": "artifact.source_revision",
+      "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "code": "ARTIFACT_MISMATCH"
+    },
+    {
+      "id": "artifact-checksum-mismatch",
+      "path": "artifact.sha256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000",
+      "code": "ARTIFACT_MISMATCH"
+    },
+    {
+      "id": "secret-exposure",
+      "path": "secrets.embedded_value",
+      "value": "SYNTHETIC_CANARY_NEVER_REAL",
+      "code": "SECRET_EXPOSURE"
+    },
+    {
+      "id": "excessive-permissions",
+      "path": "permissions.contents",
+      "value": "write",
+      "code": "EXCESSIVE_CI_PERMISSIONS"
+    },
+    {
+      "id": "untrusted-identity",
+      "path": "permissions.id_token",
+      "value": true,
+      "code": "EXCESSIVE_CI_PERMISSIONS"
+    },
+    {
+      "id": "incompatible-migration",
+      "path": "migration.compatible",
+      "value": false,
+      "code": "UNSAFE_MIGRATION"
+    },
+    {
+      "id": "partial-migration",
+      "path": "migration.partial",
+      "value": true,
+      "code": "UNSAFE_MIGRATION"
+    },
+    {
+      "id": "missing-approval",
+      "path": "deployment.state",
+      "value": "APPLY_AUTHORIZED",
+      "code": "MISSING_APPROVAL"
+    },
+    {
+      "id": "wrong-environment",
+      "path": "environment.endpoint_environment",
+      "value": "production",
+      "code": "WRONG_ENVIRONMENT"
+    },
+    {
+      "id": "unproven-data-rollback",
+      "path": "recovery.data_rollback",
+      "value": true,
+      "code": "UNPROVEN_DATA_RECOVERY"
+    },
+    {
+      "id": "false-deployment",
+      "path": "deployment.state",
+      "value": "APPLIED",
+      "code": "FALSE_APPLY_CLAIM"
+    },
+    {
+      "id": "missing-provenance",
+      "path": "artifact.provenance",
+      "value": "UNKNOWN",
+      "code": "MISSING_PROVENANCE"
+    },
+    {
+      "id": "incompatible-container",
+      "path": "container.enabled",
+      "value": true,
+      "code": "CONTAINER_RUNTIME_CONTRACT"
+    },
+    {
+      "id": "unapproved-resource-delete",
+      "path": "iac.deletions",
+      "value": [
+        "fictional-resource"
+      ],
+      "code": "UNAPPROVED_DESTRUCTION"
+    },
+    {
+      "id": "invalid-port",
+      "path": "config.port",
+      "value": 70000,
+      "code": "INVALID_CONFIG"
+    },
+    {
+      "id": "missing-postdeploy-verification",
+      "path": "deployment.state",
+      "value": "POST_APPLY_VERIFIED",
+      "code": "MISSING_POST_VERIFICATION"
+    },
+    {
+      "id": "cyclic-stages",
+      "path": "stages.0.depends_on",
+      "value": [
+        "readiness"
+      ],
+      "code": "CYCLIC_PIPELINE"
+    }
+  ]
+}

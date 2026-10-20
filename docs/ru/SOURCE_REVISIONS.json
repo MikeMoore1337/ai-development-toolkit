@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "6f2d884cfaa8a2c44d32464cecb5bd5b0a796d0cd35c75c0b775f393c5ea1ee4"
+      "source_sha256": "a8bee8e7c7859519510070d4d61eeb2b0d2ea43910c69b07ed229a5e7b1a304f"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "a37177be3f6a44b6fb160daf5af29e85c88aa624f59b8a54093e24519ee8b152"
+      "source_sha256": "9d04ac7786fde804c60c905991638bd844fafe77306614939ab0acfc61d8e470"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "b75b3d338d0ea08141830e8bd2a105bd1b0a23d4486018a94f3a2e7bccafb0b5"
+      "source_sha256": "9f98c1b2188e5346e8a016554b3f4fd7d3f5f4d4bda67b7dda0054d123b5768f"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -161,6 +161,11 @@
       "source": "docs/SECURITY_DEVSECOPS.md",
       "translation": "docs/ru/SECURITY_DEVSECOPS.md",
       "source_sha256": "e3f03dad3537cff829a664e51dfde16a30ead8cf77b305c9e3f7becaef3b4416"
+    },
+    {
+      "source": "docs/DEVOPS_INFRASTRUCTURE.md",
+      "translation": "docs/ru/DEVOPS_INFRASTRUCTURE.md",
+      "source_sha256": "02028a26987db553b9f551fe5b25745dbe8389fca482da56b1f6528515928efb"
     }
   ]
 }

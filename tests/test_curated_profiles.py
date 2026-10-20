@@ -18,6 +18,8 @@ MANIFEST = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
 RULES = json.loads((ROOT / "docs/QUALITY_RULES.json").read_text(encoding="utf-8"))
 LEGACY_PROFILE_DIGEST = "c26a85dd1c214892cbf1ef6539a743c6f0cc87db53242d07f0103c79ecb40a41"
 NEW = {
+    "devops-infrastructure": ["devops-infrastructure", "release-safety",
+                             "security-boundaries", "architecture-decisions"],
     "security-engineering": ["security-engineering", "security-boundaries",
                              "security-review", "security-testing"],
     "performance-load-testing": ["performance-load-testing", "test-strategy",
@@ -55,7 +57,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(36, len(MANIFEST["profiles"]))
+        self.assertEqual(37, len(MANIFEST["profiles"]))
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))
         for name, expected in NEW.items():
