@@ -4906,6 +4906,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "Original Russian translation of Agent Skills format or release procedure (#87); no changes to bundled SKILL.md or legal approvals."
+    },
+    {
+      "id": "documentation-docs-ru-skill-quality-metrics-md",
+      "path": "docs/ru/SKILL_QUALITY_METRICS.md",
+      "name": "SKILL_QUALITY_METRICS.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-19",
+      "distribution": "included",
+      "notes": "Human-readable Russian translation of internal source quality metrics methodology, Issue #87. No installed SKILL.md, QA rights snapshot, runtime code or external permissions modified."
     }
   ],
   "owner_review_record": {
