@@ -125,6 +125,12 @@ Optional [performance-load-testing](../extensions/performance/skills/performance
 
 Optional [reliability-testing](../extensions/reliability/skills/reliability-testing/SKILL.md) adds invariant-first fault testing, bounded retries, replay, version conflicts and recovery checks. Nine offline reference/mutant pairs use fictional SQLite state. [Guide](RELIABILITY_TESTING.md). No real broker or production claim.
 
+## DevOps & Infrastructure extension
+
+| Skill | When to use it |
+| :--- | :--- |
+| [`devops-infrastructure`](../extensions/devops/skills/devops-infrastructure/SKILL.md) | Discover actual CI/CD, container and IaC contracts, plan verified deployment and recovery without execution. [Guide](DEVOPS_INFRASTRUCTURE.md). |
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -201,6 +207,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |

@@ -284,6 +284,12 @@
       "security-boundaries",
       "security-review",
       "security-testing"
+    ],
+    "devops-infrastructure": [
+      "devops-infrastructure",
+      "release-safety",
+      "security-boundaries",
+      "architecture-decisions"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -452,6 +458,13 @@
       "skill_root": "extensions/security/skills",
       "skills": [
         "security-engineering"
+      ],
+      "auto_install": false
+    },
+    "devops": {
+      "skill_root": "extensions/devops/skills",
+      "skills": [
+        "devops-infrastructure"
       ],
       "auto_install": false
     }
