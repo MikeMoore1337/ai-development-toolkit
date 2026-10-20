@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "f6206ba14a469760d4212c14e96434faf8bea1c3c0093ea6e45e6223e994d8ce"
+      "source_sha256": "92d64e3621c2e406d6b125f53f944fc0de89b96e4c0f690d3bb12213d36b1f85"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "49a4ccaf47ec03172c573c6b8b44bc9218de40463b0c00c701eca396ed5d6e7b"
+      "source_sha256": "29d9195dd33d6ef8ed04a53429ef35d4e1aa0128c4798f0998518374467de68b"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "980dc190a011149d0458f1b254067f859c4ae5945b178b82555255ae77bdf393"
+      "source_sha256": "d0c48c0e1901963d2d5018b15645e0740715a49b25de04077448cdbe64b1ce40"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -146,6 +146,11 @@
       "source": "docs/AI_ENGINEERING_QA.md",
       "translation": "docs/ru/AI_ENGINEERING_QA.md",
       "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
+    },
+    {
+      "source": "docs/RELIABILITY_TESTING.md",
+      "translation": "docs/ru/RELIABILITY_TESTING.md",
+      "source_sha256": "17bff6fa76950aa9eb3f3089a30076ce1bb44428896067a156b878ad36ae18ba"
     }
   ]
 }

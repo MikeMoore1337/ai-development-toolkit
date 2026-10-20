@@ -17,6 +17,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Contract and integration tests | `qa-contract` | 4 | Add more only by task |
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
+| Stateful reliability, retry, duplicates and recovery | `reliability-testing` | 4 | Invariants, bounded synthetic fault tests; no production chaos |
 | AI evaluation, RAG or prompt/tool-use regression | `ai-engineering-qa` | 5 | Reuse QA contracts and security guidance; no real model call |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Idea validation, MVP scope and PRD | `product-discovery` | 3 | Formal QA requirements analysis only when needed |
@@ -37,6 +38,10 @@ Optional `ux-design` composes one process skill with existing design-system and 
 ## AI Engineering & QA
 
 The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
+
+## Reliability Testing
+
+The optional `reliability-testing` profile adds one specialist skill and reuses `background-processing`, `integration-testing` and `failure-triage`. Offline independent state oracles reject known broken implementations, without claiming real broker guarantees or exactly-once. [Guide](RELIABILITY_TESTING.md).
 
 ## Backend Development
 
