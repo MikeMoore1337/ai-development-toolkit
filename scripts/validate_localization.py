@@ -32,6 +32,8 @@ PAGES = (
     "docs/ru/CLEAR_VOICE_INTEGRATION.md",
     "docs/ru/UNIVERSAL_ENGINEERING.md",
     "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/ru/AGENT_SKILLS_SPEC.md",
+    "docs/ru/RELEASE_PROCESS.md",
     "docs/en/SOURCE_EVALUATION.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
@@ -46,6 +48,8 @@ PAGES = (
     "docs/CLEAR_VOICE_INTEGRATION.md",
     "docs/UNIVERSAL_ENGINEERING.md",
     "docs/SKILL_QUALITY_V2.md",
+    "docs/AGENT_SKILLS_SPEC.md",
+    "docs/RELEASE_PROCESS.md",
     "docs/SOURCE_EVALUATION.md",
     "docs/ADAPTATION.md",
     "docs/INTEGRATION_MATRIX.md",
@@ -82,6 +86,8 @@ LANGUAGE_LINKS = {
     "docs/CLEAR_VOICE_INTEGRATION.md": "(ru/CLEAR_VOICE_INTEGRATION.md)",
     "docs/UNIVERSAL_ENGINEERING.md": "(ru/UNIVERSAL_ENGINEERING.md)",
     "docs/SKILL_QUALITY_V2.md": "(ru/SKILL_QUALITY_V2.md)",
+    "docs/AGENT_SKILLS_SPEC.md": "(ru/AGENT_SKILLS_SPEC.md)",
+    "docs/RELEASE_PROCESS.md": "(ru/RELEASE_PROCESS.md)",
     "docs/SOURCE_EVALUATION.md": "(en/SOURCE_EVALUATION.md)",
     "docs/en/SOURCE_EVALUATION.md": "(../SOURCE_EVALUATION.md)",
     "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
@@ -105,6 +111,8 @@ LANGUAGE_LINKS = {
     "docs/ru/CLEAR_VOICE_INTEGRATION.md": "(../CLEAR_VOICE_INTEGRATION.md)",
     "docs/ru/UNIVERSAL_ENGINEERING.md": "(../UNIVERSAL_ENGINEERING.md)",
     "docs/ru/SKILL_QUALITY_V2.md": "(../SKILL_QUALITY_V2.md)",
+    "docs/ru/AGENT_SKILLS_SPEC.md": "(../AGENT_SKILLS_SPEC.md)",
+    "docs/ru/RELEASE_PROCESS.md": "(../RELEASE_PROCESS.md)",
 }
 
 
@@ -147,7 +155,8 @@ def validate(root: Path) -> list[str]:
                      "docs/ru/BEGINNER_WORKFLOW.md",
                      "docs/ru/CLEAR_VOICE_INTEGRATION.md",
                      "docs/ru/SKILL_QUALITY_V2.md",
-                     "docs/ru/UNIVERSAL_ENGINEERING.md"):
+                     "docs/ru/UNIVERSAL_ENGINEERING.md",
+                     "docs/ru/AGENT_SKILLS_SPEC.md", "docs/ru/RELEASE_PROCESS.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -162,6 +171,7 @@ def validate(root: Path) -> list[str]:
                      "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md",
                      "CLEAR_VOICE_INTEGRATION.md",
                      "UNIVERSAL_ENGINEERING.md", "SKILL_QUALITY_V2.md",
+                     "AGENT_SKILLS_SPEC.md", "RELEASE_PROCESS.md",
                      "../en/SOURCE_EVALUATION.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
@@ -244,6 +254,10 @@ def validate(root: Path) -> list[str]:
         "SKILL_QUALITY_V2.md": ("NOT_MEASURED", "NOT_APPLICABLE", "EVIDENCE001",
                                 "source_revision", "reviewed_by", "observed_at",
                                 "INDEPENDENT_REVIEW_PENDING", "Issue #11"),
+        "AGENT_SKILLS_SPEC.md": ("skills-ref", "--scope all", "MANIFEST.json",
+                                 "65", "0.1.0", "3.11"),
+        "RELEASE_PROCESS.md": ("ID1337", "--mode release", "BLOCKED",
+                               "NOT_VERIFIED", "SHA256SUMS.txt", "v5.4.0"),
         "QUALITY_RUBRIC.md": ("verified", "unknown", "failed", "BLOCKER", "WARNING",
                               "NOT_MEASURED", "--mode inventory", "--mode release",
                               "0.17.1", "1.7.12"),

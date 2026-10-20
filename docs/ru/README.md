@@ -32,6 +32,8 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
 | Универсальная разработка | [Инженерные навыки (RU)](UNIVERSAL_ENGINEERING.md) / [EN](../UNIVERSAL_ENGINEERING.md) |
 | Стандарт качества навыков v2 | [Skill Quality (RU)](SKILL_QUALITY_V2.md) / [EN](../SKILL_QUALITY_V2.md) |
+| Спецификация Agent Skills | [Спецификация и эталонный CLI (RU)](AGENT_SKILLS_SPEC.md) / [EN](../AGENT_SKILLS_SPEC.md) |
+| Процедура выпуска релиза | [Проверки и разрешения (RU)](RELEASE_PROCESS.md) / [EN](../RELEASE_PROCESS.md) |
 | Адаптация навыков под проект | [Инструкция по адаптации (RU)](../ADAPTATION.md) / [EN](../en/ADAPTATION.md) |
 | Аудит сторонних источников | [Решения (RU)](../SOURCE_EVALUATION.md) / [EN](../en/SOURCE_EVALUATION.md) |
 | Совместимость Codex, Claude Code, Hermes | [Матрица и ограничения (RU)](CLIENT_COMPATIBILITY.md) |
