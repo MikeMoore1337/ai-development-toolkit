@@ -14,7 +14,7 @@
 
 [English](README.md) · **Русский**
 
-[Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 ## Для чего нужен Toolkit
 
-**Впервые знакомишься с проектом?** Открой [пошаговый первый запуск](docs/ru/GETTING_STARTED.md) для Windows, Linux или macOS. Он использует отдельную учебную папку, показывает предварительный просмотр, явную установку и проверку состояния. [Все переведённые материалы](docs/ru/README.md).
+**Впервые знакомишься с проектом или не хочешь использовать терминал?** Открой [«Начните без терминала»](docs/ru/BEGINNER_START.md): выбери клиента, скопируй один из пяти запросов и пойми, что ИИ реально сможет сделать. Python и Git для обсуждения идеи не нужны. Если требуется установить навыки в локальный проект, используй [технический первый запуск](docs/ru/GETTING_STARTED.md) с предварительным просмотром и проверкой. [Все русские материалы](docs/ru/README.md).
 
 Задача не просто в том, чтобы агент быстрее написал код. Нужно понять требования, не затронуть лишнее, проверить реальные сценарии и отличать успешное выполнение теста от корректной работы функции.
 
