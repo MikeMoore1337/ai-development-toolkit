@@ -52,3 +52,9 @@ Do not use `qa-all` as a default and do not assume pytest or Playwright is avail
 - **Missing Python / inaccessible source / unmanaged skill collision:** no forced installation or overwrite. Continue with read-only inspection or a bounded proposal if possible, report exactly why the integration is BLOCKED.
 
 This route does not require a paid Toolkit API or a new orchestration framework. Client-specific skill discovery and genuine usefulness are **NOT_TESTED** until measured in a real client session; see [client evidence](docs/CLIENT_COMPATIBILITY.md) and [pilot protocol](docs/REAL_AGENT_PILOT.md).
+
+## Beginner acceptance: two links and any task (#52)
+
+The [single human acceptance protocol (RU)](docs/ru/ACCEPTANCE.md#сценарий-двух-ссылок-и-произвольной-задачи-issue-52) asks an independent beginner to provide only the Toolkit URL, a disposable target repository URL and a natural-language task **without using a terminal or choosing skills manually**. Offline CLI tests verify safe filesystem behavior, **not** human comprehension or live Codex/Claude Code skill activation.
+
+Independent beginner usability: **NOT_TESTED**. Client discovery/invocation and comparative effectiveness remain separate [#11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11) / [#68](https://github.com/MikeMoore1337/ai-development-toolkit/issues/68) gates under the zero-additional-cost policy.

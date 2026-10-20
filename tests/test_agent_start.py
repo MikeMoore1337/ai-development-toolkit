@@ -105,5 +105,65 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertIn("Claude Code", text)
 
 
+    def test_beginner_acceptance_links_and_human_status(self):
+        protocol = (ROOT / "docs/ru/ACCEPTANCE.md").read_text(encoding="utf-8")
+        self.assertIn("## Сценарий двух ссылок и произвольной задачи (Issue #52)", protocol)
+        for token in ("AGENT_START.ru.md", "NOT_TESTED", "BLOCKED", "preview",
+                      "rollback/recover", "10 минут", "двух необходимых уточнений"):
+            self.assertIn(token, protocol)
+        self.assertIn("(docs/ru/ACCEPTANCE.md#", EN.read_text(encoding="utf-8"))
+        self.assertIn("(docs/ru/ACCEPTANCE.md#", RU.read_text(encoding="utf-8"))
+        self.assertIn("NOT_TESTED", EN.read_text(encoding="utf-8"))
+        self.assertIn("NOT_TESTED", RU.read_text(encoding="utf-8"))
+
+    def test_absent_project_never_created_by_init_or_doctor(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "missing"
+            for cmd in ("doctor", "init"):
+                args = (cmd, "--target", str(target))
+                if cmd == "init":
+                    args += ("--task", "feature", "--apply")
+                response = run_cli(*args)
+                self.assertEqual(response.returncode, 2, response.stderr)
+                self.assertEqual(json.loads(response.stdout)["result"], "BLOCKED")
+                self.assertFalse(target.exists(), "Missing project must remain untouched")
+
+    def test_separate_codex_and_claude_layouts_preserve_project_rules(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            policies = {}
+            for name in ("AGENTS.md", "CLAUDE.md"):
+                path = target / name
+                path.write_text("user-owned policy: do not modify\n", encoding="utf-8")
+                policies[name] = path.read_bytes()
+            codex = run_cli("init", "--target", directory, "--task", "feature", "--apply")
+            self.assertEqual(codex.returncode, 0, codex.stderr)
+            claude = run_cli("init", "--target", directory, "--task", "ui",
+                             "--layout", "claude", "--apply")
+            self.assertEqual(claude.returncode, 0, claude.stderr)
+            for name, before in policies.items():
+                self.assertEqual((target / name).read_bytes(), before)
+            self.assertTrue((target / ".agents/skills/task-scoping/SKILL.md").is_file())
+            self.assertTrue((target / ".claude/skills/task-scoping/SKILL.md").is_file())
+            for layout in ("codex", "claude"):
+                result = run_cli("status", "--target", directory, "--layout", layout)
+                self.assertEqual(result.returncode, 0, (layout, result.stderr))
+
+    def test_locally_modified_managed_skill_is_not_replaced(self):
+        with tempfile.TemporaryDirectory() as directory:
+            initial = run_cli("init", "--target", directory, "--task", "feature",
+                              "--apply")
+            self.assertEqual(initial.returncode, 0, initial.stderr)
+            skill = Path(directory) / ".agents/skills/task-scoping/SKILL.md"
+            skill.write_text(skill.read_text(encoding="utf-8") + "\nlocal owner edit\n",
+                             encoding="utf-8")
+            before = skill.read_bytes()
+            attempt = run_cli("init", "--target", directory, "--task", "feature",
+                              "--apply")
+            self.assertEqual(attempt.returncode, 2, attempt.stderr)
+            self.assertEqual(json.loads(attempt.stdout)["result"], "BLOCKED")
+            self.assertEqual(skill.read_bytes(), before)
+
+
 if __name__ == "__main__":
     unittest.main()
