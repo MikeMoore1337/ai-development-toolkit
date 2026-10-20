@@ -30,6 +30,9 @@ PAGES = (
     "docs/ru/BEGINNER_WORKFLOW.md",
     "docs/ru/QUALITY_RUBRIC.md",
     "docs/ru/CLEAR_VOICE_INTEGRATION.md",
+    "docs/ru/UNIVERSAL_ENGINEERING.md",
+    "docs/ru/SKILL_QUALITY_V2.md",
+    "docs/en/SOURCE_EVALUATION.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
     "docs/CURATED_SKILL_PACKS.md",
@@ -41,6 +44,9 @@ PAGES = (
     "docs/BEGINNER_WORKFLOW.md",
     "docs/QUALITY_RUBRIC.md",
     "docs/CLEAR_VOICE_INTEGRATION.md",
+    "docs/UNIVERSAL_ENGINEERING.md",
+    "docs/SKILL_QUALITY_V2.md",
+    "docs/SOURCE_EVALUATION.md",
     "docs/ADAPTATION.md",
     "docs/INTEGRATION_MATRIX.md",
     "docs/PORTABILITY_EVAL_SCENARIOS.md",
@@ -50,7 +56,7 @@ PAGES = (
     "docs/en/PORTABILITY_EVAL_SCENARIOS.md",
     "docs/en/TASK_PROMPT_TEMPLATE.md",
 )
-RU_PAGES = tuple(page for page in PAGES if page.startswith("docs/ru/"))
+TRANSLATED_PAGES = tuple(page for page in PAGES if page.startswith(("docs/ru/", "docs/en/")))
 CATALOG_SKILLS = re.compile(r"^\| \[`([^`]+)`\]\([^)]+\) \|", re.M)
 CATALOG_PROFILES = re.compile(r"^\| `([a-z][a-z0-9-]*)` \|", re.M)
 CATALOG_ROLES = re.compile(r"^\| (?:Core|QA) \| `([a-z][a-z0-9-]*)` \|", re.M)
@@ -74,6 +80,10 @@ LANGUAGE_LINKS = {
     "docs/BEGINNER_WORKFLOW.md": "(ru/BEGINNER_WORKFLOW.md)",
     "docs/QUALITY_RUBRIC.md": "(ru/QUALITY_RUBRIC.md)",
     "docs/CLEAR_VOICE_INTEGRATION.md": "(ru/CLEAR_VOICE_INTEGRATION.md)",
+    "docs/UNIVERSAL_ENGINEERING.md": "(ru/UNIVERSAL_ENGINEERING.md)",
+    "docs/SKILL_QUALITY_V2.md": "(ru/SKILL_QUALITY_V2.md)",
+    "docs/SOURCE_EVALUATION.md": "(en/SOURCE_EVALUATION.md)",
+    "docs/en/SOURCE_EVALUATION.md": "(../SOURCE_EVALUATION.md)",
     "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
     "docs/INTEGRATION_MATRIX.md": "(en/INTEGRATION_MATRIX.md)",
     "docs/PORTABILITY_EVAL_SCENARIOS.md": "(en/PORTABILITY_EVAL_SCENARIOS.md)",
@@ -93,6 +103,8 @@ LANGUAGE_LINKS = {
     "docs/ru/BEGINNER_WORKFLOW.md": "(../BEGINNER_WORKFLOW.md)",
     "docs/ru/QUALITY_RUBRIC.md": "(../QUALITY_RUBRIC.md)",
     "docs/ru/CLEAR_VOICE_INTEGRATION.md": "(../CLEAR_VOICE_INTEGRATION.md)",
+    "docs/ru/UNIVERSAL_ENGINEERING.md": "(../UNIVERSAL_ENGINEERING.md)",
+    "docs/ru/SKILL_QUALITY_V2.md": "(../SKILL_QUALITY_V2.md)",
 }
 
 
@@ -104,7 +116,7 @@ def validate(root: Path) -> list[str]:
         if not (root / relative).is_file():
             errors.append(f"L10N001 {relative}: missing required page")
 
-    for relative in RU_PAGES:
+    for relative in TRANSLATED_PAGES:
         page = root / relative
         if not page.is_file():
             continue
@@ -133,7 +145,9 @@ def validate(root: Path) -> list[str]:
                      "docs/ru/ACCEPTANCE.md", "docs/ru/MAKE_FEATURE_INTEGRATION.md",
                      "docs/ru/LANGUAGE_POLICY.md",
                      "docs/ru/BEGINNER_WORKFLOW.md",
-                     "docs/ru/CLEAR_VOICE_INTEGRATION.md"):
+                     "docs/ru/CLEAR_VOICE_INTEGRATION.md",
+                     "docs/ru/SKILL_QUALITY_V2.md",
+                     "docs/ru/UNIVERSAL_ENGINEERING.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 README.ru.md: missing localized entry {path}")
 
@@ -146,7 +160,9 @@ def validate(root: Path) -> list[str]:
                      "PUBLICATION_POLICY.md", "ACCEPTANCE.md",
                      "MAKE_FEATURE_INTEGRATION.md", "LANGUAGE_POLICY.md",
                      "BEGINNER_WORKFLOW.md", "QUALITY_RUBRIC.md",
-                     "CLEAR_VOICE_INTEGRATION.md"):
+                     "CLEAR_VOICE_INTEGRATION.md",
+                     "UNIVERSAL_ENGINEERING.md", "SKILL_QUALITY_V2.md",
+                     "../en/SOURCE_EVALUATION.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
 
@@ -191,7 +207,7 @@ def validate(root: Path) -> list[str]:
 
     for name in ("INSTALLATION.md", "CURATED_SKILL_PACKS.md", "CLIENT_MIGRATION.md",
                  "MAKE_FEATURE_INTEGRATION.md", "BEGINNER_WORKFLOW.md",
-                 "CLEAR_VOICE_INTEGRATION.md"):
+                 "CLEAR_VOICE_INTEGRATION.md", "UNIVERSAL_ENGINEERING.md"):
         source = root / "docs" / name
         target = root / "docs/ru" / name
         if source.is_file() and target.is_file():
@@ -223,6 +239,11 @@ def validate(root: Path) -> list[str]:
                                "UNSUPPORTED", "NOT_DONE"),
         "CLEAR_VOICE_INTEGRATION.md": ("--apply", "NOT_TESTED", "SKILL.md",
                                        "ru-primary-en-secondary", "права"),
+        "UNIVERSAL_ENGINEERING.md": ("NOT_MEASURED", "WF001", "feature-delivery",
+                                      "make-feature", "--apply", "AGENTS.md", "CLAUDE.md"),
+        "SKILL_QUALITY_V2.md": ("NOT_MEASURED", "NOT_APPLICABLE", "EVIDENCE001",
+                                "source_revision", "reviewed_by", "observed_at",
+                                "INDEPENDENT_REVIEW_PENDING", "Issue #11"),
         "QUALITY_RUBRIC.md": ("verified", "unknown", "failed", "BLOCKER", "WARNING",
                               "NOT_MEASURED", "--mode inventory", "--mode release",
                               "0.17.1", "1.7.12"),

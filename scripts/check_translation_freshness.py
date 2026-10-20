@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REVISIONS = Path("docs/ru/SOURCE_REVISIONS.json")
 CHECKSUM = re.compile(r"^[0-9a-f]{64}$")
-EN_PATH = re.compile(r"^docs/[A-Z_]+\.md$")
+EN_PATH = re.compile(r"^docs/[A-Z0-9_]+\.md$")
 
 
 def check(root: Path = ROOT) -> tuple[list[str], list[str]]:

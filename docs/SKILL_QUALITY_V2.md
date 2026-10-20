@@ -1,5 +1,7 @@
 # Toolkit Skill Quality v2 (Issue #43)
 
+[Русская версия](ru/SKILL_QUALITY_V2.md)
+
 Toolkit Skill Quality v2 is an **internal quality standard**, not a revision of the official [Agent Skills specification](AGENT_SKILLS_SPEC.md). The pinned official reference validator remains authoritative for upstream format checking. This contract applies to **new or substantially revised skills**. Existing skills are valid without adding uniform new headings. Reuse the [offline metrics](SKILL_QUALITY_METRICS.md), [existing workflow exclusions](QUALITY_RULES.json), [client contracts](CLIENT_COMPATIBILITY.md), and [provenance rules](PROVENANCE_AUDIT.md) rather than creating competing validators or managers.
 
 ## Purpose, activation and boundaries

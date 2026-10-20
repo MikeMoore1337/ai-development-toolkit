@@ -14,7 +14,7 @@
 
 [English](README.md) · **Русский**
 
-[Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
@@ -40,7 +40,7 @@
 | Раздел | Состав | Подробнее |
 | :--- | :--- | :--- |
 | **Core** | 23 навыка разработки, проверки, безопасности, UI и работы с текстом | [Основные навыки](docs/SKILLS_CATALOG.md#core-skills) |
-| **Frontend / Backend / Fullstack** | 14 новых универсальных навыков проектирования и реализации | [Engineering](docs/UNIVERSAL_ENGINEERING.md) |
+| **Frontend / Backend / Fullstack** | 14 новых универсальных навыков проектирования и реализации | [Инженерные навыки RU](docs/ru/UNIVERSAL_ENGINEERING.md) |
 | **QA Engineering Pack** | 27 навыков API/UI/CI, надёжности тестирования и управления качеством | [QA-навыки](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 самостоятельный подключаемый навык работы над функциями | [Интеграция](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Роли** | 5 основных и 11 специализированных ролей QA | [Каталог ролей](docs/SKILLS_CATALOG.md#agent-roles) |

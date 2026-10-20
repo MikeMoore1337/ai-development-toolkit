@@ -1,5 +1,7 @@
 # Universal engineering skills
 
+[Русская версия](ru/UNIVERSAL_ENGINEERING.md)
+
 The core skills remain general-purpose. These three new packs add focused
 engineering guidance without introducing dependencies, runtimes, repository
 modifications or automatic installation.
