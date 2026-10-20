@@ -1,0 +1,39 @@
+# Избирательное внедрение внешних методик (октябрь 2026)
+
+Эта инструкция дополняет `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING_EVALS.md`, `EXTERNAL_SKILL_REVIEW` и `MANIFEST.json`. Она **не** добавляет новые навыки автоматически. Область: четыре проекта владельца, но этот репозиторий остаётся read-only для чужих задач и отчётов.
+
+## Что брать, а что не устанавливать
+
+| Источники | Рекомендация для Toolkit | Обязательная проверка |
+|---|---|---|
+| `obra/superpowers` | Адаптировать доказательство завершения, отладку и независимый review | Не вводить второй controller и безусловный TDD для всех задач |
+| `anthropics/skills` | По Apache-2.0 отдельного `skill-creator` изучить дизайн paired evals и activation | **Поэлементная лицензия**: `docx/pdf/pptx/xlsx` содержат специальные запреты на копирование и производные |
+| `daymade/claude-code-skills/frontend-visual-qa` | Дополнить уже существующие screenshot-fidelity и QA практикой route+state+viewport+observable outcome | Не считать автоматически сохранённый PNG доказательством визуальной корректности |
+| `vercel-labs/agent-browser` | При конкретной недостаче Playwright - изолированный read-only кандидат | Нет cookie export, нет сессий production, не включать в CI по умолчанию |
+| `coreyhaines31/marketingskills`, `wondelai/skills` | Отбирать CRO/SEO, JTBD и user research как тематические references | Не превращать Toolkit в marketing runtime/платный API |
+| `199-biotechnologies/claude-deep-research-skill` | Методики claim-level provenance, DOI и подтверждения источников | Не добавлять search-cli/Exa/платные провайдеры и автономных исследовательских агентов |
+| `pbakaus/impeccable`, `nextlevelbuilder/ui-ux-pro-max-skill`, `Leonxlnx/taste-skill`, `ibelick/ui-skills`, `iart-ai/web-animation-skills`, `LottieFiles/motion-design-skill` | Выборочные методы дизайн-анализа, доступности, motion и screenshots | Утверждённая дизайн-система проекта всегда приоритетнее; избегать дублирующих hooks/CLI |
+| `antfu/skills` | Принцип версионированных справочников Vite/Vitest | Проверять совпадение версий, не заменять официальные docs |
+| `shadcn-ui/ui`, `starc007/ui-components`, `cosscom/coss` | Только идеи совместимых React-примитивов; `cosscom/coss` - коммуникационная платформа | Проверка разных пакетов/лицензий, AGPL/MIT, accessibility; не копировать полные комплекты |
+| `motiondivision/motion`, `greensock/GSAP`, `airbnb/lottie-web` | Описать различия в runtime dependency reviews | Не смешивать с Agent Skills; лицензии и bundle/performance отдельно |
+| `heygen-com/hyperframes`, `remotion-dev/remotion`, `remotion-dev/skills` | Опциональные видео-сценарии только по явному запросу | Проверить лицензию Remotion, локальные затраты и отсутствие ненужных API |
+| `ailabs-393/ai-labs-claude-skills` | Не внедрять пакет | Установщик способен копировать навыки при postinstall; преимущества поверх Toolkit не доказаны |
+
+## Доказательная приёмка одного предлагаемого дополнения
+
+1. Сначала карта функционального пересечения: существующий путь, конкретная недостающая возможность, проектный владелец/Issue, исходный URL, дата и pin SHA при импорте **содержимого**.
+2. Отдельно проверить каждую лицензию файла и вложения, scripts/hooks/postinstall, сетевые направления, cookie/credential доступ, требования платных услуг и автоматические записи. Описать отказ как нормальный исход.
+3. Сформировать минимум положительный, отрицательный и конфликтный prompt, включая новичка и экспертный режим. Ожидаемая маршрутизация фиксируется ДО теста. Не устанавливать исследуемый skill глобально.
+4. Если измеряется эффективность - повторить paired baseline/candidate на одинаковом exact repo SHA, версии модели и правах, менять порядок и сохранять фактические свидетельства **вне Toolkit**. Использовать `python scripts/skill_eval.py <dataset.json>`.
+5. Независимая проверка принимает конкретные критерии, регрессии, ошибки, несанкционированные действия, ложные заявления и неизвестные значения. Синтетика ≠ реальный агентный тест; нет результатов - `NOT_MEASURED`.
+6. Выбрать: `reuse existing`, `reference only`, `adapt`, `isolated install` или `reject`. Для `adapt` создавать минимальный оригинальный текст, не копировать лицензионно запрещённые материалы.
+7. Любое изменение существующих навыков - обычный PR, MANIFEST/docs/tests и проверка обоих языков документации. Пользовательские отчёты не сохраняются в Toolkit.
+
+## Применение по продуктам
+
+- **YFC:** дополнительные visual QA/motion/performance и доказательная SEO-конверсия через существующие roles/CI, без редизайна и новых библиотек по умолчанию.
+- **Hermes:** Control Center - **полноценный React/Vite UI** и требует визуальных доказательств; Research Scout - независимая научная верификация. Не импортировать UI skills в resident runtime.
+- **Second Brain:** собственный дизайн v7, Motion и Playwright; расширять evidence, не заменять анимационный стек.
+- **Toolkit:** воспроизводимые skill evals и правильная маршрутизация, а не бесконечное расширение каталога.
+
+Ни один из перечисленных внешних инструментов этим документом не установлен. Исторический аудит: https://github.com/obra/superpowers · https://github.com/anthropics/skills · https://github.com/daymade/claude-code-skills/tree/main/frontend-visual-qa. Текущий анализ - рекомендации по исходникам, а не proof реальной AI-эффективности.

@@ -12,3 +12,5 @@ This is a portable collection of AI development skills and reference agent roles
 - Update MANIFEST.json, tests and docs for changes to the core.
 - Run `python scripts/validate_pack.py` and `python -m unittest discover -s tests -v`.
 - Never claim official `skills-ref`, production, or live agent evaluations were run if they were not.
+
+- For suggestions drawn from third-party AI/design/QA collections, apply [selective external adoption and evidence gates](docs/EXTERNAL_METHODS_ADOPTION.md) (RU; [English](docs/en/EXTERNAL_METHODS_ADOPTION.md)). Never import entire bundles by default. Hermes Control Center is a real UI; its browser QA must not be conflated with resident-agent runtime skills.
