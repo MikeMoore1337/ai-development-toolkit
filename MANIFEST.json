@@ -242,6 +242,12 @@
       "product-discovery",
       "task-scoping",
       "research-verification"
+    ],
+    "project-delivery-management": [
+      "project-delivery-management",
+      "task-scoping",
+      "requirements-traceability",
+      "quality-gate-assessment"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -361,6 +367,13 @@
       "skill_root": "extensions/product/skills",
       "skills": [
         "product-discovery"
+      ],
+      "auto_install": false
+    },
+    "management": {
+      "skill_root": "extensions/management/skills",
+      "skills": [
+        "project-delivery-management"
       ],
       "auto_install": false
     }

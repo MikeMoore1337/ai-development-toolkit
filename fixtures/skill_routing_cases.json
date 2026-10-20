@@ -144,6 +144,20 @@
         "Use code review to inspect a production implementation diff for regressions.",
         "Design a database migration with a rollback plan."
       ]
+    },
+    {
+      "id": "delivery-plan-versus-feature-execution",
+      "target": "project-delivery-management",
+      "positive": [
+        "project delivery management plan from PRD dependencies risks statuses",
+        "delivery plan for tasks and blocking dependencies from requirements",
+        "project delivery management risks change tracking and handoff"
+      ],
+      "negative": [
+        "Fix a Python bug and implement the code change",
+        "Write a unit test for this backend function",
+        "Publish the release after approved deployment verification"
+      ]
     }
   ]
 }

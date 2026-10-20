@@ -19,6 +19,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Release QA | `qa-release` | 4 | None |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
 | Idea validation, MVP scope and PRD | `product-discovery` | 3 | Formal QA requirements analysis only when needed |
+| Delivery plan, dependencies and risk review | `project-delivery-management` | 4 | Add a feature controller separately only when implementing |
 | Technical research | `research` | 2 | `codebase-knowledge-map` for large repositories |
 | LLM API provider research | `provider-research` | 2 | No paid API required |
 
@@ -152,3 +153,7 @@ Provenance: only existing source skills are referenced, without changing
 licensed snapshots. ID1337 permission is limited to exact previously pinned
 source versions; neither legal review nor new distribution authorization
 can be inferred. No live Codex, Claude or Hermes discovery is claimed.
+
+## Project & Delivery Management
+
+The optional `project-delivery-management` profile maps an existing PRD to work, dependencies, risks and observed status while reusing scoping/QA skills. No new tracker, workflow controller or automatic GitHub writes. [Guide](PROJECT_DELIVERY_MANAGEMENT.md).

@@ -144,6 +144,9 @@ Roles are reference instructions, not separately running programs. Installers cu
 | QA | `test-management-analyst` | [Role](../extensions/qa/roles/test-management-analyst.md) |
 | QA | `test-reviewer` | [Role](../extensions/qa/roles/test-reviewer.md) |
 
+
+[Project & Delivery Management](PROJECT_DELIVERY_MANAGEMENT.md): optional planning skill, not a task tracker or feature controller.
+
 ## Profiles
 
 See [Curated Skill Packs](CURATED_SKILL_PACKS.md) for task navigation, optional skills and safe transitions.
@@ -157,6 +160,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `product-discovery` | `product-discovery`, `task-scoping`, `research-verification` |
+| `project-delivery-management` | `project-delivery-management`, `task-scoping`, `requirements-traceability`, `quality-gate-assessment` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |
