@@ -69,6 +69,16 @@ Optional, technology-neutral skills under `extensions/fullstack/skills/`.
 | [`cross-layer-debugging`](../extensions/fullstack/skills/cross-layer-debugging/SKILL.md) | Trace faults through interface and backend. |
 | [`end-to-end-feature-design`](../extensions/fullstack/skills/end-to-end-feature-design/SKILL.md) | Design a vertical feature slice with testable acceptance. |
 
+## Product Discovery extension
+
+Optional, stack-independent guidance for shaping product value before implementation.
+
+| Skill | When to use |
+| :--- | :--- |
+| [`product-discovery`](../extensions/product/skills/product-discovery/SKILL.md) | Test the product problem and hypotheses; define MVP inclusions/exclusions, a traceable PRD and meaningful metrics before development. |
+
+[Beginner and expert Product Discovery guide](PRODUCT_DISCOVERY.md).
+
 ## QA Engineering Pack
 
 The QA extension is optional and not automatically installed with the Core.
@@ -146,6 +156,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
+| `product-discovery` | `product-discovery`, `task-scoping`, `research-verification` |
 | `research` | `task-scoping`, `research-verification` |
 | `browser-task` | `browser-workflow-evidence`, `qa-strategy` |
 | `codex-feature` | `task-scoping`, `feature-delivery`, `minimal-safe-change`, `implementation`, `qa-strategy`, `code-review` |

@@ -18,6 +18,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
 | Agent design and architecture | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
+| Idea validation, MVP scope and PRD | `product-discovery` | 3 | Formal QA requirements analysis only when needed |
 | Technical research | `research` | 2 | `codebase-knowledge-map` for large repositories |
 | LLM API provider research | `provider-research` | 2 | No paid API required |
 
@@ -67,6 +68,13 @@ Reuse `agent-architecture` = `architecture-decisions`, `agent-framework-fit`,
 boundaries and `external-skill-review` before third-party imports. Use
 `provider-research` separately for LLM APIs. No Hermes runtime or agent
 framework is installed or mandated. Not a live security/agent behavior test.
+
+## Product Discovery
+
+The optional `product-discovery` profile combines one new product skill with existing
+`task-scoping` and `research-verification`. Its output is a proposed PRD and
+falsifiable hypotheses, not implemented code or validated market demand.
+[Beginner/expert guide](PRODUCT_DISCOVERY.md). No paid API or new installer.
 
 ## Research & Analysis
 

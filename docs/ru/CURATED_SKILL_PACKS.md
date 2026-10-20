@@ -17,8 +17,16 @@
 | Анализ ошибок CI | `qa-ci` | 4 | Нет |
 | Проверка перед выпуском | `qa-release` | 4 | Нет |
 | Архитектура ИИ-агентов | `agent-architecture` | 4 | `security-boundaries`, `external-skill-review` |
+| Проверка идеи, MVP и PRD | `product-discovery` | 3 | Формальный анализ QA-требований только при необходимости |
 | Техническое исследование | `research` | 2 | `codebase-knowledge-map` для больших репозиториев |
 | Изучение условий LLM API | `provider-research` | 2 | Платный API не требуется |
+
+## Product Discovery - от идеи к MVP
+
+Необязательный профиль `product-discovery` объединяет один новый продуктовый навык
+с существующими `task-scoping` и `research-verification`.
+Выход - PRD с проверяемыми гипотезами, а не готовое приложение или доказанный спрос.
+[Руководство на русском](PRODUCT_DISCOVERY.md). Платный API и новый установщик не нужны.
 
 ## Backend - серверная разработка
 

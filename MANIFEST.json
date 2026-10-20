@@ -237,6 +237,11 @@
       "implementation",
       "qa-strategy",
       "code-review"
+    ],
+    "product-discovery": [
+      "product-discovery",
+      "task-scoping",
+      "research-verification"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -349,6 +354,13 @@
         "fullstack-integration",
         "cross-layer-debugging",
         "end-to-end-feature-design"
+      ],
+      "auto_install": false
+    },
+    "product": {
+      "skill_root": "extensions/product/skills",
+      "skills": [
+        "product-discovery"
       ],
       "auto_install": false
     }

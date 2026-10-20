@@ -108,6 +108,18 @@
         "Write a React component with motion transitions.",
         "Prepare a deployment changelog."
       ]
+    },
+    {
+      "id": "product-discovery-prd-not-api-fix",
+      "target": "product-discovery",
+      "positive": [
+        "Create a product discovery PRD: define MVP scope, target users, hypotheses and measurable success metrics.",
+        "Prepare a product discovery hypothesis backlog, MVP exclusions and PRD for a proposed feature."
+      ],
+      "negative": [
+        "Fix a failing Python backend API endpoint and add unit tests.",
+        "Implement an existing approved REST API contract with integration tests."
+      ]
     }
   ]
 }

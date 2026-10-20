@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = ("feature", "ui", "qa", "ci", "release", "docs", "agent",
-         "backend", "frontend", "fullstack", "research", "provider",
+         "backend", "frontend", "fullstack", "research", "provider", "product",
          "docs-edit", "docs-verify")
 
 # Explicit, non-installing suggestions; the primary profile stays minimal.
@@ -97,6 +97,7 @@ def recommend(target: Path, task: str, manifest: dict) -> dict:
             "fullstack": ("fullstack", "User-selected cross-layer feature work; no technology inferred"),
             "research": ("research", "User-selected technical research and source verification"),
             "provider": ("provider-research", "User-selected LLM API or provider comparison"),
+            "product": ("product-discovery", "User-selected idea validation, MVP scope and PRD, not code implementation"),
         }[task]
     profiles = manifest.get("profiles", {})
     if chosen not in profiles:

@@ -26,6 +26,7 @@ NEW = {
     "fullstack": ["task-scoping", "end-to-end-feature-design", "fullstack-integration",
                   "implementation", "qa-strategy", "code-review"],
     "research": ["task-scoping", "research-verification"],
+    "product-discovery": ["product-discovery", "task-scoping", "research-verification"],
 }
 
 
@@ -40,7 +41,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(28, len(MANIFEST["profiles"]))
+        self.assertEqual(29, len(MANIFEST["profiles"]))
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))
         for name, expected in NEW.items():
