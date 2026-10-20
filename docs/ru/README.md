@@ -24,7 +24,7 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Установка, обновление и восстановление | [Установка (RU)](INSTALLATION.md) |
 | Каталог навыков и профилей | [Каталог (RU)](SKILLS_CATALOG.md) |
 | Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
-| Адаптация навыков под проект | [Инструкция по адаптации (RU)](../ADAPTATION.md) |
+| Адаптация навыков под проект | [Инструкция по адаптации (RU)](../ADAPTATION.md) / [EN](../en/ADAPTATION.md) |
 | Совместимость Codex, Claude Code, Hermes | [Матрица и ограничения (RU)](CLIENT_COMPATIBILITY.md) |
 | Перенос навыков между клиентами | [Миграция и восстановление (RU)](CLIENT_MIGRATION.md) |
 | Правила публикации и права | [Правила распространения (RU)](PUBLICATION_POLICY.md) |
