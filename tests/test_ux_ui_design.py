@@ -49,6 +49,7 @@ class UXUIDesignTests(unittest.TestCase):
                          "screenshot-fidelity", "component-architecture"):
             self.assertIn(required, content)
         for ref in ("WORKFLOW.md", "UX_UI_CONTRACT.json", "MANUAL_ACCEPTANCE.md",
+                    "INSPIRATION_REVIEW.md", "REVIEW_AND_STRESS.md",
                     "EXAMPLE_EXPENSES.json", "EXAMPLE_WORKFLOWS.json"):
             self.assertTrue((SKILL / "references" / ref).is_file())
 
@@ -137,6 +138,19 @@ class UXUIDesignTests(unittest.TestCase):
         p = self.sample()
         p["handoff"]["implementation_status"] = "IMPLEMENTED_VERIFIED"
         self.assertTrue(any("without code evidence" in x for x in validate(p)))
+
+    def test_external_source_evaluation_is_not_vendoring(self):
+        review = (SKILL / "references/INSPIRATION_REVIEW.md").read_text(encoding="utf-8")
+        stress = (SKILL / "references/REVIEW_AND_STRESS.md").read_text(encoding="utf-8")
+        for source in ("pbakaus/impeccable", "emilkowalski/skills",
+                       "nextlevelbuilder/ui-ux-pro-max-skill"):
+            self.assertIn(source, review)
+        for key in ("NOT_TESTED", "permission", "same actual data boundary",
+                    "genuinely", "evidence"):
+            # The checklist is a plan, not a claim of runtime verification.
+            self.assertIn(key.lower(), stress.lower())
+        self.assertIn("not copied", review)
+        self.assertIn("No third-party code", review)
 
     def test_fallback_and_bilingual_docs(self):
         for path in ("docs/UX_UI_DESIGN.md", "docs/ru/UX_UI_DESIGN.md"):

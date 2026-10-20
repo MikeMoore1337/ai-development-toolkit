@@ -24,6 +24,12 @@ An ordinary idea is enough. Use the optional `ux-design` profile with a capable 
 
 Trace example: `R1 -> UC1 -> FLOW-1 -> SCREEN-2 -> COMP-FORM -> AC1/AC2`. The [expense journal](../extensions/design/skills/ux-design-process/references/EXAMPLE_EXPENSES.json) and [role-aware work console](../extensions/design/skills/ux-design-process/references/EXAMPLE_WORKFLOWS.json) are synthetic design specifications, not implemented or visually verified applications.
 
+## Additional review from three independent sources
+
+Toolkit adopts **methods, not third-party installations**: clarify the product goal before visual choices, run a realistic data/error stress pass on actual UI inputs, compare genuinely different interaction patterns when a design decision is open, and keep critique separate from measured technical checks. Existing design tokens always take priority over another project's look.
+
+Read the [original review/stress checklist](../extensions/design/skills/ux-design-process/references/REVIEW_AND_STRESS.md) for optional concrete cases (long localized text, zero/one/large values, missing records, authorization, offline, duplicate submit, dynamic viewport and keyboard). The [source assessment](../extensions/design/skills/ux-design-process/references/INSPIRATION_REVIEW.md) records the exact upstream revisions, licenses and what was intentionally excluded. No Impeccable binary, third-party skill pack or design-style database is bundled.
+
 ## Responsive and accessibility evidence
 
 For each important screen propose representative mobile/desktop viewports (tablet when relevant), focus and keyboard access, zoom, long localized text, virtual keyboard, safe-area, overflow, errors and empty states. Proposed layout does not prove responsiveness. Apply relevant [WCAG 2.2](https://www.w3.org/TR/WCAG22/) criteria with their exceptions: focus, keyboard, labels, feedback, contrast, target size and reduced motion. Distinguish automatic checks, manual checks and assistive-technology trials. Never claim compliance from a checklist.

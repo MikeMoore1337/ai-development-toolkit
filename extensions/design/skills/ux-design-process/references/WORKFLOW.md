@@ -32,6 +32,14 @@
 7. Developer handoff: exact links source R -> UC -> FLOW -> SCREEN -> COMPONENT -> AC, assets (real or absent), design decisions, responsive, accessibility, QA cases, status and unresolved assumptions.
 8. Design QA: when an implementation exists, compare same viewport and state, real screenshots/interaction and keyboard behavior. Evidence-gated: SOURCE_VALIDATED, CONTRACT_VALIDATED, RENDERED, INTERACTION_TESTED, VISUAL_REVIEWED, OWNER_ACCEPTED, IMPLEMENTED, RUNTIME_VERIFIED are independent milestones, not an automatic ladder.
 
+## Conditional design-quality review
+
+- Form a minimal brief before visuals: stable product truth, goal, user context, source constraints and acceptance oracle separately from proposed visual choices.
+- Only when a material design trade-off exists, compare alternatives that differ in navigation, hierarchy, density or interaction. Do not require a prototype switcher, a new design-system, or automatic root files.
+- For technical readiness, challenge the real data interface with domain-plausible extreme values, missing properties, localization/long text, permission errors, network/race failures and mobile touch/keyboard constraints.
+- Evaluate qualitative critique, objective technical failures and visual consistency separately. State what was actually reviewed versus planned. Evidence from code inspection is not evidence of observed device behavior.
+- Use [review/stress scenarios](REVIEW_AND_STRESS.md) and [upstream adoption decisions](INSPIRATION_REVIEW.md) as optional references. Do not add their vendors, generated assets, dependencies or execution environments.
+
 ## Failure recovery
 
 - No source => DRAFT_WITH_GAPS, not SOURCE_VALIDATED.
