@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Report stale Russian documentation sources without blocking unrelated changes.
+"""Report stale RU/EN translated documentation without blocking unrelated changes.
 
-Only exact, safe, repository-local source/translation pairs are accepted.
+Only explicit, safe, repository-local source/translation pairs are accepted.
 This checks revision age, not translation meaning, skill activation, or rights.
 """
 from __future__ import annotations
@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REVISIONS = Path("docs/ru/SOURCE_REVISIONS.json")
 CHECKSUM = re.compile(r"^[0-9a-f]{64}$")
-EN_PATH = re.compile(r"^docs/[A-Z_]+\.md$")
+SOURCE_PATH = re.compile(r"^docs/[A-Z_]+\.md$")
 
 
 def check(root: Path = ROOT) -> tuple[list[str], list[str]]:
@@ -32,6 +32,7 @@ def check(root: Path = ROOT) -> tuple[list[str], list[str]]:
         return ["L10N007: invalid source revision metadata"], []
 
     seen: set[str] = set()
+    destinations: set[str] = set()
     for entry in info["pairs"]:
         if not isinstance(entry, dict):
             errors.append("L10N007: invalid revision entry")
@@ -39,13 +40,15 @@ def check(root: Path = ROOT) -> tuple[list[str], list[str]]:
         source = entry.get("source")
         translated = entry.get("translation")
         expected = entry.get("source_sha256")
-        if (not isinstance(source, str) or not EN_PATH.fullmatch(source)
-                or translated != source.replace("docs/", "docs/ru/", 1)
+        if (not isinstance(source, str) or not SOURCE_PATH.fullmatch(source)
+                or translated not in (source.replace("docs/", "docs/ru/", 1),
+                                      source.replace("docs/", "docs/en/", 1))
                 or not isinstance(expected, str) or not CHECKSUM.fullmatch(expected)
-                or source in seen):
+                or source in seen or translated in destinations):
             errors.append("L10N007: unsafe, duplicate or malformed revision entry")
             continue
         seen.add(source)
+        destinations.add(translated)
         original = root / source
         localized = root / translated
         if original.is_symlink() or localized.is_symlink() or not original.is_file() or not localized.is_file():
@@ -70,7 +73,7 @@ def main() -> int:
     for item in warnings:
         print("WARNING: " + item)
     if not errors and not warnings:
-        print("RU translation sources: current revisions (not semantic verification)")
+        print("RU/EN translation sources: current revisions (not semantic verification)")
     return 1 if errors or (args.strict and warnings) else 0
 
 
