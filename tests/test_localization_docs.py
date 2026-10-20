@@ -42,6 +42,15 @@ FIXTURE_FILES = (
     "docs/LANGUAGE_POLICY.md",
     "docs/ru/MAKE_FEATURE_INTEGRATION.md",
     "docs/ru/LANGUAGE_POLICY.md",
+    "docs/ADAPTATION.md",
+    "docs/INTEGRATION_MATRIX.md",
+    "docs/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/TASK_PROMPT_TEMPLATE.md",
+    "docs/en/README.md",
+    "docs/en/ADAPTATION.md",
+    "docs/en/INTEGRATION_MATRIX.md",
+    "docs/en/PORTABILITY_EVAL_SCENARIOS.md",
+    "docs/en/TASK_PROMPT_TEMPLATE.md",
 )
 
 
@@ -59,7 +68,7 @@ class RussianOnboardingTests(unittest.TestCase):
         # the fixture with existing link targets, without copying the whole
         # repository or suppressing missing-link detection in the validator.
         for name in FIXTURE_FILES:
-            if not name.startswith("docs/ru/"):
+            if not name.startswith(("docs/ru/", "docs/en/")):
                 continue
             original = ROOT / name
             for raw in validator.LINK.findall(original.read_text(encoding="utf-8")):
@@ -138,6 +147,24 @@ class RussianOnboardingTests(unittest.TestCase):
 
 
 
+
+    def test_missing_english_translation_fails(self):
+        (self.root / "docs/en/TASK_PROMPT_TEMPLATE.md").unlink()
+        self.check("L10N001")
+
+    def test_english_translation_bad_link_fails(self):
+        page = self.root / "docs/en/ADAPTATION.md"
+        page.write_text(page.read_text(encoding="utf-8") + "\n[Missing](missing-file.md)\n",
+                        encoding="utf-8")
+        self.check("L10N002")
+
+    def test_missing_russian_source_to_english_link_fails(self):
+        page = self.root / "docs/INTEGRATION_MATRIX.md"
+        content = page.read_text(encoding="utf-8")
+        self.assertIn("(en/INTEGRATION_MATRIX.md)", content)
+        page.write_text(content.replace("(en/INTEGRATION_MATRIX.md)",
+                                        "(INTEGRATION_MATRIX.md)", 1), encoding="utf-8")
+        self.check("L10N004")
 
     def test_make_feature_missing_reverse_link_fails(self):
         page = self.root / "docs/MAKE_FEATURE_INTEGRATION.md"
