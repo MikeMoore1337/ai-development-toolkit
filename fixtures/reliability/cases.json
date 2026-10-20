@@ -1,0 +1,244 @@
+{
+  "fixture_version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "duplicate-delivery",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / duplicate-delivery",
+      "business_invariant": "same ID is deduplicated",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "E1 delivered twice",
+      "failure_point": "after first commit",
+      "failure_type": "duplicate-delivery",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "same ID is deduplicated",
+      "expected_persistent_state": {
+        "count": 7,
+        "unique_events": 1
+      },
+      "recovery_behavior": "same ID is deduplicated",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "timeout-after-effect",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / timeout-after-effect",
+      "business_invariant": "client retries same key",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "E2 committed, response lost, replay",
+      "failure_point": "after commit before response",
+      "failure_type": "timeout-after-effect",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "client retries same key",
+      "expected_persistent_state": {
+        "count": 9,
+        "unique_events": 1
+      },
+      "recovery_behavior": "client retries same key",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "lost-update",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / lost-update",
+      "business_invariant": "both increments persist",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "two stale reads followed by two writes",
+      "failure_point": "between read and write",
+      "failure_type": "lost-update",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "both increments persist",
+      "expected_persistent_state": {
+        "count": 11
+      },
+      "recovery_behavior": "both increments persist",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "partial-transaction",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / partial-transaction",
+      "business_invariant": "all-or-nothing rollback",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "debit 5 then injected exception",
+      "failure_point": "after debit before credit",
+      "failure_type": "partial-transaction",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "all-or-nothing rollback",
+      "expected_persistent_state": {
+        "A": 20,
+        "B": 0
+      },
+      "recovery_behavior": "all-or-nothing rollback",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "retry-budget",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / retry-budget",
+      "business_invariant": "bounded retry",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "permanent dependency errors",
+      "failure_point": "after third failure",
+      "failure_type": "retry-budget",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "bounded retry",
+      "expected_persistent_state": {
+        "attempts": 3,
+        "delays": [
+          1,
+          2
+        ],
+        "outcome": "EXHAUSTED"
+      },
+      "recovery_behavior": "bounded retry",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "out-of-order",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / out-of-order",
+      "business_invariant": "newer result preserved",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "version 2 then version 1",
+      "failure_point": "before obsolete version",
+      "failure_type": "out-of-order",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "newer result preserved",
+      "expected_persistent_state": {
+        "version": 2,
+        "value": 20
+      },
+      "recovery_behavior": "newer result preserved",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "ack-before-commit",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / ack-before-commit",
+      "business_invariant": "no acknowledgement without effect",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "ack decision then failed write",
+      "failure_point": "before durable commit",
+      "failure_type": "ack-before-commit",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "no acknowledgement without effect",
+      "expected_persistent_state": {
+        "acknowledged": false,
+        "count": 0
+      },
+      "recovery_behavior": "no acknowledgement without effect",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "restart-recovery",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / restart-recovery",
+      "business_invariant": "durable key and effect",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "commit E7, reopen DB, replay E7",
+      "failure_point": "after commit before restart",
+      "failure_type": "restart-recovery",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "durable key and effect",
+      "expected_persistent_state": {
+        "count": 6,
+        "unique_events": 1
+      },
+      "recovery_behavior": "durable key and effect",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    },
+    {
+      "case_id": "version-conflict",
+      "system": "fictional local counter/ledger",
+      "source_requirement": "Issue #58 / version-conflict",
+      "business_invariant": "stale second update rejected",
+      "initial_state": {
+        "synthetic": true
+      },
+      "operation": "two clients with version 0",
+      "failure_point": "between conflicting writes",
+      "failure_type": "version-conflict",
+      "injection_method": "fixed offline fault or forced schedule",
+      "expected_observable_result": "stale second update rejected",
+      "expected_persistent_state": {
+        "version": 1,
+        "value": 4,
+        "first_accepted": true,
+        "second_rejected": true
+      },
+      "recovery_behavior": "stale second update rejected",
+      "execution_bound": 10,
+      "test_level": "synthetic-offline",
+      "actual_evidence": "NOT_RUN",
+      "result_status": "NOT_RUN",
+      "limitations": [
+        "Synthetic Python/SQLite or virtual schedule only; not real broker or production evidence"
+      ]
+    }
+  ]
+}
