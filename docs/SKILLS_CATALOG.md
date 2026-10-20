@@ -95,7 +95,7 @@ Optional stakeholder needs, business rules, use cases, domain boundaries, select
 
 | Skill | When to use |
 | :--- | :--- |
-| [business-system-analysis](../extensions/analysis/skills/business-system-analysis/SKILL.md) | Refine sourced R-ID and AC-ID into testable system specifications with explicit conflicts, missing contracts, decisions and UX/engineering/QA handoffs. |
+| [`business-system-analysis`](../extensions/analysis/skills/business-system-analysis/SKILL.md) | Refine sourced R-ID and AC-ID into testable system specifications with explicit conflicts, missing contracts, decisions and UX/engineering/QA handoffs. |
 
 [Beginner and expert guide](BUSINESS_SYSTEM_ANALYSIS.md).
 

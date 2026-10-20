@@ -93,7 +93,7 @@
 
 | Навык | Когда использовать |
 | :--- | :--- |
-| [business-system-analysis](../../extensions/analysis/skills/business-system-analysis/SKILL.md) | Превратить исходные R-ID и AC-ID в проверяемую системную спецификацию с конфликтами, неизвестными контрактами и трассировкой. |
+| [`business-system-analysis`](../../extensions/analysis/skills/business-system-analysis/SKILL.md) | Превратить исходные R-ID и AC-ID в проверяемую системную спецификацию с конфликтами, неизвестными контрактами и трассировкой. |
 
 [Руководство для новичков и специалистов](BUSINESS_SYSTEM_ANALYSIS.md).
 
