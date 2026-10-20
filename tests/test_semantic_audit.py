@@ -39,7 +39,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         historical = {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]}
         self.assertEqual(historical, {name: skills for name, skills
                                       in self.manifest["profiles"].items()
-                                      if name not in {"docs-technical", "product-discovery", "project-delivery-management", "business-system-analysis", "ux-design", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure"}})
+                                      if name not in {"docs-technical", "product-discovery", "project-delivery-management", "business-system-analysis", "ux-design", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-qa"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
         self.assertEqual(["product-discovery", "task-scoping", "research-verification"],
