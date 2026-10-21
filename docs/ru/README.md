@@ -36,6 +36,7 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
 | Универсальная разработка | [Инженерные навыки (RU)](UNIVERSAL_ENGINEERING.md) / [EN](../UNIVERSAL_ENGINEERING.md) |
 | Стандарт качества навыков v2 | [Skill Quality (RU)](SKILL_QUALITY_V2.md) / [EN](../SKILL_QUALITY_V2.md) |
+| Испытания навыков с реальными агентами | [Операторское руководство (RU)](REAL_AGENT_PILOT.md) / [EN](../REAL_AGENT_PILOT.md) - реальные вызовы сейчас заблокированы, доступны офлайновые проверки |
 | Метрики навыков и интерпретация отчётов | [Метрики (RU)](SKILL_QUALITY_METRICS.md) / [EN](../SKILL_QUALITY_METRICS.md) |
 | Спецификация Agent Skills | [Спецификация и эталонный CLI (RU)](AGENT_SKILLS_SPEC.md) / [EN](../AGENT_SKILLS_SPEC.md) |
 | Публикация и права на выпуск | [Сопровождение и выпуск (RU)](PUBLISHING.md) / [EN](../PUBLISHING.md) |
