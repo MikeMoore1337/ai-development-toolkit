@@ -20,6 +20,7 @@ The source tree has 34 Markdown pages immediately under `docs/` (excluding `docs
 | More EN → RU guides | [Universal engineering](ru/UNIVERSAL_ENGINEERING.md), [Skill Quality v2](ru/SKILL_QUALITY_V2.md) and [Beginner workflow](ru/BEGINNER_WORKFLOW.md) have Russian counterparts |
 | Additional translated technical guides | [Agent Skills spec RU](ru/AGENT_SKILLS_SPEC.md), [Release process RU](ru/RELEASE_PROCESS.md), and [Skill metrics RU](ru/SKILL_QUALITY_METRICS.md); each retains its canonical English source |
 | Added repository-operation guides (EN → RU) | [Publishing RU](ru/PUBLISHING.md) / [EN](PUBLISHING.md); [Branch protection RU](ru/BRANCH_PROTECTION.md) / [EN](BRANCH_PROTECTION.md). Existing release and owner gates remain unchanged |
+| Source-locked real-agent pilot operator guide (EN → RU) | [Russian operating guide](ru/REAL_AGENT_PILOT.md) / [English canonical source](REAL_AGENT_PILOT.md). Describes the zero-spend hold; does not unlock real agent execution |
 | English-only specialized/audit/history | Remaining docs such as `PROVENANCE_AUDIT.md`, `SKILLS_QUALITY_AUDIT.md` and archived release/evaluation notes |
 | Canonical skill with Russian instructions | Make Feature and Clear Voice; **no parallel installable English `SKILL.md`** |
 | Bilingual human guides for Russian-primary skills | [Make Feature EN](MAKE_FEATURE_INTEGRATION.md) / [RU](ru/MAKE_FEATURE_INTEGRATION.md); [Clear Voice EN](CLEAR_VOICE_INTEGRATION.md) / [RU](ru/CLEAR_VOICE_INTEGRATION.md). Original skills remain unchanged. |
