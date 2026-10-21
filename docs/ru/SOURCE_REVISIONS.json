@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "888439a59d767abdb7ce97cf9ef90f3ea86245166c780dbbdf0f496b9e81b6a8"
+      "source_sha256": "9878d4f004b561151b930b94b94f5a58c47cfdad0b05d2e78dd8245ee45bc415"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "11cd8a51193ed0bf05c6f97aa89a2c5c68dbe554c3b4d899b38810b668c6b79f"
+      "source_sha256": "6398d1436477b025eeb12a6ebb1b55ae169d26b66925d1fddb678bf79c26ff82"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "ac94dfee679bd42b6674cd9666330330afbfa50c6ba8240f6ea42bf4076e2049"
+      "source_sha256": "0c1743c3ea2490f8ca79682990b189f5a76367563ddaa308bebb05d243268f24"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -171,6 +171,11 @@
       "source": "docs/ACCESSIBILITY_QA.md",
       "translation": "docs/ru/ACCESSIBILITY_QA.md",
       "source_sha256": "4b8170430fa16a6b5a85fd27dfda152d42e0fe132407f67ffecae66f6bc837c3"
+    },
+    {
+      "source": "docs/OBSERVABILITY_SRE.md",
+      "translation": "docs/ru/OBSERVABILITY_SRE.md",
+      "source_sha256": "7f879c0245a712d4f262eb7cae07079e389efa083417ca05728cdeb087a7a556"
     }
   ]
 }
