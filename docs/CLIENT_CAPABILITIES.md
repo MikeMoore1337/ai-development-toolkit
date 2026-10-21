@@ -76,3 +76,7 @@ For `ZIP` fixtures only, `client_capabilities.inspect_zip` inspects metadata wit
 Live protocol (separately gated by Issue #11): record client/version, configuration, install layout, exact Skill SHA, discovery observation, invocation evidence, task + acceptance criteria, baseline and candidate, cost, permissions and limitations. Mark each of discovery, invocation, task completion and useful benefit **independently**. No trial, live agent delegation, paid API, account setup or deployment was performed for #68.
 
 Issue #69 receives the *capability vocabulary* for optional integrations, credential/permission boundaries and scoped actions; it does **not** inherit any verified external-tool permissions.
+
+## Tool-level permissions (Issue #69)
+
+The companion [optional integrations and authority contracts](TOOL_INTEGRATIONS.md) add a synthetic per-operation permission/egress/cost/evidence model without changing the existing client registries or L1-L6 levels. A client capability does not grant tool authorization or prove an executed action.

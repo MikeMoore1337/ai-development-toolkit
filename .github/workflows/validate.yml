@@ -94,6 +94,8 @@ jobs:
         run: python scripts/validate_pack.py
       - name: Verify offline AI client contracts (no models or agent runtimes)
         run: python scripts/verify_client_compatibility.py
+      - name: Validate offline tool integration and authority contracts (#69)
+        run: python scripts/validate_tool_integrations.py
       - name: Validate links profiles and exclusive workflows (offline)
         run: python scripts/validate_quality.py
       - name: Check skill selection descriptions with offline lexical fixtures
