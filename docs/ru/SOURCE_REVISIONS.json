@@ -10,7 +10,7 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "771599b77e343a77f0e1fabbcedb81a81203716d04b7bfd32b06345a6f2403cc"
+      "source_sha256": "e54d7c0ca39e9dd88ed67690cb838674b79a411457a58c2406975dc1b18df302"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
@@ -100,7 +100,7 @@
     {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "b505ccc5ffa592c85a7cccaefa78dfa740898186eae389df55426e88f7137d3a"
+      "source_sha256": "79c0bcaa0549276b8e9647e3235c979440afaa387942cb3d230196fc1693af03"
     },
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
@@ -140,7 +140,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "7cabd470d841becac2585c52a52ee3b4a3ee90ac626e79c1712c68d7ae5eabe9"
+      "source_sha256": "e3799da047240c11394702897c34898c3186110d61c10a8287cdfa168e9b120d"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",

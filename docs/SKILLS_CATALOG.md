@@ -32,7 +32,7 @@ These 24 skills live under `.agents/skills/`.
 | [`screenshot-fidelity`](../.agents/skills/screenshot-fidelity/SKILL.md) | Compare UI implementations against screenshots and design references. Use for visual parity, screenshot-to-code, regressions and responsive layout checks. |
 | [`security-boundaries`](../.agents/skills/security-boundaries/SKILL.md) | Review concrete trust boundaries, credentials, sensitive data and harmful failure modes. Use when a change introduces or crosses a security boundary. |
 | [`skill-portability`](../.agents/skills/skill-portability/SKILL.md) | Use when creating, evaluating, importing or migrating an Agent Skills SKILL.md folder. Validate metadata, links, client compatibility, provenance and activation boundarie… |
-| [`ux-ui-design-orchestra`](../.agents/skills/ux-ui-design-orchestra/SKILL.md) | Coordinate read-only design specialists, consolidate one evidence-linked UI concept and stop for owner approval before implementation. |
+| [`ux-ui-design-orchestra`](../.agents/skills/ux-ui-design-orchestra/SKILL.md) | Route plain-language new design or existing UI audit requests through selected specialists; produce one evidence-aware concept and stop for owner visual approval. |
 | [`task-scoping`](../.agents/skills/task-scoping/SKILL.md) | Define the scope, constraints, acceptance criteria and dependencies of a change. Use before implementing a task with incomplete or competing requirements. |
 
 ## Frontend engineering extension

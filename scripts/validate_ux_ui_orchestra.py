@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-MODES = {"audit-proposal", "audit-only", "implement-approved"}
+MODES = {"create-design", "audit-proposal", "audit-only", "implement-approved"}
 WORKERS = {"ACTUAL_SUBAGENT", "GENERIC_SUBAGENT", "SEQUENTIAL"}
 SOURCES = {"LOADED", "REFERENCE_ONLY", "UNAVAILABLE"}
 EVIDENCE = {"RENDERED", "SOURCE_ONLY", "NOT_OBSERVED"}
@@ -35,8 +35,8 @@ def validate(report: object) -> list[str]:
     if not isinstance(workers, list) or not workers:
         errors.append("workers must be nonempty list")
         workers = []
-    if len(workers) > 5:
-        errors.append("too many workstreams")
+    if len(workers) > 3:
+        errors.append("too many workstreams (maximum 3)")
     selected = set()
     for i, worker in enumerate(workers):
         if not isinstance(worker, dict):
@@ -126,6 +126,11 @@ def validate(report: object) -> list[str]:
             errors.append("cannot implement before visual approval")
     if mode == "audit-proposal" and report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") == "NOT_PREPARED":
         errors.append("approval requested without design proposal")
+    if mode == "create-design":
+        if report["gate"] == "AUDIT_COMPLETE":
+            errors.append("new design cannot claim completed UI audit")
+        if report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") != "RENDERED":
+            errors.append("new design cannot request visual approval without rendered visuals")
     return errors
 
 
