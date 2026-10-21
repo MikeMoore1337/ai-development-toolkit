@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "A-unknown-version",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "current_resolved",
+          "value": null
+        }
+      ],
+      "expected_error": "UNKNOWN_CURRENT_VERSION"
+    },
+    {
+      "id": "B-manifest-mismatch",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "manifest.old.alpha-core",
+          "value": "9.9.9"
+        }
+      ],
+      "expected_error": "MANIFEST_LOCK_MISMATCH"
+    },
+    {
+      "id": "C-hidden-transitive",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "reported_changes",
+          "value": [
+            {
+              "id": "alpha-core",
+              "category": "MODIFIED",
+              "old_version": "1.2.0",
+              "new_version": "1.3.0",
+              "direct": true,
+              "scope": "production",
+              "source_changed": false,
+              "checksum_changed": true,
+              "license_changed": false,
+              "reason": "synthetic dependency graph change",
+              "evidence": "synthetic-lock-diff",
+              "risk": "REVIEW",
+              "supply_chain_reviewed": true,
+              "checksum_reviewed": true,
+              "license_reviewed": true
+            }
+          ]
+        }
+      ],
+      "expected_error": "HIDDEN_TRANSITIVE"
+    },
+    {
+      "id": "D-unverified-advisory",
+      "base": "security",
+      "changes": [
+        {
+          "path": "advisory.status",
+          "value": "ADVISORY_NOT_VERIFIED"
+        }
+      ],
+      "expected_error": "UNVERIFIED_ADVISORY"
+    },
+    {
+      "id": "E-affected-range",
+      "base": "security",
+      "changes": [
+        {
+          "path": "advisory.applicability",
+          "value": "NOT_AFFECTED_BY_RANGE"
+        }
+      ],
+      "expected_error": "AFFECTED_RANGE"
+    },
+    {
+      "id": "F-unsupported-runtime",
+      "base": "security",
+      "changes": [
+        {
+          "path": "runtime.candidate_minimum",
+          "value": "3.14.0"
+        }
+      ],
+      "expected_error": "UNSUPPORTED_RUNTIME"
+    },
+    {
+      "id": "G-breaking-api",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "contracts.provided_by_candidate",
+          "value": [
+            "new_fetch"
+          ]
+        }
+      ],
+      "expected_error": "BREAKING_API"
+    },
+    {
+      "id": "H-package-source",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "new_graph.1.source",
+          "value": "unreviewed-registry"
+        }
+      ],
+      "expected_error": "LOCKFILE_DIFF"
+    },
+    {
+      "id": "I-checksum",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "new_graph.1.checksum",
+          "value": "sha256:unexpected"
+        }
+      ],
+      "expected_error": "LOCKFILE_DIFF"
+    },
+    {
+      "id": "J-license",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "new_graph.1.license",
+          "value": "NOASSERTION"
+        }
+      ],
+      "expected_error": "LOCKFILE_DIFF"
+    },
+    {
+      "id": "K-critical-regression",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "tests.required",
+          "value": [
+            "static",
+            "runtime"
+          ]
+        }
+      ],
+      "expected_error": "MISSING_REGRESSION"
+    },
+    {
+      "id": "L-false-pass",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "evidence.run-runtime.executed",
+          "value": false
+        }
+      ],
+      "expected_error": "FALSE_TEST_PASS"
+    },
+    {
+      "id": "M-incomplete-rollback",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "rollback.old_lockfile_revision",
+          "value": null
+        }
+      ],
+      "expected_error": "ROLLBACK_INCOMPLETE"
+    },
+    {
+      "id": "N-irreversible-migration",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "rollback.data_migration_reversible",
+          "value": false
+        }
+      ],
+      "expected_error": "IRREVERSIBLE_MIGRATION"
+    },
+    {
+      "id": "O-mass-upgrade",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "plan.components",
+          "value": [
+            "alpha-core",
+            "gamma-lib",
+            "unrelated-lib"
+          ]
+        }
+      ],
+      "expected_error": "MASS_UPGRADE"
+    },
+    {
+      "id": "P-unauthorized-apply",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "change_status",
+          "value": "CHANGE_APPLIED_LOCALLY"
+        }
+      ],
+      "expected_error": "UNAUTHORIZED_APPLY"
+    },
+    {
+      "id": "Q-false-release",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "change_status",
+          "value": "RELEASED"
+        }
+      ],
+      "expected_error": "FALSE_RELEASE"
+    },
+    {
+      "id": "R-parser-claim",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "claims.real_lockfile_parser",
+          "value": true
+        }
+      ],
+      "expected_error": "ECOSYSTEM_CLAIM"
+    },
+    {
+      "id": "S-dependency-confusion",
+      "base": "security",
+      "changes": [
+        {
+          "path": "new_graph.0.source",
+          "value": "untrusted-registry"
+        }
+      ],
+      "expected_error": "LOCKFILE_DIFF"
+    },
+    {
+      "id": "T-missing-test-evidence",
+      "base": "ordinary",
+      "changes": [
+        {
+          "path": "evidence.run-runtime.result",
+          "value": "UNKNOWN"
+        }
+      ],
+      "expected_error": "FALSE_TEST_PASS"
+    }
+  ]
+}
