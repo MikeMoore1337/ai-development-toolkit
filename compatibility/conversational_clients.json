@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "registry_kind": "CONVERSATIONAL_REFERENCE_CLIENT",
+  "companion_filesystem_registry": "compatibility/clients.json",
+  "reviewed_on": "2026-10-21",
+  "clients": [
+    {
+      "client_id": "chatgpt",
+      "client_type": "CONVERSATIONAL_REFERENCE_CLIENT",
+      "client_version": null,
+      "operating_mode": "GUIDANCE_ONLY",
+      "client_name": "ChatGPT (ordinary chat)",
+      "documentation_url": "https://help.openai.com/en/articles/20001066-skills-in-chatgpt",
+      "secondary_source": "https://help.openai.com/en/articles/8555545-uploading-files-and-audio-to-chatgpt",
+      "native_skill_support": "PARTIAL",
+      "native_skill_mechanism": "Hosted Skills and Plugins where eligible; not Codex project-local .agents/skills",
+      "limit": "Hosted Skills availability depends on plan/workspace/region; URL is guidance, not installation. File and browser actions depend on tools in this specific chat.",
+      "source_contract_status": "VERIFIED",
+      "capabilities": {
+        "toolkit_access": "UNKNOWN",
+        "file_read": "UNKNOWN",
+        "file_write": "UNKNOWN",
+        "terminal": "UNKNOWN",
+        "browser": "UNKNOWN",
+        "github_access": "UNKNOWN",
+        "attachments": "UNKNOWN",
+        "zip_handling": "UNKNOWN",
+        "skill_installation": "UNKNOWN",
+        "skill_discovery": "UNKNOWN",
+        "tool_invocation": "UNKNOWN",
+        "separate_agents": "UNKNOWN",
+        "external_actions": "UNKNOWN"
+      },
+      "approval_requirements": "Explicit target write / installation / external action consent; never imply permission from the URL",
+      "evidence": {
+        "L1": "NOT_APPLICABLE",
+        "L2": "NOT_APPLICABLE",
+        "L3": "VERIFIED",
+        "L4": "NOT_TESTED",
+        "L5": "NOT_TESTED",
+        "L6": "NOT_MEASURED"
+      },
+      "scenarios": {
+        "toolkit_url": "NOT_TESTED",
+        "zip_plus_toolkit_url": "OWNER_REPORTED_PASS",
+        "chat_only": "NOT_TESTED",
+        "hosted_skill_upload": "NOT_TESTED"
+      },
+      "historical_evidence": "Owner-reported ZIP+Toolkit URL experiments 2026-10-20 (client versions/logs not attached); no automatic SKILL invocation evidence",
+      "limitations": "Hosted Skills availability depends on plan/workspace/region; URL is guidance, not installation. File and browser actions depend on tools in this specific chat."
+    },
+    {
+      "client_id": "claude-ai",
+      "client_type": "CONVERSATIONAL_REFERENCE_CLIENT",
+      "client_version": null,
+      "operating_mode": "GUIDANCE_ONLY",
+      "client_name": "Claude.ai (ordinary chat)",
+      "documentation_url": "https://support.claude.com/en/articles/12512180-use-skills-in-claude",
+      "secondary_source": "https://support.claude.com/en/articles/12512198-how-to-create-custom-skills",
+      "native_skill_support": "PARTIAL",
+      "native_skill_mechanism": "Native uploaded Skills via Customize > Skills, subject to account settings; not Claude Code .claude/skills",
+      "limit": "Skills on Free and paid plans require code execution enabled and appropriate settings; feature availability and actions must be confirmed in-session.",
+      "source_contract_status": "VERIFIED",
+      "capabilities": {
+        "toolkit_access": "UNKNOWN",
+        "file_read": "UNKNOWN",
+        "file_write": "UNKNOWN",
+        "terminal": "UNKNOWN",
+        "browser": "UNKNOWN",
+        "github_access": "UNKNOWN",
+        "attachments": "UNKNOWN",
+        "zip_handling": "UNKNOWN",
+        "skill_installation": "UNKNOWN",
+        "skill_discovery": "UNKNOWN",
+        "tool_invocation": "UNKNOWN",
+        "separate_agents": "UNKNOWN",
+        "external_actions": "UNKNOWN"
+      },
+      "approval_requirements": "Explicit target write / installation / external action consent; never imply permission from the URL",
+      "evidence": {
+        "L1": "NOT_APPLICABLE",
+        "L2": "NOT_APPLICABLE",
+        "L3": "VERIFIED",
+        "L4": "NOT_TESTED",
+        "L5": "NOT_TESTED",
+        "L6": "NOT_MEASURED"
+      },
+      "scenarios": {
+        "toolkit_url": "NOT_TESTED",
+        "zip_plus_toolkit_url": "OWNER_REPORTED_PASS",
+        "chat_only": "NOT_TESTED",
+        "hosted_skill_upload": "NOT_TESTED"
+      },
+      "historical_evidence": "Owner-reported ZIP+Toolkit URL experiments 2026-10-20 (client versions/logs not attached); no automatic SKILL invocation evidence",
+      "limitations": "Skills on Free and paid plans require code execution enabled and appropriate settings; feature availability and actions must be confirmed in-session."
+    }
+  ]
+}

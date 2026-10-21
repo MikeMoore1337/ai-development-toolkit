@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from validate_pack import validate_skill
+from client_capabilities import load_conversations
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "compatibility" / "clients.json"
@@ -180,10 +181,12 @@ def main() -> int:
     args = parser.parse_args()
     try:
         data = load_registry(args.registry)
+        conversations = load_conversations()
         if args.project is None:
             if args.client or args.layout or args.skills:
                 raise ContractError("--project is required for filesystem checks")
-            report = {"status": "PASS", "clients": [r["client_id"] for r in data["clients"]],
+            report = {"status": "PASS", "clients": [r["client_id"] for r in data["clients"]] +
+                      [r["client_id"] for r in conversations["clients"]],
                       "scope": "registry only; L4-L6 NOT_TESTED"}
         else:
             if not args.client or not args.skills:
