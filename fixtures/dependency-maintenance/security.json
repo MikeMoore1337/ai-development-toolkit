@@ -77,7 +77,13 @@
       "risk": "REVIEW",
       "supply_chain_reviewed": true,
       "checksum_reviewed": true,
-      "license_reviewed": true
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test1.4.0",
+      "new_checksum": "sha256:test1.5.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
     },
     {
       "id": "transport-core",
@@ -94,7 +100,13 @@
       "risk": "REVIEW",
       "supply_chain_reviewed": true,
       "checksum_reviewed": true,
-      "license_reviewed": true
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test2.0.0",
+      "new_checksum": "sha256:test2.1.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
     }
   ],
   "upgrade_reason": {
@@ -149,7 +161,8 @@
     "introduced": "1.0.0",
     "fixed": "1.5.0",
     "source": "SYNTHETIC ONLY",
-    "evidence_id": "syn-advisory"
+    "evidence_id": "syn-advisory",
+    "id": "SYNTH-ADV-001"
   },
   "tests": {
     "required": [

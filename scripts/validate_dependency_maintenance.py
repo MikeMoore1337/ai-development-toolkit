@@ -104,6 +104,12 @@ def graph_diff(old, new):
             "source_changed": bool(a and b and a["source"] != b["source"]),
             "checksum_changed": bool(a and b and a["checksum"] != b["checksum"]),
             "license_changed": bool(a and b and a["license"] != b["license"]),
+            "old_source": a["source"] if a else None,
+            "new_source": b["source"] if b else None,
+            "old_checksum": a["checksum"] if a else None,
+            "new_checksum": b["checksum"] if b else None,
+            "old_license": a["license"] if a else None,
+            "new_license": b["license"] if b else None,
         }
     return changes
 

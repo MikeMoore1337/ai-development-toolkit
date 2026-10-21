@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from validate_dependency_maintenance import FIXTURES, graph_diff, graph_index, inspect, load, patch
+from validate_dependency_maintenance import FIXTURES, affected, graph_diff, graph_index, inspect, load, patch
 
 
 class DependencyMaintenanceContracts(unittest.TestCase):
@@ -42,13 +42,18 @@ class DependencyMaintenanceContracts(unittest.TestCase):
                                 "value": "NOT_AFFECTED_BY_RANGE"}])
         self.assertIn("AFFECTED_RANGE", inspect(wrong))
 
+    def test_security_affected_range_boundaries(self):
+        self.assertTrue(affected("1.4.0", "1.0.0", "1.5.0"))
+        self.assertFalse(affected("1.5.0", "1.0.0", "1.5.0"))
+        self.assertFalse(affected("0.9.0", "1.0.0", "1.5.0"))
+
     def test_no_implicit_runtime_or_lockfile_parser_claims(self):
         sample = load("ordinary")
         self.assertFalse(sample["claims"]["real_lockfile_parser"])
         self.assertEqual("SYNTHETIC", sample["origin"])
         self.assertEqual("COMPLETE_SYNTHETIC_GRAPH", sample["transitive_status"])
         self.assertIn("ECOSYSTEM_CLAIM", inspect(patch(sample, [
-            {"path": "claims.real_lockfile_parser", "value": True}]))
+            {"path": "claims.real_lockfile_parser", "value": True}])))
 
 
 if __name__ == "__main__":

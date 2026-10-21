@@ -77,7 +77,13 @@
       "risk": "REVIEW",
       "supply_chain_reviewed": true,
       "checksum_reviewed": true,
-      "license_reviewed": true
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test1.2.0",
+      "new_checksum": "sha256:test1.3.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
     },
     {
       "id": "gamma-lib",
@@ -94,7 +100,13 @@
       "risk": "REVIEW",
       "supply_chain_reviewed": true,
       "checksum_reviewed": true,
-      "license_reviewed": true
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test0.9.0",
+      "new_checksum": "sha256:test1.0.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
     }
   ],
   "upgrade_reason": {
