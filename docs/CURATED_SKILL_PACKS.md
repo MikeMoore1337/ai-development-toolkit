@@ -19,6 +19,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Release QA | `qa-release` | 4 | None |
 | Accessibility QA: keyboard, focus, forms, contrast and WCAG | `accessibility-qa` | 4 | Offline examples; optional real browser and AT checks |
 | Incident investigation, telemetry quality, SLI/SLO and recovery | `observability-sre` | 5 | Offline synthetic oracles, owner gate for infrastructure |
+| ETL/ELT, contracts, quality, lineage, incremental processing | `data-engineering` | 5 | Offline synthetic evidence; no warehouse |
 | Library upgrades, lockfile and rollback | `dependency-maintenance` | 5 | Evidence-first; no automatic updates |
 | CI/CD, containers, infrastructure and deployment planning | `devops-infrastructure` | 4 | Offline synthetic checks only; no cloud or Docker required |
 | Threat modeling, security architecture and DevSecOps | `security-engineering` | 4 | Offline synthetic tests; no external scans |
@@ -211,3 +212,8 @@ All 27 QA skills now ship with task-local `references/` (lazy-load only when the
 ## Dependency maintenance
 
 The opt-in `dependency-maintenance` profile reuses existing skills. [Guide](DEPENDENCY_MAINTENANCE.md).
+
+
+## Data Engineering & Analytics
+
+Optional `data-engineering` profile adds one focused skill and reuses Backend, QA and Reliability guidance. [Guide](DATA_ENGINEERING.md).

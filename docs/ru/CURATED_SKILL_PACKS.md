@@ -180,3 +180,8 @@ python scripts/profile_metrics.py
 ## Сопровождение зависимостей
 
 Опциональный профиль `dependency-maintenance` переиспользует существующие навыки. [Руководство](DEPENDENCY_MAINTENANCE.md).
+
+
+## Data Engineering & Analytics - обработка данных
+
+Опциональный профиль `data-engineering` включает один специализированный навык и уже существующие Backend, QA и Reliability. [Руководство](DATA_ENGINEERING.md).

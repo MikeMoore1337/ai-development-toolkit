@@ -84,6 +84,8 @@ jobs:
         run: python scripts/validate_provenance.py --mode release --report "${{ runner.temp }}/provenance-release-preflight.json"
       - name: Validate normalized dependency maintenance fixtures (offline)
         run: python scripts/validate_dependency_maintenance.py
+      - name: Offline data contracts, incremental pipeline and 25 negative oracles
+        run: python scripts/validate_data_engineering.py
       - name: Validate metadata
         run: python scripts/validate_pack.py
       - name: Verify offline AI client contracts (no models or agent runtimes)

@@ -221,6 +221,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
