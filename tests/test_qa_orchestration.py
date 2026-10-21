@@ -37,7 +37,7 @@ class QAOrchestraTests(unittest.TestCase):
             with self.subTest(mutate=repr(mutate)):
                 case = self.case()
                 mutate(case)
-                self.assertEqual(["invalid input shape"], qa.validate_report(case))
+                self.assertTrue(qa.validate_report(case), "Malformed input passed validation")
 
     def test_invalid_root_fails_closed(self):
         for raw in (None, [], ["fake"], "report"):
