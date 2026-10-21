@@ -15,7 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from agent_eval_fixtures import FIXTURES
-from agent_eval_offline_smoke import perform_smoke, oracle_exit, REFERENCE_FIXES, isolated_smoke_root
+from agent_eval_offline_smoke import (perform_smoke, oracle_exit, REFERENCE_FIXES,
+                                      isolated_smoke_root, cleanup_temporary_directory)
 
 
 class OfflineSmokeTests(unittest.TestCase):
@@ -56,43 +57,41 @@ class OfflineSmokeTests(unittest.TestCase):
         self.assertEqual("SKIPPED_RUNTIME_MISSING", report["cases"][0]["state"])
 
     def test_transient_temp_cleanup_enotempty_is_bounded_and_retried(self):
-        original = shutil.rmtree
-        observed = []
-        def flaky(path):
-            observed.append(path)
-            if len(observed) == 1:
+        calls = []
+        def flaky_cleanup():
+            calls.append(1)
+            if len(calls) == 1:
                 raise OSError(errno.ENOTEMPTY, "Go cache writer raced cleanup")
-            return original(path)
-        with patch("agent_eval_offline_smoke.shutil.rmtree", side_effect=flaky):
-            with isolated_smoke_root() as root:
-                (root / "synthetic.txt").write_text("test only", encoding="utf-8")
-        self.assertEqual(len(observed), 2)
-        self.assertFalse(root.exists())
+        cleanup_temporary_directory(flaky_cleanup)
+        self.assertEqual(len(calls), 2)
 
     def test_persistent_temp_cleanup_error_is_not_ignored(self):
-        root = None
-        try:
-            with patch("agent_eval_offline_smoke.shutil.rmtree",
-                       side_effect=OSError(errno.ENOTEMPTY, "persistent")):
-                with self.assertRaises(OSError) as caught:
-                    with isolated_smoke_root() as root:
-                        (root / "synthetic.txt").write_text("test only", encoding="utf-8")
-                self.assertEqual(caught.exception.errno, errno.ENOTEMPTY)
-        finally:
-            if root is not None and root.exists():
-                shutil.rmtree(root)
+        calls = []
+        def broken_cleanup():
+            calls.append(1)
+            raise OSError(errno.ENOTEMPTY, "persistent")
+        with self.assertRaises(OSError) as caught:
+            cleanup_temporary_directory(broken_cleanup)
+        self.assertEqual(caught.exception.errno, errno.ENOTEMPTY)
+        self.assertEqual(len(calls), 8)
 
     def test_other_cleanup_errors_fail_immediately(self):
-        root = None
-        try:
-            with patch("agent_eval_offline_smoke.shutil.rmtree",
-                       side_effect=PermissionError(errno.EACCES, "not allowed")):
-                with self.assertRaises(PermissionError):
-                    with isolated_smoke_root() as root:
-                        pass
-        finally:
-            if root is not None and root.exists():
-                shutil.rmtree(root)
+        calls = []
+        def denied_cleanup():
+            calls.append(1)
+            raise PermissionError(errno.EACCES, "not allowed")
+        with self.assertRaises(PermissionError):
+            cleanup_temporary_directory(denied_cleanup)
+        self.assertEqual(len(calls), 1)
+
+    def test_native_temporary_directory_handles_synthetic_git_like_files(self):
+        with isolated_smoke_root() as root:
+            nested = root / "python-api-baseline" / ".git" / "objects"
+            nested.mkdir(parents=True)
+            sample = nested / "readonly-git-object"
+            sample.write_text("not a real repo", encoding="utf-8")
+            sample.chmod(0o444)
+        self.assertFalse(root.exists())
 
     def test_broken_reference_is_rejected(self):
         with patch.dict(REFERENCE_FIXES["python-api"], {
