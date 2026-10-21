@@ -39,6 +39,8 @@ For `create-design` and substantial redesign proposals, the coordinator **must**
 
 ## Product-specific quality gate
 
+**Never use SaaS as the default style for unrelated products.** Construct the page from the target audience, real content, physical/digital experience and primary task; a generic SaaS hero/card/pricing/dashboard composition is not a starting scaffold. If the requested product actually is SaaS, familiar SaaS patterns remain valid when its workflows support them. Distinguish candidate-specific **observed** template flaws from prospective risks instead of inventing three defects to satisfy the checklist. Originality means meaningful product specificity while preserving usability, accessibility and approved branding.
+
 For substantial new work, require brand-fit, authentic audience/CTA, editorial hierarchy, distinctive visual rhythm, considered imagery and mobile composition. Use actual Impeccable methodology where its sources are readable; otherwise report its source status honestly. Before proposing an approval-ready concept, identify **at least three distinct generic-template risks** and correct them or explain why they suit this product. The dark-SaaS template with repetitive cards and synthetic proof is not an acceptable automatic fallback; neither the palette nor an accessibility PASS proves original art direction. Iterate until the design is not interchangeable with an unrelated business. See [create-design](CREATE_DESIGN.md).
 
 ## Merge algorithm
