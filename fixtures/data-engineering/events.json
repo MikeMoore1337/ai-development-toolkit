@@ -1,0 +1,78 @@
+{
+  "source": "fixture://synthetic-events",
+  "dataset_version": "1.0",
+  "transform_version": "1.0",
+  "source_kind": "SYNTHETIC",
+  "batches": [
+    {
+      "id": "batch-1",
+      "sequence": 1,
+      "records": [
+        {
+          "event_id": "e1",
+          "actor_id": "actor-a",
+          "action": "view",
+          "amount": 1,
+          "event_time": "2026-10-20T11:00:00+00:00"
+        },
+        {
+          "event_id": "e2",
+          "actor_id": "actor-b",
+          "action": "purchase",
+          "amount": 5,
+          "event_time": "2026-10-20T12:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "id": "batch-2",
+      "sequence": 2,
+      "records": [
+        {
+          "event_id": "e3",
+          "actor_id": "actor-a",
+          "action": "view",
+          "amount": 2,
+          "event_time": "2026-10-19T10:00:00+00:00"
+        },
+        {
+          "event_id": "e4",
+          "actor_id": "actor-b",
+          "action": "purchase",
+          "amount": 4,
+          "event_time": "2026-10-20T09:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "id": "batch-3",
+      "sequence": 3,
+      "records": [
+        {
+          "event_id": "e5",
+          "actor_id": "actor-c",
+          "action": "view",
+          "amount": 1,
+          "event_time": "2026-10-19T18:00:00+00:00"
+        },
+        {
+          "event_id": "e6",
+          "actor_id": "actor-c",
+          "action": "purchase",
+          "amount": 1,
+          "event_time": "2026-10-18T08:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "record_count": 6,
+    "totals": {
+      "view": 4,
+      "purchase": 10
+    },
+    "purchase_count": 3,
+    "denominator": 6,
+    "purchase_fraction": 0.5
+  }
+}

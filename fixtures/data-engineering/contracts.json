@@ -1,0 +1,60 @@
+{
+  "contract_id": "synthetic-activity-v1",
+  "dataset_id": "synthetic.events",
+  "dataset_version": "1.0",
+  "source": "fixture://synthetic-events",
+  "producer": "fixture-generator",
+  "consumer": "synthetic-metric",
+  "owner": "UNKNOWN",
+  "record_identity": [
+    "event_id"
+  ],
+  "privacy_class": "SYNTHETIC",
+  "retention": "UNKNOWN",
+  "compatibility": "VERIFY_CONSUMERS",
+  "update_policy": "ORDERED_APPEND",
+  "fields": {
+    "event_id": {
+      "type": "string",
+      "required": true
+    },
+    "actor_id": {
+      "type": "string",
+      "required": true
+    },
+    "action": {
+      "type": "string",
+      "allowed": [
+        "view",
+        "purchase"
+      ],
+      "required": true
+    },
+    "amount": {
+      "type": "integer",
+      "min": 0,
+      "unit": "points",
+      "required": true
+    },
+    "event_time": {
+      "type": "rfc3339",
+      "timezone": "UTC",
+      "required": true
+    }
+  },
+  "expected_batches": 3,
+  "lateness_floor": "2026-10-17T00:00:00+00:00",
+  "observation_time": "2026-10-21T00:00:00+00:00",
+  "freshness_hours": 48,
+  "transform_version": "1.0",
+  "metric": {
+    "id": "purchase_fraction",
+    "formula": "number of purchase events / number of unique events",
+    "unit": "fraction",
+    "grain": "full supplied synthetic set",
+    "time_zone": "UTC",
+    "zero_denominator": "NOT_APPLICABLE",
+    "null_policy": "reject",
+    "rounding": "exact"
+  }
+}
