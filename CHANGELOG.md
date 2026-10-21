@@ -15,7 +15,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.2)
 
-No new changes recorded.
+- Reorganized bilingual README onboarding around tasks, real execution boundaries, and compact navigation.
+- Added the Evidence Desk vector hero and count-free social preview proposal without modifying approved legacy PNG files.
+- Added offline README/presentation regression checks and recorded the verified v5.5.2 release status.
 
 ## 5.5.2 (candidate, 2026-10-21)
 
