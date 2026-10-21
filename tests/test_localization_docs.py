@@ -361,6 +361,14 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("(ru/REAL_AGENT_PILOT.md)", "(RELEASE_PROCESS.md)", 1), encoding="utf-8")
         self.check("L10N004")
 
+    def test_release_manifest_boundary_cannot_disappear(self):
+        page = self.root / "docs/ru/RELEASE_PROCESS.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("MANIFEST.json", data)
+        page.write_text(data.replace("MANIFEST.json", "REMOVED_VERSION_FILE"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
     def test_release_owner_gate_cannot_disappear(self):
         page = self.root / "docs/ru/RELEASE_PROCESS.md"
         data = page.read_text(encoding="utf-8")
