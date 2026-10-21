@@ -242,6 +242,20 @@ class ClientCapabilityTests(unittest.TestCase):
                     cap.CapabilityError, message):
                 cap.inspect_zip(self.zip(entries, f"bad-directory-{i}.zip"))
 
+    def test_zip_file_directory_collision_oracle(self):
+        """A regular file cannot also be an ancestor of another archive entry."""
+        valid = self.zip([("src/", ""), ("src/main.py", "ok")],
+                         "valid-parent.zip")
+        self.assertEqual("ZIP_PREFLIGHT_PASS", cap.inspect_zip(valid)["status"])
+        for i, entries in enumerate((
+            [("src", "file"), ("src/main.py", "child")],
+            [("src/main.py", "child"), ("src", "file")],
+            [("SRC", "file"), ("src/main.py", "child")],
+        )):
+            with self.subTest(i=i), self.assertRaisesRegex(
+                    cap.CapabilityError, "path collision"):
+                cap.inspect_zip(self.zip(entries, f"parent-collision-{i}.zip"))
+
     def test_zip_expansion_bomb_refused(self):
         bomb = self.zip([("big.txt", "x" * (cap.MAX_RATIO * 1024))],
                         "compression.zip")
