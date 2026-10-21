@@ -41,15 +41,47 @@
     "motion-quality",
     "provider-reality-check",
     "screenshot-fidelity",
-    "skill-portability"
+    "skill-portability",
+    "ux-ui-design-orchestra"
   ],
   "profiles": {
-    "general": [
+    "accessibility-qa": [
+      "accessibility-testing",
+      "test-analysis-design",
+      "playwright-testing",
+      "quality-gate-assessment"
+    ],
+    "agent-architecture": [
+      "architecture-decisions",
+      "agent-framework-fit",
+      "codebase-knowledge-map",
+      "qa-strategy"
+    ],
+    "ai-engineering-qa": [
+      "ai-engineering-qa",
+      "research-verification",
+      "security-boundaries",
+      "test-analysis-design",
+      "contract-testing"
+    ],
+    "backend": [
       "task-scoping",
+      "architecture-decisions",
+      "service-architecture",
+      "api-design",
       "implementation",
       "qa-strategy",
-      "code-review",
-      "minimal-safe-change"
+      "code-review"
+    ],
+    "browser-task": [
+      "browser-workflow-evidence",
+      "qa-strategy"
+    ],
+    "business-system-analysis": [
+      "business-system-analysis",
+      "task-scoping",
+      "requirement-analysis",
+      "requirements-traceability"
     ],
     "codex-feature": [
       "task-scoping",
@@ -59,35 +91,21 @@
       "qa-strategy",
       "code-review"
     ],
-    "ui-fix": [
-      "task-scoping",
-      "design-system-consistency",
-      "screenshot-fidelity",
-      "qa-strategy"
+    "devops-infrastructure": [
+      "devops-infrastructure",
+      "release-safety",
+      "security-boundaries",
+      "architecture-decisions"
     ],
-    "ui-motion": [
-      "design-system-consistency",
-      "motion-quality",
-      "qa-strategy"
-    ],
-    "skill-import": [
-      "skill-portability",
-      "external-skill-review",
+    "docs-technical": [
+      "documentation-maintenance",
       "research-verification"
     ],
-    "agent-architecture": [
-      "architecture-decisions",
-      "agent-framework-fit",
-      "codebase-knowledge-map",
-      "qa-strategy"
+    "editorial": [
+      "clear-voice"
     ],
-    "provider-research": [
-      "research-verification",
-      "provider-reality-check"
-    ],
-    "browser-task": [
-      "browser-workflow-evidence",
-      "qa-strategy"
+    "editorial-qa": [
+      "qa-clear-voice"
     ],
     "feature-delivery": [
       "feature-delivery",
@@ -96,75 +114,52 @@
       "qa-strategy",
       "release-safety"
     ],
-    "qa-core": [
-      "requirement-analysis",
-      "test-analysis-design",
-      "test-review",
-      "change-impact-analysis",
-      "quality-gate-assessment"
+    "frontend": [
+      "task-scoping",
+      "design-system-consistency",
+      "component-architecture",
+      "frontend-api-integration",
+      "implementation",
+      "qa-strategy",
+      "code-review"
     ],
-    "qa-python": [
-      "test-analysis-design",
-      "test-review",
-      "api-testing",
-      "pytest-test-design",
-      "database-validation",
-      "test-data-management",
+    "fullstack": [
+      "task-scoping",
+      "end-to-end-feature-design",
+      "fullstack-integration",
+      "implementation",
+      "qa-strategy",
+      "code-review"
+    ],
+    "general": [
+      "task-scoping",
+      "implementation",
+      "qa-strategy",
+      "code-review",
+      "minimal-safe-change"
+    ],
+    "make-feature": [
+      "make-feature"
+    ],
+    "performance-load-testing": [
+      "performance-load-testing",
+      "test-strategy",
       "failure-triage"
     ],
-    "qa-fullstack": [
-      "requirement-analysis",
-      "test-analysis-design",
-      "test-review",
-      "change-impact-analysis",
-      "api-testing",
-      "contract-testing",
-      "integration-testing",
-      "e2e-testing",
-      "playwright-testing"
+    "product-discovery": [
+      "product-discovery",
+      "task-scoping",
+      "research-verification"
     ],
-    "qa-ci": [
-      "failure-triage",
-      "flaky-analysis",
-      "test-data-management",
-      "test-review"
-    ],
-    "qa-release": [
-      "change-impact-analysis",
-      "coverage-analysis",
+    "project-delivery-management": [
+      "project-delivery-management",
+      "task-scoping",
       "requirements-traceability",
       "quality-gate-assessment"
     ],
-    "qa-security": [
-      "security-testing",
-      "test-data-management",
-      "test-review",
-      "quality-gate-assessment"
-    ],
-    "qa-contract": [
-      "contract-testing",
-      "integration-testing",
-      "api-testing",
-      "change-impact-analysis"
-    ],
-    "qa-ui": [
-      "test-analysis-design",
-      "e2e-testing",
-      "playwright-testing",
-      "test-review",
-      "quality-gate-assessment"
-    ],
-    "qa-management": [
-      "requirements-traceability",
-      "test-management",
-      "defect-management",
-      "quality-gate-assessment"
-    ],
-    "qa-collaboration": [
-      "collaborative-development",
-      "qa-safe-change",
-      "qa-code-review",
-      "test-review"
+    "provider-research": [
+      "research-verification",
+      "provider-reality-check"
     ],
     "qa-all": [
       "api-testing",
@@ -195,78 +190,75 @@
       "test-review",
       "test-strategy"
     ],
-    "docs-technical": [
-      "documentation-maintenance",
-      "research-verification"
+    "qa-ci": [
+      "failure-triage",
+      "flaky-analysis",
+      "test-data-management",
+      "test-review"
     ],
-    "editorial": [
-      "clear-voice"
+    "qa-collaboration": [
+      "collaborative-development",
+      "qa-safe-change",
+      "qa-code-review",
+      "test-review"
     ],
-    "editorial-qa": [
-      "qa-clear-voice"
+    "qa-contract": [
+      "contract-testing",
+      "integration-testing",
+      "api-testing",
+      "change-impact-analysis"
     ],
-    "make-feature": [
-      "make-feature"
+    "qa-core": [
+      "requirement-analysis",
+      "test-analysis-design",
+      "test-review",
+      "change-impact-analysis",
+      "quality-gate-assessment"
     ],
-    "backend": [
-      "task-scoping",
-      "architecture-decisions",
-      "service-architecture",
-      "api-design",
-      "implementation",
-      "qa-strategy",
-      "code-review"
+    "qa-fullstack": [
+      "requirement-analysis",
+      "test-analysis-design",
+      "test-review",
+      "change-impact-analysis",
+      "api-testing",
+      "contract-testing",
+      "integration-testing",
+      "e2e-testing",
+      "playwright-testing"
     ],
-    "frontend": [
-      "task-scoping",
-      "design-system-consistency",
-      "component-architecture",
-      "frontend-api-integration",
-      "implementation",
-      "qa-strategy",
-      "code-review"
+    "qa-management": [
+      "requirements-traceability",
+      "test-management",
+      "defect-management",
+      "quality-gate-assessment"
     ],
-    "research": [
-      "task-scoping",
-      "research-verification"
+    "qa-python": [
+      "test-analysis-design",
+      "test-review",
+      "api-testing",
+      "pytest-test-design",
+      "database-validation",
+      "test-data-management",
+      "failure-triage"
     ],
-    "fullstack": [
-      "task-scoping",
-      "end-to-end-feature-design",
-      "fullstack-integration",
-      "implementation",
-      "qa-strategy",
-      "code-review"
-    ],
-    "product-discovery": [
-      "product-discovery",
-      "task-scoping",
-      "research-verification"
-    ],
-    "project-delivery-management": [
-      "project-delivery-management",
-      "task-scoping",
+    "qa-release": [
+      "change-impact-analysis",
+      "coverage-analysis",
       "requirements-traceability",
       "quality-gate-assessment"
     ],
-    "business-system-analysis": [
-      "business-system-analysis",
-      "task-scoping",
-      "requirement-analysis",
-      "requirements-traceability"
+    "qa-security": [
+      "security-testing",
+      "test-data-management",
+      "test-review",
+      "quality-gate-assessment"
     ],
-    "ux-design": [
-      "ux-design-process",
-      "design-system-consistency",
-      "component-architecture",
-      "task-scoping"
-    ],
-    "ai-engineering-qa": [
-      "ai-engineering-qa",
-      "research-verification",
-      "security-boundaries",
+    "qa-ui": [
       "test-analysis-design",
-      "contract-testing"
+      "e2e-testing",
+      "playwright-testing",
+      "test-review",
+      "quality-gate-assessment"
     ],
     "reliability-testing": [
       "reliability-testing",
@@ -274,10 +266,9 @@
       "integration-testing",
       "failure-triage"
     ],
-    "performance-load-testing": [
-      "performance-load-testing",
-      "test-strategy",
-      "failure-triage"
+    "research": [
+      "task-scoping",
+      "research-verification"
     ],
     "security-engineering": [
       "security-engineering",
@@ -285,17 +276,33 @@
       "security-review",
       "security-testing"
     ],
-    "devops-infrastructure": [
-      "devops-infrastructure",
-      "release-safety",
-      "security-boundaries",
-      "architecture-decisions"
+    "skill-import": [
+      "skill-portability",
+      "external-skill-review",
+      "research-verification"
     ],
-    "accessibility-qa": [
-      "accessibility-testing",
-      "test-analysis-design",
-      "playwright-testing",
-      "quality-gate-assessment"
+    "ui-fix": [
+      "task-scoping",
+      "design-system-consistency",
+      "screenshot-fidelity",
+      "qa-strategy"
+    ],
+    "ui-motion": [
+      "design-system-consistency",
+      "motion-quality",
+      "qa-strategy"
+    ],
+    "ui-orchestra": [
+      "ux-ui-design-orchestra",
+      "design-system-consistency",
+      "screenshot-fidelity",
+      "qa-strategy"
+    ],
+    "ux-design": [
+      "ux-design-process",
+      "design-system-consistency",
+      "component-architecture",
+      "task-scoping"
     ]
   },
   "third_party_runtime_bundled": false,

@@ -7,9 +7,9 @@
 Переносимая библиотека навыков, ролей и рабочих процессов для разработки программного обеспечения с ИИ-агентами.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-75-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-76-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-38-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-39-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 [English](README.md) · **Русский**
@@ -33,6 +33,7 @@
 | **Разработка без лишних изменений** | Анализ требований, архитектурных решений и границ задачи |
 | **Осмысленные проверки** | Проектирование тестов, test oracle, анализ CI и контроль выпуска |
 | **Последовательный UI** | Проверка дизайн-системы, скриншотов и анимаций |
+| **Оркестрация UX/UI** | Единый аудит несколькими экспертными навыками, дизайн-проект и план без изменения UI до одобрения |
 | **Качественный текст** | Clear Voice для ясной документации и сообщений интерфейса |
 | **Доставка функций** | Make Feature 0.3.0 или feature-delivery, но не оба одновременно |
 | **Бережная установка** | Выбор профиля, предварительный просмотр и запрет перезаписи |
@@ -41,12 +42,12 @@
 
 | Раздел | Состав | Подробнее |
 | :--- | :--- | :--- |
-| **Core** | 23 навыка разработки, проверки, безопасности, UI и работы с текстом | [Основные навыки](docs/SKILLS_CATALOG.md#core-skills) |
+| **Core** | 24 навыка разработки, проверки, безопасности, UI и работы с текстом | [Основные навыки](docs/SKILLS_CATALOG.md#core-skills) |
 | **Frontend / Backend / Fullstack** | 14 новых универсальных навыков проектирования и реализации | [Инженерные навыки RU](docs/ru/UNIVERSAL_ENGINEERING.md) |
 | **QA Engineering Pack** | 27 навыков API/UI/CI, надёжности тестирования и управления качеством | [QA-навыки](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 самостоятельный подключаемый навык работы над функциями | [Интеграция](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Роли** | 5 основных и 11 специализированных ролей QA | [Каталог ролей](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Профили** | 38 наборов навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
+| **Профили** | 39 наборов навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
 
 Навыки оформлены по формату [Agent Skills](https://agentskills.io/specification). Наличие навыка не даёт агенту автоматически права менять файлы, подключаться к сервисам или выпускать изменения.
 
@@ -94,7 +95,7 @@ python scripts/skill_manager.py status --target /path/to/project
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 75 навыков и 38 профилей](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
+[Полный каталог из 76 навыков и 39 профилей](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 

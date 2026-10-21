@@ -4,7 +4,7 @@
 
 ## Основные навыки
 
-Эти 23 навыка находятся в `.agents/skills/`.
+Эти 24 навыка находятся в `.agents/skills/`.
 
 | Навык | Когда использовать |
 | :--- | :--- |
@@ -30,6 +30,7 @@
 | [`screenshot-fidelity`](../../.agents/skills/screenshot-fidelity/SKILL.md) | Сравнивайте реализованный интерфейс с эталонными скриншотами, включая адаптивность и регрессии. |
 | [`security-boundaries`](../../.agents/skills/security-boundaries/SKILL.md) | Проверяйте границы доверия, учётные данные и опасные сценарии при изменениях безопасности. |
 | [`skill-portability`](../../.agents/skills/skill-portability/SKILL.md) | Создавайте, переносите и оценивайте Agent Skills с проверкой структуры, ссылок, совместимости и происхождения. |
+| [`ux-ui-design-orchestra`](../../.agents/skills/ux-ui-design-orchestra/SKILL.md) | Координировать независимые проверки UX/UI, объединить один обоснованный дизайн и остановиться до визуального одобрения. |
 | [`task-scoping`](../../.agents/skills/task-scoping/SKILL.md) | Формулируйте границы, критерии приёмки и зависимости задачи до начала реализации. |
 
 ## Расширение Frontend
@@ -218,6 +219,7 @@
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
+| `ui-orchestra` | `ux-ui-design-orchestra`, `design-system-consistency`, `screenshot-fidelity`, `qa-strategy` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |

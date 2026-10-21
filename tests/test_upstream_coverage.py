@@ -27,7 +27,7 @@ class OfficialCoverageTests(unittest.TestCase):
 
     def test_core_does_not_include_optional_packs(self):
         paths = validator.skill_directories(ROOT, "core")
-        self.assertEqual(23, len(paths))
+        self.assertEqual(24, len(paths))
         self.assertTrue(all(".agents/skills/" in p.as_posix() for p in paths))
 
     def test_missing_declared_skill_fails_closed(self):
