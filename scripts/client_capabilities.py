@@ -206,6 +206,7 @@ def inspect_zip(path: Path) -> dict:
     if path.suffix.lower() != ".zip" or not path.is_file() or path.is_symlink():
         raise CapabilityError("ATTACHMENT_UNAVAILABLE or unsupported ZIP")
     names = set()
+    regular_files = set()
     count = files = total = 0
     try:
         with zipfile.ZipFile(path, "r") as archive:
@@ -224,7 +225,16 @@ def inspect_zip(path: Path) -> dict:
                     raise CapabilityError("Unsafe ZIP path traversal/absolute path")
                 if normalized.as_posix().casefold() in names:
                     raise CapabilityError("Duplicate or colliding ZIP paths")
-                names.add(normalized.as_posix().casefold())
+                canonical = normalized.as_posix().casefold()
+                parents = canonical.split("/")[:-1]
+                if (any("/".join(parents[:i]) in regular_files
+                        for i in range(1, len(parents) + 1))
+                        or (not info.is_dir() and any(
+                            existing.startswith(canonical + "/") for existing in names))):
+                    raise CapabilityError("ZIP file/directory path collision")
+                names.add(canonical)
+                if not info.is_dir():
+                    regular_files.add(canonical)
                 if SECRET_NAMES.search(entry):
                     raise CapabilityError("ZIP contains possible secrets")
                 mode = stat.S_IFMT(info.external_attr >> 16)
