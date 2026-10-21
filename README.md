@@ -1,6 +1,6 @@
 <div align="center">
 
-[![AI Development Toolkit: skills, roles, build, test and human review](assets/branding/hero-v2.svg)](docs/BEGINNER_START.md)
+[![AI Development Toolkit: skills, roles, build, test and human review](docs/visuals/hero-evidence.svg)](docs/BEGINNER_START.md)
 
 **English** · [Русский](README.ru.md)
 
