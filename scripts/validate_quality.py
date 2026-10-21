@@ -496,7 +496,9 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
         if "## Published v5.5.0 and v5.5.1 archive errata" in body:
             if (f"`{version}` (candidate, NOT PUBLISHED)" not in body
                     or "/releases/tag/v5.5.1" not in body
-                    or "TAG_MANIFEST_VERSION_MISMATCH" not in body):
+                    or body.count("TAG_MANIFEST_VERSION_MISMATCH") < 2
+                    or '$taggedManifest.version' not in body
+                    or '$manifest.version' not in body):
                 add(findings, "DOC004", path, 1, "Release candidate identity or pre-tag guard mismatch")
         elif ("currently " + chr(96) + version + chr(96) not in body or
                 "/releases/tag/v" + version not in body or "Unreleased" not in body):
