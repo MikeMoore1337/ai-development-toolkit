@@ -29,6 +29,80 @@ def run_cli(*arguments: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+
+class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
+    """Offline source, compatibility and fallback contract, not real ChatGPT execution."""
+
+    def test_live_protocol_is_bounded_read_only_and_versioned(self):
+        import re
+        live = MANIFEST["chatgpt_personal_live"]
+        self.assertEqual(live["schema_version"], 1)
+        self.assertEqual(live["protocol_generation"], 1)
+        self.assertEqual(live["canonical_repository"], "MikeMoore1337/ai-development-toolkit")
+        self.assertEqual(live["tracked_branch"], "main")
+        self.assertEqual(live["commit_resolution"], "exact_sha_required")
+        self.assertTrue(re.fullmatch(r"\d+\.\d+\.\d+", live["min_plugin_version"]))
+        self.assertGreaterEqual(tuple(map(int, live["min_plugin_version"].split("."))), (0, 1, 5))
+        self.assertEqual(live["fallback"], "BUNDLED_ROUTER")
+        self.assertEqual(live["activation"], "best_effort_per_task_read_only")
+        self.assertIs(live["install_upgrade_automatic"], False)
+        self.assertTrue(1 <= live["max_retrieved_sources_per_task"] <= 8)
+
+    def test_exact_head_ci_matrix_required(self):
+        live = MANIFEST["chatgpt_personal_live"]
+        self.assertEqual(live["required_ci_checks"], [
+            "tests (ubuntu-latest, 3.12)",
+            "tests (ubuntu-latest, 3.13)",
+            "tests (windows-latest, 3.14)",
+        ])
+        matrix = [
+            {"name": check, "status": "completed", "conclusion": "success"}
+            for check in live["required_ci_checks"]
+        ]
+        def passes(given):
+            values = {c["name"]: c for c in given}
+            return all(name in values and values[name]["status"] == "completed"
+                       and values[name]["conclusion"] == "success"
+                       for name in live["required_ci_checks"])
+        self.assertTrue(passes(matrix))
+        for changed in (
+            matrix[:-1],
+            [dict(x, conclusion="failure") if i == 0 else x for i, x in enumerate(matrix)],
+            [dict(x, status="in_progress", conclusion=None) if i == 0 else x
+             for i, x in enumerate(matrix)],
+        ):
+            self.assertFalse(passes(changed))
+
+    def test_source_file_allowlist_does_not_escape_toolkit(self):
+        from pathlib import PurePosixPath
+        live = MANIFEST["chatgpt_personal_live"]
+        self.assertEqual(live["integrity_manifest"], "SHA256SUMS.txt")
+        self.assertTrue((ROOT / live["integrity_manifest"]).is_file())
+        self.assertIn("ui-orchestra", live["source_sets"])
+        self.assertIn("AGENT_START.ru.md", live["source_sets"]["entry"])
+        for values in live["source_sets"].values():
+            self.assertIsInstance(values, list)
+            self.assertGreater(len(values), 0)
+            self.assertLessEqual(len(values), live["max_retrieved_sources_per_task"])
+            for filename in values:
+                path = PurePosixPath(filename)
+                self.assertFalse(path.is_absolute())
+                self.assertNotIn("..", path.parts)
+                self.assertTrue((ROOT / filename).is_file(), filename)
+                self.assertTrue((ROOT / filename).resolve().is_relative_to(ROOT.resolve()))
+
+    def test_bilingual_docs_reject_silent_upgrade_claims(self):
+        guides = (EN, RU, ROOT / "docs/CLIENT_COMPATIBILITY.md",
+                  ROOT / "docs/ru/CLIENT_COMPATIBILITY.md")
+        for path in guides:
+            contents = path.read_text(encoding="utf-8")
+            for keyword in ("chatgpt_personal_live", "FALLBACK_BUNDLED", "SHELL_UPDATE_REQUIRED"):
+                self.assertIn(keyword, contents, (path, keyword))
+            self.assertIn("SHA", contents, path)
+
+
+
+
 class UniversalAgentEntryTests(unittest.TestCase):
     def test_source_and_target_discovery_for_both_languages(self):
         for guide in (EN, RU):
