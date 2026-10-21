@@ -32,3 +32,7 @@ Claims of time or token savings require comparable actual tasks and measurements
 Use `scripts/skill_manager.py` for managed skills: `catalog --profile qa-python`, a no-write preview, explicit `--apply` and independent `status --layout codex` / `status --layout claude`. `migrate` copies identical **managed** skills between supported layouts without removing source files. User-created or legacy skills are not adopted or moved automatically.
 
 For exact commands on Windows/Linux, lockfile details and recovery see [client migration](../CLIENT_MIGRATION.md). A copied skill file does **not** prove the target client discovered or used it.
+
+## Tool permissions
+
+The [optional tool integration contracts](../TOOL_INTEGRATIONS.md) (Issue #69) distinguish client capability, connection, exact operation/resource approval, network egress, zero-spend policy and execution evidence. Prefer native functions and a chat-only fallback. Never treat read-only approval as write, publish or deploy permission.
