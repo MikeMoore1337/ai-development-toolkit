@@ -17,7 +17,15 @@ ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\Z")
 
 
 def validate_report(report: Any) -> list[str]:
-    """Fail closed on false-green claims; no external evidence is authenticated."""
+    """Fail closed on malformed JSON; do not authenticate external evidence."""
+    try:
+        return _validate_report(report)
+    except (TypeError, KeyError, ValueError, AttributeError):
+        return ["invalid input shape"]
+
+
+def _validate_report(report: Any) -> list[str]:
+    """Check internal consistency only; external receipts remain unverified."""
     problems: list[str] = []
     if not isinstance(report, dict):
         return ["report must be an object"]

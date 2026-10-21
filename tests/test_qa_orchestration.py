@@ -24,6 +24,26 @@ class QAOrchestraTests(unittest.TestCase):
         self.assertTrue(any(text in problem for problem in qa.validate_report(case)),
                         qa.validate_report(case))
 
+    def test_invalid_nested_object_fails_closed(self):
+        for mutate in (
+            lambda p: p["execution"].update(peak={"fake": "many"}),
+            lambda p: p.update(required_check_ids=[{"id": "check1"}]),
+            lambda p: p["streams"][0].update(execution=["SEQUENTIAL"]),
+            lambda p: p["checks"][0].update(status=["PASS"]),
+            lambda p: p["evidence"][0].update(kind={"kind": "TEST_RUN"}),
+            lambda p: p["checks"][0].update(evidence_ids=[{"id": "source1"}]),
+            lambda p: p["streams"][0].update(id={"id": "api"}),
+        ):
+            with self.subTest(mutate=repr(mutate)):
+                case = self.case()
+                mutate(case)
+                self.assertEqual(["invalid input shape"], qa.validate_report(case))
+
+    def test_invalid_root_fails_closed(self):
+        for raw in (None, [], ["fake"], "report"):
+            with self.subTest(raw=raw):
+                self.assertNotEqual([], qa.validate_report(raw))
+
     def test_valid_bounded_sequential_audit(self):
         self.assertEqual([], qa.validate_report(self.case()))
 
