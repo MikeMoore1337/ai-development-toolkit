@@ -199,7 +199,7 @@ class ClientCapabilityTests(unittest.TestCase):
         malformed = self.zip([("a/b.txt", "bad")], "backslash.zip")
         archive_bytes = malformed.read_bytes()
         self.assertEqual(2, archive_bytes.count(b"a/b.txt"))
-        malformed.write_bytes(archive_bytes.replace(b"a/b.txt", b"a\\\\b.txt"))
+        malformed.write_bytes(archive_bytes.replace(b"a/b.txt", b"a\\b.txt"))
         with self.assertRaisesRegex(cap.CapabilityError, "path traversal"):
             cap.inspect_zip(malformed)
         with self.assertRaisesRegex(cap.CapabilityError, "Empty ZIP"):
