@@ -281,6 +281,11 @@
       "source": "docs/SKILLS_QUALITY_AUDIT.md",
       "translation": "docs/ru/SKILLS_QUALITY_AUDIT.md",
       "source_sha256": "0fcfe55152540397698ccf295e1d53808e620220152d78c72cd4fd754e8f10f9"
+    },
+    {
+      "source": "docs/ORCHESTRATION_PILOT.md",
+      "translation": "docs/ru/ORCHESTRATION_PILOT.md",
+      "source_sha256": "219979f12c39f01d6d4bfcbfd526839943b03ecb9490478ec4030fbe09a3786c"
     }
   ]
 }

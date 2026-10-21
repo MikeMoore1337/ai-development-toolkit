@@ -43,6 +43,25 @@ class PilotLedgerTests(unittest.TestCase):
             })
         return doc
 
+    def test_pilot_documentation_freshness_and_evidence_boundaries(self):
+        import hashlib
+
+        source = ROOT / "docs/ORCHESTRATION_PILOT.md"
+        translation = ROOT / "docs/ru/ORCHESTRATION_PILOT.md"
+        revisions = json.loads((ROOT / "docs/ru/SOURCE_REVISIONS.json").read_text(encoding="utf-8"))
+        matches = [entry for entry in revisions["pairs"] if entry["source"] == "docs/ORCHESTRATION_PILOT.md"]
+        self.assertEqual(1, len(matches))
+        self.assertEqual("docs/ru/ORCHESTRATION_PILOT.md", matches[0]["translation"])
+        digest = hashlib.sha256(source.read_bytes().replace(b"\\r\\n", b"\\n")).hexdigest()
+        self.assertEqual(digest, matches[0]["source_sha256"])
+        for guide in (source, translation):
+            content = guide.read_text(encoding="utf-8")
+            self.assertIn("v5.5.2", content)
+            self.assertIn("NOT_RUN", content)
+            self.assertIn("NOT_MEASURED", content)
+            self.assertIn("verified_zero_incremental_cost=false", content)
+            self.assertIn("verified_isolation=false", content)
+
     def test_unrun_reference_is_consistent_not_evidence(self):
         self.assertEqual([], pilot.validate(self.fresh()))
 

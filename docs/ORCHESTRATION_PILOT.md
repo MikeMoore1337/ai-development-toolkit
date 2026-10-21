@@ -27,4 +27,8 @@ Record real CLI tool invocation IDs/traces, test outputs, provider/client/model 
 
 The offline validator checks **internal assertions**, not the authenticity of logs or owner grants: no invented observed runs, positive timestamps without execution, model mismatch, bogus parallel workers, missing evidence, or unauthorized paid API. `PENDING_INDEPENDENT_REVIEW` is the most advanced representable conclusion; there is intentionally **no automatic PASS or measured speedup status**. The supplied registry reports zero real agents.
 
-Toolkit `v5.5.0` was published on 21 October 2026 at tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. GitHub archive CI passed; this **does not prove** client discovery or independent subagents. The present pilot files are not part of the tagged release. Model-execution and publication gates remain distinct.
+## Release provenance (verified 2026-10-21)
+
+Toolkit [`v5.5.0`](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at immutable tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. The newer published [`v5.5.2`](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) points to tag SHA `bf8d469f7402ed1a99e19ba6797d841751801ea5` and **does include** this source-only pilot guide, its Russian counterpart, fixture and validator. Presence was checked at that tag, not inferred from the moving `main` branch. No new release was created by this documentation correction.
+
+**Source availability is not execution evidence.** The pinned pilot registry still declares `NOT_RUN`, `owner_runtime_approved=false`, `verified_zero_incremental_cost=false` and `verified_isolation=false`; independent workers and A/B measurements remain `NOT_RUN` / `NOT_MEASURED`. An archive, a green CI run or an installed skill cannot clear the real-agent cost/isolation gate. Publication and model execution require distinct approvals.
