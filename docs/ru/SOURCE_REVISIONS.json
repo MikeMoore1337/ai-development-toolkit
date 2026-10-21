@@ -206,6 +206,11 @@
       "source": "docs/TOOL_INTEGRATIONS.md",
       "translation": "docs/ru/TOOL_INTEGRATIONS.md",
       "source_sha256": "4efacc056ac4794fb58428738e47c95a828fd5a5b09e5e058c5d5b69d0bd9d0f"
+    },
+    {
+      "source": "docs/FINAL_ACCEPTANCE.md",
+      "translation": "docs/ru/FINAL_ACCEPTANCE.md",
+      "source_sha256": "86fe4f24172a10eed3d92283ba363c502cdd11edaa4297732b8c813411caaadf"
     }
   ]
 }
