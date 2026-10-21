@@ -102,3 +102,7 @@ The machine-readable [acceptance and negative cases](../fixtures/beginner_journe
 - **#11:** independently gated live AI-client activation/effectiveness - **NOT_MEASURED** here.
 
 **Expert content review checklist:** scope and exclusions clear; jargon not required; real client capability conditional; action/approval boundary explicit; negative cases stop unsafe claims; no paid dependency; acceptance outcome tied to evidence. This checklist permits expert review but is *not* evidence that an independent human performed it.
+
+## End-to-end delivery
+
+For a continuous idea-to-support contract, resumable handoffs and honest evidence levels, see [End-to-end workflow](END_TO_END_WORKFLOW.md). This does not add a new controller or require a terminal.

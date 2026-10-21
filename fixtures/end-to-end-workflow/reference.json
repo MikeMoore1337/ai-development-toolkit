@@ -1,0 +1,408 @@
+{
+  "synthetic": true,
+  "workflow_id": "SYNTHETIC-WF-001",
+  "source_request": "I need a local home task list: add, view and complete tasks; no account.",
+  "project_ref": "SYNTHETIC-local-home-tasks",
+  "source_revision": "SYNTHETIC-REV-1",
+  "controller": "feature-delivery",
+  "active_controllers": [
+    "feature-delivery"
+  ],
+  "mode": "normal",
+  "current_stage": "analysis",
+  "required_stages": [
+    "discovery",
+    "prd",
+    "planning",
+    "analysis",
+    "ux",
+    "architecture",
+    "implementation",
+    "qa",
+    "security",
+    "release",
+    "operations",
+    "support"
+  ],
+  "original_r_ids": [
+    "R1",
+    "R2",
+    "R3"
+  ],
+  "original_ac_ids": [
+    "AC1",
+    "AC2",
+    "AC3"
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Add a local task"
+    },
+    {
+      "id": "R2",
+      "text": "Display added tasks"
+    },
+    {
+      "id": "R3",
+      "text": "Mark tasks complete"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "r": "R1",
+      "text": "Nonblank item is added once"
+    },
+    {
+      "id": "AC2",
+      "r": "R2",
+      "text": "Item visible"
+    },
+    {
+      "id": "AC3",
+      "r": "R3",
+      "text": "Completion shown"
+    }
+  ],
+  "decisions": [
+    "D1"
+  ],
+  "trace": [
+    {
+      "r": "R1",
+      "ac": "AC1",
+      "decision": "D1",
+      "implementation": "SYNTHETIC-only",
+      "test": "T1",
+      "evidence": "E1"
+    },
+    {
+      "r": "R2",
+      "ac": "AC2",
+      "decision": "D1",
+      "implementation": "SYNTHETIC-only",
+      "test": "T2",
+      "evidence": "E1"
+    },
+    {
+      "r": "R3",
+      "ac": "AC3",
+      "decision": "D1",
+      "implementation": "SYNTHETIC-only",
+      "test": "T3",
+      "evidence": "E1"
+    }
+  ],
+  "artifacts": {
+    "request": "SYNTHETIC source statement",
+    "discovery": "SYNTHETIC user, problem, no account",
+    "prd": "SYNTHETIC R1-R3 AC1-AC3",
+    "plan": "SYNTHETIC bounded tasks",
+    "analysis": "SYNTHETIC task states pending/done",
+    "ux": "SYNTHETIC one-screen proposal only",
+    "architecture": "SYNTHETIC local-only option, not chosen by owner",
+    "implementation": "SYNTHETIC implementation plan, no real code",
+    "qa": "SYNTHETIC test plan, no tests run",
+    "security": "SYNTHETIC no account/no cloud",
+    "release": "SYNTHETIC blocked, no real SHA",
+    "operations": "SYNTHETIC not deployed",
+    "support": "SYNTHETIC possible issue: empty entry"
+  },
+  "stages": [
+    {
+      "id": "discovery",
+      "input": "request",
+      "output": "discovery",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "COMPLETE",
+      "skip_reason": null
+    },
+    {
+      "id": "prd",
+      "input": "discovery",
+      "output": "prd",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "COMPLETE",
+      "skip_reason": null
+    },
+    {
+      "id": "planning",
+      "input": "prd",
+      "output": "planning",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "COMPLETE",
+      "skip_reason": null
+    },
+    {
+      "id": "analysis",
+      "input": "planning",
+      "output": "analysis",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "ux",
+      "input": "analysis",
+      "output": "ux",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "architecture",
+      "input": "ux",
+      "output": "architecture",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "implementation",
+      "input": "architecture",
+      "output": "implementation",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "qa",
+      "input": "implementation",
+      "output": "qa",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "security",
+      "input": "qa",
+      "output": "security",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "release",
+      "input": "security",
+      "output": "release",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null
+    },
+    {
+      "id": "operations",
+      "input": "release",
+      "output": "operations",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "NOT_APPLICABLE",
+      "skip_reason": "No deployed product in synthetic story"
+    },
+    {
+      "id": "support",
+      "input": "operations",
+      "output": "support",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "NOT_APPLICABLE",
+      "skip_reason": "No deployed product in synthetic story"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "stage": "prd",
+      "level": "SOURCE_BACKED",
+      "executed": false,
+      "observations": [],
+      "receipt": null
+    }
+  ],
+  "tests": [
+    {
+      "id": "T1",
+      "ac": "AC1",
+      "status": "NOT_RUN",
+      "executed": false,
+      "observed": null,
+      "evidence": "E1"
+    },
+    {
+      "id": "T2",
+      "ac": "AC2",
+      "status": "NOT_RUN",
+      "executed": false,
+      "observed": null,
+      "evidence": "E1"
+    },
+    {
+      "id": "T3",
+      "ac": "AC3",
+      "status": "NOT_RUN",
+      "executed": false,
+      "observed": null,
+      "evidence": "E1"
+    }
+  ],
+  "acceptance_claim": "NOT_TESTED",
+  "outcome": "INCOMPLETE",
+  "handoffs": [
+    {
+      "id": "H1",
+      "from": "prd",
+      "to": "analysis",
+      "related": "SYNTHETIC-WF-001",
+      "r_ids": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "ac_ids": [
+        "AC1",
+        "AC2",
+        "AC3"
+      ],
+      "source_artifact": "prd",
+      "source_revision": "SYNTHETIC-REV-1",
+      "deliverable": "analysis",
+      "decisions": [
+        "D1"
+      ],
+      "constraints": [
+        "local",
+        "no account"
+      ],
+      "questions": [
+        "persistence not authorized"
+      ],
+      "evidence": [
+        "E1"
+      ],
+      "verification": "PROPOSED",
+      "required_approval": "NONE",
+      "status": "PREPARED",
+      "receiver_ack": "NOT_AVAILABLE"
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "prd",
+      "to": "analysis",
+      "type": "BLOCKS",
+      "satisfied": true
+    },
+    {
+      "from": "implementation",
+      "to": "qa",
+      "type": "BLOCKS",
+      "satisfied": false
+    },
+    {
+      "from": "qa",
+      "to": "release",
+      "type": "BLOCKS",
+      "satisfied": false
+    },
+    {
+      "from": "release",
+      "to": "operations",
+      "type": "BLOCKS",
+      "satisfied": false
+    }
+  ],
+  "scope": {
+    "approved": [
+      "add",
+      "list",
+      "complete"
+    ],
+    "implemented": [],
+    "excluded": [
+      "registration",
+      "server",
+      "paid_api"
+    ],
+    "optional": [
+      "persistence"
+    ]
+  },
+  "permissions": {
+    "read": true,
+    "change": false,
+    "execute": false,
+    "external": false,
+    "paid_api": false,
+    "irreversible": false,
+    "publish": false
+  },
+  "actions": {
+    "change": false,
+    "execute": false,
+    "external": false,
+    "paid_api": false,
+    "toolkit_write": false,
+    "irreversible": false
+  },
+  "capabilities": {
+    "read": true,
+    "write": false,
+    "execute": false,
+    "browser": false,
+    "github": false,
+    "subagents": false,
+    "external": false,
+    "available_tools": []
+  },
+  "gates": {
+    "security_applicable": true,
+    "security_checked": true,
+    "visual_required": false,
+    "visual_approved": false
+  },
+  "release": {
+    "state": "BLOCKED",
+    "implemented": false,
+    "merged": false,
+    "deployed": false,
+    "production": false,
+    "published": false,
+    "user_verified": false,
+    "version": null,
+    "support_version": null,
+    "exact_sha": null
+  },
+  "tool_calls": [],
+  "blockers": [
+    {
+      "id": "B1",
+      "stage": "implementation",
+      "reason": "No permitted project write access",
+      "safe_next": "prepare or obtain project access"
+    }
+  ],
+  "resume": {
+    "previous_state_revision": "SYNTHETIC-STATE-1",
+    "previous_source_revision": "SYNTHETIC-REV-1",
+    "previous_head": "SYNTHETIC-REV-1",
+    "current_head": "SYNTHETIC-REV-1",
+    "last_completed": "planning",
+    "next_pending": "analysis",
+    "accepted_decisions": [
+      "D1"
+    ],
+    "previous_evidence": [
+      "E1"
+    ],
+    "blockers": [
+      "B1"
+    ],
+    "pending_approvals": [
+      "release"
+    ],
+    "delegations_before": 1,
+    "delegations_used": 1,
+    "irreversible_replayed": false,
+    "duplicate_issue": false,
+    "duplicate_state": false,
+    "revalidation": false
+  }
+}

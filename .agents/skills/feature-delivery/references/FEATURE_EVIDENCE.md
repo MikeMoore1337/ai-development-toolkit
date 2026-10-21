@@ -10,3 +10,5 @@
 - Stop: open items, why they block, and a concrete next action. A green local test does not establish production success.
 
 Use one concise report where possible. Avoid document sprawl.
+
+For cross-stage handoff, original R/AC identity, stop/resume and evidence levels, use the [shared contract](../../../../docs/END_TO_END_WORKFLOW.md); this is guidance, not a second controller.
