@@ -1,6 +1,41 @@
 # Changelog
 
-## Unreleased (main after v5.4.0)
+## 5.5.0 (release candidate, publication pending)
+
+This release candidate includes all source changes after the published v5.4.0, not
+only QA #125. It is not yet a published GitHub Release. The candidate heading must
+be changed to 'released' only after the tag and archive have been verified.
+
+### Highlights
+
+- QA Engineering Pack v2: 23 new worked reference guides provide references
+  for all 27 QA skills; 11 reference roles now define required inputs, skill
+  choices, evidence and handoffs, negative cases and limits to independent review
+  (#124, #125).
+- New optional engineering/testing capabilities for Product Discovery, Business
+  and System Analysis, Project Delivery Management, UX/UI Design, AI/RAG/LLM
+  quality, reliability/faults, performance/load, Security/DevSecOps,
+  DevOps/Infrastructure and Accessibility QA (#53-62).
+- Stronger universal Frontend, Backend, Fullstack and QA skill contracts,
+  read-only source use, no-installation beginner workflows, and owner-controlled
+  report destinations. Toolkit is not a storage location for other projects.
+- Expanded Russian and English instructions, checks for translation source
+  revisions, bounded CI, security scanning, provenance scope and SHA256 source
+  verification, and selected portable Clear Voice improvements.
+
+### Compatibility and verification
+
+- No new mandatory hosted service, paid API, AI model execution or running agent.
+  Optional framework-specific skills are only appropriate when the target project
+  actually uses those frameworks.
+- Historic approved source fingerprint baselines are retained. QA v2 changes
+  have a separately recorded owner-reported approval; third-party rights have not
+  been independently established.
+- Validation is static/offline. Actual AI-client skill activation and
+  effectiveness are NOT_MEASURED. Publishing requires a separate release
+  provenance preflight, an immutable tag and actual public archive checks.
+
+### Changes since v5.4.0
 
 - Added a full Russian Skill Quality Metrics guide with pinned historical evidence, matching CLI examples and offline translation regressions (#87).
 
