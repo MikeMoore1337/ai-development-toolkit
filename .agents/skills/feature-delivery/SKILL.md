@@ -36,3 +36,6 @@ Prefer existing issue/PR/tracker. For complex or interruptible tasks, store a sm
 If a required permission, source, dependency, baseline or irreversible decision is missing, do not invent it. Complete independent available work and leave the dependent step clearly pending. Required acceptance criteria cannot be silently removed to claim success.
 
 Read [the feature evidence checklist](references/FEATURE_EVIDENCE.md) when accepting a feature; use only the applicable sections.
+
+## Optional orchestration
+For genuinely independent cross-layer work, use the [adaptive feature orchestra guide](../../../docs/FEATURE_DELIVERY_ORCHESTRA.md) **only if the task warrants delegation**. It keeps this `feature-delivery` controller, one writer, scoped read-only specialists, and current exact-head checks. Small fixes stay single-agent; without real subagents report sequential execution, never invented reviewers. Do not add another workflow state machine or release permission.

@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "task_id": "synthetic-household-list",
+  "revision": "0123456789abcdef0123456789abcdef01234567",
+  "controller": "feature-delivery",
+  "active_controllers": [
+    "feature-delivery"
+  ],
+  "depth": "normal",
+  "risk_flags": [],
+  "execution": {
+    "mode": "SEQUENTIAL",
+    "peak": 1
+  },
+  "units": [
+    {
+      "id": "research",
+      "purpose": "Read contract and find reuse",
+      "role": "researcher",
+      "status": "PLANNED",
+      "execution": "SEQUENTIAL",
+      "trace": null,
+      "write_paths": [],
+      "depends_on": []
+    },
+    {
+      "id": "build",
+      "purpose": "One authorized implementer owns file changes",
+      "role": "implementer",
+      "status": "PLANNED",
+      "execution": "SEQUENTIAL",
+      "trace": null,
+      "write_paths": [
+        "src/tasks.py"
+      ],
+      "depends_on": [
+        "research"
+      ]
+    },
+    {
+      "id": "verify",
+      "purpose": "Risk-driven QA using real observable checks",
+      "role": "qa-verifier",
+      "status": "PLANNED",
+      "execution": "SEQUENTIAL",
+      "trace": null,
+      "write_paths": [],
+      "depends_on": [
+        "build"
+      ]
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "requirement": "Adding a task is persisted",
+      "check_ids": [
+        "T1"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "source1",
+      "kind": "CODE_INSPECTION",
+      "revision": "0123456789abcdef0123456789abcdef01234567",
+      "reference": "Synthetic example only; no actual repository accessed"
+    }
+  ],
+  "checks": [
+    {
+      "id": "T1",
+      "status": "NOT_RUN",
+      "evidence_ids": [
+        "source1"
+      ]
+    }
+  ],
+  "approvals": [],
+  "outcome": "PLAN_ONLY"
+}
