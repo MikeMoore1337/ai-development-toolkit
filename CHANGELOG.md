@@ -1,6 +1,20 @@
 # Changelog
 
-## Unreleased (main after v5.4.0)
+## Unreleased (main after v5.5.1)
+
+No new changes recorded.
+
+## 5.5.1 (released, 2026-10-21)
+
+- Reconciled published release identity, versioned metadata and bilingual documentation after the incorrectly labelled v5.5.0 source archive (#146).
+- Added fail-closed GitHub source-archive verification of Git tag against MANIFEST.json.version to prevent repeated mismatches.
+- Kept the QA Pack v2, Make Feature and source-rights snapshots unchanged; refreshed translation revision pin, version-independent negative tests and SHA256 inventory.
+
+## 5.5.0 (released, 2026-10-21)
+
+- Shipped QA Engineering Pack v2, cross-client capability and handoff workflows, UX/UI Design Orchestra and other engineering packs from v5.4.0 to 21 October 2026.
+- Historical archive limitation: tag v5.5.0 was actually published from a tree whose MANIFEST.json and README still said v5.4.0; the immutable archive has not been altered. v5.5.1 corrects that metadata for a new source tree.
+
 
 - Added UX/UI Design Orchestra: bounded independent specialist analysis, single read-only design proposal, explicit pre-implementation owner approval, honest sequential fallback, offline receipt validator and RU/EN integration guides (#121).
 
@@ -27,7 +41,7 @@
 
 - Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
 
-Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
+These changes are included in the [published v5.5.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), despite the stale 5.4.0 version metadata inside that historical source archive. The v5.5.0 tag is preserved; compare [v5.4.0...v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...v5.5.0) for the recorded source changes.
 
 - Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
 - Added pinned official Agent Skills validation, source quality/link/profile checks, provenance inventory and release preflight (#25, #27, #28).
