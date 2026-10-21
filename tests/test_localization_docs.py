@@ -68,6 +68,12 @@ FIXTURE_FILES = (
     "docs/ru/RELEASE_PROCESS.md",
     "docs/REAL_AGENT_PILOT.md",
     "docs/ru/REAL_AGENT_PILOT.md",
+    "docs/SKILL_EVALS.md",
+    "docs/ru/SKILL_EVALS.md",
+    "docs/GITHUB_SETUP.md",
+    "docs/ru/GITHUB_SETUP.md",
+    "docs/WINDOWS_PUBLISHING.md",
+    "docs/ru/WINDOWS_PUBLISHING.md",
     "docs/PUBLISHING.md",
     "docs/ru/PUBLISHING.md",
     "docs/BRANCH_PROTECTION.md",
@@ -308,6 +314,29 @@ class RussianOnboardingTests(unittest.TestCase):
         data = page.read_text(encoding="utf-8")
         self.assertIn("tests (windows-latest, 3.14)", data)
         page.write_text(data.replace("tests (windows-latest, 3.14)", "no-check"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
+    def test_skill_eval_cannot_claim_measurement_from_missing_data(self):
+        page = self.root / "docs/ru/SKILL_EVALS.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_MEASURED", data)
+        page.write_text(data.replace("NOT_MEASURED", "VERIFIED", 100), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_initial_publication_guide_retains_script_name(self):
+        page = self.root / "docs/ru/GITHUB_SETUP.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("publish_github.ps1", data)
+        page.write_text(data.replace("publish_github.ps1", "publish-anyway.ps1"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
+    def test_windows_publishing_keeps_unblock_file_scope(self):
+        page = self.root / "docs/ru/WINDOWS_PUBLISHING.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("Unblock-File", data)
+        page.write_text(data.replace("Unblock-File", "Set-ExecutionPolicy Bypass"),
                         encoding="utf-8")
         self.check("L10N009")
 
