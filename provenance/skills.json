@@ -8082,7 +8082,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-22",
+      "last_reviewed": "2026-10-21",
       "distribution": "included",
       "distribution_basis": "New SVG drawn specifically for this repository; no third-party art incorporated; permission to publish subject to owner visual and release review",
       "notes": "Visual candidate from PR #178; not part of previously owner-approved assets/branding/ PNG snapshots. Do not treat draft review as final release approval."
@@ -8102,7 +8102,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-22",
+      "last_reviewed": "2026-10-21",
       "distribution": "included",
       "distribution_basis": "New SVG composed for the Toolkit presentation; no imported third-party image; owner publication review pending",
       "notes": "Draft visual proposal only. Does not update GitHub repository social preview settings or protected social-preview.png."
@@ -8122,7 +8122,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-22",
+      "last_reviewed": "2026-10-21",
       "distribution": "included",
       "distribution_basis": "New repository-specific offline regression checks under repository MIT declaration; independent chain of title not claimed",
       "notes": "Checks bilingual navigation, local preview assets and published-release wording; no external API calls."
@@ -8707,5 +8707,6 @@
         "extensions/qa/skills/test-strategy/references/FIELD_GUIDE.md": "4ad05473689b4741840d362df7035d4cbe223021e2014026564e49235136da9d"
       }
     }
-  ]
+  ],
+  "github_readme_review_date": "2026-10-21"
 }
