@@ -1,0 +1,208 @@
+{
+  "cases": [
+    {
+      "id": "wrong_classification",
+      "path": "report.kind",
+      "value": "QUESTION",
+      "expected_error": "BAD_CLASSIFICATION"
+    },
+    {
+      "id": "missing_next",
+      "path": "report.next",
+      "value": "",
+      "expected_error": "INTAKE_MISSING"
+    },
+    {
+      "id": "no_privacy",
+      "path": "report.privacy",
+      "value": null,
+      "expected_error": "INTAKE_MISSING"
+    },
+    {
+      "id": "invented_version",
+      "path": "report.version_evidence",
+      "value": null,
+      "expected_error": "VERSION_UNVERIFIED"
+    },
+    {
+      "id": "false_duplicate",
+      "path": "duplicate.state",
+      "value": "CONFIRMED",
+      "expected_error": "FALSE_DUPLICATE"
+    },
+    {
+      "id": "fake_reproduction",
+      "path": "reproduction.attempts",
+      "value": 0,
+      "expected_error": "FAKE_REPRODUCTION"
+    },
+    {
+      "id": "untrusted_reproduction",
+      "path": "reproduction.evidence",
+      "value": "R",
+      "expected_error": "FAKE_REPRODUCTION"
+    },
+    {
+      "id": "broken_repro_link",
+      "path": "reproduction.report",
+      "value": "OTHER",
+      "expected_error": "TRACE_LOST"
+    },
+    {
+      "id": "fake_rca",
+      "path": "diagnosis.confidence",
+      "value": "CONFIRMED",
+      "expected_error": "FAKE_RCA"
+    },
+    {
+      "id": "no_acceptance",
+      "path": "handoff.acceptance",
+      "value": [],
+      "expected_error": "HANDOFF_NO_AC"
+    },
+    {
+      "id": "wrong_handoff",
+      "path": "handoff.report",
+      "value": "OTHER",
+      "expected_error": "TRACE_LOST"
+    },
+    {
+      "id": "false_fix",
+      "path": "fix.commit",
+      "value": null,
+      "expected_error": "FIX_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "fake_qa",
+      "path": "fix.test_status",
+      "value": "NOT_RUN",
+      "expected_error": "QA_NOT_VERIFIED"
+    },
+    {
+      "id": "untrusted_qa",
+      "path": "fix.test_evidence",
+      "value": "R",
+      "expected_error": "QA_NOT_VERIFIED"
+    },
+    {
+      "id": "merge_not_proven",
+      "path": "delivery.merge_evidence",
+      "value": null,
+      "expected_error": "MERGE_UNVERIFIED"
+    },
+    {
+      "id": "release_not_proven",
+      "path": "delivery.release_evidence",
+      "value": null,
+      "expected_error": "RELEASE_UNVERIFIED"
+    },
+    {
+      "id": "wrong_release_version",
+      "path": "delivery.version",
+      "value": "99.99",
+      "expected_error": "VERSION_MAPPING"
+    },
+    {
+      "id": "deployment_not_proven",
+      "path": "delivery.deploy_evidence",
+      "value": null,
+      "expected_error": "DEPLOY_UNVERIFIED"
+    },
+    {
+      "id": "wrong_deployment_version",
+      "path": "delivery.deployed_version",
+      "value": "1.1",
+      "expected_error": "DEPLOY_VERSION_MISMATCH"
+    },
+    {
+      "id": "false_user_verified",
+      "path": "delivery.user_verified",
+      "value": true,
+      "expected_error": "USER_NOT_VERIFIED"
+    },
+    {
+      "id": "rollback_ignored",
+      "path": "delivery.rollback",
+      "value": true,
+      "expected_error": "ROLLBACK_INVALID"
+    },
+    {
+      "id": "closed_known_issue",
+      "path": "known_issue.status",
+      "value": "CLOSED",
+      "expected_error": "KNOWN_ISSUE_PREMATURE"
+    },
+    {
+      "id": "untested_workaround",
+      "path": "known_issue.workaround",
+      "value": "delete saved files",
+      "expected_error": "WORKAROUND_UNTESTED"
+    },
+    {
+      "id": "bad_changelog",
+      "path": "changelog.version",
+      "value": "99.99",
+      "expected_error": "CHANGELOG_MISMATCH"
+    },
+    {
+      "id": "removed_without_approval",
+      "path": "deprecation.state",
+      "value": "REMOVED",
+      "expected_error": "DEPRECATION_UNAPPROVED"
+    },
+    {
+      "id": "sent_without_permission",
+      "path": "message.status",
+      "value": "SENT",
+      "expected_error": "UNAUTHORIZED_SEND"
+    },
+    {
+      "id": "invented_deadline",
+      "path": "message.deadline",
+      "value": "tomorrow",
+      "expected_error": "UNAPPROVED_DEADLINE"
+    },
+    {
+      "id": "leak_token",
+      "path": "message.text",
+      "value": "token=synthetic-secret",
+      "expected_error": "SENSITIVE_CONTENT"
+    },
+    {
+      "id": "false_data_safety",
+      "path": "message.data_safe_claim",
+      "value": true,
+      "expected_error": "DATA_SAFETY_UNVERIFIED"
+    },
+    {
+      "id": "premature_closure",
+      "path": "closure.status",
+      "value": "CLOSED",
+      "expected_error": "FALSE_CLOSURE"
+    },
+    {
+      "id": "lost_pr_link",
+      "path": "trace.pr",
+      "value": "OTHER",
+      "expected_error": "TRACE_LOST"
+    },
+    {
+      "id": "fake_access",
+      "path": "access.claimed_observation",
+      "value": true,
+      "expected_error": "ACCESS_UNVERIFIED"
+    },
+    {
+      "id": "lost_evidence",
+      "path": "report.evidence",
+      "value": "missing-ref",
+      "expected_error": "EVIDENCE_MISSING"
+    },
+    {
+      "id": "false_customer_claim",
+      "path": "message.claim",
+      "value": "USER_VERIFIED",
+      "expected_error": "CUSTOMER_CLAIM_UNSUPPORTED"
+    }
+  ]
+}

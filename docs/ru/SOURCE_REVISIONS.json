@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "56e61ebd6acd10a80f474ace068985db69f77caae8eed86770faec468dac7738"
+      "source_sha256": "771599b77e343a77f0e1fabbcedb81a81203716d04b7bfd32b06345a6f2403cc"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "226f00889969626144f1c7e89bb0248d18aa81f137c5408a81c3c2b87f1bc870"
+      "source_sha256": "29feccd3e70ce646c56825028ca0fc08f71933c4136a831f8feb103ce5cfc896"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "df8f101c84947a51aec84b31f3507125975087c2eac9402c5dea5ef0fa7c4ede"
+      "source_sha256": "29c3f5b5a8adadd451a4cd0ceef93613b3736c38902c343a7046ab7dca0af423"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -186,6 +186,11 @@
       "source": "docs/DATA_ENGINEERING.md",
       "translation": "docs/ru/DATA_ENGINEERING.md",
       "source_sha256": "0faf7e56dca51fe4b147f7f8cb64427a6178c958d6af8f24520fdd6f2b1a3ee9"
+    },
+    {
+      "source": "docs/MAINTENANCE_SUPPORT.md",
+      "translation": "docs/ru/MAINTENANCE_SUPPORT.md",
+      "source_sha256": "50fd0c31e6cbc934b772ed428940fe32ce77a2d436dc716c7fd084ba7927a4c0"
     }
   ]
 }

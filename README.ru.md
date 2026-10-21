@@ -7,14 +7,14 @@
 Переносимая библиотека навыков, ролей и рабочих процессов для разработки программного обеспечения с ИИ-агентами.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-79-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-80-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-42-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-43-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 [English](README.md) · **Русский**
 
-[Toolkit по ссылке - без установки](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Бизнес- и системный анализ](docs/ru/BUSINESS_SYSTEM_ANALYSIS.md) · [Проектирование UX/UI](docs/ru/UX_UI_DESIGN.md) · [DevOps и инфраструктура](docs/ru/DEVOPS_INFRASTRUCTURE.md) · [Accessibility QA](docs/ru/ACCESSIBILITY_QA.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
+[Toolkit по ссылке - без установки](AGENT_START.ru.md) · [Начать без терминала](docs/ru/BEGINNER_START.md) · [Путь от идеи до результата](docs/ru/BEGINNER_WORKFLOW.md) · [Clear Voice - руководство](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Make Feature - руководство](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Спецификация Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md) · [Качество навыков v2](docs/ru/SKILL_QUALITY_V2.md) · [Полнота переводов](docs/ru/LANGUAGE_POLICY.md) · [Первый запуск с нуля](docs/ru/GETTING_STARTED.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Русская документация](docs/ru/README.md) · [Словарь](docs/ru/GLOSSARY.md) · [Бизнес- и системный анализ](docs/ru/BUSINESS_SYSTEM_ANALYSIS.md) · [Проектирование UX/UI](docs/ru/UX_UI_DESIGN.md) · [Сопровождение и поддержка](docs/ru/MAINTENANCE_SUPPORT.md) · [DevOps и инфраструктура](docs/ru/DEVOPS_INFRASTRUCTURE.md) · [Accessibility QA](docs/ru/ACCESSIBILITY_QA.md) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md) · [Установка и восстановление](docs/ru/INSTALLATION.md) · [Планы (EN)](docs/ROADMAP.md)
 
 </div>
 
@@ -47,7 +47,7 @@
 | **QA Engineering Pack** | 27 навыков API/UI/CI, надёжности тестирования и управления качеством | [QA-навыки](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 самостоятельный подключаемый навык работы над функциями | [Интеграция](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Роли** | 5 основных и 11 специализированных ролей QA | [Каталог ролей](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Профили** | 42 набора навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
+| **Профили** | 43 набора навыков под конкретные задачи | [Все профили](docs/SKILLS_CATALOG.md#profiles) |
 
 Навыки оформлены по формату [Agent Skills](https://agentskills.io/specification). Наличие навыка не даёт агенту автоматически права менять файлы, подключаться к сервисам или выпускать изменения.
 
@@ -96,7 +96,7 @@ python scripts/skill_manager.py status --target /path/to/project
 | Отредактировать текст | `editorial` |
 | Вести задачу через Make Feature | `make-feature` |
 
-[Полный каталог из 79 навыков и 42 профиля](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
+[Полный каталог из 80 навыков и 43 профиля](docs/ru/SKILLS_CATALOG.md). Для независимых управляемых установок Codex и Claude Code см. [миграцию и восстановление (EN)](docs/CLIENT_MIGRATION.md) и команду `python scripts/skill_manager.py catalog`.
 
 ## Проверка перед использованием
 

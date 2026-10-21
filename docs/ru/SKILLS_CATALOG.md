@@ -134,6 +134,7 @@
 
 | Навык | Когда применять |
 | :--- | :--- |
+| [`maintenance-support`](../../extensions/operations/skills/maintenance-support/SKILL.md) | Сопровождайте обращения, проверяйте доказательства исправления и выпуска и готовьте достоверные ответы. |
 | [`observability-sre`](../../extensions/operations/skills/observability-sre/SKILL.md) | Проверка логов, метрик и трассировок, SLI/SLO, расследование инцидентов и восстановление. |
 | [`dependency-maintenance`](../../extensions/operations/skills/dependency-maintenance/SKILL.md) | Оценка обновлений, lockfile, транзитивных зависимостей, advisories, совместимости и отката. |
 
@@ -221,6 +222,7 @@
 | :--- | :--- |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
+| `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
 | `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |

@@ -1,0 +1,193 @@
+{
+  "evidence": {
+    "R": {
+      "source": "USER_REPORTED"
+    },
+    "V": {
+      "source": "SOURCE_BACKED"
+    },
+    "T": {
+      "source": "SYNTHETIC_TESTED"
+    },
+    "C": {
+      "source": "SOURCE_BACKED"
+    },
+    "Q": {
+      "source": "SYNTHETIC_TESTED"
+    },
+    "M": {
+      "source": "SOURCE_BACKED"
+    },
+    "P": {
+      "source": "SOURCE_BACKED"
+    },
+    "D": {
+      "source": "SYNTHETIC_TESTED"
+    },
+    "U": {
+      "source": "USER_REPORTED"
+    },
+    "B": {
+      "source": "SYNTHETIC_TESTED"
+    },
+    "N": {
+      "source": "SOURCE_BACKED"
+    }
+  },
+  "report": {
+    "id": "SYN-R1",
+    "kind": "FAULT",
+    "source": "synthetic report",
+    "category": "DEFECT",
+    "basis": "save failure",
+    "product": "Example Notes",
+    "component": "save",
+    "version": "1.1",
+    "version_evidence": "V",
+    "environment": "unknown",
+    "symptom": "save lost",
+    "expected": "persist",
+    "observed": "not persisted",
+    "evidence": "R",
+    "privacy": "SYNTHETIC",
+    "missing": [],
+    "next": "verify installed build",
+    "conflict": true,
+    "reports": [
+      {
+        "version": "1.1",
+        "claim": "fails"
+      },
+      {
+        "version": "1.0",
+        "claim": "works"
+      }
+    ]
+  },
+  "duplicate": {
+    "candidate": "SYN-OLD",
+    "state": "POSSIBLE",
+    "same_cause": false,
+    "evidence": null
+  },
+  "reproduction": {
+    "id": "SYN-REP",
+    "report": "SYN-R1",
+    "status": "NOT_REPRODUCED",
+    "attempts": 2,
+    "version": "1.1",
+    "environment": "local",
+    "preconditions": "test account",
+    "data": "fake note",
+    "steps": [
+      "save",
+      "reload"
+    ],
+    "expected": "persisted",
+    "actual": "save succeeded locally",
+    "evidence": "T",
+    "limitations": "production unavailable; intermittent"
+  },
+  "diagnosis": {
+    "confidence": "UNDETERMINED",
+    "cause": null,
+    "alternatives": [
+      "different version",
+      "flags"
+    ],
+    "evidence": null
+  },
+  "handoff": {
+    "report": "SYN-R1",
+    "issue": "SYN-I1",
+    "acceptance": [
+      "note persisted after reload"
+    ],
+    "requirement": "SYN-REQ",
+    "risk": "storage",
+    "unknowns": [
+      "live rollout"
+    ]
+  },
+  "fix": {
+    "status": "NONE",
+    "commit": null,
+    "pr": null,
+    "code_evidence": null,
+    "test_status": "NOT_RUN",
+    "test_evidence": null
+  },
+  "delivery": {
+    "merged": false,
+    "merge_evidence": null,
+    "published": false,
+    "version": null,
+    "release_evidence": null,
+    "deployed": false,
+    "channel": null,
+    "environment": null,
+    "deployed_version": null,
+    "deploy_evidence": null,
+    "user_version": "1.1",
+    "user_environment": "unknown",
+    "user_verified": false,
+    "user_evidence": null,
+    "rollback": false,
+    "rollback_evidence": null
+  },
+  "known_issue": {
+    "issue": "SYN-I1",
+    "status": "OPEN",
+    "versions": [
+      "1.1"
+    ],
+    "fixed_version": null,
+    "workaround": null,
+    "workaround_checked": false,
+    "workaround_evidence": null
+  },
+  "changelog": {
+    "state": "DRAFT",
+    "issue": "SYN-I1",
+    "pr": null,
+    "version": null,
+    "evidence": null
+  },
+  "deprecation": {
+    "feature": "legacy-example",
+    "state": "PROPOSED",
+    "approved": false,
+    "approval_evidence": null,
+    "requires_notice": true,
+    "notice_evidence": null
+  },
+  "message": {
+    "report": "SYN-R1",
+    "status": "DRAFT",
+    "claim": "NOT_REPRODUCED",
+    "text": "Cannot reproduce locally. Please share your exact version and last step.",
+    "approved": false,
+    "send_evidence": null,
+    "deadline": null,
+    "deadline_approved": false,
+    "data_safe_claim": false,
+    "data_evidence": null
+  },
+  "closure": {
+    "status": "OPEN",
+    "reason": null,
+    "evidence": null
+  },
+  "access": {
+    "production": false,
+    "claimed_observation": false,
+    "observation_evidence": null
+  },
+  "trace": {
+    "report": "SYN-R1",
+    "issue": "SYN-I1",
+    "pr": null,
+    "commit": null,
+    "version": null
+  }
+}
