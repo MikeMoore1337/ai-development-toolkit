@@ -82,6 +82,8 @@ jobs:
         run: python scripts/validate_provenance.py --mode inventory --report "${{ runner.temp }}/provenance-inventory.json"
       - name: Confirm exact owner-reviewed release source snapshot (technical gate)
         run: python scripts/validate_provenance.py --mode release --report "${{ runner.temp }}/provenance-release-preflight.json"
+      - name: Validate normalized dependency maintenance fixtures (offline)
+        run: python scripts/validate_dependency_maintenance.py
       - name: Validate metadata
         run: python scripts/validate_pack.py
       - name: Verify offline AI client contracts (no models or agent runtimes)

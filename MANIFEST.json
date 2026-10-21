@@ -310,6 +310,13 @@
       "release-safety",
       "security-boundaries",
       "reliability-testing"
+    ],
+    "dependency-maintenance": [
+      "dependency-maintenance",
+      "minimal-safe-change",
+      "code-review",
+      "security-engineering",
+      "release-safety"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -498,6 +505,7 @@
     "operations": {
       "skill_root": "extensions/operations/skills",
       "skills": [
+        "dependency-maintenance",
         "observability-sre"
       ],
       "auto_install": false

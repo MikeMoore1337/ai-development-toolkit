@@ -19,6 +19,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | Release QA | `qa-release` | 4 | None |
 | Accessibility QA: keyboard, focus, forms, contrast and WCAG | `accessibility-qa` | 4 | Offline examples; optional real browser and AT checks |
 | Incident investigation, telemetry quality, SLI/SLO and recovery | `observability-sre` | 5 | Offline synthetic oracles, owner gate for infrastructure |
+| Library upgrades, lockfile and rollback | `dependency-maintenance` | 5 | Evidence-first; no automatic updates |
 | CI/CD, containers, infrastructure and deployment planning | `devops-infrastructure` | 4 | Offline synthetic checks only; no cloud or Docker required |
 | Threat modeling, security architecture and DevSecOps | `security-engineering` | 4 | Offline synthetic tests; no external scans |
 | Bounded load, performance budgets and regressions | `performance-load-testing` | 3 | Synthetic local tests only; no external traffic |
@@ -206,3 +207,7 @@ The optional `project-delivery-management` profile maps an existing PRD to work,
 ### QA v2: examples and role handoffs
 
 All 27 QA skills now ship with task-local `references/` (lazy-load only when the case calls for examples, failure oracles and handoff templates). The 11 QA roles have explicit input/output and exclusion contracts. Roles are **reference instructions**: the installer does not provision subagents. Pick the smallest task-specific profile; `qa-ui` uses Playwright only if the project actually uses it, and `qa-python` does not require pytest in other frameworks. For trivial work use one agent serially; delegate only if the client has genuinely distinct workers and file ownership does not conflict. Never call self-review independent. Reports stay in chat by default; no external API or paid runtime. See [QA Pack](../extensions/qa/README.md), [portability](QA_PORTABILITY.md), and [role contracts](../extensions/qa/roles/qa-architect.md).
+
+## Dependency maintenance
+
+The opt-in `dependency-maintenance` profile reuses existing skills. [Guide](DEPENDENCY_MAINTENANCE.md).
