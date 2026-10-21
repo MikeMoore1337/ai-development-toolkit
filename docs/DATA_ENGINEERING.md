@@ -15,6 +15,19 @@ Optional data-engineering profile adds exactly one specialized skill and reuses 
 - Backfill: planning, authorized execution and independently confirmed data repair are separate stages. Re-running a batch can double count without idempotency.
 - Analytics Metric: explicit formula, numerator/denominator, grain, window, timezone, NULL, zero division, filters and rounding; business owner determines meaning, engineer implements, QA independently verifies.
 
+## Reuse-first gap matrix
+
+| Capability | Reuse | Issue #65 addition |
+| --- | --- | --- |
+| Access, transactions, physical integrity | `data-access`, `database-validation` | No duplication |
+| Contracts, consumers, schema changes | `contract-testing`, `database-migrations` | Pipeline-level version and semantic decisions |
+| Quality and test data | `test-data-management`, `integration-testing` | Full-dataset completeness, freshness and independent aggregate oracle |
+| Stateful recovery | `reliability-testing`, `observability-sre` | Batch checkpoints, bounded late arrival and synthetic backfill |
+| Business and metric requirements | `business-system-analysis`, `product-discovery` | Implemented numerator/denominator and independent metric validation |
+| ETL/ELT, lineage | Existing partial storage and QA guidance | One specialized source-to-result lifecycle skill |
+
+No separate roles, workflow controller or new QA Pack is required. The example models local atomic commit only; real storage guarantees require separate tests.
+
 ## Beginner
 
 Example request: "I have Excel and CSV exports. Help combine them using confirmed keys, find duplicate or missing rows, verify totals and preview changes without overwriting original files." No ETL vocabulary is needed. Real Excel processing can require an external project's chosen Excel library; the skill does not install one.
