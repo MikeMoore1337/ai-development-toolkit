@@ -241,6 +241,21 @@
       "source": "docs/WINDOWS_PUBLISHING.md",
       "translation": "docs/ru/WINDOWS_PUBLISHING.md",
       "source_sha256": "173822504e7c7b5f731bd88b8ccff9c340f1e54d4bee9bce7c6540bbb9b7275b"
+    },
+    {
+      "source": "docs/QA_PORTABILITY.md",
+      "translation": "docs/ru/QA_PORTABILITY.md",
+      "source_sha256": "19f16bf6ec02aaa075692d4339e156d66ebc9618db0b674d155b6f47f156175c"
+    },
+    {
+      "source": "docs/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+      "translation": "docs/ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+      "source_sha256": "b643946fb2e35485765da8f2d365ddf33b6ec170f91fa374711a1a7584fe1a8f"
+    },
+    {
+      "source": "docs/EVALUATION_PLAN_V4.md",
+      "translation": "docs/ru/EVALUATION_PLAN_V4.md",
+      "source_sha256": "ac65101ebc32be4718f453ea6e7a548fc70ba8a5aba739d307bc4be2a607281d"
     }
   ]
 }
