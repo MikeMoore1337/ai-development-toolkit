@@ -1,6 +1,6 @@
 <div align="center">
 
-[![AI Development Toolkit: навыки, роли, разработка, тестирование и решение человека](assets/branding/hero-v2.svg)](docs/ru/BEGINNER_START.md)
+[![AI Development Toolkit: навыки, роли, разработка, тестирование и решение человека](docs/visuals/hero-evidence.svg)](docs/ru/BEGINNER_START.md)
 
 [English](README.md) · **Русский**
 
