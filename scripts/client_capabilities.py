@@ -195,6 +195,10 @@ def validate_execution_claim(claim: dict) -> None:
     if claim["owner_report_only"] and (
             claim["skill_invoked"] or claim["measured_effectiveness"]):
         raise CapabilityError("Owner report cannot prove L5/L6")
+    if claim["route"] != "NATIVE_FILESYSTEM_SKILL" and (
+            claim["skill_discovered"] or claim["skill_invoked"]):
+        raise CapabilityError("URL/attachment guidance cannot prove native skill invocation")
+
 
 
 def inspect_zip(path: Path) -> dict:
@@ -202,45 +206,50 @@ def inspect_zip(path: Path) -> dict:
     if path.suffix.lower() != ".zip" or not path.is_file() or path.is_symlink():
         raise CapabilityError("ATTACHMENT_UNAVAILABLE or unsupported ZIP")
     names = set()
-    count = total = 0
+    count = files = total = 0
     try:
         with zipfile.ZipFile(path, "r") as archive:
             for info in archive.infolist():
-                if info.is_dir():
-                    continue
                 count += 1
                 if count > MAX_ENTRIES:
                     raise CapabilityError("ZIP file count exceeds safe limit")
-                name = info.orig_filename  # ZipInfo.filename normalizes backslashes on Windows.
-                normalized = PurePosixPath(name)
-                if (not name or name.startswith("/") or "\\" in name or
-                        re.match(r"^[A-Za-z]:", name) or
-                        any(part in {"", ".", ".."} for part in name.split("/")) or
-                        "\x00" in name):
+                # Inspect the unsanitized original. Windows zipfile normalizes backslashes.
+                name = info.orig_filename
+                entry = name[:-1] if info.is_dir() and name.endswith("/") else name
+                normalized = PurePosixPath(entry)
+                if (not entry or entry.startswith("/") or "\\" in entry or
+                        re.match(r"^[A-Za-z]:", entry) or
+                        any(part in {"", ".", ".."} for part in entry.split("/")) or
+                        "\x00" in entry):
                     raise CapabilityError("Unsafe ZIP path traversal/absolute path")
                 if normalized.as_posix().casefold() in names:
                     raise CapabilityError("Duplicate or colliding ZIP paths")
                 names.add(normalized.as_posix().casefold())
-                mode = info.external_attr >> 16
-                if stat.S_IFMT(mode) not in {0, stat.S_IFREG}:
+                if SECRET_NAMES.search(entry):
+                    raise CapabilityError("ZIP contains possible secrets")
+                mode = stat.S_IFMT(info.external_attr >> 16)
+                if info.is_dir():
+                    if mode not in {0, stat.S_IFDIR}:
+                        raise CapabilityError("Linked or non-directory ZIP entry")
+                    continue
+                files += 1
+                if mode not in {0, stat.S_IFREG}:
                     raise CapabilityError("Linked or non-regular ZIP entry")
                 if info.flag_bits & 1 or info.compress_type not in {
                         zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}:
                     raise CapabilityError("Encrypted or unsupported ZIP entry")
-                if SECRET_NAMES.search(name):
-                    raise CapabilityError("ZIP contains possible secrets")
                 if name.casefold().endswith((".zip", ".tar", ".tgz", ".7z", ".rar", ".gz")):
                     raise CapabilityError("Nested archive requires separate approval")
                 total += info.file_size
                 if total > MAX_UNCOMPRESSED or info.file_size > (
                         max(info.compress_size, 1) * MAX_RATIO):
                     raise CapabilityError("ZIP expansion exceeds safe limit")
-            if not count:
+            if not files:
                 raise CapabilityError("Empty ZIP archive")
             bad = archive.testzip()
             if bad is not None:
                 raise CapabilityError("Corrupted ZIP member")
     except (zipfile.BadZipFile, EOFError, OSError, RuntimeError) as exc:
         raise CapabilityError("Corrupted ZIP archive") from exc
-    return {"status": "ZIP_PREFLIGHT_PASS", "entries": count,
+    return {"status": "ZIP_PREFLIGHT_PASS", "entries": files,
             "uncompressed_bytes": total, "extracted": False}
