@@ -40,7 +40,7 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "beb7ae36176eeb1198c116725d1ed86250b5c28f4e276549ef91be4de4592da8"
+      "source_sha256": "1d0a9c53cb8b00e8b0258d7d938c152cb6240136a093a87e4d0c1b2d60145ae0"
     },
     {
       "source": "docs/ADAPTATION.md",
@@ -226,6 +226,21 @@
       "source": "docs/REAL_AGENT_PILOT.md",
       "translation": "docs/ru/REAL_AGENT_PILOT.md",
       "source_sha256": "d1485efd9887edc53359561be9800ac7db64cc7fd1f27f44d99667369ef95d6b"
+    },
+    {
+      "source": "docs/SKILL_EVALS.md",
+      "translation": "docs/ru/SKILL_EVALS.md",
+      "source_sha256": "56529b79b753c98b0c78439efa73a5f398f1810aa845e2b5cc712aecd82c696b"
+    },
+    {
+      "source": "docs/GITHUB_SETUP.md",
+      "translation": "docs/ru/GITHUB_SETUP.md",
+      "source_sha256": "3baff265039a99a7440ad8b45508246ee2c356028bc6e5b97345592e5aae03c9"
+    },
+    {
+      "source": "docs/WINDOWS_PUBLISHING.md",
+      "translation": "docs/ru/WINDOWS_PUBLISHING.md",
+      "source_sha256": "173822504e7c7b5f731bd88b8ccff9c340f1e54d4bee9bce7c6540bbb9b7275b"
     }
   ]
 }
