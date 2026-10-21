@@ -12,8 +12,8 @@ STATES = {"PASS", "FAIL", "NOT_RUN", "BLOCKED", "UNKNOWN"}
 REAL_EVIDENCE = {"TEST_RUN", "CI_RUN", "BROWSER_RUN"}
 EVIDENCE_KINDS = REAL_EVIDENCE | {"CODE_INSPECTION", "SYNTHETIC"}
 WORKER_MODES = {"SEQUENTIAL", "ACTUAL_SUBAGENT", "GENERIC_SUBAGENT"}
-HEX_SHA = re.compile(r"[0-9a-f]{40}\\Z")
-ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\\Z")
+HEX_SHA = re.compile(r"[0-9a-f]{40}\Z")
+ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\Z")
 
 
 def validate_report(report: Any) -> list[str]:
