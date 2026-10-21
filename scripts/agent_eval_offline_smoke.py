@@ -162,21 +162,26 @@ def oracle_exit(case_id: str, workspace: Path, *, timeout: int = 45) -> dict:
                 "outcome_class": "TIMEOUT"}
 
 
+def cleanup_temporary_directory(cleanup):
+    """Retry transient ENOTEMPTY; retain tempfile's Windows read-only handling."""
+    for attempt in range(8):
+        try:
+            cleanup()
+            return
+        except OSError as error:
+            if error.errno not in (errno.ENOTEMPTY, errno.EEXIST) or attempt == 7:
+                raise
+            time.sleep(0.05 * (attempt + 1))
+
+
 @contextmanager
 def isolated_smoke_root():
-    """Remove synthetic workspace; retry only transient Go cache cleanup races."""
-    root = Path(tempfile.mkdtemp(prefix="adt-offline-oracle-"))
+    """Isolated synthetic files; native tempfile cleanup handles Git objects on Windows."""
+    temp = tempfile.TemporaryDirectory(prefix="adt-offline-oracle-")
     try:
-        yield root
+        yield Path(temp.name)
     finally:
-        for attempt in range(8):
-            try:
-                shutil.rmtree(root)
-                break
-            except OSError as error:
-                if error.errno not in (errno.ENOTEMPTY, errno.EEXIST) or attempt == 7:
-                    raise
-                time.sleep(0.05 * (attempt + 1))
+        cleanup_temporary_directory(temp.cleanup)
 
 
 def perform_smoke(cases: list[str], *, strict_runtimes: bool = False,
