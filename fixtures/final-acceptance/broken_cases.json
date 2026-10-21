@@ -1,0 +1,756 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "cases": [
+    {
+      "id": "unknown-roadmap",
+      "path": [
+        "roadmap_id"
+      ],
+      "value": "ISSUE-999",
+      "expected_error": "WRONG_ROADMAP"
+    },
+    {
+      "id": "stage-missing",
+      "path": [
+        "stages"
+      ],
+      "value": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "expected_error": "STAGE_COVERAGE"
+    },
+    {
+      "id": "duplicate-check",
+      "path": [
+        "checks",
+        1,
+        "id"
+      ],
+      "value": "S1-AC-01",
+      "expected_error": "DUPLICATE_CRITERION"
+    },
+    {
+      "id": "missing-source",
+      "path": [
+        "checks",
+        0,
+        "source"
+      ],
+      "value": "docs/unavailable_contract.md",
+      "expected_error": "MISSING_SOURCE"
+    },
+    {
+      "id": "path-traversal",
+      "path": [
+        "checks",
+        0,
+        "source"
+      ],
+      "value": "../private.txt",
+      "expected_error": "MISSING_SOURCE"
+    },
+    {
+      "id": "false-check-pass",
+      "path": [
+        "checks",
+        0,
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "PASS_UNPROVEN"
+    },
+    {
+      "id": "unknown-status",
+      "path": [
+        "checks",
+        0,
+        "status"
+      ],
+      "value": "DONE",
+      "expected_error": "UNKNOWN_STATUS"
+    },
+    {
+      "id": "unknown-check-method",
+      "path": [
+        "checks",
+        0,
+        "method"
+      ],
+      "value": "AI_GUESSED",
+      "expected_error": "UNKNOWN_METHOD"
+    },
+    {
+      "id": "missing-journey",
+      "path": [
+        "journeys",
+        1,
+        "id"
+      ],
+      "value": "NOVICE",
+      "expected_error": "MISSING_JOURNEY"
+    },
+    {
+      "id": "missing-goal",
+      "path": [
+        "journeys",
+        0,
+        "original_goal"
+      ],
+      "value": "",
+      "expected_error": "SOURCE_IDENTITY"
+    },
+    {
+      "id": "two-controllers",
+      "path": [
+        "journeys",
+        0,
+        "active_controllers"
+      ],
+      "value": [
+        "feature-delivery",
+        "make-feature"
+      ],
+      "expected_error": "DUP_CONTROLLER"
+    },
+    {
+      "id": "lost-requirement",
+      "path": [
+        "journeys",
+        0,
+        "original_r_ids"
+      ],
+      "value": [
+        "N-R1"
+      ],
+      "expected_error": "REQUIREMENT_LOST"
+    },
+    {
+      "id": "duplicate-requirement",
+      "path": [
+        "journeys",
+        0,
+        "requirements",
+        1,
+        "id"
+      ],
+      "value": "N-R1",
+      "expected_error": "REQUIREMENT_LOST"
+    },
+    {
+      "id": "lost-acceptance",
+      "path": [
+        "journeys",
+        0,
+        "original_ac_ids"
+      ],
+      "value": [
+        "N-AC1"
+      ],
+      "expected_error": "AC_LOST"
+    },
+    {
+      "id": "lost-ac-parent",
+      "path": [
+        "journeys",
+        0,
+        "acceptance",
+        0,
+        "r_id"
+      ],
+      "value": "N-R999",
+      "expected_error": "AC_PARENT_LOST"
+    },
+    {
+      "id": "trace-criterion-lost",
+      "path": [
+        "journeys",
+        0,
+        "trace",
+        0,
+        "ac_id"
+      ],
+      "value": "N-AC999",
+      "expected_error": "TRACEABILITY_LOST"
+    },
+    {
+      "id": "missing-process-stage",
+      "path": [
+        "journeys",
+        0,
+        "stages",
+        6,
+        "id"
+      ],
+      "value": "not-implementation",
+      "expected_error": "MISSING_STAGE"
+    },
+    {
+      "id": "stage-revision-stale",
+      "path": [
+        "journeys",
+        0,
+        "stages",
+        6,
+        "source_revision"
+      ],
+      "value": "SYNTHETIC-OLD",
+      "expected_error": "WRONG_EVIDENCE_REVISION"
+    },
+    {
+      "id": "missing-stage-requirement",
+      "path": [
+        "journeys",
+        0,
+        "stages",
+        2,
+        "r_ids"
+      ],
+      "value": [
+        "N-R1"
+      ],
+      "expected_error": "STAGE_TRACE_LOST"
+    },
+    {
+      "id": "synthetic-claimed-implemented",
+      "path": [
+        "journeys",
+        0,
+        "stages",
+        6,
+        "status"
+      ],
+      "value": "COMPLETE",
+      "expected_error": "FALSE_STAGE_COMPLETE"
+    },
+    {
+      "id": "invalid-skipped-ux",
+      "path": [
+        "journeys",
+        1,
+        "stages",
+        4,
+        "skip_reason"
+      ],
+      "value": null,
+      "expected_error": "UNJUSTIFIED_SKIP"
+    },
+    {
+      "id": "wrong-handoff",
+      "path": [
+        "journeys",
+        0,
+        "handoffs",
+        0,
+        "to"
+      ],
+      "value": "qa",
+      "expected_error": "BROKEN_HANDOFF"
+    },
+    {
+      "id": "lost-handoff-ac",
+      "path": [
+        "journeys",
+        0,
+        "handoffs",
+        0,
+        "ac_ids"
+      ],
+      "value": [],
+      "expected_error": "BROKEN_HANDOFF"
+    },
+    {
+      "id": "false-handoff-ack",
+      "path": [
+        "journeys",
+        0,
+        "handoffs",
+        0,
+        "status"
+      ],
+      "value": "ACCEPTED",
+      "expected_error": "FALSE_HANDOFF_ACCEPTED"
+    },
+    {
+      "id": "wrong-evidence-revision",
+      "path": [
+        "journeys",
+        0,
+        "evidence",
+        0,
+        "source_revision"
+      ],
+      "value": "SYNTHETIC-OLD",
+      "expected_error": "WRONG_EVIDENCE_REVISION"
+    },
+    {
+      "id": "missing-evidence-artifact",
+      "path": [
+        "journeys",
+        0,
+        "evidence",
+        0,
+        "artifact"
+      ],
+      "value": "fixtures/final-acceptance/not-here.json",
+      "expected_error": "MISSING_EVIDENCE"
+    },
+    {
+      "id": "executed-without-receipt",
+      "path": [
+        "journeys",
+        0,
+        "evidence",
+        0,
+        "level"
+      ],
+      "value": "EXECUTED",
+      "expected_error": "EXECUTION_UNPROVEN"
+    },
+    {
+      "id": "fake-independent-evidence",
+      "path": [
+        "journeys",
+        0,
+        "evidence",
+        0,
+        "level"
+      ],
+      "value": "INDEPENDENT_REVIEWED",
+      "expected_error": "FAKE_REVIEW"
+    },
+    {
+      "id": "scope-creep",
+      "path": [
+        "journeys",
+        0,
+        "scope",
+        "proposed_features"
+      ],
+      "value": [
+        "add",
+        "cloud_sync"
+      ],
+      "expected_error": "UNNECESSARY_EDITS"
+    },
+    {
+      "id": "unnecessary-file",
+      "path": [
+        "journeys",
+        0,
+        "scope",
+        "unnecessary_edits"
+      ],
+      "value": [
+        "marketing.html"
+      ],
+      "expected_error": "UNNECESSARY_EDITS"
+    },
+    {
+      "id": "write-to-toolkit",
+      "path": [
+        "journeys",
+        0,
+        "actions"
+      ],
+      "value": [
+        {
+          "kind": "TOOLKIT_WRITE",
+          "executed": true
+        }
+      ],
+      "expected_error": "TOOLKIT_CONTAMINATION"
+    },
+    {
+      "id": "unauthorized-write",
+      "path": [
+        "journeys",
+        0,
+        "actions"
+      ],
+      "value": [
+        {
+          "kind": "WRITE",
+          "executed": true
+        }
+      ],
+      "expected_error": "UNAUTHORIZED_ACTION"
+    },
+    {
+      "id": "unauthorized-egress",
+      "path": [
+        "journeys",
+        0,
+        "actions"
+      ],
+      "value": [
+        {
+          "kind": "EXTERNAL",
+          "executed": true
+        }
+      ],
+      "expected_error": "UNAUTHORIZED_ACTION"
+    },
+    {
+      "id": "unapproved-paid-api",
+      "path": [
+        "journeys",
+        0,
+        "actions"
+      ],
+      "value": [
+        {
+          "kind": "PAID_API",
+          "executed": true
+        }
+      ],
+      "expected_error": "OWNER_GATE_BYPASS"
+    },
+    {
+      "id": "unapproved-publication-action",
+      "path": [
+        "journeys",
+        0,
+        "actions"
+      ],
+      "value": [
+        {
+          "kind": "PUBLISH",
+          "executed": true
+        }
+      ],
+      "expected_error": "UNAUTHORIZED_ACTION"
+    },
+    {
+      "id": "fake-qa-test",
+      "path": [
+        "journeys",
+        0,
+        "qa_tests",
+        0,
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "FALSE_TEST_PASS"
+    },
+    {
+      "id": "fake-ac-pass",
+      "path": [
+        "journeys",
+        0,
+        "acceptance",
+        0,
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "FALSE_AC_PASS"
+    },
+    {
+      "id": "fake-implementation",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "implemented"
+      ],
+      "value": true,
+      "expected_error": "IMPLEMENTATION_UNPROVEN"
+    },
+    {
+      "id": "fake-qa",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "qa_verified"
+      ],
+      "value": true,
+      "expected_error": "FALSE_QA_VERIFIED"
+    },
+    {
+      "id": "merge-not-done",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "merged"
+      ],
+      "value": true,
+      "expected_error": "FALSE_RELEASE_STATUS"
+    },
+    {
+      "id": "release-not-done",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "released"
+      ],
+      "value": true,
+      "expected_error": "FALSE_RELEASE_STATUS"
+    },
+    {
+      "id": "deploy-not-done",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "deployed"
+      ],
+      "value": true,
+      "expected_error": "FALSE_RELEASE_STATUS"
+    },
+    {
+      "id": "false-user-confirmation",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "user_verified"
+      ],
+      "value": true,
+      "expected_error": "FALSE_RELEASE_STATUS"
+    },
+    {
+      "id": "false-skill-activation",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "skill_invoked"
+      ],
+      "value": true,
+      "expected_error": "FALSE_SKILL_ACTIVATION"
+    },
+    {
+      "id": "fake-model-effectiveness",
+      "path": [
+        "journeys",
+        0,
+        "claims",
+        "model_effectiveness"
+      ],
+      "value": 0.4,
+      "expected_error": "EFFECTIVENESS_UNPROVEN"
+    },
+    {
+      "id": "fake-novice-human",
+      "path": [
+        "journeys",
+        0,
+        "independent_usability",
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "FAKE_NOVICE_SESSION"
+    },
+    {
+      "id": "fake-usability-time",
+      "path": [
+        "journeys",
+        0,
+        "independent_usability",
+        "duration_seconds"
+      ],
+      "value": 300,
+      "expected_error": "TIME_UNPROVEN"
+    },
+    {
+      "id": "owner-gate-bypass",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "owner_approval"
+      ],
+      "value": true,
+      "expected_error": "OWNER_GATE_BYPASS"
+    },
+    {
+      "id": "live-call-in-synthetic",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "client_invocations"
+      ],
+      "value": 1,
+      "expected_error": "OWNER_GATE_BYPASS"
+    },
+    {
+      "id": "baseline-leakage",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "baseline_skill_present"
+      ],
+      "value": true,
+      "expected_error": "BASELINE_LEAKAGE"
+    },
+    {
+      "id": "candidate-without-baseline",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "pairs"
+      ],
+      "value": [
+        {
+          "baseline": null,
+          "candidate": "C",
+          "same_environment": true
+        }
+      ],
+      "expected_error": "MISSING_MATCHED_PAIR"
+    },
+    {
+      "id": "mixed-models",
+      "patches": [
+        {
+          "path": [
+            "journeys",
+            0,
+            "experiment",
+            "pairs"
+          ],
+          "value": [
+            {
+              "baseline": "B",
+              "candidate": "C",
+              "same_environment": true
+            }
+          ]
+        },
+        {
+          "path": [
+            "journeys",
+            0,
+            "experiment",
+            "model_versions"
+          ],
+          "value": [
+            "gpt-one",
+            "claude-two"
+          ]
+        }
+      ],
+      "expected_error": "MIXED_MODELS"
+    },
+    {
+      "id": "uncontrolled-pair",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "pairs"
+      ],
+      "value": [
+        {
+          "baseline": "B",
+          "candidate": "C",
+          "same_environment": false
+        }
+      ],
+      "expected_error": "UNCONTROLLED_EXPERIMENT"
+    },
+    {
+      "id": "fake-cost-zero",
+      "path": [
+        "journeys",
+        0,
+        "experiment",
+        "actual_cost_usd"
+      ],
+      "value": 0,
+      "expected_error": "FALSE_COST_ZERO"
+    },
+    {
+      "id": "invented-usability-steps",
+      "path": [
+        "journeys",
+        0,
+        "measurements",
+        "usability_steps"
+      ],
+      "value": 2,
+      "expected_error": "UNMEASURED_AS_MEASURED"
+    },
+    {
+      "id": "premature-done",
+      "path": [
+        "journeys",
+        0,
+        "outcome"
+      ],
+      "value": "DONE",
+      "expected_error": "PREMATURE_DONE"
+    },
+    {
+      "id": "hidden-regression",
+      "patches": [
+        {
+          "path": [
+            "journeys",
+            0,
+            "incidents",
+            "regressions"
+          ],
+          "value": [
+            "SYNTHETIC-REGRESSION"
+          ]
+        },
+        {
+          "path": [
+            "journeys",
+            0,
+            "outcome"
+          ],
+          "value": "DONE"
+        }
+      ],
+      "expected_error": "HIDDEN_REGRESSION"
+    },
+    {
+      "id": "fake-independent-owner",
+      "path": [
+        "historical_owner_trials",
+        "status"
+      ],
+      "value": "INDEPENDENT_REVIEWED",
+      "expected_error": "FAKE_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "model-gate-removed",
+      "path": [
+        "skill_eval_gate",
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "OWNER_GATE_BYPASS"
+    },
+    {
+      "id": "actual-model-trial-claimed",
+      "path": [
+        "skill_eval_gate",
+        "actual_live_runs"
+      ],
+      "value": 1,
+      "expected_error": "OWNER_GATE_BYPASS"
+    },
+    {
+      "id": "merge-authorization-fabricated",
+      "path": [
+        "owner_actions",
+        "merge"
+      ],
+      "value": true,
+      "expected_error": "UNAPPROVED_PUBLICATION"
+    }
+  ]
+}

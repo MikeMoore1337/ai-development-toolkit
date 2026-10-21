@@ -1,0 +1,2037 @@
+{
+  "schema_version": 1,
+  "acceptance_id": "ISSUE-70-FINAL-OFFLINE",
+  "roadmap_id": "ISSUE-42",
+  "issue_reference": "ISSUE-70",
+  "source_revision_policy": "RUNTIME_GIT_HEAD_FOR_EXECUTED_CHECKS; SYNTHETIC_REV_FOR_FIXTURE_DATA",
+  "synthetic": true,
+  "disclaimer": "Validation of fixture contracts is not live agent execution, skill invocation, independent usability or empirical model effectiveness.",
+  "stages": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6"
+  ],
+  "workflow_stages": [
+    "discovery",
+    "prd",
+    "planning",
+    "analysis",
+    "ux",
+    "architecture",
+    "implementation",
+    "qa",
+    "security",
+    "release",
+    "operations",
+    "support"
+  ],
+  "verification_levels": [
+    "SOURCE_ONLY",
+    "CONTRACT_VALIDATED",
+    "SYNTHETIC_TESTED",
+    "EXECUTED",
+    "INDEPENDENT_REVIEWED",
+    "OWNER_REPORTED",
+    "NOT_TESTED",
+    "BLOCKED"
+  ],
+  "statuses": [
+    "PASS",
+    "FAIL",
+    "NOT_TESTED",
+    "BLOCKED",
+    "NOT_APPLICABLE",
+    "INCONCLUSIVE"
+  ],
+  "checks": [
+    {
+      "id": "S1-AC-01",
+      "stage": "S1",
+      "criterion": "Documented source exists: Skill metadata/specification",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_pack.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S1-AC-02",
+      "stage": "S1",
+      "criterion": "Documented source exists: Skill quality rubric",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/SKILL_QUALITY_V2.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S1-AC-03",
+      "stage": "S1",
+      "criterion": "Documented source exists: Routing regression oracle",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/skill_routing_eval.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S1-AC-04",
+      "stage": "S1",
+      "criterion": "Documented source exists: Skill registry",
+      "method": "SOURCE_PRESENCE",
+      "source": "MANIFEST.json",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S1-AC-05",
+      "stage": "S1",
+      "criterion": "Documented source exists: Source rights and provenance",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_provenance.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S1-AC-06",
+      "stage": "S1",
+      "criterion": "Documented source exists: Reference skills validation",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_with_skills_ref.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-01",
+      "stage": "S2",
+      "criterion": "Documented source exists: Zero-terminal beginner workflow",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/BEGINNER_WORKFLOW.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-02",
+      "stage": "S2",
+      "criterion": "Documented source exists: Safe first-run fixture",
+      "method": "SOURCE_PRESENCE",
+      "source": "fixtures/no_terminal_acceptance.json",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-03",
+      "stage": "S2",
+      "criterion": "Documented source exists: Preview/apply/recover tests",
+      "method": "SOURCE_PRESENCE",
+      "source": "tests/test_beginner_workflow.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-04",
+      "stage": "S2",
+      "criterion": "Documented source exists: Local IDE and ZIP guidance",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/ru/ACCEPTANCE.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-05",
+      "stage": "S2",
+      "criterion": "Documented source exists: Independent usability protocol",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/ru/ACCEPTANCE.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S2-AC-06",
+      "stage": "S2",
+      "criterion": "Independent novice execution",
+      "method": "INDEPENDENT_HUMAN",
+      "source": null,
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S3-AC-01",
+      "stage": "S3",
+      "criterion": "Documented source exists: Product discovery",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/PRODUCT_DISCOVERY.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S3-AC-02",
+      "stage": "S3",
+      "criterion": "Documented source exists: Requirements traceability",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/BUSINESS_SYSTEM_ANALYSIS.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S3-AC-03",
+      "stage": "S3",
+      "criterion": "Documented source exists: UX/UI contracts",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/UX_UI_DESIGN.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S3-AC-04",
+      "stage": "S3",
+      "criterion": "Documented source exists: Architecture handoff",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/END_TO_END_WORKFLOW.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S3-AC-05",
+      "stage": "S3",
+      "criterion": "Documented source exists: Change-scope control",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_end_to_end_workflow.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-01",
+      "stage": "S4",
+      "criterion": "Documented source exists: QA and test strategy",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/QUALITY_RUBRIC.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-02",
+      "stage": "S4",
+      "criterion": "Documented source exists: AI system contract validation",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_ai_contracts.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-03",
+      "stage": "S4",
+      "criterion": "Documented source exists: Reliability testing",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_reliability.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-04",
+      "stage": "S4",
+      "criterion": "Documented source exists: Accessibility QA",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/ACCESSIBILITY_QA.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-05",
+      "stage": "S4",
+      "criterion": "Documented source exists: Security boundaries",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/SECURITY_DEVSECOPS.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-06",
+      "stage": "S4",
+      "criterion": "Documented source exists: Performance budgets",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/PERFORMANCE_LOAD_TESTING.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S4-AC-07",
+      "stage": "S4",
+      "criterion": "Actual model effectiveness",
+      "method": "LIVE_MODEL",
+      "source": null,
+      "status": "BLOCKED",
+      "blocker": "ISSUE_11_ZERO_SPEND_AND_SEPARATE_OWNER_APPROVAL",
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-01",
+      "stage": "S5",
+      "criterion": "Documented source exists: Release safety policy",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/RELEASE_PROCESS.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-02",
+      "stage": "S5",
+      "criterion": "Documented source exists: Observability",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/OBSERVABILITY_SRE.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-03",
+      "stage": "S5",
+      "criterion": "Documented source exists: Dependency maintenance",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/DEPENDENCY_MAINTENANCE.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-04",
+      "stage": "S5",
+      "criterion": "Documented source exists: Data engineering",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/DATA_ENGINEERING.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-05",
+      "stage": "S5",
+      "criterion": "Documented source exists: Support contracts",
+      "method": "SOURCE_PRESENCE",
+      "source": "docs/MAINTENANCE_SUPPORT.md",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S5-AC-06",
+      "stage": "S5",
+      "criterion": "Documented source exists: Deployment receipt validation",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_end_to_end_workflow.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-01",
+      "stage": "S6",
+      "criterion": "Documented source exists: End-to-end contract",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_end_to_end_workflow.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-02",
+      "stage": "S6",
+      "criterion": "Documented source exists: Client capability registry",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/client_capabilities.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-03",
+      "stage": "S6",
+      "criterion": "Documented source exists: Cross-client compatibility",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/verify_client_compatibility.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-04",
+      "stage": "S6",
+      "criterion": "Documented source exists: Tool operation permissions",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/validate_tool_integrations.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-05",
+      "stage": "S6",
+      "criterion": "Documented source exists: Skill eval offline harness",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/agent_eval_offline_smoke.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-06",
+      "stage": "S6",
+      "criterion": "Documented source exists: Cost and owner execution guards",
+      "method": "SOURCE_PRESENCE",
+      "source": "scripts/agent_eval_runner.py",
+      "status": "NOT_TESTED",
+      "blocker": null,
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-07",
+      "stage": "S6",
+      "criterion": "Live client skill discovery",
+      "method": "LIVE_MODEL",
+      "source": null,
+      "status": "BLOCKED",
+      "blocker": "ISSUE_11_ZERO_SPEND_AND_SEPARATE_OWNER_APPROVAL",
+      "evidence_id": null,
+      "verification_timestamp": null
+    },
+    {
+      "id": "S6-AC-08",
+      "stage": "S6",
+      "criterion": "Real independent model review",
+      "method": "LIVE_MODEL",
+      "source": null,
+      "status": "BLOCKED",
+      "blocker": "ISSUE_11_ZERO_SPEND_AND_SEPARATE_OWNER_APPROVAL",
+      "evidence_id": null,
+      "verification_timestamp": null
+    }
+  ],
+  "journeys": [
+    {
+      "id": "NOVICE",
+      "synthetic": true,
+      "original_goal": "I am not a programmer. Build a simple, local, free home-expense application where I can add expenses and see the total for a month.",
+      "source_revision": "SYNTHETIC-NOVICE-REV-1",
+      "client_mode": "CONVERSATIONAL_REFERENCE_CLIENT",
+      "controller": "feature-delivery",
+      "active_controllers": [
+        "feature-delivery"
+      ],
+      "project_ref": "SYNTHETIC-NOVICE-PROJECT",
+      "original_r_ids": [
+        "N-R1",
+        "N-R2",
+        "N-R3"
+      ],
+      "original_ac_ids": [
+        "N-AC1",
+        "N-AC2",
+        "N-AC3"
+      ],
+      "requirements": [
+        {
+          "id": "N-R1",
+          "description": "Add a positive-value expense locally",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "N-R2",
+          "description": "Show the list of recorded expenses",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "N-R3",
+          "description": "Calculate totals for a selected calendar month",
+          "origin": "ORIGINAL_GOAL"
+        }
+      ],
+      "acceptance": [
+        {
+          "id": "N-AC1",
+          "r_id": "N-R1",
+          "criterion": "A valid expense is entered exactly once",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "N-AC2",
+          "r_id": "N-R2",
+          "criterion": "Saved entries can be listed",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "N-AC3",
+          "r_id": "N-R3",
+          "criterion": "Monthly total uses selected month boundaries",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        }
+      ],
+      "trace": [
+        {
+          "goal_ref": "NOVICE",
+          "r_id": "N-R1",
+          "ac_id": "N-AC1",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "N-T1",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "NOVICE",
+          "r_id": "N-R2",
+          "ac_id": "N-AC2",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "N-T2",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "NOVICE",
+          "r_id": "N-R3",
+          "ac_id": "N-AC3",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "N-T3",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        }
+      ],
+      "stages": [
+        {
+          "id": "discovery",
+          "deliverable": "user intent and offline/free boundary",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "request",
+          "output": "discovery"
+        },
+        {
+          "id": "prd",
+          "deliverable": "N-R and N-AC mapping",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "discovery",
+          "output": "prd"
+        },
+        {
+          "id": "planning",
+          "deliverable": "bounded MVP plan",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "prd",
+          "output": "planning"
+        },
+        {
+          "id": "analysis",
+          "deliverable": "positive amount, date and monthly aggregation",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "planning",
+          "output": "analysis"
+        },
+        {
+          "id": "ux",
+          "deliverable": "simple add/list/total user journey",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "analysis",
+          "output": "ux"
+        },
+        {
+          "id": "architecture",
+          "deliverable": "local storage option, no cloud or Docker",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "ux",
+          "output": "architecture"
+        },
+        {
+          "id": "implementation",
+          "deliverable": "not implemented; synthetic change plan only",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "architecture",
+          "output": "implementation"
+        },
+        {
+          "id": "qa",
+          "deliverable": "planned amount, duplicates, month boundary and persistence cases",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "implementation",
+          "output": "qa"
+        },
+        {
+          "id": "security",
+          "deliverable": "no unapproved egress",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "qa",
+          "output": "security"
+        },
+        {
+          "id": "release",
+          "deliverable": "local prototype handoff, not production",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "security",
+          "output": "release"
+        },
+        {
+          "id": "operations",
+          "deliverable": "no production deployment",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "release",
+          "output": "operations"
+        },
+        {
+          "id": "support",
+          "deliverable": "plain-language next action and known limitations",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "operations",
+          "output": "support"
+        }
+      ],
+      "handoffs": [
+        {
+          "from": "discovery",
+          "to": "prd",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "discovery",
+          "deliverable": "prd",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "prd",
+          "to": "planning",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "prd",
+          "deliverable": "planning",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "planning",
+          "to": "analysis",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "planning",
+          "deliverable": "analysis",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "analysis",
+          "to": "ux",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "analysis",
+          "deliverable": "ux",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "ux",
+          "to": "architecture",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "ux",
+          "deliverable": "architecture",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "architecture",
+          "to": "implementation",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "architecture",
+          "deliverable": "implementation",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "implementation",
+          "to": "qa",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "implementation",
+          "deliverable": "qa",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "qa",
+          "to": "security",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "qa",
+          "deliverable": "security",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "security",
+          "to": "release",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "security",
+          "deliverable": "release",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "release",
+          "to": "operations",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "release",
+          "deliverable": "operations",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "operations",
+          "to": "support",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "r_ids": [
+            "N-R1",
+            "N-R2",
+            "N-R3"
+          ],
+          "ac_ids": [
+            "N-AC1",
+            "N-AC2",
+            "N-AC3"
+          ],
+          "source_artifact": "operations",
+          "deliverable": "support",
+          "status": "PREPARED",
+          "receiver_ack": null
+        }
+      ],
+      "scope": {
+        "approved": [
+          "add",
+          "list",
+          "monthly_total"
+        ],
+        "excluded": [
+          "signup",
+          "cloud_sync",
+          "paid_api",
+          "social_share",
+          "docker"
+        ],
+        "proposed_features": [
+          "add",
+          "list",
+          "monthly_total"
+        ],
+        "actual_changed_files": [],
+        "unnecessary_edits": []
+      },
+      "qa_tests": [
+        {
+          "id": "N-T1",
+          "ac_id": "N-AC1",
+          "case": "valid positive amount",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "N-T2",
+          "ac_id": "N-AC1",
+          "case": "reject zero/negative/blank amount",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "N-T3",
+          "ac_id": "N-AC2",
+          "case": "list added records",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "N-T4",
+          "ac_id": "N-AC3",
+          "case": "month start/end",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "N-T5",
+          "ac_id": "N-AC3",
+          "case": "do not double count",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "N-T6",
+          "ac_id": "N-AC2",
+          "case": "reopen and persistence if agreed",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-NOVICE-SOURCE",
+          "source_revision": "SYNTHETIC-NOVICE-REV-1",
+          "level": "SOURCE_ONLY",
+          "method": "FIXTURE_TEXT",
+          "executed": false,
+          "artifact": "fixtures/final-acceptance/contract.json",
+          "observation": "Synthetic input only",
+          "reviewer": null,
+          "independent": false
+        }
+      ],
+      "capabilities": {
+        "file_write": false,
+        "terminal": false,
+        "external": false,
+        "skill_discovered": false,
+        "skill_invoked": false
+      },
+      "permissions": {
+        "write": false,
+        "external": false,
+        "paid_api": false,
+        "publish": false,
+        "deploy": false,
+        "toolkit_write": false
+      },
+      "actions": [],
+      "claims": {
+        "implemented": false,
+        "qa_verified": false,
+        "merged": false,
+        "released": false,
+        "deployed": false,
+        "user_verified": false,
+        "independent_reviewed": false,
+        "skill_invoked": false,
+        "model_effectiveness": null
+      },
+      "receipts": {
+        "implementation": null,
+        "qa": null,
+        "merge": null,
+        "release": null,
+        "deployment": null,
+        "user": null,
+        "invocation": null,
+        "independent_review": null
+      },
+      "independent_usability": {
+        "status": "NOT_TESTED",
+        "session_id": null,
+        "reviewer_id": null,
+        "executor_id": null,
+        "timestamps": [],
+        "observed_steps": null,
+        "duration_seconds": null
+      },
+      "experiment": {
+        "status": "BLOCKED",
+        "reason": "ISSUE_11_ZERO_SPEND_AND_SEPARATE_OWNER_APPROVAL",
+        "owner_approval": false,
+        "client_invocations": 0,
+        "baseline_skill_present": false,
+        "model_versions": [],
+        "pairs": [],
+        "actual_cost_usd": null
+      },
+      "measurements": {
+        "usability_steps": null,
+        "wall_time_seconds": null,
+        "actual_cost_usd": null,
+        "model_quality_improvement": null
+      },
+      "incidents": {
+        "unauthorized_actions": [],
+        "false_claims": [],
+        "regressions": [],
+        "unnecessary_edits": []
+      },
+      "outcome": "INCOMPLETE"
+    },
+    {
+      "id": "EXPERT",
+      "synthetic": true,
+      "original_goal": "Add CSV batch import to an existing application while preserving API compatibility, authorization, idempotency, error diagnostics, test evidence and safe release.",
+      "source_revision": "SYNTHETIC-EXPERT-REV-1",
+      "client_mode": "FILESYSTEM_SKILL_CLIENT",
+      "controller": "feature-delivery",
+      "active_controllers": [
+        "feature-delivery"
+      ],
+      "project_ref": "SYNTHETIC-EXPERT-PROJECT",
+      "original_r_ids": [
+        "X-R1",
+        "X-R2",
+        "X-R3",
+        "X-R4",
+        "X-R5"
+      ],
+      "original_ac_ids": [
+        "X-AC1",
+        "X-AC2",
+        "X-AC3",
+        "X-AC4",
+        "X-AC5"
+      ],
+      "requirements": [
+        {
+          "id": "X-R1",
+          "description": "Parse CSV and reject malformed inputs",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "X-R2",
+          "description": "Preserve public API contract",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "X-R3",
+          "description": "Enforce tenant access controls",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "X-R4",
+          "description": "Import idempotently with partial-failure policy",
+          "origin": "ORIGINAL_GOAL"
+        },
+        {
+          "id": "X-R5",
+          "description": "Produce QA, release and support evidence",
+          "origin": "ORIGINAL_GOAL"
+        }
+      ],
+      "acceptance": [
+        {
+          "id": "X-AC1",
+          "r_id": "X-R1",
+          "criterion": "Malformed CSV and invalid encoding are rejected",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "X-AC2",
+          "r_id": "X-R2",
+          "criterion": "Existing API clients keep working",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "X-AC3",
+          "r_id": "X-R3",
+          "criterion": "Unauthorized tenant access is denied",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "X-AC4",
+          "r_id": "X-R4",
+          "criterion": "Retries and duplicate imports do not duplicate records",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        },
+        {
+          "id": "X-AC5",
+          "r_id": "X-R5",
+          "criterion": "Release gates and handoff have traceable receipts",
+          "status": "NOT_TESTED",
+          "evidence_id": null
+        }
+      ],
+      "trace": [
+        {
+          "goal_ref": "EXPERT",
+          "r_id": "X-R1",
+          "ac_id": "X-AC1",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "X-T1",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "EXPERT",
+          "r_id": "X-R2",
+          "ac_id": "X-AC2",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "X-T2",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "EXPERT",
+          "r_id": "X-R3",
+          "ac_id": "X-AC3",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "X-T3",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "EXPERT",
+          "r_id": "X-R4",
+          "ac_id": "X-AC4",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "X-T4",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        },
+        {
+          "goal_ref": "EXPERT",
+          "r_id": "X-R5",
+          "ac_id": "X-AC5",
+          "stage": "qa",
+          "deliverable": "qa",
+          "test_ref": "X-T5",
+          "evidence_id": null,
+          "final_status": "NOT_TESTED"
+        }
+      ],
+      "stages": [
+        {
+          "id": "discovery",
+          "deliverable": "existing system interfaces and roles",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "request",
+          "output": "discovery"
+        },
+        {
+          "id": "prd",
+          "deliverable": "X-R and X-AC mapping",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "discovery",
+          "output": "prd"
+        },
+        {
+          "id": "planning",
+          "deliverable": "bounded implementation and risk review",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "prd",
+          "output": "planning"
+        },
+        {
+          "id": "analysis",
+          "deliverable": "CSV, API, authorization and data contract",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "planning",
+          "output": "analysis"
+        },
+        {
+          "id": "ux",
+          "deliverable": "not applicable: API-only case",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "NOT_APPLICABLE",
+          "skip_reason": "API import has no end-user UI in this fixture",
+          "input": "analysis",
+          "output": "ux"
+        },
+        {
+          "id": "architecture",
+          "deliverable": "transaction boundaries and retry policy",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "ux",
+          "output": "architecture"
+        },
+        {
+          "id": "implementation",
+          "deliverable": "planned import service; no code changes",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "architecture",
+          "output": "implementation"
+        },
+        {
+          "id": "qa",
+          "deliverable": "planned unit, integration, contract, tenant and malformed input checks",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "implementation",
+          "output": "qa"
+        },
+        {
+          "id": "security",
+          "deliverable": "tenant isolation, CSV safety and egress gate",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "qa",
+          "output": "security"
+        },
+        {
+          "id": "release",
+          "deliverable": "exact SHA/CI and recovery plan required",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "security",
+          "output": "release"
+        },
+        {
+          "id": "operations",
+          "deliverable": "error correlation and telemetry expectations",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "release",
+          "output": "operations"
+        },
+        {
+          "id": "support",
+          "deliverable": "release version mapping, known issues and recovery instructions",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null,
+          "input": "operations",
+          "output": "support"
+        }
+      ],
+      "handoffs": [
+        {
+          "from": "discovery",
+          "to": "prd",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "discovery",
+          "deliverable": "prd",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "prd",
+          "to": "planning",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "prd",
+          "deliverable": "planning",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "planning",
+          "to": "analysis",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "planning",
+          "deliverable": "analysis",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "analysis",
+          "to": "ux",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "analysis",
+          "deliverable": "ux",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "ux",
+          "to": "architecture",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "ux",
+          "deliverable": "architecture",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "architecture",
+          "to": "implementation",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "architecture",
+          "deliverable": "implementation",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "implementation",
+          "to": "qa",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "implementation",
+          "deliverable": "qa",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "qa",
+          "to": "security",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "qa",
+          "deliverable": "security",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "security",
+          "to": "release",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "security",
+          "deliverable": "release",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "release",
+          "to": "operations",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "release",
+          "deliverable": "operations",
+          "status": "PREPARED",
+          "receiver_ack": null
+        },
+        {
+          "from": "operations",
+          "to": "support",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "r_ids": [
+            "X-R1",
+            "X-R2",
+            "X-R3",
+            "X-R4",
+            "X-R5"
+          ],
+          "ac_ids": [
+            "X-AC1",
+            "X-AC2",
+            "X-AC3",
+            "X-AC4",
+            "X-AC5"
+          ],
+          "source_artifact": "operations",
+          "deliverable": "support",
+          "status": "PREPARED",
+          "receiver_ack": null
+        }
+      ],
+      "scope": {
+        "approved": [
+          "csv_import",
+          "api_compatibility",
+          "authz",
+          "idempotency",
+          "qa_release_handoff"
+        ],
+        "excluded": [
+          "api_break",
+          "tenant_escalation",
+          "silent_partial_failure",
+          "production_without_approval"
+        ],
+        "proposed_features": [
+          "csv_import",
+          "api_compatibility",
+          "authz",
+          "idempotency",
+          "qa_release_handoff"
+        ],
+        "actual_changed_files": [],
+        "unnecessary_edits": []
+      },
+      "qa_tests": [
+        {
+          "id": "X-T1",
+          "ac_id": "X-AC1",
+          "case": "malformed CSV",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T2",
+          "ac_id": "X-AC1",
+          "case": "invalid encoding",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T3",
+          "ac_id": "X-AC2",
+          "case": "API backwards compatibility",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T4",
+          "ac_id": "X-AC3",
+          "case": "cross-tenant authorization",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T5",
+          "ac_id": "X-AC4",
+          "case": "idempotency / duplicate rows",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T6",
+          "ac_id": "X-AC4",
+          "case": "partial failure, transaction and retry",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T7",
+          "ac_id": "X-AC5",
+          "case": "integration and release readiness",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        },
+        {
+          "id": "X-T8",
+          "ac_id": "X-AC5",
+          "case": "observability and support handoff",
+          "status": "NOT_TESTED",
+          "executed": false,
+          "evidence_id": null
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-EXPERT-SOURCE",
+          "source_revision": "SYNTHETIC-EXPERT-REV-1",
+          "level": "SOURCE_ONLY",
+          "method": "FIXTURE_TEXT",
+          "executed": false,
+          "artifact": "fixtures/final-acceptance/contract.json",
+          "observation": "Synthetic input only",
+          "reviewer": null,
+          "independent": false
+        }
+      ],
+      "capabilities": {
+        "file_write": false,
+        "terminal": false,
+        "external": false,
+        "skill_discovered": false,
+        "skill_invoked": false
+      },
+      "permissions": {
+        "write": false,
+        "external": false,
+        "paid_api": false,
+        "publish": false,
+        "deploy": false,
+        "toolkit_write": false
+      },
+      "actions": [],
+      "claims": {
+        "implemented": false,
+        "qa_verified": false,
+        "merged": false,
+        "released": false,
+        "deployed": false,
+        "user_verified": false,
+        "independent_reviewed": false,
+        "skill_invoked": false,
+        "model_effectiveness": null
+      },
+      "receipts": {
+        "implementation": null,
+        "qa": null,
+        "merge": null,
+        "release": null,
+        "deployment": null,
+        "user": null,
+        "invocation": null,
+        "independent_review": null
+      },
+      "independent_usability": {
+        "status": "NOT_TESTED",
+        "session_id": null,
+        "reviewer_id": null,
+        "executor_id": null,
+        "timestamps": [],
+        "observed_steps": null,
+        "duration_seconds": null
+      },
+      "experiment": {
+        "status": "BLOCKED",
+        "reason": "ISSUE_11_ZERO_SPEND_AND_SEPARATE_OWNER_APPROVAL",
+        "owner_approval": false,
+        "client_invocations": 0,
+        "baseline_skill_present": false,
+        "model_versions": [],
+        "pairs": [],
+        "actual_cost_usd": null
+      },
+      "measurements": {
+        "usability_steps": null,
+        "wall_time_seconds": null,
+        "actual_cost_usd": null,
+        "model_quality_improvement": null
+      },
+      "incidents": {
+        "unauthorized_actions": [],
+        "false_claims": [],
+        "regressions": [],
+        "unnecessary_edits": []
+      },
+      "outcome": "INCOMPLETE"
+    }
+  ],
+  "historical_owner_trials": {
+    "status": "OWNER_REPORTED_PASS",
+    "clients": [
+      "ChatGPT",
+      "Claude",
+      "DeepSeek",
+      "Qwen"
+    ],
+    "technical_logs": "NOT_ATTACHED",
+    "independent_evidence": "NOT_ATTACHED",
+    "model_effectiveness": "NOT_MEASURED"
+  },
+  "skill_eval_gate": {
+    "status": "BLOCKED",
+    "issue": "ISSUE-11",
+    "guard_file": "scripts/agent_eval_runner.py",
+    "owner_approval": false,
+    "actual_live_runs": 0,
+    "additional_cost": "NOT_MEASURED",
+    "reason": "No separate owner approval, independent safety review or verified zero-spend execution path."
+  },
+  "readiness_policy": {
+    "technical_offline_can_pass_without_live": true,
+    "live_effectiveness_claim_allowed": false
+  },
+  "owner_actions": {
+    "merge": false,
+    "publish": false,
+    "deploy": false,
+    "close_issue": false
+  }
+}
