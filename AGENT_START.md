@@ -89,3 +89,7 @@ Independent beginner usability: **NOT_TESTED**. Client discovery/invocation and 
 ## One-request UX/UI Design Orchestra
 
 When the task asks for multiple UI skill reviews consolidated into a design, select the `ux-ui-design-orchestra` skill (optional profile `ui-orchestra`). Ask only for the screen/task in natural language: "Audit my current UI using Impeccable and applicable accessibility/motion methods. Give me one concrete design proposal and implementation plan; do not change UI before visual approval." Default analysis is **read-only**. Actual subagent invocation depends on client capability; otherwise perform sequential review and report it honestly. No report or preview is written into the Toolkit source. See [UX/UI Design](docs/UX_UI_DESIGN.md).
+
+## Conversation clients and ZIP + URL (Issue #68)
+
+For ordinary ChatGPT and Claude.ai sessions, read [client capabilities and evidence](docs/CLIENT_CAPABILITIES.md) before claiming access. A user's project ZIP and the Toolkit URL are independent inputs; confirm that each is actually readable. A pasted URL means `GUIDANCE_ONLY` until a genuine installed-skill invocation is evidenced. Native hosted Skills, if eligible, are not the Codex/Claude Code project-local filesystem install. If nothing is readable, prepare guidance in chat rather than inventing edits or tests. Do not store user content in the Toolkit.

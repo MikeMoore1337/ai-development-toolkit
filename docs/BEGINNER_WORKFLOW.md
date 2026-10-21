@@ -106,3 +106,7 @@ The machine-readable [acceptance and negative cases](../fixtures/beginner_journe
 ## End-to-end delivery
 
 For a continuous idea-to-support contract, resumable handoffs and honest evidence levels, see [End-to-end workflow](END_TO_END_WORKFLOW.md). This does not add a new controller or require a terminal.
+
+## Use Toolkit in ChatGPT or Claude.ai without installation
+
+Open a chat and say: "Use https://github.com/MikeMoore1337/ai-development-toolkit for this task." If you have a project ZIP, attach **the project ZIP** separately and describe the goal; no GitHub URL for your own project is needed. The client must first establish whether it can actually read the Toolkit and the attachment. If not, ask for only the necessary source files or give a clearly labeled draft. Nothing is installed merely by sharing the URL; generated reports stay in chat by default. Native hosted Skills, where available, are optional and independent from this no-install workflow. See [the client guide](CLIENT_CAPABILITIES.md).
