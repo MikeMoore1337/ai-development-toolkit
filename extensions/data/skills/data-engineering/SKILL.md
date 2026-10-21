@@ -25,4 +25,4 @@ Reuse existing data-access, contract-testing, database-validation, test-data-man
 
 Beginner request: "Combine CSV/Excel files, check duplicates, missing records and totals; do not overwrite originals." Expert request: "Design incremental ETL/ELT with versioned contracts, watermark, schema evolution, backfill, lineage and independent gates."
 
-[Offline synthetic example](../../../../fixtures/data-engineering/README.md) is runnable with the Python standard library only inside Toolkit. External users can use any language, database or cloud and require no Python, paid service, API, DWH, broker or ETL framework.
+Offline synthetic example: fixtures/data-engineering/README.md (from Toolkit root) is runnable with the Python standard library only inside Toolkit. External users can use any language, database or cloud and require no Python, paid service, API, DWH, broker or ETL framework.
