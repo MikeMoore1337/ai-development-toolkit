@@ -1,6 +1,7 @@
 """End-to-end reference-oracle smoke with NO model calls, net, or outputs."""
 from __future__ import annotations
 
+import errno
 import json
 from pathlib import Path
 import shutil
@@ -14,10 +15,63 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from agent_eval_fixtures import FIXTURES
-from agent_eval_offline_smoke import perform_smoke, oracle_exit, REFERENCE_FIXES
+from agent_eval_offline_smoke import perform_smoke, oracle_exit, REFERENCE_FIXES, _temporary_oracle_root
 
 
 class OfflineSmokeTests(unittest.TestCase):
+    def test_transient_go_telemetry_cleanup_race_retries(self):
+        class Temporary:
+            name = "/tmp/synthetic-oracle-root"
+            calls = 0
+
+            def cleanup(self):
+                self.calls += 1
+                if self.calls < 3:
+                    raise OSError(errno.ENOTEMPTY, "Go telemetry writing")
+
+        resource = Temporary()
+        with patch("agent_eval_offline_smoke.tempfile.TemporaryDirectory",
+                   return_value=resource), patch("agent_eval_offline_smoke.time.sleep") as pause:
+            with _temporary_oracle_root() as path:
+                self.assertEqual(path, Path(resource.name))
+        self.assertEqual(3, resource.calls)
+        self.assertEqual(2, pause.call_count)
+
+    def test_persistent_enotempty_still_fails_closed(self):
+        class Temporary:
+            name = "/tmp/synthetic-oracle-root"
+            calls = 0
+
+            def cleanup(self):
+                self.calls += 1
+                raise OSError(errno.ENOTEMPTY, "Still not empty")
+
+        resource = Temporary()
+        with patch("agent_eval_offline_smoke.tempfile.TemporaryDirectory",
+                   return_value=resource), patch("agent_eval_offline_smoke.time.sleep"):
+            with self.assertRaises(OSError):
+                with _temporary_oracle_root():
+                    pass
+        self.assertEqual(5, resource.calls)
+
+    def test_other_cleanup_errors_are_not_retried(self):
+        class Temporary:
+            name = "/tmp/synthetic-oracle-root"
+            calls = 0
+
+            def cleanup(self):
+                self.calls += 1
+                raise OSError(errno.EACCES, "Access denied")
+
+        resource = Temporary()
+        with patch("agent_eval_offline_smoke.tempfile.TemporaryDirectory",
+                   return_value=resource), patch("agent_eval_offline_smoke.time.sleep") as pause:
+            with self.assertRaises(PermissionError):
+                with _temporary_oracle_root():
+                    pass
+        self.assertEqual(1, resource.calls)
+        pause.assert_not_called()
+
     def test_python_paired_hidden_oracle_discriminates(self):
         result = perform_smoke(["python-api"], strict_runtimes=True)
         self.assertTrue(result["all_requested_cases_exercised"])

@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "purpose": "REAL_CLIENT_AB_PILOT",
+  "policy": {
+    "paid_api_allowed": false,
+    "owner_runtime_approved": false,
+    "verified_zero_incremental_cost": false,
+    "verified_isolation": false,
+    "approval_reference": null,
+    "cost_reference": null,
+    "isolation_reference": null
+  },
+  "cases": [
+    {
+      "id": "YFC",
+      "repository": "MikeMoore1337/your-fitness-coach",
+      "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
+      "scope": "Read-only review of workout-set completion persistence and Web/TMA-to-API contracts; no private user data",
+      "acceptance_ids": [
+        "YFC_AC1",
+        "YFC_AC2"
+      ],
+      "baseline": {
+        "status": "NOT_RUN",
+        "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
+        "acceptance_ids": [
+          "YFC_AC1",
+          "YFC_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      },
+      "orchestra": {
+        "status": "NOT_RUN",
+        "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
+        "acceptance_ids": [
+          "YFC_AC1",
+          "YFC_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      }
+    },
+    {
+      "id": "Hermes",
+      "repository": "MikeMoore1337/hermes",
+      "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
+      "scope": "Read-only review of Ops Watch evidence-to-alert contracts; no resident service activation",
+      "acceptance_ids": [
+        "HERMES_AC1",
+        "HERMES_AC2"
+      ],
+      "baseline": {
+        "status": "NOT_RUN",
+        "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
+        "acceptance_ids": [
+          "HERMES_AC1",
+          "HERMES_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      },
+      "orchestra": {
+        "status": "NOT_RUN",
+        "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
+        "acceptance_ids": [
+          "HERMES_AC1",
+          "HERMES_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      }
+    },
+    {
+      "id": "SecondBrain",
+      "repository": "MikeMoore1337/second-brain",
+      "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
+      "scope": "Read-only review of Stage 19 confirmation and Stage 20 foreground boundaries; no vault read/write",
+      "acceptance_ids": [
+        "BRAIN_AC1",
+        "BRAIN_AC2"
+      ],
+      "baseline": {
+        "status": "NOT_RUN",
+        "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
+        "acceptance_ids": [
+          "BRAIN_AC1",
+          "BRAIN_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      },
+      "orchestra": {
+        "status": "NOT_RUN",
+        "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
+        "acceptance_ids": [
+          "BRAIN_AC1",
+          "BRAIN_AC2"
+        ],
+        "client": null,
+        "model": null,
+        "invocation_id": null,
+        "worker_traces": [],
+        "evidence": [],
+        "elapsed_seconds": null,
+        "tokens_used": null
+      }
+    }
+  ],
+  "conclusion": "NOT_MEASURED"
+}

@@ -9,6 +9,8 @@ No model, API, network client, subscription or provider authentication.
 from __future__ import annotations
 
 import argparse
+import errno
+from contextlib import contextmanager
 import hashlib
 import json
 import os
@@ -79,6 +81,27 @@ DEFAULT_ORACLE_TIMEOUT = 45
 # An isolated Go cache requires an initial standard-library build on clean Windows.
 # Retain hard failure on timeout; only allow enough time for a genuine test verdict.
 GO_COLD_BUILD_TIMEOUT = 110
+
+
+@contextmanager
+def _temporary_oracle_root():
+    """Retry transient ENOTEMPTY while cleaning a disposable Go oracle home.
+
+    Go may finish its test process while local telemetry still writes. This
+    never suppresses persistent files or an unrelated filesystem failure.
+    """
+    temp = tempfile.TemporaryDirectory(prefix="adt-offline-oracle-")
+    try:
+        yield Path(temp.name)
+    finally:
+        for attempt in range(5):
+            try:
+                temp.cleanup()
+                break
+            except OSError as exc:
+                if exc.errno not in (errno.ENOTEMPTY, errno.EEXIST) or attempt == 4:
+                    raise
+                time.sleep(0.10 * (attempt + 1))
 
 
 def allowed_runtime(case_id: str) -> bool:
@@ -169,8 +192,7 @@ def perform_smoke(cases: list[str], *, strict_runtimes: bool = False,
     results: list[dict] = []
     # Automatically removed. No GitHub, external network, provider logs or
     # user working tree is touched (only isolated synthetic temporary files).
-    with tempfile.TemporaryDirectory(prefix="adt-offline-oracle-") as parent:
-        root = Path(parent)
+    with _temporary_oracle_root() as root:
         for case_id in cases:
             if not allowed_runtime(case_id):
                 if strict_runtimes:
