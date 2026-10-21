@@ -1,5 +1,7 @@
 # Skill Evals: paired trial records (experimental)
 
+[Русская версия](ru/SKILL_EVALS.md)
+
 This is a **scorer**, not an agent runner or a benchmark certification. It never
 accesses remote accounts, executes target projects, infers missing telemetry, or
 decides whether an evidence artifact proves a claimed outcome.
