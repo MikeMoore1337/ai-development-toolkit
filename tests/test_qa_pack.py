@@ -34,7 +34,7 @@ class QAExtensionTests(unittest.TestCase):
 
     def test_profile_catalog_resolves(self):
         sources = skill_sources(self.m)
-        self.assertEqual(78, len(sources))
+        self.assertEqual(79, len(sources))
         for profile, names in self.m['profiles'].items():
             with self.subTest(profile=profile):
                 self.assertTrue(names)
