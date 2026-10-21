@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "repository": "example/project",
+  "revision": "0123456789abcdef0123456789abcdef01234567",
+  "mode": "AUDIT_ONLY",
+  "execution": {
+    "mode": "SEQUENTIAL",
+    "peak": 1
+  },
+  "streams": [
+    {
+      "id": "api",
+      "focus": "Endpoint status, authorization and error contracts",
+      "execution": "SEQUENTIAL",
+      "trace": null,
+      "skill": "api-testing"
+    },
+    {
+      "id": "ui",
+      "focus": "Critical browser navigation and state transitions",
+      "execution": "SEQUENTIAL",
+      "trace": null,
+      "skill": "playwright-testing"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "source1",
+      "kind": "CODE_INSPECTION",
+      "reference": "Example synthetic fixture only - not an executed test",
+      "revision": "0123456789abcdef0123456789abcdef01234567"
+    }
+  ],
+  "checks": [
+    {
+      "id": "check1",
+      "stream_id": "api",
+      "oracle": "Unauthorized requests return 403",
+      "status": "NOT_RUN",
+      "evidence_ids": [
+        "source1"
+      ]
+    },
+    {
+      "id": "check2",
+      "stream_id": "ui",
+      "oracle": "A keyboard user can complete the workflow",
+      "status": "NOT_RUN",
+      "evidence_ids": []
+    }
+  ],
+  "required_check_ids": [
+    "check1",
+    "check2"
+  ],
+  "gate": "INSUFFICIENT_EVIDENCE",
+  "changed_code": false
+}
