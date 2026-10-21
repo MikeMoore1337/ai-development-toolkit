@@ -66,6 +66,8 @@ FIXTURE_FILES = (
     "docs/ru/AGENT_SKILLS_SPEC.md",
     "docs/RELEASE_PROCESS.md",
     "docs/ru/RELEASE_PROCESS.md",
+    "docs/REAL_AGENT_PILOT.md",
+    "docs/ru/REAL_AGENT_PILOT.md",
     "docs/PUBLISHING.md",
     "docs/ru/PUBLISHING.md",
     "docs/BRANCH_PROTECTION.md",
@@ -308,6 +310,27 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("tests (windows-latest, 3.14)", "no-check"),
                         encoding="utf-8")
         self.check("L10N009")
+
+    def test_real_agent_pilot_cannot_claim_measured_effectiveness(self):
+        page = self.root / "docs/ru/REAL_AGENT_PILOT.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_MEASURED", data)
+        page.write_text(data.replace("NOT_MEASURED", "VERIFIED", 100), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_real_agent_pilot_cannot_remove_source_lock(self):
+        page = self.root / "docs/ru/REAL_AGENT_PILOT.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("ZERO-SPEND", data)
+        page.write_text(data.replace("ZERO-SPEND", "PAID_ALLOWED", 100), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_real_agent_pilot_reverse_link_cannot_disappear(self):
+        page = self.root / "docs/REAL_AGENT_PILOT.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/REAL_AGENT_PILOT.md)", data)
+        page.write_text(data.replace("(ru/REAL_AGENT_PILOT.md)", "(RELEASE_PROCESS.md)", 1), encoding="utf-8")
+        self.check("L10N004")
 
     def test_release_owner_gate_cannot_disappear(self):
         page = self.root / "docs/ru/RELEASE_PROCESS.md"
