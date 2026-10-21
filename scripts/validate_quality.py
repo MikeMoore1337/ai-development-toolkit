@@ -435,9 +435,19 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
                     add(findings, "DOC005", path, 1, "Recommended command missing: " + cmd)
             if "install.py --list-profiles" in q:
                 add(findings, "DOC005", path, 1, "Legacy installer recommended")
-        released = re.search(r"/releases/tag/v(\d+\.\d+\.\d+)", body)
-        if not released or released.group(1) != version or "CHANGELOG.md" not in body:
-            add(findings, "DOC004", path, 1, "Published release differs from baseline")
+        candidate_marker = ("**Next release candidate:**" if path == "README.md"
+                            else "**Кандидат следующего релиза:**")
+        if candidate_marker in body:
+            expected = ("**NOT PUBLISHED**" if path == "README.md"
+                        else "**НЕ ОПУБЛИКОВАН**")
+            if (f"`v{version}`" not in body or expected not in body
+                    or "CHANGELOG.md" not in body or
+                    "/releases/tag/v5.5.1" not in body):
+                add(findings, "DOC004", path, 1, "Unpublished release candidate metadata differs")
+        else:
+            released = re.search(r"/releases/tag/v(\d+\.\d+\.\d+)", body)
+            if not released or released.group(1) != version or "CHANGELOG.md" not in body:
+                add(findings, "DOC004", path, 1, "Published release differs from baseline")
 
     path = "docs/AGENT_SKILLS_SPEC.md"
     if (root / path).is_file():
@@ -472,13 +482,23 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
     path = "CHANGELOG.md"
     if (root / path).is_file():
         headings = re.findall(r"^##\s+(.+)$", (root / path).read_text(encoding="utf-8"), re.M)
+        candidate = ("**v5.5.1 published-tag metadata erratum" in
+                     (root / path).read_text(encoding="utf-8"))
+        expected_status = "candidate" if candidate else "released"
         if (len(headings) < 2 or headings[0] != "Unreleased (main after v" + version + ")"
-                or not re.fullmatch(re.escape(version) + r" \(released, \d{4}-\d{2}-\d{2}\)", headings[1])):
+                or not re.fullmatch(re.escape(version) +
+                                    r" \(" + expected_status + r", \d{4}-\d{2}-\d{2}\)",
+                                    headings[1])):
             add(findings, "DOC004", path, 1, "Released/Unreleased section mismatch")
     path = "docs/RELEASE_PROCESS.md"
     if (root / path).is_file():
         body = (root / path).read_text(encoding="utf-8")
-        if ("currently " + chr(96) + version + chr(96) not in body or
+        if "## Published v5.5.0 and v5.5.1 archive errata" in body:
+            if (f"`{version}` (candidate, NOT PUBLISHED)" not in body
+                    or "/releases/tag/v5.5.1" not in body
+                    or "TAG_MANIFEST_VERSION_MISMATCH" not in body):
+                add(findings, "DOC004", path, 1, "Release candidate identity or pre-tag guard mismatch")
+        elif ("currently " + chr(96) + version + chr(96) not in body or
                 "/releases/tag/v" + version not in body or "Unreleased" not in body):
             add(findings, "DOC004", path, 1, "Release process baseline mismatch")
 
