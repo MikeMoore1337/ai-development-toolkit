@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from validate_data_engineering import (PipelineError, aggregate, audit, build,
-                                       empty_state, ingest, load, mutate, validate)
+                                       empty_state, ingest, load, mutate, partition_batch, validate)
 
 
 class DataEngineeringTests(unittest.TestCase):
@@ -65,6 +65,23 @@ class DataEngineeringTests(unittest.TestCase):
             with self.subTest(case=case["id"]):
                 self.assertIn(case["expected_error"],
                               audit(mutate(sample, case["path"], case["value"])))
+
+    def test_reject_invalid_rows_before_aggregate_and_require_external_accuracy(self):
+        source, contract = load("events.json"), load("contracts.json")
+        batch = copy.deepcopy(source["batches"][0])
+        bad = copy.deepcopy(batch["records"][0])
+        bad["event_id"] = "invalid-new-event"
+        bad["amount"] = -99
+        batch["records"].append(bad)
+        accepted, rejected = partition_batch(batch, contract)
+        self.assertEqual(2, len(accepted["records"]))
+        self.assertEqual(1, len(rejected))
+        self.assertIn("RANGE", rejected[0]["issues"])
+        state = ingest(empty_state(), accepted, source, contract)
+        self.assertEqual({"view": 1, "purchase": 5}, aggregate(state)["totals"])
+        self.assertEqual("NOT_VERIFIED", aggregate(state)["accuracy"])
+        self.assertFalse(aggregate(state)["oracle_verified"])
+        self.assertEqual("PASS", build()["report"]["accuracy"])
 
     def test_zero_denominator_does_not_divide(self):
         self.assertEqual(0, aggregate(empty_state())["denominator"])

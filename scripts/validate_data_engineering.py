@@ -62,6 +62,21 @@ def record_issues(record: dict, contract: dict) -> set[str]:
     return issues
 
 
+def partition_batch(batch: dict, contract: dict) -> tuple[dict, list[dict]]:
+    """Separate contract-invalid records without publishing them to the target."""
+    accepted: list[dict] = []
+    rejected: list[dict] = []
+    for record in batch["records"]:
+        issues = sorted(record_issues(record, contract))
+        if issues:
+            rejected.append({"event_id": record.get("event_id"), "issues": issues})
+        else:
+            accepted.append(copy.deepcopy(record))
+    filtered = copy.deepcopy(batch)
+    filtered["records"] = accepted
+    return filtered, rejected
+
+
 def empty_state() -> dict:
     return {"rows": {}, "applied_batches": [], "checkpoint": 0,
             "watermark": None, "lineage": []}
@@ -125,8 +140,8 @@ def aggregate(state: dict) -> dict:
     count = len(rows)
     return {"records": count, "totals": totals, "purchase_count": purchases,
             "denominator": count, "purchase_fraction": purchases / count if count else None,
-            "accuracy": "PASS", "oracle_verified": True, "executed": True,
-            "status": "DATA_QUALITY_PASS", "backfill_idempotent": True,
+            "accuracy": "NOT_VERIFIED", "oracle_verified": False, "executed": True,
+            "status": "EXECUTION_PASS", "backfill_idempotent": True,
             "private_data": None, "production_verified": False}
 
 
@@ -134,19 +149,28 @@ def build() -> dict:
     contract = load("contracts.json")
     source = load("events.json")
     state = empty_state()
+    rejected: list[dict] = []
     for batch in source["batches"]:
-        state = ingest(state, batch, source, contract)
+        accepted, invalid = partition_batch(batch, contract)
+        rejected.extend(invalid)
+        state = ingest(state, accepted, source, contract)
     report = aggregate(state)
     report.update({
         "source_checksum": fingerprint(source), "pipeline_id": "synthetic-activity-v1",
         "transform_version": source["transform_version"], "mode": "full",
         "input_records": sum(len(b["records"]) for b in source["batches"]),
-        "accepted_records": len(state["rows"]), "rejected_records": 0,
+        "accepted_records": len(state["rows"]), "rejected_records": len(rejected),
         "output_records": len(state["rows"]),
         "observation_time": contract["observation_time"],
         "limitations": ["SYNTHETIC_ONLY", "NO_REAL_DATA", "NO_EXTERNAL_EXACTLY_ONCE"],
     })
-    return {"contract": contract, "source": source, "state": state, "report": report}
+    sample = {"contract": contract, "source": source, "state": state, "report": report}
+    failures = audit(sample)
+    if failures:
+        raise PipelineError("REFERENCE_QUALITY_FAIL: " + ",".join(failures))
+    # Promote status only after independent fixture-based verification.
+    report.update(accuracy="PASS", oracle_verified=True, status="DATA_QUALITY_PASS")
+    return sample
 
 
 def audit(sample: dict) -> list[str]:
@@ -269,6 +293,17 @@ def validate() -> tuple[int, int]:
         state = ingest(state, batch, source, contract)
         if ingest(state, batch, source, contract) != state:
             raise RuntimeError("replay modified state")
+    dirty = copy.deepcopy(source["batches"][0])
+    dirty["records"].append({
+        "event_id": "quarantined", "actor_id": "actor-bad", "action": "view",
+        "amount": -99, "event_time": "2026-10-20T11:00:00+00:00",
+    })
+    clean, rejected = partition_batch(dirty, contract)
+    if len(rejected) != 1 or "RANGE" not in rejected[0]["issues"]:
+        raise RuntimeError("corrupt record was not quarantined")
+    safe = ingest(empty_state(), clean, source, contract)
+    if aggregate(safe)["totals"] != {"view": 1, "purchase": 5}:
+        raise RuntimeError("rejected event influenced the accepted aggregate")
     if aggregate(state)["totals"] != source["expected"]["totals"]:
         raise RuntimeError("wrong incremental aggregate")
     for batch in source["batches"]:
@@ -288,7 +323,7 @@ def validate() -> tuple[int, int]:
 def main() -> None:
     good, negative = validate()
     print(f"DATA_ENGINEERING=PASS references={good} broken={negative} "
-          "incremental=PASS backfill=PASS network=0 real_data=0")
+          "incremental=PASS quarantine=PASS backfill=PASS network=0 real_data=0")
 
 
 if __name__ == "__main__":
