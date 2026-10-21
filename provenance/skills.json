@@ -7826,6 +7826,26 @@
       "last_reviewed": "2026-10-21",
       "distribution": "included",
       "notes": "Russian human-facing translation of the existing repository guidance; preserves exact CLI flags, branch and publication approval boundaries (#87)."
+    },
+    {
+      "id": "documentation-docs-ru-real-agent-pilot-md",
+      "path": "docs/ru/REAL_AGENT_PILOT.md",
+      "name": "REAL_AGENT_PILOT.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-21",
+      "distribution": "included",
+      "notes": "Russian operator translation of existing source-locked zero-spend real-agent pilot guide (#87); no model calls, unlocking, paid API use or protected SKILL changes."
     }
   ],
   "owner_review_record": {
