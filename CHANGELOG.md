@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased (main after v5.4.0)
+## Unreleased (main after v5.5.0)
+
+No changes recorded yet.
+
+## 5.5.0 (released, 2026-10-21)
+
+- QA Engineering Pack v2: expanded references for 27 QA skills, role contracts and evidence-based handoffs (#124, #125).
+- Portable workflows and client adapters for Codex, Claude Code and conversational assistants (#67, #68, #69, #70).
+- UX/UI Design Orchestra: expert review, explicit owner approval for visual changes and offline verification (#121, #123).
+- Engineering, security, accessibility, reliability, data, DevOps, maintenance and SRE guidance with offline regression gates.
+- Expanded RU/EN documentation, tool-integration boundaries and orchestration contracts with no mandatory paid APIs or claims of measured live multiagent performance.
 
 - Added UX/UI Design Orchestra: bounded independent specialist analysis, single read-only design proposal, explicit pre-implementation owner approval, honest sequential fallback, offline receipt validator and RU/EN integration guides (#121).
 
@@ -27,7 +37,7 @@
 
 - Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
 
-Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
+This version incorporates the changes merged since [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0). See the [release comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...v5.5.0). Static contract and CI coverage do not establish real-agent effectiveness or a production deployment.
 
 - Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
 - Added pinned official Agent Skills validation, source quality/link/profile checks, provenance inventory and release preflight (#25, #27, #28).
