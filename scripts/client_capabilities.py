@@ -211,7 +211,7 @@ def inspect_zip(path: Path) -> dict:
                 count += 1
                 if count > MAX_ENTRIES:
                     raise CapabilityError("ZIP file count exceeds safe limit")
-                name = info.filename
+                name = info.orig_filename  # ZipInfo.filename normalizes backslashes on Windows.
                 normalized = PurePosixPath(name)
                 if (not name or name.startswith("/") or "\\" in name or
                         re.match(r"^[A-Za-z]:", name) or
