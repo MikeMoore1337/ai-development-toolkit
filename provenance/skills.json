@@ -6669,8 +6669,8 @@
     },
     {
       "id": "maintenance66-1",
-      "path": "extensions/operations/skills/maintenance-support/SKILL.md",
-      "name": "SKILL.md",
+      "path": "extensions/operations/skills/maintenance-support",
+      "name": "Maintenance & Support skill and references",
       "kind": "skill",
       "author": "Toolkit maintainers (claimed)",
       "origin": "original",
