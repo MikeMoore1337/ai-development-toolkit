@@ -184,7 +184,6 @@ class ClientCapabilityTests(unittest.TestCase):
             ("path traversal", [("../escape.py", "bad")]),
             ("path traversal", [("/absolute.py", "bad")]),
             ("path traversal", [("C:/windows/x", "bad")]),
-            ("path traversal", [("a\\b.txt", "bad")]),
             ("Duplicate", [("File.py", "1"), ("file.py", "2")]),
             ("Linked", [(link, "target")]),
             ("secrets", [(".env", "private")]),
@@ -195,6 +194,14 @@ class ClientCapabilityTests(unittest.TestCase):
             with self.subTest(i=i), self.assertRaisesRegex(
                     cap.CapabilityError, message):
                 cap.inspect_zip(self.zip(entries, f"bad-{i}.zip"))
+        # Inject a literal backslash into both ZIP headers. On Windows,
+        # zipfile.writestr normalizes names, making a naive fixture a false negative.
+        malformed = self.zip([("a/b.txt", "bad")], "backslash.zip")
+        archive_bytes = malformed.read_bytes()
+        self.assertEqual(2, archive_bytes.count(b"a/b.txt"))
+        malformed.write_bytes(archive_bytes.replace(b"a/b.txt", b"a\\\\b.txt"))
+        with self.assertRaisesRegex(cap.CapabilityError, "path traversal"):
+            cap.inspect_zip(malformed)
         with self.assertRaisesRegex(cap.CapabilityError, "Empty ZIP"):
             cap.inspect_zip(self.zip([], "empty.zip"))
         corrupt = self.folder / "corrupt.zip"
