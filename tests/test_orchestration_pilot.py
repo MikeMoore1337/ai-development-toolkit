@@ -135,10 +135,10 @@ class PilotLedgerTests(unittest.TestCase):
         self.assertEqual([], pilot.validate(doc))
         # This tests the declaration contract only, NOT real model execution.
 
-    def test_malformed_nested_object_fails_closed(self):
+    def test_invented_nested_worker_trace_fails_closed(self):
         doc = self.fresh()
         doc["cases"][0]["baseline"]["worker_traces"] = [{"unhashable": True}]
-        self.reject("MALFORMED_INPUT", doc)
+        self.reject("FAKE_OBSERVATION", doc)
 
 
 if __name__ == "__main__":
