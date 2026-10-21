@@ -36,6 +36,14 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
 | Универсальная разработка | [Инженерные навыки (RU)](UNIVERSAL_ENGINEERING.md) / [EN](../UNIVERSAL_ENGINEERING.md) |
 | Стандарт качества навыков v2 | [Skill Quality (RU)](SKILL_QUALITY_V2.md) / [EN](../SKILL_QUALITY_V2.md) |
+| Аудит происхождения и лицензий | [Аудит (RU)](PROVENANCE_AUDIT.md) / [EN](../PROVENANCE_AUDIT.md) - исторические сведения, не юридическое заключение |
+| Аудит качества навыков и ролей | [Аудит (RU)](SKILLS_QUALITY_AUDIT.md) / [EN](../SKILLS_QUALITY_AUDIT.md) - Issue #26 |
+| Переносимость QA-источников | [Решение (RU)](QA_PORTABILITY.md) / [EN](../QA_PORTABILITY.md) - права работодателя не проверены |
+| Пример ошибочного навыка | [Антипаттерны (RU)](SKILL_QUALITY_V2_ANTI_PATTERNS.md) / [EN](../SKILL_QUALITY_V2_ANTI_PATTERNS.md) |
+| План развития | [План (RU)](ROADMAP.md) / [EN](../ROADMAP.md) - снимок исходного документа |
+| Парная оценка v4 | [План (RU)](EVALUATION_PLAN_V4.md) / [EN](../EVALUATION_PLAN_V4.md) |
+| Исторический аудит v5.0.0 | [Аудит (RU)](RELEASE_AUDIT_V5.md) / [EN](../RELEASE_AUDIT_V5.md) - 18.10.2026 |
+| Исторические проверки v5.2.0 | [Проверки (RU)](RELEASE_AUDIT_V5_2.md) / [EN](../RELEASE_AUDIT_V5_2.md) |
 | Оценка навыков на парных испытаниях | [Методика (RU)](SKILL_EVALS.md) / [EN](../SKILL_EVALS.md) - подсчёт данных, не запуск модели |
 | Испытания навыков с реальными агентами | [Операторское руководство (RU)](REAL_AGENT_PILOT.md) / [EN](../REAL_AGENT_PILOT.md) - реальные вызовы сейчас заблокированы, доступны офлайновые проверки |
 | Метрики навыков и интерпретация отчётов | [Метрики (RU)](SKILL_QUALITY_METRICS.md) / [EN](../SKILL_QUALITY_METRICS.md) |

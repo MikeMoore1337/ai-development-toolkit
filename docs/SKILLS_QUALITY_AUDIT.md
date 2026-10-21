@@ -1,5 +1,7 @@
 # Skills, Roles & Profiles Quality Audit (Issue #26)
 
+[Русская версия](ru/SKILLS_QUALITY_AUDIT.md)
+
 ## Scope and trust boundaries
 
 Base reviewed: `main` at `655dbd5b9c93e3829a6e9428c680205f8db723d4` (2026-10-19).

@@ -1,5 +1,7 @@
 # Evaluation plan for practical usefulness
 
+[Русская версия](ru/EVALUATION_PLAN_V4.md)
+
 Do not assert improvement merely because more skills or tests exist.
 
 ## Paired trials

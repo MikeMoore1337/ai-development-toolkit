@@ -1,5 +1,7 @@
 # AI Development Toolkit v5.0.0 - local release audit
 
+[Русская версия](ru/RELEASE_AUDIT_V5.md)
+
 Date: 2026-10-18
 
 ## Scope

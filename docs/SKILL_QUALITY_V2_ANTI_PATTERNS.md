@@ -1,5 +1,7 @@
 # Negative sample: do not use this as a skill
 
+[Русская версия](ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md)
+
 This is a **manual anti-pattern**, intentionally not a registered SKILL.md.
 
 ~~~yaml
