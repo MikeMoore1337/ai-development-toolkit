@@ -33,7 +33,7 @@ class OfflineSmokeTests(unittest.TestCase):
         with patch("agent_eval_offline_smoke.tempfile.TemporaryDirectory",
                    return_value=resource), patch("agent_eval_offline_smoke.time.sleep") as pause:
             with _temporary_oracle_root() as path:
-                self.assertEqual(str(path), resource.name)
+                self.assertEqual(path, Path(resource.name))
         self.assertEqual(3, resource.calls)
         self.assertEqual(2, pause.call_count)
 
