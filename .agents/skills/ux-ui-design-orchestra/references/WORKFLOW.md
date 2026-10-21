@@ -7,6 +7,10 @@
 - `audit-only`: diagnosis and priorities, no future implementation proposal required.
 - `implement-approved`: separate explicitly requested task *after* documented visual approval for a specified design version. Implement only the accepted scope, using the target's existing GitHub/CI/visual-release process. Do not treat this as automatic continuation.
 
+## Mandatory routing precedence
+
+For any visually substantive new website, landing page, app design, UX/UI overhaul or audit, **MUST** enter `ux-ui-design-orchestra` before generic `ux-design-process`, `frontend`, `fullstack`, `make-feature`, `feature-delivery`, or `ui-fix`. The other skills may support the orchestra; they are not equivalent. A request to "build", "test", or "code" a new landing page still starts with `create-design` and the visual approval gate. An already approved isolated CSS/UX bugfix with no new design decision can go directly to `ui-fix`. Missing orchestra instructions means `ORCHESTRA_SOURCE_UNAVAILABLE`, not silent replacement by another skill.
+
 ## Natural-language routing
 
 - "Make me a modern fitness-club landing page", "I want a nice website", "нарисуй новый экран" -> `create-design` when no applicable existing UI is supplied; never demand the words "UX", "skills" or "orchestra".
@@ -28,6 +32,14 @@ Coordinate with the existing target role instead of creating a second issue, tas
 3. Optional motion specialist: Emil's `review-animations` / `improve-animations` + project motion guidance. If no motion issue, choose design system consistency or product-specific flow reviewer instead. Taste / UI UX Pro Max only for user-authorized concept exploration and comparative ideas, not automatic reskinning.
 
 Give all workers the **same** input digest: repository revision, product UX, approved brand decisions, viewports, task/out-of-scope, allowed tools, non-write gate and evidence references. Workers should return findings keyed by stable local IDs and an explicit no-write affirmation. The coordinator must inspect actual outputs and can reject a recommendation.
+
+## Three distinct design hypotheses before selection
+
+For `create-design` and substantial redesign proposals, the coordinator **must** explore three options with different information architecture, section hierarchy, spatial grids, image language, and major interaction. Keep cost low: these are concise design briefs, not three coded prototypes and not necessarily three independent agents. Test each against the same project evidence and core user goal. Rank product/task fit, compositional differentiation, responsive/a11y feasibility, implementation cost and template-swap risk; document why one won and why the other two lost. If swapping the logo, product photography and color allows the same design to sell a gym membership, mango and B2B SaaS, the direction is insufficiently specific; revise instead of proceeding. Only the selected direction reaches the visual-approval package. Follow [CREATE_DESIGN.md](CREATE_DESIGN.md) and [HANDOFF.md](HANDOFF.md); never claim creative quality is machine verified.
+
+## Product-specific quality gate
+
+For substantial new work, require brand-fit, authentic audience/CTA, editorial hierarchy, distinctive visual rhythm, considered imagery and mobile composition. Use actual Impeccable methodology where its sources are readable; otherwise report its source status honestly. Before proposing an approval-ready concept, identify **at least three distinct generic-template risks** and correct them or explain why they suit this product. The dark-SaaS template with repetitive cards and synthetic proof is not an acceptable automatic fallback; neither the palette nor an accessibility PASS proves original art direction. Iterate until the design is not interchangeable with an unrelated business. See [create-design](CREATE_DESIGN.md).
 
 ## Merge algorithm
 

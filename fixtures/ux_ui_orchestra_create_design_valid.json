@@ -28,5 +28,68 @@
     "status": "NOT_STARTED"
   },
   "changed_ui": false,
-  "gate": "VISUAL_PACKAGE_MISSING"
+  "gate": "VISUAL_PACKAGE_MISSING",
+  "design_quality": {
+    "product_specific_direction": "Editorial athletic-club identity emphasizing real training atmosphere and class discovery; unverified claims are placeholders.",
+    "selected_over_alternative": "Editorial training story preferred over generic SaaS cards because physical place and training are primary.",
+    "generic_template_risks": [
+      "Avoid interchangeable three-tier SaaS pricing cards without actual club membership evidence",
+      "Replace feature grid of generic marketing benefits with training and facilities narrative",
+      "Reject invented growth statistics or unlicensed stock hero imagery"
+    ],
+    "impeccable_source_status": "REFERENCE_ONLY",
+    "quality_status": "READY_FOR_VISUAL_REVIEW"
+  },
+  "design_exploration": {
+    "directions": [
+      {
+        "id": "training-editorial",
+        "title": "Editorial gym culture",
+        "product_story": "A real training community with credible instructors and day-to-day class rhythm",
+        "information_architecture": "Starts with training culture and class discovery, then coach proof, location and trial",
+        "composition": "Full-bleed training moment then wide editorial columns alternating with a compact class timetable",
+        "typography_and_imagery": "Condensed functional headlines paired with documentary training photography, real rights pending",
+        "primary_interaction": "Choose class format and request a trial through a clearly marked demo inquiry",
+        "tradeoff": "Stronger emotional brand presence but needs real documentary imagery and reliable schedule data"
+      },
+      {
+        "id": "local-field-guide",
+        "title": "Neighborhood training field guide",
+        "product_story": "Help nearby first-timers feel comfortable and find their first suitable class",
+        "information_architecture": "Start with location and what to expect, then beginner routes and practical visit preparation",
+        "composition": "Map-like chapter navigation with stacked annotated venue fragments and a step-by-step visitor path",
+        "typography_and_imagery": "Warm explanatory typography and diagrammatic illustration rather than monumental hero photography",
+        "primary_interaction": "Guide me to a class using an accessible three-step preference choice",
+        "tradeoff": "Comforting for newcomers but less dynamic for athletes who know the club"
+      },
+      {
+        "id": "performance-led",
+        "title": "Focused training outcomes",
+        "product_story": "Experienced athletes need equipment, formats and precise session details rather than generic hype",
+        "information_architecture": "Start with equipment and session formats, then coaching credentials and timetable lookup",
+        "composition": "Dense training-spec layout with vertical programme index and full-width session detail",
+        "typography_and_imagery": "Numerical sport editorial hierarchy and factual equipment images, without unverified metrics",
+        "primary_interaction": "Filter session types and examine exact details before inquiry",
+        "tradeoff": "Strong practical relevance but can feel utilitarian to casual visitors"
+      }
+    ],
+    "selected_id": "training-editorial",
+    "selection_rationale": "Training culture and class discovery answer the stated ambition without a generic product-feature grid, provided real images and class facts are obtained.",
+    "rejections": [
+      {
+        "id": "local-field-guide",
+        "reason": "Better for first-time anxiety but too instructional for the intended energetic positioning."
+      },
+      {
+        "id": "performance-led",
+        "reason": "Highly practical but insufficient emphasis on club atmosphere for an introductory landing page."
+      }
+    ],
+    "cross_domain_swap_test": {
+      "test_domain": "B2B bookkeeping SaaS",
+      "would_require_structural_redesign": true,
+      "explanation": "Documentary training moments, session discovery and venue-visit navigation cannot carry a bookkeeping subscription funnel without changing the information architecture and imagery."
+    },
+    "status": "COMPARED"
+  }
 }

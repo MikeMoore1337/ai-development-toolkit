@@ -126,7 +126,98 @@ def validate(report: object) -> list[str]:
             errors.append("cannot implement before visual approval")
     if mode == "audit-proposal" and report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") == "NOT_PREPARED":
         errors.append("approval requested without design proposal")
+    if mode == "create-design" or (mode == "audit-proposal" and report.get("design_exploration_required") is True):
+        exploration = report.get("design_exploration")
+        if not isinstance(exploration, dict):
+            errors.append("new/substantial design requires three-direction exploration")
+        else:
+            directions = exploration.get("directions")
+            ids = set()
+            compositions = set()
+            architectures = set()
+            if not isinstance(directions, list) or len(directions) != 3:
+                errors.append("design exploration requires exactly three directions")
+                directions = []
+            for idx, direction in enumerate(directions):
+                if not isinstance(direction, dict):
+                    errors.append(f"direction {idx}: invalid")
+                    continue
+                for field in ("id", "title", "product_story", "information_architecture",
+                              "composition", "typography_and_imagery", "primary_interaction", "tradeoff"):
+                    value = direction.get(field)
+                    if not isinstance(value, str) or not value.strip():
+                        errors.append(f"direction {idx}: missing {field}")
+                identity = direction.get("id")
+                if isinstance(identity, str) and identity.strip():
+                    if identity in ids:
+                        errors.append("design exploration duplicate direction id")
+                    ids.add(identity)
+                for field, seen in (("composition", compositions), ("information_architecture", architectures)):
+                    value = direction.get(field)
+                    if isinstance(value, str) and value.strip():
+                        normalized = " ".join(value.casefold().split())
+                        if normalized in seen:
+                            errors.append(f"design exploration repeated {field} (palette swap only)")
+                        seen.add(normalized)
+            selected = exploration.get("selected_id")
+            if not isinstance(selected, str) or selected not in ids:
+                errors.append("design exploration selected direction missing")
+            rationale = exploration.get("selection_rationale")
+            if not isinstance(rationale, str) or not rationale.strip():
+                errors.append("design exploration missing selection rationale")
+            rejections = exploration.get("rejections")
+            rejected = set()
+            if not isinstance(rejections, list) or len(rejections) != 2:
+                errors.append("design exploration requires two rejected directions")
+            else:
+                for i, rejection in enumerate(rejections):
+                    if not isinstance(rejection, dict):
+                        errors.append(f"design exploration rejection {i}: invalid")
+                        continue
+                    rid, reason = rejection.get("id"), rejection.get("reason")
+                    if not isinstance(rid, str) or not isinstance(reason, str) or not reason.strip():
+                        errors.append(f"design exploration rejection {i}: incomplete")
+                    else:
+                        rejected.add(rid)
+                if not isinstance(selected, str) or selected in rejected or rejected != (ids - {selected}):
+                    errors.append("design exploration rejected IDs must match unselected directions")
+            swap = exploration.get("cross_domain_swap_test")
+            if not isinstance(swap, dict):
+                errors.append("design exploration requires cross-domain swap test")
+                swap_passes = False
+            else:
+                swap_passes = swap.get("would_require_structural_redesign") is True
+                if not isinstance(swap.get("test_domain"), str) or not swap["test_domain"].strip():
+                    errors.append("design exploration missing swap target")
+                if not isinstance(swap.get("explanation"), str) or not swap["explanation"].strip():
+                    errors.append("design exploration missing swap explanation")
+                if type(swap.get("would_require_structural_redesign")) is not bool:
+                    errors.append("design exploration swap result invalid")
+            comp_status = exploration.get("status")
+            if comp_status not in ("COMPARED", "NEEDS_REVISION"):
+                errors.append("design exploration comparison status invalid")
+            if report["gate"] == "AWAITING_VISUAL_APPROVAL" and (len(directions) != 3 or comp_status != "COMPARED" or not swap_passes):
+                errors.append("cannot request visual approval without distinct compared directions and passing swap test")
     if mode == "create-design":
+        quality = report.get("design_quality")
+        if not isinstance(quality, dict):
+            errors.append("create-design requires design_quality declaration")
+        else:
+            for key in ("product_specific_direction", "selected_over_alternative"):
+                value = quality.get(key)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append(f"design quality missing {key}")
+            risks = quality.get("generic_template_risks")
+            if (not isinstance(risks, list) or len(risks) < 3
+                    or any(not isinstance(x, str) or not x.strip() for x in risks)
+                    or len({x.strip().casefold() for x in risks if isinstance(x, str)}) != len(risks)):
+                errors.append("design quality requires three distinct generic template risks")
+            if quality.get("impeccable_source_status") not in SOURCES:
+                errors.append("design quality missing honest Impeccable source status")
+            if quality.get("quality_status") not in ("READY_FOR_VISUAL_REVIEW", "NEEDS_DESIGN_REVISION"):
+                errors.append("design quality invalid status")
+            if report["gate"] == "AWAITING_VISUAL_APPROVAL" and quality.get("quality_status") != "READY_FOR_VISUAL_REVIEW":
+                errors.append("cannot request visual approval before design quality revision")
         if report["gate"] == "AUDIT_COMPLETE":
             errors.append("new design cannot claim completed UI audit")
         if report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") != "RENDERED":

@@ -14,4 +14,8 @@ No global installation, automatic fetching, shell command or external API follow
 
 In `create-design`, product structure/content comes before visual polish. Accessibility and responsive reviewers test the proposed states as hypotheses, not as observed defects. Specialists must not present invented users, analytics, reviews or usability findings as real research.
 
+Three structural design hypotheses are not three specialist workstreams. Generate them in one read-only task, then use an Impeccable-informed perspective to compare their layout logic, interaction, product specificity and swap-test results. Do not pretend three concepts imply three spawned agents or three rendered applications. Reject directions distinguishable only by fonts, colors or copy.
+
+For new and substantial UI work, the art-direction/Impeccable-informed critique is required even when only one agent executes sequentially. Prefer actual read sources; a GitHub URL without a read is `REFERENCE_ONLY`, and no external subagent should be claimed without invocation evidence. Report whether generic SaaS cards, decorative gradients, ungrounded social proof or a stock hero could be removed or replaced with a business-specific composition. Treat color schemes as constraints, not evidence of design originality.
+
 Do not make all workers inspect the same unpartitioned checklist. For a small UI fix one combined audit is cheaper and more truthful; the orchestrator may choose one worker.
