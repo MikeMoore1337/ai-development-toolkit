@@ -1,8 +1,14 @@
 # Changelog
 
-## Unreleased (main after v5.5.0)
+## Unreleased (main after v5.5.1)
 
 No changes recorded yet.
+
+## 5.5.1 (released, 2026-10-21)
+
+- Corrected manifest, RU/EN README and release documentation to match published versioning after v5.5.0 shipped with older metadata (#146).
+- Stabilized the Windows go-cli offline hidden oracle, retaining strict negative and known-good controls (#143).
+- The existing v5.5.0 Git tag and its archive are immutable and were not rewritten.
 
 ## 5.5.0 (released, 2026-10-21)
 
