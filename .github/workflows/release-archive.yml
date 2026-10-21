@@ -46,10 +46,11 @@ jobs:
       - name: Extract clean archive and verify checksums
         env:
           ARCHIVE_DIR: ${{ runner.temp }}/adt-release
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
         run: |
           set -euo pipefail
           python - <<'PY'
-          import os, pathlib, stat, zipfile
+          import json, os, pathlib, stat, zipfile
           out = pathlib.Path(os.environ["ARCHIVE_DIR"])
           with zipfile.ZipFile(out / "source.zip") as archive:
               roots = set()
@@ -64,6 +65,9 @@ jobs:
                   raise SystemExit("Expected exactly one archive root")
               archive.extractall(out / "extracted")
               root = (out / "extracted" / next(iter(roots))).resolve()
+          manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
+          if manifest.get("version") != os.environ["RELEASE_TAG"][1:]:
+              raise SystemExit("BLOCKED: release tag and MANIFEST.json.version disagree")
           (out / "root.txt").write_text(str(root), encoding="utf-8")
           print(f"Archive extracted to {root}")
           PY
