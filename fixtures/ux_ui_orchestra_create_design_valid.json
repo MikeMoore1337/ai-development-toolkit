@@ -90,6 +90,10 @@
       "would_require_structural_redesign": true,
       "explanation": "Documentary training moments, session discovery and venue-visit navigation cannot carry a bookkeeping subscription funnel without changing the information architecture and imagery."
     },
-    "status": "COMPARED"
+    "status": "COMPARED",
+    "visual_comparison": {
+      "status": "MISSING",
+      "frames": []
+    }
   }
 }
