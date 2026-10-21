@@ -38,6 +38,37 @@ class DeliveryOrchestraTests(unittest.TestCase):
         report["checks"][0]["evidence_ids"] = [{"fake": "evidence"}]
         self.rejects("INVALID_INPUT_SHAPE", report)
 
+    def test_more_than_three_sequential_steps_are_supported(self):
+        report = self.trial()
+        report["units"].append({
+            "id": "security", "purpose": "Risk review on approved source",
+            "role": "security-reviewer", "status": "PLANNED",
+            "execution": "SEQUENTIAL", "trace": None,
+            "write_paths": [], "depends_on": ["verify"]
+        })
+        self.assertEqual([], delivery.validate(report))
+
+    def test_parallel_readers_and_one_sequential_writer(self):
+        report = self.trial()
+        report["execution"] = {"mode": "SUBAGENTS", "peak": 2}
+        for index in [0, 2]:
+            unit = report["units"][index]
+            unit["execution"] = "GENERIC_SUBAGENT"
+            unit["status"] = "EXECUTED"
+            unit["trace"] = f"actual-delegation-receipt-{index}"
+        report["units"][2]["depends_on"] = ["research"]
+        self.assertEqual([], delivery.validate(report))
+
+    def test_subagent_may_not_write_shared_branch(self):
+        report = self.trial()
+        report["execution"] = {"mode": "SUBAGENTS", "peak": 1}
+        report["units"][0]["status"] = "EXECUTED"
+        report["units"][0]["execution"] = "GENERIC_SUBAGENT"
+        report["units"][0]["trace"] = "real-tool-receipt"
+        report["units"][0]["role"] = "implementer"
+        report["units"][0]["write_paths"] = ["src/unowned.py"]
+        self.rejects("SUBAGENT_WRITE", report)
+
     def test_synthetic_plan_passes_but_not_executed(self):
         self.assertEqual([], delivery.validate(self.trial()))
 

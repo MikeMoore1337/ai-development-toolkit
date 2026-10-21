@@ -59,7 +59,7 @@ def _validate(data: Any) -> list[str]:
     if mode == "SEQUENTIAL" and peak != 1:
         errors.append("FAKE_PARALLELISM")
     units = data["units"]
-    if not isinstance(units, list) or not (1 <= len(units) <= 3):
+    if not isinstance(units, list) or not (1 <= len(units) <= 12):
         return errors + ["UNITS_COUNT"]
     identities: dict[str, dict] = {}
     actual = 0
@@ -83,7 +83,7 @@ def _validate(data: Any) -> list[str]:
         if item["execution"] not in WORKER_MODES:
             errors.append("UNIT_EXECUTION")
         if item["execution"] == "SEQUENTIAL":
-            if item["trace"] is not None or mode == "SUBAGENTS":
+            if item["trace"] is not None:
                 errors.append("FAKE_SUBAGENT")
         else:
             if mode == "SEQUENTIAL" or item["status"] != "EXECUTED":
@@ -101,11 +101,13 @@ def _validate(data: Any) -> list[str]:
             writers += 1
             if item["role"] != "implementer":
                 errors.append("WRITE_OWNER")
+            if item["execution"] != "SEQUENTIAL":
+                errors.append("SUBAGENT_WRITE")
         if not isinstance(item["depends_on"], list) or len(set(item["depends_on"])) != len(item["depends_on"]):
             errors.append("DEPENDENCIES")
     if writers > 1:
         errors.append("CONCURRENT_WRITERS")
-    if mode == "SUBAGENTS" and (actual < 2 or peak > actual):
+    if mode == "SUBAGENTS" and (actual < 1 or peak > actual):
         errors.append("FAKE_PARALLELISM")
     graph = {}
     for uid, unit in identities.items():
