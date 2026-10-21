@@ -1,6 +1,8 @@
 # Windows publication troubleshooting
 
-The toolkit's publication script uses `py -3` automatically when the Windows Python Launcher is installed; otherwise it uses `python`.
+[Русская версия](ru/WINDOWS_PUBLISHING.md)
+
+This describes the **initial publication of a different, new repository**, not updating or releasing the existing official Toolkit repository. Do not rerun `scripts/publish_github.ps1` against the official repository. Use [GitHub setup](GITHUB_SETUP.md), [publication policy](PUBLICATION_POLICY.md) and the [reviewed release process](RELEASE_PROCESS.md) for maintenance. The initial-publication script uses `py -3` automatically when the Windows Python Launcher is installed; otherwise it uses `python`.
 
 ## PowerShell script execution
 
@@ -10,7 +12,7 @@ If PowerShell blocks the unsigned script, review it and remove the download mark
 Unblock-File -LiteralPath .\scripts\publish_github.ps1
 ```
 
-## Dependencies and preflight
+## Dependencies and preflight (initial publication only)
 
 ```powershell
 py -3 -m pip install -r requirements-dev.txt
