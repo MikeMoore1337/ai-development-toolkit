@@ -1,6 +1,6 @@
 # Changelog
 
-## v5.5.0 published-tag metadata erratum (2026-10-21)
+**v5.5.0 published-tag metadata erratum (2026-10-21)**
 
 GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. Its **tagged source still declares `MANIFEST.json.version = 5.4.0`**, and the historical `Unreleased` heading below incorrectly reflects the already published content. This entry is a forward-only erratum, **not** a rewritten historical tag or proof that the archive manifest was updated. Follow [#153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153) for version-consistency remediation.
 
