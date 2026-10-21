@@ -302,7 +302,7 @@ def validate(root: Path) -> list[str]:
         "AGENT_SKILLS_SPEC.md": ("skills-ref", "--scope all", "MANIFEST.json",
                                  "76", "0.1.0", "3.11"),
         "RELEASE_PROCESS.md": ("ID1337", "--mode release", "BLOCKED",
-                               "NOT_VERIFIED", "SHA256SUMS.txt", "v5.4.0"),
+                               "NOT_VERIFIED", "SHA256SUMS.txt", "TAG_MANIFEST_VERSION_MISMATCH"),
         "REAL_AGENT_PILOT.md": ("ZERO-SPEND", "--execute", "NOT_MEASURED",
                                 "NOT_PERFORMED", "NOT_VERIFIED",
                                 "SYNTHETIC_OFFLINE_HARNESS_SMOKE_NOT_MODEL_EVAL",
