@@ -20,12 +20,22 @@ class EndToEndWorkflowTests(unittest.TestCase):
     def test_negative_mutations_all_rejected_with_explanation(self):
         good = load("reference.json")
         cases = load("broken_cases.json")["cases"]
-        self.assertGreaterEqual(len(cases), 32)
+        self.assertGreaterEqual(len(cases), 44)
         for item in cases:
             with self.subTest(item=item["id"]):
                 bad = mutate(good, item["path"], item["value"])
                 self.assertIn(item["expected_error"], audit(bad))
         self.assertEqual([], audit(good))
+
+    def test_quick_and_deep_reference_routes(self):
+        quick = load("quick.json")
+        deep = load("deep.json")
+        self.assertEqual([], audit(quick))
+        self.assertEqual([], audit(deep))
+        self.assertEqual(["implementation", "qa"],
+                         [item["id"] for item in quick["stages"]])
+        self.assertEqual("deep", deep["mode"])
+        self.assertTrue(deep["gates"]["security_applicable"])
 
     def test_resume_is_idempotent_no_mutation(self):
         case = load("reference.json")

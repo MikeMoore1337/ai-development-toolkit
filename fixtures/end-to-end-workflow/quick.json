@@ -1,0 +1,250 @@
+{
+  "synthetic": true,
+  "workflow_id": "SYNTHETIC-WF-QUICK",
+  "source_request": "Correct a local completion label in a small, reversible change.",
+  "project_ref": "SYNTHETIC-existing-local-tasks",
+  "source_revision": "SYNTHETIC-REV-1",
+  "controller": "feature-delivery",
+  "active_controllers": [
+    "feature-delivery"
+  ],
+  "mode": "quick",
+  "current_stage": "implementation",
+  "required_stages": [
+    "implementation",
+    "qa"
+  ],
+  "original_r_ids": [
+    "R3"
+  ],
+  "original_ac_ids": [
+    "AC3"
+  ],
+  "requirements": [
+    {
+      "id": "R3",
+      "text": "Mark tasks complete"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC3",
+      "r": "R3",
+      "text": "Completion shown"
+    }
+  ],
+  "decisions": [
+    "D1"
+  ],
+  "trace": [
+    {
+      "r": "R3",
+      "ac": "AC3",
+      "decision": "D1",
+      "implementation": "SYNTHETIC-only",
+      "test": "T3",
+      "evidence": "E1"
+    }
+  ],
+  "artifacts": {
+    "request": "SYNTHETIC source statement",
+    "discovery": "SYNTHETIC user, problem, no account",
+    "prd": "SYNTHETIC R1-R3 AC1-AC3",
+    "analysis": "SYNTHETIC task states pending/done",
+    "ux": "SYNTHETIC one-screen proposal only",
+    "architecture": "SYNTHETIC local-only option, not chosen by owner",
+    "implementation": "SYNTHETIC implementation plan, no real code",
+    "qa": "SYNTHETIC test plan, no tests run",
+    "security": "SYNTHETIC no account/no cloud",
+    "release": "SYNTHETIC blocked, no real SHA",
+    "operations": "SYNTHETIC not deployed",
+    "support": "SYNTHETIC possible issue: empty entry",
+    "planning": "SYNTHETIC bounded tasks"
+  },
+  "stages": [
+    {
+      "id": "implementation",
+      "input": "architecture",
+      "output": "implementation",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null,
+      "requirement_refs": [
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "qa",
+      "evidence_refs": []
+    },
+    {
+      "id": "qa",
+      "input": "implementation",
+      "output": "qa",
+      "source_revision": "SYNTHETIC-REV-1",
+      "status": "PROPOSED",
+      "skip_reason": null,
+      "requirement_refs": [
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "NOT_TESTED",
+      "test_refs": [
+        "T3"
+      ],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": null,
+      "evidence_refs": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "stage": "prd",
+      "level": "SOURCE_BACKED",
+      "executed": false,
+      "observations": [],
+      "receipt": null
+    }
+  ],
+  "tests": [
+    {
+      "id": "T3",
+      "ac": "AC3",
+      "status": "NOT_RUN",
+      "executed": false,
+      "observed": null,
+      "evidence": "E1"
+    }
+  ],
+  "acceptance_claim": "NOT_TESTED",
+  "outcome": "INCOMPLETE",
+  "handoffs": [],
+  "dependencies": [
+    {
+      "from": "implementation",
+      "to": "qa",
+      "type": "BLOCKS",
+      "satisfied": false
+    }
+  ],
+  "scope": {
+    "approved": [
+      "complete"
+    ],
+    "implemented": [],
+    "excluded": [
+      "registration",
+      "server",
+      "paid_api"
+    ],
+    "optional": []
+  },
+  "permissions": {
+    "read": true,
+    "change": false,
+    "execute": false,
+    "external": false,
+    "paid_api": false,
+    "irreversible": false,
+    "publish": false
+  },
+  "actions": {
+    "change": false,
+    "execute": false,
+    "external": false,
+    "paid_api": false,
+    "toolkit_write": false,
+    "irreversible": false
+  },
+  "capabilities": {
+    "read": true,
+    "write": false,
+    "execute": false,
+    "browser": false,
+    "github": false,
+    "subagents": false,
+    "external": false,
+    "available_tools": []
+  },
+  "gates": {
+    "security_applicable": false,
+    "security_checked": false,
+    "visual_required": false,
+    "visual_approved": false
+  },
+  "release": {
+    "state": "BLOCKED",
+    "implemented": false,
+    "merged": false,
+    "deployed": false,
+    "production": false,
+    "published": false,
+    "user_verified": false,
+    "version": null,
+    "support_version": null,
+    "exact_sha": null
+  },
+  "tool_calls": [],
+  "blockers": [
+    {
+      "id": "B1",
+      "stage": "implementation",
+      "reason": "No permitted project write access",
+      "safe_next": "prepare or obtain project access"
+    }
+  ],
+  "resume": {
+    "previous_state_revision": "SYNTHETIC-STATE-1",
+    "previous_source_revision": "SYNTHETIC-REV-1",
+    "previous_head": "SYNTHETIC-REV-1",
+    "current_head": "SYNTHETIC-REV-1",
+    "last_completed": "planning",
+    "next_pending": "analysis",
+    "accepted_decisions": [
+      "D1"
+    ],
+    "previous_evidence": [
+      "E1"
+    ],
+    "blockers": [
+      "B1"
+    ],
+    "pending_approvals": [
+      "release"
+    ],
+    "delegations_before": 1,
+    "delegations_used": 1,
+    "irreversible_replayed": false,
+    "duplicate_issue": false,
+    "duplicate_state": false,
+    "revalidation": false
+  },
+  "owners": {
+    "product_owner": "UNKNOWN",
+    "implementation_owner": "NOT_ASSIGNED"
+  },
+  "remaining_scope": [
+    "limited label correction",
+    "focused tests"
+  ],
+  "next_action": "Obtain permission to change the existing app",
+  "review": {
+    "independent": "NOT_AVAILABLE",
+    "reason": "No separate executor invoked; synthetic fixture only"
+  }
+}

@@ -50,7 +50,9 @@ reliability-testing, performance-load-testing, accessibility-qa и DevOps под
     python scripts/validate_end_to_end_workflow.py
     python -m unittest tests.test_end_to_end_workflow -v
 
-Стандартный Python без внешних API проверяет [42 неисправных варианта](../../fixtures/end-to-end-workflow/broken_cases.json): два контроллера, потерю R/AC, циклы, фиктивную независимость, QA PASS без исполнения, ложный релиз, scope creep, изменение SHA и права на запись. Проверяется связность структурных утверждений, а не работа реального приложения.
+Дополнительные эталоны [Quick](../../fixtures/end-to-end-workflow/quick.json) и [Deep](../../fixtures/end-to-end-workflow/deep.json) проверяют соответствующие режимы. Каждая стадия содержит вход, выход, ревизию, R/решения/тесты, уровень и пробелы доказательств, разрешение, следующий этап.
+
+Стандартный Python без внешних API проверяет [44 неисправных варианта](../../fixtures/end-to-end-workflow/broken_cases.json): два контроллера, потерю R/AC, циклы, фиктивную независимость, QA PASS без исполнения, ложный релиз, scope creep, изменение SHA и права на запись. Проверяется связность структурных утверждений, а не работа реального приложения.
 
 ## Новичку, специалисту и при отсутствии терминала
 

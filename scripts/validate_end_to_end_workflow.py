@@ -56,6 +56,13 @@ def audit(w: dict) -> list[str]:
     artifacts = w.get("artifacts", {})
     revision = w.get("source_revision")
     for s in stages:
+        fields = ("id", "input", "output", "source_revision", "requirement_refs",
+                  "decision_refs", "verification_level", "test_refs",
+                  "observations", "missing_evidence", "approval_state",
+                  "next_stage", "evidence_refs")
+        need(all(key in s and (s[key] is not None or key == "next_stage")
+                 for key in fields), "STAGE_EVIDENCE_MISSING")
+        need(s.get("verification_level") in LEVELS, "ILLEGAL_STATUS")
         if s.get("status") == "NOT_APPLICABLE":
             need(bool(s.get("skip_reason")), "UNJUSTIFIED_SKIP")
         if s.get("status") not in ("PROPOSED", "COMPLETE", "BLOCKED", "NOT_APPLICABLE"):
@@ -77,6 +84,11 @@ def audit(w: dict) -> list[str]:
          "TRACEABILITY_LOST")
     evidence = {e.get("id"): e for e in w.get("evidence", [])}
     need(all(e.get("level") in LEVELS for e in evidence.values()), "ILLEGAL_STATUS")
+    for s in stages:
+        need(set(s.get("requirement_refs", [])) <= original_r,
+             "TRACEABILITY_LOST")
+        need(set(s.get("evidence_refs", [])) <= set(evidence),
+             "MISSING_EVIDENCE")
     for t in trace:
         need(t.get("r") in reqs and t.get("ac") in acs, "TRACEABILITY_LOST")
         need(t.get("evidence") in evidence, "MISSING_EVIDENCE")

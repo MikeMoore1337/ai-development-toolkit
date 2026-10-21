@@ -549,6 +549,28 @@
       ],
       "value": null,
       "expected_error": "UNJUSTIFIED_SKIP"
+    },
+    {
+      "id": "stage-evidence-fields-missing",
+      "path": [
+        "stages",
+        3,
+        "verification_level"
+      ],
+      "value": null,
+      "expected_error": "STAGE_EVIDENCE_MISSING"
+    },
+    {
+      "id": "unknown-stage-evidence",
+      "path": [
+        "stages",
+        3,
+        "evidence_refs"
+      ],
+      "value": [
+        "NOT_REAL"
+      ],
+      "expected_error": "MISSING_EVIDENCE"
     }
   ]
 }

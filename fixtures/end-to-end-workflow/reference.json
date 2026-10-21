@@ -116,7 +116,22 @@
       "output": "discovery",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "COMPLETE",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [],
+      "verification_level": "SOURCE_BACKED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "prd",
+      "evidence_refs": [
+        "E1"
+      ]
     },
     {
       "id": "prd",
@@ -124,7 +139,22 @@
       "output": "prd",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "COMPLETE",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [],
+      "verification_level": "SOURCE_BACKED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "planning",
+      "evidence_refs": [
+        "E1"
+      ]
     },
     {
       "id": "planning",
@@ -132,7 +162,22 @@
       "output": "planning",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "COMPLETE",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [],
+      "verification_level": "SOURCE_BACKED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "analysis",
+      "evidence_refs": [
+        "E1"
+      ]
     },
     {
       "id": "analysis",
@@ -140,7 +185,20 @@
       "output": "analysis",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "ux",
+      "evidence_refs": []
     },
     {
       "id": "ux",
@@ -148,7 +206,20 @@
       "output": "ux",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "architecture",
+      "evidence_refs": []
     },
     {
       "id": "architecture",
@@ -156,7 +227,22 @@
       "output": "architecture",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "implementation",
+      "evidence_refs": []
     },
     {
       "id": "implementation",
@@ -164,7 +250,24 @@
       "output": "implementation",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "qa",
+      "evidence_refs": []
     },
     {
       "id": "qa",
@@ -172,7 +275,28 @@
       "output": "qa",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "NOT_TESTED",
+      "test_refs": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "security",
+      "evidence_refs": []
     },
     {
       "id": "security",
@@ -180,7 +304,24 @@
       "output": "security",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "release",
+      "evidence_refs": []
     },
     {
       "id": "release",
@@ -188,7 +329,24 @@
       "output": "release",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "PROPOSED",
-      "skip_reason": null
+      "skip_reason": null,
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "PENDING",
+      "next_stage": "operations",
+      "evidence_refs": []
     },
     {
       "id": "operations",
@@ -196,7 +354,24 @@
       "output": "operations",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "NOT_APPLICABLE",
-      "skip_reason": "No deployed product in synthetic story"
+      "skip_reason": "No deployed product in synthetic story",
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": "support",
+      "evidence_refs": []
     },
     {
       "id": "support",
@@ -204,7 +379,24 @@
       "output": "support",
       "source_revision": "SYNTHETIC-REV-1",
       "status": "NOT_APPLICABLE",
-      "skip_reason": "No deployed product in synthetic story"
+      "skip_reason": "No deployed product in synthetic story",
+      "requirement_refs": [
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "decision_refs": [
+        "D1"
+      ],
+      "verification_level": "PROPOSED",
+      "test_refs": [],
+      "observations": [],
+      "missing_evidence": [
+        "No executed product evidence; synthetic case only"
+      ],
+      "approval_state": "NOT_REQUIRED",
+      "next_stage": null,
+      "evidence_refs": []
     }
   ],
   "evidence": [
@@ -404,5 +596,20 @@
     "duplicate_issue": false,
     "duplicate_state": false,
     "revalidation": false
+  },
+  "owners": {
+    "product_owner": "UNKNOWN",
+    "implementation_owner": "NOT_ASSIGNED"
+  },
+  "remaining_scope": [
+    "obtain authorized project access",
+    "implement R1-R3",
+    "execute product QA",
+    "request explicit release approval"
+  ],
+  "next_action": "Obtain project source and permission before implementation",
+  "review": {
+    "independent": "NOT_AVAILABLE",
+    "reason": "No separate executor invoked; synthetic fixture only"
   }
 }

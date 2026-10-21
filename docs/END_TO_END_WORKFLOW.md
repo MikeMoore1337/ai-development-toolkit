@@ -50,7 +50,9 @@ Run from an authorised Toolkit development checkout:
     python scripts/validate_end_to_end_workflow.py
     python -m unittest tests.test_end_to_end_workflow -v
 
-The read-only Python standard-library oracle checks [42 intentionally broken mutations](../fixtures/end-to-end-workflow/broken_cases.json) against the same reference, including controller conflict, ID loss, dependency cycles, false QA/release/independence, scope creep, write boundary and stale HEAD. It checks structured claims, **not** whether the fictional implementation actually runs.
+[Quick](../fixtures/end-to-end-workflow/quick.json) and [Deep](../fixtures/end-to-end-workflow/deep.json) are additional synthetic reference routes. Every stage includes input/output, revision, R/decision/test references, evidence level, observations or missing evidence, approval and next stage.
+
+The read-only Python standard-library oracle checks [44 intentionally broken mutations](../fixtures/end-to-end-workflow/broken_cases.json) against the same reference, including controller conflict, ID loss, dependency cycles, false QA/release/independence, scope creep, write boundary and stale HEAD. It checks structured claims, **not** whether the fictional implementation actually runs.
 
 ## Beginner, expert and chat-only paths
 
