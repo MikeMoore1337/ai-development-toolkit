@@ -296,6 +296,13 @@
       "test-analysis-design",
       "playwright-testing",
       "quality-gate-assessment"
+    ],
+    "observability-sre": [
+      "observability-sre",
+      "failure-triage",
+      "release-safety",
+      "security-boundaries",
+      "reliability-testing"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -478,6 +485,13 @@
       "skill_root": "extensions/accessibility/skills",
       "skills": [
         "accessibility-testing"
+      ],
+      "auto_install": false
+    },
+    "operations": {
+      "skill_root": "extensions/operations/skills",
+      "skills": [
+        "observability-sre"
       ],
       "auto_install": false
     }

@@ -7,9 +7,9 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-75-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-76-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-38-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-39-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
@@ -101,13 +101,14 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
 | Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
+| Investigate incidents and recovery | `observability-sre` | Evidence-linked SLI/SLO and response, no production action |
 | Investigate flaky CI | `qa-ci` | Distinguish product defects from infrastructure/test failures |
 | Evaluate a release | `qa-release` | Coverage, traceability and quality gates |
 | Audit web accessibility | `accessibility-qa` | WCAG 2.2 criteria, keyboard, focus and evidence |
 | Improve documentation | `editorial` | Clear Voice only |
 | Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
 
-See [all 38 profiles and all 75 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
+See [all 39 profiles and all 76 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
 
 ## How the parts fit
 
