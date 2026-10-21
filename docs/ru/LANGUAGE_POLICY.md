@@ -21,6 +21,7 @@
 | Дополнительные технические переводы | [Спецификация Agent Skills](AGENT_SKILLS_SPEC.md), [Процесс релиза](RELEASE_PROCESS.md), [Метрики качества навыков](SKILL_QUALITY_METRICS.md) — английские исходники сохранены |
 | Руководства по сопровождению репозитория | [Публикация (RU)](PUBLISHING.md) / [EN](../PUBLISHING.md); [Защита main (RU)](BRANCH_PROTECTION.md) / [EN](../BRANCH_PROTECTION.md). Оригинальные проверки и разрешения сохранены |
 | Реальные испытания агентов - руководство оператора | [Русская версия](REAL_AGENT_PILOT.md) / [английский исходник](../REAL_AGENT_PILOT.md). Поясняет запрет расходов и границы синтетических проверок, запуск моделей не разблокирует |
+| Дополнительные прикладные руководства | [Оценка навыков](SKILL_EVALS.md), [Настройка GitHub](GITHUB_SETUP.md), [Публикация в Windows](WINDOWS_PUBLISHING.md). Первичная публикация относится только к **новому** репозиторию; реальные испытания моделей остаются заблокированы |
 | Другие EN-only страницы | `PROVENANCE_AUDIT.md`, `SKILLS_QUALITY_AUDIT.md`, исторические аудиты и специальные инструкции |
 | Русскоязычные устанавливаемые исходники | Make Feature и Clear Voice. **Вторые английские `SKILL.md` не создаются** |
 | Двуязычные руководства к русскоязычным навыкам | [Make Feature RU](MAKE_FEATURE_INTEGRATION.md) / [EN](../MAKE_FEATURE_INTEGRATION.md); [Clear Voice RU](CLEAR_VOICE_INTEGRATION.md) / [EN](../CLEAR_VOICE_INTEGRATION.md). Исходники навыков не менялись. |
