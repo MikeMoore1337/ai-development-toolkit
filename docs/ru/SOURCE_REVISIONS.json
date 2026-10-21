@@ -25,7 +25,7 @@
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
       "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
-      "source_sha256": "4b0f11b89574dc3ad31010afd934aa55767c2022ed7b362849484c5987f4daff"
+      "source_sha256": "53db4963ebb482450a02212a2c297ea0b4ab073be40e5ad9273a4bb3b2122e15"
     },
     {
       "source": "docs/PUBLICATION_POLICY.md",
@@ -69,7 +69,7 @@
     {
       "source": "docs/BEGINNER_WORKFLOW.md",
       "translation": "docs/ru/BEGINNER_WORKFLOW.md",
-      "source_sha256": "6e24b981ca0c1c20323ce0e0e33c793e3a30f98bdc141e195a1cc710b98f50d5"
+      "source_sha256": "692645e1d0f5ac68b60b78d1d6241d9196db8a2e0dcbeff742683aa855dd9a93"
     },
     {
       "source": "docs/QUALITY_RUBRIC.md",
@@ -196,6 +196,11 @@
       "source": "docs/END_TO_END_WORKFLOW.md",
       "translation": "docs/ru/END_TO_END_WORKFLOW.md",
       "source_sha256": "39c68f771dc578e5ba33ff7ee5effef955f5e77ff0aaf5ce665c6d7e0dbdb432"
+    },
+    {
+      "source": "docs/CLIENT_CAPABILITIES.md",
+      "translation": "docs/ru/CLIENT_CAPABILITIES.md",
+      "source_sha256": "d9b01717b5554d6ddb56833a6c42777bc565ae8d4a8eec3707f2d9f142d6e897"
     }
   ]
 }
