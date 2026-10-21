@@ -35,3 +35,7 @@ Machine-readable registry and L1-L6 evidence limits: [client compatibility](../C
 | Hermes | Documented `.agents/skills/` or `.hermes/skills/` | No dedicated Hermes adapter | Not executed; project trust needs separate verification |
 
 Two managed clients in one project can have separate schema-v1 lockfiles. `migrate` copies **only managed files** whose contents match the current Toolkit version; it refuses local drift and collisions. See [client migration](../CLIENT_MIGRATION.md). File-level compatibility and successful copying **cannot prove** client/model discovery or use.
+
+## External tool permissions
+
+See the [tool capability, permission and execution evidence contracts](../TOOL_INTEGRATIONS.md) (Issue #69): availability, actual connection, scoped authority, pricing, egress and verified outcome are separate. No tool is installed by default.
