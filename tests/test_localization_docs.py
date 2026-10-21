@@ -74,6 +74,12 @@ FIXTURE_FILES = (
     "docs/ru/GITHUB_SETUP.md",
     "docs/WINDOWS_PUBLISHING.md",
     "docs/ru/WINDOWS_PUBLISHING.md",
+    "docs/QA_PORTABILITY.md",
+    "docs/ru/QA_PORTABILITY.md",
+    "docs/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+    "docs/ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+    "docs/EVALUATION_PLAN_V4.md",
+    "docs/ru/EVALUATION_PLAN_V4.md",
     "docs/PUBLISHING.md",
     "docs/ru/PUBLISHING.md",
     "docs/BRANCH_PROTECTION.md",
@@ -124,6 +130,36 @@ class RussianOnboardingTests(unittest.TestCase):
             self.assertTrue(any(f.startswith(expected) for f in findings), findings)
         else:
             self.assertEqual(findings, [])
+
+    def test_qa_portability_rights_caveat_cannot_disappear(self):
+        page = self.root / "docs/ru/QA_PORTABILITY.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_MEASURED", data)
+        page.write_text(data.replace("NOT_MEASURED", "VERIFIED"), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_bad_skill_is_not_presented_as_installable(self):
+        page = self.root / "docs/ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("name: everything", data)
+        page.write_text(data.replace("name: everything", "name: specialized"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
+    def test_paired_trials_cannot_claim_measured_gain(self):
+        page = self.root / "docs/ru/EVALUATION_PLAN_V4.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("NOT_MEASURED", data)
+        page.write_text(data.replace("NOT_MEASURED", "OBSERVED"), encoding="utf-8")
+        self.check("L10N009")
+
+    def test_qa_portability_reverse_link_cannot_disappear(self):
+        page = self.root / "docs/QA_PORTABILITY.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("(ru/QA_PORTABILITY.md)", data)
+        page.write_text(data.replace("(ru/QA_PORTABILITY.md)",
+                                     "(ru/MISSING.md)", 1), encoding="utf-8")
+        self.check("L10N004")
 
     def test_current_russian_onboarding(self):
         self.check()
