@@ -35,6 +35,9 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Каталог навыков и профилей | [Каталог (RU)](SKILLS_CATALOG.md) |
 | Наборы для Backend, Frontend и QA | [Тематические наборы (RU)](CURATED_SKILL_PACKS.md) |
 | Универсальная разработка | [Инженерные навыки (RU)](UNIVERSAL_ENGINEERING.md) / [EN](../UNIVERSAL_ENGINEERING.md) |
+| Решение о переносимости QA-материалов | [Разбор исходников (RU)](QA_PORTABILITY.md) / [EN](../QA_PORTABILITY.md) - границы прав и отсутствие независимой проверки работодателя |
+| Антипример универсального навыка | [Признаки плохого навыка (RU)](SKILL_QUALITY_V2_ANTI_PATTERNS.md) / [EN](../SKILL_QUALITY_V2_ANTI_PATTERNS.md) - только демонстрация, не устанавливать |
+| Проверка пользы набора v4 | [План сравнительных испытаний (RU)](EVALUATION_PLAN_V4.md) / [EN](../EVALUATION_PLAN_V4.md) - реальные результаты не измерены |
 | Стандарт качества навыков v2 | [Skill Quality (RU)](SKILL_QUALITY_V2.md) / [EN](../SKILL_QUALITY_V2.md) |
 | Оценка навыков на парных испытаниях | [Методика (RU)](SKILL_EVALS.md) / [EN](../SKILL_EVALS.md) - подсчёт данных, не запуск модели |
 | Испытания навыков с реальными агентами | [Операторское руководство (RU)](REAL_AGENT_PILOT.md) / [EN](../REAL_AGENT_PILOT.md) - реальные вызовы сейчас заблокированы, доступны офлайновые проверки |
