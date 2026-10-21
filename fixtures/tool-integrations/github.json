@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "scenario": "github_review",
+  "controller": "feature-delivery",
+  "active_controllers": [
+    "feature-delivery"
+  ],
+  "client": {
+    "id": "codex",
+    "capability": "AVAILABLE",
+    "connection": "CONNECTED"
+  },
+  "tool": {
+    "id": "native-github",
+    "name": "Built-in GitHub reader",
+    "provider": "Client",
+    "category": "NATIVE_CLIENT_TOOL",
+    "version": null,
+    "source": "Synthetic capability snapshot",
+    "trust": "CLIENT_NATIVE",
+    "supported_actions": [
+      "read_pr",
+      "read_ci"
+    ],
+    "required_scopes": [
+      "pull_requests:read"
+    ],
+    "network_destinations": [
+      "api.github.com"
+    ],
+    "authentication": "CLIENT_MANAGED",
+    "data_access": [
+      "PUBLIC"
+    ],
+    "side_effects": "NONE",
+    "reversibility": "REVERSIBLE",
+    "approval_requirements": [
+      "WRITE",
+      "DEPLOY"
+    ],
+    "alternatives": [
+      "report in chat"
+    ],
+    "evidence_level": "SYNTHETIC_TESTED",
+    "limitations": [
+      "No real client tested"
+    ]
+  },
+  "task": {
+    "resource": "fictional-org/sample#PR42",
+    "repository": "fictional-org/sample",
+    "organization": "fictional-org",
+    "environment": "LOCAL",
+    "operation": "read_pr",
+    "operation_class": "READ",
+    "scope": "pull_requests:read",
+    "data_classification": "PUBLIC",
+    "target_type": "GITHUB",
+    "owner_approved_design": false
+  },
+  "permission": {
+    "id": "synthetic-grant-1",
+    "tool_id": "native-github",
+    "client_id": "codex",
+    "resource": "fictional-org/sample#PR42",
+    "repository": "fictional-org/sample",
+    "organization": "fictional-org",
+    "environment": "LOCAL",
+    "operation": "read_pr",
+    "operation_class": "READ",
+    "required_scope": "pull_requests:read",
+    "available_scopes": [
+      "pull_requests:read"
+    ],
+    "source": "SYNTHETIC_OWNER",
+    "status": "GRANTED",
+    "approval_reference": "synthetic-approval-1",
+    "expires": "2099-12-31",
+    "data_classification": "PUBLIC",
+    "egress_allowed": true,
+    "side_effects": "NONE",
+    "reversibility": "REVERSIBLE",
+    "cost_policy": "ZERO_SPEND"
+  },
+  "egress": {
+    "source": "synthetic-PR",
+    "destination": "api.github.com",
+    "actual_destination": "api.github.com",
+    "expected_destinations": [
+      "api.github.com"
+    ],
+    "data_classification": "PUBLIC",
+    "allowed_classes": [
+      "PUBLIC"
+    ],
+    "payload_minimized": true,
+    "contains_secret": false,
+    "output_is_instruction": false,
+    "redirect": false
+  },
+  "cost": {
+    "status": "VERIFIED_ZERO",
+    "pricing_source": "synthetic fixture, no network",
+    "pricing_review_date": "2026-10-21",
+    "free_tier_conditions": "No billable call in the offline fixture",
+    "estimated_requests": 1,
+    "used_requests": 0,
+    "quota": 100,
+    "policy": "ZERO_SPEND",
+    "planned_cost": 0,
+    "actual_cost": 0
+  },
+  "integration": {
+    "decision": "NO_INSTALL_NEEDED",
+    "native_sufficient": true,
+    "gap_demonstrated": false,
+    "install_attempted": false,
+    "approval_for_install": false,
+    "source_revision": null,
+    "benefit": "HYPOTHESIS",
+    "benefit_measured": false,
+    "requires_real_credentials": false,
+    "removal_plan": "No installation, no removal",
+    "residual_data_ack": true
+  },
+  "preview": {
+    "state": "PLAN",
+    "tool_supports_dry_run": false,
+    "claims_dry_run": false,
+    "has_side_effect": false
+  },
+  "execution": {
+    "status": "PREPARED",
+    "reported_executed": false,
+    "tool_response_reference": null,
+    "observed_result": null,
+    "verified": false,
+    "live_access": false,
+    "claims_live_check": false,
+    "claimed_approved_design": false,
+    "unsafe_retry": false,
+    "publication_performed": false
+  },
+  "storage": {
+    "toolkit_written": false,
+    "destination": "CHAT"
+  }
+}
