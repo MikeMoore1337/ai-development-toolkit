@@ -1,6 +1,7 @@
 """End-to-end reference-oracle smoke with NO model calls, net, or outputs."""
 from __future__ import annotations
 
+import errno
 import json
 from pathlib import Path
 import shutil
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from agent_eval_fixtures import FIXTURES
-from agent_eval_offline_smoke import perform_smoke, oracle_exit, REFERENCE_FIXES
+from agent_eval_offline_smoke import perform_smoke, oracle_exit, REFERENCE_FIXES, isolated_smoke_root
 
 
 class OfflineSmokeTests(unittest.TestCase):
@@ -53,6 +54,45 @@ class OfflineSmokeTests(unittest.TestCase):
             report = perform_smoke(["go-cli"])
         self.assertFalse(report["all_requested_cases_exercised"])
         self.assertEqual("SKIPPED_RUNTIME_MISSING", report["cases"][0]["state"])
+
+    def test_transient_temp_cleanup_enotempty_is_bounded_and_retried(self):
+        original = shutil.rmtree
+        observed = []
+        def flaky(path):
+            observed.append(path)
+            if len(observed) == 1:
+                raise OSError(errno.ENOTEMPTY, "Go cache writer raced cleanup")
+            return original(path)
+        with patch("agent_eval_offline_smoke.shutil.rmtree", side_effect=flaky):
+            with isolated_smoke_root() as root:
+                (root / "synthetic.txt").write_text("test only", encoding="utf-8")
+        self.assertEqual(len(observed), 2)
+        self.assertFalse(root.exists())
+
+    def test_persistent_temp_cleanup_error_is_not_ignored(self):
+        root = None
+        try:
+            with patch("agent_eval_offline_smoke.shutil.rmtree",
+                       side_effect=OSError(errno.ENOTEMPTY, "persistent")):
+                with self.assertRaises(OSError) as caught:
+                    with isolated_smoke_root() as root:
+                        (root / "synthetic.txt").write_text("test only", encoding="utf-8")
+                self.assertEqual(caught.exception.errno, errno.ENOTEMPTY)
+        finally:
+            if root is not None and root.exists():
+                shutil.rmtree(root)
+
+    def test_other_cleanup_errors_fail_immediately(self):
+        root = None
+        try:
+            with patch("agent_eval_offline_smoke.shutil.rmtree",
+                       side_effect=PermissionError(errno.EACCES, "not allowed")):
+                with self.assertRaises(PermissionError):
+                    with isolated_smoke_root() as root:
+                        pass
+        finally:
+            if root is not None and root.exists():
+                shutil.rmtree(root)
 
     def test_broken_reference_is_rejected(self):
         with patch.dict(REFERENCE_FIXES["python-api"], {
