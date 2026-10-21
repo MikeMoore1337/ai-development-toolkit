@@ -221,6 +221,11 @@
       "source": "docs/PUBLISHING.md",
       "translation": "docs/ru/PUBLISHING.md",
       "source_sha256": "637a086062f9cb5077ea818875e5ff3557559c82c9ca56c44d194c428aad2baf"
+    },
+    {
+      "source": "docs/REAL_AGENT_PILOT.md",
+      "translation": "docs/ru/REAL_AGENT_PILOT.md",
+      "source_sha256": "d1485efd9887edc53359561be9800ac7db64cc7fd1f27f44d99667369ef95d6b"
     }
   ]
 }
