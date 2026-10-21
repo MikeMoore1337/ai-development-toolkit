@@ -18,6 +18,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
 | Accessibility QA: keyboard, focus, forms, contrast and WCAG | `accessibility-qa` | 4 | Offline examples; optional real browser and AT checks |
+| Customer reports, Known Issues and verified delivery | `maintenance-support` | 5 | Offline only, no ticket writes or automatic messages |
 | Incident investigation, telemetry quality, SLI/SLO and recovery | `observability-sre` | 5 | Offline synthetic oracles, owner gate for infrastructure |
 | ETL/ELT, contracts, quality, lineage, incremental processing | `data-engineering` | 5 | Offline synthetic evidence; no warehouse |
 | Library upgrades, lockfile and rollback | `dependency-maintenance` | 5 | Evidence-first; no automatic updates |
@@ -217,3 +218,7 @@ The opt-in `dependency-maintenance` profile reuses existing skills. [Guide](DEPE
 ## Data Engineering & Analytics
 
 Optional `data-engineering` profile adds one focused skill and reuses Backend, QA and Reliability guidance. [Guide](DATA_ENGINEERING.md).
+
+## Maintenance & Support
+
+Optional `maintenance-support` profile reuses existing QA and release evidence. [Guide](MAINTENANCE_SUPPORT.md).

@@ -136,6 +136,7 @@ Optional [reliability-testing](../extensions/reliability/skills/reliability-test
 
 | Skill | When to use it |
 | :--- | :--- |
+| [`maintenance-support`](../extensions/operations/skills/maintenance-support/SKILL.md) | Manage customer report lifecycle, defect evidence, known issues and verified release communications. |
 | [`observability-sre`](../extensions/operations/skills/observability-sre/SKILL.md) | Quality-check logs/metrics/traces, correlate incident evidence, calculate SLI/SLO and verify recovery. |
 | [`dependency-maintenance`](../extensions/operations/skills/dependency-maintenance/SKILL.md) | Assess bounded upgrades, transitive/lockfile deltas, advisories, compatibility and rollback. |
 
@@ -223,6 +224,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | :--- | :--- |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
+| `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
 | `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
