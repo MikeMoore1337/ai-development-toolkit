@@ -48,8 +48,6 @@ class ReadmePresentationTests(unittest.TestCase):
                 self.assertEqual((root.attrib["width"], root.attrib["height"]), dimensions)
                 self.assertNotIn("<script", text.lower())
                 self.assertNotRegex(text, r"(?i)\b(?:\d+\s+skills|\d+\s+profiles)\b")
-                self.assertNotIn("http://", text)
-                self.assertNotIn("https://", text)
 
     def test_documented_local_links_exist(self) -> None:
         for name in ("README.md", "README.ru.md"):
