@@ -7,9 +7,9 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-75-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-76-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-38-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-39-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
@@ -31,6 +31,7 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 | **Purposeful changes** | Task scoping, architecture decisions and minimal-safe-change guidance |
 | **Trustworthy testing** | Test design, meaningful assertions, CI failure analysis and release gates |
 | **Consistent interfaces** | Design-system consistency, screenshot fidelity and motion review |
+| **Coordinated UI audit** | UX/UI Design Orchestra: read-only design critique, one proposal and plan before visual approval |
 | **Better writing** | Clear Voice for precise, natural technical and product communication |
 | **End-to-end feature work** | Make Feature 0.3.0 and feature-delivery workflows, **selected one at a time** |
 | **Portable installation** | Curated profiles, preview before writing and protection against overwrites |
@@ -39,12 +40,12 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 
 | Collection | Contents | Explore |
 | :--- | :--- | :--- |
-| **Core skills** | 23 skills for planning, implementation, review, security, UI and editorial work | [Browse core](docs/SKILLS_CATALOG.md#core-skills) |
+| **Core skills** | 24 skills for planning, implementation, review, security, UI and editorial work | [Browse core](docs/SKILLS_CATALOG.md#core-skills) |
 | **Frontend / Backend / Fullstack** | 14 optional, framework-neutral engineering skills | [Engineering guide](docs/UNIVERSAL_ENGINEERING.md) |
 | **QA Engineering Pack** | 27 optional skills for API, UI, contract and integration tests, CI, reliability and release evaluation | [Browse QA pack](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 optional, self-contained workflow skill for feature delivery | [Integration](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Agent roles** | 5 core + 11 specialist QA reference roles | [Browse roles](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Install profiles** | 38 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
+| **Install profiles** | 39 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
 
 Skills follow the [Agent Skills](https://agentskills.io/specification) directory convention. They are task-specific guidance, **not** autonomous agents with default access to your files, accounts or deployment infrastructure.
 
@@ -98,6 +99,7 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Design a backend service | `backend` | Service and API contract guidance |
 | Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
 | Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
+| Consolidate design, accessibility and motion reviews | `ui-orchestra` | Evidence-linked unified concept; no UI edits before owner approval |
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
 | Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
@@ -107,7 +109,7 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Improve documentation | `editorial` | Clear Voice only |
 | Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
 
-See [all 38 profiles and all 75 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
+See [all 39 profiles and all 76 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
 
 ## How the parts fit
 

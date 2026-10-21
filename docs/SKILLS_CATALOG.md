@@ -6,7 +6,7 @@ A maintained reference based on `MANIFEST.json` and the actual `SKILL.md` files 
 
 ## Core skills
 
-These 23 skills live under `.agents/skills/`.
+These 24 skills live under `.agents/skills/`.
 
 | Skill | When to use it |
 | :--- | :--- |
@@ -32,6 +32,7 @@ These 23 skills live under `.agents/skills/`.
 | [`screenshot-fidelity`](../.agents/skills/screenshot-fidelity/SKILL.md) | Compare UI implementations against screenshots and design references. Use for visual parity, screenshot-to-code, regressions and responsive layout checks. |
 | [`security-boundaries`](../.agents/skills/security-boundaries/SKILL.md) | Review concrete trust boundaries, credentials, sensitive data and harmful failure modes. Use when a change introduces or crosses a security boundary. |
 | [`skill-portability`](../.agents/skills/skill-portability/SKILL.md) | Use when creating, evaluating, importing or migrating an Agent Skills SKILL.md folder. Validate metadata, links, client compatibility, provenance and activation boundarie… |
+| [`ux-ui-design-orchestra`](../.agents/skills/ux-ui-design-orchestra/SKILL.md) | Coordinate read-only design specialists, consolidate one evidence-linked UI concept and stop for owner approval before implementation. |
 | [`task-scoping`](../.agents/skills/task-scoping/SKILL.md) | Define the scope, constraints, acceptance criteria and dependencies of a change. Use before implementing a task with incomplete or competing requirements. |
 
 ## Frontend engineering extension
@@ -220,6 +221,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
+| `ui-orchestra` | `ux-ui-design-orchestra`, `design-system-consistency`, `screenshot-fidelity`, `qa-strategy` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |
