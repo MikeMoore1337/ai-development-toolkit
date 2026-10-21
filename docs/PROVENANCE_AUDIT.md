@@ -1,5 +1,7 @@
 # Provenance, licenses and distribution audit (2026-10-19)
 
+[Русская версия](ru/PROVENANCE_AUDIT.md)
+
 **Scope:** source tree at `main@b81cd6dc8c60c2466242928e37b237de25eddd12`, plus the provenance controls introduced by Issue #28. This document is **not legal advice or an authorization to publish**.
 
 ## Coverage and classification

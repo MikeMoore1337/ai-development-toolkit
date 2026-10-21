@@ -40,7 +40,7 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "1d0a9c53cb8b00e8b0258d7d938c152cb6240136a093a87e4d0c1b2d60145ae0"
+      "source_sha256": "0ed6c414e52cbd829adcbec094752c3319b62752bbbb2868c02fd30d7500c47a"
     },
     {
       "source": "docs/ADAPTATION.md",
@@ -241,6 +241,46 @@
       "source": "docs/WINDOWS_PUBLISHING.md",
       "translation": "docs/ru/WINDOWS_PUBLISHING.md",
       "source_sha256": "173822504e7c7b5f731bd88b8ccff9c340f1e54d4bee9bce7c6540bbb9b7275b"
+    },
+    {
+      "source": "docs/QA_PORTABILITY.md",
+      "translation": "docs/ru/QA_PORTABILITY.md",
+      "source_sha256": "19f16bf6ec02aaa075692d4339e156d66ebc9618db0b674d155b6f47f156175c"
+    },
+    {
+      "source": "docs/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+      "translation": "docs/ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
+      "source_sha256": "b643946fb2e35485765da8f2d365ddf33b6ec170f91fa374711a1a7584fe1a8f"
+    },
+    {
+      "source": "docs/ROADMAP.md",
+      "translation": "docs/ru/ROADMAP.md",
+      "source_sha256": "ecfbda0010dbe3be292aa778cb83c2cac8d121d91acac6447bdbee152c4ac277"
+    },
+    {
+      "source": "docs/EVALUATION_PLAN_V4.md",
+      "translation": "docs/ru/EVALUATION_PLAN_V4.md",
+      "source_sha256": "ac65101ebc32be4718f453ea6e7a548fc70ba8a5aba739d307bc4be2a607281d"
+    },
+    {
+      "source": "docs/RELEASE_AUDIT_V5.md",
+      "translation": "docs/ru/RELEASE_AUDIT_V5.md",
+      "source_sha256": "938439e219590c45ee10a5ee4392659c5fc67a20224ef12be1afbceaa6cf1cc8"
+    },
+    {
+      "source": "docs/RELEASE_AUDIT_V5_2.md",
+      "translation": "docs/ru/RELEASE_AUDIT_V5_2.md",
+      "source_sha256": "897d035ed0551b78aa6a4e64fe55c3897407360210b930a75cb8c6f11ca0adce"
+    },
+    {
+      "source": "docs/PROVENANCE_AUDIT.md",
+      "translation": "docs/ru/PROVENANCE_AUDIT.md",
+      "source_sha256": "4705682580253e04692ef713ab7117061ead36748e8387bf19062b1949c36744"
+    },
+    {
+      "source": "docs/SKILLS_QUALITY_AUDIT.md",
+      "translation": "docs/ru/SKILLS_QUALITY_AUDIT.md",
+      "source_sha256": "0fcfe55152540397698ccf295e1d53808e620220152d78c72cd4fd754e8f10f9"
     }
   ]
 }
