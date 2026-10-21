@@ -46,6 +46,21 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 [Curated engineering and QA packs](docs/CURATED_SKILL_PACKS.md) · [How skills are evaluated](docs/SKILL_EVALS.md) · [Make Feature](docs/MAKE_FEATURE_INTEGRATION.md) · [Clear Voice](docs/CLEAR_VOICE_INTEGRATION.md)
 
+<details>
+<summary>Inventory counters (automatically checked in CI)</summary>
+
+[![Skills](https://img.shields.io/badge/skills-80-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-43-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+
+| Group | Inventory |
+| :--- | ---: |
+| **Core skills** | 24 |
+| **Frontend / Backend / Fullstack** | 14 |
+| **QA Engineering Pack** | 27 |
+
+</details>
+
 ## Quick start
 
 **Local installation is optional.** You need Python 3.12+, a project directory and a separately installed AI client for the command-line route. Read [the no-terminal guide](docs/BEGINNER_START.md) if you only want to describe a task.
