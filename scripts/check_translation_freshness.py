@@ -63,11 +63,42 @@ def check(root: Path = ROOT) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+
+def coverage(root: Path = ROOT) -> tuple[int, int, list[str]]:
+    """Return deterministic filename coverage; this does not verify translation meaning.
+
+    Russian-first sources may have their counterpart in docs/en/. Historical
+    and specialized sources without translations are gaps, not CI failures.
+    """
+    base = root.resolve() / "docs"
+    if base.is_symlink() or not base.is_dir():
+        raise ValueError("Missing or linked docs directory")
+    sources = sorted(base.glob("*.md"), key=lambda path: path.name)
+    paired = 0
+    gaps: list[str] = []
+    for source in sources:
+        if source.is_symlink() or not source.is_file():
+            gaps.append(source.relative_to(root.resolve()).as_posix())
+            continue
+        if any(
+            not directory.is_symlink()
+            and (directory / source.name).is_file()
+            and not (directory / source.name).is_symlink()
+            for directory in (base / "ru", base / "en")
+        ):
+            paired += 1
+        else:
+            gaps.append(source.relative_to(root.resolve()).as_posix())
+    return len(sources), paired, gaps
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--strict", action="store_true",
                         help="Fail on stale sources (manual pre-publication check only)")
+    parser.add_argument("--coverage", action="store_true",
+                        help="Print all untranslated documentation filenames without failing CI")
     args = parser.parse_args()
     errors, warnings = check(args.root)
     for item in errors:
@@ -76,6 +107,15 @@ def main() -> int:
         print("WARNING: " + item)
     if not errors and not warnings:
         print("RU translation sources: current revisions (not semantic verification)")
+    if args.coverage:
+        try:
+            total, paired, gaps = coverage(args.root)
+        except (OSError, ValueError) as exc:
+            print(f"ERROR: L10N_COVERAGE: {type(exc).__name__}")
+            return 1
+        print(f"DOCUMENTATION_COVERAGE: root={total} paired={paired} unpaired={len(gaps)}")
+        for path in gaps:
+            print(f"UNPAIRED_DOC: {path}")
     return 1 if errors or (args.strict and warnings) else 0
 
 
