@@ -27,6 +27,101 @@ class DesignOrchestraTests(unittest.TestCase):
         self.assertEqual("ux-ui-design-orchestra", manifest["profiles"]["ui-orchestra"][0])
         self.assertNotIn("ux-ui-design-orchestra", manifest["profiles"]["general"])
 
+    def test_new_design_must_have_art_direction_and_non_template_critique(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        self.assertEqual([], checker.validate(payload))
+        del payload["design_quality"]
+        self.assert_bad("requires design_quality", payload)
+
+    def test_missing_template_risks_rejects_generic_design(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        payload["design_quality"]["generic_template_risks"] = ["neon glow", "neon glow", "generic pricing"]
+        self.assert_bad("three distinct generic template risks", payload)
+        payload["design_quality"]["generic_template_risks"] = ["card grid"]
+        self.assert_bad("three distinct generic template risks", payload)
+
+    def test_unrevised_design_cannot_request_approval(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["demo:desktop", "demo:mobile"])
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["design_quality"]["quality_status"] = "NEEDS_DESIGN_REVISION"
+        self.assert_bad("before design quality revision", payload)
+
+    def test_mandatory_orchestra_before_generic_frontend_in_source(self):
+        skill = (ROOT / ".agents/skills/ux-ui-design-orchestra/SKILL.md").read_text(encoding="utf-8")
+        workflow = (ROOT / ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md").read_text(encoding="utf-8")
+        for doc in (ROOT / "AGENT_START.md", ROOT / "AGENT_START.ru.md"):
+            text = doc.read_text(encoding="utf-8")
+            self.assertIn("ORCHESTRA_SOURCE_UNAVAILABLE", text)
+            self.assertIn("ux-ui-design-orchestra", text)
+        self.assertIn("primary coordinator", skill)
+        self.assertIn("Mandatory routing precedence", workflow)
+        self.assertIn("generic-template risks", skill)
+        self.assertIn("create-design", workflow)
+
+    def load_three_directions(self):
+        return json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+
+    def test_three_distinct_concepts_are_required_for_create_design(self):
+        payload = self.load_three_directions()
+        self.assertEqual([], checker.validate(payload))
+        del payload["design_exploration"]
+        self.assert_bad("requires three-direction exploration", payload)
+        payload = self.load_three_directions()
+        payload["design_exploration"]["directions"].pop()
+        self.assert_bad("requires exactly three directions", payload)
+
+    def test_palette_only_direction_variants_are_rejected(self):
+        payload = self.load_three_directions()
+        concepts = payload["design_exploration"]["directions"]
+        concepts[1]["composition"] = concepts[0]["composition"]
+        self.assert_bad("repeated composition", payload)
+        payload = self.load_three_directions()
+        concepts = payload["design_exploration"]["directions"]
+        concepts[2]["information_architecture"] = concepts[0]["information_architecture"]
+        self.assert_bad("repeated information_architecture", payload)
+
+    def test_selected_direction_and_rejections_are_consistent(self):
+        payload = self.load_three_directions()
+        payload["design_exploration"]["selected_id"] = "does-not-exist"
+        self.assert_bad("selected direction missing", payload)
+        payload = self.load_three_directions()
+        payload["design_exploration"]["rejections"][0]["id"] = "training-editorial"
+        self.assert_bad("rejected IDs must match", payload)
+
+    def test_invalid_selected_id_fails_closed_without_exception(self):
+        payload = self.load_three_directions()
+        for malformed in ([], {}, 42, None):
+            with self.subTest(malformed=malformed):
+                payload["design_exploration"]["selected_id"] = malformed
+                self.assert_bad("selected direction missing", payload)
+
+    def test_swap_test_blocks_approval_when_generic(self):
+        payload = self.load_three_directions()
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
+        self.assertEqual([], checker.validate(payload))
+        payload["design_exploration"]["cross_domain_swap_test"]["would_require_structural_redesign"] = False
+        self.assert_bad("passing swap test", payload)
+
+    def test_superficial_exploration_not_ready_for_visual_review(self):
+        payload = self.load_three_directions()
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
+        payload["design_exploration"]["status"] = "NEEDS_REVISION"
+        self.assert_bad("distinct compared directions", payload)
+
+    def test_substantial_existing_redesign_uses_same_exploration_contract(self):
+        payload = copy.deepcopy(self.good)
+        payload["design_exploration_required"] = True
+        self.assert_bad("requires three-direction exploration", payload)
+        payload["design_exploration"] = self.load_three_directions()["design_exploration"]
+        self.assertEqual([], checker.validate(payload))
+
+    def test_unrelated_approved_small_fix_remains_exempt(self):
+        payload = copy.deepcopy(self.good)
+        self.assertEqual([], checker.validate(payload))
+
     def test_new_design_text_only_requires_visual_package(self):
         payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
         self.assertEqual([], checker.validate(payload))

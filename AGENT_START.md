@@ -62,7 +62,7 @@ When the project is already open, the Toolkit URL is optional, and no repository
 | User asks for | Initial route; refine after inspection |
 | --- | --- |
 | Build/fix a feature | `feature` -> `codex-feature` (or choose `make-feature` alone) |
-| New visual design or UI critique | `ui-orchestra` -> `create-design` (new) / `audit-proposal` (existing); use `ui-fix` for an already-approved small fix |
+| Substantial visual design, landing page, website or UI redesign | **MUST `ui-orchestra` first** -> `create-design` (new) / `audit-proposal` (existing); `ux-design` and `frontend` support, not replace, this route |
 | API/backend/frontend integration | `backend`, `frontend`, `fullstack` |
 | Tests or flaky CI | `qa` (stack-aware), `ci` |
 | Security assessment | `qa-security` and `security-boundaries` selectively; this is not an automatic security certificate |
@@ -87,6 +87,13 @@ Independent beginner usability: **NOT_TESTED**. Client discovery/invocation and 
 
 
 ## One-request UX/UI Design Orchestra
+
+**Mandatory routing precedence:** if the request involves new visible design, a marketing landing page, a substantially redesigned interface or removing generic AI styling, select `ux-ui-design-orchestra` FIRST, even when the user also asks to build and test the site. The generic `frontend`, `ux-design-process`, `ui-fix` and feature-delivery paths cannot silently bypass its visual approval checkpoint. Only an isolated, already approved minor CSS/interaction fix with no new visual decision is exempt. If this skill cannot be read, report `ORCHESTRA_SOURCE_UNAVAILABLE` instead of pretending it ran.
+
+**Three-concept exploration (required for new and substantive designs):** generate three compositionally different short design briefs, compare hierarchy, layout, imagery, interaction, mobile UX and the cross-domain swap test, then select one. Do not just recolor the same grid. Existing YFC/Hermes/other project styling is not a transferable blank-canvas default. Only the selected concept receives full mockups; do not ask beginners to write complex prompts or pay for three websites.
+
+**Art-direction checkpoint:** conduct an Impeccable-informed `shape`/`distill` critique, label actual external sources `LOADED` / `REFERENCE_ONLY` / `UNAVAILABLE`, and challenge at least three concrete generic SaaS-template risks. A site that is technically responsive and functional is not necessarily well designed; preserve authentic venue-specific content, composition, type and visual rhythm. A proposal needing visual approval cannot be replaced with a fully implemented frontend.
+
 
 **Users do not have to learn prompts, skills or the project structure.** Treat ordinary requests such as "Make me a beautiful fitness club website", "Draw a landing page" or "Improve my existing interface" as design intent when this Toolkit guidance is accessible. Inspect the available target workspace and its `AGENTS.md` first, then select `ux-ui-design-orchestra` (optional profile `ui-orchestra`) **without requiring the user to name it**.
 
