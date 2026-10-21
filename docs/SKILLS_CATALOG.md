@@ -132,6 +132,14 @@ Optional [reliability-testing](../extensions/reliability/skills/reliability-test
 | :--- | :--- |
 | [`devops-infrastructure`](../extensions/devops/skills/devops-infrastructure/SKILL.md) | Discover actual CI/CD, container and IaC contracts, plan verified deployment and recovery without execution. [Guide](DEVOPS_INFRASTRUCTURE.md). |
 
+## Operations & SRE extension
+
+| Skill | When to use it |
+| :--- | :--- |
+| [`observability-sre`](../extensions/operations/skills/observability-sre/SKILL.md) | Quality-check logs/metrics/traces, correlate incident evidence, calculate SLI/SLO and verify recovery. |
+
+[Guide](OBSERVABILITY_SRE.md) | [RU](ru/OBSERVABILITY_SRE.md).
+
 ## Accessibility QA extension
 
 Optional [accessibility-testing](../extensions/accessibility/skills/accessibility-testing/SKILL.md) maps applicable WCAG 2.2 criteria to keyboard, focus, forms, semantic, contrast, responsive and screen-reader test evidence. [Guide](ACCESSIBILITY_QA.md). Offline checks do not establish conformance.
@@ -212,6 +220,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |

@@ -18,6 +18,7 @@ package manager, skill runtime, dependencies or automatic installation is introd
 | CI investigation | `qa-ci` | 4 | None |
 | Release QA | `qa-release` | 4 | None |
 | Accessibility QA: keyboard, focus, forms, contrast and WCAG | `accessibility-qa` | 4 | Offline examples; optional real browser and AT checks |
+| Incident investigation, telemetry quality, SLI/SLO and recovery | `observability-sre` | 5 | Offline synthetic oracles, owner gate for infrastructure |
 | CI/CD, containers, infrastructure and deployment planning | `devops-infrastructure` | 4 | Offline synthetic checks only; no cloud or Docker required |
 | Threat modeling, security architecture and DevSecOps | `security-engineering` | 4 | Offline synthetic tests; no external scans |
 | Bounded load, performance budgets and regressions | `performance-load-testing` | 3 | Synthetic local tests only; no external traffic |
@@ -46,6 +47,10 @@ The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `
 ## Accessibility QA
 
 Optional `accessibility-qa` combines one specialist skill with existing QA test-design, optional Playwright and quality-gate guidance. [Guide](ACCESSIBILITY_QA.md). Offline checks never claim WCAG conformance.
+
+## Observability & SRE
+
+The optional `observability-sre` profile adds one evidence-led skill and reuses triage, release-safety, security and reliability. [Guide](OBSERVABILITY_SRE.md). No mandatory monitoring stack, live access or new controller.
 
 ## DevOps & Infrastructure
 

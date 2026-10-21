@@ -130,6 +130,14 @@
 | :--- | :--- |
 | [`devops-infrastructure`](../../extensions/devops/skills/devops-infrastructure/SKILL.md) | Проверяйте реальные CI/CD, контейнеры, IaC, окружения и планы развёртывания, не выполняя публикацию. [Руководство](DEVOPS_INFRASTRUCTURE.md). |
 
+## Operations & SRE
+
+| Навык | Когда применять |
+| :--- | :--- |
+| [`observability-sre`](../../extensions/operations/skills/observability-sre/SKILL.md) | Проверка логов, метрик и трассировок, SLI/SLO, расследование инцидентов и восстановление. |
+
+[Руководство](OBSERVABILITY_SRE.md) | [EN](../OBSERVABILITY_SRE.md).
+
 ## Accessibility QA - проверка доступности
 
 Необязательный навык [accessibility-testing](../../extensions/accessibility/skills/accessibility-testing/SKILL.md) связывает применимые критерии WCAG 2.2 с проверками клавиатуры, фокуса, форм, семантики, контраста и экранных дикторов. [Руководство](ACCESSIBILITY_QA.md). Автономные проверки не подтверждают соответствие.
@@ -210,6 +218,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
