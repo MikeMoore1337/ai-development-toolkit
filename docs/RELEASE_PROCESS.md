@@ -9,15 +9,16 @@ substitute for independently verifying a tagged public release.
 
 The actual latest public GitHub Release is [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), tagged at `04d60055e93c04dda26fb3868689ab4031fbf617`. **The published tag still contains `MANIFEST.json.version = 5.4.0`, and its changelog/release instructions still describe v5.4.0 as the last release.** This is a documented metadata discrepancy, not a reason to move or rewrite an immutable release tag. Treat the tag as the published identity, report the stale in-archive version accurately, and track corrective forward-only work in [Issue #153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153). Historical v5.4.0 examples and SHA below are retained as historical examples, **not** current-release status. Recheck rights gates, manifest/tag identity and archive evidence before the next release.
 
+
 ## Version and release state
 
-- `MANIFEST.json.version` identifies the **last published baseline release** (currently `5.4.0`), not the version of every subsequent `main` commit.
+- `MANIFEST.json.version` identifies the **last published baseline release** (currently `5.5.1`), not the version of every subsequent `main` commit.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Current baseline: [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0) at `4bec16fc6ded5796f765210f77c78e4567e2fb6a` (2026-10-18). Compare [v5.4.0...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main) for changes not yet released.
+Current baseline: [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) (2026-10-21). Resolve its exact commit using the published tag; compare [v5.5.1...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.1...main) for subsequent changes. Historical [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) contains stale 5.4.0 metadata and must remain immutable.
 
 
 1. Work on a feature branch and document what changed and any migration risks.
@@ -62,7 +63,7 @@ extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
 For example, on Windows (replace the tag for the release under review):
 
 ```powershell
-$tag = "v5.4.0"
+$tag = "v5.5.1"
 $zip = Join-Path $env:TEMP "adt-$tag.zip"
 $dest = Join-Path $env:TEMP "adt-$tag-source"
 if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
@@ -70,6 +71,8 @@ Invoke-WebRequest "https://github.com/MikeMoore1337/ai-development-toolkit/archi
 Expand-Archive -LiteralPath $zip -DestinationPath $dest
 $root = Get-ChildItem $dest -Directory | Select-Object -First 1
 python scripts/verify_checksums.py --archive-root $root.FullName
+$manifest = Get-Content (Join-Path $root.FullName "MANIFEST.json") -Raw | ConvertFrom-Json
+if ("v$($manifest.version)" -cne $tag) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
 ```
 
 The archive check compares SHA256 values **and requires every extracted source
@@ -86,6 +89,6 @@ After publication, the GitHub Actions `Verify release source archive` workflow
 runs for a pushed release tag and for `release: published`. It can also be triggered manually
 with a valid `vX.Y.Z` tag. Review the completed job and its
 `release-source-verification` artifact before declaring archive acceptance.
-This workflow checks actual downloaded bytes, unlike static Git tree checks.
+This workflow checks actual downloaded bytes and rejects an archive whose `MANIFEST.json.version` does not equal the `vX.Y.Z` tag. This post-tag control detects a mismatch but cannot undo a tag or release that has already been published; verify the manifest version before tagging.
 
 New tagged archives are checked against the provenance release gate after SHA verification. Historic archives without the provenance script are reported as `NOT_VERIFIED` for licensing while retaining their independent checksum verification; they are never retroactively considered cleared for redistribution.
