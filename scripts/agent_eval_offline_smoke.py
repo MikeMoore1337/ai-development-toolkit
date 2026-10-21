@@ -9,6 +9,8 @@ No model, API, network client, subscription or provider authentication.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
+import errno
 import hashlib
 import json
 import os
@@ -160,6 +162,23 @@ def oracle_exit(case_id: str, workspace: Path, *, timeout: int = 45) -> dict:
                 "outcome_class": "TIMEOUT"}
 
 
+@contextmanager
+def isolated_smoke_root():
+    """Remove synthetic workspace; retry only transient Go cache cleanup races."""
+    root = Path(tempfile.mkdtemp(prefix="adt-offline-oracle-"))
+    try:
+        yield root
+    finally:
+        for attempt in range(8):
+            try:
+                shutil.rmtree(root)
+                break
+            except OSError as error:
+                if error.errno not in (errno.ENOTEMPTY, errno.EEXIST) or attempt == 7:
+                    raise
+                time.sleep(0.05 * (attempt + 1))
+
+
 def perform_smoke(cases: list[str], *, strict_runtimes: bool = False,
                   timeout: int | None = None) -> dict:
     if not cases or len(set(cases)) != len(cases) or any(c not in EXPECTED_CASES for c in cases):
@@ -169,8 +188,7 @@ def perform_smoke(cases: list[str], *, strict_runtimes: bool = False,
     results: list[dict] = []
     # Automatically removed. No GitHub, external network, provider logs or
     # user working tree is touched (only isolated synthetic temporary files).
-    with tempfile.TemporaryDirectory(prefix="adt-offline-oracle-") as parent:
-        root = Path(parent)
+    with isolated_smoke_root() as root:
         for case_id in cases:
             if not allowed_runtime(case_id):
                 if strict_runtimes:
