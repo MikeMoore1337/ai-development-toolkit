@@ -23,6 +23,21 @@ class DeliveryOrchestraTests(unittest.TestCase):
     def rejects(self, code, trial):
         self.assertIn(code, delivery.validate(trial))
 
+    def test_unhashable_risk_is_rejected(self):
+        report = self.trial()
+        report["risk_flags"] = [["privacy"]]
+        self.rejects("INVALID_INPUT_SHAPE", report)
+
+    def test_unhashable_write_scope_is_rejected(self):
+        report = self.trial()
+        report["units"][1]["write_paths"] = [{"path": "src/x.py"}]
+        self.rejects("INVALID_INPUT_SHAPE", report)
+
+    def test_unhashable_evidence_id_is_rejected(self):
+        report = self.trial()
+        report["checks"][0]["evidence_ids"] = [{"fake": "evidence"}]
+        self.rejects("INVALID_INPUT_SHAPE", report)
+
     def test_synthetic_plan_passes_but_not_executed(self):
         self.assertEqual([], delivery.validate(self.trial()))
 

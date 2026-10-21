@@ -18,6 +18,14 @@ ACTUAL_EVIDENCE = {"TEST_RUN", "CI_RUN", "INTEGRATION_RUN"}
 
 
 def validate(data: Any) -> list[str]:
+    """Reject malformed nested JSON safely instead of throwing a traceback."""
+    try:
+        return _validate(data)
+    except (TypeError, KeyError, ValueError, AttributeError):
+        return ["INVALID_INPUT_SHAPE"]
+
+
+def _validate(data: Any) -> list[str]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return ["EXPECTED_OBJECT"]
