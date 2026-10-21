@@ -47,14 +47,14 @@ class ReadmePresentationTests(unittest.TestCase):
                 self.assertEqual(root.tag, "{http://www.w3.org/2000/svg}svg")
                 self.assertEqual((root.attrib["width"], root.attrib["height"]), dimensions)
                 self.assertNotIn("<script", text.lower())
-                self.assertNotRegex(text, r"(?i)\\b(?:\\d+\\s+skills|\\d+\\s+profiles)\\b")
+                self.assertNotRegex(text, r"(?i)\b(?:\d+\s+skills|\d+\s+profiles)\b")
                 self.assertNotIn("http://", text)
                 self.assertNotIn("https://", text)
 
     def test_documented_local_links_exist(self) -> None:
         for name in ("README.md", "README.ru.md"):
             text = (ROOT / name).read_text(encoding="utf-8")
-            for link in re.findall(r"(?<!!)\\[[^\\]\\n]+\\]\\(([^)]+)\\)", text):
+            for link in re.findall(r"(?<!!)\[[^\]\n]+\]\(([^)]+)\)", text):
                 path = link.split("#", 1)[0]
                 if not path or path.startswith(("https://", "http://")):
                     continue
