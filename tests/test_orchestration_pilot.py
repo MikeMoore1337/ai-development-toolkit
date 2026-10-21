@@ -52,7 +52,7 @@ class PilotLedgerTests(unittest.TestCase):
         matches = [entry for entry in revisions["pairs"] if entry["source"] == "docs/ORCHESTRATION_PILOT.md"]
         self.assertEqual(1, len(matches))
         self.assertEqual("docs/ru/ORCHESTRATION_PILOT.md", matches[0]["translation"])
-        digest = hashlib.sha256(source.read_bytes().replace(b"\\r\\n", b"\\n")).hexdigest()
+        digest = hashlib.sha256(source.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
         self.assertEqual(digest, matches[0]["source_sha256"])
         for guide in (source, translation):
             content = guide.read_text(encoding="utf-8")
