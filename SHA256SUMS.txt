@@ -45,7 +45,7 @@ a1c589a4303262018e29303aadfd1b2ac3bf30191d68739474ee993b438a648e  .agents/skills
 0cea49bb4d5e7ca73f6c0f9ea1958ca6c3889a4a789925c2fd0ab641de842d5d  .agents/skills/minimal-safe-change/SKILL.md
 f7aacf0b3435d34b542de40dc5763a493b694b20b4a796cff1763b7cff4d270f  .agents/skills/motion-quality/SKILL.md
 b6b549463b9ab34ff0d3d342f571f5e3edd94a3bef8f9a6184046f32b7ca143a  .agents/skills/provider-reality-check/SKILL.md
-3325b24a50403e2a2bdd60bf57abcf820035b98a2440c519c1304363e0c1e1b1  .agents/skills/qa-strategy/SKILL.md
+621910cc346ca94e228b40c74ef4c87b5346c173ad0e91917364cb0f0788cb57  .agents/skills/qa-strategy/SKILL.md
 70fde5fbabc8b46d2a984cef675b5e59831b63c1aa91ab2d14e011da04258e89  .agents/skills/release-safety/SKILL.md
 1940f43d4778743dbcb846dc26e6f43832541469c1b5db1aac32f9972f2a28be  .agents/skills/research-verification/SKILL.md
 d84db143a1230d17334abd73ac2433bacda7243659966555c5d3cc2081c166b7  .agents/skills/screenshot-fidelity/SKILL.md

@@ -14,4 +14,4 @@ description: Choose risk-based unit, integration, contract, UI and end-to-end va
 **Output:** risk matrix, chosen tests, actual results, uncovered risks.
 
 ## Optional independent QA coordination
-For a genuinely cross-layer or high-risk verification request, use [QA Orchestra](../../../docs/QA_ORCHESTRATION.md) to select at most three independent **read-only** QA perspectives, with sequential fallback when no real subagent tool exists. Reuse the relevant QA Pack skills, not a new controller. Always report actual run evidence and preserve the target repository's Issue, approval and release gates. For a small fix, use one agent and this skill's normal risk-based test plan.
+For a genuinely cross-layer or high-risk verification request, use QA Orchestra (repository guide: `docs/QA_ORCHESTRATION.md`) to select at most three independent **read-only** QA perspectives, with sequential fallback when no real subagent tool exists. Reuse the relevant QA Pack skills, not a new controller. Always report actual run evidence and preserve the target repository's Issue, approval and release gates. For a small fix, use one agent and this skill's normal risk-based test plan.
