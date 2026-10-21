@@ -24,7 +24,7 @@ class ReadmePresentationTests(unittest.TestCase):
         ):
             with self.subTest(name=name):
                 text = (ROOT / name).read_text(encoding="utf-8")
-                self.assertIn("(assets/branding/hero-v2.svg)", text)
+                self.assertIn("(docs/visuals/hero-evidence.svg)", text)
                 self.assertIn(f"({beginner})", text)
                 self.assertIn(f"({agent})", text)
                 self.assertIn(f"/releases/tag/v{version}", text)
@@ -37,8 +37,8 @@ class ReadmePresentationTests(unittest.TestCase):
 
     def test_vector_assets_are_local_and_without_dynamic_counts(self) -> None:
         for name, dimensions in (
-            ("assets/branding/hero-v2.svg", ("1440", "690")),
-            ("assets/branding/social-preview-v2.svg", ("1280", "640")),
+            ("docs/visuals/hero-evidence.svg", ("1440", "690")),
+            ("docs/visuals/social-preview-proposal.svg", ("1280", "640")),
         ):
             with self.subTest(name=name):
                 path = ROOT / name
