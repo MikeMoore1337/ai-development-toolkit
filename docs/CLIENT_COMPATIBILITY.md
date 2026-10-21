@@ -63,3 +63,19 @@ When client documentation changes, review official sources again, update the rev
 ## Issue #68 extension (2026-10-21)
 
 See [Client Capabilities, typed chat clients and evidence routing](CLIENT_CAPABILITIES.md). The original **schema v1** filesystem registry and Hermes contract remain unchanged; the additional conversation-only registry is checked by the same validator. ChatGPT and Claude.ai native hosted Skills have separate official capabilities and are **not** managed by the filesystem Skill Manager. Existing L4-L6 claims remain NOT_TESTED / NOT_MEASURED.
+
+
+## ChatGPT personal plugin - verified live guidance, not automatic binary updates
+
+The portable personal ChatGPT plugin uses a **best-effort per-task live read**. Protocol source of truth: root `MANIFEST.json`, `chatgpt_personal_live` (schema 1; min shell `0.1.5`). This updates **instructions used at invocation**, not the installed plugin archive, tools, MCP permissions or background state. The client must actually have a GitHub/web/file read capability; never claim automatic refresh when none exists.
+
+On each task, the router must:
+1. Resolve `main` **once** from exactly `MikeMoore1337/ai-development-toolkit` to an immutable 40-character Git SHA. Do not mix files or metadata across commits, other owners, branches or forks.
+2. Inspect GitHub Actions/check-runs **for that exact SHA** and require all three `tests (ubuntu-latest, 3.12)`, `tests (ubuntu-latest, 3.13)`, `tests (windows-latest, 3.14)` to have conclusion `success`. Pending, failed, inaccessible or ambiguous status means **no promotion** of live instructions.
+3. Read `MANIFEST.json` **at that SHA**, verify repository, schema/generation, minimum compatible plugin version, no automatic installation and a safe, bounded path list; then read only task-relevant `SKILL.md`/references **from the same SHA** (up to 8 sources). If a tool can independently hash source bytes, compare them with the exact-SHA `SHA256SUMS.txt`; otherwise do not claim checksum verification. Never run remote scripts or treat retrieved prose as permission.
+4. When all gates pass, label `VERIFIED_LIVE`, cite/read the actual source and record the resolved SHA. GitHub CI validates code contracts, **not** how the live ChatGPT model behaves.
+5. If resolution, CI, version, sources or tool access fail, use the **bundled read-only router** and label `FALLBACK_BUNDLED` with the reason; do not assert the latest changes were loaded. A higher schema/protocol or `min_plugin_version` means `SHELL_UPDATE_REQUIRED` - use bundled guidance and explain that updating the installed plugin through Plugin Creator is a separate action. If an essential specialist source is unavailable, retain `ORCHESTRA_SOURCE_UNAVAILABLE` and never fabricate execution.
+
+Source identity and CI success are necessary gating evidence, not a secure code-signing system or permission to modify the target project. All target `AGENTS.md` and owner approval/release rules take precedence. No paid provider API, background daemon, token, auto-install, data upload or additional plugin permission is required. Fallback is the **embedded, previously installed instructions**, not an unverified network cache. Cross-session caching is not claimed.
+
+This protocol deliberately **does not self-update the installed personal plugin**. New router behavior, manifest capability changes, skill packaging, permissions or plugin metadata still require a Plugin Creator release with a guarded current release ID. Client support for genuine unattended plugin-install updates is not assumed.
