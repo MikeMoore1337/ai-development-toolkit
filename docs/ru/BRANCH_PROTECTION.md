@@ -1,0 +1,27 @@
+# Обязательные проверки CI для ветки `main`
+
+[English source](../BRANCH_PROTECTION.md) | [Процесс релиза](RELEASE_PROCESS.md) | [Правила публикации](PUBLICATION_POLICY.md)
+
+GitHub Actions [Validate toolkit](../../.github/workflows/validate.yml) выполняется для Pull Request в `main` и для коммитов в `main`.
+
+Защита ветки настраивается **непосредственно в GitHub**. Нельзя включить её одним лишь добавлением файла в репозиторий. Владельцу нужны авторизованный GitHub CLI (`gh`) и права администратора репозитория.
+
+Существующий ruleset должен называться `Protect main`, иметь активный режим `active` и распространяться на основную ветку. Скрипт сохраняет остальные правила и список исключений (bypass).
+
+```powershell
+gh auth status
+py -3 scripts/configure_required_checks.py
+py -3 scripts/configure_required_checks.py --apply
+```
+
+Первый запуск скрипта - **только чтение**. Второй добавляет и проверяет три обязательные проверки GitHub Actions:
+
+- `tests (ubuntu-latest, 3.12)`
+- `tests (ubuntu-latest, 3.13)`
+- `tests (windows-latest, 3.14)`
+
+Проверки привязаны к приложению GitHub Actions (ID `15368`, подтверждён по запускам репозитория). Перед слиянием PR его ветка должна быть синхронизирована с актуальной `main`. Скрипт **не обходит** обязательность Pull Request, не предоставляет дополнительных прав обхода правил и не изменяет сам workflow.
+
+Для другого репозитория укажите `--repo OWNER/REPO`. После применения откройте `Settings → Rules → Rulesets → Protect main` и проверьте три обязательные проверки. PR с неуспешной проверкой нельзя считать готовым к слиянию.
+
+Проверки CI не подтверждают реальную активацию навыков в Codex/Claude, права на публикацию и корректность уже опубликованного GitHub Release.

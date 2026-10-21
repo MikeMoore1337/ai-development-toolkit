@@ -66,6 +66,10 @@ FIXTURE_FILES = (
     "docs/ru/AGENT_SKILLS_SPEC.md",
     "docs/RELEASE_PROCESS.md",
     "docs/ru/RELEASE_PROCESS.md",
+    "docs/PUBLISHING.md",
+    "docs/ru/PUBLISHING.md",
+    "docs/BRANCH_PROTECTION.md",
+    "docs/ru/BRANCH_PROTECTION.md",
     "docs/SOURCE_EVALUATION.md",
     "docs/en/SOURCE_EVALUATION.md",
     "docs/INTEGRATION_MATRIX.md",
@@ -288,6 +292,22 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("(ru/AGENT_SKILLS_SPEC.md)", "(AGENT_SKILLS_SPEC.md)"),
                         encoding="utf-8")
         self.check("L10N004")
+
+    def test_publishing_confirmation_gate_cannot_disappear(self):
+        page = self.root / "docs/ru/PUBLISHING.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("PUBLISH", data)
+        page.write_text(data.replace("PUBLISH", "UNAPPROVED"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
+    def test_branch_protection_required_check_cannot_disappear(self):
+        page = self.root / "docs/ru/BRANCH_PROTECTION.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("tests (windows-latest, 3.14)", data)
+        page.write_text(data.replace("tests (windows-latest, 3.14)", "no-check"),
+                        encoding="utf-8")
+        self.check("L10N009")
 
     def test_release_owner_gate_cannot_disappear(self):
         page = self.root / "docs/ru/RELEASE_PROCESS.md"

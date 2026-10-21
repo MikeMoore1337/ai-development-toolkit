@@ -40,7 +40,7 @@
     {
       "source": "docs/LANGUAGE_POLICY.md",
       "translation": "docs/ru/LANGUAGE_POLICY.md",
-      "source_sha256": "ad908d2c6a9fa372029cc5f42d3a8bf783b2def591b66a98caa203cba689cc0c"
+      "source_sha256": "59915414990221f8c346e147a4d8409af67022bca3e6e63a4a06042cf81d9c82"
     },
     {
       "source": "docs/ADAPTATION.md",
@@ -211,6 +211,16 @@
       "source": "docs/FINAL_ACCEPTANCE.md",
       "translation": "docs/ru/FINAL_ACCEPTANCE.md",
       "source_sha256": "86fe4f24172a10eed3d92283ba363c502cdd11edaa4297732b8c813411caaadf"
+    },
+    {
+      "source": "docs/BRANCH_PROTECTION.md",
+      "translation": "docs/ru/BRANCH_PROTECTION.md",
+      "source_sha256": "65c409fd957efb9d7276124cc5824f3ed68ff64c25701434885e0a3c2857af5e"
+    },
+    {
+      "source": "docs/PUBLISHING.md",
+      "translation": "docs/ru/PUBLISHING.md",
+      "source_sha256": "637a086062f9cb5077ea818875e5ff3557559c82c9ca56c44d194c428aad2baf"
     }
   ]
 }

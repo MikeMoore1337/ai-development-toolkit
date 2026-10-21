@@ -1,6 +1,8 @@
 # Publishing AI Development Toolkit
 
-The official repository [MikeMoore1337/ai-development-toolkit](https://github.com/MikeMoore1337/ai-development-toolkit) **already exists**. It has published [v5.3.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.3.0) and [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0). Do not recreate the official repository or rerun the first-publication script for maintenance.
+[Русская версия](ru/PUBLISHING.md)
+
+The official repository [MikeMoore1337/ai-development-toolkit](https://github.com/MikeMoore1337/ai-development-toolkit) **already exists** and has published [versioned GitHub Releases](https://github.com/MikeMoore1337/ai-development-toolkit/releases). Check the release list for the actual latest tagged version; neither an updated README nor an untagged `main` commit is a release. Do not recreate the official repository or rerun the first-publication script for maintenance.
 
 ## Maintaining this repository
 

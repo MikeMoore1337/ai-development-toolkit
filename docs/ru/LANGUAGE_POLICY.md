@@ -19,6 +19,7 @@
 | Ранее смешанный язык | [Оценка источников (RU)](../SOURCE_EVALUATION.md) с [английской версией](../en/SOURCE_EVALUATION.md); [Рубрика качества (EN)](../QUALITY_RUBRIC.md) / [RU](QUALITY_RUBRIC.md) |
 | Дополнительно переведено EN → RU | [Универсальная разработка](UNIVERSAL_ENGINEERING.md), [Skill Quality v2](SKILL_QUALITY_V2.md) и [маршрут новичка](BEGINNER_WORKFLOW.md) |
 | Дополнительные технические переводы | [Спецификация Agent Skills](AGENT_SKILLS_SPEC.md), [Процесс релиза](RELEASE_PROCESS.md), [Метрики качества навыков](SKILL_QUALITY_METRICS.md) — английские исходники сохранены |
+| Руководства по сопровождению репозитория | [Публикация (RU)](PUBLISHING.md) / [EN](../PUBLISHING.md); [Защита main (RU)](BRANCH_PROTECTION.md) / [EN](../BRANCH_PROTECTION.md). Оригинальные проверки и разрешения сохранены |
 | Другие EN-only страницы | `PROVENANCE_AUDIT.md`, `SKILLS_QUALITY_AUDIT.md`, исторические аудиты и специальные инструкции |
 | Русскоязычные устанавливаемые исходники | Make Feature и Clear Voice. **Вторые английские `SKILL.md` не создаются** |
 | Двуязычные руководства к русскоязычным навыкам | [Make Feature RU](MAKE_FEATURE_INTEGRATION.md) / [EN](../MAKE_FEATURE_INTEGRATION.md); [Clear Voice RU](CLEAR_VOICE_INTEGRATION.md) / [EN](../CLEAR_VOICE_INTEGRATION.md). Исходники навыков не менялись. |

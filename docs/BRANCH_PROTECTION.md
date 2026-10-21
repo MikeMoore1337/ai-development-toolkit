@@ -1,5 +1,7 @@
 # Enforcing CI checks on `main`
 
+[Русская версия](ru/BRANCH_PROTECTION.md)
+
 The toolkit's [Validate toolkit](../.github/workflows/validate.yml) workflow runs on pull requests to `main` and on pushes to `main`.
 
 Branch protection is configured separately in GitHub and **cannot be enabled by checking a file into the repository**. The repository owner must have GitHub CLI (`gh`) authenticated with repository administration permission.
