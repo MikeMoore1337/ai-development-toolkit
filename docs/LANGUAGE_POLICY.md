@@ -34,4 +34,14 @@ Read existing [Russian docs index](ru/README.md) for actual currently translated
 5. Do not edit protected Make Feature or QA source snapshots, personal licenses or bundled third-party material merely to change language. A new version of source text needs a separate origin/rights review and actual client-compatibility assessment.
 6. Maintain clear distinctions: file installation ≠ live client discovery, self-check ≠ independent review, CI PASS ≠ legal distribution permission, docs update ≠ release/deploy.
 
+## Current translation gap inventory (non-blocking)
+
+From the repository root, run:
+
+```bash
+python scripts/check_translation_freshness.py --coverage
+```
+
+This prints deterministic counts of root `docs/*.md` pages, pages with a filename-matched `docs/ru/` **or** `docs/en/` counterpart, and each unpaired source. A Russian-first guide with an English companion counts as paired. Historical and specialist pages remain visible as gaps rather than disappearing from the audit. **An absent translation does not fail CI.** To separately enforce source-revision freshness on already registered pairs, use `--strict`; neither mode establishes semantic equivalence, human usability or AI-client activation.
+
 **Next in sequence:** additional high-value EN-only user docs and specialized and historical documents based on practical demand. Broader specialist/audit pages are P2/P3, based on user value. No claim of full bilingual translation until both directions and actual documentation are reviewed.
