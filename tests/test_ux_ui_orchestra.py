@@ -62,6 +62,82 @@ class DesignOrchestraTests(unittest.TestCase):
     def load_three_directions(self):
         return json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
 
+    def with_rendered_comparison(self, payload):
+        """Synthetic declaration only: reference strings are not real rendered images."""
+        directions = payload["design_exploration"]["directions"]
+        layouts = (
+            ["immersive_training", "class_index", "coach_story"],
+            ["location_map", "visitor_guide", "first_class_picker"],
+            ["equipment_spec", "session_filter", "coach_credentials"],
+        )
+        payload["design_exploration"]["visual_comparison"] = {
+            "status": "RENDERED",
+            "frames": [
+                {"direction_id": direction["id"], "evidence_id": f"W{i}",
+                 "layout_signature": layouts[i]}
+                for i, direction in enumerate(directions)
+            ],
+        }
+        payload["evidence"] = [
+            {"id": f"W{i}", "status": "RENDERED",
+             "artifact_ref": f"synthetic:frame-{i}.svg",
+             "route": "SYNTHETIC_WIREFRAME",
+             "viewport": "420x700",
+             "provenance": "synthetic declaration for structural testing; no real rendering"}
+            for i in range(3)
+        ]
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=[
+            "synthetic:winner-desktop.png", "synthetic:winner-mobile.png"])
+        return payload
+
+    def test_visual_comparison_is_required_before_winner_approval(self):
+        payload = self.load_three_directions()
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
+        self.assert_bad("before three rendered visual sketches", payload)
+        self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
+
+    def test_missing_visual_comparison_status_cannot_be_passed_off_as_rendered(self):
+        payload = self.load_three_directions()
+        del payload["design_exploration"]["visual_comparison"]
+        self.assert_bad("honest visual comparison status", payload)
+        payload = self.load_three_directions()
+        payload["design_exploration"]["visual_comparison"]["frames"] = [
+            {"direction_id": "training-editorial", "evidence_id": "fake"}]
+        self.assert_bad("missing visual comparison cannot claim frame artifacts", payload)
+
+    def test_three_real_evidence_declarations_are_required(self):
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        self.assertEqual([], checker.validate(payload))
+        payload["evidence"][0]["status"] = "SOURCE_ONLY"
+        self.assert_bad("missing rendered evidence", payload)
+
+    def test_mismatched_visual_frames_and_repeated_layouts_fail(self):
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        payload["design_exploration"]["visual_comparison"]["frames"].pop()
+        self.assert_bad("exactly three rendered frames", payload)
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        frames = payload["design_exploration"]["visual_comparison"]["frames"]
+        frames[1]["layout_signature"] = frames[0]["layout_signature"]
+        self.assert_bad("repeats same composition signature", payload)
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        payload["design_exploration"]["visual_comparison"]["frames"][1]["direction_id"] = "training-editorial"
+        self.assert_bad("unknown or duplicate direction", payload)
+
+    def test_visual_comparison_cannot_reuse_unsegmented_capture_or_inconsistent_scale(self):
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        payload["evidence"][1]["artifact_ref"] = payload["evidence"][0]["artifact_ref"]
+        self.assert_bad("reuses same unsegmented artifact", payload)
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        payload["evidence"][2]["viewport"] = "960x1200"
+        self.assert_bad("matching viewport scale", payload)
+
+    def test_winner_requires_both_desktop_and_mobile_at_approval(self):
+        payload = self.with_rendered_comparison(self.load_three_directions())
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"]["artifact_refs"] = ["only-desktop.png"]
+        self.assert_bad("winner desktop and mobile previews", payload)
+
     def test_three_distinct_concepts_are_required_for_create_design(self):
         payload = self.load_three_directions()
         self.assertEqual([], checker.validate(payload))
@@ -100,7 +176,7 @@ class DesignOrchestraTests(unittest.TestCase):
         payload = self.load_three_directions()
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
         payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
-        self.assertEqual([], checker.validate(payload))
+        self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
         payload["design_exploration"]["cross_domain_swap_test"]["would_require_structural_redesign"] = False
         self.assert_bad("passing swap test", payload)
 
@@ -134,7 +210,8 @@ class DesignOrchestraTests(unittest.TestCase):
         self.assert_bad("without rendered visuals", payload)
         payload["proposal"]["visual_status"] = "RENDERED"
         payload["proposal"]["artifact_refs"] = ["artifact:desktop", "artifact:mobile"]
-        self.assertEqual([], checker.validate(payload))
+        self.assert_bad("before three rendered visual sketches", payload)
+        self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
 
     def test_new_design_cannot_claim_existing_ui_audit(self):
         payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
