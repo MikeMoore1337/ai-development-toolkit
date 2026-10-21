@@ -39,6 +39,7 @@ PAGES = (
     "docs/ru/SKILL_QUALITY_METRICS.md",
     "docs/ru/AGENT_SKILLS_SPEC.md",
     "docs/ru/RELEASE_PROCESS.md",
+    "docs/ru/REAL_AGENT_PILOT.md",
     "docs/en/SOURCE_EVALUATION.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
@@ -56,6 +57,7 @@ PAGES = (
     "docs/SKILL_QUALITY_METRICS.md",
     "docs/AGENT_SKILLS_SPEC.md",
     "docs/RELEASE_PROCESS.md",
+    "docs/REAL_AGENT_PILOT.md",
     "docs/SOURCE_EVALUATION.md",
     "docs/ADAPTATION.md",
     "docs/INTEGRATION_MATRIX.md",
@@ -99,6 +101,7 @@ LANGUAGE_LINKS = {
     "docs/SKILL_QUALITY_METRICS.md": "(ru/SKILL_QUALITY_METRICS.md)",
     "docs/AGENT_SKILLS_SPEC.md": "(ru/AGENT_SKILLS_SPEC.md)",
     "docs/RELEASE_PROCESS.md": "(ru/RELEASE_PROCESS.md)",
+    "docs/REAL_AGENT_PILOT.md": "(ru/REAL_AGENT_PILOT.md)",
     "docs/SOURCE_EVALUATION.md": "(en/SOURCE_EVALUATION.md)",
     "docs/en/SOURCE_EVALUATION.md": "(../SOURCE_EVALUATION.md)",
     "docs/ADAPTATION.md": "(en/ADAPTATION.md)",
@@ -125,6 +128,7 @@ LANGUAGE_LINKS = {
     "docs/ru/SKILL_QUALITY_METRICS.md": "(../SKILL_QUALITY_METRICS.md)",
     "docs/ru/AGENT_SKILLS_SPEC.md": "(../AGENT_SKILLS_SPEC.md)",
     "docs/ru/RELEASE_PROCESS.md": "(../RELEASE_PROCESS.md)",
+    "docs/ru/REAL_AGENT_PILOT.md": "(../REAL_AGENT_PILOT.md)",
 }
 
 
@@ -185,6 +189,7 @@ def validate(root: Path) -> list[str]:
                      "UNIVERSAL_ENGINEERING.md", "SKILL_QUALITY_V2.md",
                      "SKILL_QUALITY_METRICS.md",
                      "AGENT_SKILLS_SPEC.md", "RELEASE_PROCESS.md",
+                     "REAL_AGENT_PILOT.md",
                      "../en/SOURCE_EVALUATION.md"):
             if f"({path})" not in content:
                 errors.append(f"L10N004 docs/ru/README.md: missing {path}")
@@ -285,6 +290,10 @@ def validate(root: Path) -> list[str]:
                                  "76", "0.1.0", "3.11"),
         "RELEASE_PROCESS.md": ("ID1337", "--mode release", "BLOCKED",
                                "NOT_VERIFIED", "SHA256SUMS.txt", "v5.4.0"),
+        "REAL_AGENT_PILOT.md": ("ZERO-SPEND", "--execute", "NOT_MEASURED",
+                                "NOT_PERFORMED", "NOT_VERIFIED",
+                                "SYNTHETIC_OFFLINE_HARNESS_SMOKE_NOT_MODEL_EVAL",
+                                "agent_eval_offline_smoke.py", "agent_eval_hermes_contract.py"),
         "BRANCH_PROTECTION.md": ("Protect main", "gh auth status", "--apply",
                                   "tests (ubuntu-latest, 3.12)", "tests (windows-latest, 3.14)"),
         "PUBLISHING.md": ("MANIFEST.json.version", "SHA256SUMS.txt", "--write",
