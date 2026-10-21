@@ -59,6 +59,23 @@ class DesignOrchestraTests(unittest.TestCase):
         self.assertIn("generic-template risks", skill)
         self.assertIn("create-design", workflow)
 
+    def test_domain_first_instructions_do_not_default_to_saas_template(self):
+        # Regression guard for both client entrypoints, both guides and the actual skill.
+        required = {
+            ".agents/skills/ux-ui-design-orchestra/SKILL.md": "Domain-first, not SaaS-first",
+            ".agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md": "Do not make a SaaS website unless",
+            ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md": "Never use SaaS as the default style",
+            ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md": "Do not convert anti-SaaS examples",
+            "AGENT_START.md": "SaaS is not the default design style",
+            "AGENT_START.ru.md": "SaaS-структура не является вариантом по умолчанию",
+            "docs/UX_UI_DESIGN.md": "A SaaS layout is not the default",
+            "docs/ru/UX_UI_DESIGN.md": "SaaS-макет не является вариантом по умолчанию",
+        }
+        for path, expectation in required.items():
+            with self.subTest(path=path):
+                text = (ROOT / path).read_text(encoding="utf-8")
+                self.assertIn(expectation, text)
+
     def load_three_directions(self):
         return json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
 

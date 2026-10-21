@@ -64,7 +64,7 @@ class ProfileRecommendationTests(unittest.TestCase):
 
     def test_explicit_workflow_tasks(self):
         for task, profile in {
-            "feature": "codex-feature", "ui": "ui-fix", "ci": "qa-ci",
+            "feature": "codex-feature", "ui": "ui-orchestra", "ux": "ui-orchestra", "ci": "qa-ci",
             "release": "qa-release", "docs": "docs-technical", "docs-edit": "editorial",
             "docs-verify": "docs-technical", "agent": "agent-architecture",
             "backend": "backend", "frontend": "frontend",
@@ -73,6 +73,14 @@ class ProfileRecommendationTests(unittest.TestCase):
         }.items():
             with self.subTest(task=task):
                 self.check(task, profile)
+
+    def test_visual_design_defaults_to_orchestra_not_generic_ui_fix(self):
+        for task in ("ui", "ux"):
+            result = self.check(task, "ui-orchestra")
+            self.assertEqual("ux-ui-design-orchestra", result["skills"][0])
+        self.assertIn("ui-fix", self.check("ui", "ui-orchestra")["optional_profiles"])
+        self.assertIn("ux-design", self.check("ux", "ui-orchestra")["optional_profiles"])
+        self.assertIn("ui-orchestra", self.check("frontend", "frontend")["optional_profiles"])
 
     def test_docs_routes_technical_work_to_documentation_maintenance(self):
         selected = self.check("docs", "docs-technical")
