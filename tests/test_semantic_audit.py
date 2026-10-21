@@ -28,7 +28,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         # was reviewed in its original source snapshot.
         self.assertEqual({name: path for name, path in self.expected.items()
                           if name in actual}, actual)
-        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing", "ux-ui-design-orchestra", "observability-sre"},
+        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing", "ux-ui-design-orchestra", "observability-sre", "dependency-maintenance"},
                          set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
@@ -39,7 +39,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         historical = {x["profile_id"]: x["skills"] for x in self.inventory["profiles"]}
         self.assertEqual(historical, {name: skills for name, skills
                                       in self.manifest["profiles"].items()
-                                      if name not in {"docs-technical", "product-discovery", "project-delivery-management", "business-system-analysis", "ux-design", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-qa", "ui-orchestra", "observability-sre"}})
+                                      if name not in {"docs-technical", "product-discovery", "project-delivery-management", "business-system-analysis", "ux-design", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-qa", "ui-orchestra", "observability-sre", "dependency-maintenance"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
         self.assertEqual(["product-discovery", "task-scoping", "research-verification"],
