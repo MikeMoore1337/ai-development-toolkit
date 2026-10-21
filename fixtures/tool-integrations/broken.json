@@ -1,0 +1,569 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "read-to-write",
+      "scenario": "github",
+      "path": [
+        "task",
+        "operation_class"
+      ],
+      "value": "WRITE",
+      "error": "OPERATION_ESCALATION"
+    },
+    {
+      "id": "write-to-deploy",
+      "scenario": "github",
+      "path": [
+        "task",
+        "operation_class"
+      ],
+      "value": "DEPLOY",
+      "error": "OPERATION_ESCALATION"
+    },
+    {
+      "id": "cross-resource",
+      "scenario": "github",
+      "path": [
+        "task",
+        "resource"
+      ],
+      "value": "fictional-org/other#PR1",
+      "error": "CROSS_RESOURCE"
+    },
+    {
+      "id": "cross-repository",
+      "scenario": "github",
+      "path": [
+        "task",
+        "repository"
+      ],
+      "value": "fictional-org/other",
+      "error": "CROSS_REPOSITORY"
+    },
+    {
+      "id": "cross-organization",
+      "scenario": "github",
+      "path": [
+        "task",
+        "organization"
+      ],
+      "value": "other-org",
+      "error": "CROSS_ORGANIZATION"
+    },
+    {
+      "id": "wrong-environment",
+      "scenario": "github",
+      "path": [
+        "task",
+        "environment"
+      ],
+      "value": "PRODUCTION",
+      "error": "WRONG_ENVIRONMENT"
+    },
+    {
+      "id": "unsupported-action",
+      "scenario": "github",
+      "path": [
+        "task",
+        "operation"
+      ],
+      "value": "merge_pr",
+      "error": "UNSUPPORTED_OPERATION"
+    },
+    {
+      "id": "granted-action-differs",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "operation"
+      ],
+      "value": "merge_pr",
+      "error": "OPERATION_ESCALATION"
+    },
+    {
+      "id": "wrong-credential-scope",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "available_scopes"
+      ],
+      "value": [
+        "issues:read"
+      ],
+      "error": "MISSING_CREDENTIAL_SCOPE"
+    },
+    {
+      "id": "wrong-tool-id",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "tool_id"
+      ],
+      "value": "evil-tool",
+      "error": "GRANT_ID_MISMATCH"
+    },
+    {
+      "id": "wrong-client-id",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "client_id"
+      ],
+      "value": "other-client",
+      "error": "GRANT_ID_MISMATCH"
+    },
+    {
+      "id": "missing-approval",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "approval_reference"
+      ],
+      "value": "",
+      "error": "AUTHORIZATION_MISSING"
+    },
+    {
+      "id": "denied-approval",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "status"
+      ],
+      "value": "DENIED",
+      "error": "AUTHORIZATION_MISSING"
+    },
+    {
+      "id": "unknown-authorization",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "status"
+      ],
+      "value": "UNKNOWN",
+      "error": "AUTHORIZATION_MISSING"
+    },
+    {
+      "id": "expired-approval",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "expires"
+      ],
+      "value": "2000-01-01",
+      "error": "EXPIRED_AUTHORIZATION"
+    },
+    {
+      "id": "not-connected",
+      "scenario": "github",
+      "path": [
+        "client",
+        "connection"
+      ],
+      "value": "NOT_CONNECTED",
+      "error": "TOOL_NOT_CONNECTED"
+    },
+    {
+      "id": "provider-only",
+      "scenario": "github",
+      "path": [
+        "client",
+        "capability"
+      ],
+      "value": "NOT_TESTED",
+      "error": "CAPABILITY_NOT_CONFIRMED"
+    },
+    {
+      "id": "unknown-data-class",
+      "scenario": "github",
+      "path": [
+        "task",
+        "data_classification"
+      ],
+      "value": "UNKNOWN",
+      "error": "UNKNOWN_CLASSIFICATION"
+    },
+    {
+      "id": "data-mismatch",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "data_classification"
+      ],
+      "value": "PERSONAL_DATA",
+      "error": "DATA_CLASS_MISMATCH"
+    },
+    {
+      "id": "private-egress",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "allowed_classes"
+      ],
+      "value": [
+        "PERSONAL_DATA"
+      ],
+      "error": "SENSITIVE_EGRESS"
+    },
+    {
+      "id": "wrong-destination",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "actual_destination"
+      ],
+      "value": "malicious.example",
+      "error": "UNEXPECTED_DESTINATION"
+    },
+    {
+      "id": "unexpected-redirect",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "redirect"
+      ],
+      "value": true,
+      "error": "UNEXPECTED_REDIRECT"
+    },
+    {
+      "id": "secret-in-output",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "contains_secret"
+      ],
+      "value": true,
+      "error": "SECRET_IN_LOG_OR_EGRESS"
+    },
+    {
+      "id": "instruction-in-response",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "output_is_instruction"
+      ],
+      "value": true,
+      "error": "TOOL_OUTPUT_INJECTION"
+    },
+    {
+      "id": "unbounded-egress",
+      "scenario": "github",
+      "path": [
+        "egress",
+        "payload_minimized"
+      ],
+      "value": false,
+      "error": "EXCESS_DATA_EGRESS"
+    },
+    {
+      "id": "unknown-price",
+      "scenario": "github",
+      "path": [
+        "cost",
+        "status"
+      ],
+      "value": "COST_UNKNOWN",
+      "error": "COST_UNKNOWN"
+    },
+    {
+      "id": "paid-call",
+      "scenario": "github",
+      "path": [
+        "cost",
+        "planned_cost"
+      ],
+      "value": 1,
+      "error": "COST_BOUNDARY"
+    },
+    {
+      "id": "free-limit-exceeded",
+      "scenario": "github",
+      "path": [
+        "cost",
+        "estimated_requests"
+      ],
+      "value": 101,
+      "error": "RATE_LIMIT_EXCEEDED"
+    },
+    {
+      "id": "unmeasured-benefit",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "benefit"
+      ],
+      "value": "SAVES_80_PERCENT",
+      "error": "UNMEASURED_BENEFIT"
+    },
+    {
+      "id": "unexpected-install",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "install_attempted"
+      ],
+      "value": true,
+      "error": "UNAUTHORIZED_INSTALL"
+    },
+    {
+      "id": "existing-tool-ignored",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "decision"
+      ],
+      "value": "PILOT_PROPOSED",
+      "error": "NATIVE_IGNORED"
+    },
+    {
+      "id": "install-without-approval",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "decision"
+      ],
+      "value": "APPROVED_FOR_INSTALL",
+      "error": "INSTALL_APPROVAL_MISSING"
+    },
+    {
+      "id": "needs-real-credential",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "requires_real_credentials"
+      ],
+      "value": true,
+      "error": "REAL_CREDENTIALS_REQUESTED"
+    },
+    {
+      "id": "missing-removal-plan",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "removal_plan"
+      ],
+      "value": "",
+      "error": "REMOVAL_DATA_POLICY"
+    },
+    {
+      "id": "fake-dry-run",
+      "scenario": "github",
+      "path": [
+        "preview",
+        "claims_dry_run"
+      ],
+      "value": true,
+      "error": "FAKE_DRY_RUN"
+    },
+    {
+      "id": "dry-run-mutation",
+      "scenario": "github",
+      "path": [
+        "preview",
+        "has_side_effect"
+      ],
+      "value": true,
+      "error": "PREVIEW_SIDE_EFFECT"
+    },
+    {
+      "id": "false-execution",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "reported_executed"
+      ],
+      "value": true,
+      "error": "FABRICATED_EXTERNAL_ACTION"
+    },
+    {
+      "id": "synthetic-live-run",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "status"
+      ],
+      "value": "EXECUTED",
+      "error": "SYNTHETIC_EXECUTION_CLAIM"
+    },
+    {
+      "id": "false-verification",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "verified"
+      ],
+      "value": true,
+      "error": "FALSE_VERIFICATION"
+    },
+    {
+      "id": "fake-health-check",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "claims_live_check"
+      ],
+      "value": true,
+      "error": "FAKE_LIVE_MONITORING"
+    },
+    {
+      "id": "unsafe-retry",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "unsafe_retry"
+      ],
+      "value": true,
+      "error": "UNSAFE_RETRY"
+    },
+    {
+      "id": "unauthorized-publication",
+      "scenario": "github",
+      "path": [
+        "execution",
+        "publication_performed"
+      ],
+      "value": true,
+      "error": "FABRICATED_EXTERNAL_ACTION"
+    },
+    {
+      "id": "design-consent-confusion",
+      "scenario": "figma",
+      "path": [
+        "execution",
+        "claimed_approved_design"
+      ],
+      "value": true,
+      "error": "DESIGN_APPROVAL_CONFUSION"
+    },
+    {
+      "id": "figma-autoinstall",
+      "scenario": "figma",
+      "path": [
+        "integration",
+        "install_attempted"
+      ],
+      "value": true,
+      "error": "UNAUTHORIZED_INSTALL"
+    },
+    {
+      "id": "figma-mutation",
+      "scenario": "figma",
+      "path": [
+        "task",
+        "operation_class"
+      ],
+      "value": "WRITE",
+      "error": "FIGMA_OPTIONAL_BOUNDARY"
+    },
+    {
+      "id": "server-fake-runtime",
+      "scenario": "server",
+      "path": [
+        "execution",
+        "live_access"
+      ],
+      "value": true,
+      "error": "FAKE_LIVE_MONITORING"
+    },
+    {
+      "id": "no-server-read",
+      "scenario": "server",
+      "path": [
+        "task",
+        "operation"
+      ],
+      "value": "execute_command",
+      "error": "NO_SERVER_ACCESS"
+    },
+    {
+      "id": "toolkit-contamination",
+      "scenario": "github",
+      "path": [
+        "storage",
+        "toolkit_written"
+      ],
+      "value": true,
+      "error": "TOOLKIT_CONTAMINATION"
+    },
+    {
+      "id": "dual-workflows",
+      "scenario": "github",
+      "path": [
+        "active_controllers"
+      ],
+      "value": [
+        "feature-delivery",
+        "make-feature"
+      ],
+      "error": "DUPLICATE_CONTROLLER"
+    },
+    {
+      "id": "unsupported-rollback",
+      "scenario": "github",
+      "path": [
+        "tool",
+        "reversibility"
+      ],
+      "value": "IRREVERSIBLE",
+      "error": "UNSUPPORTED_ROLLBACK"
+    },
+    {
+      "id": "no-remaining-data-awareness",
+      "scenario": "github",
+      "path": [
+        "integration",
+        "residual_data_ack"
+      ],
+      "value": false,
+      "error": "REMOVAL_DATA_POLICY"
+    },
+    {
+      "id": "not-synthetic",
+      "scenario": "github",
+      "path": [
+        "synthetic"
+      ],
+      "value": false,
+      "error": "NOT_SYNTHETIC"
+    },
+    {
+      "id": "removed-field",
+      "scenario": "github",
+      "path": [
+        "schema_version"
+      ],
+      "value": 2,
+      "error": "SCHEMA"
+    },
+    {
+      "id": "declared-nonzero-cost",
+      "scenario": "github",
+      "path": [
+        "cost",
+        "actual_cost"
+      ],
+      "value": 5,
+      "error": "COST_BOUNDARY"
+    },
+    {
+      "id": "grant-egress-denied",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "egress_allowed"
+      ],
+      "value": false,
+      "error": "SENSITIVE_EGRESS"
+    },
+    {
+      "id": "different-data-class",
+      "scenario": "github",
+      "path": [
+        "permission",
+        "data_classification"
+      ],
+      "value": "CONFIDENTIAL",
+      "error": "DATA_CLASS_MISMATCH"
+    }
+  ]
+}
