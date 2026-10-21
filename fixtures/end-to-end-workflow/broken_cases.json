@@ -1,0 +1,576 @@
+{
+  "synthetic": true,
+  "cases": [
+    {
+      "id": "dual-controller",
+      "path": [
+        "active_controllers"
+      ],
+      "value": [
+        "feature-delivery",
+        "make-feature"
+      ],
+      "expected_error": "DUP_CONTROLLER"
+    },
+    {
+      "id": "unknown-controller",
+      "path": [
+        "controller"
+      ],
+      "value": "third-orchestrator",
+      "expected_error": "UNKNOWN_CONTROLLER"
+    },
+    {
+      "id": "fake-review",
+      "path": [
+        "evidence",
+        0
+      ],
+      "value": {
+        "id": "E1",
+        "stage": "qa",
+        "level": "INDEPENDENT_REVIEWED",
+        "executed": true,
+        "observations": [
+          "claimed"
+        ],
+        "separate_context": false,
+        "invoked": false
+      },
+      "expected_error": "FICTIONAL_REVIEW"
+    },
+    {
+      "id": "missing-original-r",
+      "path": [
+        "requirements"
+      ],
+      "value": [
+        {
+          "id": "R1"
+        },
+        {
+          "id": "R2"
+        }
+      ],
+      "expected_error": "REQUIREMENT_LOST"
+    },
+    {
+      "id": "lost-ac",
+      "path": [
+        "acceptance"
+      ],
+      "value": [
+        {
+          "id": "AC1",
+          "r": "R1"
+        },
+        {
+          "id": "AC2",
+          "r": "R2"
+        }
+      ],
+      "expected_error": "AC_LOST"
+    },
+    {
+      "id": "missing-output",
+      "path": [
+        "stages",
+        6,
+        "output"
+      ],
+      "value": "missing-code",
+      "expected_error": "MISSING_ARTIFACT"
+    },
+    {
+      "id": "source-revision-swapped",
+      "path": [
+        "stages",
+        2,
+        "source_revision"
+      ],
+      "value": "SYNTHETIC-OLD",
+      "expected_error": "SOURCE_REVISION_MISMATCH"
+    },
+    {
+      "id": "dependency-cycle",
+      "path": [
+        "dependencies"
+      ],
+      "value": [
+        {
+          "from": "prd",
+          "to": "analysis",
+          "type": "BLOCKS",
+          "satisfied": true
+        },
+        {
+          "from": "implementation",
+          "to": "qa",
+          "type": "BLOCKS",
+          "satisfied": false
+        },
+        {
+          "from": "qa",
+          "to": "release",
+          "type": "BLOCKS",
+          "satisfied": false
+        },
+        {
+          "from": "release",
+          "to": "operations",
+          "type": "BLOCKS",
+          "satisfied": false
+        },
+        {
+          "from": "qa",
+          "to": "implementation",
+          "type": "BLOCKS",
+          "satisfied": true
+        }
+      ],
+      "expected_error": "DEPENDENCY_CYCLE"
+    },
+    {
+      "id": "missing-qa-gate",
+      "path": [
+        "dependencies"
+      ],
+      "value": [
+        {
+          "from": "prd",
+          "to": "analysis",
+          "type": "BLOCKS",
+          "satisfied": true
+        }
+      ],
+      "expected_error": "DEPENDENCY_REQUIRED"
+    },
+    {
+      "id": "stage-out-of-order",
+      "path": [
+        "stages"
+      ],
+      "value": [
+        {
+          "id": "discovery",
+          "input": "request",
+          "output": "discovery",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "COMPLETE",
+          "skip_reason": null
+        },
+        {
+          "id": "prd",
+          "input": "discovery",
+          "output": "prd",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "COMPLETE",
+          "skip_reason": null
+        },
+        {
+          "id": "ux",
+          "input": "analysis",
+          "output": "ux",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "analysis",
+          "input": "planning",
+          "output": "analysis",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "architecture",
+          "input": "ux",
+          "output": "architecture",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "implementation",
+          "input": "architecture",
+          "output": "implementation",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "qa",
+          "input": "implementation",
+          "output": "qa",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "security",
+          "input": "qa",
+          "output": "security",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "release",
+          "input": "security",
+          "output": "release",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "PROPOSED",
+          "skip_reason": null
+        },
+        {
+          "id": "operations",
+          "input": "release",
+          "output": "operations",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "NOT_APPLICABLE",
+          "skip_reason": "No deployed product in synthetic story"
+        },
+        {
+          "id": "support",
+          "input": "operations",
+          "output": "support",
+          "source_revision": "SYNTHETIC-REV-1",
+          "status": "NOT_APPLICABLE",
+          "skip_reason": "No deployed product in synthetic story"
+        }
+      ],
+      "expected_error": "STAGE_ORDER"
+    },
+    {
+      "id": "illegal-stage-status",
+      "path": [
+        "stages",
+        3,
+        "status"
+      ],
+      "value": "RELEASED",
+      "expected_error": "ILLEGAL_STATUS"
+    },
+    {
+      "id": "qa-pass-without-observations",
+      "path": [
+        "evidence",
+        0
+      ],
+      "value": {
+        "id": "E1",
+        "stage": "qa",
+        "level": "TESTED",
+        "executed": false,
+        "observations": []
+      },
+      "expected_error": "QA_UNPROVEN"
+    },
+    {
+      "id": "test-not-executed",
+      "path": [
+        "tests",
+        0,
+        "status"
+      ],
+      "value": "PASS",
+      "expected_error": "TEST_NOT_EXECUTED"
+    },
+    {
+      "id": "design-is-not-code",
+      "path": [
+        "release",
+        "implemented"
+      ],
+      "value": true,
+      "expected_error": "DESIGN_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "draft-pr-is-not-merge",
+      "path": [
+        "release",
+        "merged"
+      ],
+      "value": true,
+      "expected_error": "MERGE_UNPROVEN"
+    },
+    {
+      "id": "merge-is-not-deployment",
+      "path": [
+        "release",
+        "deployed"
+      ],
+      "value": true,
+      "expected_error": "DEPLOY_UNPROVEN"
+    },
+    {
+      "id": "local-is-not-production",
+      "path": [
+        "release",
+        "production"
+      ],
+      "value": true,
+      "expected_error": "LOCAL_NOT_PRODUCTION"
+    },
+    {
+      "id": "fake-tool-call",
+      "path": [
+        "tool_calls"
+      ],
+      "value": [
+        {
+          "name": "unavailable-agent",
+          "receipt": "SYNTHETIC"
+        }
+      ],
+      "expected_error": "TOOL_UNAVAILABLE"
+    },
+    {
+      "id": "unapproved-handoff",
+      "path": [
+        "handoffs",
+        0,
+        "status"
+      ],
+      "value": "ACCEPTED",
+      "expected_error": "APPROVAL_UNCONFIRMED"
+    },
+    {
+      "id": "paid-api",
+      "path": [
+        "actions",
+        "paid_api"
+      ],
+      "value": true,
+      "expected_error": "PAID_NOT_APPROVED"
+    },
+    {
+      "id": "write-user-report-to-toolkit",
+      "path": [
+        "actions",
+        "toolkit_write"
+      ],
+      "value": true,
+      "expected_error": "TOOLKIT_WRITE"
+    },
+    {
+      "id": "duplicate-resume",
+      "path": [
+        "resume",
+        "duplicate_state"
+      ],
+      "value": true,
+      "expected_error": "DUPLICATE_STATE"
+    },
+    {
+      "id": "budget-reset",
+      "path": [
+        "resume",
+        "delegations_used"
+      ],
+      "value": 0,
+      "expected_error": "BUDGET_RESET"
+    },
+    {
+      "id": "irreversible-replay",
+      "path": [
+        "resume",
+        "irreversible_replayed"
+      ],
+      "value": true,
+      "expected_error": "IRREVERSIBLE_REPEAT"
+    },
+    {
+      "id": "scope-creep",
+      "path": [
+        "scope",
+        "implemented"
+      ],
+      "value": [
+        "registration"
+      ],
+      "expected_error": "SCOPE_CREEP"
+    },
+    {
+      "id": "acceptance-mismatch",
+      "path": [
+        "acceptance_claim"
+      ],
+      "value": "PASS",
+      "expected_error": "AC_MISMATCH"
+    },
+    {
+      "id": "security-bypassed",
+      "path": [
+        "gates",
+        "security_checked"
+      ],
+      "value": false,
+      "expected_error": "SECURITY_SKIPPED"
+    },
+    {
+      "id": "visual-not-approved",
+      "path": [
+        "gates",
+        "visual_required"
+      ],
+      "value": true,
+      "expected_error": "VISUAL_APPROVAL_MISSING"
+    },
+    {
+      "id": "publish-not-approved",
+      "path": [
+        "release",
+        "published"
+      ],
+      "value": true,
+      "expected_error": "PUBLISH_NOT_APPROVED"
+    },
+    {
+      "id": "fake-user-verified",
+      "path": [
+        "release",
+        "user_verified"
+      ],
+      "value": true,
+      "expected_error": "USER_VERIFICATION_UNPROVEN"
+    },
+    {
+      "id": "wrong-support-version",
+      "path": [
+        "release",
+        "support_version"
+      ],
+      "value": "SYNTHETIC-9.9",
+      "expected_error": "SUPPORT_VERSION_MISMATCH"
+    },
+    {
+      "id": "partial-declared-done",
+      "path": [
+        "outcome"
+      ],
+      "value": "DONE",
+      "expected_error": "PREMATURE_DONE"
+    },
+    {
+      "id": "stale-sha",
+      "path": [
+        "resume",
+        "current_head"
+      ],
+      "value": "SYNTHETIC-REV-2",
+      "expected_error": "STALE_EVIDENCE"
+    },
+    {
+      "id": "lost-blocker",
+      "path": [
+        "resume",
+        "blockers"
+      ],
+      "value": [
+        "missing-B1"
+      ],
+      "expected_error": "LOST_BLOCKER"
+    },
+    {
+      "id": "lost-accepted-decision",
+      "path": [
+        "resume",
+        "accepted_decisions"
+      ],
+      "value": [
+        "unknown-D"
+      ],
+      "expected_error": "LOST_DECISION"
+    },
+    {
+      "id": "unapproved-file-change",
+      "path": [
+        "actions",
+        "change"
+      ],
+      "value": true,
+      "expected_error": "WRITE_NOT_AUTHORIZED"
+    },
+    {
+      "id": "unavailable-terminal",
+      "path": [
+        "actions",
+        "execute"
+      ],
+      "value": true,
+      "expected_error": "TOOL_UNAVAILABLE"
+    },
+    {
+      "id": "unauthorized-external-action",
+      "path": [
+        "actions",
+        "external"
+      ],
+      "value": true,
+      "expected_error": "APPROVAL_UNCONFIRMED"
+    },
+    {
+      "id": "premature-stage-unblock",
+      "path": [
+        "stages",
+        7,
+        "status"
+      ],
+      "value": "COMPLETE",
+      "expected_error": "DEPENDENCY_REQUIRED"
+    },
+    {
+      "id": "unsupported-claim-release",
+      "path": [
+        "release",
+        "state"
+      ],
+      "value": "RELEASED",
+      "expected_error": "ILLEGAL_STATUS"
+    },
+    {
+      "id": "broken-handoff-link",
+      "path": [
+        "handoffs",
+        0,
+        "deliverable"
+      ],
+      "value": "missing",
+      "expected_error": "HANDOFF_ARTIFACT"
+    },
+    {
+      "id": "unjustified-skipped-stage",
+      "path": [
+        "stages",
+        10,
+        "skip_reason"
+      ],
+      "value": null,
+      "expected_error": "UNJUSTIFIED_SKIP"
+    },
+    {
+      "id": "stage-evidence-fields-missing",
+      "path": [
+        "stages",
+        3,
+        "verification_level"
+      ],
+      "value": null,
+      "expected_error": "STAGE_EVIDENCE_MISSING"
+    },
+    {
+      "id": "unknown-stage-evidence",
+      "path": [
+        "stages",
+        3,
+        "evidence_refs"
+      ],
+      "value": [
+        "NOT_REAL"
+      ],
+      "expected_error": "MISSING_EVIDENCE"
+    }
+  ]
+}

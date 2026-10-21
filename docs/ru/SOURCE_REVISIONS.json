@@ -69,7 +69,7 @@
     {
       "source": "docs/BEGINNER_WORKFLOW.md",
       "translation": "docs/ru/BEGINNER_WORKFLOW.md",
-      "source_sha256": "02dc352e7b1848d865c4d71148f7054b1b45e4f150696abe3240d9cce16f11fa"
+      "source_sha256": "6e24b981ca0c1c20323ce0e0e33c793e3a30f98bdc141e195a1cc710b98f50d5"
     },
     {
       "source": "docs/QUALITY_RUBRIC.md",
@@ -191,6 +191,11 @@
       "source": "docs/MAINTENANCE_SUPPORT.md",
       "translation": "docs/ru/MAINTENANCE_SUPPORT.md",
       "source_sha256": "50fd0c31e6cbc934b772ed428940fe32ce77a2d436dc716c7fd084ba7927a4c0"
+    },
+    {
+      "source": "docs/END_TO_END_WORKFLOW.md",
+      "translation": "docs/ru/END_TO_END_WORKFLOW.md",
+      "source_sha256": "39c68f771dc578e5ba33ff7ee5effef955f5e77ff0aaf5ce665c6d7e0dbdb432"
     }
   ]
 }
