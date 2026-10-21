@@ -83,11 +83,20 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC001")
 
     def test_prepared_published_release(self):
-        self.replace("CHANGELOG.md", "5.4.0 (released,", "5.4.0 (prepared,")
+        self.replace("CHANGELOG.md", "5.5.2 (candidate,", "5.5.2 (released,")
         self.check("DOC004")
 
     def test_missing_unreleased(self):
-        self.replace("CHANGELOG.md", "## Unreleased (main after v5.4.0)", "## Upcoming")
+        self.replace("CHANGELOG.md", "## Unreleased (main after v5.5.2)", "## Upcoming")
+        self.check("DOC004")
+
+    def test_release_candidate_must_not_claim_published(self):
+        self.replace("README.md", "**NOT PUBLISHED**", "**PUBLISHED**")
+        self.check("DOC004")
+
+    def test_release_candidate_requires_exact_tag_guard(self):
+        self.replace("docs/RELEASE_PROCESS.md",
+                     "TAG_MANIFEST_VERSION_MISMATCH", "IGNORE_RELEASE_VERSION")
         self.check("DOC004")
 
     def test_manifest_version_drift(self):
