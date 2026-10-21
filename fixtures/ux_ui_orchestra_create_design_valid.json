@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "mode": "create-design",
+  "project": "New fitness club landing (no repository)",
+  "baseline": "UNKNOWN",
+  "design_authority": "Unbranded concept; business facts unverified",
+  "max_concurrent_workers": 3,
+  "observed_peak_workers": 1,
+  "workers": [
+    {
+      "name": "Product design perspective",
+      "execution": "SEQUENTIAL",
+      "source_status": "REFERENCE_ONLY"
+    }
+  ],
+  "evidence": [],
+  "findings": [],
+  "proposal": {
+    "selected_direction": "Mobile-first fitness club landing with trial-class CTA; prices, address and timetable unknown",
+    "visual_status": "TEXT_SPEC",
+    "artifact_refs": [],
+    "implementation_plan": [
+      "Render mobile and desktop previews using available authorized tools",
+      "Seek explicit approval for a specific visual version before writing frontend code"
+    ]
+  },
+  "implementation": {
+    "status": "NOT_STARTED"
+  },
+  "changed_ui": false,
+  "gate": "VISUAL_PACKAGE_MISSING"
+}

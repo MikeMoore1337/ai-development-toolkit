@@ -62,7 +62,7 @@ When the project is already open, the Toolkit URL is optional, and no repository
 | User asks for | Initial route; refine after inspection |
 | --- | --- |
 | Build/fix a feature | `feature` -> `codex-feature` (or choose `make-feature` alone) |
-| Design/UI change | `ui` -> `ui-fix`, or `frontend` for component work |
+| New visual design or UI critique | `ui-orchestra` -> `create-design` (new) / `audit-proposal` (existing); use `ui-fix` for an already-approved small fix |
 | API/backend/frontend integration | `backend`, `frontend`, `fullstack` |
 | Tests or flaky CI | `qa` (stack-aware), `ci` |
 | Security assessment | `qa-security` and `security-boundaries` selectively; this is not an automatic security certificate |
@@ -88,7 +88,11 @@ Independent beginner usability: **NOT_TESTED**. Client discovery/invocation and 
 
 ## One-request UX/UI Design Orchestra
 
-When the task asks for multiple UI skill reviews consolidated into a design, select the `ux-ui-design-orchestra` skill (optional profile `ui-orchestra`). Ask only for the screen/task in natural language: "Audit my current UI using Impeccable and applicable accessibility/motion methods. Give me one concrete design proposal and implementation plan; do not change UI before visual approval." Default analysis is **read-only**. Actual subagent invocation depends on client capability; otherwise perform sequential review and report it honestly. No report or preview is written into the Toolkit source. See [UX/UI Design](docs/UX_UI_DESIGN.md).
+**Users do not have to learn prompts, skills or the project structure.** Treat ordinary requests such as "Make me a beautiful fitness club website", "Draw a landing page" or "Improve my existing interface" as design intent when this Toolkit guidance is accessible. Inspect the available target workspace and its `AGENTS.md` first, then select `ux-ui-design-orchestra` (optional profile `ui-orchestra`) **without requiring the user to name it**.
+
+Automatically choose `create-design` for a new screen/site without applicable existing UI, `audit-proposal` for improvement of an existing UI, or `audit-only` for diagnosis only. Ask zero questions by default; at most two short, necessary beginner-friendly questions, otherwise state reasonable assumptions. One unified design direction and a responsive visual package are the target; only claim a render when real tools created one. Code changes require specific owner visual approval and a separate `implement-approved` step, even when the initial user says "build a site". If no renderer is available, give a clear text concept labelled `VISUAL_PACKAGE_MISSING`, not fictional mockups.
+
+Real subagents depend on client capabilities; sequential work must not be described as parallel. This is an instruction-based workflow, **not automatic proof of client skill activation**. Outputs belong in chat or a user-authorized location, never the Toolkit repository. See [UX/UI Design](docs/UX_UI_DESIGN.md) and [new-design workflow](.agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md).
 
 ## Conversation clients and ZIP + URL (Issue #68)
 

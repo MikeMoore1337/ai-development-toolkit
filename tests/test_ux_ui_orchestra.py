@@ -27,6 +27,33 @@ class DesignOrchestraTests(unittest.TestCase):
         self.assertEqual("ux-ui-design-orchestra", manifest["profiles"]["ui-orchestra"][0])
         self.assertNotIn("ux-ui-design-orchestra", manifest["profiles"]["general"])
 
+    def test_new_design_text_only_requires_visual_package(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        self.assertEqual([], checker.validate(payload))
+        payload["changed_ui"] = True
+        self.assert_bad("no UI changes", payload)
+
+    def test_new_design_cannot_claim_visual_approval_without_render(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        self.assert_bad("without rendered visuals", payload)
+        payload["proposal"]["visual_status"] = "RENDERED"
+        payload["proposal"]["artifact_refs"] = ["artifact:desktop", "artifact:mobile"]
+        self.assertEqual([], checker.validate(payload))
+
+    def test_new_design_cannot_claim_existing_ui_audit(self):
+        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+        payload["gate"] = "AUDIT_COMPLETE"
+        self.assert_bad("cannot claim completed UI audit", payload)
+
+    def test_no_more_than_three_workstreams(self):
+        payload = copy.deepcopy(self.good)
+        payload["workers"] = [{"name": str(i), "execution": "SEQUENTIAL", "source_status": "REFERENCE_ONLY"} for i in range(4)]
+        self.assert_bad("too many workstreams", payload)
+
+    def test_existing_audit_flow_is_preserved(self):
+        self.assertEqual([], checker.validate(self.good))
+
     def test_claimed_edit_in_audit_is_rejected(self):
         p = copy.deepcopy(self.good)
         p["changed_ui"] = True

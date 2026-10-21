@@ -31,7 +31,7 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 | **Purposeful changes** | Task scoping, architecture decisions and minimal-safe-change guidance |
 | **Trustworthy testing** | Test design, meaningful assertions, CI failure analysis and release gates |
 | **Consistent interfaces** | Design-system consistency, screenshot fidelity and motion review |
-| **Coordinated UI audit** | UX/UI Design Orchestra: read-only design critique, one proposal and plan before visual approval |
+| **Design from an ordinary idea** | UX/UI Design Orchestra: create a new concept or audit existing UI, select specialists, present one proposal before visual approval |
 | **Better writing** | Clear Voice for precise, natural technical and product communication |
 | **End-to-end feature work** | Make Feature 0.3.0 and feature-delivery workflows, **selected one at a time** |
 | **Portable installation** | Curated profiles, preview before writing and protection against overwrites |
