@@ -10,12 +10,12 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "a4fc540f32fb7e48c3ec9ecc64d0d3b724ab56eb98234a033b2841bbecf9e468"
+      "source_sha256": "4501fbe71e032897aa73d547f3b9996c6fe88acd1b7eb9fc50b5500c3de0ad5c"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
-      "source_sha256": "6398d1436477b025eeb12a6ebb1b55ae169d26b66925d1fddb678bf79c26ff82"
+      "source_sha256": "99025ce31da8b62bea647908f45ece907912b6c82dc0fa9178633d6baa98c21e"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -105,7 +105,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "a6fdd51959e138de9aa65f79d6ba701c034191c297597b89da9b173798e4fe87"
+      "source_sha256": "8fd50d8161dc2c8153f48a09cdd0fd46dab9c73bd75a4f7220d71839268b8bea"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -176,6 +176,11 @@
       "source": "docs/OBSERVABILITY_SRE.md",
       "translation": "docs/ru/OBSERVABILITY_SRE.md",
       "source_sha256": "7f879c0245a712d4f262eb7cae07079e389efa083417ca05728cdeb087a7a556"
+    },
+    {
+      "source": "docs/DEPENDENCY_MAINTENANCE.md",
+      "translation": "docs/ru/DEPENDENCY_MAINTENANCE.md",
+      "source_sha256": "6e8afee7deb7aacb012e0dd075c958a25b885c920c708bdeeb43decbcc22a247"
     }
   ]
 }

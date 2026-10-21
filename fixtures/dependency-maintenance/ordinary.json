@@ -1,0 +1,258 @@
+{
+  "schema_version": 1,
+  "origin": "SYNTHETIC",
+  "claims": {
+    "real_lockfile_parser": false
+  },
+  "assessment_id": "SYN-64-ORD",
+  "project": "fictional-app",
+  "ecosystem": "Python",
+  "package": "alpha-core",
+  "source_sha": "synthetic-baseline-001",
+  "current_resolved": "1.2.0",
+  "candidate_version": "1.3.0",
+  "transitive_status": "COMPLETE_SYNTHETIC_GRAPH",
+  "manifest": {
+    "old": {
+      "alpha-core": "1.2.0"
+    },
+    "new": {
+      "alpha-core": "1.3.0"
+    }
+  },
+  "lockfile_revision": "synthetic-lock-candidate",
+  "old_graph": [
+    {
+      "id": "alpha-core",
+      "version": "1.2.0",
+      "direct": true,
+      "scope": "production",
+      "source": "synthetic-registry",
+      "checksum": "sha256:test1.2.0",
+      "license": "MIT"
+    },
+    {
+      "id": "gamma-lib",
+      "version": "0.9.0",
+      "direct": false,
+      "scope": "production",
+      "source": "synthetic-registry",
+      "checksum": "sha256:test0.9.0",
+      "license": "MIT"
+    }
+  ],
+  "new_graph": [
+    {
+      "id": "alpha-core",
+      "version": "1.3.0",
+      "direct": true,
+      "scope": "production",
+      "source": "synthetic-registry",
+      "checksum": "sha256:test1.3.0",
+      "license": "MIT"
+    },
+    {
+      "id": "gamma-lib",
+      "version": "1.0.0",
+      "direct": false,
+      "scope": "production",
+      "source": "synthetic-registry",
+      "checksum": "sha256:test1.0.0",
+      "license": "MIT"
+    }
+  ],
+  "reported_changes": [
+    {
+      "id": "alpha-core",
+      "category": "MODIFIED",
+      "old_version": "1.2.0",
+      "new_version": "1.3.0",
+      "direct": true,
+      "scope": "production",
+      "source_changed": false,
+      "checksum_changed": true,
+      "license_changed": false,
+      "reason": "synthetic dependency graph change",
+      "evidence": "synthetic-lock-diff",
+      "risk": "REVIEW",
+      "supply_chain_reviewed": true,
+      "checksum_reviewed": true,
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test1.2.0",
+      "new_checksum": "sha256:test1.3.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
+    },
+    {
+      "id": "gamma-lib",
+      "category": "MODIFIED",
+      "old_version": "0.9.0",
+      "new_version": "1.0.0",
+      "direct": false,
+      "scope": "production",
+      "source_changed": false,
+      "checksum_changed": true,
+      "license_changed": false,
+      "reason": "synthetic dependency graph change",
+      "evidence": "synthetic-lock-diff",
+      "risk": "REVIEW",
+      "supply_chain_reviewed": true,
+      "checksum_reviewed": true,
+      "license_reviewed": true,
+      "old_source": "synthetic-registry",
+      "new_source": "synthetic-registry",
+      "old_checksum": "sha256:test0.9.0",
+      "new_checksum": "sha256:test1.0.0",
+      "old_license": "MIT",
+      "new_license": "MIT"
+    }
+  ],
+  "upgrade_reason": {
+    "reason": "BUG_FIX",
+    "project_impact": "Synthetic retry behavior affected",
+    "source": "fictional release notes"
+  },
+  "changelog": {
+    "status": "SOURCE_CONFIRMED",
+    "evidence": "synthetic-changelog",
+    "breaking_changes": [
+      "candidate has new method but retains legacy method"
+    ]
+  },
+  "contracts": {
+    "required_by_consumer": [
+      "legacy_fetch"
+    ],
+    "provided_by_candidate": [
+      "legacy_fetch",
+      "new_fetch"
+    ],
+    "critical_test_ids": [
+      "contract",
+      "integration"
+    ]
+  },
+  "plan": {
+    "strategy": "MINIMAL",
+    "components": [
+      "alpha-core",
+      "gamma-lib"
+    ],
+    "coordination_reason": null
+  },
+  "runtime": {
+    "target": "3.12.0",
+    "candidate_minimum": "3.11.0"
+  },
+  "compatibility_matrix": [
+    {
+      "dimension": "runtime",
+      "value": "3.12.0",
+      "source_status": "SUPPORTED_BY_SOURCE",
+      "test_status": "TESTED_PASS",
+      "test_id": "runtime",
+      "evidence": "synthetic-runtime"
+    }
+  ],
+  "advisory": {
+    "status": "NO_KNOWN_ADVISORY_IN_CHECKED_SOURCES",
+    "applicability": "APPLICABILITY_UNKNOWN",
+    "package": "alpha-core",
+    "source": null,
+    "evidence_id": null
+  },
+  "tests": {
+    "required": [
+      "static",
+      "contract",
+      "integration",
+      "runtime"
+    ],
+    "executed": [
+      {
+        "id": "static",
+        "evidence_id": "run-static",
+        "outcome": "PASS"
+      },
+      {
+        "id": "contract",
+        "evidence_id": "run-contract",
+        "outcome": "PASS"
+      },
+      {
+        "id": "integration",
+        "evidence_id": "run-integration",
+        "outcome": "PASS"
+      },
+      {
+        "id": "runtime",
+        "evidence_id": "run-runtime",
+        "outcome": "PASS"
+      }
+    ]
+  },
+  "evidence": {
+    "run-static": {
+      "kind": "test_execution",
+      "test_id": "static",
+      "executed": true,
+      "result": "PASS",
+      "origin": "SYNTHETIC"
+    },
+    "run-contract": {
+      "kind": "test_execution",
+      "test_id": "contract",
+      "executed": true,
+      "result": "PASS",
+      "origin": "SYNTHETIC"
+    },
+    "run-integration": {
+      "kind": "test_execution",
+      "test_id": "integration",
+      "executed": true,
+      "result": "PASS",
+      "origin": "SYNTHETIC"
+    },
+    "run-runtime": {
+      "kind": "test_execution",
+      "test_id": "runtime",
+      "executed": true,
+      "result": "PASS",
+      "origin": "SYNTHETIC"
+    },
+    "run-security-negative": {
+      "kind": "test_execution",
+      "test_id": "security-negative",
+      "executed": true,
+      "result": "PASS",
+      "origin": "SYNTHETIC"
+    },
+    "syn-advisory": {
+      "kind": "synthetic_notice",
+      "origin": "SYNTHETIC"
+    }
+  },
+  "decision": "UPGRADE_RECOMMENDED",
+  "change_status": "ASSESSMENT_PREPARED",
+  "approval": {
+    "status": "PENDING",
+    "evidence_id": null
+  },
+  "rollback": {
+    "status": "PREPARED",
+    "old_source_sha": "synthetic-baseline-001",
+    "old_manifest_revision": "synthetic-manifest-old",
+    "old_lockfile_revision": "synthetic-lock-old",
+    "data_migration_reversible": true,
+    "verification_test": "runtime"
+  },
+  "release": {
+    "status": "NOT_RUN",
+    "production_verification": false
+  },
+  "limitations": [
+    "Synthetic only; real package compatibility not measured"
+  ]
+}

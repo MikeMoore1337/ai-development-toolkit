@@ -137,6 +137,7 @@ Optional [reliability-testing](../extensions/reliability/skills/reliability-test
 | Skill | When to use it |
 | :--- | :--- |
 | [`observability-sre`](../extensions/operations/skills/observability-sre/SKILL.md) | Quality-check logs/metrics/traces, correlate incident evidence, calculate SLI/SLO and verify recovery. |
+| [`dependency-maintenance`](../extensions/operations/skills/dependency-maintenance/SKILL.md) | Assess bounded upgrades, transitive/lockfile deltas, advisories, compatibility and rollback. |
 
 [Guide](OBSERVABILITY_SRE.md) | [RU](ru/OBSERVABILITY_SRE.md).
 
@@ -220,6 +221,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |

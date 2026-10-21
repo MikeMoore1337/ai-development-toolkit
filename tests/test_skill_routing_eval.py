@@ -77,7 +77,7 @@ class SkillRoutingTests(unittest.TestCase):
 
     def test_catalog_is_manifest_driven(self):
         from_manifest = routing.read_catalog(ROOT)
-        self.assertEqual(77, len(from_manifest))
+        self.assertEqual(78, len(from_manifest))
         self.assertIn("feature-delivery", from_manifest)
         self.assertIn("make-feature", from_manifest)
         self.assertIn("performance-load-testing", from_manifest)

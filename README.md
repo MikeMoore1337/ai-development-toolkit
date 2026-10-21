@@ -7,9 +7,9 @@
 A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
 
 ![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-77-0E7A6B?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-78-0E7A6B?style=flat-square)
 ![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-40-0E7A6B?style=flat-square)
+![Profiles](https://img.shields.io/badge/profiles-41-0E7A6B?style=flat-square)
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
 
 **English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
@@ -110,7 +110,7 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Improve documentation | `editorial` | Clear Voice only |
 | Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
 
-See [all 40 profiles and all 77 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
+See [all 41 profiles and all 78 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
 
 ## How the parts fit
 

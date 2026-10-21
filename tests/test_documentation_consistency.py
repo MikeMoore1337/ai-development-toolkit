@@ -50,7 +50,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check()
 
     def test_stale_badge(self):
-        self.replace("README.md", "badge/skills-77-", "badge/skills-51-")
+        self.replace("README.md", "badge/skills-78-", "badge/skills-51-")
         self.check("DOC001")
 
     def test_new_skills_require_doc_refresh(self):
@@ -78,7 +78,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC003")
 
     def test_stale_spec_count(self):
-        self.replace("docs/AGENT_SKILLS_SPEC.md", "77 in the checked revision",
+        self.replace("docs/AGENT_SKILLS_SPEC.md", "78 in the checked revision",
                      "51 in the checked revision")
         self.check("DOC001")
 
