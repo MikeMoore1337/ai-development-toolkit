@@ -1,0 +1,154 @@
+{
+  "cases": [
+    {
+      "id": "missing-required",
+      "path": "source.batches.0.records.0.event_id",
+      "value": null,
+      "expected_error": "REQUIRED_FIELD"
+    },
+    {
+      "id": "wrong-type",
+      "path": "source.batches.0.records.0.amount",
+      "value": "5",
+      "expected_error": "TYPE"
+    },
+    {
+      "id": "negative-amount",
+      "path": "source.batches.0.records.0.amount",
+      "value": -1,
+      "expected_error": "RANGE"
+    },
+    {
+      "id": "duplicate-id",
+      "path": "source.batches.0.records.1.event_id",
+      "value": "e1",
+      "expected_error": "DUPLICATE_ID"
+    },
+    {
+      "id": "duplicate-batch",
+      "path": "source.batches.1.id",
+      "value": "batch-1",
+      "expected_error": "DUPLICATE_BATCH"
+    },
+    {
+      "id": "missing-batch",
+      "path": "source.batches.1.sequence",
+      "value": 4,
+      "expected_error": "MISSING_BATCH"
+    },
+    {
+      "id": "bad-timestamp",
+      "path": "source.batches.0.records.0.event_time",
+      "value": "garbage",
+      "expected_error": "TIME"
+    },
+    {
+      "id": "missing-timezone",
+      "path": "source.batches.0.records.0.event_time",
+      "value": "2026-10-20T11:00:00",
+      "expected_error": "TIMEZONE"
+    },
+    {
+      "id": "expired-event",
+      "path": "source.batches.2.records.1.event_time",
+      "value": "2026-10-01T10:00:00+00:00",
+      "expected_error": "STALE"
+    },
+    {
+      "id": "missing-source",
+      "path": "source.source",
+      "value": "UNKNOWN",
+      "expected_error": "SOURCE"
+    },
+    {
+      "id": "unknown-version",
+      "path": "source.dataset_version",
+      "value": "9.0",
+      "expected_error": "SCHEMA"
+    },
+    {
+      "id": "changed-unit",
+      "path": "contract.fields.amount.unit",
+      "value": "kilograms",
+      "expected_error": "INCOMPATIBLE_SEMANTICS"
+    },
+    {
+      "id": "unknown-transform",
+      "path": "source.transform_version",
+      "value": "UNKNOWN",
+      "expected_error": "TRANSFORM"
+    },
+    {
+      "id": "wrong-aggregate",
+      "path": "report.totals.view",
+      "value": 99,
+      "expected_error": "AGGREGATE"
+    },
+    {
+      "id": "double-count",
+      "path": "report.records",
+      "value": 8,
+      "expected_error": "DOUBLE_COUNT"
+    },
+    {
+      "id": "bad-denominator",
+      "path": "report.denominator",
+      "value": 5,
+      "expected_error": "DENOMINATOR"
+    },
+    {
+      "id": "early-checkpoint",
+      "path": "state.checkpoint",
+      "value": 4,
+      "expected_error": "CHECKPOINT"
+    },
+    {
+      "id": "partially-loaded-batch",
+      "path": "state.rows.e6",
+      "value": null,
+      "expected_error": "PARTIAL_BATCH"
+    },
+    {
+      "id": "non-idempotent-backfill",
+      "path": "report.backfill_idempotent",
+      "value": false,
+      "expected_error": "BACKFILL"
+    },
+    {
+      "id": "broken-lineage",
+      "path": "state.lineage.0.source",
+      "value": "UNKNOWN",
+      "expected_error": "LINEAGE"
+    },
+    {
+      "id": "unknown-record-source",
+      "path": "state.rows.e1.origin",
+      "value": "UNKNOWN",
+      "expected_error": "ORIGIN"
+    },
+    {
+      "id": "accuracy-unverified",
+      "path": "report.oracle_verified",
+      "value": false,
+      "expected_error": "FALSE_ACCURACY"
+    },
+    {
+      "id": "pass-without-run",
+      "path": "report.executed",
+      "value": false,
+      "expected_error": "FALSE_PASS"
+    },
+    {
+      "id": "private-data-report",
+      "path": "report.private_data",
+      "value": "real@example.org",
+      "expected_error": "PRIVACY"
+    },
+    {
+      "id": "fictional-production-proof",
+      "path": "report.production_verified",
+      "value": true,
+      "expected_error": "PRODUCTION_CLAIM"
+    }
+  ]
+}

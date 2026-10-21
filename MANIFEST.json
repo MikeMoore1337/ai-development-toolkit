@@ -317,6 +317,13 @@
       "code-review",
       "security-engineering",
       "release-safety"
+    ],
+    "data-engineering": [
+      "data-engineering",
+      "data-access",
+      "contract-testing",
+      "database-validation",
+      "reliability-testing"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -507,6 +514,13 @@
       "skills": [
         "dependency-maintenance",
         "observability-sre"
+      ],
+      "auto_install": false
+    },
+    "data": {
+      "skill_root": "extensions/data/skills",
+      "skills": [
+        "data-engineering"
       ],
       "auto_install": false
     }
