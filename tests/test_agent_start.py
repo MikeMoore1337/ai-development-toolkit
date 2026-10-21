@@ -218,7 +218,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
             for name, before in policies.items():
                 self.assertEqual((target / name).read_bytes(), before)
             self.assertTrue((target / ".agents/skills/task-scoping/SKILL.md").is_file())
-            self.assertTrue((target / ".claude/skills/task-scoping/SKILL.md").is_file())
+            self.assertTrue((target / ".claude/skills/ux-ui-design-orchestra/SKILL.md").is_file())
             for layout in ("codex", "claude"):
                 result = run_cli("status", "--target", directory, "--layout", layout)
                 self.assertEqual(result.returncode, 0, (layout, result.stderr))
