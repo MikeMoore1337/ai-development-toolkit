@@ -158,6 +158,19 @@ class ClientCapabilityTests(unittest.TestCase):
                     cap.CapabilityError, message):
                 cap.validate_execution_claim(self.claim(**mutation))
 
+    def test_url_guidance_never_proves_skill_invocation(self):
+        for route, access in (
+            ("TOOLKIT_REFERENCE", {"read_source": True}),
+            ("ATTACHMENT_GUIDANCE", {"attachment_read": True}),
+        ):
+            with self.subTest(route=route), self.assertRaisesRegex(
+                    cap.CapabilityError, "guidance cannot prove native"):
+                cap.validate_execution_claim(self.claim(
+                    route=route, installed=True, approved_install=True,
+                    skill_discovered=True, discovery_evidence="synthetic discovery claim",
+                    skill_invoked=True, invocation_evidence="synthetic invocation claim",
+                    **access))
+
     def zip(self, entries, name="project.zip"):
         path = self.folder / name
         with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as z:
@@ -214,6 +227,20 @@ class ClientCapabilityTests(unittest.TestCase):
             cap.inspect_zip(self.zip([("x" + str(i), "x")
                                       for i in range(cap.MAX_ENTRIES + 1)],
                                      "too-many.zip"))
+
+    def test_zip_directory_entries_checked_before_skipping(self):
+        safe = self.zip([("src/", ""), ("src/main.py", "print(1)")],
+                        "directory.zip")
+        self.assertEqual("ZIP_PREFLIGHT_PASS", cap.inspect_zip(safe)["status"])
+        cases = [
+            ("path traversal", [("../", ""), ("safe.txt", "data")]),
+            ("secrets", [(".env/", ""), ("safe.txt", "data")]),
+            ("Duplicate", [("src/", ""), ("src", "data")]),
+        ]
+        for i, (message, entries) in enumerate(cases):
+            with self.subTest(i=i), self.assertRaisesRegex(
+                    cap.CapabilityError, message):
+                cap.inspect_zip(self.zip(entries, f"bad-directory-{i}.zip"))
 
     def test_zip_expansion_bomb_refused(self):
         bomb = self.zip([("big.txt", "x" * (cap.MAX_RATIO * 1024))],
