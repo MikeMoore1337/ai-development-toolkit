@@ -25,6 +25,13 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
         self.assertIn('python "$archive_root/scripts/validate_provenance.py"', text)
         self.assertIn("--mode release", text)
 
+    def test_archive_rejects_tag_manifest_version_mismatch(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn('RELEASE_TAG: ${{', text)
+        self.assertIn('"MANIFEST.json"', text)
+        self.assertIn('manifest.get("version")', text)
+        self.assertIn('"BLOCKED: release tag and MANIFEST.json.version disagree"', text)
+
     def test_required_matrix_enforces_release_snapshot(self):
         workflow = ROOT / ".github" / "workflows" / "validate.yml"
         text = workflow.read_text(encoding="utf-8")
