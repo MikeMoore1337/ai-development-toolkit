@@ -78,7 +78,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC003")
 
     def test_stale_spec_count(self):
-        self.replace("docs/AGENT_SKILLS_SPEC.md", "75 in the checked revision",
+        self.replace("docs/AGENT_SKILLS_SPEC.md", "76 in the checked revision",
                      "51 in the checked revision")
         self.check("DOC001")
 

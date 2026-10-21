@@ -2,6 +2,8 @@
 
 ## Unreleased (main after v5.4.0)
 
+- Added UX/UI Design Orchestra: bounded independent specialist analysis, single read-only design proposal, explicit pre-implementation owner approval, honest sequential fallback, offline receipt validator and RU/EN integration guides (#121).
+
 - Added a full Russian Skill Quality Metrics guide with pinned historical evidence, matching CLI examples and offline translation regressions (#87).
 
 - Added Russian specification validation and reproducible release guides with unchanged official CLI commands and owner rights gates (#87).

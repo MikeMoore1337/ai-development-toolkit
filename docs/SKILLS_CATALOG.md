@@ -6,7 +6,7 @@ A maintained reference based on `MANIFEST.json` and the actual `SKILL.md` files 
 
 ## Core skills
 
-These 23 skills live under `.agents/skills/`.
+These 24 skills live under `.agents/skills/`.
 
 | Skill | When to use it |
 | :--- | :--- |
@@ -32,6 +32,7 @@ These 23 skills live under `.agents/skills/`.
 | [`screenshot-fidelity`](../.agents/skills/screenshot-fidelity/SKILL.md) | Compare UI implementations against screenshots and design references. Use for visual parity, screenshot-to-code, regressions and responsive layout checks. |
 | [`security-boundaries`](../.agents/skills/security-boundaries/SKILL.md) | Review concrete trust boundaries, credentials, sensitive data and harmful failure modes. Use when a change introduces or crosses a security boundary. |
 | [`skill-portability`](../.agents/skills/skill-portability/SKILL.md) | Use when creating, evaluating, importing or migrating an Agent Skills SKILL.md folder. Validate metadata, links, client compatibility, provenance and activation boundarie… |
+| [`ux-ui-design-orchestra`](../.agents/skills/ux-ui-design-orchestra/SKILL.md) | Coordinate read-only design specialists, consolidate one evidence-linked UI concept and stop for owner approval before implementation. |
 | [`task-scoping`](../.agents/skills/task-scoping/SKILL.md) | Define the scope, constraints, acceptance criteria and dependencies of a change. Use before implementing a task with incomplete or competing requirements. |
 
 ## Frontend engineering extension
@@ -131,14 +132,6 @@ Optional [reliability-testing](../extensions/reliability/skills/reliability-test
 | :--- | :--- |
 | [`devops-infrastructure`](../extensions/devops/skills/devops-infrastructure/SKILL.md) | Discover actual CI/CD, container and IaC contracts, plan verified deployment and recovery without execution. [Guide](DEVOPS_INFRASTRUCTURE.md). |
 
-## Operations & SRE extension
-
-| Skill | When to use it |
-| :--- | :--- |
-| [`observability-sre`](../extensions/operations/skills/observability-sre/SKILL.md) | Review telemetry quality, correlate incident evidence, compute SLI/SLO and validate recovery. |
-
-[Observability & SRE guide](OBSERVABILITY_SRE.md) | [RU](ru/OBSERVABILITY_SRE.md).
-
 ## Accessibility QA extension
 
 Optional [accessibility-testing](../extensions/accessibility/skills/accessibility-testing/SKILL.md) maps applicable WCAG 2.2 criteria to keyboard, focus, forms, semantic, contrast, responsive and screen-reader test evidence. [Guide](ACCESSIBILITY_QA.md). Offline checks do not establish conformance.
@@ -219,7 +212,6 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
-| `observability-sre` | `observability-sre`, `failure-triage`, `release-safety`, `security-boundaries`, `reliability-testing` |
 | `accessibility-qa` | `accessibility-testing`, `test-analysis-design`, `playwright-testing`, `quality-gate-assessment` |
 | `devops-infrastructure` | `devops-infrastructure`, `release-safety`, `security-boundaries`, `architecture-decisions` |
 | `security-engineering` | `security-engineering`, `security-boundaries`, `security-review`, `security-testing` |
@@ -229,6 +221,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |
+| `ui-orchestra` | `ux-ui-design-orchestra`, `design-system-consistency`, `screenshot-fidelity`, `qa-strategy` |
 | `backend` | `task-scoping`, `architecture-decisions`, `service-architecture`, `api-design`, `implementation`, `qa-strategy`, `code-review` |
 | `frontend` | `task-scoping`, `design-system-consistency`, `component-architecture`, `frontend-api-integration`, `implementation`, `qa-strategy`, `code-review` |
 | `fullstack` | `task-scoping`, `end-to-end-feature-design`, `fullstack-integration`, `implementation`, `qa-strategy`, `code-review` |

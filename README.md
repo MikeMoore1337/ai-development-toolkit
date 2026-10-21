@@ -31,6 +31,7 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 | **Purposeful changes** | Task scoping, architecture decisions and minimal-safe-change guidance |
 | **Trustworthy testing** | Test design, meaningful assertions, CI failure analysis and release gates |
 | **Consistent interfaces** | Design-system consistency, screenshot fidelity and motion review |
+| **Coordinated UI audit** | UX/UI Design Orchestra: read-only design critique, one proposal and plan before visual approval |
 | **Better writing** | Clear Voice for precise, natural technical and product communication |
 | **End-to-end feature work** | Make Feature 0.3.0 and feature-delivery workflows, **selected one at a time** |
 | **Portable installation** | Curated profiles, preview before writing and protection against overwrites |
@@ -39,12 +40,12 @@ AI can produce code quickly. Getting the **right change**, validating its behavi
 
 | Collection | Contents | Explore |
 | :--- | :--- | :--- |
-| **Core skills** | 23 skills for planning, implementation, review, security, UI and editorial work | [Browse core](docs/SKILLS_CATALOG.md#core-skills) |
+| **Core skills** | 24 skills for planning, implementation, review, security, UI and editorial work | [Browse core](docs/SKILLS_CATALOG.md#core-skills) |
 | **Frontend / Backend / Fullstack** | 14 optional, framework-neutral engineering skills | [Engineering guide](docs/UNIVERSAL_ENGINEERING.md) |
 | **QA Engineering Pack** | 27 optional skills for API, UI, contract and integration tests, CI, reliability and release evaluation | [Browse QA pack](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
 | **Make Feature** | 1 optional, self-contained workflow skill for feature delivery | [Integration](docs/MAKE_FEATURE_INTEGRATION.md) |
 | **Agent roles** | 5 core + 11 specialist QA reference roles | [Browse roles](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Install profiles** | 38 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
+| **Install profiles** | 39 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
 
 Skills follow the [Agent Skills](https://agentskills.io/specification) directory convention. They are task-specific guidance, **not** autonomous agents with default access to your files, accounts or deployment infrastructure.
 
@@ -98,10 +99,10 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 | Design a backend service | `backend` | Service and API contract guidance |
 | Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
 | Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
+| Consolidate design, accessibility and motion reviews | `ui-orchestra` | Evidence-linked unified concept; no UI edits before owner approval |
 | Review animation | `ui-motion` | Motion quality and accessibility considerations |
 | Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
 | Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
-| Investigate incidents and recovery | `observability-sre` | Evidence-linked SLI/SLO and response, no production action |
 | Investigate flaky CI | `qa-ci` | Distinguish product defects from infrastructure/test failures |
 | Evaluate a release | `qa-release` | Coverage, traceability and quality gates |
 | Audit web accessibility | `accessibility-qa` | WCAG 2.2 criteria, keyboard, focus and evidence |

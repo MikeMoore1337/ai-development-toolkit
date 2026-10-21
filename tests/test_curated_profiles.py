@@ -18,8 +18,8 @@ MANIFEST = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
 RULES = json.loads((ROOT / "docs/QUALITY_RULES.json").read_text(encoding="utf-8"))
 LEGACY_PROFILE_DIGEST = "c26a85dd1c214892cbf1ef6539a743c6f0cc87db53242d07f0103c79ecb40a41"
 NEW = {
-    "observability-sre": ["observability-sre", "failure-triage", "release-safety",
-                          "security-boundaries", "reliability-testing"],
+    "ui-orchestra": ["ux-ui-design-orchestra", "design-system-consistency",
+                     "screenshot-fidelity", "qa-strategy"],
     "accessibility-qa": ["accessibility-testing", "test-analysis-design",
                          "playwright-testing", "quality-gate-assessment"],
     "devops-infrastructure": ["devops-infrastructure", "release-safety",

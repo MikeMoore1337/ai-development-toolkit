@@ -54,3 +54,10 @@ python scripts/validate_ux_ui_spec.py extensions/design/skills/ux-design-process
 ```
 
 Preview writes nothing and install requires explicit `--apply`. Toolkit copies referenced for another person's task stay **read-only**; return their designs and reports in chat unless another destination is explicitly authorized. Actual AI-client skill activation, render, owner review and usability trials remain NOT_MEASURED / NOT_TESTED until performed.
+
+
+## UX/UI Design Orchestra - independent audit into one concept
+
+Use the optional `ui-orchestra` profile or [`ux-ui-design-orchestra`](../.agents/skills/ux-ui-design-orchestra/SKILL.md) when asking several UI specialists for **one** actionable result. Default `audit-proposal` never edits frontend: inspect approved brand and actual routes/states, assign up to three complementary read-only reviews (Impeccable design critique; UI Skills technical accessibility; Emil animation only when relevant), reconcile findings against the incumbent design contract, and provide one concept, real visual artifacts if available, and a post-approval component/test plan. If custom/named subagents are unavailable, use generic spawned agents honestly or sequential perspectives, never claim fake parallelism. Reports stay in chat or an expressly requested target location, **never inside Toolkit**. User visual approval and release gates cannot be bypassed.
+
+[Orchestra workflow](../.agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md) · [Specialist routing](../.agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md) · [Optional read-only report checker](../scripts/validate_ux_ui_orchestra.py). This is portable client guidance, not proof that live client multi-agent execution has been tested.

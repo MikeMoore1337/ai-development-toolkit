@@ -84,3 +84,8 @@ This route does not require a paid Toolkit API or a new orchestration framework.
 The [single human acceptance protocol (RU)](docs/ru/ACCEPTANCE.md#сценарий-открытого-проекта-в-ide-и-необязательных-ссылок-issue-52) asks an independent beginner to use a **Toolkit URL as external guidance for a locally open IDE project**, without installing anything, using the terminal or adding reports to the project. Other workflows remain optional. Offline CLI tests verify safe filesystem behavior, **not** human comprehension or live Codex/Claude Code skill activation.
 
 Independent beginner usability: **NOT_TESTED**. Client discovery/invocation and comparative effectiveness remain separate [#11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11) / [#68](https://github.com/MikeMoore1337/ai-development-toolkit/issues/68) gates under the zero-additional-cost policy.
+
+
+## One-request UX/UI Design Orchestra
+
+When the task asks for multiple UI skill reviews consolidated into a design, select the `ux-ui-design-orchestra` skill (optional profile `ui-orchestra`). Ask only for the screen/task in natural language: "Audit my current UI using Impeccable and applicable accessibility/motion methods. Give me one concrete design proposal and implementation plan; do not change UI before visual approval." Default analysis is **read-only**. Actual subagent invocation depends on client capability; otherwise perform sequential review and report it honestly. No report or preview is written into the Toolkit source. See [UX/UI Design](docs/UX_UI_DESIGN.md).

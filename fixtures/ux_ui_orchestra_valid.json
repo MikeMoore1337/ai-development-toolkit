@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "mode": "audit-proposal",
+  "project": "Example UI",
+  "baseline": "UNKNOWN",
+  "design_authority": "Current approved tokens and owner rules",
+  "max_concurrent_workers": 3,
+  "observed_peak_workers": 1,
+  "workers": [
+    {
+      "name": "Impeccable design perspective",
+      "execution": "SEQUENTIAL",
+      "source_status": "REFERENCE_ONLY"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "status": "SOURCE_ONLY",
+      "route": "/dashboard",
+      "provenance": "source scan"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "status": "HYPOTHESIS",
+      "evidence_ids": [],
+      "problem": "Repeated panels might obscure primary action",
+      "recommendation": "Check one real screen at relevant breakpoints before approval"
+    }
+  ],
+  "proposal": {
+    "selected_direction": "Reduce visual duplication while preserving brand",
+    "visual_status": "TEXT_SPEC",
+    "artifact_refs": [],
+    "implementation_plan": [
+      "Review existing primary action and component tokens",
+      "Provide mockup and owner review"
+    ]
+  },
+  "implementation": {
+    "status": "NOT_STARTED"
+  },
+  "changed_ui": false,
+  "gate": "VISUAL_PACKAGE_MISSING"
+}
