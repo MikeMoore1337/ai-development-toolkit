@@ -46,6 +46,21 @@ Toolkit служит **источником инструкций, а не мес
 
 [Тематические наборы навыков](docs/ru/CURATED_SKILL_PACKS.md) · [Оценка навыков](docs/ru/SKILL_EVALS.md) · [Make Feature](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Clear Voice](docs/ru/CLEAR_VOICE_INTEGRATION.md)
 
+<details>
+<summary>Состав каталога (количества проверяются в CI)</summary>
+
+[![Skills](https://img.shields.io/badge/skills-80-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-43-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+
+| Раздел | Количество |
+| :--- | ---: |
+| **Core skills** | 24 |
+| **Frontend / Backend / Fullstack** | 14 |
+| **QA Engineering Pack** | 27 |
+
+</details>
+
 ## Быстрый старт
 
 **Локальная установка не обязательна.** Для командного способа нужны Python 3.12+, папка проекта и отдельно установленный ИИ-клиент. Если хотите только сформулировать задачу, начните с [варианта без терминала](docs/ru/BEGINNER_START.md).
