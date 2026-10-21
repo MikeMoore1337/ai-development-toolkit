@@ -361,6 +361,14 @@ class RussianOnboardingTests(unittest.TestCase):
         page.write_text(data.replace("(ru/REAL_AGENT_PILOT.md)", "(RELEASE_PROCESS.md)", 1), encoding="utf-8")
         self.check("L10N004")
 
+    def test_release_tag_manifest_guard_cannot_disappear(self):
+        page = self.root / "docs/ru/RELEASE_PROCESS.md"
+        data = page.read_text(encoding="utf-8")
+        self.assertIn("TAG_MANIFEST_VERSION_MISMATCH", data)
+        page.write_text(data.replace("TAG_MANIFEST_VERSION_MISMATCH", "IGNORE_TAG_VERSION"),
+                        encoding="utf-8")
+        self.check("L10N009")
+
     def test_release_owner_gate_cannot_disappear(self):
         page = self.root / "docs/ru/RELEASE_PROCESS.md"
         data = page.read_text(encoding="utf-8")

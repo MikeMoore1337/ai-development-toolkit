@@ -2,9 +2,40 @@
 
 **v5.5.0 published-tag metadata erratum (2026-10-21)**
 
-GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. Its **tagged source still declares `MANIFEST.json.version = 5.4.0`**, and the historical `Unreleased` heading below incorrectly reflects the already published content. This entry is a forward-only erratum, **not** a rewritten historical tag or proof that the archive manifest was updated. Follow [#153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153) for version-consistency remediation.
+GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. Its **tagged source still declares `MANIFEST.json.version = 5.4.0`**, and its historical changelog incorrectly listed released material as `Unreleased`. This entry is a forward-only erratum, **not** a rewritten historical tag or proof that the archive manifest was updated. Follow [#146](https://github.com/MikeMoore1337/ai-development-toolkit/issues/146) and [#153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153) for the forward-only v5.5.2 correction; this release-candidate changelog does not claim v5.5.2 exists as a published GitHub Release.
 
-## Unreleased (main after v5.4.0)
+**v5.5.1 published-tag metadata erratum (2026-10-21)**
+
+GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
+
+## Unreleased (main after v5.5.2)
+
+No new changes recorded.
+
+## 5.5.2 (candidate, 2026-10-21)
+
+- Prepared a forward-only, version-consistent source candidate after both v5.5.0 and v5.5.1 shipped with a stale manifest; publication of this candidate remains pending (#146, #153).
+- Added fail-closed GitHub source-archive verification of Git tag against MANIFEST.json.version. The gate detects errors but does not undo a published tag (#172).
+- Kept the QA Pack v2, Make Feature and source-rights snapshots unchanged; refreshed translation revision pin, version-independent negative tests and SHA256 inventory.
+- Stabilized Go offline oracle and cleanup behavior on Windows/Linux without weakening failure checks (#143, #149).
+- Added stricter UX/UI Design Orchestra routing and design-quality gates (#144).
+- Introduced offline zero-cost orchestration A/B evidence contracts, **not** real agent effectiveness results (#141).
+- Added a nonblocking bidirectional RU/EN coverage report and translated publishing and branch-protection guides (#87; PRs #159, #160).
+- Added Russian zero-spend real-agent pilot operating guide with pinned source revision and strict offline evidence caveats (#87; PR #164).
+- Require three distinctly rendered low-fidelity comparison sketches before UX/UI Design Orchestra approval, with an offline fail-closed gate (#166).
+- Add Russian evaluation, GitHub setup and Windows-first-publication operator guides and correct dangerous first-publication instructions for the already existing official repo (#87; PR #168).
+- Published forward-only metadata errata for both immutable v5.5.0 and v5.5.1 tags (#153).
+- Added guarded on-demand ChatGPT personal plugin live-guidance source loading (source-only contract; automatic plugin binary update is NOT provided) (#170).
+
+## 5.5.1 (released, 2026-10-21)
+
+- Actual immutable tag: `64f163acc322acc6aecf5b1f44b6f76744505f46`. It contains previously merged documentation, QA and UX/UI work, **but also `MANIFEST.json.version=5.4.0`**. The tag was published without the intended version correction. SHA256/provenance-only CI did not check the tag identity.
+
+## 5.5.0 (released, 2026-10-21)
+
+- Shipped QA Engineering Pack v2, cross-client capability and handoff workflows, UX/UI Design Orchestra and other engineering packs from v5.4.0 to 21 October 2026.
+- Historical archive limitation: tag v5.5.0 was actually published from a tree whose MANIFEST.json and README still said v5.4.0; the immutable archive has not been altered. v5.5.1 did not correct the tagged metadata; v5.5.2 is the next proposed forward-only fix.
+
 
 - Added UX/UI Design Orchestra: bounded independent specialist analysis, single read-only design proposal, explicit pre-implementation owner approval, honest sequential fallback, offline receipt validator and RU/EN integration guides (#121).
 
@@ -31,7 +62,7 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 - Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
 
-Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
+These changes are included in the [published v5.5.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), despite the stale 5.4.0 version metadata inside that historical source archive. The v5.5.0 tag is preserved; compare [v5.4.0...v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...v5.5.0) for the recorded source changes.
 
 - Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
 - Added pinned official Agent Skills validation, source quality/link/profile checks, provenance inventory and release preflight (#25, #27, #28).
