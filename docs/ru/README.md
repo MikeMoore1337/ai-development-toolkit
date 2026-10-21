@@ -38,6 +38,8 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Стандарт качества навыков v2 | [Skill Quality (RU)](SKILL_QUALITY_V2.md) / [EN](../SKILL_QUALITY_V2.md) |
 | Метрики навыков и интерпретация отчётов | [Метрики (RU)](SKILL_QUALITY_METRICS.md) / [EN](../SKILL_QUALITY_METRICS.md) |
 | Спецификация Agent Skills | [Спецификация и эталонный CLI (RU)](AGENT_SKILLS_SPEC.md) / [EN](../AGENT_SKILLS_SPEC.md) |
+| Публикация и права на выпуск | [Сопровождение и выпуск (RU)](PUBLISHING.md) / [EN](../PUBLISHING.md) |
+| Защита основной ветки и обязательный CI | [Настройка правил (RU)](BRANCH_PROTECTION.md) / [EN](../BRANCH_PROTECTION.md) |
 | Процедура выпуска релиза | [Проверки и разрешения (RU)](RELEASE_PROCESS.md) / [EN](../RELEASE_PROCESS.md) |
 | Адаптация навыков под проект | [Инструкция по адаптации (RU)](../ADAPTATION.md) / [EN](../en/ADAPTATION.md) |
 | Аудит сторонних источников | [Решения (RU)](../SOURCE_EVALUATION.md) / [EN](../en/SOURCE_EVALUATION.md) |
