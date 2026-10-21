@@ -127,5 +127,78 @@ class OfflineSmokeTests(unittest.TestCase):
         self.assertEqual(0, report["real_agent_trials"])
 
 
+    def test_go_cold_cache_budget_is_bounded_and_explicit_timeout_preserved(self):
+        for explicit, expected in ((None, 110), (7, 7)):
+            with self.subTest(explicit_timeout=explicit):
+                observed = []
+                responses = iter([
+                    {"returncode": 1, "timed_out": False,
+                     "duration_ms": 50000, "outcome_class": "TEST_ASSERTION_FAILURE"},
+                    {"returncode": 0, "timed_out": False,
+                     "duration_ms": 20000, "outcome_class": "OTHER_OUTPUT"},
+                ])
+                def fake_oracle(case, workspace, *, timeout):
+                    observed.append(timeout)
+                    return next(responses)
+                with patch("agent_eval_offline_smoke.allowed_runtime", return_value=True), \
+                     patch("agent_eval_offline_smoke._go_version_label", return_value="go1.25.1"), \
+                     patch("agent_eval_offline_smoke.oracle_exit", side_effect=fake_oracle):
+                    report = perform_smoke(["go-cli"], strict_runtimes=True,
+                                           timeout=explicit)
+                self.assertEqual([expected, expected], observed)
+                self.assertEqual("OFFLINE_ORACLE_DISCRIMINATES", report["cases"][0]["state"])
+
+    def test_go_timeout_cannot_be_mistaken_for_baseline_failure(self):
+        responses = [
+            {"returncode": None, "timed_out": True,
+             "duration_ms": 110000, "outcome_class": "TIMEOUT"},
+            {"returncode": 0, "timed_out": False,
+             "duration_ms": 1500, "outcome_class": "OTHER_OUTPUT"},
+        ]
+        with patch("agent_eval_offline_smoke.allowed_runtime", return_value=True), \
+             patch("agent_eval_offline_smoke._go_version_label", return_value="go1.25.1"), \
+             patch("agent_eval_offline_smoke.oracle_exit", side_effect=responses):
+            with self.assertRaisesRegex(ValueError, "not discriminative: go-cli.*TIMEOUT"):
+                perform_smoke(["go-cli"], strict_runtimes=True)
+
+    def test_go_broken_reference_still_fails_and_diagnostics_are_sanitized(self):
+        responses = [
+            {"returncode": 1, "timed_out": False,
+             "duration_ms": 1200, "outcome_class": "TEST_ASSERTION_FAILURE"},
+            {"returncode": 1, "timed_out": False,
+             "duration_ms": 1100, "outcome_class": "COMPILATION_FAILURE"},
+        ]
+        with patch("agent_eval_offline_smoke.allowed_runtime", return_value=True), \
+             patch("agent_eval_offline_smoke._go_version_label", return_value="go1.25.1"), \
+             patch("agent_eval_offline_smoke.oracle_exit", side_effect=responses):
+            with self.assertRaisesRegex(ValueError, "COMPILATION_FAILURE"):
+                perform_smoke(["go-cli"], strict_runtimes=True)
+
+    def test_oracle_output_is_only_classified_never_exposed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            argv = ["go", "test"]
+            result = subprocess.CompletedProcess(
+                argv, 1, b"--- FAIL: local assertion with secret-value",
+                b"hidden stderr secret-value")
+            with patch("agent_eval_offline_smoke.subprocess.run", return_value=result):
+                verdict = oracle_exit("go-cli", Path(directory))
+        self.assertEqual(1, verdict["returncode"])
+        self.assertEqual("TEST_ASSERTION_FAILURE", verdict["outcome_class"])
+        self.assertFalse(verdict["timed_out"])
+        self.assertNotIn("secret-value", json.dumps(verdict))
+        self.assertGreaterEqual(verdict["duration_ms"], 0)
+
+    def test_subprocess_timeout_is_diagnostic_not_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            error = subprocess.TimeoutExpired(["go", "test"], 1,
+                                              output=b"secret-value")
+            with patch("agent_eval_offline_smoke.subprocess.run", side_effect=error):
+                verdict = oracle_exit("go-cli", Path(directory), timeout=1)
+        self.assertTrue(verdict["timed_out"])
+        self.assertIsNone(verdict["returncode"])
+        self.assertEqual("TIMEOUT", verdict["outcome_class"])
+        self.assertNotIn("secret-value", json.dumps(verdict))
+
+
 if __name__ == "__main__":
     unittest.main()
