@@ -40,6 +40,7 @@ AI Development Toolkit - библиотека инструкций (Agent Skills
 | Испытания навыков с реальными агентами | [Операторское руководство (RU)](REAL_AGENT_PILOT.md) / [EN](../REAL_AGENT_PILOT.md) - реальные вызовы сейчас заблокированы, доступны офлайновые проверки |
 | Метрики навыков и интерпретация отчётов | [Метрики (RU)](SKILL_QUALITY_METRICS.md) / [EN](../SKILL_QUALITY_METRICS.md) |
 | Спецификация Agent Skills | [Спецификация и эталонный CLI (RU)](AGENT_SKILLS_SPEC.md) / [EN](../AGENT_SKILLS_SPEC.md) |
+| Диагностика PowerShell в Windows | [Первая публикация (RU)](WINDOWS_PUBLISHING.md) / [EN](../WINDOWS_PUBLISHING.md) - только для нового репозитория |
 | Настройки GitHub | [Настройка репозитория (RU)](GITHUB_SETUP.md) / [EN](../GITHUB_SETUP.md) |
 | Публикация и права на выпуск | [Сопровождение и выпуск (RU)](PUBLISHING.md) / [EN](../PUBLISHING.md) |
 | Защита основной ветки и обязательный CI | [Настройка правил (RU)](BRANCH_PROTECTION.md) / [EN](../BRANCH_PROTECTION.md) |
