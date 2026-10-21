@@ -7,13 +7,15 @@ substitute for independently verifying a tagged public release.
 
 ## Version and release state
 
-- `MANIFEST.json.version` identifies the **last published baseline release** (currently `5.5.0`), not the version of every subsequent `main` commit.
+- `MANIFEST.json.version` identifies the **last published baseline release** (currently `5.5.1`), not the version of every subsequent `main` commit.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Current baseline: [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), released 2026-10-21. Resolve the immutable commit from the published tag. Compare [v5.5.0...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.0...main) for subsequent changes.
+Current baseline: [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1), released 2026-10-21. Resolve the immutable commit from the published tag. Compare [v5.5.1...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.1...main) for subsequent changes.
+
+The already-published v5.5.0 tag at `04d60055e93c04dda26fb3868689ab4031fbf617` remains immutable. The v5.5.1 patch reconciles release metadata after that archive was published and includes the subsequent Windows Go oracle fix (#143, #146).
 
 
 1. Work on a feature branch and document what changed and any migration risks.
@@ -58,7 +60,7 @@ extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
 For example, on Windows (replace the tag for the release under review):
 
 ```powershell
-$tag = "v5.5.0"
+$tag = "v5.5.1"
 $zip = Join-Path $env:TEMP "adt-$tag.zip"
 $dest = Join-Path $env:TEMP "adt-$tag-source"
 if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
