@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased (main after v5.4.0)
+## Unreleased (main after v5.5.0)
+
+No changes recorded yet.
+
+## 5.5.0 (released, 2026-10-21)
+
+- QA Engineering Pack v2: task-specific references for all 27 QA skills, strengthened contracts for 11 roles and evidence-based handoffs (#124, #125).
+- Cross-client workflows, capability matrix and conservative ZIP onboarding for Codex, Claude Code and conversational assistants (#68).
+- Evidence-oriented idea-to-delivery workflow and resumable handoff contracts (#67).
+- UX/UI Design Orchestra with independent review safeguards and approval before interface changes (#121, #123).
+- Added offline engineering, security, reliability, accessibility, data, DevOps, maintenance and SRE guidance with deterministic checks.
+- Expanded Russian and English documentation, client compatibility diagnostics and regression testing without introducing mandatory paid APIs or live-agent claims.
+
 
 - Added UX/UI Design Orchestra: bounded independent specialist analysis, single read-only design proposal, explicit pre-implementation owner approval, honest sequential fallback, offline receipt validator and RU/EN integration guides (#121).
 
@@ -27,7 +39,7 @@
 
 - Started a Russian documentation entry point and safe beginner walkthrough, with offline localization navigation/CLI regression checks (#78); priority technical manuals are still English.
 
-Changes merged after the [v5.4.0 release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0), which remains the last published baseline. This section is **not a GitHub Release**. See the [commit comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...main).
+This release includes the changes made since [v5.4.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.4.0). See the [v5.4.0...v5.5.0 comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.4.0...v5.5.0). Official client activation and effectiveness remain unmeasured unless separately evidenced.
 
 - Added offline Codex/Claude trial harness and hidden-oracle protections; live model evaluations remain owner-gated and unmeasured (#19-23).
 - Added pinned official Agent Skills validation, source quality/link/profile checks, provenance inventory and release preflight (#25, #27, #28).
