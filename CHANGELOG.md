@@ -1,10 +1,12 @@
 # Changelog
 
-## 5.5.0 (release candidate, publication pending)
+## Unreleased (main after v5.4.0)
 
-This release candidate includes all source changes after the published v5.4.0, not
-only QA #125. It is not yet a published GitHub Release. The candidate heading must
-be changed to 'released' only after the tag and archive have been verified.
+### Candidate v5.5.0 - proposed scope
+
+This proposed release includes changes after the published v5.4.0, not only
+QA #125. No v5.5.0 tag or GitHub Release exists yet. The package manifest
+remains 5.4.0 until a complete publication can be carried out.
 
 ### Highlights
 
