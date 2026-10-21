@@ -98,7 +98,6 @@
     "request": "SYNTHETIC source statement",
     "discovery": "SYNTHETIC user, problem, no account",
     "prd": "SYNTHETIC R1-R3 AC1-AC3",
-    "plan": "SYNTHETIC bounded tasks",
     "analysis": "SYNTHETIC task states pending/done",
     "ux": "SYNTHETIC one-screen proposal only",
     "architecture": "SYNTHETIC local-only option, not chosen by owner",
@@ -107,7 +106,8 @@
     "security": "SYNTHETIC no account/no cloud",
     "release": "SYNTHETIC blocked, no real SHA",
     "operations": "SYNTHETIC not deployed",
-    "support": "SYNTHETIC possible issue: empty entry"
+    "support": "SYNTHETIC possible issue: empty entry",
+    "planning": "SYNTHETIC bounded tasks"
   },
   "stages": [
     {
