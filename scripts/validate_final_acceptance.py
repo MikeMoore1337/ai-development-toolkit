@@ -259,8 +259,8 @@ def audit(document: dict, root: Path = ROOT) -> list[str]:
             errors.add("EFFECTIVENESS_UNPROVEN")
         if experiment.get("actual_cost_usd") == 0 and not pairs:
             errors.add("FALSE_COST_ZERO")
-        if j.get("incidents", {}).get("regressions") and
-                j.get("outcome") == "DONE":
+        if (j.get("incidents", {}).get("regressions") and
+                j.get("outcome") == "DONE"):
             errors.add("HIDDEN_REGRESSION")
         if j.get("outcome") == "DONE":
             need(claims.get("qa_verified") and claims.get("implemented") and
@@ -343,8 +343,10 @@ def report(document: dict) -> dict:
         journeys[journey["id"]] = "PASS: SYNTHETIC_CONTRACT_ONLY"
     negative = load("broken_cases.json")["cases"]
     for case in negative:
-        altered = mutate(document, case["path"], case.get("value"),
-                         delete=case.get("delete", False))
+        altered = copy.deepcopy(document)
+        for patch in case.get("patches", [case]):
+            altered = mutate(altered, patch["path"], patch.get("value"),
+                             delete=patch.get("delete", False))
         actual = audit(altered)
         if case["expected_error"] not in actual:
             raise AssertionError(f"{case['id']}: expected {case['expected_error']}, got {actual}")
