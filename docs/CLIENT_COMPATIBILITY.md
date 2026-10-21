@@ -59,3 +59,7 @@ Only the project-level .agents/skills / .hermes/skills tree can be checked offli
 The existing hosted Linux/Windows CI invokes the offline registry gate along with quality, ownership tests, provenance and SHA256 validation. The pinned upstream skills-ref reference check remains separate. No new dependency, external runner, network-dependent source fetch or model request is introduced.
 
 When client documentation changes, review official sources again, update the review date and pinned source revision as necessary, and adapt checks and tests. L4-L6 evidence remains subject to the separately gated real-agent Issue #11.
+
+## Issue #68 extension (2026-10-21)
+
+See [Client Capabilities, typed chat clients and evidence routing](CLIENT_CAPABILITIES.md). The original **schema v1** filesystem registry and Hermes contract remain unchanged; the additional conversation-only registry is checked by the same validator. ChatGPT and Claude.ai native hosted Skills have separate official capabilities and are **not** managed by the filesystem Skill Manager. Existing L4-L6 claims remain NOT_TESTED / NOT_MEASURED.

@@ -549,5 +549,7 @@
   "optional_integrations": {},
   "make_feature_source_bundled": true,
   "provenance_registry": "provenance/skills.json",
-  "release_provenance_gate": "owner_approval_ID1337_snapshots_plus_new_release_signoff"
+  "release_provenance_gate": "owner_approval_ID1337_snapshots_plus_new_release_signoff",
+  "conversational_client_registry": "compatibility/conversational_clients.json",
+  "conversational_client_reviewed_on": "2026-10-21"
 }
