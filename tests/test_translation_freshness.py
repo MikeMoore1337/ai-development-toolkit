@@ -33,6 +33,34 @@ class TranslationSourceFreshnessTests(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, destination)
 
+    def test_coverage_detects_unpaired_files_without_failing_freshness(self):
+        total, paired, gaps = mod.coverage(self.root)
+        self.assertEqual(total, paired)
+        self.assertEqual(gaps, [])
+        extra = self.root / "docs" / "UNTRANSLATED.md"
+        extra.write_text("# Untranslated source\\n", encoding="utf-8")
+        total, paired, gaps = mod.coverage(self.root)
+        self.assertEqual(total, paired + 1)
+        self.assertEqual(gaps, ["docs/UNTRANSLATED.md"])
+        self.assertEqual(mod.check(self.root), ([], []))
+
+    def test_coverage_recognizes_russian_first_english_counterpart(self):
+        source = self.root / "docs" / "ADAPTATION.md"
+        translation = self.root / "docs" / "en" / "ADAPTATION.md"
+        self.assertTrue(source.is_file())
+        self.assertTrue(translation.is_file())
+        _, _, gaps = mod.coverage(self.root)
+        self.assertNotIn("docs/ADAPTATION.md", gaps)
+
+    def test_coverage_rejects_symlinked_doc_source(self):
+        path = self.root / "docs" / "LINKED.md"
+        try:
+            path.symlink_to(self.root / "docs" / "INSTALLATION.md")
+        except (OSError, NotImplementedError):
+            self.skipTest("Symlink creation unavailable in this test environment")
+        _, _, gaps = mod.coverage(self.root)
+        self.assertIn("docs/LINKED.md", gaps)
+
     def test_current_source_revisions(self):
         self.assertEqual(mod.check(self.root), ([], []))
 
