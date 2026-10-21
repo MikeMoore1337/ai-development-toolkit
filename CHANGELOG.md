@@ -1,5 +1,10 @@
 # Changelog
 
+**v5.5.2 publication confirmed (2026-10-21)**
+
+The [v5.5.2 GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) was published on 21 October 2026 at commit `bf8d469f7402ed1a99e19ba6797d841751801ea5`. The published tag's `MANIFEST.json.version` is `5.5.2`. Earlier candidate statements below remain historical pre-publication records; they are **not** the current release status. The existing v5.5.0 and v5.5.1 mismatches are unchanged.
+
+
 **v5.5.0 published-tag metadata erratum (2026-10-21)**
 
 GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. Its **tagged source still declares `MANIFEST.json.version = 5.4.0`**, and its historical changelog incorrectly listed released material as `Unreleased`. This entry is a forward-only erratum, **not** a rewritten historical tag or proof that the archive manifest was updated. Follow [#146](https://github.com/MikeMoore1337/ai-development-toolkit/issues/146) and [#153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153) for the forward-only v5.5.2 correction; this release-candidate changelog does not claim v5.5.2 exists as a published GitHub Release.
