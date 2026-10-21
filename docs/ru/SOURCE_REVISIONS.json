@@ -46,13 +46,13 @@
       "source": "docs/ADAPTATION.md",
       "translation": "docs/en/ADAPTATION.md",
       "source_language": "ru",
-      "source_sha256": "06b1e9f899b36d60ecbd630c07cc66e486a469ed965553d6a7370fe94e051bea"
+      "source_sha256": "e4206837759d2bb5fe0c327d0aad91e1b8158221e1a30fd7d43883f00b45e5df"
     },
     {
       "source": "docs/INTEGRATION_MATRIX.md",
       "translation": "docs/en/INTEGRATION_MATRIX.md",
       "source_language": "ru",
-      "source_sha256": "454a224dbe3cfac47cf83f240bb93cee6fa27f58b208892828727bef829c4d32"
+      "source_sha256": "0a517349e7f3e6ad78dfebfed833d4ac469895a4cca279e98ea5da2d91c367a0"
     },
     {
       "source": "docs/PORTABILITY_EVAL_SCENARIOS.md",
@@ -200,7 +200,12 @@
     {
       "source": "docs/CLIENT_CAPABILITIES.md",
       "translation": "docs/ru/CLIENT_CAPABILITIES.md",
-      "source_sha256": "d9b01717b5554d6ddb56833a6c42777bc565ae8d4a8eec3707f2d9f142d6e897"
+      "source_sha256": "3aa77ebcaba98e3ec08500f414f39a5403db0c472063d12c80e0a2ae11ffcad7"
+    },
+    {
+      "source": "docs/TOOL_INTEGRATIONS.md",
+      "translation": "docs/ru/TOOL_INTEGRATIONS.md",
+      "source_sha256": "4efacc056ac4794fb58428738e47c95a828fd5a5b09e5e058c5d5b69d0bd9d0f"
     }
   ]
 }
