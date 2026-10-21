@@ -198,6 +198,67 @@ def validate(report: object) -> list[str]:
                 errors.append("design exploration comparison status invalid")
             if report["gate"] == "AWAITING_VISUAL_APPROVAL" and (len(directions) != 3 or comp_status != "COMPARED" or not swap_passes):
                 errors.append("cannot request visual approval without distinct compared directions and passing swap test")
+            comparison = exploration.get("visual_comparison")
+            if not isinstance(comparison, dict) or comparison.get("status") not in ("RENDERED", "MISSING"):
+                errors.append("design exploration requires honest visual comparison status")
+                comparison = {}
+            frames = comparison.get("frames")
+            if not isinstance(frames, list):
+                errors.append("design exploration visual frames must be a list")
+                frames = []
+            if comparison.get("status") == "MISSING" and frames:
+                errors.append("missing visual comparison cannot claim frame artifacts")
+            if comparison.get("status") == "RENDERED":
+                if len(frames) != 3:
+                    errors.append("visual comparison requires exactly three rendered frames")
+                frame_ids = set()
+                frame_refs = set()
+                layout_signatures = set()
+                viewports = set()
+                rendered_evidence = {
+                    row["id"]: row for row in ledger if isinstance(row, dict)
+                    and isinstance(row.get("id"), str) and row.get("status") == "RENDERED"
+                }
+                for idx, frame in enumerate(frames):
+                    if not isinstance(frame, dict):
+                        errors.append(f"visual frame {idx}: invalid")
+                        continue
+                    direction_id = frame.get("direction_id")
+                    if not isinstance(direction_id, str) or direction_id not in ids or direction_id in frame_ids:
+                        errors.append(f"visual frame {idx}: unknown or duplicate direction")
+                    else:
+                        frame_ids.add(direction_id)
+                    evidence_id = frame.get("evidence_id")
+                    evidence_row = rendered_evidence.get(evidence_id) if isinstance(evidence_id, str) else None
+                    if evidence_row is None:
+                        errors.append(f"visual frame {idx}: missing rendered evidence")
+                    else:
+                        source_ref = evidence_row.get("artifact_ref")
+                        if source_ref in frame_refs:
+                            errors.append("visual comparison reuses same unsegmented artifact")
+                        frame_refs.add(source_ref)
+                        viewports.add(evidence_row.get("viewport"))
+                    signature = frame.get("layout_signature")
+                    if (not isinstance(signature, list) or not 3 <= len(signature) <= 12
+                            or any(not isinstance(item, str) or not item.strip() for item in signature)):
+                        errors.append(f"visual frame {idx}: invalid ordered layout signature")
+                    else:
+                        normalized = tuple(" ".join(item.casefold().split()) for item in signature)
+                        if normalized in layout_signatures:
+                            errors.append("visual comparison repeats same composition signature")
+                        layout_signatures.add(normalized)
+                if frame_ids != ids:
+                    errors.append("visual comparison frame directions do not match three candidates")
+                if len(viewports) > 1:
+                    errors.append("visual comparison frames must use matching viewport scale")
+            if report["gate"] == "AWAITING_VISUAL_APPROVAL":
+                if comparison.get("status") != "RENDERED" or len(frames) != 3:
+                    errors.append("cannot request visual approval before three rendered visual sketches")
+                if isinstance(proposal, dict):
+                    finals = proposal.get("artifact_refs")
+                    if (proposal.get("visual_status") != "RENDERED" or not isinstance(finals, list)
+                            or len(set(x for x in finals if isinstance(x, str) and x.strip())) < 2):
+                        errors.append("cannot request visual approval without winner desktop and mobile previews")
     if mode == "create-design":
         quality = report.get("design_quality")
         if not isinstance(quality, dict):
