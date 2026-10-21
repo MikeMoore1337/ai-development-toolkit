@@ -112,7 +112,11 @@ python scripts/validate_with_skills_ref.py --scope all
 
 ## Документация и участие
 
-[Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации](docs/ru/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
+[Все русские материалы](docs/ru/README.md) · [Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Маршрут новичка](docs/ru/BEGINNER_WORKFLOW.md) · [Совместимость клиентов](docs/ru/CLIENT_COMPATIBILITY.md)
+
+[Make Feature](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Clear Voice](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Актуальность переводов](docs/ru/LANGUAGE_POLICY.md) · [Качество навыков](docs/ru/SKILL_QUALITY_V2.md) · [Универсальная разработка](docs/ru/UNIVERSAL_ENGINEERING.md) · [Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md)
+
+[Методика оценки (EN)](docs/QUALITY_RUBRIC.md) · [Политика публикации](docs/ru/PUBLICATION_POLICY.md) · [Дорожная карта (EN)](docs/ROADMAP.md) · [Участие (EN)](CONTRIBUTING.md)
 
 Ядро распространяется по MIT. Отдельные компоненты, включая Make Feature, имеют собственные сведения об авторах и лицензиях. См. [политику публикации](docs/PUBLICATION_POLICY.md). Проект не является официальным дистрибутивом Codex, Claude Code или Agent Skills.
 
