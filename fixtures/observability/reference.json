@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "incident_id": "SYN-63-001",
+  "origin": "SYNTHETIC",
+  "service_id": "order-api",
+  "environment": "synthetic",
+  "source_revision": "demo-v2",
+  "evidence_level": "SYNTHETIC_TESTED",
+  "data_quality": "PARTIAL",
+  "sampling": {
+    "trace_coverage": "partial",
+    "logs": "complete_in_fixture"
+  },
+  "window": {
+    "start": "2026-10-20T10:00:00Z",
+    "end": "2026-10-20T10:05:00Z",
+    "observed_at": "2026-10-20T10:05:00Z"
+  },
+  "metric_interval_seconds": 60,
+  "evidence": [
+    {
+      "id": "e-deploy",
+      "kind": "release_event",
+      "origin": "SYNTHETIC",
+      "summary": "candidate demo-v2 deployed in simulation"
+    },
+    {
+      "id": "e-metric",
+      "kind": "independent_measurement",
+      "origin": "SYNTHETIC",
+      "summary": "synthetic request-completion counters"
+    },
+    {
+      "id": "e-log",
+      "kind": "log",
+      "origin": "SYNTHETIC",
+      "summary": "worker reported configuration error"
+    },
+    {
+      "id": "e-trace",
+      "kind": "trace",
+      "origin": "SYNTHETIC",
+      "summary": "sampled slow request, partial other trace"
+    },
+    {
+      "id": "e-config",
+      "kind": "config_diff",
+      "origin": "SYNTHETIC",
+      "summary": "worker concurrency dropped from 4 to 1"
+    },
+    {
+      "id": "e-replay",
+      "kind": "replay",
+      "origin": "SYNTHETIC",
+      "summary": "isolated replay reproduced slowdown only with new worker config"
+    },
+    {
+      "id": "e-action",
+      "kind": "simulation_record",
+      "origin": "SYNTHETIC",
+      "summary": "simulation reverted worker concurrency"
+    },
+    {
+      "id": "e-recovery",
+      "kind": "independent_measurement",
+      "origin": "SYNTHETIC",
+      "summary": "two successive complete synthetic intervals recovered"
+    }
+  ],
+  "logs": [
+    {
+      "event_id": "l1",
+      "timestamp": "2026-10-20T10:01:00Z",
+      "severity": "INFO",
+      "service": "order-api",
+      "component": "web",
+      "environment": "synthetic",
+      "event_name": "order.started",
+      "correlation_id": "order-demo-001",
+      "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "span_id": "1111111111111111",
+      "operation": "submit_order",
+      "outcome": "started",
+      "error_category": null,
+      "source_revision": "demo-v2",
+      "message": "Synthetic order started"
+    },
+    {
+      "event_id": "l2",
+      "timestamp": "2026-10-20T10:01:01Z",
+      "severity": "ERROR",
+      "service": "order-api",
+      "component": "worker",
+      "environment": "synthetic",
+      "event_name": "order.delayed",
+      "correlation_id": "order-demo-001",
+      "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "span_id": "2222222222222222",
+      "operation": "process_order",
+      "outcome": "error",
+      "error_category": "CONFIGURATION",
+      "source_revision": "demo-v2",
+      "message": "Synthetic worker queue congested"
+    },
+    {
+      "event_id": "l3",
+      "timestamp": "2026-10-20T10:01:02Z",
+      "severity": "WARN",
+      "service": "order-api",
+      "component": "external",
+      "environment": "synthetic",
+      "event_name": "dependency.timeout",
+      "correlation_id": "order-demo-002",
+      "operation": "dependency_call",
+      "outcome": "timeout",
+      "error_category": "DEPENDENCY",
+      "source_revision": "demo-v2",
+      "message": "Fictional dependency timed out; not necessarily root cause"
+    }
+  ],
+  "traces": [
+    {
+      "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "span_id": "1111111111111111",
+      "parent_span_id": null,
+      "service": "order-api",
+      "operation": "POST /orders",
+      "start": "2026-10-20T10:01:00.000Z",
+      "end": "2026-10-20T10:01:00.900Z",
+      "outcome": "error",
+      "attributes": {
+        "kind": "web"
+      },
+      "environment": "synthetic",
+      "sampling": "sampled",
+      "source_revision": "demo-v2"
+    },
+    {
+      "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "span_id": "2222222222222222",
+      "parent_span_id": "1111111111111111",
+      "service": "worker",
+      "operation": "consume order",
+      "start": "2026-10-20T10:01:00.200Z",
+      "end": "2026-10-20T10:01:00.800Z",
+      "outcome": "error",
+      "attributes": {
+        "kind": "consumer"
+      },
+      "environment": "synthetic",
+      "sampling": "sampled",
+      "source_revision": "demo-v2"
+    },
+    {
+      "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "span_id": "3333333333333333",
+      "parent_span_id": "1111111111111111",
+      "service": "storage",
+      "operation": "commit",
+      "start": "2026-10-20T10:01:00.210Z",
+      "end": "2026-10-20T10:01:00.350Z",
+      "outcome": "ok",
+      "attributes": {
+        "kind": "db"
+      },
+      "environment": "synthetic",
+      "sampling": "sampled",
+      "source_revision": "demo-v2"
+    }
+  ],
+  "correlations": [
+    {
+      "events": [
+        "l1",
+        "l2"
+      ],
+      "method": "exact_id",
+      "confidence": "CONFIRMED"
+    }
+  ],
+  "metrics": [
+    {
+      "timestamp": "2026-10-20T10:00:00Z",
+      "eligible": 100,
+      "good": 100,
+      "environment": "synthetic",
+      "source_revision": "demo-v2",
+      "sampling": "complete"
+    },
+    {
+      "timestamp": "2026-10-20T10:01:00Z",
+      "eligible": 100,
+      "good": 88,
+      "environment": "synthetic",
+      "source_revision": "demo-v2",
+      "sampling": "complete"
+    },
+    {
+      "timestamp": "2026-10-20T10:02:00Z",
+      "eligible": 100,
+      "good": 100,
+      "environment": "synthetic",
+      "source_revision": "demo-v2",
+      "sampling": "complete"
+    },
+    {
+      "timestamp": "2026-10-20T10:03:00Z",
+      "eligible": 100,
+      "good": 100,
+      "environment": "synthetic",
+      "source_revision": "demo-v2",
+      "sampling": "complete"
+    },
+    {
+      "timestamp": "2026-10-20T10:04:00Z",
+      "eligible": 100,
+      "good": 100,
+      "environment": "synthetic",
+      "source_revision": "demo-v2",
+      "sampling": "complete"
+    }
+  ],
+  "slo": {
+    "indicator_id": "order-completion",
+    "user_journey": "submit order",
+    "eligible_events": "all_started_orders",
+    "good_events": "committed_orders",
+    "excluded": [],
+    "measurement_source": "e-metric",
+    "objective": "0.99",
+    "approval": "SYNTHETIC_APPROVED",
+    "eligible_count": 500,
+    "good_count": 488,
+    "bad_count": 12,
+    "allowable_bad": "5.00",
+    "spent_bad": "12",
+    "remaining": "-7.00"
+  },
+  "alerts": [
+    {
+      "id": "a1",
+      "dedupe_key": "order-api-completion",
+      "triggered_at": "2026-10-20T10:02:00Z",
+      "environment": "synthetic",
+      "component": "web",
+      "metric_window_complete": true,
+      "evidence": "e-metric",
+      "severity": "high",
+      "impact": "confirmed_synthetic"
+    }
+  ],
+  "timeline": [
+    {
+      "event_id": "t1",
+      "event_timestamp": "2026-10-20T10:00:00Z",
+      "observation_timestamp": "2026-10-20T10:00:01Z",
+      "environment": "synthetic",
+      "evidence": "e-deploy",
+      "observed_event": "Configuration changed",
+      "interpretation": "Possible trigger"
+    },
+    {
+      "event_id": "t2",
+      "event_timestamp": "2026-10-20T10:01:00Z",
+      "observation_timestamp": "2026-10-20T10:01:03Z",
+      "environment": "synthetic",
+      "evidence": "e-log",
+      "observed_event": "Worker slowed",
+      "interpretation": "Cause not yet established"
+    },
+    {
+      "event_id": "t3",
+      "event_timestamp": "2026-10-20T10:02:00Z",
+      "observation_timestamp": "2026-10-20T10:02:01Z",
+      "environment": "synthetic",
+      "evidence": "e-metric",
+      "observed_event": "Completion ratio degraded",
+      "interpretation": "Impact measured"
+    },
+    {
+      "event_id": "t4",
+      "event_timestamp": "2026-10-20T10:03:00Z",
+      "observation_timestamp": "2026-10-20T10:03:01Z",
+      "environment": "synthetic",
+      "evidence": "e-action",
+      "observed_event": "Synthetic config restored",
+      "interpretation": "Simulation only"
+    },
+    {
+      "event_id": "t5",
+      "event_timestamp": "2026-10-20T10:05:00Z",
+      "observation_timestamp": "2026-10-20T10:05:00Z",
+      "environment": "synthetic",
+      "evidence": "e-recovery",
+      "observed_event": "Two stable minute windows",
+      "interpretation": "Synthetic recovery criterion satisfied"
+    }
+  ],
+  "impact": {
+    "status": "CONFIRMED",
+    "evidence": "e-metric",
+    "affected_operations": 12,
+    "user_count": "UNKNOWN",
+    "scope": "fictional orders only"
+  },
+  "hypotheses": [
+    {
+      "id": "H-CONFIG",
+      "statement": "Reduced worker concurrency caused backlog",
+      "confidence": "CONFIRMED",
+      "evidence": [
+        "e-config",
+        "e-replay"
+      ],
+      "role": "root_cause"
+    },
+    {
+      "id": "H-EXTERNAL",
+      "statement": "Third-party timeout caused all errors",
+      "confidence": "POSSIBLE",
+      "evidence": [
+        "e-log"
+      ],
+      "role": "alternative"
+    }
+  ],
+  "root_cause": "H-CONFIG",
+  "mitigation": {
+    "kind": "configuration_restore",
+    "proposal": "Restore concurrency 4 in isolated synthetic model",
+    "risk": "Low for fixture only",
+    "reversible": true,
+    "data_impact": "none in fixture",
+    "cost": "0",
+    "owner_approved": true,
+    "approval_scope": "SYNTHETIC_ONLY",
+    "execution": "SIMULATION_ONLY",
+    "production_executed": false,
+    "evidence": "e-action"
+  },
+  "statuses": [
+    "DETECTED",
+    "INVESTIGATING",
+    "IMPACT_CONFIRMED",
+    "MITIGATION_PROPOSED",
+    "APPROVAL_PENDING",
+    "MITIGATION_EXECUTED",
+    "RECOVERY_OBSERVED",
+    "RECOVERY_VERIFIED",
+    "RCA_PENDING",
+    "RCA_COMPLETED",
+    "CLOSED"
+  ],
+  "recovery": {
+    "status": "RECOVERY_VERIFIED",
+    "evidence": "e-recovery",
+    "criteria": "two full consecutive minutes with success >= 99%"
+  },
+  "postmortem": {
+    "summary": "Synthetic worker concurrency incident",
+    "impact": "12 fictional eligible operations unsuccessful; real user count unknown",
+    "detected_at": "2026-10-20T10:02:00Z",
+    "recovered_at": "2026-10-20T10:05:00Z",
+    "timeline": "t1 to t5, evidence per record",
+    "sources": [
+      "e-deploy",
+      "e-metric",
+      "e-log",
+      "e-trace",
+      "e-config",
+      "e-replay",
+      "e-action",
+      "e-recovery"
+    ],
+    "confirmed_causes": [
+      "H-CONFIG"
+    ],
+    "uncertainties": "Partial traces; other incidents are not excluded",
+    "detection": "Order completion SLI",
+    "actions_taken": "Synthetic-only configuration restore",
+    "helped": "Independent replay",
+    "hindered": "Missing trace coverage",
+    "corrective_actions": [
+      {
+        "id": "CA-1",
+        "action": "Add config guard",
+        "acceptance": "Reject worker concurrency < 2 in isolated tests"
+      },
+      {
+        "id": "CA-2",
+        "action": "Improve sampling visibility",
+        "acceptance": "Report sampled-out operations as UNKNOWN"
+      }
+    ],
+    "owners": "UNASSIGNED",
+    "verification": "Two consecutive recovery metric windows",
+    "residual_risks": "Real deployment effects not tested",
+    "open_questions": [
+      "Does config behavior reproduce in a real authorized staging environment?"
+    ]
+  }
+}
