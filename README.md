@@ -1,61 +1,56 @@
 <div align="center">
 
-![AI Development Toolkit](assets/branding/hero.png)
+[![AI Development Toolkit: skills, roles, build, test and human review](assets/branding/hero-v2.svg)](docs/BEGINNER_START.md)
 
-**Build with AI. Ship with evidence.**
+**English** · [Русский](README.ru.md)
 
-A curated, portable collection of agent skills, specialist roles and practical workflows for AI-assisted software development.
+[![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml) · [Latest release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/latest) · [Skills catalog](docs/SKILLS_CATALOG.md)
 
-![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-253B50?style=flat-square)
-![Skills](https://img.shields.io/badge/skills-80-0E7A6B?style=flat-square)
-![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)
-![Profiles](https://img.shields.io/badge/profiles-43-0E7A6B?style=flat-square)
-[![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
-
-**English** · [Русский](README.ru.md) · [Пошаговый старт на русском](docs/ru/GETTING_STARTED.md)
-
-[ChatGPT plugin live guidance](docs/CLIENT_COMPATIBILITY.md#chatgpt-personal-plugin---verified-live-guidance-not-automatic-binary-updates) · [Use Toolkit for any task](AGENT_START.md) · [Start without a terminal](docs/BEGINNER_START.md) · [Beginner workflow](docs/BEGINNER_WORKFLOW.md) · [Clear Voice guide](docs/CLEAR_VOICE_INTEGRATION.md) · [Make Feature guide](docs/MAKE_FEATURE_INTEGRATION.md) · [English translations of RU originals](docs/en/ADAPTATION.md) · [Languages and translation coverage](docs/LANGUAGE_POLICY.md) · [Curated Backend, Frontend, QA, Agent Engineering and Research packs](docs/CURATED_SKILL_PACKS.md) · [Maintenance & Support](docs/MAINTENANCE_SUPPORT.md) · [DevOps & Infrastructure](docs/DEVOPS_INFRASTRUCTURE.md) · [Accessibility QA](docs/ACCESSIBILITY_QA.md) · [Business & System Analysis](docs/BUSINESS_SYSTEM_ANALYSIS.md) · [UX/UI Design](docs/UX_UI_DESIGN.md) · [Getting started](#quick-start) · [Explore skills](docs/SKILLS_CATALOG.md) · [Installation guide](docs/INSTALLATION.md) · [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md)
+**[Start without a terminal](docs/BEGINNER_START.md)** · **[Use Toolkit with your project](AGENT_START.md)** · **[Local installation](#quick-start)** · **[Documentation](#documentation)**
 
 </div>
 
----
+## Start with the task
 
-## Why this toolkit?
+AI Development Toolkit is a **portable library of reusable instructions, specialized roles and QA workflows** for AI-assisted development. It is not a standalone coding agent, hosting service or permission to access your project.
 
-**Already have a project open in an IDE with Codex?** Simply ask: "Use https://github.com/MikeMoore1337/ai-development-toolkit to complete this task in my current project." [Toolkit is a reference source](AGENT_START.md), **never a storage destination for another user's files or reports**. Code, tests and requested report files belong in the user's project or another chosen destination, never in Toolkit. Installing Toolkit in the user's project is optional.
+| You want to… | Start here | What to expect |
+| :--- | :--- | :--- |
+| **Describe an idea without using a terminal** | [Beginner guide](docs/BEGINNER_START.md) | Five copy-ready requests and honest limits for each AI client |
+| **Work on an already-open project** | [Give your coding agent the Toolkit link](AGENT_START.md) | Read relevant guidance before proposing changes; no Toolkit installation required just to use the reference |
+| **Install and manage local skills** | [Safe installation](docs/INSTALLATION.md) | Profile selection, preview, explicit apply, status and rollback |
 
-AI can produce code quickly. Getting the **right change**, validating its behaviour and delivering it safely still requires a repeatable process. This toolkit supplies reusable instructions and focused workflows - without imposing a whole framework on your application.
+For a coding agent that **can actually access your existing project**, a useful first request is:
 
-| What you need | What you get |
-| :--- | :--- |
-| **Purposeful changes** | Task scoping, architecture decisions and minimal-safe-change guidance |
-| **Trustworthy testing** | Test design, meaningful assertions, CI failure analysis and release gates |
-| **Consistent interfaces** | Design-system consistency, screenshot fidelity and motion review |
-| **Design from an ordinary idea** | UX/UI Design Orchestra: create a new concept or audit existing UI, select specialists, present one proposal before visual approval |
-| **Better writing** | Clear Voice for precise, natural technical and product communication |
-| **End-to-end feature work** | Make Feature 0.3.0 and feature-delivery workflows, **selected one at a time** |
-| **Portable installation** | Curated profiles, preview before writing and protection against overwrites |
+```text
+Use https://github.com/MikeMoore1337/ai-development-toolkit
+to complete this task in my current project. Inspect first,
+select only the relevant skills, implement and report what was actually tested.
+```
+
+Toolkit is a **reference source, not an output directory for other users' code, logs or reports**. An agent may only modify your project with appropriate tools and permissions. Merely linking a repository does not activate skills or prove execution.
+
+## What this looks like in practice
+
+These are **illustrative workflows, not claimed real-world test runs**.
+
+| Starting request | Relevant path | Check before calling it done |
+| :--- | :--- | :--- |
+| “Design a distinctive fitness-club website.” | [UX/UI Design Orchestra](docs/UX_UI_DESIGN.md): compare concepts, critique, present actual previews | Owner reviews the visuals **before** UI implementation |
+| “Find and fix a failing API test.” | [QA Engineering Pack](docs/CURATED_SKILL_PACKS.md): reproduce, diagnose, make a focused change | Test results and the exact changed files are reported |
+| “Help me prepare a release.” | [Release quality and gates](docs/RELEASE_PROCESS.md): risks, traceability, evidence | A human decides whether publication is authorized |
 
 ## What's inside?
 
-| Collection | Contents | Explore |
-| :--- | :--- | :--- |
-| **Core skills** | 24 skills for planning, implementation, review, security, UI and editorial work | [Browse core](docs/SKILLS_CATALOG.md#core-skills) |
-| **Frontend / Backend / Fullstack** | 14 optional, framework-neutral engineering skills | [Engineering guide](docs/UNIVERSAL_ENGINEERING.md) |
-| **QA Engineering Pack** | 27 optional skills for API, UI, contract and integration tests, CI, reliability and release evaluation | [Browse QA pack](docs/SKILLS_CATALOG.md#qa-engineering-pack) |
-| **Make Feature** | 1 optional, self-contained workflow skill for feature delivery | [Integration](docs/MAKE_FEATURE_INTEGRATION.md) |
-| **Agent roles** | 5 core + 11 specialist QA reference roles | [Browse roles](docs/SKILLS_CATALOG.md#agent-roles) |
-| **Install profiles** | 43 task-focused selections | [Choose a profile](docs/SKILLS_CATALOG.md#profiles) |
+**Reusable skills** for Frontend, Backend, Fullstack, QA, security, operations and UX/UI; **specialist roles**; and **task-focused profiles** for supported coding clients. [Explore the current catalog](docs/SKILLS_CATALOG.md) rather than relying on counts embedded in graphics. The [compatibility matrix](docs/CLIENT_COMPATIBILITY.md) distinguishes documented support from confirmed live execution.
 
-Skills follow the [Agent Skills](https://agentskills.io/specification) directory convention. They are task-specific guidance, **not** autonomous agents with default access to your files, accounts or deployment infrastructure.
+[Curated engineering and QA packs](docs/CURATED_SKILL_PACKS.md) · [How skills are evaluated](docs/SKILL_EVALS.md) · [Make Feature](docs/MAKE_FEATURE_INTEGRATION.md) · [Clear Voice](docs/CLEAR_VOICE_INTEGRATION.md)
 
 ## Quick start
 
-**New to programming or avoiding the terminal?** Open [Start without a terminal](docs/BEGINNER_START.md), choose your AI client and copy one of five requests. No Python or Git is needed just to discuss an idea. The deeper [beginner conversation workflow](docs/BEGINNER_WORKFLOW.md) explains how to scope and verify work; actual file edits and tests still require suitable tools and permission.
+**Local installation is optional.** You need Python 3.12+, a project directory and a separately installed AI client for the command-line route. Read [the no-terminal guide](docs/BEGINNER_START.md) if you only want to describe a task.
 
-**What you need:** Python 3.12+ and an existing project folder. The Toolkit supplies reusable instructions for a separately installed AI coding client; it does not install the client or grant permissions. Choose a profile for your task rather than browsing every skill.
-
-**Next release candidate:** `v5.5.2` (**NOT PUBLISHED**). The latest public [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) points to immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`, but its tagged `MANIFEST.json.version` is actually `5.4.0`, as is the older `v5.5.0` tag. Do not treat their embedded version as corrected, or describe `main` as a release. [Changelog and release errata](CHANGELOG.md); publication requires a separate rights decision for the exact artifact and verification of the new tag and archive.
+**Latest published release:** [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) (21 October 2026). Its tag contains `MANIFEST.json.version = 5.5.2`. The older v5.5.0 and v5.5.1 tags retain historical version mismatches; see [release errata](CHANGELOG.md). `main` may have changes not yet released.
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 
@@ -92,25 +87,15 @@ python scripts/skill_manager.py status --target "C:\Work\my-app"
 
 ## Choose your workflow
 
-| Your task | Recommended profile | Why |
+| Task | Suggested profile | More information |
 | :--- | :--- | :--- |
-| Implement a change | `codex-feature` | Scope, implementation and review |
-| Build a frontend component | `frontend` | Stack-neutral component/API guidance |
-| Design a backend service | `backend` | Service and API contract guidance |
-| Integrate UI and API | `fullstack` | Cross-layer contracts and validation |
-| Fix a visual mismatch | `ui-fix` | Design consistency and screenshot evidence |
-| Consolidate design, accessibility and motion reviews | `ui-orchestra` | Evidence-linked unified concept; no UI edits before owner approval |
-| Review animation | `ui-motion` | Motion quality and accessibility considerations |
-| Evaluate AI assistants and RAG | `ai-engineering-qa` | Versioned offline oracles, prompt and tool-use regression; no model runs |
-| Design Python API tests | `qa-python` | Test oracles, data management and failure diagnosis |
-| Investigate incidents and recovery | `observability-sre` | SLI/SLO, evidence-linked RCA and owner-approved mitigation |
-| Investigate flaky CI | `qa-ci` | Distinguish product defects from infrastructure/test failures |
-| Evaluate a release | `qa-release` | Coverage, traceability and quality gates |
-| Audit web accessibility | `accessibility-qa` | WCAG 2.2 criteria, keyboard, focus and evidence |
-| Improve documentation | `editorial` | Clear Voice only |
-| Build a feature end-to-end | `make-feature` | Opt-in feature workflow |
+| Implement an existing feature | `codex-feature` | [Feature workflows](docs/END_TO_END_WORKFLOW.md) |
+| Frontend, backend or integration | `frontend` / `backend` / `fullstack` | [Engineering guide](docs/UNIVERSAL_ENGINEERING.md) |
+| UX/UI exploration or redesign | `ui-orchestra` | [Design guide](docs/UX_UI_DESIGN.md) |
+| Test design, flaky CI or release QA | `qa-python` / `qa-ci` / `qa-release` | [QA pack](docs/CURATED_SKILL_PACKS.md) |
+| Security, accessibility and incidents | Task-specific profile | [All profiles](docs/SKILLS_CATALOG.md) |
 
-See [all 43 profiles and all 80 skills](docs/SKILLS_CATALOG.md). For managed installs across Codex and Claude Code, see [safe migration and rollback](docs/CLIENT_MIGRATION.md) and the read-only `python scripts/skill_manager.py catalog` command.
+See the [complete catalog](docs/SKILLS_CATALOG.md) and [safe client migration](docs/CLIENT_MIGRATION.md). Profiles select relevant instructions; they do not grant permissions or prove activation.
 
 ## How the parts fit
 
