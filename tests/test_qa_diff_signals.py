@@ -62,6 +62,73 @@ class ContentDiffTests(unittest.TestCase):
         self.assertEqual(0, output["executed_tests"])
         self.assertIn("db-rollback", output["required_critical_check_ids"])
 
+
+    def test_yfc_like_state_change_adds_replay_integrity_and_consumer_review(self):
+        path = "backend/fitminiapp_api/services/workout_sync.py"
+        patch = (
+            b"diff --git a/backend/fitminiapp_api/services/workout_sync.py "
+            b"b/backend/fitminiapp_api/services/workout_sync.py\n"
+            b"--- a/backend/fitminiapp_api/services/workout_sync.py\n"
+            b"+++ b/backend/fitminiapp_api/services/workout_sync.py\n"
+            b"@@ -1 +1,3 @@\n"
+            b"-set_row.version += 1\n"
+            b"+if not applied: raise WorkoutSetSyncError(422, 'empty')\n"
+            b"+set_row.version += 1\n"
+            b"+mutation_id = request_fingerprint\n"
+        )
+        inspection = hints.inspect_patch(patch, [path])
+        self.assertIn("PERSISTED_STATE", inspection["files"][path]["signals"])
+        enriched = qa.add_content_evidence(qa.plan([path]), inspection)
+        checks = {row["id"]: row for row in enriched["recommendations"]}
+        for cid in ("state-integrity", "async-replay", "consumer-review"):
+            self.assertIn(cid, checks)
+            self.assertEqual("NOT_RUN", checks[cid]["status"])
+            self.assertEqual("CONTENT_TOKEN_HINT_ONLY", checks[cid]["evidence"])
+            self.assertEqual([path], checks[cid]["changed_paths"])
+            self.assertIsNone(checks[cid]["execution_receipt"])
+        self.assertNotIn("db-migration", checks)
+        self.assertNotIn("db-rollback", checks)
+        self.assertEqual(0, enriched["executed_tests"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", enriched["gate"])
+
+    def test_state_hints_do_not_invent_test_maps_or_known_consumers(self):
+        path = "services/custom/mutation.py"
+        patch = (
+            b"diff --git a/services/custom/mutation.py b/services/custom/mutation.py\n"
+            b"--- a/services/custom/mutation.py\n"
+            b"+++ b/services/custom/mutation.py\n"
+            b"@@ -1 +1 @@\n-old = 1\n+expected_version = request.version\n"
+        )
+        report = qa.add_content_evidence(
+            qa.plan([path]), hints.inspect_patch(patch, [path])
+        )
+        self.assertIn("consumer-review", report["unmapped_check_ids"])
+        self.assertEqual([], report["declared_test_candidates"])
+        self.assertEqual("NONE", report["test_mapping_source"])
+        self.assertEqual(0, report["executed_tests"])
+
+    def test_api_change_adds_consumer_review_without_claiming_call_graph(self):
+        report = qa.add_content_evidence(qa.plan(PATHS), hints.inspect_patch(PATCH, PATHS))
+        checks = {x["id"]: x for x in report["recommendations"]}
+        self.assertIn("consumer-review", checks)
+        self.assertIn("src/custom/view.py", checks["consumer-review"]["changed_paths"])
+        self.assertEqual("NOT_RUN", checks["consumer-review"]["status"])
+
+    def test_non_state_docs_diff_remains_without_mutation_hints(self):
+        path = "docs/overview.md"
+        patch = (
+            b"diff --git a/docs/overview.md b/docs/overview.md\n"
+            b"--- a/docs/overview.md\n+++ b/docs/overview.md\n"
+            b"@@ -1 +1 @@\n-Old description\n+New description\n"
+        )
+        report = qa.add_content_evidence(
+            qa.plan([path]), hints.inspect_patch(patch, [path])
+        )
+        ids = {x["id"] for x in report["recommendations"]}
+        self.assertNotIn("state-integrity", ids)
+        self.assertNotIn("consumer-review", ids)
+        self.assertEqual("INSUFFICIENT_EVIDENCE", report["gate"])
+
     def test_existing_high_risk_checks_are_not_removed(self):
         original = qa.plan(["src/auth/permissions.py", "src/custom/view.py"])
         evidence = hints.inspect_patch(
