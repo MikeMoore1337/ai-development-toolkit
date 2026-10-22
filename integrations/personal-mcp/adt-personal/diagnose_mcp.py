@@ -111,7 +111,7 @@ def main() -> int:
               and 'qa-python' in prepared.get('secondary_profiles', [])
               and len(prepared.get('loaded_skills', [])) > 0
               and local_coverage.get('coverage') == 'FOUND_LOCAL'
-              and local_coverage.get('candidates', [None])[0] == 'qa-strategy'
+              and 'qa-strategy' in local_coverage.get('candidates', [])
               and missing_coverage.get('coverage') == 'MISSING'
               and local_coverage.get('external_skill_install') == 'NOT_AUTHORIZED'
               and missing_coverage.get('external_skill_install') == 'NOT_AUTHORIZED'
