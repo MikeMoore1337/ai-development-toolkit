@@ -19,6 +19,7 @@ SPEC.loader.exec_module(validator)
 FIXTURE_FILES = (
     "README.md",
     "README.ru.md",
+    "docs/visuals/hero-evidence.svg",
     "CONTRIBUTING.md",
     "docs/INSTALLATION.md",
     "docs/SKILLS_CATALOG.md",
