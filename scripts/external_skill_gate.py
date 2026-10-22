@@ -24,6 +24,17 @@ DIGEST = re.compile(r"[a-f0-9]{64}\Z")
 SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 LICENSES = {"MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "CC0-1.0", "ISC", "MPL-2.0"}
 SCRIPT_SUFFIXES = {".sh", ".bash", ".ps1", ".bat", ".cmd", ".py", ".js", ".mjs", ".exe", ".dll", ".so"}
+# References are review signals, never automatically trusted as bundled files.
+# These match explicit launch/download/hook instructions in SKILL.md without
+# executing anything or interpreting those instructions as commands.
+EXECUTION_REFERENCES = (
+    re.compile(r"(?:^|[\\s\x60'\"(])(?:[A-Za-z0-9_.<>-]+/)*scripts/[A-Za-z0-9_./-]+", re.I),
+    re.compile(r"\\b(?:npx|bunx|pipx|pnpm\\s+dlx|curl|wget|powershell|bash)\\s+\\S+", re.I),
+    re.compile(r"\\b(?:launcher|executable|binary)\\b.{0,120}\\b(?:download|run|execute|install)\\b", re.I | re.S),
+    re.compile(r"\\b(?:hooks?|postinstall|preinstall)\\b.{0,90}\\b(?:enable|install|register|on|off|runs?)\\b", re.I | re.S),
+)
+# Only explicit local Markdown references are interpreted, and only as data.
+LOCAL_REFERENCES = re.compile(r"\\]\\(((?:reference|references|scripts)/[A-Za-z0-9_./-]+)\\)")
 SUSPICIOUS = (
     re.compile(r"ignore (?:all |previous |prior )?instructions", re.I),
     re.compile(r"(?:curl|wget)\s+.*(?:\||-o|--output)", re.I),
@@ -150,6 +161,13 @@ def review(candidate_dir: Path, manifest_file: Path) -> dict:
             if any(pattern.search(text) for pattern in SUSPICIOUS):
                 issues.append(_issue("SUSPICIOUS_INSTRUCTIONS", "REVIEW", rel))
             if rel == "SKILL.md":
+                if any(pattern.search(text) for pattern in EXECUTION_REFERENCES):
+                    issues.append(_issue("EXECUTION_OR_DOWNLOAD_REFERENCE", "REVIEW", rel))
+                for target in sorted(set(LOCAL_REFERENCES.findall(text))):
+                    if not _safe_name(target):
+                        issues.append(_issue("UNSAFE_SKILL_REFERENCE", "BLOCK", rel))
+                    elif target not in actual:
+                        issues.append(_issue("REFERENCED_FILE_NOT_INCLUDED", "REVIEW", target))
                 normalized_text = text.replace("\r\n", "\n")
                 # An opening "---" is not sufficient: require a closing delimiter.
                 frontmatter = re.match(r"\A---\n(.*?)\n---(?:\n|\Z)",
