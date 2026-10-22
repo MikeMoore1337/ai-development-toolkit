@@ -142,6 +142,80 @@ def ranking(prompt: str, catalog: dict[str, str],
     return [name for _, name in sorted(scores, key=lambda pair: (-pair[0], pair[1]))]
 
 
+def recommend(prompt: str, catalog: dict[str, str],
+              aliases: dict[str, list[str]], manifest: dict,
+              top_k: int = 3) -> dict:
+    """Read-only lexical suggestions, not installed skills or model confidence."""
+    if not isinstance(prompt, str) or not prompt.strip() or len(prompt) > 2000:
+        raise RoutingInputError("Request must be nonempty and at most 2000 characters")
+    if not 1 <= top_k <= min(5, len(catalog)):
+        raise RoutingInputError("top_k must be between 1 and 5")
+    parts = [p.strip() for p in re.split(r"\s+(?:and|и)\s+|\s*;\s*", prompt, flags=re.I)
+             if p.strip()]
+    if len(parts) > 3 or any(len(terms(part)) < 2 for part in parts):
+        parts = [prompt.strip()]
+    docs, idf = vectors(catalog)
+    profiles = manifest.get("profiles", {})
+    roles = sorted(set(manifest.get("core_roles", [])) |
+                   {role for pack in manifest.get("extension_packs", {}).values()
+                    for role in pack.get("roles", [])})
+    results = []
+    for part in parts:
+        ordered = ranking(part, catalog, docs, idf, aliases)
+        language = prompt_language(part)
+        tokens = set(terms(part))
+        normalized_query = {alias_stem(t) if language == "ru" else t for t in tokens}
+        candidates = []
+        for name in ordered[:top_k]:
+            positive_desc = re.split(r"\bnot for\b", catalog[name], maxsplit=1, flags=re.I)[0]
+            description_hits = sorted(tokens & set(terms(positive_desc)))
+            name_hits = sorted(tokens & set(terms(name.replace("-", " "))))
+            alias_hits = set()
+            for phrase in aliases.get(name, []):
+                if prompt_language(phrase) == language:
+                    normalized_alias = {alias_stem(t) if language == "ru" else t
+                                        for t in terms(phrase)}
+                    match = normalized_query & normalized_alias
+                    if len(match) >= 2:
+                        alias_hits.update(match)
+            supported = bool(name_hits or len(description_hits) >= 2 or len(alias_hits) >= 2)
+            candidates.append({
+                "skill": name,
+                "rank": len(candidates) + 1,
+                "lexical_support": "PRESENT" if supported else "WEAK",
+                "evidence": {
+                    "name_tokens": name_hits[:6],
+                    "description_tokens": description_hits[:6],
+                    "alias_tokens": sorted(alias_hits)[:8],
+                },
+                "candidate_profiles": sorted(p for p, skills in profiles.items()
+                                             if isinstance(skills, list) and name in skills)[:8],
+            })
+        results.append({
+            "text": part,
+            "language": language,
+            "candidates": candidates,
+            "other_not_selected": ordered[top_k:top_k + 3],
+            "status": "SUGGESTIONS_ONLY" if any(
+                c["lexical_support"] == "PRESENT" for c in candidates
+            ) else "INSUFFICIENT_EVIDENCE",
+        })
+    leaders = {row["candidates"][0]["skill"] for row in results
+               if row["candidates"] and row["candidates"][0]["lexical_support"] == "PRESENT"}
+    return {
+        "classification": "offline_lexical_advice",
+        "confidence": "NOT_CALIBRATED",
+        "client_skill_selection": "NOT_OBSERVED",
+        "client_effectiveness": "NOT_TESTED",
+        "installs_or_executes": False,
+        "split_is_heuristic": True,
+        "multiple_distinct_intents": len(leaders) > 1,
+        "segments": results,
+        "available_roles_not_automatically_selected": roles,
+        "limitations": "Token matches and hand-curated aliases are not model understanding.",
+    }
+
+
 def load_cases(file: Path, catalog: dict[str, str]) -> list[dict]:
     data = json.loads(file.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or set(data) != {"schema_version", "cases"}:
@@ -232,17 +306,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--top-k", type=int, default=3)
     parser.add_argument("--aliases", type=Path, default=ALIAS_FILE)
     parser.add_argument("--strict", action="store_true", help="Fail for mismatched curated prompts")
+    parser.add_argument("--recommend", type=str, help="Explain a task route, without execution")
     args = parser.parse_args(argv)
     try:
         catalog = read_catalog(args.root.resolve())
-        cases = load_cases(args.cases, catalog)
         aliases = read_aliases(args.aliases, catalog)
-        report = evaluate(catalog, cases, top_k=args.top_k, aliases=aliases)
+        if args.recommend is not None:
+            manifest = json.loads((args.root / "MANIFEST.json").read_text(encoding="utf-8"))
+            report = recommend(args.recommend, catalog, aliases, manifest, top_k=args.top_k)
+        else:
+            cases = load_cases(args.cases, catalog)
+            report = evaluate(catalog, cases, top_k=args.top_k, aliases=aliases)
     except (OSError, ValueError, KeyError, TypeError, RuntimeError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False))
-    return 1 if args.strict and report["failed"] else 0
+    return 1 if args.strict and args.recommend is None and report["failed"] else 0
 
 
 if __name__ == "__main__":
