@@ -125,6 +125,20 @@ class ProjectAdoptionTests(unittest.TestCase):
         self.assertEqual("second-brain", json.loads(stdout.getvalue())["archetype"])
         self.assertFalse((self.target / ".adt").exists())
 
+    def test_linked_project_root_is_rejected_before_inspection(self):
+        external = self.target.parent / "external"
+        external.mkdir()
+        (external / "AGENTS.md").write_bytes(b"PRIVATE_PROJECT_POLICY_DO_NOT_DISCLOSE")
+        link = self.target.parent / "project-link"
+        try:
+            link.symlink_to(external, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Directory symlink unavailable on this environment")
+        before = snapshot(external)
+        with self.assertRaisesRegex(adoption.AdoptionError, "Linked project root"):
+            adoption.inspect(link, "codex", "qa", "generic", manifest=self.manifest)
+        self.assertEqual(before, snapshot(external))
+
     def test_linked_governance_marker_blocks_if_supported(self):
         source = self.target / "actual.md"
         source.write_text("private", encoding="utf-8")

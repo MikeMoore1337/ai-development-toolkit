@@ -57,6 +57,8 @@ def inspect(target: Path, layout: str, task: str, archetype: str,
     if task not in recommend_profile.TASKS:
         raise AdoptionError("Unsupported task")
     target = target.expanduser().absolute()
+    if target.is_symlink() or target.is_junction():
+        raise AdoptionError("Linked project root requires a trusted checkout")
     marker = marker_inventory(target) if target.is_dir() else {}
     selected = None
     if target.is_dir() and not any(v == "UNSAFE_LINK" for v in marker.values()):
