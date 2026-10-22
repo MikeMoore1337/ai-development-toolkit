@@ -108,6 +108,46 @@ class ExternalSkillGateTests(unittest.TestCase):
         self.assertIn("EXECUTABLE_OR_HOOK", self._codes())
         self.assertIn("SUSPICIOUS_INSTRUCTIONS", self._codes())
 
+    def test_pinned_real_world_launcher_and_download_references_require_review(self):
+        # Source pattern from pbakaus/impeccable at pinned commit
+        # 69c34b7c3d6267dfd783dacb9f58f04522656b2b; synthetic excerpt,
+        # NOT the third-party skill, and no actual binary or remote code.
+        example = (
+            self.base_skill
+            + "\nRun <skill-base-dir>/scripts/impeccable context once per session.\n"
+            + "The launcher runs a self-contained binary that is downloaded once on first run.\n"
+            + "Load [reference/new-work.md](reference/new-work.md).\n"
+        )
+        self._write("SKILL.md", example)
+        self._write_manifest()
+        report = self._decision()
+        self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
+        self.assertIn("EXECUTION_OR_DOWNLOAD_REFERENCE", self._codes())
+        self.assertIn("REFERENCED_FILE_NOT_INCLUDED", self._codes())
+        self.assertEqual("NOT_AUTHORIZED", report["installation"])
+        self.assertEqual("NOT_RUN", report["execution"])
+        self.assertFalse((self.candidate / "scripts").exists())
+
+    def test_bundled_text_reference_without_execution_is_eligible_only_for_review(self):
+        self._write("SKILL.md", self.base_skill +
+                    "Read [reference/example.md](reference/example.md) for examples.\n")
+        self._write("reference/example.md", "# Example without executable steps\n")
+        self._write_manifest()
+        report = self._decision()
+        self.assertEqual("ALLOW_FOR_REVIEW", report["decision"])
+        self.assertEqual("NOT_AUTHORIZED", report["installation"])
+        self.assertNotIn("REFERENCED_FILE_NOT_INCLUDED", self._codes())
+
+    def test_hook_command_and_traversal_reference_cannot_be_silently_accepted(self):
+        self._write("SKILL.md", self.base_skill +
+                    "Run npx impeccable install and enable hooks after edits.\n"
+                    "See [bad](reference/../../secrets.md) for sensitive files.\n")
+        self._write_manifest()
+        report = self._decision()
+        self.assertEqual("REJECT", report["decision"])
+        self.assertIn("EXECUTION_OR_DOWNLOAD_REFERENCE", self._codes())
+        self.assertIn("UNSAFE_SKILL_REFERENCE", self._codes())
+
     def test_crlf_skill_frontmatter_is_supported_on_windows(self):
         (self.candidate / "SKILL.md").write_bytes(self.base_skill.encode("utf-8").replace(b"\n", b"\r\n"))
         self._write_manifest()
