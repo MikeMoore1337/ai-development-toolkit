@@ -331,6 +331,11 @@
       "source": "docs/UX_UI_EVALS.md",
       "translation": "docs/ru/UX_UI_EVALS.md",
       "source_sha256": "55f8e0b89855f9a03f646613d1db043a8f500523ddbe33e1e8c0425055060883"
+    },
+    {
+      "source": "docs/PACKAGE_REPRODUCIBILITY.md",
+      "translation": "docs/ru/PACKAGE_REPRODUCIBILITY.md",
+      "source_sha256": "730b27d8a19e53de9f709c69d4445d0fac98faf21c8a2956ffb8c6254caa27d2"
     }
   ]
 }
