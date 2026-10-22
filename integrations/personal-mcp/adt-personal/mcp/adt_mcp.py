@@ -11,9 +11,10 @@ import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 from typing import Any
+from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.9'
+VERSION = '0.1.10'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -420,6 +421,30 @@ class Toolkit:
             'source_revision': self.source_revision,
         }
 
+    def discover_external_skill_candidates(
+            self, query: str, consent: object = False,
+            allowed_repos: object = None) -> dict[str, Any]:
+        """Combine local evidence and opt-in public path-only search; no installs.
+
+        Source pins are supplied by the caller, not inferred from skill text.
+        The external candidates are not trusted, downloaded or activated.
+        """
+        local = self.assess_skill_coverage(query)
+        try:
+            external = discover_pinned_skills(query, consent, allowed_repos)
+        except DiscoveryDenied as exc:
+            raise ToolkitError(str(exc)) from None
+        return {
+            'local_skill_coverage': local,
+            'external_discovery': external,
+            'next_step': 'MANUAL_SOURCE_AND_LICENSE_VERIFICATION'
+                         if external['status'] == 'REVIEW_ONLY' else 'NONE',
+            'security_gate': 'NOT_RUN',
+            'external_skill_install': 'NOT_AUTHORIZED',
+            'client_activation': 'NOT_OBSERVED',
+            'source_revision': self.source_revision,
+        }
+
     def route(self, task: str, profile: str = '') -> dict[str, Any]:
         if not isinstance(task, str) or not task.strip() or len(task) > 12000:
             raise ToolkitError('task must be nonempty text up to 12000 characters')
@@ -544,6 +569,14 @@ TOOLS: list[dict[str, Any]] = [
      'description':'Read-only local lexical skill coverage advisory: exact local / ambiguous / missing. Never searches external sources or installs skills.',
      'inputSchema':{'type':'object','properties':{'query':{'type':'string','minLength':1,'maxLength':500}},
                     'required':['query'],'additionalProperties':False}},
+    {'name':'toolkit_discover_external_skill_candidates',
+     'description':'Explicit opt-in, pinned, public GitHub Skill path metadata search. No source contents, external execution, installation or trust approval. Requires exact source commit SHAs; defaults to NO_NETWORK.',
+     'inputSchema':{'type':'object','properties':{
+         'query':{'type':'string','minLength':1,'maxLength':500},
+         'consent':{'type':'boolean','description':'Must explicitly be true to allow public GitHub metadata network lookup'},
+         'allowed_repos':{'type':'array','maxItems':3,'items':{'type':'string'},
+                          'description':'Explicit allowlist of https://github.com/owner/repo@<full 40-char SHA>'}},
+         'required':['query'],'additionalProperties':False}},
     {'name':'toolkit_prepare_task','description':'For a Codex task, compare client-reported existing skill/role names with relevant Toolkit guidance and return only needed skill and role contents. No project scans, copies, installation or agent spawning (read-only).',
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
@@ -563,7 +596,7 @@ TOOLS: list[dict[str, Any]] = [
      'inputSchema':{'type':'object','properties':{'name':{'type':'string'},'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'required':['name'],'additionalProperties':False}},
 ]
 for t in TOOLS:
-    t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': False, 'idempotentHint': True}
+    t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': t['name'] == 'toolkit_discover_external_skill_candidates', 'idempotentHint': True}
 
 def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(args, dict):
@@ -576,6 +609,9 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
         return tk.route(args.get('task', ''), args.get('profile', ''))
     if name == 'toolkit_assess_skill_coverage':
         return tk.assess_skill_coverage(args.get('query', ''))
+    if name == 'toolkit_discover_external_skill_candidates':
+        return tk.discover_external_skill_candidates(
+            args.get('query', ''), args.get('consent', False), args.get('allowed_repos'))
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
                                args.get('existing_roles'), args.get('profile',''), args.get('max_skills',5))
