@@ -75,7 +75,8 @@ def asset_record(entry: object, root: Path) -> dict:
         raise EvidenceError("Unsafe artifact path")
     base = root.resolve()
     target = base.joinpath(*posix.parts)
-    if target.is_symlink() or any(parent.is_symlink() for parent in target.parents if parent != base):
+    if target.is_symlink() or any(parent.is_symlink() for parent in target.parents
+               if parent != base and parent.is_relative_to(base)):
         raise EvidenceError("Symlink visual evidence not accepted")
     resolved = target.resolve()
     if not resolved.is_relative_to(base) or not resolved.is_file():
