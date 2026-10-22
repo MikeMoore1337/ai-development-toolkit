@@ -137,6 +137,8 @@ def load_test_map(path: Path) -> dict:
         if len(raw) > MAPPING_MAX_BYTES:
             raise ImpactInputError("Test map too large")
         data = json.loads(raw.decode("utf-8"))
+    except ImpactInputError:
+        raise
     except (OSError, UnicodeError, ValueError) as exc:
         raise ImpactInputError("Test map is unreadable or invalid JSON") from exc
     return validate_test_map(data)
