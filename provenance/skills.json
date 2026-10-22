@@ -10046,6 +10046,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Personal MCP opt-in fixed-host public GitHub metadata only; no skill content download, execution or automatic import. Source-only, Codex client proof separate (#190)."
+    },
+    {
+      "id": "workflow-personal-mcp-optin-discovery-smoke",
+      "path": ".github/workflows/personal-mcp-optin-discovery-smoke.yml",
+      "name": "personal-mcp-optin-discovery-smoke.yml",
+      "kind": "workflow",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-22",
+      "distribution": "included",
+      "notes": "Anonymous pinned GitHub metadata-only opt-in smoke using real MCP stdio; no external Skill download, install or code execution; Codex client not verified."
     }
   ],
   "owner_review_record": {
