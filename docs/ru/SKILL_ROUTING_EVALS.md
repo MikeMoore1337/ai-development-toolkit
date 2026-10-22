@@ -60,4 +60,6 @@ python -m unittest tests.test_skill_routing_eval -v
 
 В JSON-отчёте `coverage.catalog_total` обозначает весь каталог, `coverage.curated_targets` - проверенные целевые навыки, `coverage.uncovered_targets` - ещё не охваченные навыки, `coverage.languages` - число позитивных и негативных примеров на каждом языке. Язык по кириллице определяется эвристически.
 
-`client_skill_selection = NOT_OBSERVED` и `client_effectiveness = NOT_TESTED` означают отсутствие реального прогона ChatGPT/Codex/Claude. Испытания клиентов и влияние на результат остаются задачей [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
+Текущий корпус содержит **104 сценария для всех 82 заявленных навыков**: для каждого предусмотрены положительные и отрицательные запросы **на русском и английском**. Это *покрытие тестовыми примерами*, а не независимо подтверждённая семантическая точность: эталоны и лексические подсказки составлялись вместе. Другие переформулировки и запросы с несколькими намерениями требуют отдельной проверки.
+
+`client_skill_selection = NOT_OBSERVED` и `client_effectiveness = NOT_TESTED` означают отсутствие реального прогона ChatGPT/Codex/Claude. Испытания клиентов, независимые контрольные задачи и влияние на результат остаются задачей [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
