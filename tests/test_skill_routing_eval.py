@@ -269,6 +269,48 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertGreaterEqual(report["failed"], 1)
         self.assertFalse(report["observations"][-1]["pass"])
 
+    def test_holdout_reports_alphabetical_fallback_separately(self):
+        catalog = {
+            "api-testing": "Validate HTTP status responses.",
+            "seo-audit": "Review search indexing and metadata.",
+        }
+        cases = [{"id": "unknown", "kind": "single",
+                  "query": "zzzzqwertyunknown", "expected": ["api-testing"]}]
+        report = routing.evaluate_holdout(catalog, {}, {}, cases, top_k=1)
+        self.assertEqual(1, report["passed"])  # Legacy alphabetical top-1.
+        self.assertEqual(0, report["supported_passed"])
+        self.assertEqual(1, report["abstained"])
+        self.assertEqual(1, report["unverified_fallback"])
+        self.assertEqual(1, report["by_kind"]["single"]["unverified_fallback"])
+        self.assertEqual(1, report["by_language"]["en"]["abstained"])
+        self.assertTrue(report["observations"][0]["unverified_fallback"])
+        self.assertEqual([], report["observations"][0]["supported_candidates"])
+        self.assertEqual("NOT_CALIBRATED", report["confidence"])
+
+    def test_holdout_supported_negative_choice_is_distinct_from_legacy(self):
+        catalog = {
+            "database-migrations": "Plan database migrations and rollback.",
+            "accessibility-testing": "Audit keyboard focus and accessibility.",
+        }
+        cases = [{"id": "negation", "kind": "negative",
+                  "query": "Skip database migration planning; audit keyboard focus and accessibility.",
+                  "expected": ["accessibility-testing"],
+                  "avoid_top1": ["database-migrations"]}]
+        report = routing.evaluate_holdout(catalog, {}, {}, cases, top_k=2)
+        row = report["observations"][0]
+        self.assertEqual(["accessibility-testing"], row["supported_candidates"])
+        self.assertTrue(row["supported_negative_control_ok"])
+        self.assertTrue(row["supported_pass"])
+        self.assertFalse(row["abstained"])
+        self.assertEqual(1, report["by_kind"]["negative"]["supported_passed"])
+
+    def test_holdout_refuses_unbounded_top_k_consistently(self):
+        catalog = {"code-review": "Review code changes."}
+        cases = [{"id": "one", "kind": "single", "query": "Review code",
+                  "expected": ["code-review"]}]
+        with self.assertRaisesRegex(routing.RoutingInputError, "top_k"):
+            routing.evaluate_holdout(catalog, {}, {}, cases, top_k=2)
+
     def test_holdout_schema_rejects_unknown_targets_and_forbidden_overlap(self):
         test_file = self.root / "holdout.json"
         record = {
@@ -304,6 +346,11 @@ class SkillRoutingTests(unittest.TestCase):
         report = routing.evaluate_holdout(catalog, aliases, manifest, holdout)
         self.assertEqual(len(holdout), report["count"])
         self.assertEqual(report["count"], report["passed"] + report["failed"])
+        self.assertEqual(report["count"], report["supported_passed"] + report["supported_failed"])
+        self.assertEqual(report["count"], sum(
+            report["by_language"][language]["cases"] for language in ("ru", "en")))
+        self.assertEqual(report["count"], sum(
+            report["by_kind"][kind]["cases"] for kind in ("single", "compound", "negative")))
         self.assertEqual("untuned_holdout_diagnostic", report["classification"])
 
     def test_deterministic_results(self):
