@@ -241,6 +241,101 @@ def load_cases(file: Path, catalog: dict[str, str]) -> list[dict]:
     return data["cases"]
 
 
+def load_holdout(path: Path, catalog: dict[str, str]) -> list[dict]:
+    """Validate an untuned benchmark, separate from curated routing fixtures."""
+    source = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(source, dict) or set(source) != {"schema_version", "description", "cases"}:
+        raise RoutingInputError("Invalid holdout file structure")
+    if source["schema_version"] != 1 or not isinstance(source["description"], str):
+        raise RoutingInputError("Unknown holdout schema")
+    cases = source["cases"]
+    if not isinstance(cases, list) or not cases:
+        raise RoutingInputError("Empty holdout dataset")
+    seen: set[str] = set()
+    for case in cases:
+        if not isinstance(case, dict) or not {"id", "kind", "query", "expected"} <= set(case):
+            raise RoutingInputError("Invalid holdout case")
+        if set(case) - {"id", "kind", "query", "expected", "avoid_top1"}:
+            raise RoutingInputError("Unknown holdout case attributes")
+        if not isinstance(case["id"], str) or not case["id"] or case["id"] in seen:
+            raise RoutingInputError("Duplicate or missing holdout ID")
+        seen.add(case["id"])
+        if case["kind"] not in ("single", "compound", "negative"):
+            raise RoutingInputError("Unknown holdout kind")
+        if (not isinstance(case["query"], str) or not case["query"].strip()
+                or len(case["query"]) > 1000):
+            raise RoutingInputError("Invalid holdout query")
+        expected = case["expected"]
+        if (not isinstance(expected, list) or not expected or len(expected) > 4
+                or any(not isinstance(item, str) or item not in catalog for item in expected)
+                or len(set(expected)) != len(expected)):
+            raise RoutingInputError("Unknown or duplicate expected skill")
+        avoid = case.get("avoid_top1", [])
+        if (not isinstance(avoid, list) or any(not isinstance(item, str) or item not in catalog
+                                               for item in avoid)
+                or len(set(avoid)) != len(avoid)):
+            raise RoutingInputError("Invalid forbidden skill")
+        if case["kind"] == "negative" and not avoid:
+            raise RoutingInputError("Negative holdout must define avoid_top1")
+        if case["kind"] != "negative" and "avoid_top1" in case:
+            raise RoutingInputError("Only negative cases can contain avoid_top1")
+        if set(expected) & set(avoid):
+            raise RoutingInputError("Expected and forbidden skills overlap")
+    return cases
+
+
+def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
+                     manifest: dict, cases: list[dict], top_k: int = 3) -> dict:
+    """Measure unseen lexical prompts; never auto-adjust aliases or assert calibrated accuracy."""
+    if not 1 <= top_k <= len(catalog):
+        raise RoutingInputError("top_k out of bounds")
+    docs, idf = vectors(catalog)
+    observations = []
+    for case in cases:
+        query = case["query"]
+        if case["kind"] == "compound":
+            advice = recommend(query, catalog, aliases, manifest, top_k=top_k)
+            proposals = [item["skill"] for part in advice["segments"]
+                         for item in part["candidates"]]
+            found = all(skill in proposals for skill in case["expected"])
+            first = [part["candidates"][0]["skill"] for part in advice["segments"]
+                     if part["candidates"]]
+        else:
+            order = ranking(query, catalog, docs, idf, aliases)
+            proposals = order[:top_k]
+            found = any(skill in proposals for skill in case["expected"])
+            first = proposals[:1]
+        avoided = all(skill not in first for skill in case.get("avoid_top1", []))
+        ok = found and avoided
+        observations.append({
+            "id": case["id"], "kind": case["kind"], "language": prompt_language(query),
+            "expected": case["expected"], "forbidden_top1": case.get("avoid_top1", []),
+            "top_choices": first, "candidates": proposals,
+            "hit_at_k": found, "negative_control_ok": avoided, "pass": ok,
+        })
+    grouped = {}
+    for group in ("single", "compound", "negative"):
+        items = [row for row in observations if row["kind"] == group]
+        grouped[group] = {
+            "cases": len(items), "passed": sum(row["pass"] for row in items),
+            "failed": sum(not row["pass"] for row in items),
+        }
+    return {
+        "classification": "untuned_holdout_diagnostic",
+        "method": "lexical_ranker_not_semantic_model",
+        "expected_labels": "manually_curated_not_independently_adjudicated",
+        "confidence": "NOT_CALIBRATED",
+        "client_skill_selection": "NOT_OBSERVED",
+        "client_effectiveness": "NOT_TESTED",
+        "strict_gate": False,
+        "count": len(observations),
+        "passed": sum(row["pass"] for row in observations),
+        "failed": sum(not row["pass"] for row in observations),
+        "by_kind": grouped,
+        "observations": observations,
+    }
+
+
 def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3,
              aliases: dict[str, list[str]] | None = None) -> dict:
     if not 1 <= top_k <= len(catalog):
@@ -307,11 +402,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--aliases", type=Path, default=ALIAS_FILE)
     parser.add_argument("--strict", action="store_true", help="Fail for mismatched curated prompts")
     parser.add_argument("--recommend", type=str, help="Explain a task route, without execution")
+    parser.add_argument("--holdout", type=Path, help="Measure separate untuned prompts (diagnostic only)")
     args = parser.parse_args(argv)
     try:
         catalog = read_catalog(args.root.resolve())
         aliases = read_aliases(args.aliases, catalog)
-        if args.recommend is not None:
+        if args.recommend is not None and args.holdout is not None:
+            raise RoutingInputError("--recommend and --holdout are incompatible")
+        if args.holdout is not None and args.strict:
+            raise RoutingInputError("--holdout cannot be used as an uncalibrated strict gate")
+        if args.holdout is not None:
+            manifest = json.loads((args.root / "MANIFEST.json").read_text(encoding="utf-8"))
+            holdout = load_holdout(args.holdout, catalog)
+            report = evaluate_holdout(catalog, aliases, manifest, holdout, top_k=args.top_k)
+        elif args.recommend is not None:
             manifest = json.loads((args.root / "MANIFEST.json").read_text(encoding="utf-8"))
             report = recommend(args.recommend, catalog, aliases, manifest, top_k=args.top_k)
         else:
