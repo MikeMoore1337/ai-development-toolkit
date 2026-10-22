@@ -1,0 +1,73 @@
+name: Personal MCP pinned discovery live smoke
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "integrations/personal-mcp/adt-personal/mcp/adt_discovery.py"
+      - "integrations/personal-mcp/adt-personal/mcp/adt_mcp.py"
+      - "integrations/personal-mcp/adt-personal/tests/test_discovery.py"
+      - ".github/workflows/personal-mcp-optin-discovery-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  public-optin-mcp-stdio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install stdlib Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify real MCP stdio opt-in public path lookup
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          script = Path('integrations/personal-mcp/adt-personal/mcp/adt_mcp.py')
+          pin = 'https://github.com/MikeMoore1337/ai-development-toolkit@a7c8c300aaadcdd3828ca417b23e16398e3c0e44'
+          def call(i, arguments):
+              return {'jsonrpc': '2.0', 'id': i, 'method': 'tools/call',
+                      'params': {'name': 'toolkit_discover_external_skill_candidates',
+                                 'arguments': arguments}}
+          requests = [
+              call(1, {'query': 'qa-strategy'}),
+              call(2, {'query': 'qa-strategy', 'consent': True, 'allowed_repos': [pin]}),
+          ]
+          process = subprocess.run(
+              [sys.executable, '-B', str(script), '--source', str(Path.cwd())],
+              input=''.join(json.dumps(r) + '\n' for r in requests).encode('utf-8'),
+              capture_output=True, timeout=45, check=False)
+          if process.returncode:
+              raise SystemExit('MCP_STDIO_PROCESS_FAILED')
+          replies = [json.loads(line) for line in process.stdout.decode('utf-8').splitlines()]
+          assert [r['id'] for r in replies] == [1, 2], 'MCP_RESPONSE_IDS_MISMATCH'
+          first, second = [r['result']['structuredContent'] for r in replies]
+          assert first['external_discovery']['status'] == 'NO_NETWORK', first
+          out = second['external_discovery']
+          assert out['status'] == 'REVIEW_ONLY', out.get('reason')
+          assert out['installation'] == 'NOT_AUTHORIZED'
+          assert out['content_downloaded'] is False
+          assert out['security_gate'] == 'NOT_RUN'
+          assert second['external_skill_install'] == 'NOT_AUTHORIZED'
+          assert any(x['path'] == '.agents/skills/qa-strategy/SKILL.md'
+                     and x['revision'] == 'a7c8c300aaadcdd3828ca417b23e16398e3c0e44'
+                     and x['license'] == 'NOT_VERIFIED'
+                     and x['content'] == 'NOT_DOWNLOADED'
+                     for x in out['candidates']), 'PINNED_QA_SKILL_PATH_ABSENT'
+          print('MCP_OPTIN_PUBLIC_DISCOVERY_SMOKE=PASS')
+          print('DEFAULT_NO_NETWORK=PASS')
+          print('THIRD_PARTY_INSTALL=NOT_AUTHORIZED')
+          print('PERSONAL_CODEX_CLIENT=NOT_VERIFIED')
+          PY
