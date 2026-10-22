@@ -103,7 +103,7 @@ def main() -> int:
               and pilot.get('profile') == 'backend' and 'qa-core' in pilot.get('secondary_profiles', [])
               and composite.get('profile') == 'backend'
               and 'qa-python' in composite.get('secondary_profiles', [])
-              and len(tools) == 8 and prepared.get('primary_profile') == 'backend'
+              and len(tools) == 9 and prepared.get('primary_profile') == 'backend'
               and 'qa-python' in prepared.get('secondary_profiles', [])
               and len(prepared.get('loaded_skills', [])) > 0)
         summary = {'status': 'PASS' if ok else 'FAIL', 'transport': 'DIRECT_STDIO_NOT_CODEX',
