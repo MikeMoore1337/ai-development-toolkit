@@ -331,6 +331,13 @@
       "failure-triage",
       "quality-gate-assessment",
       "release-safety"
+    ],
+    "prompt-refinement": [
+      "prompt-refinement"
+    ],
+    "seo-audit": [
+      "seo-audit",
+      "research-verification"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -477,7 +484,8 @@
     "ai": {
       "skill_root": "extensions/ai/skills",
       "skills": [
-        "ai-engineering-qa"
+        "ai-engineering-qa",
+        "prompt-refinement"
       ],
       "auto_install": false
     },
@@ -531,6 +539,13 @@
         "data-engineering"
       ],
       "auto_install": false
+    },
+    "seo": {
+      "skill_root": "extensions/seo/skills",
+      "skills": [
+        "seo-audit"
+      ],
+      "auto_install": false
     }
   },
   "qa_source_distribution_policy": "User identifies QA source as own material from work project. Public release contains portable rewrites, not original proprietary project policies; confirm employer IP obligations if applicable.",
@@ -581,6 +596,14 @@
       ],
       "engineering": [
         "docs/SKILLS_CATALOG.md"
+      ],
+      "prompt-refinement": [
+        "extensions/ai/skills/prompt-refinement/SKILL.md",
+        "extensions/ai/skills/prompt-refinement/references/EXAMPLES.md"
+      ],
+      "seo-audit": [
+        "extensions/seo/skills/seo-audit/SKILL.md",
+        "extensions/seo/skills/seo-audit/references/CHECKLIST.md"
       ]
     },
     "max_retrieved_sources_per_task": 8,

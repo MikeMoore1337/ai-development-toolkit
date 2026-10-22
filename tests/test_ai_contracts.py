@@ -117,7 +117,7 @@ class AIContractsTests(unittest.TestCase):
 
     def test_manifest_profile_and_install_preview(self):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
-        self.assertEqual(["ai-engineering-qa"], manifest["extension_packs"]["ai"]["skills"])
+        self.assertEqual(["ai-engineering-qa", "prompt-refinement"], manifest["extension_packs"]["ai"]["skills"])
         self.assertEqual(ROOT / "extensions/ai/skills/ai-engineering-qa", skill_sources(manifest)["ai-engineering-qa"])
         profile = manifest["profiles"]["ai-engineering-qa"]
         self.assertIn("ai-engineering-qa", profile)

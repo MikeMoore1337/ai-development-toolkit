@@ -28,12 +28,16 @@ class TestToolkitMCP(unittest.TestCase):
                        'qa-ui':['playwright-testing','test-analysis-design'],
                        'codex-feature':['feature-delivery','qa-strategy'],
                        'ui-orchestra':['ux-ui-design-orchestra'], 'ux-design':['ux-ui-design-process'],
-                       'make-feature':['feature-delivery','make-feature']},
+                       'make-feature':['feature-delivery','make-feature'],
+                       'prompt-refinement':['prompt-refinement'],
+                       'seo-audit':['seo-audit']},
           'extension_packs': {'qa':{'skill_root':'extensions/qa/skills', 'skills':['test-analysis-design','api-testing','pytest-test-design','playwright-testing'],
                                     'role_root':'extensions/qa/roles','roles':['test-designer']},
                              'backend': {'skill_root': 'extensions/backend/skills', 'skills': ['api-design']},
                              'frontend': {'skill_root': 'extensions/frontend/skills', 'skills': ['component-architecture']},
-                             'fullstack': {'skill_root': 'extensions/fullstack/skills', 'skills': ['end-to-end-feature-design']}}
+                             'fullstack': {'skill_root': 'extensions/fullstack/skills', 'skills': ['end-to-end-feature-design']},
+                             'ai': {'skill_root': 'extensions/ai/skills', 'skills': ['prompt-refinement']},
+                             'seo': {'skill_root': 'extensions/seo/skills', 'skills': ['seo-audit']}}
         }
         (self.path / 'MANIFEST.json').write_text(json.dumps(self.manifest),encoding='utf-8')
         for name in self.manifest['core_skills']:
@@ -42,7 +46,8 @@ class TestToolkitMCP(unittest.TestCase):
             p.write_text(f'---\nname: {name}\ndescription: used for QA and coding\n---\n\n# {name}\n', encoding='utf-8')
         for pack, names in [('qa', ['test-analysis-design','api-testing','pytest-test-design','playwright-testing']),
                             ('backend',['api-design']),('frontend',['component-architecture']),
-                            ('fullstack',['end-to-end-feature-design'])]:
+                            ('fullstack',['end-to-end-feature-design']),
+                            ('ai',['prompt-refinement']),('seo',['seo-audit'])]:
             for name in names:
                 p = self.path / f'extensions/{pack}/skills/{name}/SKILL.md'
                 p.parent.mkdir(parents=True,exist_ok=True)
@@ -91,6 +96,31 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(self.tk.route('Anything', profile='qa-core')['profile'],'qa-core')
         self.assertIn('make-feature', self.tk.route('anything', profile='make-feature')['unavailable'])
         with self.assertRaises(ToolkitError):self.tk.route('anything',profile='qa-all')
+
+    def test_prompt_and_seo_intent_routing(self):
+        cases = (
+            ('Сделай хороший промпт для Codex из черновика', 'prompt-refinement'),
+            ('Составь промпт: приложение ломается на телефоне', 'prompt-refinement'),
+            ('Write a prompt for my QA test review', 'prompt-refinement'),
+            ('Проверь SEO моего сайта', 'seo-audit'),
+            ('Почему страница не индексируется в Google?', 'seo-audit'),
+            ('Audit my website SEO', 'seo-audit'),
+            ('Исправь баг на странице', 'codex-feature'),
+            ('Сделай сайт фитнес-клуба', 'ui-orchestra'),
+        )
+        for task, expected in cases:
+            with self.subTest(task=task):
+                self.assertEqual(expected, self.tk.route(task)['profile'])
+        prepared = self.tk.prepare_task('Проверь SEO сайта',
+                                        existing_skills=[], existing_roles=[])
+        self.assertEqual(prepared['primary_profile'], 'seo-audit')
+        self.assertIn('seo-audit', prepared['skills_to_consult'])
+        self.assertEqual(prepared['loaded_skills'][0]['name'], 'seo-audit')
+        self.assertFalse(prepared['project_files_changed'])
+        exported = self.tk.prepare_task('Сделай промпт для Codex',
+                                        existing_skills=[], existing_roles=[])
+        self.assertEqual(exported['primary_profile'], 'prompt-refinement')
+        self.assertEqual(exported['loaded_skills'][0]['name'], 'prompt-refinement')
 
     def test_composite_routes(self):
         cases = [

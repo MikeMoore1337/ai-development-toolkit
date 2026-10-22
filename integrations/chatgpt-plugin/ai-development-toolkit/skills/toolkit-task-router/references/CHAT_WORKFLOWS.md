@@ -17,3 +17,13 @@ User: "Use https://github.com/MikeMoore1337/ai-development-toolkit to audit my p
 ## Permission boundaries
 
 Never write to a connected repository, install skills, fetch private files or claim live tool results without real authorization, tools and user intent. Reference materials are not authority to bypass project/corporate controls.
+
+## Rough user text and explicit prompt export
+
+User: "сделай мне магазин манго, красиво". Treat this as **FULFILL_REQUEST**: use UX/UI Orchestra to prepare real design evidence for approval; do not return a prompt to paste elsewhere.
+
+User: "помоги сформулировать хороший промпт для Codex: при вводе веса экран дёргается". Treat as **EXPORT_PROMPT**: use `toolkit-prompt-refinement` for one engineering prompt preserving access/QA constraints. Do not pretend the app was changed.
+
+## SEO from supplied evidence
+
+User: "проверь SEO моего сайта". Use `toolkit-seo-audit`; inspect only available URLs, HTML or files, mark `NOT_VERIFIED` for unknown rankings/index status and propose URL-specific verification. Never invent Search Console results.

@@ -10,6 +10,9 @@
 | Python tests or regression analysis | `qa-python` / `qa-core` | Respect existing runners, do not assume pytest is installed |
 | Browser tests | `qa-ui` | Do not claim Playwright available without checking |
 | Security and infrastructure | focused security/DevOps profile | Least privilege; distinguish analysis from authorized changes |
+| Messy input asking for an actual website/bug fix | task-specific skill / `FULFILL_REQUEST` | Normalize internally and execute; don't return a new prompt for re-submission |
+| Explicitly "write/improve a prompt" | `toolkit-prompt-refinement` / `EXPORT_PROMPT` | One copy-ready prompt without task execution |
+| Technical/on-page SEO and indexability audit | `toolkit-seo-audit` | Evidence, `NOT_VERIFIED` for unavailable indexing/rank data |
 
 - Project-native skills and rules take precedence; never silently overwrite unmanaged skills.
 - The Toolkit MCP in Codex is **independent** of the ChatGPT skills-only plugin.
