@@ -134,8 +134,15 @@ class SkillRoutingTests(unittest.TestCase):
         report = routing.evaluate(catalog, cases, aliases=aliases)
         self.assertGreaterEqual(len(cases), 12)
         self.assertEqual(82, report["coverage"]["catalog_total"])
-        self.assertEqual(8, report["coverage"]["languages"]["ru"]["tested_target_count"])
-        self.assertGreater(len(report["coverage"]["uncovered_targets"]), 0)
+        # Full RU/EN fixture inventory is not proof of real client activation.
+        self.assertEqual(len(catalog), report["coverage"]["curated_targets"])
+        self.assertEqual([], report["coverage"]["uncovered_targets"])
+        for language in ("ru", "en"):
+            self.assertEqual(len(catalog), report["coverage"]["languages"][language]["tested_target_count"])
+            self.assertGreaterEqual(report["coverage"]["languages"][language]["positive_prompts"], len(catalog))
+            self.assertGreaterEqual(report["coverage"]["languages"][language]["negative_prompts"], len(catalog))
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
         self.assertTrue({"qa-failure-triage-versus-generic-tests",
                          "qa-test-oracle-review-versus-code-review"} <=
                         {case["id"] for case in cases})
