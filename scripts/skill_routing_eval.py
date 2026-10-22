@@ -316,20 +316,27 @@ def load_holdout(path: Path, catalog: dict[str, str]) -> list[dict]:
 
 def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
                      manifest: dict, cases: list[dict], top_k: int = 3) -> dict:
-    """Measure unseen lexical prompts; never auto-adjust aliases or assert calibrated accuracy."""
-    if not 1 <= top_k <= len(catalog):
+    """Audit raw top-k and evidence-supported advice separately on frozen cases."""
+    if not 1 <= top_k <= min(5, len(catalog)):
         raise RoutingInputError("top_k out of bounds")
     docs, idf = vectors(catalog)
     observations = []
     for case in cases:
         query = case["query"]
+        # The previous top-k measurement is retained, including the historical
+        # alphabetical fallback. Never silently rewrite that baseline.
+        advice = recommend(query, catalog, aliases, manifest, top_k=top_k)
+        supported = list(dict.fromkeys(
+            item["skill"] for part in advice["segments"]
+            for item in part["candidates"]
+        ))
+        supported_first = [part["candidates"][0]["skill"] for part in advice["segments"]
+                           if part["candidates"]]
         if case["kind"] == "compound":
-            advice = recommend(query, catalog, aliases, manifest, top_k=top_k)
             proposals = [item["skill"] for part in advice["segments"]
                          for item in part["candidates"]]
             found = all(skill in proposals for skill in case["expected"])
-            first = [part["candidates"][0]["skill"] for part in advice["segments"]
-                     if part["candidates"]]
+            first = supported_first
         else:
             order = ranking(query, catalog, docs, idf, aliases)
             proposals = order[:top_k]
@@ -337,19 +344,39 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
             first = proposals[:1]
         avoided = all(skill not in first for skill in case.get("avoid_top1", []))
         ok = found and avoided
+
+        supported_found = (all(skill in supported for skill in case["expected"])
+                           if case["kind"] == "compound"
+                           else any(skill in supported for skill in case["expected"]))
+        supported_avoided = all(skill not in supported_first
+                                for skill in case.get("avoid_top1", []))
+        supported_ok = supported_found and supported_avoided
         observations.append({
             "id": case["id"], "kind": case["kind"], "language": prompt_language(query),
             "expected": case["expected"], "forbidden_top1": case.get("avoid_top1", []),
             "top_choices": first, "candidates": proposals,
             "hit_at_k": found, "negative_control_ok": avoided, "pass": ok,
+            "supported_candidates": supported,
+            "supported_top_choices": supported_first,
+            "supported_hit_at_k": supported_found,
+            "supported_negative_control_ok": supported_avoided,
+            "supported_pass": supported_ok,
+            "abstained": not supported,
+            "unverified_fallback": ok and not supported_ok,
         })
-    grouped = {}
-    for group in ("single", "compound", "negative"):
-        items = [row for row in observations if row["kind"] == group]
-        grouped[group] = {
-            "cases": len(items), "passed": sum(row["pass"] for row in items),
+
+    def summary(items: list[dict]) -> dict:
+        return {
+            "cases": len(items),
+            "passed": sum(row["pass"] for row in items),
             "failed": sum(not row["pass"] for row in items),
+            "supported_passed": sum(row["supported_pass"] for row in items),
+            "supported_failed": sum(not row["supported_pass"] for row in items),
+            "recommended": sum(not row["abstained"] for row in items),
+            "abstained": sum(row["abstained"] for row in items),
+            "unverified_fallback": sum(row["unverified_fallback"] for row in items),
         }
+
     return {
         "classification": "untuned_holdout_diagnostic",
         "method": "lexical_ranker_not_semantic_model",
@@ -361,10 +388,21 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
         "count": len(observations),
         "passed": sum(row["pass"] for row in observations),
         "failed": sum(not row["pass"] for row in observations),
-        "by_kind": grouped,
+        "supported_passed": sum(row["supported_pass"] for row in observations),
+        "supported_failed": sum(not row["supported_pass"] for row in observations),
+        "abstained": sum(row["abstained"] for row in observations),
+        "unverified_fallback": sum(row["unverified_fallback"] for row in observations),
+        "by_kind": {kind: summary([row for row in observations if row["kind"] == kind])
+                    for kind in ("single", "compound", "negative")},
+        "by_language": {language: summary([row for row in observations
+                                          if row["language"] == language])
+                        for language in ("ru", "en")},
+        "limitations": (
+            "Legacy top-k and evidence-supported suggestions are distinct; "
+            "none of these counts measures calibrated semantic accuracy or client activation."
+        ),
         "observations": observations,
     }
-
 
 def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3,
              aliases: dict[str, list[str]] | None = None) -> dict:
