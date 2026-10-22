@@ -258,6 +258,9 @@ class BeginnerTaskRouteTests(unittest.TestCase):
                 for link in links:
                     with self.subTest(doc=path, link=link):
                         target = unquote(link.split("#", 1)[0])
+                        if not target:
+                            self.assertTrue(link.startswith("#"))
+                            continue
                         self.assertFalse(target.startswith(("/", "\\")))
                         self.assertNotIn(":", target)
                         file = (document.parent / target).resolve()
