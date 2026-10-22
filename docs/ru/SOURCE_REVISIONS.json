@@ -326,6 +326,11 @@
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
       "translation": "docs/ru/PROJECT_ADOPTION_PREFLIGHT.md",
       "source_sha256": "5706461ffd9e307c86149dcae9e61a33a85247313ddc563ec5d56e6555ab9a8b"
+    },
+    {
+      "source": "docs/PACKAGE_REPRODUCIBILITY.md",
+      "translation": "docs/ru/PACKAGE_REPRODUCIBILITY.md",
+      "source_sha256": "730b27d8a19e53de9f709c69d4445d0fac98faf21c8a2956ffb8c6254caa27d2"
     }
   ]
 }
