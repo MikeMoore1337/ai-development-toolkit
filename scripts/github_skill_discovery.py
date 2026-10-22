@@ -21,6 +21,7 @@ MAX_BYTES = 256 * 1024
 MAX_TREE_ENTRIES = 5000
 MAX_MATCHES = 20
 HEX = re.compile(r"[0-9a-f]{40}\Z")
+PATH_SEGMENT = re.compile(r"\.?[A-Za-z0-9][A-Za-z0-9_.-]{0,99}\Z")
 SAFE_SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,99}\Z")
 
 
@@ -85,7 +86,7 @@ def _skill_path(path: object) -> str | None:
     pieces = path.split("/")
     if not pieces or pieces[-1] != "SKILL.md":
         return None
-    if not all(SAFE_SEGMENT.fullmatch(x) and x not in {".", ".."} for x in pieces[:-1]):
+    if not all(PATH_SEGMENT.fullmatch(x) and x not in {".", ".."} for x in pieces[:-1]):
         return None
     return "/".join(pieces)
 
@@ -119,7 +120,7 @@ def discover(
     if len({source.lower() for source, _, _, _ in pins}) != len(pins):
         return {**base, "status": "REJECT", "reason": "DUPLICATE_SOURCE", "candidates": []}
     fetcher = _request if fetch_json is None else fetch_json
-    tokens = {t for t in re.findall(r"(?u)\b[\w-]{3,}\b", query.casefold())}
+    tokens = {t for t in re.findall(r"(?u)\w+", query.casefold().replace("-", " ").replace("_", " ")) if len(t) >= 2}
     candidates = []
     try:
         for url, owner, repo, commit_sha in pins:
@@ -142,8 +143,8 @@ def discover(
                 path = _skill_path(entry.get("path"))
                 if path is None:
                     continue
-                score = sum(1 for word in tokens
-                            if word in re.findall(r"(?u)[\w-]+", path.casefold()))
+                path_words = set(re.findall(r"(?u)\w+", path.casefold().replace("-", " ").replace("_", " ")))
+                score = len(tokens & path_words)
                 if score == 0:
                     continue
                 candidates.append({
