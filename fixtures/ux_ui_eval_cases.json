@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "new-site",
+      "request_en": "Create a product-specific mango storefront; show three distinct spatial sketches before choosing a direction.",
+      "request_ru": "Спроектируй магазин манго с тремя разными композициями и визуальной приёмкой до реализации.",
+      "needs_three": true,
+      "criteria": [
+        "product-fit",
+        "task-hierarchy",
+        "compositional-originality",
+        "cross-domain-swap",
+        "mobile-desktop",
+        "states",
+        "accessibility",
+        "motion",
+        "design-authority"
+      ],
+      "expected_gate": "HUMAN_VISUAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "substantial-redesign",
+      "request_en": "Redesign an existing training dashboard while preserving owner-approved brand and visual gates.",
+      "request_ru": "Существенно переработай экран тренировок, не меняя приложение до согласования трёх разных эскизов.",
+      "needs_three": true,
+      "criteria": [
+        "product-fit",
+        "task-hierarchy",
+        "compositional-originality",
+        "cross-domain-swap",
+        "mobile-desktop",
+        "states",
+        "accessibility",
+        "design-authority"
+      ],
+      "expected_gate": "HUMAN_VISUAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "minor-ui-fix",
+      "request_en": "Review a previously approved rest-timer alignment defect with reference captures, without inventing three redesigns.",
+      "request_ru": "Проверь локальный дефект выравнивания таймера на утверждённом экране без нового редизайна.",
+      "needs_three": false,
+      "criteria": [
+        "task-hierarchy",
+        "mobile-desktop",
+        "states",
+        "accessibility",
+        "design-authority"
+      ],
+      "expected_gate": "HUMAN_VISUAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "responsive-accessibility",
+      "request_en": "Review a responsive data-entry screen for keyboard focus, dynamic type, virtual keyboard, overflow and reduced motion.",
+      "request_ru": "Проверь адаптивность экрана ввода: фокус, клавиатуру, переполнение, состояния ошибок и уменьшение анимации.",
+      "needs_three": false,
+      "criteria": [
+        "mobile-desktop",
+        "states",
+        "accessibility",
+        "motion",
+        "design-authority"
+      ],
+      "expected_gate": "HUMAN_VISUAL_REVIEW_REQUIRED"
+    }
+  ]
+}
