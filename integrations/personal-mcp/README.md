@@ -42,3 +42,9 @@ Replace the sample checkout path with the location of the extracted package or r
 Finally restart Codex. Run `codex mcp get ai-development-toolkit`, then **actually invoke** `toolkit_info` and `toolkit_prepare_task` in Codex. Direct stdio diagnostics alone cannot prove Codex activation. Loaded instructions are not native installed skills or spawned agents. The updater refreshes **only Toolkit source**, not the MCP executable or ChatGPT plugin. Respect employer security restrictions and avoid connecting corporate repositories without permission.
 
 [Russian guide](README.ru.md) | [Comparison](../../docs/INTEGRATIONS.md)
+
+## Prompt refinement and SEO routing
+
+With an up-to-date Toolkit source, `toolkit_prepare_task` can select the `prompt-refinement` and `seo-audit` profiles from plain-language requests. For example, "write a good prompt for Codex from these notes" selects prompt export, while "audit my site's SEO" selects evidence-based SEO guidance. An ordinary "build a site" request **must be fulfilled**, not converted into a prompt for resubmission; new design remains subject to UX/UI approval.
+
+These are read-only **MCP routing and guidance** features: Codex must invoke the tools and perform actual project or website checks using its available permissions. A source-level or offline MCP test is not proof that the user’s Codex installation activated the new skills.

@@ -18,6 +18,16 @@ PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
 ROUTES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    # Only explicit prompt-writing requests use EXPORT_PROMPT; ordinary tasks remain actionable.
+    ('prompt-refinement', ('сделай промпт', 'составь промпт', 'напиши промпт',
+                           'улучши промпт', 'адаптируй промпт', 'перепиши промпт',
+                           'промпт для', 'хороший промпт', 'формулируй запрос для ии',
+                           'improve prompt', 'rewrite prompt', 'write a prompt',
+                           'create a prompt', 'prompt for', 'turn into a prompt')),
+    ('seo-audit', ('seo', 'сео', 'поисковая оптимизац', 'поисковую оптимизац',
+                   'сео аудит', 'индексац страниц', 'не индексируется',
+                   'indexability', 'search engine optimization', 'sitemap.xml',
+                   'robots.txt', 'canonical url')),
     ('ui-orchestra', ('ux audit', 'ui audit', 'ux/ui аудит', 'ui/ux аудит', 'аудит ux', 'аудит ui', 'design audit', 'design orchestra', 'аудит интерфейс', 'аудит дизай', 'оцени интерфейс', 'проверь дизайн', 'review ui')),
     ('ui-motion', ('animation', 'motion', 'анимац', 'переходы интерфейс')),
     ('ux-design', ('design landing', 'design screen', 'user flow', 'wireframe', 'нарисуй дизайн', 'дизайн лендинг', 'спроектируй интерфейс', 'проектировани ux')),
@@ -75,6 +85,8 @@ PRIORITY_SKILLS = {
     'qa-contract': ('contract-testing', 'integration-testing'),
     'qa-core': ('test-analysis-design', 'test-review', 'quality-gate-assessment'),
     'ui-orchestra': ('ux-ui-design-orchestra', 'design-system-consistency', 'screenshot-fidelity'),
+    'prompt-refinement': ('prompt-refinement',),
+    'seo-audit': ('seo-audit', 'research-verification'),
 }
 
 
@@ -332,6 +344,7 @@ class Toolkit:
                 'Never write Toolkit skills, roles, reports or caches into a corporate project by default.',
                 'If a native file-based installation is requested, preview Skill Manager changes and obtain explicit approval before --apply.',
                 'Do not claim success of tool execution or tests that were not performed.',
+                'Default FULFILL_REQUEST: perform the task in the available client; use EXPORT_PROMPT only if the user explicitly asks to write or improve a prompt.',
             ],
         }
 
