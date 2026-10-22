@@ -124,9 +124,90 @@ def surface_matches(path: str) -> dict[str, list[str]]:
     return matches
 
 
+MAPPING_MAX_BYTES = 131072
+ID_PATTERN = re.compile(r"[a-zA-Z][a-zA-Z0-9_.-]{0,79}\Z")
+TEST_REF_PATTERN = re.compile(r"[a-zA-Z0-9_./:-]{1,160}\Z")
+
+
+def load_test_map(path: Path) -> dict:
+    """Load bounded JSON; neither infer nor execute any test command."""
+    try:
+        with path.open("rb") as handle:
+            raw = handle.read(MAPPING_MAX_BYTES + 1)
+        if len(raw) > MAPPING_MAX_BYTES:
+            raise ImpactInputError("Test map too large")
+        data = json.loads(raw.decode("utf-8"))
+    except ImpactInputError:
+        raise
+    except (OSError, UnicodeError, ValueError) as exc:
+        raise ImpactInputError("Test map is unreadable or invalid JSON") from exc
+    return validate_test_map(data)
+
+
+def validate_test_map(data: dict) -> dict:
+    """Fail closed for optional project-owned mapping, including direct callers."""
+    if not isinstance(data, dict) or set(data) != {"schema_version", "entries"}:
+        raise ImpactInputError("Invalid test map schema")
+    entries = data["entries"]
+    if type(data["schema_version"]) is not int or data["schema_version"] != 1 or not isinstance(entries, list) or len(entries) > 100:
+        raise ImpactInputError("Invalid test map version or count")
+    seen = set()
+    for item in entries:
+        if not isinstance(item, dict) or set(item) != {
+            "id", "prefix", "check_ids", "test_ids", "requirement_ids"
+        }:
+            raise ImpactInputError("Invalid test mapping entry")
+        name, prefix = item["id"], item["prefix"]
+        if not isinstance(name, str) or not ID_PATTERN.fullmatch(name) or name in seen:
+            raise ImpactInputError("Invalid or duplicate mapping id")
+        seen.add(name)
+        if not isinstance(prefix, str) or not prefix.endswith("/"):
+            raise ImpactInputError("Mapping prefix must be a directory")
+        validate_paths([prefix[:-1]])
+        for key, allowed, max_count in (
+            ("check_ids", set(CHECKS), 12),
+            ("test_ids", None, 12),
+            ("requirement_ids", None, 12),
+        ):
+            vals = item[key]
+            if not isinstance(vals, list) or not vals or len(vals) > max_count:
+                raise ImpactInputError("Invalid or empty " + key)
+            if any(not isinstance(v, str) for v in vals) or len(set(vals)) != len(vals):
+                raise ImpactInputError("Invalid or duplicate " + key)
+            if allowed is not None and any(v not in allowed for v in vals):
+                raise ImpactInputError("Unknown QA check id")
+            if allowed is None and any(not TEST_REF_PATTERN.fullmatch(v)
+                                       or ".." in v or v.startswith("/") for v in vals):
+                raise ImpactInputError("Unsafe or invalid test/requirement reference")
+    return data
+
+
+def select_declared_tests(changed_paths: list[str], check_ids: set[str],
+                          declared: dict) -> list[dict]:
+    """Use exact path-prefix matches; do not assert that tests exist or run."""
+    selected = []
+    for item in declared["entries"]:
+        paths = sorted(p for p in changed_paths if p.startswith(item["prefix"]))
+        if not paths:
+            continue
+        for check_id in item["check_ids"]:
+            if check_id not in check_ids:
+                continue
+            for test_id in item["test_ids"]:
+                selected.append({
+                    "mapping_id": item["id"], "check_id": check_id,
+                    "test_id": test_id, "requirement_ids": item["requirement_ids"],
+                    "matched_paths": paths, "status": "NOT_RUN",
+                    "source": "OWNER_DECLARED_NOT_VERIFIED",
+                    "execution_receipt": None,
+                })
+    return sorted(selected, key=lambda x: (
+        x["check_id"], x["test_id"], x["mapping_id"]))
+
+
 def plan(paths: list[str], *, repository: str = "UNKNOWN",
          base: str = "UNKNOWN", head: str = "UNKNOWN",
-         source: str = "SUPPLIED_PATH_LIST") -> dict:
+         source: str = "SUPPLIED_PATH_LIST", test_map: dict | None = None) -> dict:
     paths = validate_paths(paths)
     if source not in ("SUPPLIED_PATH_LIST", "LOCAL_GIT_DIFF"):
         raise ImpactInputError("Unknown change source")
@@ -168,6 +249,9 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
             "test_command": None,
             "execution_receipt": None,
         })
+    declared_tests = (select_declared_tests(paths, set(checks), validate_test_map(test_map))
+                      if test_map is not None else [])
+    mapped_checks = {x["check_id"] for x in declared_tests}
     return {
         "schema_version": 1,
         "classification": "READ_ONLY_TEST_SELECTION",
@@ -178,6 +262,9 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
         "unmapped_paths": unknown,
         "required_critical_check_ids": sorted(cid for cid in checks if cid in CRITICAL_CHECKS),
         "recommendations": result,
+        "declared_test_candidates": declared_tests,
+        "unmapped_check_ids": sorted(set(checks) - mapped_checks),
+        "test_mapping_source": "OWNER_DECLARED_NOT_VERIFIED" if test_map is not None else "NONE",
         "gate": "INSUFFICIENT_EVIDENCE",
         "executed_tests": 0,
         "client_effectiveness": "NOT_TESTED",
@@ -186,6 +273,7 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
             "Recommended checks are NOT_RUN, never PASS; no CI, browser or production evidence",
             "Project policy, actual source diff, change intent and reviewers can require more checks",
             "No writes to target repository, installation, provider calls or paid APIs",
+            "Test references are declared by owner: existence, applicability and execution NOT_VERIFIED",
         ],
     }
 
@@ -198,6 +286,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--git-head", help="Exact SHA of changed revision, only with --git-base")
     p.add_argument("--root", type=Path, default=Path.cwd())
     p.add_argument("--repository", default="UNKNOWN")
+    p.add_argument("--test-map", type=Path, help="Optional owner-supplied, read-only test ID mapping JSON")
     p.add_argument("--output", type=Path, help="Write a new report file (never overwrite)")
     args = p.parse_args(argv)
     try:
@@ -205,9 +294,11 @@ def main(argv: list[str] | None = None) -> int:
             raise ImpactInputError("--git-base and --git-head must be supplied together")
         paths = (changed_paths_by_git(args.root.resolve(), args.git_base, args.git_head)
                  if args.git_base else validate_paths(args.paths))
+        declared = load_test_map(args.test_map) if args.test_map is not None else None
         report = plan(paths, repository=args.repository,
                       base=args.git_base or "UNKNOWN", head=args.git_head or "UNKNOWN",
-                      source="LOCAL_GIT_DIFF" if args.git_base else "SUPPLIED_PATH_LIST")
+                      source="LOCAL_GIT_DIFF" if args.git_base else "SUPPLIED_PATH_LIST",
+                      test_map=declared)
         payload = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         if args.output is None:
             print(payload, end="")

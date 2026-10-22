@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "fixture-workout-ui",
+      "prefix": "frontend/views/",
+      "check_ids": [
+        "ui-state",
+        "browser-flow"
+      ],
+      "test_ids": [
+        "tests/e2e/workout.spec.ts::restore_after_unlock"
+      ],
+      "requirement_ids": [
+        "FIXTURE-WORKOUT-RESTORE"
+      ]
+    },
+    {
+      "id": "fixture-api-schema",
+      "prefix": "backend/api/",
+      "check_ids": [
+        "api-contract",
+        "api-negative"
+      ],
+      "test_ids": [
+        "tests/contract/test_api_compat.py::test_backward_compatible"
+      ],
+      "requirement_ids": [
+        "FIXTURE-API-COMPAT"
+      ]
+    },
+    {
+      "id": "fixture-tenant-auth",
+      "prefix": "backend/auth/",
+      "check_ids": [
+        "auth-boundary",
+        "privacy-boundary"
+      ],
+      "test_ids": [
+        "tests/security/test_tenant.py::test_denied_other_tenant"
+      ],
+      "requirement_ids": [
+        "FIXTURE-TENANT-ISOLATION"
+      ]
+    },
+    {
+      "id": "fixture-db-migration",
+      "prefix": "backend/db/migrations/",
+      "check_ids": [
+        "db-migration",
+        "db-rollback"
+      ],
+      "test_ids": [
+        "tests/db/test_migrations.py::test_down_revision"
+      ],
+      "requirement_ids": [
+        "FIXTURE-MIGRATION-REVERSIBLE"
+      ]
+    },
+    {
+      "id": "fixture-hermes-queue",
+      "prefix": "src/queue/",
+      "check_ids": [
+        "async-replay"
+      ],
+      "test_ids": [
+        "tests/queue/test_replay.py::test_deduplicate"
+      ],
+      "requirement_ids": [
+        "FIXTURE-EVENT-IDEMPOTENCY"
+      ]
+    },
+    {
+      "id": "fixture-deployment",
+      "prefix": ".github/workflows/",
+      "check_ids": [
+        "deployment-safety"
+      ],
+      "test_ids": [
+        "tests/infra/test_release_policy.py::test_release_gate"
+      ],
+      "requirement_ids": [
+        "FIXTURE-RELEASE-POLICY"
+      ]
+    }
+  ]
+}

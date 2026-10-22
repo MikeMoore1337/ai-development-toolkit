@@ -9826,6 +9826,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Original Russian safe project adoption evidence guide; no private project records stored."
+    },
+    {
+      "id": "qa-191-fixtures-qa-change-impact-test-map-json",
+      "path": "fixtures/qa_change_impact_test_map.json",
+      "name": "qa_change_impact_test_map.json",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/QA_CHANGE_IMPACT.md",
+      "last_reviewed": "2026-10-22",
+      "distribution": "included",
+      "notes": "Synthetic opt-in declared test/requirement references, not existing tests in YFC/Hermes/Second Brain; no actual test execution (#191)."
     }
   ],
   "owner_review_record": {
