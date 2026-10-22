@@ -73,3 +73,17 @@ python scripts/skill_routing_eval.py --recommend "Audit SEO metadata and verify 
 The optional `--recommend` mode reuses the same lexical ranker. It provides matching description, name and alias tokens as evidence, associated profile names, available roles (not automatically selected), and additional candidates outside the top three. It heuristically splits at `and`, `и` or `;`, with at most three segments. No skill is installed, loaded by a client or executed.
 
 `confidence = NOT_CALIBRATED` is intentional: keyword overlap is not a probability of correctness. `client_skill_selection = NOT_OBSERVED` and `client_effectiveness = NOT_TESTED` remain explicit. An ambiguous or weakly supported suggestion is for human review.
+
+### Untuned holdout: cross-project prompts, not a publication threshold
+
+To measure routing beyond the examples used when curating aliases:
+
+```bash
+python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_holdout.json
+```
+
+**38 separately authored prompts:** 24 single-intent, 8 compound-intent, 6 negation-sensitive cases. They reference patterns from workout tracking, agent services, private notes and generic software delivery. The holdout is frozen independently of alias changes in this PR and is not used to optimize lexical triggers.
+
+The JSON report shows `hit_at_k`, avoidance of forbidden top-1 choices, passed/failed counts by request type and every observed recommendation. The benchmark is **diagnostic** (`strict_gate = false`); its score is not a model probability or proof of runtime activation. The expected labels were authored manually and have not been independently adjudicated. A failing query should be investigated and reported, not silently rewritten to produce 100%.
+
+CI prints this baseline separately from the original strict curated-fixture gate. Client integration and real-task acceptance still belong to #141.
