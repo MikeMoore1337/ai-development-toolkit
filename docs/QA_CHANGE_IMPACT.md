@@ -28,6 +28,12 @@ Each recommendation includes `changed_paths`, `risk`, `purpose`, `status = NOT_R
 
 The `fixtures/qa_change_impact_cases.json` cases are **synthetic** YFC/Hermes/Second Brain-like PR examples. Passing their oracles proves deterministic lower-bound check suggestions, *not* that those applications were accessed or their tests executed.
 
+## Persisted-state and dependent-consumer risk hints
+
+With `--inspect-diff`, added or removed markers such as `mutation_id`, `expected_version`, `request_fingerprint`, `is_completed` and version assignments produce the **PERSISTED_STATE** signal. It adds `state-integrity` (version, persistence and no-op-write invariants), `async-replay` (idempotency, retries and conflicts), and `consumer-review` (manual search for direct callers). API hints also add `consumer-review`. A token match is **not** proof of known consumers, database migrations, test results or a call graph.
+
+For example, a workout-set service change can affect an unchanged HTTP PATCH route, planned progression and frontend offline queue. Review such consumers **manually** and connect real tests and acceptance criteria through the separately approved test map. False positives are possible; application-level version assignments do not automatically require a migration or rollback. All recommended checks remain `NOT_RUN` until independently executed.
+
 ## Manual handoff
 
 Map `changed path → affected consumer/contract → failure mode → named test → oracle → status → receipt`. Use the project's QA orchestration and traceability flow if several boundaries are involved. Actual test execution and resulting PASS/FAIL must be recorded separately, against an exact commit and environment; do not overwrite NOT_RUN with an assumption.

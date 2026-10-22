@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from install import install, skill_sources
-from profile_metrics import measure, audit_exact_sources
+from profile_metrics import measure, audit_exact_sources, audit_directives
 from skill_manager import ManagerError, operate, read_state
 
 MANIFEST = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
@@ -127,6 +127,71 @@ class CuratedProfileTests(unittest.TestCase):
             (folders[1] / "SKILL.md").write_bytes(b"Different instructions")
             revised = audit_exact_sources(root, manifest)
             self.assertEqual(1, len(revised["byte_identical_groups"]))
+
+
+    def test_lexical_audit_is_deterministic_read_only_and_not_semantic(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            alpha = root / ".agents" / "skills" / "alpha"
+            beta = root / ".agents" / "skills" / "beta"
+            for folder in (alpha, beta):
+                (folder / "references").mkdir(parents=True)
+            shared = (
+                "Review each changed contract by checking original primary evidence "
+                "and tracing every dependent component carefully before changing "
+                "production operations or reporting a successful acceptance with "
+                "complete permission checks verified persistence tests and rollback plans."
+            )
+            near = shared.replace("successful acceptance", "final acceptance")
+            (alpha / "SKILL.md").write_text(
+                "---\nname: alpha\n---\n# Guide\n1. " + shared + "\n",
+                encoding="utf-8")
+            (beta / "SKILL.md").write_text(
+                "---\nname: beta\n---\n# Guide\n1. " + shared.swapcase() + "\n",
+                encoding="utf-8")
+            (beta / "references" / "guide.md").write_text(
+                "1. " + near + "\n", encoding="utf-8")
+            manifest = {
+                "core_skills": ["alpha", "beta"], "extension_skills": [],
+                "extension_packs": {}, "profiles": {"trial": ["alpha", "beta"]},
+            }
+            before = [(p, p.read_bytes()) for folder in (alpha, beta)
+                      for p in sorted(folder.rglob("*")) if p.is_file()]
+            report = audit_directives(root, manifest)
+            self.assertEqual(report, audit_directives(root, manifest))
+            self.assertEqual(3, report["sources_scanned"])
+            self.assertEqual(3, report["directive_lines_examined"])
+            self.assertEqual(1, len(report["normalized_exact_groups"]))
+            self.assertTrue(report["near_lexical_candidates"])
+            self.assertTrue(all(x["review_only"] for x in report["near_lexical_candidates"]))
+            self.assertEqual("NOT_VERIFIED", report["semantic_equivalence"])
+            self.assertEqual("NOT_MEASURED", report["model_tokens_saved"])
+            self.assertNotIn("primary evidence", str(report))
+            self.assertEqual(before, [(p, p.read_bytes()) for p, _ in before])
+
+    def test_lexical_audit_skips_short_lines_and_rejects_linked_sources(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            folder = root / ".agents" / "skills" / "alpha"
+            references = folder / "references"
+            references.mkdir(parents=True)
+            (folder / "SKILL.md").write_text(
+                "---\nname: alpha\n---\n# Guide\nKeep it short.\n",
+                encoding="utf-8")
+            manifest = {
+                "core_skills": ["alpha"], "extension_skills": [],
+                "extension_packs": {}, "profiles": {"trial": ["alpha"]},
+            }
+            report = audit_directives(root, manifest)
+            self.assertEqual(0, report["directive_lines_examined"])
+            self.assertEqual([], report["near_lexical_candidates"])
+            link = references / "linked.md"
+            try:
+                link.symlink_to(folder / "SKILL.md")
+            except (OSError, NotImplementedError):
+                self.skipTest("File symlinks unavailable")
+            with self.assertRaisesRegex(ValueError, "Linked"):
+                audit_directives(root, manifest)
 
     def test_both_client_previews_leave_files_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:

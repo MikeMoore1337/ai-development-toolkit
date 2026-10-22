@@ -100,7 +100,7 @@
     {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "79c0bcaa0549276b8e9647e3235c979440afaa387942cb3d230196fc1693af03"
+      "source_sha256": "3c27c4c360591380727c2b719d80a467fe554ddfb1ba0b46302eb1c729f8353e"
     },
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
@@ -115,7 +115,7 @@
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
       "translation": "docs/ru/SKILL_QUALITY_METRICS.md",
-      "source_sha256": "0a007abdf7594e653fe799e5881bf70a6ec8cd9edc38393d0a90eff9a6b78c72"
+      "source_sha256": "303086e57ea5ea91d6b65e347306d7854c80c89d5520a3c77c5ff89dfc474186"
     },
     {
       "source": "docs/PRODUCT_DISCOVERY.md",
@@ -320,7 +320,7 @@
     {
       "source": "docs/QA_CHANGE_IMPACT.md",
       "translation": "docs/ru/QA_CHANGE_IMPACT.md",
-      "source_sha256": "f87fe5f3fe5a08d240f8d98500400e07a3f279877eb133351dc6b9ef0117b4e0"
+      "source_sha256": "8cf0b7161f15e5086affdcbd0c7c8d6ac4d25f9ebf8c4f30089442e6d3ddc2d8"
     },
     {
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
