@@ -1008,6 +1008,246 @@
         "Review one failing unit test.",
         "Исследуй один падающий unit тест."
       ]
+    },
+    {
+      "id": "cross-language-ru-code-review",
+      "target": "code-review",
+      "positive": [
+        "Проведи ревью изменений исходного кода на корректность и риск регрессий.",
+        "Проверь diff реализации на ошибки и сопровождаемость."
+      ],
+      "negative": [
+        "Составь SEO аудит лендинга и метатеги.",
+        "Подготовь стратегию тестирования API."
+      ]
+    },
+    {
+      "id": "cross-language-ru-playwright-testing",
+      "target": "playwright-testing",
+      "positive": [
+        "Напиши тесты Playwright для браузера с ожиданиями и трассировкой.",
+        "Проверь через Playwright UI тесты с реальными скриншотами."
+      ],
+      "negative": [
+        "Подготовь документацию миграции базы данных.",
+        "Проанализируй лицензии внешнего навыка."
+      ]
+    },
+    {
+      "id": "cross-language-ru-state-management",
+      "target": "state-management",
+      "positive": [
+        "Исправь состояние React при асинхронных запросах и гонках данных.",
+        "Разбери управление состоянием фронтенда и старые ответы API."
+      ],
+      "negative": [
+        "Напиши статью для поисковой оптимизации.",
+        "Проверь права сторонней библиотеки."
+      ]
+    },
+    {
+      "id": "cross-language-ru-feature-delivery",
+      "target": "feature-delivery",
+      "positive": [
+        "Реализуй новую функцию приложения с проверкой критериев приемки.",
+        "Сделай доставку фичи от задачи до тестов и результата."
+      ],
+      "negative": [
+        "Проанализируй тарифы поставщиков LLM.",
+        "Оцени доступность дизайна по WCAG."
+      ]
+    },
+    {
+      "id": "cross-language-ru-skill-portability",
+      "target": "skill-portability",
+      "positive": [
+        "Перенеси SKILL.md в другого AI клиента с проверкой совместимости.",
+        "Проверь переносимость каталога навыков между Codex и Claude."
+      ],
+      "negative": [
+        "Оптимизируй SQL запросы сервиса.",
+        "Обнови зависимости Python проекта."
+      ]
+    },
+    {
+      "id": "cross-language-ru-clear-voice",
+      "target": "clear-voice",
+      "positive": [
+        "Перепиши рассылку человеческим языком без канцеляризмов.",
+        "Улучши естественность маркетингового текста без изменения фактов."
+      ],
+      "negative": [
+        "Исправь SQL миграцию базы данных.",
+        "Напиши API тесты."
+      ]
+    },
+    {
+      "id": "cross-language-ru-test-strategy",
+      "target": "test-strategy",
+      "positive": [
+        "Выбери стратегию тестирования сервиса по рискам и уровням.",
+        "Разработай test strategy с нужным покрытием компонентов."
+      ],
+      "negative": [
+        "Реализуй анимацию кнопки.",
+        "Сделай SEO аудит лендинга."
+      ]
+    },
+    {
+      "id": "cross-language-ru-product-discovery",
+      "target": "product-discovery",
+      "positive": [
+        "Подготовь PRD и сформулируй MVP, гипотезы и метрики успеха.",
+        "Проведи исследование продукта и целевой аудитории до реализации."
+      ],
+      "negative": [
+        "Исправь баг Python API.",
+        "Проверь нестабильный pytest тест."
+      ]
+    },
+    {
+      "id": "cross-language-ru-failure-triage",
+      "target": "failure-triage",
+      "positive": [
+        "Разбери упавший тест CI по логам и классифицируй причину.",
+        "Проведи triage падения пайплайна перед исправлением."
+      ],
+      "negative": [
+        "Напиши новый UI компонент React.",
+        "Подготовь стратегию тестирования."
+      ]
+    },
+    {
+      "id": "cross-language-ru-test-review",
+      "target": "test-review",
+      "positive": [
+        "Проверь качество проверок автотестов и корректность оракулов.",
+        "Проведи ревью тестов на ложноположительный зеленый результат."
+      ],
+      "negative": [
+        "Разработай новую API схему.",
+        "Оптимизируй запрос базы данных."
+      ]
+    },
+    {
+      "id": "cross-language-ru-project-delivery-management",
+      "target": "project-delivery-management",
+      "positive": [
+        "Составь план доставки проекта по зависимостям и рискам.",
+        "Управляй этапами поставки задач из PRD и статусами."
+      ],
+      "negative": [
+        "Исправь анимацию React.",
+        "Разбери ошибку pytest."
+      ]
+    },
+    {
+      "id": "cross-language-ru-ai-engineering-qa",
+      "target": "ai-engineering-qa",
+      "positive": [
+        "Разработай QA оценку RAG ответов и регрессию промптов LLM.",
+        "Проверь tool calling AI агента на неправильные обращения к инструментам."
+      ],
+      "negative": [
+        "Напиши обычные HTTP API тесты.",
+        "Исправь CSS разметку."
+      ]
+    },
+    {
+      "id": "cross-language-ru-reliability-testing",
+      "target": "reliability-testing",
+      "positive": [
+        "Проверь надежность событий с повторами, идемпотентностью и восстановлением.",
+        "Разработай тесты устойчивости к сбоям и потерянным подтверждениям."
+      ],
+      "negative": [
+        "Создай компонент формы React.",
+        "Улучши текст рассылки."
+      ]
+    },
+    {
+      "id": "cross-language-ru-devops-infrastructure",
+      "target": "devops-infrastructure",
+      "positive": [
+        "Проверь DevOps инфраструктуру, IaC и CI CD пайплайны.",
+        "Спроектируй деплой через контейнеры с инфраструктурными правилами."
+      ],
+      "negative": [
+        "Напиши пользовательский текст интерфейса.",
+        "Проверь формы в React."
+      ]
+    },
+    {
+      "id": "cross-language-en-accessibility-testing",
+      "target": "accessibility-testing",
+      "positive": [
+        "Audit keyboard focus, screen reader announcements and WCAG accessibility requirements.",
+        "Design accessibility tests for a mobile interface with keyboard navigation."
+      ],
+      "negative": [
+        "Fix a SQL transaction error.",
+        "Plan a batch ETL pipeline."
+      ]
+    },
+    {
+      "id": "cross-language-en-flaky-analysis",
+      "target": "flaky-analysis",
+      "positive": [
+        "Investigate flaky tests that fail intermittently on CI with random timing.",
+        "Analyze nondeterministic test failures and isolate retry-based false positives."
+      ],
+      "negative": [
+        "Build a visual design system.",
+        "Review an API schema specification."
+      ]
+    },
+    {
+      "id": "cross-language-en-observability-sre",
+      "target": "observability-sre",
+      "positive": [
+        "Improve system observability with traces, logs, alerting and SRE error budgets.",
+        "Diagnose an incident with telemetry dashboards and distributed traces."
+      ],
+      "negative": [
+        "Draft an onboarding illustration.",
+        "Rewrite a marketing announcement."
+      ]
+    },
+    {
+      "id": "cross-language-en-prompt-refinement",
+      "target": "prompt-refinement",
+      "positive": [
+        "Rewrite a vague prompt into a precise task with success criteria and constraints.",
+        "Refine an unclear LLM instruction with an explicit output contract."
+      ],
+      "negative": [
+        "Optimize a database query.",
+        "Fix CSS layout."
+      ]
+    },
+    {
+      "id": "cross-language-en-seo-audit",
+      "target": "seo-audit",
+      "positive": [
+        "Audit search engine optimization, canonical links, crawlability and page metadata.",
+        "Review SEO indexing and search traffic issues on a website."
+      ],
+      "negative": [
+        "Repair a backend worker queue.",
+        "Create QA test fixtures."
+      ]
+    },
+    {
+      "id": "cross-language-en-ux-ui-design-orchestra",
+      "target": "ux-ui-design-orchestra",
+      "positive": [
+        "Coordinate UX UI design exploration with multiple distinct visuals and approval before implementation.",
+        "Use design orchestration to critique three mockups for a new website."
+      ],
+      "negative": [
+        "Improve SQL query performance.",
+        "Investigate a failed backend test."
+      ]
     }
   ]
 }
