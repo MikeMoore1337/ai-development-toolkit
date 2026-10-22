@@ -31,3 +31,18 @@ The `fixtures/qa_change_impact_cases.json` cases are **synthetic** YFC/Hermes/Se
 ## Manual handoff
 
 Map `changed path → affected consumer/contract → failure mode → named test → oracle → status → receipt`. Use the project's QA orchestration and traceability flow if several boundaries are involved. Actual test execution and resulting PASS/FAIL must be recorded separately, against an exact commit and environment; do not overwrite NOT_RUN with an assumption.
+
+
+## Optional mapping to project-owned test and requirement IDs
+
+For projects that already maintain a test/requirements inventory, provide an **explicit, separately reviewed** JSON mapping:
+
+```bash
+python scripts/qa_change_impact.py --paths frontend/views/workout.tsx backend/api/schema.py --test-map fixtures/qa_change_impact_test_map.json
+```
+
+The optional map uses schema version 1 and `entries` with an `id`, a **directory prefix** (`frontend/views/`), `check_ids` (from the existing QA check catalog), `test_ids` (symbolic references), and `requirement_ids` (project-owned IDs). A bounded exact directory-prefix match is required; no regular expressions, shell commands, executable hooks, remote fetches or automatically generated test IDs are accepted.
+
+The additional `declared_test_candidates` contain the mapping ID, test ID, requirement IDs, matched changed paths, and explicit `NOT_RUN` / `OWNER_DECLARED_NOT_VERIFIED`. The `unmapped_check_ids` list identifies recommended checks with **no declared mapping**. Neither mapping entry existence nor syntactic validation proves a test exists, is relevant, or has passed. All critical checks from the original risk plan remain mandatory; the map can never suppress them.
+
+The supplied `fixtures/qa_change_impact_test_map.json` is **synthetic only**: its test IDs and acceptance IDs are not claims about YFC, Hermes or Second Brain. A real project's owner must approve a local mapping and inspect actual test files, changed behavior and AC before assigning work. Never treat declared tests as execution evidence or bypass protected project release rules.
