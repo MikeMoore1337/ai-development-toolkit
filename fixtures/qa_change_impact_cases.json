@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "kind": "synthetic_read_only_change_impact_goldens",
+  "caveat": "Expected checks are lower bounds for rule fixtures, not results of real project tests or reviewed production diffs.",
+  "cases": [
+    {
+      "id": "yfc-workout-ui",
+      "changed_paths": [
+        "frontend/components/workout/SetForm.tsx"
+      ],
+      "required_checks": [
+        "ui-state",
+        "browser-flow"
+      ]
+    },
+    {
+      "id": "yfc-auth-api",
+      "changed_paths": [
+        "backend/api/auth/session.py"
+      ],
+      "required_checks": [
+        "auth-boundary",
+        "privacy-boundary",
+        "api-negative",
+        "api-contract"
+      ]
+    },
+    {
+      "id": "yfc-migration",
+      "changed_paths": [
+        "backend/db/migrations/0040_exercise.sql"
+      ],
+      "required_checks": [
+        "db-migration",
+        "db-rollback"
+      ]
+    },
+    {
+      "id": "hermes-worker",
+      "changed_paths": [
+        "src/queue/consumer.py"
+      ],
+      "required_checks": [
+        "async-replay"
+      ]
+    },
+    {
+      "id": "hermes-secrets",
+      "changed_paths": [
+        "src/security/secrets.py"
+      ],
+      "required_checks": [
+        "auth-boundary",
+        "privacy-boundary"
+      ]
+    },
+    {
+      "id": "brain-data",
+      "changed_paths": [
+        "app/database/models.py"
+      ],
+      "required_checks": [
+        "db-migration",
+        "db-rollback"
+      ]
+    },
+    {
+      "id": "cross-layer-contract",
+      "changed_paths": [
+        "frontend/screens/Workout.tsx",
+        "backend/api/schema.py",
+        "backend/db/migrations/011.sql"
+      ],
+      "required_checks": [
+        "cross-layer",
+        "api-contract",
+        "db-migration",
+        "db-rollback",
+        "ui-state"
+      ]
+    },
+    {
+      "id": "infra-deploy",
+      "changed_paths": [
+        ".github/workflows/release.yml",
+        "infra/docker/compose.yml"
+      ],
+      "required_checks": [
+        "deployment-safety"
+      ]
+    },
+    {
+      "id": "docs-only",
+      "changed_paths": [
+        "docs/architecture/OVERVIEW.md"
+      ],
+      "required_checks": [
+        "unmapped-impact"
+      ]
+    },
+    {
+      "id": "unknown",
+      "changed_paths": [
+        "misc/custom_extension.xyz"
+      ],
+      "required_checks": [
+        "unmapped-impact"
+      ]
+    },
+    {
+      "id": "api-contract",
+      "changed_paths": [
+        "server/openapi/schema.yaml"
+      ],
+      "required_checks": [
+        "api-contract",
+        "api-negative"
+      ]
+    },
+    {
+      "id": "private-vault",
+      "changed_paths": [
+        "src/vault/personal_data.py"
+      ],
+      "required_checks": [
+        "auth-boundary",
+        "privacy-boundary"
+      ]
+    }
+  ]
+}
