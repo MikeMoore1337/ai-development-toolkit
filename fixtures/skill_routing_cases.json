@@ -528,6 +528,246 @@
         "Fix a frontend CSS margin.",
         "Исправь отступ CSS в интерфейсе."
       ]
+    },
+    {
+      "id": "bilingual-domain-api-design",
+      "target": "api-design",
+      "positive": [
+        "Specify HTTP API request and response contracts while preserving existing clients.",
+        "Спроектируй контракт серверного HTTP API со схемами запросов и ответов."
+      ],
+      "negative": [
+        "Audit CSS animation timings.",
+        "Проверь длительность CSS анимаций."
+      ]
+    },
+    {
+      "id": "bilingual-domain-authentication-authorization",
+      "target": "authentication-authorization",
+      "positive": [
+        "Implement resource authorization and tenant isolation for authenticated backend requests.",
+        "Настрой авторизацию ресурсов и изоляцию арендаторов в backend."
+      ],
+      "negative": [
+        "Rewrite a public support announcement.",
+        "Перепиши сообщение службы поддержки."
+      ]
+    },
+    {
+      "id": "bilingual-domain-background-processing",
+      "target": "background-processing",
+      "positive": [
+        "Implement asynchronous worker queue jobs with retries and duplicate event handling.",
+        "Реализуй фоновую очередь задач и воркеры с повторными попытками."
+      ],
+      "negative": [
+        "Compare a design mockup against a screenshot.",
+        "Сравни макет дизайна со скриншотом."
+      ]
+    },
+    {
+      "id": "bilingual-domain-data-access",
+      "target": "data-access",
+      "positive": [
+        "Optimize SQL data access queries and transaction invariants for concurrent writes.",
+        "Оптимизируй запросы слоя доступа к данным и конкурентные транзакции."
+      ],
+      "negative": [
+        "Create new user onboarding copy.",
+        "Напиши текст для onboarding пользователя."
+      ]
+    },
+    {
+      "id": "bilingual-domain-service-architecture",
+      "target": "service-architecture",
+      "positive": [
+        "Redesign backend service ownership and module dependencies without circular imports.",
+        "Пересмотри границы сервисной архитектуры backend и зависимости модулей."
+      ],
+      "negative": [
+        "Test accessibility of a modal dialog.",
+        "Проверь доступность модального окна."
+      ]
+    },
+    {
+      "id": "bilingual-domain-data-engineering",
+      "target": "data-engineering",
+      "positive": [
+        "Design incremental ETL pipelines with lineage, quality checks and reproducible backfills.",
+        "Создай ETL конвейер данных с инкрементальными загрузками и проверкой качества."
+      ],
+      "negative": [
+        "Fix an ordinary SQL query in a REST handler.",
+        "Исправь SQL запрос REST обработчика."
+      ]
+    },
+    {
+      "id": "bilingual-domain-ux-design-process",
+      "target": "ux-design-process",
+      "positive": [
+        "Plan UX user journeys, wireframes and handoff contracts from product requirements.",
+        "Спроектируй пользовательский путь UX и прототипы экранов на основе требований."
+      ],
+      "negative": [
+        "Optimize a Postgres query with EXPLAIN.",
+        "Оптимизируй запрос Postgres через EXPLAIN."
+      ]
+    },
+    {
+      "id": "bilingual-domain-component-architecture",
+      "target": "component-architecture",
+      "positive": [
+        "Refactor reusable frontend components and their composition boundaries.",
+        "Спроектируй архитектуру переиспользуемых UI компонентов и их композицию."
+      ],
+      "negative": [
+        "Add an index to a database table.",
+        "Добавь индекс таблицы базы данных."
+      ]
+    },
+    {
+      "id": "bilingual-domain-forms-validation",
+      "target": "forms-validation",
+      "positive": [
+        "Implement client-side form validation with accessible error feedback and submit behavior.",
+        "Настрой валидацию форм и отображение ошибок ввода пользователя."
+      ],
+      "negative": [
+        "Evaluate LLM provider free-tier costs.",
+        "Оцени бесплатные тарифы LLM."
+      ]
+    },
+    {
+      "id": "bilingual-domain-frontend-api-integration",
+      "target": "frontend-api-integration",
+      "positive": [
+        "Connect a frontend screen to an existing REST API including nullability and pagination.",
+        "Подключи фронтенд экран к API, обработай пагинацию и пустые ответы."
+      ],
+      "negative": [
+        "Review the external skill's license.",
+        "Проверь лицензию внешнего навыка."
+      ]
+    },
+    {
+      "id": "bilingual-domain-frontend-performance",
+      "target": "frontend-performance",
+      "positive": [
+        "Investigate slow page rendering and compare frontend bundle and Web Vitals metrics.",
+        "Исследуй производительность фронтенда, размеры бандла и Core Web Vitals."
+      ],
+      "negative": [
+        "Review a migration rollback plan for the database.",
+        "Проверь откат миграции базы данных."
+      ]
+    },
+    {
+      "id": "bilingual-domain-cross-layer-debugging",
+      "target": "cross-layer-debugging",
+      "positive": [
+        "Debug a defect spanning React UI, backend service and database state.",
+        "Найди ошибку между UI, backend API и базой данных при сохранении формы."
+      ],
+      "negative": [
+        "Improve a README's writing style.",
+        "Улучши стиль README."
+      ]
+    },
+    {
+      "id": "bilingual-domain-end-to-end-feature-design",
+      "target": "end-to-end-feature-design",
+      "positive": [
+        "Design a complete vertical feature across screens API services and persistence before coding.",
+        "Спроектируй вертикальную функцию целиком от экрана до API и хранения без реализации."
+      ],
+      "negative": [
+        "Run an existing Playwright regression test.",
+        "Запусти существующий Playwright тест."
+      ]
+    },
+    {
+      "id": "bilingual-domain-fullstack-integration",
+      "target": "fullstack-integration",
+      "positive": [
+        "Align frontend API service and storage contracts for an implemented fullstack feature.",
+        "Согласуй контракты интеграции frontend backend и базы данных в готовой функции."
+      ],
+      "negative": [
+        "Draft a new product vision document.",
+        "Составь видение продукта."
+      ]
+    },
+    {
+      "id": "bilingual-domain-make-feature",
+      "target": "make-feature",
+      "positive": [
+        "Build an entire new function from a short product request, tracking decisions and checking the result.",
+        "Сделай мне новую функцию по короткому запросу, сохрани решения и проверь результат."
+      ],
+      "negative": [
+        "Patch one already-scoped import error.",
+        "Исправь уже описанную ошибку импорта."
+      ]
+    },
+    {
+      "id": "bilingual-domain-dependency-maintenance",
+      "target": "dependency-maintenance",
+      "positive": [
+        "Review a dependency version upgrade, transitive packages, advisories and lockfile rollback.",
+        "Проверь обновление зависимостей и lockfile с анализом уязвимостей и отката."
+      ],
+      "negative": [
+        "Design a new UI dashboard layout.",
+        "Спроектируй новый дашборд."
+      ]
+    },
+    {
+      "id": "bilingual-domain-maintenance-support",
+      "target": "maintenance-support",
+      "positive": [
+        "Triage a customer support report, deduplicate issues and publish accurate fix status.",
+        "Разбери обращение поддержки, дубликаты багов и сообщи статус исправления."
+      ],
+      "negative": [
+        "Implement a new OAuth endpoint.",
+        "Реализуй новый OAuth endpoint."
+      ]
+    },
+    {
+      "id": "bilingual-domain-performance-load-testing",
+      "target": "performance-load-testing",
+      "positive": [
+        "Plan a bounded load test with request throughput, latency budgets and error rates.",
+        "Подготовь нагрузочное тестирование сервиса с RPS, задержкой и процентом ошибок."
+      ],
+      "negative": [
+        "Inspect a single button's CSS animation.",
+        "Изучи CSS анимацию одной кнопки."
+      ]
+    },
+    {
+      "id": "bilingual-domain-api-testing",
+      "target": "api-testing",
+      "positive": [
+        "Design HTTP endpoint tests for status codes, validation errors and response contracts.",
+        "Составь API тесты на HTTP статус, ошибки валидации и контракт ответа."
+      ],
+      "negative": [
+        "Optimize frontend image loading.",
+        "Оптимизируй загрузку изображений фронтенда."
+      ]
+    },
+    {
+      "id": "bilingual-domain-change-impact-analysis",
+      "target": "change-impact-analysis",
+      "positive": [
+        "Trace a changed shared module to affected API contracts, callers and regression tests.",
+        "Оцени влияние изменения общего модуля на контракты и регрессионные тесты."
+      ],
+      "negative": [
+        "Improve professional Russian style for a letter.",
+        "Улучши стиль делового письма."
+      ]
     }
   ]
 }
