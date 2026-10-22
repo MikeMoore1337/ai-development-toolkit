@@ -143,6 +143,53 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual(0, report["coverage"]["languages"]["ru"]["tested_target_count"])
         self.assertEqual(1, report["coverage"]["languages"]["en"]["tested_target_count"])
 
+    def test_recommend_compound_request_shows_evidence_without_execution(self):
+        catalog = {
+            "seo-audit": "Review SEO crawlability, indexing and metadata.",
+            "contract-testing": "Check compatibility of API contracts and schemas.",
+            "code-review": "Review a source code diff.",
+        }
+        aliases = {
+            "seo-audit": ["seo аудит сайта индексация"],
+            "contract-testing": ["api контракты схемы совместимость"],
+        }
+        manifest = {
+            "profiles": {"qa-api": ["contract-testing"], "seo": ["seo-audit"]},
+            "core_roles": ["reviewer"],
+            "extension_packs": {"qa": {"roles": ["test-designer"]}},
+        }
+        result = routing.recommend(
+            "SEO аудит сайта и API контракты схемы",
+            catalog, aliases, manifest, top_k=2,
+        )
+        self.assertEqual("NOT_CALIBRATED", result["confidence"])
+        self.assertEqual("NOT_OBSERVED", result["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", result["client_effectiveness"])
+        self.assertFalse(result["installs_or_executes"])
+        self.assertEqual(2, len(result["segments"]))
+        self.assertTrue(result["multiple_distinct_intents"])
+        first, second = result["segments"]
+        self.assertEqual("seo-audit", first["candidates"][0]["skill"])
+        self.assertEqual("contract-testing", second["candidates"][0]["skill"])
+        self.assertTrue(first["candidates"][0]["evidence"]["alias_tokens"])
+        self.assertIn("qa-api", second["candidates"][0]["candidate_profiles"])
+        self.assertIn("test-designer", result["available_roles_not_automatically_selected"])
+
+    def test_recommend_weak_evidence_does_not_claim_confidence(self):
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        result = routing.recommend(
+            "unknownplaceholderword", self.catalog, {}, manifest, top_k=2,
+        )
+        self.assertEqual("INSUFFICIENT_EVIDENCE", result["segments"][0]["status"])
+        self.assertEqual("WEAK", result["segments"][0]["candidates"][0]["lexical_support"])
+        self.assertEqual("NOT_CALIBRATED", result["confidence"])
+
+    def test_recommend_invalid_input_fails_closed(self):
+        with self.assertRaises(routing.RoutingInputError):
+            routing.recommend(" ", self.catalog, {}, {}, top_k=1)
+        with self.assertRaises(routing.RoutingInputError):
+            routing.recommend("valid request", self.catalog, {}, {}, top_k=8)
+
     def test_deterministic_results(self):
         first = routing.evaluate(self.catalog, self.cases)
         self.assertEqual(first, routing.evaluate(self.catalog, self.cases))

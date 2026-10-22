@@ -63,3 +63,13 @@ The JSON report distinguishes `coverage.catalog_total`, `coverage.curated_target
 The current curated corpus contains **104 target cases** for **all 82 declared skills**, with at least one positive and negative prompt for each target in **both Russian and English**. This is fixture *inventory coverage*, not independently measured semantic accuracy: the regression corpus and lexical alias hints were written together. Other paraphrases and mixed-intent requests are not automatically covered.
 
 `client_skill_selection = NOT_OBSERVED` and `client_effectiveness = NOT_TESTED` separate offline lexical fixtures from real Codex/ChatGPT/Claude behavior. Real client testing, independent holdout tasks, and end-to-end effectiveness still require evidence under [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
+
+### Read-only recommendations for compound tasks
+
+```bash
+python scripts/skill_routing_eval.py --recommend "Audit SEO metadata and verify API contracts"
+```
+
+The optional `--recommend` mode reuses the same lexical ranker. It provides matching description, name and alias tokens as evidence, associated profile names, available roles (not automatically selected), and additional candidates outside the top three. It heuristically splits at `and`, `и` or `;`, with at most three segments. No skill is installed, loaded by a client or executed.
+
+`confidence = NOT_CALIBRATED` is intentional: keyword overlap is not a probability of correctness. `client_skill_selection = NOT_OBSERVED` and `client_effectiveness = NOT_TESTED` remain explicit. An ambiguous or weakly supported suggestion is for human review.
