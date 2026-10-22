@@ -50,60 +50,7 @@ Last published tag: [v5.5.3](https://github.com/MikeMoore1337/ai-development-too
 
     ```powershell
     $tag = "vX.Y.Z"
-    if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+ "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
-    if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
-    if ((git rev-parse HEAD).Trim() -cne $sha) { throw "RELEASE_WRONG_HEAD_SHA" }
-    $taggedManifest = git show "${sha}:MANIFEST.json" | ConvertFrom-Json
-    if ($taggedManifest.version -cne $tag.Substring(1)) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
-    ```
-
-    Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse any previously published tag.
-12. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
-    release notes describing changes and compatibility, and verify that the
-    public archive contains the expected artifacts. Never describe a tagged
-    release as tested on real agents without actual evaluation records.
-
-For the current Ruleset configuration, see [branch protection](BRANCH_PROTECTION.md).
-Skills' structure is checked in CI, but real-agent portability and effectiveness
-are separate experimental claims.
-
-## Independent verification of a GitHub source archive
-
-Before publishing a new release, download the actual GitHub-generated ZIP and
-extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
-For example, on Windows (replace the tag for the release under review):
-
-```powershell
-$tag = "vX.Y.Z"
-$zip = Join-Path $env:TEMP "adt-$tag.zip"
-$dest = Join-Path $env:TEMP "adt-$tag-source"
-if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
-Invoke-WebRequest "https://github.com/MikeMoore1337/ai-development-toolkit/archive/refs/tags/$tag.zip" -OutFile $zip
-Expand-Archive -LiteralPath $zip -DestinationPath $dest
-$root = Get-ChildItem $dest -Directory | Select-Object -First 1
-python scripts/verify_checksums.py --archive-root $root.FullName
-$manifest = Get-Content (Join-Path $root.FullName "MANIFEST.json") -Raw | ConvertFrom-Json
-if ("v$($manifest.version)" -cne $tag) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
-```
-
-The archive check compares SHA256 values **and requires every extracted source
-file to appear exactly once** in `SHA256SUMS.txt`. It rejects missing, extra,
-linked and unlisted files. Git worktree mode uses `git ls-files -z` for the
-canonical tracked inventory, so new tracked files also require checksums.
-
-This does not authenticate the download or prove publisher identity: verify
-the intended tag commit and GitHub workflow results separately. Publication
-requires a real execution record for archive verification; merely documenting
-this procedure is not evidence that the archive was downloaded.
-
-After publication, the GitHub Actions `Verify release source archive` workflow
-runs for a pushed release tag and for `release: published`. It can also be triggered manually
-with a valid `vX.Y.Z` tag. Review the completed job and its
-`release-source-verification` artifact before declaring archive acceptance.
-This workflow checks actual downloaded bytes and rejects a mismatched `MANIFEST.json.version` versus tag. **It runs after a tag event and cannot undo an incorrect release already created.**
-
-New tagged archives are checked against the provenance release gate after SHA verification. Historic archives without the provenance script are reported as `NOT_VERIFIED` for licensing while retaining their independent checksum verification; they are never retroactively considered cleared for redistribution.
-) { throw "RELEASE_TAG_NOT_SELECTED" }
+    if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw "RELEASE_TAG_NOT_SELECTED" }
     if (git tag --list $tag) { throw "RELEASE_TAG_EXISTS_LOCALLY" }
     $sha = "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
     if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
@@ -112,7 +59,7 @@ New tagged archives are checked against the provenance release gate after SHA ve
     if ($taggedManifest.version -cne $tag.Substring(1)) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
     ```
 
-    Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse `v5.5.0`/`v5.5.1`.
+    Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse any previously published tag.
 12. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
     release notes describing changes and compatibility, and verify that the
     public archive contains the expected artifacts. Never describe a tagged
