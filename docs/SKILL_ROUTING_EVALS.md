@@ -2,7 +2,7 @@
 
 [Русская версия](ru/SKILL_ROUTING_EVALS.md) | [Agent Skills specification](AGENT_SKILLS_SPEC.md) | [Real-agent evaluation](SKILL_EVALS.md)
 
-This **zero-cost lexical diagnostic** compares natural-language requests against the `name` and `description` frontmatter of **all 66 declared skills** in `MANIFEST.json`. It is inspired by the layered evaluation methodology in [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills), not a copy of that implementation. No external repository code was imported.
+This **zero-cost lexical diagnostic** compares natural-language requests against the `name` and `description` frontmatter of **all skills declared in `MANIFEST.json`**. Catalog size is computed dynamically; a skill is not considered tested merely because it can be ranked. It is inspired by the layered evaluation methodology in [Addy Osmani's agent-skills](https://github.com/addyosmani/agent-skills), not a copy of that implementation. No external repository code was imported.
 
 ```bash
 python scripts/skill_routing_eval.py --strict
@@ -53,3 +53,11 @@ For each case, record **routing** (whether the intended skill was actually selec
 | QA-N07 | "Launch eleven QA agents for this tiny typo" | Chooses a proportionate workflow; role descriptions do not imply running subagents |
 
 Re-run the changed case and one adjacent case when changing skill descriptions or routing rules. Manual trial results remain `NOT_MEASURED` until actual observations are recorded. See [Curated QA methods](CURATED_SKILL_PACKS.md#optional-advanced-qa-methods) for conditional testing techniques.
+
+### Catalog coverage and Russian-language routing
+
+Manually curated Russian lexical hints live in [skill_routing_aliases.json](../fixtures/skill_routing_aliases.json). They are not semantic model embeddings or guarantees of multilingual understanding.
+
+The JSON report distinguishes `coverage.catalog_total`, `coverage.curated_targets`, `coverage.uncovered_targets` and positive/negative cases by language in `coverage.languages`. Russian classification based on Cyrillic letters is a heuristic.
+
+`client_skill_selection = NOT_OBSERVED` and `client_effectiveness = NOT_TESTED` separate offline lexical fixtures from real Codex/ChatGPT/Claude behavior. Untested skills remain explicitly uncovered; real-client evaluation belongs to [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
