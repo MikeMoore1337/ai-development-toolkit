@@ -46,3 +46,18 @@ The optional map uses schema version 1 and `entries` with an `id`, a **directory
 The additional `declared_test_candidates` contain the mapping ID, test ID, requirement IDs, matched changed paths, and explicit `NOT_RUN` / `OWNER_DECLARED_NOT_VERIFIED`. The `unmapped_check_ids` list identifies recommended checks with **no declared mapping**. Neither mapping entry existence nor syntactic validation proves a test exists, is relevant, or has passed. All critical checks from the original risk plan remain mandatory; the map can never suppress them.
 
 The supplied `fixtures/qa_change_impact_test_map.json` is **synthetic only**: its test IDs and acceptance IDs are not claims about YFC, Hermes or Second Brain. A real project's owner must approve a local mapping and inspect actual test files, changed behavior and AC before assigning work. Never treat declared tests as execution evidence or bypass protected project release rules.
+
+
+## Optional bounded inspection of changed source lines
+
+For a *local repository with both full commit SHAs*, opt in to the bounded text-diff heuristic:
+
+```bash
+python scripts/qa_change_impact.py --root /path/to/repo --git-base BASE_40_SHA --git-head HEAD_40_SHA --inspect-diff
+```
+
+The script uses Git's built-in diff with external diffs, textconv, color and rename detection disabled, up to **256 KiB** of UTF-8 patch data. It recognizes narrow tokens in added/removed lines (API endpoints, authorization, SQL migration, UI state, background jobs, privacy and deploy controls). Only per-file counts and *surface categories* are returned - **never changed source text, matched values or credentials**. Unknown or binary files require manual investigation. Oversized or malformed patches fail closed.
+
+The optional `diff_content` section reports `LOCAL_PATCH_TOKEN_HINTS_ONLY`. These content hints may **add** recommended checks, but cannot suppress checks inferred from paths or satisfy required CI. The resulting checks still show `NOT_RUN`, and `gate` remains `INSUFFICIENT_EVIDENCE`. Explicit test maps remain `OWNER_DECLARED_NOT_VERIFIED`. Even a recognized SQL token is not evidence that an actual database migration is required, its consumers are known or the patch is safe.
+
+Do not use `--inspect-diff` with `--paths`: a filename list has no verified patch content. This feature is a local, read-only analysis helper - not a complete diff parser, call graph, runtime execution, security audit or deployment gate. Run it only on source you are authorized to access.

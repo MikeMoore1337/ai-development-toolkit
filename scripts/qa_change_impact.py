@@ -278,12 +278,63 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
     }
 
 
+def add_content_evidence(report: dict, inspection: dict,
+                         test_map: dict | None = None) -> dict:
+    """Enrich, never remove, test checks using source-line token hints only."""
+    enriched = dict(report)
+    enriched["diff_content"] = inspection
+    by_id = {item["id"]: dict(item) for item in report["recommendations"]}
+    for path, data in inspection["files"].items():
+        if data["binary_or_unparsed"]:
+            cid = "unmapped-impact"
+            if cid not in by_id:
+                purpose, risk = CHECKS[cid]
+                by_id[cid] = {
+                    "id": cid, "purpose": purpose, "risk": risk,
+                    "status": "NOT_RUN", "evidence": "CONTENT_UNINSPECTED",
+                    "changed_paths": [], "test_command": None,
+                    "execution_receipt": None,
+                }
+            by_id[cid]["changed_paths"] = sorted(set(by_id[cid]["changed_paths"]) | {path})
+        for surface in data["signals"]:
+            if surface not in RULE_CHECKS:
+                raise ImpactInputError("Unsupported patch signal class")
+            for cid in RULE_CHECKS[surface]:
+                if cid not in by_id:
+                    purpose, risk = CHECKS[cid]
+                    by_id[cid] = {
+                        "id": cid, "purpose": purpose, "risk": risk,
+                        "status": "NOT_RUN", "evidence": "CONTENT_TOKEN_HINT_ONLY",
+                        "changed_paths": [], "test_command": None,
+                        "execution_receipt": None,
+                    }
+                by_id[cid]["changed_paths"] = sorted(set(by_id[cid]["changed_paths"]) | {path})
+    enriched["recommendations"] = [by_id[cid] for cid in sorted(by_id)]
+    active_checks = set(by_id)
+    enriched["required_critical_check_ids"] = sorted(active_checks & CRITICAL_CHECKS)
+    if test_map is not None:
+        tests = select_declared_tests(enriched["changed_paths"], active_checks,
+                                      validate_test_map(test_map))
+        enriched["declared_test_candidates"] = tests
+        enriched["unmapped_check_ids"] = sorted(
+            active_checks - {item["check_id"] for item in tests}
+        )
+    else:
+        enriched["unmapped_check_ids"] = sorted(active_checks)
+    enriched["content_evidence_status"] = "TOKEN_HINTS_WITH_GAPS" if (
+        inspection["requires_manual_review"]) else "TOKEN_HINTS_ONLY"
+    enriched["gate"] = "INSUFFICIENT_EVIDENCE"
+    enriched["executed_tests"] = 0
+    return enriched
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     group = p.add_mutually_exclusive_group(required=True)
     group.add_argument("--paths", nargs="+", help="Explicit changed relative file paths")
     group.add_argument("--git-base", help="Exact SHA of baseline revision")
     p.add_argument("--git-head", help="Exact SHA of changed revision, only with --git-base")
+    p.add_argument("--inspect-diff", action="store_true", help="Bounded local content-token hints (git SHA pair only)")
     p.add_argument("--root", type=Path, default=Path.cwd())
     p.add_argument("--repository", default="UNKNOWN")
     p.add_argument("--test-map", type=Path, help="Optional owner-supplied, read-only test ID mapping JSON")
@@ -292,6 +343,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if bool(args.git_base) != bool(args.git_head):
             raise ImpactInputError("--git-base and --git-head must be supplied together")
+        if args.inspect_diff and not args.git_base:
+            raise ImpactInputError("--inspect-diff requires an exact local Git SHA pair")
         paths = (changed_paths_by_git(args.root.resolve(), args.git_base, args.git_head)
                  if args.git_base else validate_paths(args.paths))
         declared = load_test_map(args.test_map) if args.test_map is not None else None
@@ -299,6 +352,12 @@ def main(argv: list[str] | None = None) -> int:
                       base=args.git_base or "UNKNOWN", head=args.git_head or "UNKNOWN",
                       source="LOCAL_GIT_DIFF" if args.git_base else "SUPPLIED_PATH_LIST",
                       test_map=declared)
+        if args.inspect_diff:
+            import qa_diff_signals
+            inspection = qa_diff_signals.inspect_git(
+                args.root.resolve(), args.git_base, args.git_head, paths
+            )
+            report = add_content_evidence(report, inspection, declared)
         payload = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         if args.output is None:
             print(payload, end="")
