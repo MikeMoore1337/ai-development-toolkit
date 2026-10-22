@@ -321,6 +321,11 @@
       "source": "docs/QA_CHANGE_IMPACT.md",
       "translation": "docs/ru/QA_CHANGE_IMPACT.md",
       "source_sha256": "882c4e836a4a81c1d716cb726475af7f7694eb94e7f88cc6b4cee50e839c7ca3"
+    },
+    {
+      "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
+      "translation": "docs/ru/PROJECT_ADOPTION_PREFLIGHT.md",
+      "source_sha256": "5706461ffd9e307c86149dcae9e61a33a85247313ddc563ec5d56e6555ab9a8b"
     }
   ]
 }
