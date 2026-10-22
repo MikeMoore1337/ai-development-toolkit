@@ -4,7 +4,7 @@
 
 ## Features and boundaries
 
-Toolkit includes a real **stdio MCP server** (`scripts/toolkit_mcp.py`) built with Python 3.12+ standard library, no paid APIs or model requests. Its six tools provide skill catalog, search, reference reading, advisory task routing, Skill Manager installation preview, and managed skill status.
+Toolkit includes a real **stdio MCP server** (`scripts/toolkit_mcp.py`) built with Python 3.12+ standard library, no paid APIs or model requests. Its eight tools provide skill catalog/search/reading, specialist and QA role listing/reading, advisory task routing, Skill Manager installation preview, and managed skill status. Roles are guidance documents, **not** automatically started autonomous agents.
 
 **All MCP tools are read-only.** They do not install skills or alter a user's project. When an agent needs to add skills, it can show a preview and ask the operator to use Skill Manager with explicit `--apply`. The separate installer below writes only a project-scoped MCP configuration **after the user executes --apply**. Neither process automatically installs an AI client.
 
