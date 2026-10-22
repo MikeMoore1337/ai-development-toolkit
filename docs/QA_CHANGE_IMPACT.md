@@ -1,0 +1,33 @@
+# Change-aware QA regression selection (read-only)
+
+[Русская версия](ru/QA_CHANGE_IMPACT.md)
+
+This optional helper implements the **planning worksheet** from [Change Impact Analysis](../extensions/qa/skills/change-impact-analysis/SKILL.md), supported by [Requirements Traceability](../extensions/qa/skills/requirements-traceability/SKILL.md) and [Quality Gate Assessment](../extensions/qa/skills/quality-gate-assessment/SKILL.md). It is **not** a separate test runner, a code graph, a CI quality gate, or a substitute for the project release policy.
+
+## Offline examples
+
+Supply explicitly changed paths:
+
+```bash
+python scripts/qa_change_impact.py --paths frontend/views/Workout.tsx backend/api/schema.py db/migrations/101.sql
+```
+
+Or compare two **locally available exact 40-character git commit hashes** of a repository you are authorized to inspect:
+
+```bash
+python scripts/qa_change_impact.py --root /path/to/repo --repository org/repo --git-base BASE_40_SHA --git-head HEAD_40_SHA
+```
+
+On Windows, use a Windows path for `--root`. These commands do **not** fetch repositories, call models, install dependencies, execute pytest/Playwright, or modify product projects. `--output report.json` can write a new report file but never overwrite existing evidence. Never pass private file contents or customer PII as arguments.
+
+## What the result actually means
+
+The script matches file-path tokens to surface rules for AUTH, PRIVACY, API, DB, UI, ASYNC, CI. For example, an auth change suggests negative access, tenant isolation, and PII checks; migrations require both integrity and rollback or an explicit blocker; an API + UI diff suggests a bounded cross-layer journey. Unknown paths trigger a mandatory human impact review, **not** a green result.
+
+Each recommendation includes `changed_paths`, `risk`, `purpose`, `status = NOT_RUN`, `evidence = PATH_HEURISTIC_ONLY` and empty execution receipts. Even with a pinned git diff, the helper cannot establish all transitive callers, changes hidden in differently named files, API contract details, available tests, acceptance criteria, or production results. For these, an engineer must inspect actual code, consumer traces, issue AC and target project's `AGENTS.md`. Additional tests may be necessary; never interpret this as permission to skip existing required CI or owner gates.
+
+The `fixtures/qa_change_impact_cases.json` cases are **synthetic** YFC/Hermes/Second Brain-like PR examples. Passing their oracles proves deterministic lower-bound check suggestions, *not* that those applications were accessed or their tests executed.
+
+## Manual handoff
+
+Map `changed path → affected consumer/contract → failure mode → named test → oracle → status → receipt`. Use the project's QA orchestration and traceability flow if several boundaries are involved. Actual test execution and resulting PASS/FAIL must be recorded separately, against an exact commit and environment; do not overwrite NOT_RUN with an assumption.
