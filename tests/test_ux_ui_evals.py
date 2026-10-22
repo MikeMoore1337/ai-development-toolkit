@@ -201,10 +201,14 @@ class UXUIEvidenceTests(unittest.TestCase):
             module.asset_record(bad, self.root)
         outside = self.root / "outside"
         outside.write_bytes(minimal_png(1))
-        (self.root / "shortcut.png").symlink_to(outside)
-        bad["path"] = "shortcut.png"
-        with self.assertRaisesRegex(module.EvidenceError, "Symlink"):
-            module.asset_record(bad, self.root)
+        try:
+            (self.root / "shortcut.png").symlink_to(outside)
+        except (OSError, NotImplementedError):
+            pass  # Windows without symlink privilege still tests traversal/missing files.
+        else:
+            bad["path"] = "shortcut.png"
+            with self.assertRaisesRegex(module.EvidenceError, "Symlink"):
+                module.asset_record(bad, self.root)
 
     def test_small_fix_is_exempt_from_three_concepts_but_needs_visual_evidence(self):
         item = self.request("minor-ui-fix", with_art=True)
