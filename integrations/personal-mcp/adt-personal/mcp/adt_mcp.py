@@ -90,6 +90,31 @@ PRIORITY_SKILLS = {
 }
 
 
+def _explicit_prompt_request(task: str) -> bool:
+    """Recognize a requested prompt artifact, not an instruction to execute one."""
+    text = ' '.join(task.casefold().replace('ё', 'е').split())
+    if 'промпт' not in text and 'prompt' not in text:
+        return False
+    noun = r'(?:промпт\w*|prompt\w*)'
+    patterns = (
+        r'(?<!\w)(?:сделай|создай|составь|напиши|улучши|адаптируй|перепиши|'
+        r'подготовь|сформулируй|составить|написать|улучшить|адаптировать|'
+        r'переписать|помоги составить)\s+'
+        r'(?:(?:хороший|нормальный|качественный|детальный|подробный|отличный|'
+        r'четкий|понятный|готовый|мой|этот|мне)\s+){0,3}' + noun + r'\b',
+        r'(?<!\w)(?:сделай|создай|преврати|составь)\s+из\b.{0,150}\b'
+        + noun + r'\b',
+        r'(?<!\w)(?:хочу|нужен|дай|нужна)\s+'
+        r'(?:(?:хороший|нормальный|качественный|подробный|готовый|мне)\s+){0,3}'
+        + noun + r'\b',
+        r'(?<!\w)(?:make|write|create|rewrite|improve|adapt|draft)\s+'
+        r'(?:(?:me|a|an|the|my|this|good|better|detailed|professional)\s+){0,4}'
+        r'prompt\w*\b',
+        r'\bturn\b.{0,120}\binto\s+(?:a\s+)?prompt\b',
+    )
+    return any(re.search(pattern, text) for pattern in patterns)
+
+
 def match_term(text: str, term: str) -> bool:
     """Match ASCII terms at word boundaries; allow inflected Russian word stems."""
     if not term:
@@ -359,6 +384,9 @@ class Toolkit:
             for candidate, terms in ROUTES if candidate in self.profiles
         }
         matches = {candidate: hits for candidate, hits in matches.items() if hits}
+        explicit_prompt = _explicit_prompt_request(text)
+        if explicit_prompt and 'prompt-refinement' in self.profiles:
+            matches.setdefault('prompt-refinement', ['explicit-prompt-artifact'])
         secondary: list[str] = []
         deferred: list[str] = []
         visual_phase = 'none'
@@ -374,7 +402,9 @@ class Toolkit:
             qa = [name for name in matches if name in QA_PROFILES]
             # More specific QA takes precedence over generic testing guidance.
             specific_qa = next((name for name in qa if name != 'qa-core'), qa[0] if qa else '')
-            if any(match_term(text, term) for term in VISUAL_CREATION_TERMS) and 'ui-orchestra' in self.profiles:
+            if explicit_prompt and 'prompt-refinement' in self.profiles:
+                chosen = 'prompt-refinement'
+            elif any(match_term(text, term) for term in VISUAL_CREATION_TERMS) and 'ui-orchestra' in self.profiles:
                 # A new or redesigned visual interface requires the owner's design gate.
                 chosen = 'ui-orchestra'
                 visual_phase = 'create-design'

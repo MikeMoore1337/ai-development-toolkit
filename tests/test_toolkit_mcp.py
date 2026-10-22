@@ -56,6 +56,23 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
         self.assertFalse((self.project / ".adt").exists())
 
+    def test_prompt_artifact_and_non_artifact_routing(self):
+        cases = (
+            ("Сделай из этого хренового текста нормальный промпт", "prompt-refinement"),
+            ("Составь хороший промпт для Codex: красивый сайт", "prompt-refinement"),
+            ("Сделай промпт для красивого сайта", "prompt-refinement"),
+            ("Rewrite this prompt for Claude", "prompt-refinement"),
+            ("Turn my notes into a prompt", "prompt-refinement"),
+            ("Проверь сео сайта", "seo-audit"),
+            ("Почему страница не индексируется?", "seo-audit"),
+            ("Сделай сайт по этому промпту", "ui-orchestra"),
+            ("Сделай красивый сайт для магазина", "ui-orchestra"),
+        )
+        for task, expected in cases:
+            with self.subTest(task=task):
+                result = self._invoke("toolkit_route_task", task=task)
+                self.assertEqual(expected, result["result"]["structuredContent"]["profile"])
+
     def test_reference_roles_are_read_only_not_launched_agents(self):
         roles = self._invoke("toolkit_list_roles")["result"]["structuredContent"]
         self.assertGreaterEqual(len(roles["roles"]), 5)

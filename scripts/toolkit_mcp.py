@@ -124,6 +124,31 @@ def _layout(value: object) -> str:
     return value
 
 
+def _explicit_prompt_request(task: str) -> bool:
+    """Recognize a requested prompt artifact, not an instruction to execute one."""
+    text = ' '.join(task.casefold().replace('ё', 'е').split())
+    if 'промпт' not in text and 'prompt' not in text:
+        return False
+    noun = r'(?:промпт\w*|prompt\w*)'
+    patterns = (
+        r'(?<!\w)(?:сделай|создай|составь|напиши|улучши|адаптируй|перепиши|'
+        r'подготовь|сформулируй|составить|написать|улучшить|адаптировать|'
+        r'переписать|помоги составить)\s+'
+        r'(?:(?:хороший|нормальный|качественный|детальный|подробный|отличный|'
+        r'четкий|понятный|готовый|мой|этот|мне)\s+){0,3}' + noun + r'\b',
+        r'(?<!\w)(?:сделай|создай|преврати|составь)\s+из\b.{0,150}\b'
+        + noun + r'\b',
+        r'(?<!\w)(?:хочу|нужен|дай|нужна)\s+'
+        r'(?:(?:хороший|нормальный|качественный|подробный|готовый|мне)\s+){0,3}'
+        + noun + r'\b',
+        r'(?<!\w)(?:make|write|create|rewrite|improve|adapt|draft)\s+'
+        r'(?:(?:me|a|an|the|my|this|good|better|detailed|professional)\s+){0,4}'
+        r'prompt\w*\b',
+        r'\bturn\b.{0,120}\binto\s+(?:a\s+)?prompt\b',
+    )
+    return any(re.search(pattern, text) for pattern in patterns)
+
+
 def _search(query: str) -> list[dict]:
     if not isinstance(query, str) or not query.strip() or len(query) > 500:
         raise ValueError("query must be 1-500 characters")
@@ -168,6 +193,18 @@ def invoke(tool: str, args: dict) -> dict:
         query_terms = set(re.findall(r"[a-z0-9-]+", query.casefold()))
         candidates = [profile for profile in profiles
                       if any(part in query_terms for part in profile.split("-"))]
+        normalized = " ".join(query.casefold().replace("ё", "е").split())
+        if "prompt-refinement" in profiles and _explicit_prompt_request(query):
+            candidates = ["prompt-refinement"]
+        elif ("ui-orchestra" in profiles and
+              re.search(r'\b(?:сделай|создай|разработай|нарисуй)\s+'
+                        r'(?:(?:красивый|современный)\s+)?(?:сайт|лендинг)\b',
+                        normalized)):
+            candidates = ["ui-orchestra"]
+        elif ("seo-audit" in profiles and
+              (re.search(r'(?<!\w)(?:seo|сео)(?!\w)', normalized)
+               or "поисков" in normalized or "не индексируется" in normalized)):
+            candidates = ["seo-audit"]
         role_words = set(re.findall(r"[a-z0-9-]+", query.casefold()))
         role_matches = [name for name in sorted(_roles())
                         if any(word in name for word in role_words if len(word) >= 4)]
