@@ -154,6 +154,23 @@ def recommend(prompt: str, catalog: dict[str, str],
              if p.strip()]
     if len(parts) > 3 or any(len(terms(part)) < 2 for part in parts):
         parts = [prompt.strip()]
+    # Explicit leading prohibitions must not be mistaken for tasks to perform.
+    # This bounded rule recognizes simple prefixes, not arbitrary logical negation.
+    negative_start = re.compile(
+        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|делай|проводи|создавай)|"
+        r"do\s+not|don't|skip)\b", re.I
+    )
+    excluded_clauses = []
+    actionable = []
+    for part in parts:
+        if negative_start.search(part):
+            clauses = re.split(r"[:,]\s*", part, maxsplit=1)
+            excluded_clauses.append(clauses[0])
+            if len(clauses) == 2 and len(terms(clauses[1])) >= 2:
+                actionable.append(clauses[1])
+        else:
+            actionable.append(part)
+    parts = actionable
     docs, idf = vectors(catalog)
     profiles = manifest.get("profiles", {})
     roles = sorted(set(manifest.get("core_roles", [])) |
@@ -166,7 +183,7 @@ def recommend(prompt: str, catalog: dict[str, str],
         tokens = set(terms(part))
         normalized_query = {alias_stem(t) if language == "ru" else t for t in tokens}
         candidates = []
-        for name in ordered[:top_k]:
+        for original_rank, name in enumerate(ordered[:top_k], start=1):
             positive_desc = re.split(r"\bnot for\b", catalog[name], maxsplit=1, flags=re.I)[0]
             description_hits = sorted(tokens & set(terms(positive_desc)))
             name_hits = sorted(tokens & set(terms(name.replace("-", " "))))
@@ -179,10 +196,12 @@ def recommend(prompt: str, catalog: dict[str, str],
                     if len(match) >= 2:
                         alias_hits.update(match)
             supported = bool(name_hits or len(description_hits) >= 2 or len(alias_hits) >= 2)
+            if not supported:
+                continue  # Do not present alphabetically sorted zero-evidence fallback.
             candidates.append({
                 "skill": name,
-                "rank": len(candidates) + 1,
-                "lexical_support": "PRESENT" if supported else "WEAK",
+                "rank": original_rank,
+                "lexical_support": "PRESENT",
                 "evidence": {
                     "name_tokens": name_hits[:6],
                     "description_tokens": description_hits[:6],
@@ -195,10 +214,8 @@ def recommend(prompt: str, catalog: dict[str, str],
             "text": part,
             "language": language,
             "candidates": candidates,
-            "other_not_selected": ordered[top_k:top_k + 3],
-            "status": "SUGGESTIONS_ONLY" if any(
-                c["lexical_support"] == "PRESENT" for c in candidates
-            ) else "INSUFFICIENT_EVIDENCE",
+            "other_not_selected": ordered[top_k:top_k + 3] if candidates else [],
+            "status": "SUGGESTIONS_ONLY" if candidates else "INSUFFICIENT_EVIDENCE",
         })
     leaders = {row["candidates"][0]["skill"] for row in results
                if row["candidates"] and row["candidates"][0]["lexical_support"] == "PRESENT"}
@@ -210,6 +227,10 @@ def recommend(prompt: str, catalog: dict[str, str],
         "installs_or_executes": False,
         "split_is_heuristic": True,
         "multiple_distinct_intents": len(leaders) > 1,
+        "excluded_negated_clauses": excluded_clauses,
+        "status": "NO_POSITIVE_INTENT" if not parts else (
+            "SUGGESTIONS_ONLY" if any(row["candidates"] for row in results)
+            else "INSUFFICIENT_EVIDENCE"),
         "segments": results,
         "available_roles_not_automatically_selected": roles,
         "limitations": "Token matches and hand-curated aliases are not model understanding.",
