@@ -130,9 +130,8 @@ class UXUIEvidenceTests(unittest.TestCase):
     def test_mismatched_sketch_viewports_block_comparison(self):
         item = self.request(with_art=True)
         item["visual_assets"][1]["viewport"] = "500x600"
-        out = module.audit(item, self.root, self.scenarios)
-        self.assertFalse(out["comparable_three_artifacts"])
-        self.assertEqual("VISUAL_PACKAGE_MISSING", out["gate"])
+        with self.assertRaisesRegex(module.EvidenceError, "SVG viewBox does not match"):
+            module.audit(item, self.root, self.scenarios)
 
     def test_palette_swaps_and_duplicate_risks_fail_closed(self):
         x = self.request()
