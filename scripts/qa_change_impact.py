@@ -26,9 +26,10 @@ SURFACES = {
     "DB": ("database", "migrations", "migration", "models", "sql", "alembic",
            "prisma", "db", "persistence", "repository"),
     "UI": ("frontend", "components", "views", "screens", "react", "ui",
-           "widget", "forms", "pages", "app"),
-    "ASYNC": ("worker", "queue", "task", "jobs", "events", "consumer",
+           "widget", "forms", "pages"),
+    "ASYNC": ("worker", "queue", "tasks", "jobs", "events", "consumer",
               "producer", "scheduler", "broker"),
+    "PRIVACY": ("security", "secret", "secrets", "pii", "vault", "personal", "gdpr"),
     "CI": ("workflows", "docker", "compose", "deploy", "helm", "kubernetes",
            "ci", "infra", "terraform", "pipeline"),
 }
@@ -53,6 +54,7 @@ CHECKS = {
 RISK_ORDER = {"LOW": 0, "HIGH": 1, "CRITICAL": 2, "UNKNOWN": 3}
 RULE_CHECKS = {
     "AUTH": ("auth-boundary", "privacy-boundary", "api-negative"),
+    "PRIVACY": ("privacy-boundary", "auth-boundary"),
     "API": ("api-contract", "api-negative"),
     "DB": ("db-migration", "db-rollback"),
     "UI": ("ui-state", "browser-flow"),
@@ -123,8 +125,13 @@ def surface_matches(path: str) -> dict[str, list[str]]:
 
 
 def plan(paths: list[str], *, repository: str = "UNKNOWN",
-         base: str = "UNKNOWN", head: str = "UNKNOWN") -> dict:
+         base: str = "UNKNOWN", head: str = "UNKNOWN",
+         source: str = "SUPPLIED_PATH_LIST") -> dict:
     paths = validate_paths(paths)
+    if source not in ("SUPPLIED_PATH_LIST", "LOCAL_GIT_DIFF"):
+        raise ImpactInputError("Unknown change source")
+    if source == "LOCAL_GIT_DIFF" and (base == "UNKNOWN" or head == "UNKNOWN"):
+        raise ImpactInputError("Git evidence requires exact SHA pair")
     if not isinstance(repository, str) or len(repository) > 160:
         raise ImpactInputError("Invalid repository")
     for rev in (base, head):
@@ -165,8 +172,7 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
         "schema_version": 1,
         "classification": "READ_ONLY_TEST_SELECTION",
         "repository": repository, "base_sha": base, "head_sha": head,
-        "source_verification": "LOCAL_GIT_DIFF" if base != "UNKNOWN" and head != "UNKNOWN"
-                               else "SUPPLIED_PATH_LIST",
+        "source_verification": source,
         "changed_paths": paths,
         "surfaces": {surface: sorted(items) for surface, items in sorted(surfaces.items())},
         "unmapped_paths": unknown,
@@ -200,7 +206,8 @@ def main(argv: list[str] | None = None) -> int:
         paths = (changed_paths_by_git(args.root.resolve(), args.git_base, args.git_head)
                  if args.git_base else validate_paths(args.paths))
         report = plan(paths, repository=args.repository,
-                      base=args.git_base or "UNKNOWN", head=args.git_head or "UNKNOWN")
+                      base=args.git_base or "UNKNOWN", head=args.git_head or "UNKNOWN",
+                      source="LOCAL_GIT_DIFF" if args.git_base else "SUPPLIED_PATH_LIST")
         payload = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         if args.output is None:
             print(payload, end="")
