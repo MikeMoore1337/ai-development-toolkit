@@ -141,15 +141,20 @@ def review(candidate_dir: Path, manifest_file: Path) -> dict:
             except UnicodeDecodeError:
                 issues.append(_issue("NON_UTF8_CONTENT", "REVIEW", rel))
                 continue
-            if path.suffix.lower() in SCRIPT_SUFFIXES or "scripts/" in rel or "hooks/" in rel:
+            parts = PurePosixPath(rel).parts
+            if (path.suffix.lower() in SCRIPT_SUFFIXES
+                    or any(part in {"scripts", "hooks", ".github", ".husky", "bin"}
+                           for part in parts)
+                    or path.name in {"package.json", "pyproject.toml", "Makefile", "Dockerfile"}):
                 issues.append(_issue("EXECUTABLE_OR_HOOK", "REVIEW", rel))
             if any(pattern.search(text) for pattern in SUSPICIOUS):
                 issues.append(_issue("SUSPICIOUS_INSTRUCTIONS", "REVIEW", rel))
             if rel == "SKILL.md":
-                if not text.startswith("---\n"):
+                normalized_text = text.replace("\r\n", "\n")
+                if not normalized_text.startswith("---\n"):
                     issues.append(_issue("SKILL_FRONTMATTER_MISSING", "REVIEW", rel))
                 elif data is not None:
-                    frontmatter = text.split("---\n", 2)
+                    frontmatter = normalized_text.split("---\n", 2)
                     name = re.search(r"^name:\s*([a-z0-9-]+)\s*$",
                                      frontmatter[1] if len(frontmatter) > 1 else "",
                                      flags=re.M)
