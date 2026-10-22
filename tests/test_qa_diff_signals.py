@@ -83,7 +83,9 @@ class ContentDiffTests(unittest.TestCase):
         for cid in ("state-integrity", "async-replay", "consumer-review"):
             self.assertIn(cid, checks)
             self.assertEqual("NOT_RUN", checks[cid]["status"])
-            self.assertEqual("CONTENT_TOKEN_HINT_ONLY", checks[cid]["evidence"])
+            expected_source = ("PATH_HEURISTIC_ONLY" if cid == "consumer-review"
+                               else "CONTENT_TOKEN_HINT_ONLY")
+            self.assertEqual(expected_source, checks[cid]["evidence"])
             self.assertEqual([path], checks[cid]["changed_paths"])
             self.assertIsNone(checks[cid]["execution_receipt"])
         self.assertNotIn("db-migration", checks)
