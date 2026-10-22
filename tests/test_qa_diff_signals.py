@@ -50,8 +50,14 @@ class ContentDiffTests(unittest.TestCase):
                      "db-migration", "db-rollback"):
             self.assertIn(must, checks)
             self.assertEqual("NOT_RUN", checks[must]["status"])
-            self.assertEqual("CONTENT_TOKEN_HINT_ONLY", checks[must]["evidence"])
+            self.assertIn(checks[must]["evidence"],
+                          {"PATH_HEURISTIC_ONLY", "CONTENT_TOKEN_HINT_ONLY"})
             self.assertIsNone(checks[must]["execution_receipt"])
+        # Some checks were already required by the filename heuristic and
+        # must retain their original evidence provenance.
+        self.assertEqual("PATH_HEURISTIC_ONLY", checks["api-contract"]["evidence"])
+        self.assertEqual("CONTENT_TOKEN_HINT_ONLY", checks["db-rollback"]["evidence"])
+        self.assertEqual("CONTENT_TOKEN_HINT_ONLY", checks["ui-state"]["evidence"])
         self.assertEqual("INSUFFICIENT_EVIDENCE", output["gate"])
         self.assertEqual(0, output["executed_tests"])
         self.assertIn("db-rollback", output["required_critical_check_ids"])
