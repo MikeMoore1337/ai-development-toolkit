@@ -47,6 +47,8 @@ CHECKS = {
     "ui-state": ("UI state, keyboard navigation, restoration and focus tests", "HIGH"),
     "browser-flow": ("Critical user journey and accessibility smoke checks", "HIGH"),
     "async-replay": ("Replay, concurrency, idempotency, retries and ordering", "HIGH"),
+    "state-integrity": ("Version/persistence invariants, no-op writes and transitions", "HIGH"),
+    "consumer-review": ("Manually trace direct API/service/client consumers beyond the changed diff", "HIGH"),
     "deployment-safety": ("CI safeguards, deploy policy and rollback dry-run", "CRITICAL"),
     "cross-layer": ("End-to-end check across changed frontend/API/DB boundaries", "HIGH"),
     "unmapped-impact": ("Inspect unknown paths and choose concrete risk tests", "UNKNOWN"),
@@ -55,10 +57,11 @@ RISK_ORDER = {"LOW": 0, "HIGH": 1, "CRITICAL": 2, "UNKNOWN": 3}
 RULE_CHECKS = {
     "AUTH": ("auth-boundary", "privacy-boundary", "api-negative"),
     "PRIVACY": ("privacy-boundary", "auth-boundary"),
-    "API": ("api-contract", "api-negative"),
+    "API": ("api-contract", "api-negative", "consumer-review"),
     "DB": ("db-migration", "db-rollback"),
     "UI": ("ui-state", "browser-flow"),
     "ASYNC": ("async-replay",),
+    "PERSISTED_STATE": ("state-integrity", "async-replay", "consumer-review"),
     "CI": ("deployment-safety",),
 }
 CRITICAL_CHECKS = {"auth-boundary", "privacy-boundary",
