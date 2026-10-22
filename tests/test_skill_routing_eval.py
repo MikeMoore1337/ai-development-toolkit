@@ -181,8 +181,56 @@ class SkillRoutingTests(unittest.TestCase):
             "unknownplaceholderword", self.catalog, {}, manifest, top_k=2,
         )
         self.assertEqual("INSUFFICIENT_EVIDENCE", result["segments"][0]["status"])
-        self.assertEqual("WEAK", result["segments"][0]["candidates"][0]["lexical_support"])
+        self.assertEqual([], result["segments"][0]["candidates"])
+        self.assertEqual([], result["segments"][0]["other_not_selected"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", result["status"])
         self.assertEqual("NOT_CALIBRATED", result["confidence"])
+
+    def test_recommend_does_not_execute_explicitly_negated_intent(self):
+        catalog = {
+            "database-migrations": "Plan database migrations and rollback.",
+            "accessibility-testing": "Audit keyboard focus and accessibility.",
+            "seo-audit": "Check indexing and SEO.",
+        }
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        report = routing.recommend(
+            "Skip database migration planning; audit keyboard focus and accessibility.",
+            catalog, {}, manifest, top_k=2,
+        )
+        self.assertEqual(["Skip database migration planning"],
+                         report["excluded_negated_clauses"])
+        self.assertEqual(1, len(report["segments"]))
+        self.assertEqual("accessibility-testing",
+                         report["segments"][0]["candidates"][0]["skill"])
+        self.assertNotIn(
+            "database-migrations",
+            [c["skill"] for c in report["segments"][0]["candidates"]],
+        )
+
+    def test_recommend_russian_negation_separates_positive_clause(self):
+        catalog = {
+            "seo-audit": "SEO and search engine indexing.",
+            "clear-voice": "Естественный текст интерфейса без канцеляризмов.",
+        }
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        result = routing.recommend(
+            "Не нужен SEO-аудит: перепиши текст интерфейса понятным языком.",
+            catalog, {}, manifest, top_k=2,
+        )
+        self.assertEqual(["Не нужен SEO-аудит"], result["excluded_negated_clauses"])
+        self.assertEqual(1, len(result["segments"]))
+        self.assertEqual("clear-voice", result["segments"][0]["candidates"][0]["skill"])
+
+    def test_recommend_negative_only_abstains(self):
+        catalog = {"database-migrations": "Plan migration rollback.",
+                   "api-testing": "Test API responses."}
+        result = routing.recommend(
+            "Skip database migration planning.", catalog, {}, {},
+            top_k=2,
+        )
+        self.assertEqual("NO_POSITIVE_INTENT", result["status"])
+        self.assertEqual([], result["segments"])
+        self.assertFalse(result["installs_or_executes"])
 
     def test_recommend_invalid_input_fails_closed(self):
         with self.assertRaises(routing.RoutingInputError):
