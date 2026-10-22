@@ -768,6 +768,246 @@
         "Improve professional Russian style for a letter.",
         "Улучши стиль делового письма."
       ]
+    },
+    {
+      "id": "bilingual-qa-collaborative-development",
+      "target": "collaborative-development",
+      "positive": [
+        "Coordinate parallel developers editing test fixtures without ownership conflicts.",
+        "Организуй совместную разработку тестов несколькими агентами без конфликтов файлов."
+      ],
+      "negative": [
+        "Review SEO indexing metadata.",
+        "Проверь SEO метатеги индексации."
+      ]
+    },
+    {
+      "id": "bilingual-qa-coverage-analysis",
+      "target": "coverage-analysis",
+      "positive": [
+        "Assess test coverage against product risks and requirements rather than only line percentage.",
+        "Оцени покрытие тестами требований и рисков, а не только процент строк."
+      ],
+      "negative": [
+        "Implement a production web API.",
+        "Реализуй production API."
+      ]
+    },
+    {
+      "id": "bilingual-qa-database-validation",
+      "target": "database-validation",
+      "positive": [
+        "Check database schema integrity, constraints and stored data after a migration.",
+        "Проверь целостность базы данных и схемы после миграции."
+      ],
+      "negative": [
+        "Optimize animations in a marketing page.",
+        "Оптимизируй анимации лендинга."
+      ]
+    },
+    {
+      "id": "bilingual-qa-defect-management",
+      "target": "defect-management",
+      "positive": [
+        "Write an evidence-backed defect ticket with reproduction steps, actual and expected results.",
+        "Оформи баг репорт с шагами воспроизведения и фактическим результатом."
+      ],
+      "negative": [
+        "Design frontend component composition.",
+        "Спроектируй композицию компонентов UI."
+      ]
+    },
+    {
+      "id": "bilingual-qa-e2e-testing",
+      "target": "e2e-testing",
+      "positive": [
+        "Design end to end UI user journey tests across frontend and backend with screenshots.",
+        "Подготовь сквозные E2E тесты пользовательского сценария через UI и backend."
+      ],
+      "negative": [
+        "Assess a third-party license.",
+        "Проверь стороннюю лицензию."
+      ]
+    },
+    {
+      "id": "bilingual-qa-graphify-adapter",
+      "target": "graphify-adapter",
+      "positive": [
+        "Use an approved code graph tool to inspect call relationships and change impact.",
+        "Используй одобренный граф кода для анализа связей вызовов и зависимостей."
+      ],
+      "negative": [
+        "Check grammar of public copy.",
+        "Проверь грамматику публичного текста."
+      ]
+    },
+    {
+      "id": "bilingual-qa-integration-testing",
+      "target": "integration-testing",
+      "positive": [
+        "Test interaction between database, queue and external service in an integration environment.",
+        "Проверь интеграционные тесты между базой данных, очередью и внешним сервисом."
+      ],
+      "negative": [
+        "Draw UX wireframes for a landing page.",
+        "Нарисуй UX макеты лендинга."
+      ]
+    },
+    {
+      "id": "bilingual-qa-pytest-test-design",
+      "target": "pytest-test-design",
+      "positive": [
+        "Create deterministic pytest parametrized tests with fixtures for Python function boundaries.",
+        "Спроектируй pytest тесты с фикстурами и параметризацией Python функций."
+      ],
+      "negative": [
+        "Optimize SQL joins in a service.",
+        "Оптимизируй SQL JOIN."
+      ]
+    },
+    {
+      "id": "bilingual-qa-qa-clear-voice",
+      "target": "qa-clear-voice",
+      "positive": [
+        "Rewrite a technical QA report in precise human-readable Russian without changing evidence.",
+        "Перепиши QA отчет о проверках понятным русским языком без искажения доказательств."
+      ],
+      "negative": [
+        "Improve performance of server-side pagination.",
+        "Ускорь пагинацию на сервере."
+      ]
+    },
+    {
+      "id": "bilingual-qa-qa-code-review",
+      "target": "qa-code-review",
+      "positive": [
+        "Review flaky test automation implementation and fixtures for maintainability in a PR.",
+        "Проведи ревью кода автотестов и тестовых фикстур в PR."
+      ],
+      "negative": [
+        "Evaluate whether a provider API has free quota.",
+        "Оцени бесплатные квоты API провайдера."
+      ]
+    },
+    {
+      "id": "bilingual-qa-qa-safe-change",
+      "target": "qa-safe-change",
+      "positive": [
+        "Plan a safe change to shared QA test infrastructure including verification and rollback.",
+        "Спланируй безопасное изменение общей инфраструктуры автотестов с откатом."
+      ],
+      "negative": [
+        "Draft release marketing copy.",
+        "Напиши рекламный текст релиза."
+      ]
+    },
+    {
+      "id": "bilingual-qa-quality-gate-assessment",
+      "target": "quality-gate-assessment",
+      "positive": [
+        "Assess release quality gate from actual test evidence, risks and acceptance criteria.",
+        "Оцени quality gate релиза по фактическим тестам и критериям приемки."
+      ],
+      "negative": [
+        "Implement a new form component.",
+        "Реализуй компонент формы."
+      ]
+    },
+    {
+      "id": "bilingual-qa-requirement-analysis",
+      "target": "requirement-analysis",
+      "positive": [
+        "Convert an ambiguous product request into testable QA requirements and open questions.",
+        "Разбери неоднозначные требования продукта на проверяемые условия и вопросы."
+      ],
+      "negative": [
+        "Write a load-test script with RPS.",
+        "Напиши скрипт нагрузочного теста."
+      ]
+    },
+    {
+      "id": "bilingual-qa-requirements-traceability",
+      "target": "requirements-traceability",
+      "positive": [
+        "Build traceability from requirements to test cases, executions and concrete evidence.",
+        "Свяжи требования с тест кейсами, прогонами и подтверждающими результатами."
+      ],
+      "negative": [
+        "Fix database lock contention.",
+        "Исправь блокировки БД."
+      ]
+    },
+    {
+      "id": "bilingual-qa-security-review",
+      "target": "security-review",
+      "positive": [
+        "Review credentials and untrusted tool usage in a CI test repository.",
+        "Проведи security ревью секретов и внешних инструментов в CI автотестов."
+      ],
+      "negative": [
+        "Design a public landing page.",
+        "Спроектируй публичный лендинг."
+      ]
+    },
+    {
+      "id": "bilingual-qa-security-testing",
+      "target": "security-testing",
+      "positive": [
+        "Design negative security tests for session expiry, permissions and tenant boundaries.",
+        "Разработай негативные security тесты авторизации, сессий и доступа к чужим данным."
+      ],
+      "negative": [
+        "Rewrite user-facing product text.",
+        "Перепиши текст интерфейса."
+      ]
+    },
+    {
+      "id": "bilingual-qa-test-analysis-design",
+      "target": "test-analysis-design",
+      "positive": [
+        "Apply boundary values, state transitions and test oracles to derive scenarios.",
+        "Разработай тест дизайн по граничным значениям и переходам состояний с оракулами."
+      ],
+      "negative": [
+        "Plan a worker retry queue.",
+        "Спланируй повторы задач воркера."
+      ]
+    },
+    {
+      "id": "bilingual-qa-test-data-management",
+      "target": "test-data-management",
+      "positive": [
+        "Prepare isolated reproducible test datasets with cleanup for parallel tests.",
+        "Подготовь тестовые данные с изоляцией и очисткой для параллельных прогонов."
+      ],
+      "negative": [
+        "Design an analytics data warehouse.",
+        "Спроектируй аналитическое хранилище."
+      ]
+    },
+    {
+      "id": "bilingual-qa-test-management",
+      "target": "test-management",
+      "positive": [
+        "Link automated test results to test management IDs and requirement records.",
+        "Свяжи результаты автотестов с ID в системе тест менеджмента и требованиями."
+      ],
+      "negative": [
+        "Compare React render metrics.",
+        "Сравни метрики рендеринга React."
+      ]
+    },
+    {
+      "id": "bilingual-qa-security-engineering",
+      "target": "security-engineering",
+      "positive": [
+        "Develop a security threat model for service trust boundaries and supply chain attacks.",
+        "Создай модель угроз безопасности системы с границами доверия и цепочкой поставки."
+      ],
+      "negative": [
+        "Review one failing unit test.",
+        "Исследуй один падающий unit тест."
+      ]
     }
   ]
 }
