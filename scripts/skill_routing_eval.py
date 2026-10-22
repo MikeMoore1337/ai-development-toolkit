@@ -84,11 +84,21 @@ def prompt_language(text: str) -> str:
     return "ru" if CYRILLIC.search(text) else "en"
 
 
+def alias_stem(token: str) -> str:
+    """Conservative Cyrillic-prefix heuristic, used only for optional aliases."""
+    if CYRILLIC.search(token) and len(token) > 5:
+        return token[:5]
+    return token
+
+
 def vectors(catalog: dict[str, str]) -> tuple[dict[str, Counter], dict[str, float]]:
     docs: dict[str, Counter] = {}
     df: Counter = Counter()
     for name, description in sorted(catalog.items()):
-        weighted = Counter(terms(description))
+        # A "Not for ..." clause describes exclusions, not positive triggers.
+        # It must not pull ordinary SQL/API fixes into data-engineering.
+        positive_description = re.split(r"\bnot for\b", description, maxsplit=1, flags=re.I)[0]
+        weighted = Counter(terms(positive_description))
         for token in terms(name.replace("-", " ")):
             weighted[token] += 3
         docs[name] = weighted
@@ -104,6 +114,9 @@ def ranking(prompt: str, catalog: dict[str, str],
             aliases: dict[str, list[str]] | None = None) -> list[str]:
     query = set(terms(prompt))
     query_normalized = " ".join(terms(prompt))
+    language = prompt_language(prompt)
+    query_alias_terms = {alias_stem(token) if language == "ru" else token
+                         for token in query}
     scores = []
     for name, vector in docs.items():
         overlap = sum(vector[t] * idf[t] for t in query & vector.keys())
@@ -112,13 +125,19 @@ def ranking(prompt: str, catalog: dict[str, str],
         name_phrase = " ".join(terms(name.replace("-", " ")))
         if name_phrase and name_phrase in query_normalized:
             score += 2.0
-        if aliases and prompt_language(prompt) == "ru":
-            # Strictly additive RU evidence: EN baseline rankings stay unchanged.
+        if aliases:
             for phrase in aliases.get(name, []):
-                token_set = set(terms(phrase))
-                overlap_alias = len(query & token_set)
+                # Match curated examples within their own language. Cyrillic
+                # inflections get conservative prefix normalization; this is
+                # not semantic understanding and is tested separately.
+                if prompt_language(phrase) != language:
+                    continue
+                token_set = {alias_stem(token) if language == "ru" else token
+                             for token in terms(phrase)}
+                overlap_alias = len(query_alias_terms & token_set)
                 if overlap_alias >= 2:
-                    score += 2.0 * overlap_alias / len(token_set)
+                    score += (3.0 * (overlap_alias - 1)
+                              * overlap_alias / len(token_set))
         scores.append((score, name))
     return [name for _, name in sorted(scores, key=lambda pair: (-pair[0], pair[1]))]
 
@@ -183,7 +202,7 @@ def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3,
                                     for row in observations),
         }
     return {
-        "method": "lexical-description-curated-alias-ranking-v2" if aliases else "lexical-description-ranking-v1",
+        "method": "lexical-description-curated-alias-ranking-v3" if aliases else "lexical-description-ranking-v1",
         "language_classification": "script_heuristic_not_semantic_detection",
         "client_skill_selection": "NOT_OBSERVED",
         "client_effectiveness": "NOT_TESTED",
