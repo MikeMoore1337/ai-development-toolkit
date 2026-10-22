@@ -288,6 +288,246 @@
         "Спланируй миграцию базы данных с откатом.",
         "Проанализируй логи, метрики и трассировки сервиса."
       ]
+    },
+    {
+      "id": "bilingual-core-adaptive-delivery",
+      "target": "adaptive-delivery",
+      "positive": [
+        "Document the legacy v3 scope-size routing guide and explain how it differs from feature-delivery.",
+        "Проверь совместимость старого маршрута v3 с оценкой размера задачи, не запускай новую разработку."
+      ],
+      "negative": [
+        "Implement a new product feature from acceptance criteria.",
+        "Реализуй новую функцию продукта по требованиям."
+      ]
+    },
+    {
+      "id": "bilingual-core-agent-framework-fit",
+      "target": "agent-framework-fit",
+      "positive": [
+        "Determine whether a multi-agent runtime framework is necessary before selecting LangGraph or CrewAI.",
+        "Определи нужен ли фреймворк для оркестрации нескольких агентов вместо простого сценария."
+      ],
+      "negative": [
+        "Write a pytest fixture for API contract tests.",
+        "Создай фикстуру pytest для проверки API."
+      ]
+    },
+    {
+      "id": "bilingual-core-architecture-decisions",
+      "target": "architecture-decisions",
+      "positive": [
+        "Compare architecture design alternatives for a high-impact component boundary change.",
+        "Сравни архитектурные решения и границы компонентов до масштабного изменения системы."
+      ],
+      "negative": [
+        "Fix one typo in an existing README.",
+        "Исправь опечатку в README."
+      ]
+    },
+    {
+      "id": "bilingual-core-browser-workflow-evidence",
+      "target": "browser-workflow-evidence",
+      "positive": [
+        "Automate browser workflows and capture verifiable evidence of completed UI actions.",
+        "Автоматизируй браузерный сценарий с подтверждением результата и журналом действий."
+      ],
+      "negative": [
+        "Design a database index migration.",
+        "Спроектируй миграцию индекса базы данных."
+      ]
+    },
+    {
+      "id": "bilingual-core-codebase-knowledge-map",
+      "target": "codebase-knowledge-map",
+      "positive": [
+        "Map a large codebase dependency graph and component boundaries before changing unfamiliar modules.",
+        "Построй карту кодовой базы и зависимостей модулей для исследования большого репозитория."
+      ],
+      "negative": [
+        "Rewrite a short email in natural Russian.",
+        "Перепиши короткое письмо естественным русским языком."
+      ]
+    },
+    {
+      "id": "bilingual-core-design-system-consistency",
+      "target": "design-system-consistency",
+      "positive": [
+        "Audit UI components for consistency with established design tokens and component states.",
+        "Проверь согласованность компонентов интерфейса с существующей дизайн системой и токенами."
+      ],
+      "negative": [
+        "Implement a worker queue retry mechanism.",
+        "Реализуй повторы задач фоновой очереди."
+      ]
+    },
+    {
+      "id": "bilingual-core-documentation-maintenance",
+      "target": "documentation-maintenance",
+      "positive": [
+        "Update project documentation and operating runbooks after a configuration change.",
+        "Актуализируй техническую документацию проекта после изменения конфигурации и команд."
+      ],
+      "negative": [
+        "Review the authentication threat model.",
+        "Проведи анализ угроз авторизации."
+      ]
+    },
+    {
+      "id": "bilingual-core-editorial-naturalness",
+      "target": "editorial-naturalness",
+      "positive": [
+        "Polish user-facing product copy for clarity while preserving its facts and intended tone.",
+        "Отредактируй текст продукта естественным языком без изменения фактов и смысла."
+      ],
+      "negative": [
+        "Optimize slow SQL queries for a large table.",
+        "Оптимизируй медленный SQL-запрос."
+      ]
+    },
+    {
+      "id": "bilingual-core-external-skill-review",
+      "target": "external-skill-review",
+      "positive": [
+        "Review a third-party agent skill license, hooks and installation permissions before importing it.",
+        "Проверь внешний навык агента на лицензию, опасные хуки и права установки."
+      ],
+      "negative": [
+        "Improve animation easing of an approved button.",
+        "Улучши анимацию кнопки."
+      ]
+    },
+    {
+      "id": "bilingual-core-implementation",
+      "target": "implementation",
+      "positive": [
+        "Implement a bounded code change and verify the behavior with project tests.",
+        "Реализуй ограниченное изменение кода и проверь поведение тестами."
+      ],
+      "negative": [
+        "Prepare a research summary comparing scientific publications.",
+        "Подготовь обзор научных публикаций."
+      ]
+    },
+    {
+      "id": "bilingual-core-minimal-safe-change",
+      "target": "minimal-safe-change",
+      "positive": [
+        "Make the smallest safe source change without unnecessary refactoring or incompatible behavior.",
+        "Сделай минимальное безопасное изменение кода без лишнего рефакторинга и регрессий."
+      ],
+      "negative": [
+        "Design a new multi-service architecture from scratch.",
+        "Спроектируй архитектуру нескольких сервисов."
+      ]
+    },
+    {
+      "id": "bilingual-core-motion-quality",
+      "target": "motion-quality",
+      "positive": [
+        "Evaluate interface animation timing, reduced-motion accessibility and rendering performance.",
+        "Оцени качество анимации интерфейса, длительность, плавность и reduced motion."
+      ],
+      "negative": [
+        "Fix an OAuth token validation issue.",
+        "Исправь проверку токена OAuth."
+      ]
+    },
+    {
+      "id": "bilingual-core-provider-reality-check",
+      "target": "provider-reality-check",
+      "positive": [
+        "Verify current free-tier limits and API compatibility of an LLM provider from official sources.",
+        "Проверь бесплатный тариф провайдера LLM, квоты и совместимость API по официальным источникам."
+      ],
+      "negative": [
+        "Generate a Playwright screenshot comparison.",
+        "Сделай сравнение скриншотов Playwright."
+      ]
+    },
+    {
+      "id": "bilingual-core-qa-strategy",
+      "target": "qa-strategy",
+      "positive": [
+        "Develop risk-based QA test strategy across unit, integration, contract and E2E layers.",
+        "Подготовь стратегию тестирования по рискам с уровнями unit, integration и E2E."
+      ],
+      "negative": [
+        "Implement a responsive navigation component.",
+        "Реализуй адаптивную навигацию интерфейса."
+      ]
+    },
+    {
+      "id": "bilingual-core-release-safety",
+      "target": "release-safety",
+      "positive": [
+        "Assess release readiness against pipeline checks, rollback plan and publication permissions.",
+        "Проверь готовность релиза к выпуску, необходимые проверки, откат и разрешения."
+      ],
+      "negative": [
+        "Edit public-facing product copy to sound natural.",
+        "Отредактируй текст страницы продукта."
+      ]
+    },
+    {
+      "id": "bilingual-core-research-verification",
+      "target": "research-verification",
+      "positive": [
+        "Verify a niche technical claim using primary research sources and compare competing explanations.",
+        "Проверь техническое утверждение по первоисточникам и оцени достоверность исследования."
+      ],
+      "negative": [
+        "Fix UI state synchronization in a React form.",
+        "Исправь синхронизацию состояния React-формы."
+      ]
+    },
+    {
+      "id": "bilingual-core-screenshot-fidelity",
+      "target": "screenshot-fidelity",
+      "positive": [
+        "Compare implemented screen layout with a reference screenshot for pixel-level visual parity.",
+        "Сравни готовый интерфейс с эталонным скриншотом, найди визуальные расхождения."
+      ],
+      "negative": [
+        "Check database transaction deadlocks.",
+        "Проверь взаимоблокировки транзакций базы данных."
+      ]
+    },
+    {
+      "id": "bilingual-core-security-boundaries",
+      "target": "security-boundaries",
+      "positive": [
+        "Identify trust boundaries where a new MCP tool handles credentials and private data.",
+        "Проанализируй границы доверия MCP инструмента, секреты и обработку приватных данных."
+      ],
+      "negative": [
+        "Update release notes with a new version.",
+        "Обнови журнал изменений для релиза."
+      ]
+    },
+    {
+      "id": "bilingual-core-task-scoping",
+      "target": "task-scoping",
+      "positive": [
+        "Clarify scope, acceptance criteria and dependencies before starting an underspecified task.",
+        "Определи границы задачи, критерии приемки и зависимости до реализации."
+      ],
+      "negative": [
+        "Execute already approved pytest tests.",
+        "Запусти уже утвержденные pytest тесты."
+      ]
+    },
+    {
+      "id": "bilingual-core-business-system-analysis",
+      "target": "business-system-analysis",
+      "positive": [
+        "Translate stakeholder needs and PRD into business rules, measurable requirements and use cases.",
+        "Преобразуй потребности заказчика в бизнес правила, требования системы и сценарии использования."
+      ],
+      "negative": [
+        "Fix a frontend CSS margin.",
+        "Исправь отступ CSS в интерфейсе."
+      ]
     }
   ]
 }
