@@ -9928,7 +9928,7 @@
       "notes": "Original read-only deterministic change-impact advisory (#191). Suggestions are NOT_RUN; no model execution or access to project source."
     },
     {
-      "id": "toolkit-docs-CHANGE-IMPACT-ADVISOR-md",
+      "id": "toolkit-docs-change-impact-advisor-md",
       "path": "docs/CHANGE_IMPACT_ADVISOR.md",
       "name": "CHANGE_IMPACT_ADVISOR.md",
       "kind": "doc",
@@ -9948,7 +9948,7 @@
       "notes": "Original EN/RU offline QA change-impact advisor use instructions (#191)."
     },
     {
-      "id": "toolkit-docs-ru-CHANGE-IMPACT-ADVISOR-md",
+      "id": "toolkit-docs-ru-change-impact-advisor-md",
       "path": "docs/ru/CHANGE_IMPACT_ADVISOR.md",
       "name": "CHANGE_IMPACT_ADVISOR.md",
       "kind": "doc",
