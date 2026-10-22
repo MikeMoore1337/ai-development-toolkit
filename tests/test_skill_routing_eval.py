@@ -190,6 +190,74 @@ class SkillRoutingTests(unittest.TestCase):
         with self.assertRaises(routing.RoutingInputError):
             routing.recommend("valid request", self.catalog, {}, {}, top_k=8)
 
+    def test_holdout_reports_unseen_failures_without_fake_confidence(self):
+        catalog = {
+            "seo-audit": "Search page indexing and crawl errors.",
+            "api-testing": "Verify HTTP API response status and errors.",
+            "security-testing": "Test authorization and session security.",
+        }
+        aliases = {}
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        heldout = [
+            {"id": "single", "kind": "single",
+             "query": "Check HTTP API responses.",
+             "expected": ["api-testing"]},
+            {"id": "compound", "kind": "compound",
+             "query": "Check API responses and test session security.",
+             "expected": ["api-testing", "security-testing"]},
+            {"id": "negative", "kind": "negative",
+             "query": "Review page indexing, no HTTP testing.",
+             "expected": ["seo-audit"], "avoid_top1": ["api-testing"]},
+            {"id": "miss", "kind": "single",
+             "query": "Check HTTP API responses.", "expected": ["seo-audit"]},
+        ]
+        report = routing.evaluate_holdout(catalog, aliases, manifest, heldout, top_k=2)
+        self.assertEqual(4, report["count"])
+        self.assertEqual("NOT_CALIBRATED", report["confidence"])
+        self.assertFalse(report["strict_gate"])
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual(1, report["by_kind"]["compound"]["cases"])
+        self.assertEqual(1, report["by_kind"]["negative"]["cases"])
+        self.assertGreaterEqual(report["failed"], 1)
+        self.assertFalse(report["observations"][-1]["pass"])
+
+    def test_holdout_schema_rejects_unknown_targets_and_forbidden_overlap(self):
+        test_file = self.root / "holdout.json"
+        record = {
+            "schema_version": 1, "description": "Synthetic test data",
+            "cases": [{"id": "h", "kind": "single", "query": "review code",
+                       "expected": ["invented"]}],
+        }
+        test_file.write_text(json.dumps(record), encoding="utf-8")
+        with self.assertRaisesRegex(routing.RoutingInputError, "Unknown or duplicate expected"):
+            routing.load_holdout(test_file, self.catalog)
+        record["cases"][0] = {
+            "id": "h", "kind": "negative", "query": "review code",
+            "expected": ["code-review"], "avoid_top1": ["code-review"],
+        }
+        test_file.write_text(json.dumps(record), encoding="utf-8")
+        with self.assertRaisesRegex(routing.RoutingInputError, "overlap"):
+            routing.load_holdout(test_file, self.catalog)
+
+    def test_holdout_fixture_not_copied_from_curated_routing_cases(self):
+        catalog = routing.read_catalog(ROOT)
+        curated = routing.load_cases(ROOT / "fixtures/skill_routing_cases.json", catalog)
+        holdout = routing.load_holdout(ROOT / "fixtures/skill_routing_holdout.json", catalog)
+        source_texts = {item.strip().casefold() for case in curated
+                        for key in ("positive", "negative") for item in case[key]}
+        queries = [case["query"].strip().casefold() for case in holdout]
+        self.assertEqual(len(queries), len(set(queries)))
+        self.assertTrue(set(queries).isdisjoint(source_texts))
+        self.assertGreaterEqual(len(holdout), 30)
+        self.assertEqual({"single", "compound", "negative"},
+                         {case["kind"] for case in holdout})
+        aliases = routing.read_aliases(ROOT / "fixtures/skill_routing_aliases.json", catalog)
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        report = routing.evaluate_holdout(catalog, aliases, manifest, holdout)
+        self.assertEqual(len(holdout), report["count"])
+        self.assertEqual(report["count"], report["passed"] + report["failed"])
+        self.assertEqual("untuned_holdout_diagnostic", report["classification"])
+
     def test_deterministic_results(self):
         first = routing.evaluate(self.catalog, self.cases)
         self.assertEqual(first, routing.evaluate(self.catalog, self.cases))
