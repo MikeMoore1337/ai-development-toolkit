@@ -9168,7 +9168,7 @@
       "notes": "New original Toolkit instructions/tests; real client activation and outcomes not verified"
     },
     {
-      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-prompt-refinement-SKILL-md",
+      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-prompt-refinement-skill-md",
       "path": "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-prompt-refinement/SKILL.md",
       "name": "SKILL.md",
       "kind": "reference",
@@ -9188,7 +9188,7 @@
       "notes": "Bundled prompt refinement / SEO guidance; not proof of ChatGPT skill activation."
     },
     {
-      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-prompt-refinement-references-EXAMPLES-md",
+      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-prompt-refinement-references-examples-md",
       "path": "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-prompt-refinement/references/EXAMPLES.md",
       "name": "EXAMPLES.md",
       "kind": "reference",
@@ -9208,7 +9208,7 @@
       "notes": "Bundled prompt refinement / SEO guidance; not proof of ChatGPT skill activation."
     },
     {
-      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-seo-audit-SKILL-md",
+      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-seo-audit-skill-md",
       "path": "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-seo-audit/SKILL.md",
       "name": "SKILL.md",
       "kind": "reference",
@@ -9228,7 +9228,7 @@
       "notes": "Bundled prompt refinement / SEO guidance; not proof of ChatGPT skill activation."
     },
     {
-      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-seo-audit-references-CHECKLIST-md",
+      "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-seo-audit-references-checklist-md",
       "path": "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-seo-audit/references/CHECKLIST.md",
       "name": "CHECKLIST.md",
       "kind": "reference",
