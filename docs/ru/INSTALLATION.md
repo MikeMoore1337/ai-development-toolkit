@@ -37,6 +37,10 @@ python scripts/skill_manager.py status --target /path/to/repo
 
 **Перед размещением в публичном репозитории:** выполните проверки качества и публикации, изучите `extensions/qa/SOURCE_MAPPING.md`, лицензии и строки, которые могут содержать учётные данные.
 
+## Локальный MCP-сервер
+
+[Подключение Toolkit MCP к Codex / Claude Code](MCP_INSTALL.md) в Windows, Linux и macOS. Инструменты MCP только читают, настройки меняются с явным `--apply`. Это не HTTP-сервер для ChatGPT.
+
 ## Инструкции по ОС и обновлению
 
 [Windows / PowerShell](INSTALL_WINDOWS.md) · [Linux / bash](INSTALL_LINUX.md) · [macOS / zsh или bash](INSTALL_MACOS.md) · [Toolkit, навыки, плагин и MCP: разные обновления](UPDATING.md).

@@ -215,6 +215,12 @@ jobs:
           python -m unittest discover -s tests -p test_skill_manager.py -v
           python -m unittest discover -s tests -p test_adt_cli.py -v
           python -m unittest discover -s tests -p test_platform_guides.py -v
+      - name: Validate local Toolkit MCP stdio and safe config on macOS
+        # /var links to /private/var on macOS; security guards must stay strict.
+        # Restrict disposable test fixtures to the runner's non-linked temp root.
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: python -m unittest discover -s tests -p test_toolkit_mcp.py -v
       - name: Verify checked-out file integrity and provenance
         run: |
           python scripts/verify_checksums.py

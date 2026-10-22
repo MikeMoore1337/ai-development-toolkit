@@ -15,6 +15,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.2)
 
+- Added dependency-free local stdio Toolkit MCP server, read-only skill routing/search/preview/status and guarded per-project Codex/Claude Code installer for Windows, Linux and macOS.
+- Added bilingual MCP installation, removal and safe update instructions with regression tests on all five CI environments.
+
 - Added bilingual Windows, Linux and macOS installation and update instructions, preserving client/file ownership boundaries.
 - Added focused macOS ARM64/Intel GitHub Actions portability checks without paid runners or real agent clients.
 

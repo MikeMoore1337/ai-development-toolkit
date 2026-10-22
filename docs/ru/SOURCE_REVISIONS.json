@@ -5,7 +5,7 @@
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "a320d2623ae01ffd5e32623e3fb98d357c38cd12d9090c291ae2a8707b2b79dc"
+      "source_sha256": "ebdf8cfa58b5367eeb27857b911ee5c4903fc63a8b758de768b2e2b56a2f7626"
     },
     {
       "source": "docs/SKILLS_CATALOG.md",
@@ -305,7 +305,12 @@
     {
       "source": "docs/UPDATING.md",
       "translation": "docs/ru/UPDATING.md",
-      "source_sha256": "0cc36a4b4a40c9fb89796f27750e6dff3442b78c61585f81bd3aaa568e130452"
+      "source_sha256": "415d98be46d03ca37dda71f53f9c989ecc01c566fb546e2c99f41a7787f04fb6"
+    },
+    {
+      "source": "docs/MCP_INSTALL.md",
+      "translation": "docs/ru/MCP_INSTALL.md",
+      "source_sha256": "d0f3bee545c66146d0c7fe092aed402185b8a9f363ee63b33e8ee38b892136ec"
     }
   ]
 }

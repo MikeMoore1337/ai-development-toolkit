@@ -4,6 +4,10 @@
 
 AI Development Toolkit - библиотека инструкций (Agent Skills), ролей и профилей для работы с отдельно установленным ИИ-клиентом. **Это не самостоятельный ИИ-агент** и не установщик Codex или Claude Code.
 
+## Подключение Toolkit MCP
+
+[Локальный MCP для Windows, Linux и macOS](MCP_INSTALL.md) - Codex / Claude Code, без платных API и скрытых изменений проекта.
+
 ## Установка по платформам
 
 [Windows](INSTALL_WINDOWS.md) · [Linux](INSTALL_LINUX.md) · [macOS](INSTALL_MACOS.md) · [Обновление Toolkit и навыков](UPDATING.md)

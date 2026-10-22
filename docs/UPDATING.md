@@ -7,7 +7,7 @@
 | Toolkit checkout | Review Git status and fetch an approved repository revision |
 | Skills managed in a project | Update from the **currently checked-out local Toolkit**, using Skill Manager |
 | ChatGPT plugin | Can retrieve approved current instructions when supported; **cannot replace its own installed shell automatically** |
-| MCP server | The repository does **not** ship a verified cross-platform Toolkit MCP installer or generic auto-update service |
+| Local Toolkit MCP | Ships a Python stdio server and project-scoped Codex/Claude Code installer; source code updates only after explicit reviewed Git action, no background updater |
 
 ## 1. Update the checked-out Toolkit deliberately
 
@@ -39,7 +39,7 @@ On Windows PowerShell, substitute `py -3.12` and a quoted Windows target. On mac
 
 The ChatGPT plugin's `MANIFEST.json.chatgpt_personal_live` contract may allow verified live reading of Toolkit instructions. Updating the installed plugin package/shell remains a separate action in Plugin Creator. This is account-level, not an OS executable update.
 
-The current repo provides MCP/tool integration contracts, **not** an installer for a documented Toolkit MCP service. Do not invent `pip`/`npm`/`docker` commands or claim background MCP updates. A concrete MCP implementation needs its own verified install guide, permission scope and version evidence.
+The repository includes a [local MCP installer](MCP_INSTALL.md) for Codex and Claude Code. It uses absolute paths into a trusted checkout, updated only by a deliberate reviewed Git action followed by a client reconnect. This is **not** unattended auto-updating or remote HTTP MCP. Do not invent `pip`/`npm`/`docker` commands or claim background MCP updates. A concrete MCP implementation needs its own verified install guide, permission scope and version evidence.
 
 ## 4. Evidence by environment
 

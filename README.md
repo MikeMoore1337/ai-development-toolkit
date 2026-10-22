@@ -61,6 +61,10 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 </details>
 
+## Local MCP for coding agents
+
+[Install Toolkit MCP on Windows, Linux or macOS](docs/MCP_INSTALL.md) - project-scoped Codex / Claude Code integration, read-only skill discovery and explicit config approval. ChatGPT plugin installation is separate.
+
 ## Platform installation
 
 [Windows](docs/INSTALL_WINDOWS.md) · [Linux](docs/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/INSTALL_MACOS.md) · [Safe updates](docs/UPDATING.md)
