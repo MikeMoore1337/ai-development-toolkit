@@ -9306,6 +9306,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Curated lexical Russian synonyms; source-only evaluation, no model behavior proof (#189)"
+    },
+    {
+      "id": "test-fixtures-skill-routing-holdout-json",
+      "path": "fixtures/skill_routing_holdout.json",
+      "name": "skill_routing_holdout.json",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-20",
+      "distribution": "included",
+      "notes": "Original untuned, cross-project offline benchmark authored separately from routing aliases. Not independently adjudicated; no provider/model calls (#189)."
     }
   ],
   "owner_review_record": {
