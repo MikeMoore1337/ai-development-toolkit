@@ -28,7 +28,7 @@ python -m unittest discover -s tests -v
 
 - [#199](https://github.com/MikeMoore1337/ai-development-toolkit/issues/199) - расширение поиска и подтверждение реального поведения клиентов.
 - [#200](https://github.com/MikeMoore1337/ai-development-toolkit/issues/200) - лицензии, происхождение, проверка безопасности и ручной допуск внешних навыков.
-- [#190](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190) - отдельные жизненный цикл и совместимость персонального MCP и ChatGPT-плагина. Новый инструмент пока добавлен **только** в `scripts/toolkit_mcp.py`; нельзя утверждать, что установленный персональный MCP или ChatGPT-плагин его предоставляет.
+- [#190](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190) - отдельные жизненный цикл и совместимость персонального MCP и ChatGPT-плагина. В исходниках персонального MCP (`integrations/personal-mcp/adt-personal/mcp/adt_mcp.py`, v0.1.9) инструмент также реализован. Нельзя утверждать, что **уже установленный** персональный MCP или ChatGPT-плагин его предоставляет: публикация, обновление и живой вызов клиента требуют отдельной приёмки.
 - [#11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11) - реальные парные испытания полезности, не подмена их лексическим ранжированием.
 
 Функция не меняет production и данные пользовательских проектов.
