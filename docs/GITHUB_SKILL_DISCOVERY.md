@@ -25,4 +25,4 @@ python scripts/validate_pack.py
 python scripts/verify_checksums.py
 ```
 
-CI uses mock responses only; no live GitHub calls or any personal Codex/ChatGPT MCP activation is represented as tested. The direct network path and real-client usability still require separate explicitly scoped acceptance.
+CI unit tests use mocked responses. A **separate file-scoped GitHub Actions workflow** (`.github/workflows/pinned-skill-discovery-smoke.yml`) performs an anonymous, read-only live metadata check on a known pinned public Toolkit commit, without downloading skills or setting secrets. Report a live check as PASS **only when that exact workflow run completes successfully**. This does not test an installed personal MCP or the ChatGPT plugin. The direct network path and real-client usability still require separate explicitly scoped acceptance.
