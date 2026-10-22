@@ -83,11 +83,11 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC001")
 
     def test_prepared_published_release(self):
-        self.replace("CHANGELOG.md", "5.5.2 (candidate,", "5.5.2 (released,")
+        self.replace("CHANGELOG.md", "5.5.3 (candidate,", "5.5.3 (released,")
         self.check("DOC004")
 
     def test_missing_unreleased(self):
-        self.replace("CHANGELOG.md", "## Unreleased (main after v5.5.2)", "## Upcoming")
+        self.replace("CHANGELOG.md", "## Unreleased (main after v5.5.3)", "## Upcoming")
         self.check("DOC004")
 
     def test_published_release_cannot_reference_wrong_tag(self):

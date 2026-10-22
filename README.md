@@ -79,6 +79,8 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 **Latest published release:** [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) (21 October 2026). Its tag contains `MANIFEST.json.version = 5.5.2`. The older v5.5.0 and v5.5.1 tags retain historical version mismatches; see [release errata](CHANGELOG.md). `main` may have changes not yet released.
 
+**Next release candidate:** `v5.5.3` — **NOT PUBLISHED**. The release is pending exact-commit CI, source-rights checks and GitHub publication. See [CHANGELOG.md](CHANGELOG.md).
+
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 
 ```bash

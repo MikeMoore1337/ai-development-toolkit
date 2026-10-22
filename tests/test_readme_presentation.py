@@ -27,12 +27,24 @@ class ReadmePresentationTests(unittest.TestCase):
                 self.assertIn("(docs/visuals/hero-evidence.svg)", text)
                 self.assertIn(f"({beginner})", text)
                 self.assertIn(f"({agent})", text)
-                self.assertIn(f"/releases/tag/v{version}", text)
                 self.assertIn("releases/latest", text)
-                self.assertNotRegex(
-                    text, r"(?:NOT PUBLISHED|НЕ ОПУБЛИКОВАН|Next release candidate|"
-                    r"Кандидат следующего релиза)"
-                )
+                candidate = ("Next release candidate" in text or
+                             "Кандидат следующего релиза" in text)
+                if candidate:
+                    major, minor, patch = (int(p) for p in version.split("."))
+                    self.assertGreater(patch, 0)
+                    prior = f"{major}.{minor}.{patch - 1}"
+                    self.assertIn(f"/releases/tag/v{prior}", text)
+                    self.assertIn(f"`v{version}`", text)
+                    self.assertIn("NOT PUBLISHED" if name == "README.md"
+                                  else "НЕ ОПУБЛИКОВАН", text)
+                    self.assertNotIn(f"/releases/tag/v{version}", text)
+                else:
+                    self.assertIn(f"/releases/tag/v{version}", text)
+                    self.assertNotRegex(
+                        text, r"(?:NOT PUBLISHED|НЕ ОПУБЛИКОВАН|Next release candidate|"
+                        r"Кандидат следующего релиза)"
+                    )
                 self.assertIn("README.ru.md" if name == "README.md" else "README.md", text)
 
     def test_vector_assets_are_local_and_without_dynamic_counts(self) -> None:
