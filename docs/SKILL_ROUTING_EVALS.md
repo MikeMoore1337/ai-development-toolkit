@@ -101,3 +101,19 @@ The frozen 38-case holdout now reports **two distinct measurements** for the sam
 `by_kind` and `by_language` carry each count separately; the per-case observations retain both candidate lists and their evidence-based selection status. The metrics describe *lexical support*, not correctness probabilities or independently adjudicated relevance. In particular, a lower evidence-supported hit rate with more abstentions can represent safer behavior, not a regression in the unchanged raw ranker.
 
 Neither the holdout labels nor the alias dictionary are modified by this measurement. The report remains non-gating, requires no remote API, and does not demonstrate actual skill activation by an AI client.
+
+### Human label adjudication: blinded packet before scoring
+
+The fixed 38-case holdout labels are *maintainer-authored, not independently adjudicated*. An offline review packet is available to let a **different human reviewer** formulate candidate target skills **without seeing the original expected labels or model recommendations**:
+
+```bash
+python scripts/holdout_adjudication.py prepare --output human-review.json
+```
+
+Fill each row's `decision` (`ACCEPT`, `CHALLENGE`, or leave `PENDING`), `proposed_targets` and, for negative cases, `proposed_avoid_top1`, plus the self-declared `reviewer_id` and a specific `rationale`. Only `ACCEPT` provides reviewer-proposed labels; `CHALLENGE` records ambiguity with empty proposed labels. The packet pins the exact holdout file and skill catalog digests. The output file must not already exist; existing evidence is never overwritten.
+
+```bash
+python scripts/holdout_adjudication.py audit --packet human-review.json --output review-audit.json
+```
+
+The audit validates completeness, dataset integrity, unknown targets, label disagreements and pending reviews. It **never changes** benchmark labels automatically. Even a completed packet only establishes *self-declared* reviewer identity, not independent review: `reviewer_independence = NOT_VERIFIED` and `ready_for_independent_accuracy_claim = false` remain unchanged. The human must actually perform the review before any evaluation conclusions can rely on it. No AI/API/agent is invoked.
