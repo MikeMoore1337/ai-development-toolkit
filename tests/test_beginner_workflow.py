@@ -184,5 +184,107 @@ class BeginnerJourneyTests(unittest.TestCase):
         self.assertTrue(any("invented activation" in problem for problem in validate_contract(case)))
 
 
+
+class BeginnerTaskRouteTests(unittest.TestCase):
+    """Static task-first navigation checks; not an AI-client usability trial."""
+
+    ROUTES = {
+        "docs/BEGINNER_START.md": (
+            "## Pick your task first",
+            ("Code", "QA", "Design", "SEO", "Research", "Maintenance"),
+            "## Choose an access route",
+            ("Chat without installation", "Installed ChatGPT plugin",
+             "Toolkit MCP for Codex or Claude Code",
+             "Local managed skills for Codex or Claude Code"),
+        ),
+        "docs/ru/BEGINNER_START.md": (
+            "## Сначала выберите задачу",
+            ("Код", "QA", "Дизайн", "SEO", "Исследование", "Сопровождение"),
+            "## Выберите способ подключения",
+            ("Чат без установки", "Установленный плагин ChatGPT",
+             "Toolkit MCP для Codex или Claude Code",
+             "Локальные навыки Codex или Claude Code"),
+        ),
+    }
+    PROFILE_MAP = {
+        "code": "codex-feature", "qa": "qa-core",
+        "design": "ui-orchestra", "seo": "seo-audit",
+        "research": "research", "maintenance": "maintenance-support",
+    }
+
+    @staticmethod
+    def section(content: str, title: str) -> str:
+        marker = title + "\n"
+        if content.count(marker) != 1:
+            raise ValueError("Missing or repeated heading: " + title)
+        tail = content.split(marker, 1)[1]
+        return tail.split("\n## ", 1)[0]
+
+    @staticmethod
+    def rows(section: str) -> list[tuple[str, str]]:
+        import re
+        matches = []
+        for line in section.splitlines():
+            match = re.fullmatch(
+                r"\| \*\*([^*]+)\*\* \| (.+) \| (.+) \|", line
+            )
+            if match:
+                matches.append((match.group(1), match.group(2) + " " + match.group(3)))
+        return matches
+
+    def test_all_six_tasks_and_four_routes_exist_in_both_languages(self):
+        for path, (task_heading, labels, access_heading, access_labels) in self.ROUTES.items():
+            with self.subTest(path=path):
+                content = (ROOT / path).read_text(encoding="utf-8")
+                tasks = self.rows(self.section(content, task_heading))
+                access = self.rows(self.section(content, access_heading))
+                self.assertEqual(tuple(name for name, _ in tasks), labels)
+                self.assertEqual(tuple(name for name, _ in access), access_labels)
+                for _, value in tasks + access:
+                    self.assertGreater(len(value), 65)
+                self.assertIn("NOT_TESTED", self.section(content, access_heading))
+                self.assertIn("--apply", self.section(content, access_heading))
+
+    def test_links_are_safe_existing_local_files(self):
+        import re
+        from urllib.parse import unquote
+        for path, (task_heading, _, access_heading, _) in self.ROUTES.items():
+            document = ROOT / path
+            content = document.read_text(encoding="utf-8")
+            for title in (task_heading, access_heading):
+                block = self.section(content, title)
+                links = re.findall(r"\[[^\]]+\]\(([^)]+)\)", block)
+                self.assertGreaterEqual(len(links), 5)
+                for link in links:
+                    with self.subTest(doc=path, link=link):
+                        target = unquote(link.split("#", 1)[0])
+                        if not target:
+                            self.assertTrue(link.startswith("#"))
+                            continue
+                        self.assertFalse(target.startswith(("/", "\\")))
+                        self.assertNotIn(":", target)
+                        file = (document.parent / target).resolve()
+                        self.assertTrue(file.is_relative_to(ROOT.resolve()))
+                        self.assertTrue(file.is_file())
+                        self.assertFalse((document.parent / target).is_symlink())
+
+    def test_profiles_come_from_existing_manifest(self):
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertTrue(set(self.PROFILE_MAP.values()) <= set(manifest["profiles"]))
+
+    def test_missing_task_or_repeated_heading_fails_contract(self):
+        doc = (ROOT / "docs/BEGINNER_START.md").read_text(encoding="utf-8")
+        title, _, _, _ = self.ROUTES["docs/BEGINNER_START.md"]
+        block = self.section(doc, title)
+        rows = self.rows(block)
+        self.assertEqual(6, len(rows))
+        removed = block.replace("**SEO**", "**Other**", 1)
+        self.assertNotEqual([name for name, _ in self.rows(removed)],
+                            list(self.ROUTES["docs/BEGINNER_START.md"][1]))
+        with self.assertRaises(ValueError):
+            self.section(doc + "\n" + title + "\n", title)
+
+
+
 if __name__ == "__main__":
     unittest.main()
