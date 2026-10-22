@@ -1,0 +1,575 @@
+#!/usr/bin/env python3
+"""Personal, read-only AI Development Toolkit MCP stdio adapter (stdlib only)."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path, PurePosixPath
+from typing import Any
+
+NAME = 'ai-development-toolkit-personal'
+VERSION = '0.1.8'
+PROTOCOL = '2025-06-18'
+
+# Routing guidance only; the toolkit manifest remains the source of truth.
+ROUTES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ('ui-orchestra', ('ux audit', 'ui audit', 'ux/ui аудит', 'ui/ux аудит', 'аудит ux', 'аудит ui', 'design audit', 'design orchestra', 'аудит интерфейс', 'аудит дизай', 'оцени интерфейс', 'проверь дизайн', 'review ui')),
+    ('ui-motion', ('animation', 'motion', 'анимац', 'переходы интерфейс')),
+    ('ux-design', ('design landing', 'design screen', 'user flow', 'wireframe', 'нарисуй дизайн', 'дизайн лендинг', 'спроектируй интерфейс', 'проектировани ux')),
+    ('ui-fix', ('pixel perfect', 'visual mismatch', 'screenshot', 'визуальн', 'скриншот', 'исправь верстк', 'поправь интерфейс')),
+    ('accessibility-qa', ('accessibility', 'a11y', 'wcag', 'доступност', 'скринридер')),
+    ('qa-security', ('пентест', 'security testing', 'тест безопасност', 'уязвимост', 'vulnerability')),
+    ('security-engineering', ('security architecture', 'authz', 'authentication', 'авторизац', 'аутентификац', 'безопасност')),
+    ('observability-sre', ('incident', 'observability', 'slo', 'sre', 'инцидент', 'логировани', 'мониторинг')),
+    ('ai-engineering-qa', ('rag', 'llm evaluation', 'prompt regression', 'tool use', 'проверка llm', 'тестировани ии', 'оценка модели')),
+    ('performance-load-testing', ('нагрузочн', 'load test', 'latency benchmark', 'производительност тест')),
+    ('dependency-maintenance', ('обнови зависимост', 'dependency update', 'upgrade packages', 'dependabot', 'renovate')),
+    ('qa-ci', ('flaky', 'нестабильн тест', 'pipeline fail', 'ci failure', 'падает ci', 'ошибк ci')),
+    ('qa-ui', ('e2e', 'playwright', 'ui test', 'тест ui', 'тест интерфейс', 'браузерн тест')),
+    ('qa-python', ('pytest', 'python тест', 'тест python', 'тест api на python')),
+    ('qa-contract', ('contract test', 'контрактн тест', 'совместимост api')),
+    ('qa-release', ('release gate', 'регрессионн', 'релизн проверк', 'проверка релиз')),
+    ('qa-core', ('test cases', 'тест-кейс', 'тестировани', 'покрой тест', 'покрой проект', 'покрой код', 'тестами', 'тесты', 'тестов', 'unit test', 'unit-тест', 'tests', 'протестиру', 'написать тест', 'напиши тест', 'добавь тест', 'qa audit', 'проверь качеств')),
+    ('backend', ('backend', 'бэкенд', 'бэкенда', 'серверн', 'api endpoint', 'api метод', 'базу данных', 'fastapi', 'django', 'flask', 'rest api', 'restful api', 'graphql', 'grpc', 'эндпоинт', 'эндпойнт', 'api')),
+    ('frontend', ('frontend', 'фронтенд', 'фронтенда', 'react', 'vue', 'svelte', 'компонент ui', 'сайт', 'лендинг', 'веб-приложен', 'web app')),
+    ('fullstack', ('fullstack', 'фулстек', 'сквозн функци', 'ui и api', 'frontend and backend')),
+    ('data-engineering', ('data pipeline', 'etl', 'хранилище данных', 'миграция данных')),
+    ('devops-infrastructure', ('docker', 'kubernetes', 'terraform', 'инфраструктур', 'devops', 'деплой')),
+    ('maintenance-support', ('maintenance', 'обслуживан', 'support workflow', 'поддержка продукта')),
+    ('business-system-analysis', ('бизнес анализ', 'требовани систем', 'use case', 'user story')),
+    ('product-discovery', ('product discovery', 'продуктовая гипотез', 'исследовани продукт')),
+    ('research', ('research', 'исследуй', 'изучи подход', 'сравни подход')),
+    ('docs-technical', ('readme', 'documentation', 'документац', 'инструкци')),
+    ('codex-feature', ('реализуй', 'разработай', 'разработать', 'создай', 'создать', 'сделай', 'добавь функцию', 'добавить функцию', 'feature', 'исправь баг', 'fix bug', 'implement', 'build', 'create')),
+)
+
+# Priority for explicit profiles. Only manifest-defined profile names are accepted.
+SELECTABLE = set(x for x, _ in ROUTES)
+CONFLICT_GROUP = frozenset({'make-feature', 'feature-delivery', 'adaptive-delivery'})
+QA_PROFILES = frozenset({'qa-python', 'qa-ui', 'qa-contract', 'qa-ci', 'qa-release', 'qa-security', 'qa-core'})
+VISUAL_CREATION_TERMS = ('сделай сайт', 'создай сайт', 'создать сайт', 'разработай сайт',
+                         'современный сайт', 'красивый сайт', 'лендинг', 'landing page',
+                         'нарисуй интерфейс', 'спроектируй интерфейс', 'новый интерфейс',
+                         'дизайн сайта', 'дизайн интерфейса', 'редизайн', 'redesign',
+                         'создай экран', 'нарисуй экран')
+BUILD_TERMS = ('реализуй', 'реализовать', 'разработай', 'разработать', 'создай', 'создать', 'сделай',
+               'исправь баг', 'исправить баг', 'почини баг', 'исправь дефект', 'исправить дефект',
+               'исправь ошибку', 'исправить ошибку', 'почини ошибку', 'fix bug', 'fix defect', 'refactor feature',
+               'добавь', 'добавить', 'построй', 'build', 'create', 'implement', 'develop', 'напиши код')
+TEST_ONLY_ACTIONS = ('создай тест', 'создать тест', 'реализуй тест', 'разработай тест',
+                     'исправь тест', 'исправить тест', 'почини тест', 'fix test',
+                     'сделай тест', 'добавь тест', 'разработай e2e тест', 'реализуй api-тест', 'создай api-тест', 'разработай api-тест', 'create api test', 'create test', 'implement test', 'build test')
+# Read at most the highest-signal skills first; all selected skills remain available in `skills`.
+PRIORITY_SKILLS = {
+    'backend': ('api-design', 'service-architecture', 'implementation', 'qa-strategy'),
+    'frontend': ('component-architecture', 'frontend-api-integration', 'implementation', 'qa-strategy'),
+    'fullstack': ('end-to-end-feature-design', 'fullstack-integration', 'implementation', 'qa-strategy'),
+    'codex-feature': ('task-scoping', 'feature-delivery', 'implementation', 'qa-strategy'),
+    'qa-python': ('api-testing', 'pytest-test-design', 'test-analysis-design', 'test-review'),
+    'qa-ui': ('playwright-testing', 'e2e-testing', 'test-review'),
+    'qa-contract': ('contract-testing', 'integration-testing'),
+    'qa-core': ('test-analysis-design', 'test-review', 'quality-gate-assessment'),
+    'ui-orchestra': ('ux-ui-design-orchestra', 'design-system-consistency', 'screenshot-fidelity'),
+}
+
+
+def match_term(text: str, term: str) -> bool:
+    """Match ASCII terms at word boundaries; allow inflected Russian word stems."""
+    if not term:
+        return False
+    if term[0].isascii() and term[0].isalnum():
+        return re.search(r'(?<!\w)' + re.escape(term) + r'(?!\w)', text) is not None
+    return term in text
+
+
+def has_build_intent(text: str) -> bool:
+    """Distinguish code implementation from commands that only create tests."""
+    without_test_commands = text
+    for term in TEST_ONLY_ACTIONS:
+        if term[0].isascii():
+            without_test_commands = re.sub(r'(?<!\w)' + re.escape(term) + r'\w*', ' ', without_test_commands)
+        else:
+            without_test_commands = re.sub(re.escape(term) + r'\w*', ' ', without_test_commands)
+    return any(match_term(without_test_commands, term) for term in BUILD_TERMS)
+
+
+class ToolkitError(Exception):
+    pass
+
+class Toolkit:
+    def __init__(self, source: Path):
+        self.source = source.expanduser().resolve(strict=True)
+        if not self.source.is_dir():
+            raise ToolkitError('Source must be a directory')
+        manifest_path = self.source / 'MANIFEST.json'
+        if not manifest_path.is_file() or manifest_path.is_symlink():
+            raise ToolkitError('Toolkit MANIFEST.json missing or unsafe; pass --source to a local Toolkit checkout')
+        try:
+            self.manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+        except (ValueError, OSError) as exc:
+            raise ToolkitError(f'Cannot read Toolkit manifest: {exc}') from exc
+        if self.manifest.get('package') != 'ai-development-toolkit':
+            raise ToolkitError('Wrong Toolkit manifest')
+        self.profiles = self.manifest.get('profiles', {})
+        self.skills = self._skills()
+        self.roles = self._roles()
+        self.source_revision, self.working_tree_status = self._source_revision()
+
+    def _source_revision(self) -> tuple[str, str]:
+        """Report actual local Git HEAD, never fabricate a version from MANIFEST.json."""
+        if not (self.source / '.git').exists() or not shutil.which('git'):
+            return 'UNAVAILABLE', 'UNKNOWN'
+        try:
+            rev = subprocess.run(
+                ['git', '-C', str(self.source), 'rev-parse', '--verify', 'HEAD^{commit}'],
+                capture_output=True, text=True, timeout=4, check=False,
+                env={**os.environ, 'GIT_OPTIONAL_LOCKS': '0'},
+            )
+            sha = rev.stdout.strip()
+            if rev.returncode != 0 or not re.fullmatch(r'[0-9a-fA-F]{40}|[0-9a-fA-F]{64}', sha):
+                return 'UNAVAILABLE', 'UNKNOWN'
+            status = subprocess.run(
+                ['git', '-C', str(self.source), 'status', '--porcelain', '--untracked-files=no'],
+                capture_output=True, text=True, timeout=4, check=False,
+                env={**os.environ, 'GIT_OPTIONAL_LOCKS': '0'},
+            )
+            state = ('UNKNOWN' if status.returncode else
+                     'MODIFIED_TRACKED' if status.stdout.strip() else 'CLEAN_TRACKED')
+            return sha.lower(), state
+        except (OSError, subprocess.TimeoutExpired):
+            return 'UNAVAILABLE', 'UNKNOWN'
+
+    def _safe_file(self, relative: str) -> Path:
+        p = self.source / relative
+        # Reject junction/symlink components even if the link resolves inside the source.
+        cur = self.source
+        for part in Path(relative).parts:
+            if part in ('', '.', '..') or part.startswith('\\') or ':' in part:
+                raise ToolkitError('Invalid relative path')
+            cur = cur / part
+            if cur.is_symlink():
+                raise ToolkitError('Symlink files/paths are not allowed')
+        try:
+            real = p.resolve(strict=True)
+        except (OSError, RuntimeError) as exc:
+            raise ToolkitError(f'Declared Toolkit file is missing or inaccessible: {relative}') from exc
+        if not real.is_relative_to(self.source) or not real.is_file():
+            raise ToolkitError('File is outside the Toolkit source')
+        return real
+
+    def _skills(self) -> dict[str, str]:
+        found: dict[str, str] = {}
+        for name in self.manifest.get('core_skills', []) + self.manifest.get('extension_skills', []):
+            found[name] = f'.agents/skills/{name}/SKILL.md'
+        # Include other core skills present in the checkout, not only core_skills.
+        core = self.source / '.agents' / 'skills'
+        if core.is_dir():
+            for p in sorted(core.iterdir()):
+                if p.is_dir() and not p.is_symlink() and (p / 'SKILL.md').is_file():
+                    found.setdefault(p.name, f'.agents/skills/{p.name}/SKILL.md')
+        for entry in self.manifest.get('extension_packs', {}).values():
+            root = entry.get('skill_root')
+            if not root or not isinstance(root, str):
+                continue
+            for name in entry.get('skills', []):
+                if isinstance(name, str):
+                    found.setdefault(name, f'{root}/{name}/SKILL.md')
+        return found
+
+    def _roles(self) -> dict[str, str]:
+        found = {name: f'.agents/roles/{name}.md' for name in self.manifest.get('core_roles', [])}
+        for pack in self.manifest.get('extension_packs', {}).values():
+            root = pack.get('role_root')
+            if root:
+                for name in pack.get('roles', []):
+                    found.setdefault(name, f'{root}/{name}.md')
+        return found
+
+    def info(self) -> dict[str, Any]:
+        return {'source': str(self.source), 'toolkit_version': self.manifest.get('version'),
+                'mcp_server_version': VERSION, 'mcp_protocol_version': PROTOCOL,
+                'skills': len(self.skills), 'profiles': len(self.profiles), 'roles': len(self.roles),
+                'mode': 'READ_ONLY', 'execution': 'NONE', 'client_activation': 'NOT_VERIFIED',
+                'source_revision': self.source_revision, 'working_tree_status': self.working_tree_status}
+
+    def catalog(self, kind: str, query: str = '') -> dict[str, Any]:
+        data = {'skills': self.skills, 'roles': self.roles, 'profiles': self.profiles}.get(kind)
+        if data is None:
+            raise ToolkitError('kind must be skills, roles or profiles')
+        query = query.casefold().strip()
+        results = [{'name': name, 'path': path} if kind != 'profiles'
+                   else {'name': name, 'skills': path}
+                   for name, path in sorted(data.items()) if query in name.casefold()]
+        return {'kind': kind, 'count': len(results), 'items': results[:150]}
+
+    def read(self, kind: str, name: str, offset: int = 0, limit: int = 16000) -> dict[str, Any]:
+        names = self.skills if kind == 'skill' else self.roles if kind == 'role' else None
+        if names is None or name not in names:
+            raise ToolkitError('Unknown declared skill/role. Call toolkit_catalog first.')
+        if not isinstance(offset, int) or offset < 0 or not isinstance(limit, int) or limit < 1 or limit > 32000:
+            raise ToolkitError('Invalid offset/limit (limit 1..32000)')
+        path = self._safe_file(names[name])
+        data = path.read_text(encoding='utf-8')
+        return {'name': name, 'path': names[name], 'content': data[offset:offset+limit],
+                'offset': offset, 'total_chars': len(data), 'truncated': offset+limit < len(data),
+                'provenance': 'LOCAL_SOURCE_GUIDANCE_ONLY'}
+
+    def reference(self, skill: str, relative_path: str, offset: int = 0, limit: int = 16000) -> dict[str, Any]:
+        if skill not in self.skills:
+            raise ToolkitError('Unknown skill. Call toolkit_catalog first.')
+        if not isinstance(relative_path, str) or not relative_path or '\\' in relative_path:
+            raise ToolkitError('Reference path must be a nonempty relative POSIX path')
+        reference = PurePosixPath(relative_path)
+        if reference.is_absolute() or any(x in ('', '.', '..') for x in relative_path.split('/')):
+            raise ToolkitError('Reference path traversal is forbidden')
+        if reference.suffix.lower() not in ('.md', '.txt', '.json', '.yaml', '.yml', '.toml'):
+            raise ToolkitError('Only textual supporting files can be read')
+        if not isinstance(offset, int) or offset < 0 or not isinstance(limit, int) or not 1 <= limit <= 32000:
+            raise ToolkitError('Invalid offset/limit')
+        relative = str(PurePosixPath(self.skills[skill]).parent / reference)
+        content = self._safe_file(relative).read_text(encoding='utf-8')
+        return {'skill':skill,'path':relative,'content':content[offset:offset+limit],
+                'offset':offset,'total_chars':len(content),'truncated':offset+limit < len(content),
+                'provenance':'LOCAL_SOURCE_GUIDANCE_ONLY'}
+
+    def guide(self, name: str = 'AGENT_START.ru.md', offset: int = 0, limit: int = 16000) -> dict[str, Any]:
+        if name not in ('AGENT_START.ru.md', 'AGENT_START.md', 'AGENTS.md'):
+            raise ToolkitError('Unsupported guide name')
+        if not isinstance(offset, int) or offset < 0 or not isinstance(limit, int) or not 1 <= limit <= 32000:
+            raise ToolkitError('Invalid offset/limit')
+        content = self._safe_file(name).read_text(encoding='utf-8')
+        return {'name': name, 'content': content[offset:offset+limit], 'offset': offset,
+                'total_chars':len(content),'truncated':offset+limit < len(content),
+                'provenance':'LOCAL_SOURCE_GUIDANCE_ONLY'}
+
+    def prepare_task(self, task: str, existing_skills: list[str] | None = None,
+                     existing_roles: list[str] | None = None, profile: str = '',
+                     max_skills: int = 5) -> dict[str, Any]:
+        """Load narrow task guidance by comparing inventories supplied by Codex.
+
+        This does NOT scan or write the corporate workspace. An omitted inventory is
+        unknown, not evidence that the project is missing all its skills.
+        """
+        def inventory(value: list[str] | None, label: str) -> tuple[set[str], str]:
+            if value is None:
+                return set(), 'NOT_PROVIDED'
+            if (not isinstance(value, list) or len(value) > 256 or
+                any(not isinstance(v, str) or len(v) > 128 for v in value)):
+                raise ToolkitError(f'{label} must be an array of up to 256 names')
+            return set(value), 'PROVIDED_BY_CLIENT_NOT_VERIFIED'
+
+        installed_skills, skill_inventory_status = inventory(existing_skills, 'existing_skills')
+        installed_roles, role_inventory_status = inventory(existing_roles, 'existing_roles')
+        if not isinstance(max_skills, int) or isinstance(max_skills, bool) or not 1 <= max_skills <= 8:
+            raise ToolkitError('max_skills must be an integer between 1 and 8')
+        routing = self.route(task, profile)
+        selected = routing['skills']
+        missing = [n for n in selected if n not in installed_skills]
+        present = [n for n in selected if n in installed_skills]
+        high_priority = [n for n in routing['priority_skills'] if n in missing]
+        ordered = list(dict.fromkeys(high_priority + missing))
+        loaded_skills = []
+        errors = []
+        for name in ordered[:max_skills]:
+            try:
+                loaded_skills.append(self.read('skill', name, limit=32000))
+            except (ToolkitError, OSError, UnicodeError) as exc:
+                # Failure of one optional skill must not misrepresent its activation.
+                errors.append({'name': name, 'error_type': type(exc).__name__})
+
+        lower = task.casefold()
+        profiles = routing['profiles']
+        if len(profiles) > 1 or routing['profile'] == 'ui-orchestra':
+            role = 'orchestrator'
+        elif ('review' in lower or 'ревью' in lower or 'проверка кода' in lower):
+            role = 'reviewer'
+        elif routing['profile'].startswith('qa-'):
+            role = 'qa-verifier'
+        elif routing['profile'] == 'research':
+            role = 'researcher'
+        else:
+            role = 'implementer'
+        role_candidates = [role, 'orchestrator']
+        role_name = next((r for r in role_candidates if r in self.roles), None)
+        loaded_roles = []
+        if role_name and role_name not in installed_roles:
+            try:
+                loaded_roles.append(self.read('role', role_name, limit=32000))
+            except (ToolkitError, OSError, UnicodeError) as exc:
+                errors.append({'name': role_name, 'error_type': type(exc).__name__})
+
+        return {
+            'primary_profile': routing['profile'],
+            'secondary_profiles': routing['secondary_profiles'],
+            'visual_phase': routing['visual_phase'],
+            'deferred_profiles': routing['deferred_profiles'],
+            'existing_skills_status': skill_inventory_status,
+            'existing_roles_status': role_inventory_status,
+            'selected_skills': selected,
+            'already_available_skills': present,
+            'missing_skills': missing if skill_inventory_status != 'NOT_PROVIDED' else [],
+            'skills_to_consult': ordered,
+            'loaded_skills': loaded_skills,
+            'remaining_skills_to_consult': ordered[max_skills:],
+            'role_to_consult': role_name,
+            'loaded_roles': loaded_roles,
+            'already_available_roles': ([role_name] if role_name in installed_roles else []),
+            'load_errors': errors,
+            'source_revision': self.source_revision,
+            'usage_status': 'GUIDANCE_LOADED_NOT_NATIVE_SKILL_ACTIVATION',
+            'project_files_changed': False,
+            'installation_performed': False,
+            'instructions': [
+                'Client must inspect applicable workspace, ancestor and user-level skill/role inventories before calling this tool; missing inventories remain unknown.',
+                'Read target AGENTS.md and follow project-specific rules and approvals. Existing project skills and roles take precedence.',
+                'Use returned instructions as task guidance in the current conversation, not as automatically installed native Codex skills or spawned subagents.',
+                'Inspect original references with toolkit_get_reference only when task requires them.',
+                'Never write Toolkit skills, roles, reports or caches into a corporate project by default.',
+                'If a native file-based installation is requested, preview Skill Manager changes and obtain explicit approval before --apply.',
+                'Do not claim success of tool execution or tests that were not performed.',
+            ],
+        }
+
+    def route(self, task: str, profile: str = '') -> dict[str, Any]:
+        if not isinstance(task, str) or not task.strip() or len(task) > 12000:
+            raise ToolkitError('task must be nonempty text up to 12000 characters')
+        if not isinstance(profile, str):
+            raise ToolkitError('profile must be a string')
+        text = re.sub(r'\s+', ' ', task.casefold().replace('ё', 'е'))
+        matches = {
+            candidate: [term for term in terms if match_term(text, term)]
+            for candidate, terms in ROUTES if candidate in self.profiles
+        }
+        matches = {candidate: hits for candidate, hits in matches.items() if hits}
+        secondary: list[str] = []
+        deferred: list[str] = []
+        visual_phase = 'none'
+        if profile:
+            if profile not in self.profiles:
+                raise ToolkitError('Unknown profile; see toolkit_catalog(kind=profiles)')
+            chosen = profile
+            matched = ['explicit-profile']
+        else:
+            chosen = next(iter(matches), 'general')
+            building = has_build_intent(text)
+            engineering = [name for name in ('fullstack', 'backend', 'frontend') if name in matches]
+            qa = [name for name in matches if name in QA_PROFILES]
+            # More specific QA takes precedence over generic testing guidance.
+            specific_qa = next((name for name in qa if name != 'qa-core'), qa[0] if qa else '')
+            if any(match_term(text, term) for term in VISUAL_CREATION_TERMS) and 'ui-orchestra' in self.profiles:
+                # A new or redesigned visual interface requires the owner's design gate.
+                chosen = 'ui-orchestra'
+                visual_phase = 'create-design'
+                deferred = engineering + ([specific_qa] if specific_qa else [])
+                deferred = list(dict.fromkeys(x for x in deferred if x != 'ui-orchestra'))
+            elif building and engineering:
+                if ('fullstack' in self.profiles and
+                    ('fullstack' in matches or ('backend' in matches and 'frontend' in matches))):
+                    chosen = 'fullstack'
+                else:
+                    chosen = engineering[0]
+                if specific_qa and specific_qa != chosen:
+                    secondary.append(specific_qa)
+            elif building and chosen in QA_PROFILES and 'codex-feature' in matches and not engineering:
+                # E.g. "Реализуй функцию и покрой её тестами" - implementation + QA.
+                chosen = 'codex-feature'
+                if specific_qa:
+                    secondary.append(specific_qa)
+            elif chosen in QA_PROFILES and specific_qa:
+                chosen = specific_qa
+            elif chosen == 'ui-orchestra' and 'qa-ui' in matches:
+                secondary.append('qa-ui')
+            matched = matches.get(chosen, ['visual-design-gate'] if visual_phase != 'none' else [])
+            if chosen == 'fullstack' and 'fullstack' not in matches:
+                matched = matches.get('backend', []) + matches.get('frontend', [])
+            if chosen not in self.profiles:
+                chosen = 'general' if 'general' in self.profiles else next(iter(self.profiles), '')
+                matched = []
+        profiles = [chosen] + [name for name in secondary if name in self.profiles and name != chosen]
+        selected: list[str] = []
+        unavailable: list[str] = []
+        dropped_controllers: list[str] = []
+        active_controller = ''
+        for item in profiles:
+            for name in self.profiles.get(item, []):
+                if name not in self.skills:
+                    if name not in unavailable:
+                        unavailable.append(name)
+                elif name in CONFLICT_GROUP and active_controller and name != active_controller:
+                    if name not in dropped_controllers:
+                        dropped_controllers.append(name)
+                elif name not in selected:
+                    selected.append(name)
+                    if name in CONFLICT_GROUP:
+                        active_controller = name
+        priority = []
+        for item in profiles:
+            for name in PRIORITY_SKILLS.get(item, ()):
+                if name in selected and name not in priority:
+                    priority.append(name)
+        if not priority:
+            priority = selected[:4]
+        return {
+            'profile': chosen, 'secondary_profiles': profiles[1:], 'profiles': profiles,
+            'deferred_profiles': deferred, 'visual_phase': visual_phase,
+            'matched': matched, 'matches_by_profile': {k: v for k, v in matches.items() if k in profiles},
+            'skills': selected, 'priority_skills': priority[:8],
+            'unavailable': unavailable, 'excluded_conflicting_controllers': dropped_controllers,
+            'roles': ['orchestrator'] if 'orchestrator' in self.roles else [],
+            'instructions': [
+                'Determine target project from the client workspace. Toolkit is guidance, not the target.',
+                'Inspect target AGENTS.md/CLAUDE.md and existing task approval/release rules before modifying anything.',
+                'Read the priority_skills first using toolkit_get_skill; load additional selected skills only if needed.',
+                'If visual_phase is create-design, propose and obtain visual acceptance before implementing deferred engineering profiles.',
+                'The chosen profiles are heuristic. Refine selection using actual task requirements and project context.',
+                'Avoid parallel feature-delivery/make-feature controllers.',
+                'Work and store outputs only in the authorized target project or chat, never this Toolkit source.',
+                'Do not claim tool or skill activation, file changes, tests, CI or deploy unless actually verified.',
+                'This MCP adapter is read-only; modifications require separate client tools and permission.',
+            ],
+            'classification': 'HEURISTIC_MULTI_ROUTE_NOT_MODEL_INFERENCE',
+            'source': 'LOCAL_TOOLKIT_MANIFEST',
+            'source_revision': self.source_revision,
+        }
+
+TOOLS: list[dict[str, Any]] = [
+    {'name':'toolkit_info','description':'Inspect installed AI Development Toolkit version and capabilities (read-only).',
+     'inputSchema':{'type':'object','properties':{},'additionalProperties':False}},
+    {'name':'toolkit_catalog','description':'List available real Toolkit skills, roles or profiles (read-only).',
+     'inputSchema':{'type':'object','properties':{'kind':{'type':'string','enum':['skills','roles','profiles']},'query':{'type':'string'}},'required':['kind'],'additionalProperties':False}},
+    {'name':'toolkit_route_task','description':'Select primary and secondary Toolkit profiles for natural-language software engineering and QA tasks. Returns priority skills to read first; selection is heuristic, not model inference.',
+     'inputSchema':{'type':'object','properties':{'task':{'type':'string'},'profile':{'type':'string','description':'Optional explicit manifest profile'}},'required':['task'],'additionalProperties':False}},
+    {'name':'toolkit_prepare_task','description':'For a Codex task, compare client-reported existing skill/role names with relevant Toolkit guidance and return only needed skill and role contents. No project scans, copies, installation or agent spawning (read-only).',
+     'inputSchema':{'type':'object','properties':{
+         'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
+         'existing_roles':{'type':'array','items':{'type':'string'},'maxItems':256},
+         'profile':{'type':'string'},'max_skills':{'type':'integer','minimum':1,'maximum':8}},
+         'required':['task'],'additionalProperties':False}},
+    {'name':'toolkit_get_reference','description':'Read referenced Markdown/text/JSON/YAML files within one declared Toolkit skill (read-only).',
+     'inputSchema':{'type':'object','properties':{'skill':{'type':'string'},'path':{'type':'string'},
+                 'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},
+                 'required':['skill','path'],'additionalProperties':False}},
+    {'name':'toolkit_get_guide','description':'Read real Toolkit agent entrypoint/instructions AGENTS.md or AGENT_START.* from local source.',
+     'inputSchema':{'type':'object','properties':{'name':{'type':'string','enum':['AGENT_START.ru.md','AGENT_START.md','AGENTS.md']},
+              'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'additionalProperties':False}},
+    {'name':'toolkit_get_skill','description':'Read the real skill instructions from your local Toolkit checkout (not mere names).',
+     'inputSchema':{'type':'object','properties':{'name':{'type':'string'},'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'required':['name'],'additionalProperties':False}},
+    {'name':'toolkit_get_role','description':'Read a real agent role file from your local Toolkit checkout.',
+     'inputSchema':{'type':'object','properties':{'name':{'type':'string'},'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'required':['name'],'additionalProperties':False}},
+]
+for t in TOOLS:
+    t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': False, 'idempotentHint': True}
+
+def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(args, dict):
+        raise ToolkitError('Arguments must be an object')
+    if name == 'toolkit_info':
+        return tk.info()
+    if name == 'toolkit_catalog':
+        return tk.catalog(args.get('kind', ''), args.get('query', ''))
+    if name == 'toolkit_route_task':
+        return tk.route(args.get('task', ''), args.get('profile', ''))
+    if name == 'toolkit_prepare_task':
+        return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
+                               args.get('existing_roles'), args.get('profile',''), args.get('max_skills',5))
+    if name == 'toolkit_get_reference':
+        return tk.reference(args.get('skill',''),args.get('path',''),args.get('offset',0),args.get('limit',16000))
+    if name == 'toolkit_get_guide':
+        return tk.guide(args.get('name','AGENT_START.ru.md'),args.get('offset',0),args.get('limit',16000))
+    if name in ('toolkit_get_skill','toolkit_get_role'):
+        return tk.read('skill' if name == 'toolkit_get_skill' else 'role',
+                       args.get('name', ''), args.get('offset', 0), args.get('limit', 16000))
+    raise KeyError(name)
+
+def process(tk: Toolkit, request: dict[str, Any]) -> dict[str, Any] | None:
+    if not isinstance(request, dict) or request.get('jsonrpc') != '2.0':
+        return {'jsonrpc':'2.0','id':request.get('id') if isinstance(request, dict) else None,
+                'error':{'code':-32600,'message':'Invalid JSON-RPC request'}}
+    if 'id' not in request:
+        return None # Notifications require no reply.
+    rid = request['id']
+    method = request.get('method')
+    try:
+        if method == 'initialize':
+            # Return the client's compatible version where appropriate.
+            ver = request.get('params', {}).get('protocolVersion', PROTOCOL)
+            if ver not in ('2024-11-05', '2025-03-26','2025-06-18','2025-11-25','2026-07-28'):
+                ver = PROTOCOL
+            result = {'protocolVersion':ver, 'capabilities':{'tools':{'listChanged':False}},
+                      'serverInfo':{'name':NAME,'version':VERSION}}
+        elif method == 'ping':
+            result = {}
+        elif method == 'tools/list':
+            result = {'tools':TOOLS}
+        elif method == 'tools/call':
+            p = request.get('params', {})
+            try:
+                content = dispatch(tk, p.get('name',''), p.get('arguments', {}))
+                result = {'content':[{'type':'text','text':json.dumps(content, ensure_ascii=False)}],
+                          'structuredContent':content}
+            except ToolkitError as exc:
+                result = {'content':[{'type':'text','text':str(exc)}], 'isError':True}
+            except KeyError as exc:
+                raise ValueError('Unknown tool: '+str(exc)) from exc
+        else:
+            return {'jsonrpc':'2.0','id':rid,'error':{'code':-32601,'message':'Method not found'}}
+        return {'jsonrpc':'2.0','id':rid,'result':result}
+    except UnicodeError:
+        raise  # Corrupt Toolkit content is a server-side error, not invalid tool input.
+    except (TypeError, AttributeError, ValueError) as exc:
+        return {'jsonrpc':'2.0','id':rid,'error':{'code':-32602,'message':str(exc)}}
+
+def serve(tk: Toolkit) -> None:
+    """MCP JSON-RPC over UTF-8 stdio, with matching request IDs on errors.
+
+    The client waits for the ID it sent. Returning a parse-error response with
+    id=null after a valid tools/call can leave it waiting until its timeout.
+    """
+    for line in sys.stdin.buffer:
+        try:
+            request = json.loads(line)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            response = {'jsonrpc': '2.0', 'id': None,
+                        'error': {'code': -32700, 'message': 'Parse error'}}
+            print(f'{NAME}: invalid JSON request: {type(exc).__name__}', file=sys.stderr)
+        else:
+            try:
+                response = process(tk, request)
+            except Exception as exc:
+                # Preserve the original ID, don't dump source contents to stdout.
+                response = {'jsonrpc': '2.0',
+                            'id': request.get('id') if isinstance(request, dict) else None,
+                            'error': {'code': -32603, 'message': 'Internal MCP tool error'}}
+                print(f'{NAME}: internal tool error: {type(exc).__name__}', file=sys.stderr)
+        if response is not None:
+            # MCP stdio requires UTF-8 on every platform. In Windows pipe mode
+            # sys.stdout may use the active ANSI code page (e.g. cp1251), so
+            # writing Unicode through TextIOWrapper can corrupt JSON-RPC.
+            payload = (json.dumps(response, ensure_ascii=False, separators=(',', ':')) + '\n').encode('utf-8')
+            sys.stdout.buffer.write(payload)
+            sys.stdout.buffer.flush()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description='AI Development Toolkit personal MCP (read-only)')
+    parser.add_argument('--source', type=Path, required=True, help='Absolute path to a local Toolkit checkout')
+    parser.add_argument('--check', action='store_true', help='Validate source and print capability JSON')
+    args = parser.parse_args()
+    try:
+        toolkit = Toolkit(args.source)
+    except (ToolkitError, OSError) as exc:
+        print(f'{NAME}: {exc}', file=sys.stderr)
+        return 2
+    if args.check:
+        print(json.dumps(toolkit.info(), ensure_ascii=False, indent=2))
+        return 0
+    serve(toolkit)
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

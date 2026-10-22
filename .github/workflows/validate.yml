@@ -124,6 +124,11 @@ jobs:
         # Typical runtime is <1 minute; bound hangs and preserve the last test in logs.
         timeout-minutes: 5
         run: python -u -m unittest discover -s tests -v
+      - name: Test portable MCP, updater and plugin source packages (offline)
+        timeout-minutes: 5
+        run: |
+          python -u -m unittest discover -s integrations/personal-mcp/adt-personal/tests -p "test_*.py" -v
+          python -u -m unittest discover -s integrations/tests -p "test_*.py" -v
       - name: Check exported source archive before publication (offline)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         shell: bash
@@ -221,6 +226,13 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
         run: python -m unittest discover -s tests -p test_toolkit_mcp.py -v
+      - name: Verify personal MCP and plugin packages on macOS (offline)
+        env:
+          TMPDIR: ${{ runner.temp }}
+        timeout-minutes: 5
+        run: |
+          python -u -m unittest discover -s integrations/personal-mcp/adt-personal/tests -p "test_*.py" -v
+          python -u -m unittest discover -s integrations/tests -p "test_*.py" -v
       - name: Verify checked-out file integrity and provenance
         run: |
           python scripts/verify_checksums.py
