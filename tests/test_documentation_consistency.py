@@ -58,18 +58,18 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC001")
 
     def test_table_cell_missing(self):
-        self.replace("README.md", "Scope, implementation and review |",
-                     "Scope, implementation and review | Extra |")
+        self.replace("README.md", "Five copy-ready requests and honest limits for each AI client |",
+                     "Five copy-ready requests and honest limits for each AI client | Extra |")
         self.check("DOC002")
 
     def test_table_cell_extra(self):
-        self.replace("README.md", "Cross-layer contracts and validation |",
-                     "Cross-layer contracts and validation | Extra |")
+        self.replace("README.md", "Read relevant guidance before proposing changes; no Toolkit installation required just to use the reference |",
+                     "Read relevant guidance before proposing changes; no Toolkit installation required just to use the reference | Extra |")
         self.check("DOC002")
 
     def test_unknown_profile_in_readme(self):
-        self.replace("README.ru.md", "| Разработать интерфейс | \x60frontend\x60 |",
-                     "| Разработать интерфейс | \x60unknown\x60 |")
+        self.replace("README.ru.md", "| Реализовать существующую функцию | \x60codex-feature\x60 |",
+                     "| Реализовать существующую функцию | \x60unknown\x60 |")
         self.check("DOC003")
 
     def test_stale_catalog_profile(self):
@@ -90,8 +90,8 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.replace("CHANGELOG.md", "## Unreleased (main after v5.5.2)", "## Upcoming")
         self.check("DOC004")
 
-    def test_release_candidate_must_not_claim_published(self):
-        self.replace("README.md", "**NOT PUBLISHED**", "**PUBLISHED**")
+    def test_published_release_cannot_reference_wrong_tag(self):
+        self.replace("README.md", "/releases/tag/v5.5.2", "/releases/tag/v5.5.1")
         self.check("DOC004")
 
     def test_release_candidate_requires_exact_tag_guard(self):
