@@ -108,6 +108,19 @@ class ExternalSkillGateTests(unittest.TestCase):
         self.assertIn("EXECUTABLE_OR_HOOK", self._codes())
         self.assertIn("SUSPICIOUS_INSTRUCTIONS", self._codes())
 
+    def test_crlf_skill_frontmatter_is_supported_on_windows(self):
+        (self.candidate / "SKILL.md").write_bytes(self.base_skill.encode("utf-8").replace(b"\n", b"\r\n"))
+        self._write_manifest()
+        self.assertEqual("ALLOW_FOR_REVIEW", self._decision()["decision"])
+
+    def test_ci_and_package_manifests_require_manual_review(self):
+        self._write(".github/workflows/verify.yml", "name: placeholder\n")
+        self._write("package.json", '{"scripts": {"postinstall": "echo hello"}}')
+        self._write_manifest()
+        report = self._decision()
+        self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
+        self.assertIn("EXECUTABLE_OR_HOOK", self._codes())
+
     def test_symlink_and_oversize_fail_closed(self):
         link = self.candidate / "linked.txt"
         try:
