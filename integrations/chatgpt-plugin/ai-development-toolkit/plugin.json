@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-development-toolkit",
+  "version": "0.1.1",
+  "description": "Chat-first AI Development Toolkit skill routing for ChatGPT, engineering, QA and design; optional live guidance when authorized sources are available.",
+  "repository": "https://github.com/MikeMoore1337/ai-development-toolkit",
+  "author": {
+    "name": "AI Development Toolkit Contributors"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "AI Development Toolkit",
+        "shortDescription": "Skills for AI development",
+        "longDescription": "Chat-first engineering, QA, UX/UI and DevOps guidance. Runs in ChatGPT on supported accounts without a local MCP. Uses bundled or verified accessible GitHub skill instructions; does not access private IDE files or install skills by itself.",
+        "developerName": "AI Development Toolkit Contributors",
+        "category": "Productivity",
+        "capabilities": [],
+        "defaultPrompt": [
+          "Help me plan QA for a Python API using the Toolkit.",
+          "Review the UX of an attached screen with Toolkit methodology.",
+          "Use Toolkit guidance to review the repository I connected."
+        ]
+      }
+    }
+  }
+}
