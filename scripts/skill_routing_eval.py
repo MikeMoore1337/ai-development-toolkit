@@ -84,16 +84,13 @@ def prompt_language(text: str) -> str:
     return "ru" if CYRILLIC.search(text) else "en"
 
 
-def vectors(catalog: dict[str, str], aliases: dict[str, list[str]] | None = None) -> tuple[dict[str, Counter], dict[str, float]]:
+def vectors(catalog: dict[str, str]) -> tuple[dict[str, Counter], dict[str, float]]:
     docs: dict[str, Counter] = {}
     df: Counter = Counter()
     for name, description in sorted(catalog.items()):
         weighted = Counter(terms(description))
         for token in terms(name.replace("-", " ")):
             weighted[token] += 3
-        for phrase in (aliases or {}).get(name, []):
-            for token in terms(phrase):
-                weighted[token] += 5
         docs[name] = weighted
         df.update(weighted.keys())
     n = len(docs)
@@ -103,7 +100,8 @@ def vectors(catalog: dict[str, str], aliases: dict[str, list[str]] | None = None
 
 
 def ranking(prompt: str, catalog: dict[str, str],
-            docs: dict[str, Counter], idf: dict[str, float]) -> list[str]:
+            docs: dict[str, Counter], idf: dict[str, float],
+            aliases: dict[str, list[str]] | None = None) -> list[str]:
     query = set(terms(prompt))
     query_normalized = " ".join(terms(prompt))
     scores = []
@@ -114,6 +112,13 @@ def ranking(prompt: str, catalog: dict[str, str],
         name_phrase = " ".join(terms(name.replace("-", " ")))
         if name_phrase and name_phrase in query_normalized:
             score += 2.0
+        if aliases and prompt_language(prompt) == "ru":
+            # Strictly additive RU evidence: EN baseline rankings stay unchanged.
+            for phrase in aliases.get(name, []):
+                token_set = set(terms(phrase))
+                overlap_alias = len(query & token_set)
+                if overlap_alias >= 2:
+                    score += 2.0 * overlap_alias / len(token_set)
         scores.append((score, name))
     return [name for _, name in sorted(scores, key=lambda pair: (-pair[0], pair[1]))]
 
@@ -147,12 +152,12 @@ def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3,
              aliases: dict[str, list[str]] | None = None) -> dict:
     if not 1 <= top_k <= len(catalog):
         raise RoutingInputError("top_k out of bounds")
-    docs, idf = vectors(catalog, aliases)
+    docs, idf = vectors(catalog)
     observations = []
     for case in cases:
         for polarity, prompts in (("positive", case["positive"]), ("negative", case["negative"])):
             for prompt in prompts:
-                order = ranking(prompt, catalog, docs, idf)
+                order = ranking(prompt, catalog, docs, idf, aliases)
                 position = order.index(case["target"]) + 1
                 accepted = position <= top_k if polarity == "positive" else position != 1
                 observations.append({
