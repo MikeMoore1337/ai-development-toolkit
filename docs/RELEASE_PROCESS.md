@@ -46,7 +46,15 @@ Last published tag: [v5.5.3](https://github.com/MikeMoore1337/ai-development-too
     based on private rights checks and a non-secret audit record, or obtain
     explicit authorization for a reversible exclusion in a separate PR.
     This is a mandatory manual publication step **even when the required PR CI has already passed inventory and release-preflight checks**. The CI additionally verifies a clean offline `git archive` export (Ubuntu 3.12); GitHub-generated archives of new tags must still be verified separately. The owner-reported decision ID1337 is tied to SHA256 fingerprints and classifications of 44 source units (75 files); any changed, added or relabeled files in that scope require fresh owner review. Passing the snapshot gate confirms only that the files match the recorded decision, NOT independent rightsholder or employer permission.
-11. Before tagging, run the read-only **live pre-tag gate** on the clean, already-merged exact SHA:\n\n    \`\`\`bash\n    python scripts/pre_tag_preflight.py --tag vX.Y.Z --sha EXACT_40_CHAR_SHA\n    \`\`\`\n\n    Replace the placeholders with the intended **new** release tag and merged commit. The gate verifies the local manifest, clean worktree, local HEAD, unused local and GitHub tag, exact remote \`main\` SHA, and all three required GitHub CI check runs on that SHA. GitHub read access and network are required; \`GITHUB_TOKEN\` is optional if public anonymous requests are available. It **fails closed** on missing information and never creates a tag or authorizes rights, publication or release. The command can be run on Windows, Linux or macOS from a clean checkout. For CI, the offline unit tests use synthetic GitHub results only.\n\n11. Before tagging, verify the intended release **on the exact commit** rather than assuming `main` and the PR HEAD are identical. Replace `vX.Y.Z` with a new unused tag and verify that GitHub does not already contain it. The example is read-only and does not create a tag:
+11. Before tagging, run the read-only **live pre-tag gate** on the clean, already-merged exact SHA:
+
+    ```bash
+    python scripts/pre_tag_preflight.py --tag vX.Y.Z --sha EXACT_40_CHAR_SHA
+    ```
+
+    Replace the placeholders with the intended **new** release tag and merged commit. The gate verifies the local manifest, clean worktree, local HEAD, unused local and GitHub tag, exact remote `main` SHA, and all three required GitHub CI check runs on that SHA. GitHub read access and network are required; `GITHUB_TOKEN` is optional if public anonymous requests are available. It **fails closed** on missing information and never creates a tag or authorizes rights, publication or release. The command can be run on Windows, Linux or macOS from a clean checkout. For CI, the offline unit tests use synthetic GitHub results only.
+
+12. Before tagging, verify the intended release **on the exact commit** rather than assuming `main` and the PR HEAD are identical. Replace `vX.Y.Z` with a new unused tag and verify that GitHub does not already contain it. The example is read-only and does not create a tag:
 
     ```powershell
     $tag = "vX.Y.Z"
@@ -60,7 +68,7 @@ Last published tag: [v5.5.3](https://github.com/MikeMoore1337/ai-development-too
     ```
 
     Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse any previously published tag.
-12. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
+13. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
     release notes describing changes and compatibility, and verify that the
     public archive contains the expected artifacts. Never describe a tagged
     release as tested on real agents without actual evaluation records.
