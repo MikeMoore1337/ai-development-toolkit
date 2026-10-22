@@ -9886,6 +9886,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Synthetic patch and mocked-git regression tests; no actual product environment tests (#191)."
+    },
+    {
+      "id": "workflow-github-workflows-pinned-skill-discovery-smoke-yml",
+      "path": ".github/workflows/pinned-skill-discovery-smoke.yml",
+      "name": "pinned-skill-discovery-smoke.yml",
+      "kind": "workflow",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-22",
+      "distribution": "included",
+      "notes": "Public metadata-only opt-in GitHub API smoke; no tokens, content download, install, execution of remote Skill, or paid API. Client MCP activation not tested."
     }
   ],
   "owner_review_record": {

@@ -22,8 +22,8 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
 
     def fetcher(self, owner, repo, resource, revision):
         self.calls.append((owner, repo, resource, revision))
-        if resource == "commits":
-            return {"sha": self.SHA, "commit": {"tree": {"sha": self.TREE}}}
+        if resource == "git/commits":
+            return {"sha": self.SHA, "tree": {"sha": self.TREE}}
         return {"sha": self.TREE, "truncated": False, "tree": [
             {"type": "blob", "path": "skills/backend/SKILL.md"},
             {"type": "blob", "path": "skills/design/SKILL.md"},
@@ -111,8 +111,8 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
 
     def test_commit_sha_mismatch_and_no_partial_results(self):
         def bad(owner, repo, kind, sha):
-            if kind == "commits":
-                return {"sha": "b"*40, "commit": {"tree": {"sha": self.TREE}}}
+            if kind == "git/commits":
+                return {"sha": "b"*40, "tree": {"sha": self.TREE}}
             self.fail("Tree must not be queried")
         out = discovery.discover("backend", opt_in=True, allowed_sources=(self.URL+"@"+self.SHA,),
                                  fetch_json=bad)
@@ -123,7 +123,7 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
     def test_truncated_oversize_and_tree_sha_mismatch_fail_closed(self):
         def run_tree(value):
             def fetch(owner, repo, kind, sha):
-                if kind == "commits":
+                if kind == "git/commits":
                     return self.fetcher(owner, repo, kind, sha)
                 return value
             return discovery.discover("backend", opt_in=True,
@@ -170,10 +170,10 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
                 calls.append(("close",))
         with patch.object(discovery.http.client, "HTTPSConnection", Conn):
             with self.assertRaisesRegex(discovery.DiscoveryError, "GITHUB_METADATA_UNAVAILABLE"):
-                discovery._request("example", "repo", "commits", self.SHA)
+                discovery._request("example", "repo", "git/commits", self.SHA)
         self.assertEqual("api.github.com", calls[0][1])
         self.assertEqual("GET", calls[1][1])
-        self.assertEqual("/repos/example/repo/commits/"+self.SHA, calls[1][2])
+        self.assertEqual("/repos/example/repo/git/commits/"+self.SHA, calls[1][2])
         self.assertFalse(any("authorization" in k.lower() for k in calls[1][3]))
         self.assertEqual(("close",), calls[-1])
 
