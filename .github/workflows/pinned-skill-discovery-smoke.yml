@@ -1,0 +1,63 @@
+name: Public pinned skill discovery smoke
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "scripts/github_skill_discovery.py"
+      - "tests/test_github_skill_discovery.py"
+      - ".github/workflows/pinned-skill-discovery-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  live-public-github-metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Configure stdlib Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify pinned commit and public skill path without code download
+        shell: bash
+        env:
+          PINNED_REPO: "https://github.com/MikeMoore1337/ai-development-toolkit@a7c8c300aaadcdd3828ca417b23e16398e3c0e44"
+        run: |
+          set -euo pipefail
+          set +e
+          python scripts/github_skill_discovery.py --query "qa-strategy" \
+            --discover --allow-repo "$PINNED_REPO" > "$RUNNER_TEMP/discovery.json"
+          status=$?
+          set -e
+          if [[ "$status" != 1 ]]; then
+            echo "SMOKE_UNEXPECTED_EXIT_STATUS=$status"
+            exit 1
+          fi
+          python - "$RUNNER_TEMP/discovery.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          result = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected_revision = "a7c8c300aaadcdd3828ca417b23e16398e3c0e44"
+          assert result["status"] == "REVIEW_ONLY", result.get("reason")
+          assert result["installation"] == "NOT_AUTHORIZED"
+          assert result["remote_security_gate"] == "NOT_RUN"
+          assert result["skills_content_downloaded"] is False
+          candidates = result["candidates"]
+          assert any(
+              c["revision"] == expected_revision
+              and c["path"] == ".agents/skills/qa-strategy/SKILL.md"
+              and c["license"] == "NOT_VERIFIED"
+              and c["content"] == "NOT_DOWNLOADED"
+              for c in candidates
+          ), "Expected pinned public qa-strategy path absent"
+          print("PUBLIC_PINNED_DISCOVERY_SMOKE=PASS")
+          print("SOURCE_ONLY_NO_CLIENT_PROOF=TRUE")
+          PY
