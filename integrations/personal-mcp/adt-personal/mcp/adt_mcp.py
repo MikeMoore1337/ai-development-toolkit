@@ -13,7 +13,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.8'
+VERSION = '0.1.9'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -373,6 +373,53 @@ class Toolkit:
             ],
         }
 
+    def assess_skill_coverage(self, query: str) -> dict[str, Any]:
+        """Conservative local evidence, never proof of semantic coverage.
+
+        Report FOUND_LOCAL only for a readable exact skill slug. Routing keyword
+        overlaps are ambiguous hints; no overlap is lexical absence, not a
+        statement that no suitable skill exists. No remote lookup or import.
+        """
+        if not isinstance(query, str) or not query.strip() or len(query) > 500:
+            raise ToolkitError('query must be nonempty text up to 500 characters')
+        needle = query.strip().casefold()
+        found = next((name for name in self.skills if name.casefold() == needle), None)
+        if found is not None:
+            try:
+                self.read('skill', found, limit=1)
+            except (ToolkitError, OSError, UnicodeError):
+                found = None
+        text = re.sub(r'\s+', ' ', needle.replace('ё', 'е'))
+        candidates = []
+        for profile, terms in ROUTES:
+            if profile not in self.profiles or not any(match_term(text, term) for term in terms):
+                continue
+            skill_names = [name for name in self.profiles[profile] if name in self.skills]
+            for name in skill_names:
+                if name not in candidates:
+                    candidates.append(name)
+                if len(candidates) >= 5:
+                    break
+            if len(candidates) >= 5:
+                break
+        if found is not None:
+            coverage, evidence = 'FOUND_LOCAL', 'exact_readable_local_skill_name'
+            candidates = [found] + [name for name in candidates if name != found]
+        elif candidates:
+            coverage, evidence = 'AMBIGUOUS', 'profile_keyword_overlap_not_coverage_proof'
+        else:
+            coverage, evidence = 'MISSING', 'no_profile_keyword_overlap_not_semantic_absence'
+        return {
+            'coverage': coverage, 'evidence': evidence,
+            'candidates': candidates[:5],
+            'external_skill_search': 'NOT_RUN',
+            'external_skill_install': 'NOT_AUTHORIZED',
+            'client_activation': 'NOT_OBSERVED',
+            'status': 'SOURCE_ONLY_ADVISORY',
+            'requires_review': True,
+            'source_revision': self.source_revision,
+        }
+
     def route(self, task: str, profile: str = '') -> dict[str, Any]:
         if not isinstance(task, str) or not task.strip() or len(task) > 12000:
             raise ToolkitError('task must be nonempty text up to 12000 characters')
@@ -478,6 +525,12 @@ class Toolkit:
             'classification': 'HEURISTIC_MULTI_ROUTE_NOT_MODEL_INFERENCE',
             'source': 'LOCAL_TOOLKIT_MANIFEST',
             'source_revision': self.source_revision,
+            'skill_coverage': (self.assess_skill_coverage(task) if len(task) <= 500
+                               else {'coverage': 'NOT_EVALUATED',
+                                     'evidence': 'query_exceeds_coverage_limit',
+                                     'external_skill_install': 'NOT_AUTHORIZED',
+                                     'client_activation': 'NOT_OBSERVED',
+                                     'requires_review': True}),
         }
 
 TOOLS: list[dict[str, Any]] = [
@@ -487,6 +540,10 @@ TOOLS: list[dict[str, Any]] = [
      'inputSchema':{'type':'object','properties':{'kind':{'type':'string','enum':['skills','roles','profiles']},'query':{'type':'string'}},'required':['kind'],'additionalProperties':False}},
     {'name':'toolkit_route_task','description':'Select primary and secondary Toolkit profiles for natural-language software engineering and QA tasks. Returns priority skills to read first; selection is heuristic, not model inference.',
      'inputSchema':{'type':'object','properties':{'task':{'type':'string'},'profile':{'type':'string','description':'Optional explicit manifest profile'}},'required':['task'],'additionalProperties':False}},
+    {'name':'toolkit_assess_skill_coverage',
+     'description':'Read-only local lexical skill coverage advisory: exact local / ambiguous / missing. Never searches external sources or installs skills.',
+     'inputSchema':{'type':'object','properties':{'query':{'type':'string','minLength':1,'maxLength':500}},
+                    'required':['query'],'additionalProperties':False}},
     {'name':'toolkit_prepare_task','description':'For a Codex task, compare client-reported existing skill/role names with relevant Toolkit guidance and return only needed skill and role contents. No project scans, copies, installation or agent spawning (read-only).',
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
@@ -517,6 +574,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
         return tk.catalog(args.get('kind', ''), args.get('query', ''))
     if name == 'toolkit_route_task':
         return tk.route(args.get('task', ''), args.get('profile', ''))
+    if name == 'toolkit_assess_skill_coverage':
+        return tk.assess_skill_coverage(args.get('query', ''))
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
                                args.get('existing_roles'), args.get('profile',''), args.get('max_skills',5))
