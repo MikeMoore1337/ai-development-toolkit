@@ -48,6 +48,8 @@ def main() -> int:
         rpc(4, 'tools/call', {'name': 'toolkit_route_task', 'arguments': {'task': PILOT}}),
         rpc(5, 'tools/call', {'name': 'toolkit_route_task', 'arguments': {'task': COMPOSITE}}),
         rpc(46, 'tools/call', {'name': 'toolkit_prepare_task', 'arguments': {'task': COMPOSITE, 'existing_skills': ['api-design'], 'existing_roles': []}}),
+        rpc(47, 'tools/call', {'name': 'toolkit_assess_skill_coverage', 'arguments': {'query': 'qa-strategy'}}),
+        rpc(48, 'tools/call', {'name': 'toolkit_assess_skill_coverage', 'arguments': {'query': 'zqxw-no-matching-skill'}}),
     ]
     for i in range(6, 46):
         queries.append(rpc(i, 'tools/call', {'name': 'toolkit_route_task',
@@ -93,6 +95,8 @@ def main() -> int:
         pilot = get_structured(4)
         composite = get_structured(5)
         prepared = get_structured(46)
+        local_coverage = get_structured(47)
+        missing_coverage = get_structured(48)
         tools = get_result(2).get('tools', [])
         tools = tools if isinstance(tools, list) else []
         has_errors = any(isinstance(r, dict) and (
@@ -105,7 +109,14 @@ def main() -> int:
               and 'qa-python' in composite.get('secondary_profiles', [])
               and len(tools) == 9 and prepared.get('primary_profile') == 'backend'
               and 'qa-python' in prepared.get('secondary_profiles', [])
-              and len(prepared.get('loaded_skills', [])) > 0)
+              and len(prepared.get('loaded_skills', [])) > 0
+              and local_coverage.get('coverage') == 'FOUND_LOCAL'
+              and 'qa-strategy' in local_coverage.get('candidates', [])
+              and missing_coverage.get('coverage') == 'MISSING'
+              and local_coverage.get('external_skill_install') == 'NOT_AUTHORIZED'
+              and missing_coverage.get('external_skill_install') == 'NOT_AUTHORIZED'
+              and local_coverage.get('client_activation') == 'NOT_OBSERVED'
+              and missing_coverage.get('client_activation') == 'NOT_OBSERVED')
         summary = {'status': 'PASS' if ok else 'FAIL', 'transport': 'DIRECT_STDIO_NOT_CODEX',
                    'mcp_server_version': info.get('mcp_server_version', 'NOT_RETURNED'),
                    'request_count': len(queries), 'response_count': len(replies),
@@ -115,6 +126,9 @@ def main() -> int:
                    'composite_profile': composite.get('profile', 'NOT_RETURNED'),
                    'composite_secondary_profiles': composite.get('secondary_profiles', []),
                    'tool_count': len(tools), 'prepared_skills': len(prepared.get('loaded_skills',[])),
+                   'skill_coverage_local': local_coverage.get('coverage', 'NOT_RETURNED'),
+                   'skill_coverage_missing': missing_coverage.get('coverage', 'NOT_RETURNED'),
+                   'skill_installation': local_coverage.get('external_skill_install', 'NOT_RETURNED'),
                    'elapsed_ms': elapsed_ms,
                    'exit_code': completed.returncode}
         if not ok:
