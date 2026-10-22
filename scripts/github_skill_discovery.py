@@ -45,7 +45,7 @@ def _pin(raw: object) -> tuple[str, str, str, str]:
 def _request(owner: str, repo: str, resource: str, revision: str) -> dict:
     """A fixed-host HTTPS GET without redirects, environment proxy or credentials."""
     if not (SAFE_SEGMENT.fullmatch(owner) and SAFE_SEGMENT.fullmatch(repo)
-            and resource in {"commits", "git/trees"} and HEX.fullmatch(revision)):
+            and resource in {"git/commits", "git/trees"} and HEX.fullmatch(revision)):
         raise DiscoveryError("INVALID_HTTP_TARGET")
     target = f"/repos/{owner}/{repo}/{resource}/{revision}"
     if resource == "git/trees":
@@ -124,11 +124,10 @@ def discover(
     candidates = []
     try:
         for url, owner, repo, commit_sha in pins:
-            commit = fetcher(owner, repo, "commits", commit_sha)
+            commit = fetcher(owner, repo, "git/commits", commit_sha)
             if not isinstance(commit, dict) or commit.get("sha") != commit_sha:
                 raise DiscoveryError("REVISION_NOT_VERIFIED")
-            commit_info = commit.get("commit")
-            tree_info = commit_info.get("tree") if isinstance(commit_info, dict) else None
+            tree_info = commit.get("tree")
             tree_sha = tree_info.get("sha") if isinstance(tree_info, dict) else None
             if not isinstance(tree_sha, str) or not HEX.fullmatch(tree_sha):
                 raise DiscoveryError("INVALID_GITHUB_METADATA")
