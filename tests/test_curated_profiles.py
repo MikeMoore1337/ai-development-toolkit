@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from install import install, skill_sources
-from profile_metrics import measure
+from profile_metrics import measure, audit_exact_sources
 from skill_manager import ManagerError, operate, read_state
 
 MANIFEST = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
@@ -99,6 +99,34 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(3, result["profiles"]["frontend"]["overlap_skill_counts"]["ui-fix"])
         with self.assertRaisesRegex(ValueError, "Unknown profile"):
             measure(ROOT, MANIFEST, "absent")
+
+    def test_exact_source_overlap_is_deterministic_and_not_token_claim(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            folders = [root / ".agents" / "skills" / name for name in ("alpha", "beta")]
+            for folder in folders:
+                (folder / "references").mkdir(parents=True)
+                (folder / "SKILL.md").write_bytes(b"Same source content")
+                (folder / "references" / "guide.md").write_bytes(b"Same reference")
+            manifest = {
+                "core_skills": ["alpha", "beta"], "extension_skills": [],
+                "extension_packs": {}, "profiles": {
+                    "one": ["alpha", "beta"], "two": ["alpha", "beta"]
+                }
+            }
+            before = [(p, p.read_bytes()) for folder in folders
+                      for p in folder.rglob("*") if p.is_file()]
+            report = audit_exact_sources(root, manifest)
+            self.assertEqual(report, audit_exact_sources(root, manifest))
+            self.assertEqual(4, report["source_files_hashed"])
+            self.assertEqual(2, len(report["byte_identical_groups"]))
+            self.assertEqual(1, len(report["high_profile_overlap_at_least_75_percent"]))
+            self.assertEqual("NOT_MEASURED", report["model_tokens_saved"])
+            self.assertEqual("NOT_TESTED", report["runtime_effect"])
+            self.assertEqual(before, [(p, p.read_bytes()) for p, _ in before])
+            (folders[1] / "SKILL.md").write_bytes(b"Different instructions")
+            revised = audit_exact_sources(root, manifest)
+            self.assertEqual(1, len(revised["byte_identical_groups"]))
 
     def test_both_client_previews_leave_files_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
