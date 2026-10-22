@@ -93,3 +93,11 @@ CI prints this baseline separately from the original strict curated-fixture gate
 The read-only `--recommend` mode no longer presents alphabetically sorted zero-evidence skill names as suggestions. If no ranked candidate has any verifiable name, description or curated-alias support, `candidates` is empty and the status is `INSUFFICIENT_EVIDENCE`. The evaluator does **not** silently infer a skill or assign a confidence score.
 
 Simple explicit negative prefixes (e.g. `Skip database migration planning; ...` or `Не нужен SEO-аудит: ...`) are separated from actionable instructions. The output lists `excluded_negated_clauses`; a purely negative request returns `NO_POSITIVE_INTENT`. This conservative pattern is **not** a complete natural-language negation parser. The prior untuned holdout remains unchanged so regressions are measurable.
+
+### Evidence-supported selection vs raw lexical top-k
+
+The frozen 38-case holdout now reports **two distinct measurements** for the same unchanged prompts. Legacy `passed`/`failed` retains the original rank-based result (including possible zero-overlap, alphabetical fallback). `supported_passed`/`supported_failed` only credits candidates that the read-only `--recommend` output can support with name, description or curated-alias tokens. `abstained` means no evidence-supported candidate was returned; `unverified_fallback` counts cases scored as passed by the original ranking but not by evidence-supported advice.
+
+`by_kind` and `by_language` carry each count separately; the per-case observations retain both candidate lists and their evidence-based selection status. The metrics describe *lexical support*, not correctness probabilities or independently adjudicated relevance. In particular, a lower evidence-supported hit rate with more abstentions can represent safer behavior, not a regression in the unchanged raw ranker.
+
+Neither the holdout labels nor the alias dictionary are modified by this measurement. The report remains non-gating, requires no remote API, and does not demonstrate actual skill activation by an AI client.
