@@ -36,6 +36,23 @@ class SourcePackageTests(unittest.TestCase):
                 self.assertNotIn('plugins_6',path.read_text(encoding='utf8'))
                 self.assertNotIn('pluginrel_',path.read_text(encoding='utf8'))
 
+    def test_integration_docs_do_not_rank_chatgpt_or_codex(self):
+        for name in (
+            'personal-mcp/README.ru.md',
+            'chatgpt-plugin/README.ru.md',
+            'README.ru.md',
+        ):
+            text = (BASE / name).read_text(encoding='utf-8')
+            for forbidden in (
+                'Дополнительный вариант: локальный MCP',
+                'Основной вариант для чат-бота',
+                'ChatGPT прежде всего',
+                'ChatGPT-first',
+            ):
+                self.assertNotIn(forbidden, text, name)
+        mcp_guide = (BASE / 'personal-mcp/README.ru.md').read_text(encoding='utf-8')
+        self.assertIn('равноправных способов подключения', mcp_guide)
+
     def test_unix_install_and_updater_are_present_and_safe_defaults(self):
         server = BASE / 'personal-mcp/adt-personal'
         for name in ('Install-ADT-Personal.sh', 'Enable-ADT-AutoUpdate.sh'):
