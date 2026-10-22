@@ -151,13 +151,14 @@ def review(candidate_dir: Path, manifest_file: Path) -> dict:
                 issues.append(_issue("SUSPICIOUS_INSTRUCTIONS", "REVIEW", rel))
             if rel == "SKILL.md":
                 normalized_text = text.replace("\r\n", "\n")
-                if not normalized_text.startswith("---\n"):
+                # An opening "---" is not sufficient: require a closing delimiter.
+                frontmatter = re.match(r"\A---\n(.*?)\n---(?:\n|\Z)",
+                                       normalized_text, flags=re.S)
+                if frontmatter is None:
                     issues.append(_issue("SKILL_FRONTMATTER_MISSING", "REVIEW", rel))
                 elif data is not None:
-                    frontmatter = normalized_text.split("---\n", 2)
                     name = re.search(r"^name:\s*([a-z0-9-]+)\s*$",
-                                     frontmatter[1] if len(frontmatter) > 1 else "",
-                                     flags=re.M)
+                                     frontmatter.group(1), flags=re.M)
                     if name is None:
                         issues.append(_issue("SKILL_NAME_MISSING", "REVIEW", rel))
                     elif name.group(1) != data["candidate_id"]:
