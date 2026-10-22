@@ -43,9 +43,11 @@ class PlatformGuidesTests(unittest.TestCase):
             self.assertIn(label, workflow)
         self.assertNotIn("macos-15-large", workflow)
 
-    def test_mcp_not_falsely_claimed_installed(self) -> None:
-        self.assertIn("does **not** ship", (ROOT / "docs/UPDATING.md").read_text(encoding="utf-8"))
-        self.assertIn("нет", (ROOT / "docs/ru/UPDATING.md").read_text(encoding="utf-8"))
+    def test_mcp_has_read_only_local_scope_not_unattended_update(self) -> None:
+        self.assertIn("local MCP installer", (ROOT / "docs/UPDATING.md").read_text(encoding="utf-8"))
+        self.assertIn("локальный установщик MCP", (ROOT / "docs/ru/UPDATING.md").read_text(encoding="utf-8"))
+        self.assertIn("read-only", (ROOT / "docs/MCP_INSTALL.md").read_text(encoding="utf-8"))
+        self.assertIn("только чтение", (ROOT / "docs/ru/MCP_INSTALL.md").read_text(encoding="utf-8"))
         for file in ("docs/UPDATING.md", "docs/ru/UPDATING.md"):
             body = (ROOT / file).read_text(encoding="utf-8")
             self.assertIn("chatgpt_personal_live", body)
