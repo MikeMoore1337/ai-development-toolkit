@@ -55,6 +55,16 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
         self.assertFalse((self.project / ".adt").exists())
 
+    def test_reference_roles_are_read_only_not_launched_agents(self):
+        roles = self._invoke("toolkit_list_roles")["result"]["structuredContent"]
+        self.assertGreaterEqual(len(roles["roles"]), 5)
+        role = roles["roles"][0]
+        result = self._invoke("toolkit_read_role", role=role)["result"]["structuredContent"]
+        self.assertEqual("ROLE_REFERENCE_NOT_STARTED_AGENT", result["status"])
+        self.assertIn("text", result)
+        self.assertTrue(self._invoke("toolkit_read_role", role="../../secrets")["result"]["isError"])
+        self.assertFalse((self.project / ".adt").exists())
+
     def test_read_skill_blocks_traversal_and_unknown_name(self):
         skill = sorted(mcp._sources())[0]
         for ref in ("../../AGENTS.md", "references/../../MANIFEST.json",
