@@ -145,8 +145,18 @@ def review(candidate_dir: Path, manifest_file: Path) -> dict:
                 issues.append(_issue("EXECUTABLE_OR_HOOK", "REVIEW", rel))
             if any(pattern.search(text) for pattern in SUSPICIOUS):
                 issues.append(_issue("SUSPICIOUS_INSTRUCTIONS", "REVIEW", rel))
-            if rel == "SKILL.md" and not text.startswith("---\n"):
-                issues.append(_issue("SKILL_FRONTMATTER_MISSING", "REVIEW", rel))
+            if rel == "SKILL.md":
+                if not text.startswith("---\n"):
+                    issues.append(_issue("SKILL_FRONTMATTER_MISSING", "REVIEW", rel))
+                elif data is not None:
+                    frontmatter = text.split("---\n", 2)
+                    name = re.search(r"^name:\s*([a-z0-9-]+)\s*$",
+                                     frontmatter[1] if len(frontmatter) > 1 else "",
+                                     flags=re.M)
+                    if name is None:
+                        issues.append(_issue("SKILL_NAME_MISSING", "REVIEW", rel))
+                    elif name.group(1) != data["candidate_id"]:
+                        issues.append(_issue("SKILL_NAME_MISMATCH", "BLOCK", rel))
         except OSError:
             issues.append(_issue("UNREADABLE_FILE", "BLOCK", rel))
     severity = {item["severity"] for item in issues}
