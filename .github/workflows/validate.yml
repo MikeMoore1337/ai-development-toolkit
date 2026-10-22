@@ -187,3 +187,35 @@ jobs:
       - name: Offline Hermes/Toolkit compatibility (no agent, no API)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: python scripts/agent_eval_hermes_contract.py --hermes-root .hermes-compat
+
+  macos-portability:
+    name: macOS portability (${{ matrix.os }}, Python 3.12)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Confirm macOS architecture
+        run: |
+          python -c "import platform,sys; print('SYSTEM=',platform.system(),'ARCH=',platform.machine(),'PY=',sys.version)"
+      - name: Offline managed installation and rollback on macOS
+        # macOS /var is a system symlink to /private/var. Keep the security
+        # symlink gate strict; put synthetic test fixtures under runner.temp.
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: |
+          python -m unittest discover -s tests -p test_skill_manager.py -v
+          python -m unittest discover -s tests -p test_adt_cli.py -v
+          python -m unittest discover -s tests -p test_platform_guides.py -v
+      - name: Verify checked-out file integrity and provenance
+        run: |
+          python scripts/verify_checksums.py
+          python scripts/validate_provenance.py --mode inventory --report "$RUNNER_TEMP/macos-provenance.json"

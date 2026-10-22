@@ -38,6 +38,12 @@ The first command previews file-level changes; only `--apply` writes. Review the
 **When moving to a public repository:** run validation and publication checks; review `extensions/qa/SOURCE_MAPPING.md`, licenses and all credential-like strings.
 
 
+## Operating-system guides and updates
+
+[Windows / PowerShell](INSTALL_WINDOWS.md) · [Linux / bash](INSTALL_LINUX.md) · [macOS / zsh or bash](INSTALL_MACOS.md) · [Source vs skill vs plugin vs MCP updates](UPDATING.md).
+
+Use an explicit Python 3.12+ interpreter. On Windows examples use `py -3.12`, on Linux/macOS use `python3.12` if installed. Generic `python` in shared examples must be replaced with the correct verified interpreter where necessary. Hosted macOS portability checks do not prove real-client activation.
+
 ## Optional read-only profile recommendation
 
 The toolkit can suggest a profile from an explicit task and limited, well-known

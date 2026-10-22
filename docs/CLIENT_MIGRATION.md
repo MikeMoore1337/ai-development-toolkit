@@ -31,6 +31,8 @@ References: [Codex usage](https://developers.openai.com/blog/skills-agents-sdk),
 
 The first Manager installation keeps `.adt/skills-lock.json` **schema v1**, irrespective of which layout was installed first. If another layout is installed, its separate v1 lock is `.adt/skills-lock-codex.json` or `.adt/skills-lock-claude.json`. The original lock is never silently repurposed. Both use the existing `.adt/manager.lock` and `.adt/history/` with recovery and rollback by last transaction for each layout. Do not hand-edit or delete lockfiles. Preserve `.adt/` backups outside published source control as appropriate.
 
+For OS-specific prerequisites see [Linux](INSTALL_LINUX.md), [macOS](INSTALL_MACOS.md), [Windows](INSTALL_WINDOWS.md), and [updates](UPDATING.md). The `python` examples below require a separately verified Python 3.12+ interpreter; adjust to `python3.12` on Linux/macOS if necessary.
+
 ## Linux/macOS (bash)
 
 ```bash
