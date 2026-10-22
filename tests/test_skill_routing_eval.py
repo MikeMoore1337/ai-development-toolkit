@@ -47,6 +47,51 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual("NOT_MEASURED", report["actual_skill_activation"])
         self.assertEqual("NOT_MEASURED", report["model_effectiveness"])
 
+    def test_ru_aliases_route_without_client_claims(self):
+        catalog = {
+            "contract-testing": "Contract compatibility validation.",
+            "seo-audit": "Search engine optimization review.",
+            "code-review": "Review source code regressions.",
+        }
+        cases = [{
+            "id": "russian-api",
+            "target": "contract-testing",
+            "positive": ["Контрактные тесты совместимости схемы API."],
+            "negative": ["SEO аудит сайта: индексация, метатеги."],
+        }]
+        aliases = {
+            "contract-testing": ["контрактные тесты совместимости схемы api"],
+            "seo-audit": ["seo аудит сайта индексация метатеги"],
+        }
+        report = routing.evaluate(catalog, cases, top_k=1, aliases=aliases)
+        self.assertEqual(0, report["failed"], report["observations"])
+        self.assertEqual(1, report["coverage"]["languages"]["ru"]["tested_target_count"])
+        self.assertEqual(2, len(report["coverage"]["uncovered_targets"]))
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
+
+    def test_aliases_unknown_skill_and_duplicates_blocked(self):
+        (self.root / "aliases.json").write_text(json.dumps({
+            "schema_version": 1, "aliases": {"invented": ["проверка схем"]}
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(routing.RoutingInputError, "Unknown skill alias"):
+            routing.read_aliases(self.root / "aliases.json", self.catalog)
+        (self.root / "aliases.json").write_text(json.dumps({
+            "schema_version": 1,
+            "aliases": {"code-review": ["проверка кода", "проверка кода"]}
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(routing.RoutingInputError, "duplicate alias"):
+            routing.read_aliases(self.root / "aliases.json", self.catalog)
+
+    def test_coverage_does_not_overstate_uncovered_skills(self):
+        report = routing.evaluate(self.catalog, self.cases)
+        self.assertEqual(3, report["coverage"]["catalog_total"])
+        self.assertEqual(1, report["coverage"]["curated_targets"])
+        self.assertEqual(["api-testing", "clear-voice"],
+                         report["coverage"]["uncovered_targets"])
+        self.assertEqual(0, report["coverage"]["languages"]["ru"]["tested_target_count"])
+        self.assertEqual(1, report["coverage"]["languages"]["en"]["tested_target_count"])
+
     def test_deterministic_results(self):
         first = routing.evaluate(self.catalog, self.cases)
         self.assertEqual(first, routing.evaluate(self.catalog, self.cases))
@@ -85,8 +130,12 @@ class SkillRoutingTests(unittest.TestCase):
     def test_real_fixture_is_valid_and_read_only(self):
         catalog = routing.read_catalog(ROOT)
         cases = routing.load_cases(ROOT / "fixtures/skill_routing_cases.json", catalog)
-        report = routing.evaluate(catalog, cases)
+        aliases = routing.read_aliases(ROOT / "fixtures/skill_routing_aliases.json", catalog)
+        report = routing.evaluate(catalog, cases, aliases=aliases)
         self.assertGreaterEqual(len(cases), 12)
+        self.assertEqual(82, report["coverage"]["catalog_total"])
+        self.assertEqual(8, report["coverage"]["languages"]["ru"]["tested_target_count"])
+        self.assertGreater(len(report["coverage"]["uncovered_targets"]), 0)
         self.assertTrue({"qa-failure-triage-versus-generic-tests",
                          "qa-test-oracle-review-versus-code-review"} <=
                         {case["id"] for case in cases})

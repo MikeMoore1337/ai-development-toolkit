@@ -15,6 +15,8 @@ from validate_pack import parse_metadata
 
 ROOT = Path(__file__).resolve().parents[1]
 WORD = re.compile(r"[a-zа-яё0-9]+")
+CYRILLIC = re.compile(r"[а-яё]", re.I)
+ALIAS_FILE = ROOT / "fixtures/skill_routing_aliases.json"
 
 
 class RoutingInputError(ValueError):
@@ -57,6 +59,31 @@ def read_catalog(root: Path) -> dict[str, str]:
     return catalog
 
 
+def read_aliases(path: Path, catalog: dict[str, str]) -> dict[str, list[str]]:
+    """Curated lexical hints; never a claim of semantic model understanding."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or set(data) != {"schema_version", "aliases"}:
+        raise RoutingInputError("Invalid alias registry structure")
+    if data["schema_version"] != 1 or not isinstance(data["aliases"], dict):
+        raise RoutingInputError("Invalid alias registry version")
+    result: dict[str, list[str]] = {}
+    for skill, phrases in sorted(data["aliases"].items()):
+        if skill not in catalog:
+            raise RoutingInputError("Unknown skill alias: " + str(skill))
+        if not isinstance(phrases, list) or not phrases or len(phrases) > 16:
+            raise RoutingInputError("Invalid alias list for " + skill)
+        if any(not isinstance(text, str) or not text.strip() or len(text) > 160
+               for text in phrases) or len(set(phrases)) != len(phrases):
+            raise RoutingInputError("Invalid or duplicate alias for " + skill)
+        result[skill] = phrases
+    return result
+
+
+def prompt_language(text: str) -> str:
+    """Surface-script heuristic; mixed RU/technical English is treated as RU."""
+    return "ru" if CYRILLIC.search(text) else "en"
+
+
 def vectors(catalog: dict[str, str]) -> tuple[dict[str, Counter], dict[str, float]]:
     docs: dict[str, Counter] = {}
     df: Counter = Counter()
@@ -73,7 +100,8 @@ def vectors(catalog: dict[str, str]) -> tuple[dict[str, Counter], dict[str, floa
 
 
 def ranking(prompt: str, catalog: dict[str, str],
-            docs: dict[str, Counter], idf: dict[str, float]) -> list[str]:
+            docs: dict[str, Counter], idf: dict[str, float],
+            aliases: dict[str, list[str]] | None = None) -> list[str]:
     query = set(terms(prompt))
     query_normalized = " ".join(terms(prompt))
     scores = []
@@ -84,6 +112,13 @@ def ranking(prompt: str, catalog: dict[str, str],
         name_phrase = " ".join(terms(name.replace("-", " ")))
         if name_phrase and name_phrase in query_normalized:
             score += 2.0
+        if aliases and prompt_language(prompt) == "ru":
+            # Strictly additive RU evidence: EN baseline rankings stay unchanged.
+            for phrase in aliases.get(name, []):
+                token_set = set(terms(phrase))
+                overlap_alias = len(query & token_set)
+                if overlap_alias >= 2:
+                    score += 2.0 * overlap_alias / len(token_set)
         scores.append((score, name))
     return [name for _, name in sorted(scores, key=lambda pair: (-pair[0], pair[1]))]
 
@@ -113,7 +148,8 @@ def load_cases(file: Path, catalog: dict[str, str]) -> list[dict]:
     return data["cases"]
 
 
-def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3) -> dict:
+def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3,
+             aliases: dict[str, list[str]] | None = None) -> dict:
     if not 1 <= top_k <= len(catalog):
         raise RoutingInputError("top_k out of bounds")
     docs, idf = vectors(catalog)
@@ -121,17 +157,43 @@ def evaluate(catalog: dict[str, str], cases: list[dict], top_k: int = 3) -> dict
     for case in cases:
         for polarity, prompts in (("positive", case["positive"]), ("negative", case["negative"])):
             for prompt in prompts:
-                order = ranking(prompt, catalog, docs, idf)
+                order = ranking(prompt, catalog, docs, idf, aliases)
                 position = order.index(case["target"]) + 1
                 accepted = position <= top_k if polarity == "positive" else position != 1
                 observations.append({
                     "case": case["id"], "target": case["target"],
-                    "kind": polarity, "prompt": prompt,
-                    "rank": position, "top3": order[:3], "pass": accepted,
+                    "kind": polarity, "language": prompt_language(prompt),
+                    "prompt": prompt, "rank": position,
+                    "top3": order[:3], "pass": accepted,
                 })
     failures = [row for row in observations if not row["pass"]]
+    covered = {item["target"] for item in cases}
+    languages = {}
+    for language in ("en", "ru"):
+        positives = {row["target"] for row in observations
+                     if row["kind"] == "positive" and row["language"] == language}
+        negatives = {row["target"] for row in observations
+                     if row["kind"] == "negative" and row["language"] == language}
+        languages[language] = {
+            "tested_targets": sorted(positives & negatives),
+            "tested_target_count": len(positives & negatives),
+            "positive_prompts": sum(row["language"] == language and row["kind"] == "positive"
+                                    for row in observations),
+            "negative_prompts": sum(row["language"] == language and row["kind"] == "negative"
+                                    for row in observations),
+        }
     return {
-        "method": "lexical-description-ranking-v1",
+        "method": "lexical-description-curated-alias-ranking-v2" if aliases else "lexical-description-ranking-v1",
+        "language_classification": "script_heuristic_not_semantic_detection",
+        "client_skill_selection": "NOT_OBSERVED",
+        "client_effectiveness": "NOT_TESTED",
+        "coverage": {
+            "catalog_total": len(catalog),
+            "curated_targets": len(covered),
+            "uncovered_targets": sorted(set(catalog) - covered),
+            "languages": languages,
+            "interpretation": "curated lexical coverage only; no observed client activation",
+        },
         "classification": "offline_source_diagnostic",
         "actual_skill_discovery": "NOT_MEASURED",
         "actual_skill_activation": "NOT_MEASURED",
@@ -149,12 +211,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--cases", type=Path, default=ROOT / "fixtures/skill_routing_cases.json")
     parser.add_argument("--top-k", type=int, default=3)
+    parser.add_argument("--aliases", type=Path, default=ALIAS_FILE)
     parser.add_argument("--strict", action="store_true", help="Fail for mismatched curated prompts")
     args = parser.parse_args(argv)
     try:
         catalog = read_catalog(args.root.resolve())
         cases = load_cases(args.cases, catalog)
-        report = evaluate(catalog, cases, top_k=args.top_k)
+        aliases = read_aliases(args.aliases, catalog)
+        report = evaluate(catalog, cases, top_k=args.top_k, aliases=aliases)
     except (OSError, ValueError, KeyError, TypeError, RuntimeError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 2

@@ -9286,6 +9286,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Original read-only pre-tag verification with offline negative tests (#188); external GitHub verification occurs only upon explicit CLI invocation."
+    },
+    {
+      "id": "toolkit-fixtures-skill-routing-aliases-json",
+      "path": "fixtures/skill_routing_aliases.json",
+      "name": "skill_routing_aliases.json",
+      "kind": "metadata",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-22",
+      "distribution": "included",
+      "notes": "Curated lexical Russian synonyms; source-only evaluation, no model behavior proof (#189)"
     }
   ],
   "owner_review_record": {
