@@ -38,6 +38,10 @@ The first command previews file-level changes; only `--apply` writes. Review the
 **When moving to a public repository:** run validation and publication checks; review `extensions/qa/SOURCE_MAPPING.md`, licenses and all credential-like strings.
 
 
+## Local MCP server
+
+[Install project-scoped Toolkit MCP for Codex / Claude Code](MCP_INSTALL.md) on Windows, Linux or macOS. MCP tools are read-only; config writes require explicit `--apply`. It is not an HTTP endpoint for ChatGPT.
+
 ## Operating-system guides and updates
 
 [Windows / PowerShell](INSTALL_WINDOWS.md) · [Linux / bash](INSTALL_LINUX.md) · [macOS / zsh or bash](INSTALL_MACOS.md) · [Source vs skill vs plugin vs MCP updates](UPDATING.md).

@@ -61,6 +61,10 @@ Toolkit служит **источником инструкций, а не мес
 
 </details>
 
+## Локальный MCP для ИИ-агентов
+
+[Установить Toolkit MCP на Windows, Linux или macOS](docs/ru/MCP_INSTALL.md) - подключение к Codex / Claude Code, поиск навыков без записи и настройка только после подтверждения. Плагин ChatGPT устанавливается отдельно.
+
 ## Установка по операционным системам
 
 [Windows](docs/ru/INSTALL_WINDOWS.md) · [Linux](docs/ru/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/ru/INSTALL_MACOS.md) · [Безопасные обновления](docs/ru/UPDATING.md)

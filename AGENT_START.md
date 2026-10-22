@@ -8,6 +8,10 @@ This is an **agent-facing entry point**, not an executable agent or installer. A
 
 When invoked through the separately installed personal ChatGPT plugin, check the `MANIFEST.json → chatgpt_personal_live` protocol before reading task-specific skills. Use an exact GitHub `main` SHA with all three required CI checks passed, then read relevant files **from that SHA only**. This is **read-only, per-task guidance refresh**; it cannot replace the installed plugin, install tools, change permissions or run in the background. No browsing/GitHub access, pending checks, incompatible protocol or missing source means `FALLBACK_BUNDLED` (or `SHELL_UPDATE_REQUIRED` for incompatible plugin shell), with the limitation stated honestly. [Live source and fallback contract](docs/CLIENT_COMPATIBILITY.md#chatgpt-personal-plugin---verified-live-guidance-not-automatic-binary-updates).
 
+## Optional local MCP integration
+
+For a locally installed Codex or Claude Code project, [Toolkit MCP](docs/MCP_INSTALL.md) lets the agent search and read skill sources without automatically installing them. MCP configuration is project-scoped and needs explicit `--apply` from the human operator. The ordinary reference-link workflow below remains equally supported.
+
 ## Primary path: open IDE project + Toolkit URL, without installation
 
 The user opens their project in an IDE with Codex and makes **an ordinary request**, including a Toolkit repository link. No special template, project label or installation is required.
