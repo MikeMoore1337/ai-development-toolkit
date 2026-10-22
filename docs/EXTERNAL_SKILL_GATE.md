@@ -32,6 +32,20 @@ python -m unittest tests.test_external_skill_gate -v
 
 Replace all placeholders with independently checked values before use. There is no automatic installation, no Agensi account dependency and no paid API.
 
+
+## Execution/reference threat review (real pinned source, no import)
+
+Read-only source inspection: [pbakaus/impeccable at 69c34b7](https://github.com/pbakaus/impeccable/tree/69c34b7c3d6267dfd783dacb9f58f04522656b2b), file `.agents/skills/impeccable/SKILL.md`. GitHub repository metadata declares Apache-2.0 and a root LICENSE exists. **These are licensing claims, not independent legal approval.** The skill text refers to a bundled launcher, a binary that may be fetched on first invocation, and project hooks. **None of these were executed or installed.**
+
+| Threat / uncertainty | Scanner evidence | Gate response | Remaining manual work |
+|---|---|---|---|
+| Skill text requests running `scripts/...`, `npx` or a launcher/download | `EXECUTION_OR_DOWNLOAD_REFERENCE` | `NEEDS_MANUAL_REVIEW`, not installation approval | Verify exact binary digest, source, network domains, startup behavior and cost |
+| Text links to `reference/*.md` missing from candidate inventory | `REFERENCED_FILE_NOT_INCLUDED` | `NEEDS_MANUAL_REVIEW` | Obtain independently pinned complete reference inventory |
+| Local relative Markdown reference contains `..` traversal | `UNSAFE_SKILL_REFERENCE` | `REJECT` | Reject unsafe package and investigate input provenance |
+| References exist but script source is not present | Static detector is incomplete | Never authorizes installation | Independently inspect dependencies, hooks and permitted file writes |
+
+The added synthetic regression reproduces the **risk pattern**, not the complete third-party package. A positive static result still cannot attest artifact provenance, license scope or actual runtime behavior. Detection uses bounded heuristics and can produce false positives/negatives. Full downstream acceptance requires an isolated, owner-approved review without downloading or launching binaries automatically.
+
 ## Verdicts and limits
 
 | Decision | Reason | Next action |
