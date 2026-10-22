@@ -77,9 +77,8 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 **Local installation is optional.** You need Python 3.12+, a project directory and a separately installed AI client for the command-line route. Read [the no-terminal guide](docs/BEGINNER_START.md) if you only want to describe a task.
 
-**Latest published release:** [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) (21 October 2026). Its tag contains `MANIFEST.json.version = 5.5.2`. The older v5.5.0 and v5.5.1 tags retain historical version mismatches; see [release errata](CHANGELOG.md). `main` may have changes not yet released.
+**Latest published release:** [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3) (22 October 2026). Exact tag SHA `14b96569528ab9544c0d28aa1a00343496066445`; `MANIFEST.json.version = 5.5.3`. Historical v5.5.0/v5.5.1 version mismatches are recorded in [CHANGELOG.md](CHANGELOG.md). `main` may contain later unreleased changes.
 
-**Next release candidate:** `v5.5.3` — **NOT PUBLISHED**. The release is pending exact-commit CI, source-rights checks and GitHub publication. See [CHANGELOG.md](CHANGELOG.md).
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 

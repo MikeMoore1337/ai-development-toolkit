@@ -485,8 +485,9 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
     path = "CHANGELOG.md"
     if (root / path).is_file():
         headings = re.findall(r"^##\s+(.+)$", (root / path).read_text(encoding="utf-8"), re.M)
-        candidate = ("**v5.5.1 published-tag metadata erratum" in
-                     (root / path).read_text(encoding="utf-8"))
+        # Historical errata are not evidence that the *current* version is a candidate.
+        candidate = ("**Next release candidate:**" in
+                     (root / "README.md").read_text(encoding="utf-8"))
         expected_status = "candidate" if candidate else "released"
         if (len(headings) < 2 or headings[0] != "Unreleased (main after v" + version + ")"
                 or not re.fullmatch(re.escape(version) +
@@ -496,18 +497,21 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
     path = "docs/RELEASE_PROCESS.md"
     if (root / path).is_file():
         body = (root / path).read_text(encoding="utf-8")
-        if "## Published v5.5.0 and v5.5.1 archive errata" in body:
+        if candidate:
             major, minor, patch = (int(item) for item in version.split("."))
             prior = f"{major}.{minor}.{patch - 1}" if patch > 0 else None
             if (f"`{version}` (candidate, NOT PUBLISHED)" not in body
                     or prior is None or f"/releases/tag/v{prior}" not in body
                     or body.count("TAG_MANIFEST_VERSION_MISMATCH") < 2
-                    or '$taggedManifest.version' not in body
-                    or '$manifest.version' not in body):
+                    or "$taggedManifest.version" not in body
+                    or "$manifest.version" not in body):
                 add(findings, "DOC004", path, 1, "Release candidate identity or pre-tag guard mismatch")
-        elif ("currently " + chr(96) + version + chr(96) not in body or
-                "/releases/tag/v" + version not in body or "Unreleased" not in body):
-            add(findings, "DOC004", path, 1, "Release process baseline mismatch")
+        elif (f"Last published tag: [v{version}]" not in body
+                or f"/releases/tag/v{version}" not in body
+                or body.count("TAG_MANIFEST_VERSION_MISMATCH") < 2
+                or "$taggedManifest.version" not in body
+                or "$manifest.version" not in body):
+            add(findings, "DOC004", path, 1, "Published release identity or pre-tag guard mismatch")
 
 
 def inspect(root: Path = ROOT) -> dict:

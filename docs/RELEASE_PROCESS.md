@@ -7,17 +7,17 @@ substitute for independently verifying a tagged public release.
 
 ## Published v5.5.0 and v5.5.1 archive errata (2026-10-21)
 
-The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), tagged at `04d60055e93c04dda26fb3868689ab4031fbf617`. **The published tag still contains `MANIFEST.json.version = 5.4.0`, and its changelog/release instructions still describe v5.4.0 as the last release.** This is a documented metadata discrepancy, not a reason to move or rewrite an immutable release tag. Treat the tag as the published identity, report the stale in-archive version accurately, and track corrective forward-only work in [Issue #153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153). **The subsequently published [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) is also mismatched:** immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46` includes `MANIFEST.json.version = 5.4.0`. The intended fix from PR #169 was not merged before the tag was created. Do not rewrite either tag. The v5.5.2 GitHub Release was subsequently published on 2026-10-21 with a matching manifest. The next proposal is `v5.5.3` (**NOT PUBLISHED**). The previous release workflow lacked tag/manifest matching; the new source-archive workflow includes a fail-closed guard but cannot prevent a release already published. Verify both identities BEFORE creating tags and recheck rights/archives.
+The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), tagged at `04d60055e93c04dda26fb3868689ab4031fbf617`. **The published tag still contains `MANIFEST.json.version = 5.4.0`, and its changelog/release instructions still describe v5.4.0 as the last release.** This is a documented metadata discrepancy, not a reason to move or rewrite an immutable release tag. Treat the tag as the published identity, report the stale in-archive version accurately, and track corrective forward-only work in [Issue #153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153). **The subsequently published [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) is also mismatched:** immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46` includes `MANIFEST.json.version = 5.4.0`. The intended fix from PR #169 was not merged before the tag was created. Do not rewrite either tag. The v5.5.2 GitHub Release was subsequently published on 2026-10-21 with a matching manifest. Release `v5.5.3` was published on 2026-10-22 with matching manifest version and tag. The previous release workflow lacked tag/manifest matching; the new source-archive workflow includes a fail-closed guard but cannot prevent a release already published. Verify both identities BEFORE creating tags and recheck rights/archives.
 
 ## Version and release state
 
-- `MANIFEST.json.version` in this proposed release tree is **`5.5.3` (candidate, NOT PUBLISHED)**. The last published tag is `v5.5.2`, with matching embedded version `5.5.2`; neither a branch nor a candidate field constitutes a released artifact.
+- The last published tag is **`v5.5.3`**, containing `MANIFEST.json.version = 5.5.3` at SHA `14b96569528ab9544c0d28aa1a00343496066445`. Later `main` commits are not automatically published.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Last published tag: [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) at SHA `bf8d469f7402ed1a99e19ba6797d841751801ea5` (2026-10-21), with matching embedded version `5.5.2`. Compare [v5.5.2...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.2...main) for subsequent source changes; never label this candidate published in advance.
+Last published tag: [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3) at SHA `14b96569528ab9544c0d28aa1a00343496066445` (2026-10-22), with matching manifest version `5.5.3`. [Compare v5.5.3...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.3...main) for subsequent changes.
 
 
 1. Work on a feature branch and document what changed and any migration risks.
@@ -46,10 +46,20 @@ Last published tag: [v5.5.2](https://github.com/MikeMoore1337/ai-development-too
     based on private rights checks and a non-secret audit record, or obtain
     explicit authorization for a reversible exclusion in a separate PR.
     This is a mandatory manual publication step **even when the required PR CI has already passed inventory and release-preflight checks**. The CI additionally verifies a clean offline `git archive` export (Ubuntu 3.12); GitHub-generated archives of new tags must still be verified separately. The owner-reported decision ID1337 is tied to SHA256 fingerprints and classifications of 44 source units (75 files); any changed, added or relabeled files in that scope require fresh owner review. Passing the snapshot gate confirms only that the files match the recorded decision, NOT independent rightsholder or employer permission.
-11. Before tagging, verify the intended release **on the exact commit** rather than assuming `main` and the PR HEAD are identical. The example is read-only and does not create a tag:
+11. Before tagging, run the read-only **live pre-tag gate** on the clean, already-merged exact SHA:
+
+    ```bash
+    python scripts/pre_tag_preflight.py --tag vX.Y.Z --sha EXACT_40_CHAR_SHA
+    ```
+
+    Replace the placeholders with the intended **new** release tag and merged commit. The gate verifies the local manifest, clean worktree, local HEAD, unused local and GitHub tag, exact remote `main` SHA, and all three required GitHub CI check runs on that SHA. GitHub read access and network are required; `GITHUB_TOKEN` is optional if public anonymous requests are available. It **fails closed** on missing information and never creates a tag or authorizes rights, publication or release. The command can be run on Windows, Linux or macOS from a clean checkout. For CI, the offline unit tests use synthetic GitHub results only.
+
+12. Before tagging, verify the intended release **on the exact commit** rather than assuming `main` and the PR HEAD are identical. Replace `vX.Y.Z` with a new unused tag and verify that GitHub does not already contain it. The example is read-only and does not create a tag:
 
     ```powershell
-    $tag = "v5.5.3"
+    $tag = "vX.Y.Z"
+    if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw "RELEASE_TAG_NOT_SELECTED" }
+    if (git tag --list $tag) { throw "RELEASE_TAG_EXISTS_LOCALLY" }
     $sha = "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
     if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
     if ((git rev-parse HEAD).Trim() -cne $sha) { throw "RELEASE_WRONG_HEAD_SHA" }
@@ -57,8 +67,8 @@ Last published tag: [v5.5.2](https://github.com/MikeMoore1337/ai-development-too
     if ($taggedManifest.version -cne $tag.Substring(1)) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
     ```
 
-    Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse `v5.5.0`/`v5.5.1`.
-12. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
+    Also check all required CI results **for this exact SHA**, inspect the final diff and get separate owner release-rights approval for that artifact. Never tag a different main HEAD or reuse any previously published tag.
+13. After successful CI on `main` AND the release rights gate, tag the exact validated SHA, publish
     release notes describing changes and compatibility, and verify that the
     public archive contains the expected artifacts. Never describe a tagged
     release as tested on real agents without actual evaluation records.
@@ -74,7 +84,7 @@ extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
 For example, on Windows (replace the tag for the release under review):
 
 ```powershell
-$tag = "v5.5.3"
+$tag = "vX.Y.Z"
 $zip = Join-Path $env:TEMP "adt-$tag.zip"
 $dest = Join-Path $env:TEMP "adt-$tag-source"
 if (Test-Path $dest) { throw "Destination must be fresh: $dest" }

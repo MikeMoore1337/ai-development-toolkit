@@ -1,5 +1,9 @@
 # Changelog
 
+**v5.5.3 publication confirmed (2026-10-22)**
+
+[GitHub Release v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3) was published on 22 October 2026 from commit `14b96569528ab9544c0d28aa1a00343496066445`. The tagged manifest version is `5.5.3`. Earlier candidate entries below preserve their historical context.
+
 **v5.5.2 publication confirmed (2026-10-21)**
 
 The [v5.5.2 GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) was published on 21 October 2026 at commit `bf8d469f7402ed1a99e19ba6797d841751801ea5`. The published tag's `MANIFEST.json.version` is `5.5.2`. Earlier candidate statements below remain historical pre-publication records; they are **not** the current release status. The existing v5.5.0 and v5.5.1 mismatches are unchanged.
@@ -15,11 +19,11 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.3)
 
-No additional changes recorded after the v5.5.3 release candidate.
+No additional changes recorded after the v5.5.3 release.
 
-## 5.5.3 (candidate, 2026-10-22)
+## 5.5.3 (released, 2026-10-22)
 
-**Status: prepared for owner-authorized release, not yet tagged or published.** Changes merged since [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2):
+**Status: published as v5.5.3 on 2026-10-22 from commit `14b96569528ab9544c0d28aa1a00343496066445`.** Changes merged since [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2):
 
 - Added portable ChatGPT plugin source with task routing, engineering, QA and UX/UI guidance, without local project access or paid API requirements (#184).
 - Added user-level read-only Codex MCP and source auto-update support on Windows, Linux and macOS, including tests and bilingual installation guides (#183, #184).
