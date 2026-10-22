@@ -121,6 +121,13 @@ class ExternalSkillGateTests(unittest.TestCase):
         self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
         self.assertIn("EXECUTABLE_OR_HOOK", self._codes())
 
+    def test_incomplete_frontmatter_is_never_marked_clean(self):
+        self._write("SKILL.md", "---\nname: test-skill\ndescription: unclosed frontmatter\n")
+        self._write_manifest()
+        report = self._decision()
+        self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
+        self.assertIn("SKILL_FRONTMATTER_MISSING", self._codes())
+
     def test_symlink_and_oversize_fail_closed(self):
         link = self.candidate / "linked.txt"
         try:
