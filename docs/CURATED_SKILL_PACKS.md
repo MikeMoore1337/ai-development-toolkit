@@ -47,6 +47,10 @@ Optional `ux-design` composes one process skill with existing design-system and 
 
 The optional `ai-engineering-qa` profile adds one AI-specific skill and reuses `research-verification`, `security-boundaries`, `test-analysis-design`, and `contract-testing`. It provides deterministic offline checks and does not claim real model effectiveness, RAG semantics or autonomous execution. [Guide](AI_ENGINEERING_QA.md).
 
+## Prompt Refinement and SEO
+
+`prompt-refinement` converts raw notes into a ready prompt without executing the task. `seo-audit` checks SEO with factual evidence and explicit uncertainty. Neither requires a paid API. [Guide](PROMPT_AND_SEO_SKILLS.md).
+
 ## Accessibility QA
 
 Optional `accessibility-qa` combines one specialist skill with existing QA test-design, optional Playwright and quality-gate guidance. [Guide](ACCESSIBILITY_QA.md). Offline checks never claim WCAG conformance.

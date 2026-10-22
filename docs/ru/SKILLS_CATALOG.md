@@ -114,6 +114,15 @@
 
 Опциональный навык [ai-engineering-qa](../../extensions/ai/skills/ai-engineering-qa/SKILL.md) проверяет версии наборов LLM, регрессию промптов, поиск и обоснованность RAG-ответов, права инструментов на синтетических офлайн-примерах. [Руководство](AI_ENGINEERING_QA.md). Без второго исполнителя моделей и платных API.
 
+## Промпты и SEO
+
+| Навык | Когда использовать |
+| :--- | :--- |
+| [`prompt-refinement`](../../extensions/ai/skills/prompt-refinement/SKILL.md) | Превратить сумбурные заметки в качественный промпт без выполнения задачи. |
+| [`seo-audit`](../../extensions/seo/skills/seo-audit/SKILL.md) | Технический и контентный SEO-аудит с доказательствами. |
+
+[Инструкция](PROMPT_AND_SEO_SKILLS.md).
+
 ## Security Engineering
 
 Опциональный [security-engineering](../../extensions/security/skills/security-engineering/SKILL.md) связывает угрозы, границы доверия, риски и проверяемые защитные меры. [Руководство](SECURITY_DEVSECOPS.md). Один новый навык без сканера.
@@ -232,6 +241,8 @@
 | `performance-load-testing` | `performance-load-testing`, `test-strategy`, `failure-triage` |
 | `reliability-testing` | `reliability-testing`, `background-processing`, `integration-testing`, `failure-triage` |
 | `ai-engineering-qa` | `ai-engineering-qa`, `research-verification`, `security-boundaries`, `test-analysis-design`, `contract-testing` |
+| `prompt-refinement` | `prompt-refinement` |
+| `seo-audit` | `seo-audit`, `research-verification` |
 | `agent-architecture` | `architecture-decisions`, `agent-framework-fit`, `codebase-knowledge-map`, `qa-strategy` |
 | `business-system-analysis` | `business-system-analysis`, `task-scoping`, `requirement-analysis`, `requirements-traceability` |
 | `ux-design` | `ux-design-process`, `design-system-consistency`, `component-architecture`, `task-scoping` |

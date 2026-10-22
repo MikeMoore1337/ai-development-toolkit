@@ -34,7 +34,7 @@ def main():
     assert manifest['name'] == plugin.name
     results = [
         archive(server, args.output/'AI-Development-Toolkit-Personal-MCP-0.1.8.zip', 'adt-personal'),
-        archive(plugin, args.output/'AI-Development-Toolkit-ChatGPT-Plugin-0.1.1.zip', plugin.name),
+        archive(plugin, args.output/'AI-Development-Toolkit-ChatGPT-Plugin-0.1.2.zip', plugin.name),
     ]
     print(json.dumps(results, ensure_ascii=False, indent=2))
 

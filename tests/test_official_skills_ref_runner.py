@@ -121,7 +121,7 @@ class OfficialRunnerTests(unittest.TestCase):
 
     def test_real_manifest_contains_all_declared_packs(self):
         paths = runner.skill_directories(ROOT)
-        self.assertEqual(80, len(paths))
+        self.assertEqual(82, len(paths))
         self.assertEqual(24, sum(".agents/skills/" in p.as_posix() for p in paths))
         self.assertEqual(1, sum("extensions/data/" in p.as_posix() for p in paths))
         self.assertEqual(27, sum("extensions/qa/" in p.as_posix() for p in paths))

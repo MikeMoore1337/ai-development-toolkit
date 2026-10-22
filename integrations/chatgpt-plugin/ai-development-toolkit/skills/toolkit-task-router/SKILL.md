@@ -9,6 +9,14 @@ Default to the conversational ChatGPT workflow without requiring a terminal, MCP
 
 Read `references/ROUTING.md`. For chat-only walkthroughs consult `references/CHAT_WORKFLOWS.md`. Treat the Toolkit repository as **guidance only**. The user's project rules and explicit permissions outrank reusable skill content; never send business source code to unrelated services. If a repository or project has not been provided, offer architecture/guidance and request only essential context when needed.
 
+## Understand intent before skill routing
+
+Default mode is **FULFILL_REQUEST**: understand even poorly phrased input internally and perform the underlying task with the actually available project context and tools in the same turn. Never make the user copy a polished prompt and submit it again. Ask one clarification only if essential.
+
+Exception: an explicit request **to write, improve or adapt a prompt** selects [toolkit-prompt-refinement](../toolkit-prompt-refinement/SKILL.md) in `EXPORT_PROMPT` mode; return one copy-ready prompt without executing its underlying request. Do not redirect "fix bug", "make website", "audit SEO" into prompt export.
+
+For "SEO audit", "почему не индексируется" and search visibility, select [toolkit-seo-audit](../toolkit-seo-audit/SKILL.md) and complete the evidence-based audit possible from available sources, labeling inaccessible evidence `NOT_VERIFIED`. No paid SEO API required; a new website still starts at UX/UI Design Orchestra.
+
 ## Route
 For design/redesign/new website/UX audit, **start with** the UX/UI Design Orchestra before generic frontend coding. Show genuine design alternatives and actual visual evidence when visuals are requested and supported. Don't claim UI approval based on text or invent completed specialist reviews. For nonvisual tasks, select a focused backend/frontend/fullstack/QA/DevOps profile based on the task, not all profiles.
 

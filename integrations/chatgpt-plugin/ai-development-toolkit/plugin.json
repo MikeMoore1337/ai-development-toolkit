@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-development-toolkit",
-  "version": "0.1.1",
-  "description": "Chat-first AI Development Toolkit skill routing for ChatGPT, engineering, QA and design; optional live guidance when authorized sources are available.",
+  "version": "0.1.2",
+  "description": "Chat-first Toolkit routing for engineering, QA, design, SEO and explicit prompt refinement without paid APIs.",
   "repository": "https://github.com/MikeMoore1337/ai-development-toolkit",
   "author": {
     "name": "AI Development Toolkit Contributors"
@@ -12,14 +12,16 @@
       "interface": {
         "displayName": "AI Development Toolkit",
         "shortDescription": "Skills for AI development",
-        "longDescription": "Chat-first engineering, QA, UX/UI and DevOps guidance. Runs in ChatGPT on supported accounts without a local MCP. Uses bundled or verified accessible GitHub skill instructions; does not access private IDE files or install skills by itself.",
+        "longDescription": "Chat-first engineering, QA, UX/UI and DevOps guidance. Runs in ChatGPT on supported accounts without a local MCP. Uses bundled or verified accessible GitHub skill instructions; does not access private IDE files or install skills by itself. Natural language tasks are fulfilled directly; prompt export is only on explicit request. Includes SEO audit guidance.",
         "developerName": "AI Development Toolkit Contributors",
         "category": "Productivity",
         "capabilities": [],
         "defaultPrompt": [
           "Help me plan QA for a Python API using the Toolkit.",
           "Review the UX of an attached screen with Toolkit methodology.",
-          "Use Toolkit guidance to review the repository I connected."
+          "Use Toolkit guidance to review the repository I connected.",
+          "Сделай хороший промпт для Codex из моих заметок.",
+          "Проверь SEO сайта по предоставленному HTML."
         ]
       }
     }
