@@ -90,7 +90,9 @@ class ReproduciblePackagesTests(unittest.TestCase):
                 with self.assertRaises(pkg.BundleError):
                     pkg.archive(self.src, self.root / "no.zip", top)
         with self.assertRaisesRegex(pkg.BundleError, "Empty"):
-            empty = self.root / "empty"\n            empty.mkdir()\n            pkg.source_files(empty)
+            empty = self.root / "empty"
+            empty.mkdir()
+            pkg.source_files(empty)
 
     def test_refuses_large_file_before_writing_archive(self):
         big = self.src / "oversized.bin"
