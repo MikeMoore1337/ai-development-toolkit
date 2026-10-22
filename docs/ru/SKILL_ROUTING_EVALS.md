@@ -2,7 +2,7 @@
 
 [English](../SKILL_ROUTING_EVALS.md) | [Спецификация Agent Skills](AGENT_SKILLS_SPEC.md) | [Проверка качества](SKILL_QUALITY_V2.md)
 
-Бесплатная **лексическая диагностика** сопоставляет запросы обычным языком с полями `name` и `description` всех 66 навыков из `MANIFEST.json`. За основу взят подход к многоуровневой оценке из [agent-skills Addy Osmani](https://github.com/addyosmani/agent-skills), но сторонний код не копируется.
+Бесплатная **лексическая диагностика** сопоставляет запросы обычным языком с полями `name` и `description` **всех навыков, объявленных в `MANIFEST.json`**. Количество вычисляется динамически; наличие навыка в каталоге не означает, что его поведение уже проверено. За основу взят подход к многоуровневой оценке из [agent-skills Addy Osmani](https://github.com/addyosmani/agent-skills), но сторонний код не копируется.
 
 ```bash
 python scripts/skill_routing_eval.py --strict
@@ -53,3 +53,11 @@ python -m unittest tests.test_skill_routing_eval -v
 | QA-N07 | «Запусти 11 QA-агентов для правки опечатки» | Выбирает соразмерный процесс; описание роли не означает запуск агента |
 
 При изменении описания или выбора навыка повторите затронутый сценарий и соседний конфликтующий. Пока реальных запусков нет, результат `NOT_MEASURED`. Дополнительные методы - в [руководстве по наборам](CURATED_SKILL_PACKS.md#дополнительные-методы-qa-по-необходимости).
+
+### Покрытие навыков и русский язык
+
+Проверенные вручную русские словосочетания находятся в [реестре подсказок](../../fixtures/skill_routing_aliases.json). Это ограниченное лексическое сопоставление, а не семантический поиск.
+
+В JSON-отчёте `coverage.catalog_total` обозначает весь каталог, `coverage.curated_targets` - проверенные целевые навыки, `coverage.uncovered_targets` - ещё не охваченные навыки, `coverage.languages` - число позитивных и негативных примеров на каждом языке. Язык по кириллице определяется эвристически.
+
+`client_skill_selection = NOT_OBSERVED` и `client_effectiveness = NOT_TESTED` означают отсутствие реального прогона ChatGPT/Codex/Claude. Испытания клиентов и влияние на результат остаются задачей [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
