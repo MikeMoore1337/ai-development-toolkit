@@ -28,13 +28,13 @@ SCRIPT_SUFFIXES = {".sh", ".bash", ".ps1", ".bat", ".cmd", ".py", ".js", ".mjs",
 # These match explicit launch/download/hook instructions in SKILL.md without
 # executing anything or interpreting those instructions as commands.
 EXECUTION_REFERENCES = (
-    re.compile(r"(?:^|[\\s\x60'\"(])(?:[A-Za-z0-9_.<>-]+/)*scripts/[A-Za-z0-9_./-]+", re.I),
-    re.compile(r"\\b(?:npx|bunx|pipx|pnpm\\s+dlx|curl|wget|powershell|bash)\\s+\\S+", re.I),
-    re.compile(r"\\b(?:launcher|executable|binary)\\b.{0,120}\\b(?:download|run|execute|install)\\b", re.I | re.S),
-    re.compile(r"\\b(?:hooks?|postinstall|preinstall)\\b.{0,90}\\b(?:enable|install|register|on|off|runs?)\\b", re.I | re.S),
+    re.compile(r"(?:^|[\s\x60'\"(])(?:[A-Za-z0-9_.<>-]+/)*scripts/[A-Za-z0-9_./-]+", re.I),
+    re.compile(r"\b(?:npx|bunx|pipx|pnpm\s+dlx|curl|wget|powershell|bash)\s+\S+", re.I),
+    re.compile(r"\b(?:launcher|executable|binary)\b.{0,120}\b(?:download|run|execute|install)\b", re.I | re.S),
+    re.compile(r"\b(?:hooks?|postinstall|preinstall)\b.{0,90}\b(?:enable|install|register|on|off|runs?)\b", re.I | re.S),
 )
 # Only explicit local Markdown references are interpreted, and only as data.
-LOCAL_REFERENCES = re.compile(r"\\]\\(((?:reference|references|scripts)/[A-Za-z0-9_./-]+)\\)")
+LOCAL_REFERENCES = re.compile(r"\]\(((?:reference|references|scripts)/[A-Za-z0-9_./-]+)\)")
 SUSPICIOUS = (
     re.compile(r"ignore (?:all |previous |prior )?instructions", re.I),
     re.compile(r"(?:curl|wget)\s+.*(?:\||-o|--output)", re.I),
