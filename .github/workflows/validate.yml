@@ -102,6 +102,8 @@ jobs:
         run: python scripts/validate_quality.py
       - name: Check skill selection descriptions with offline lexical fixtures
         run: python scripts/skill_routing_eval.py --strict
+      - name: Report untuned holdout routing baseline (diagnostic, not a release gate)
+        run: python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_holdout.json
       - name: Check Russian translation source revisions (warnings do not block unrelated PRs)
         run: python scripts/check_translation_freshness.py
       - name: Verify per-skill quality metrics (offline source only)
