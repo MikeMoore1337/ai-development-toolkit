@@ -34,43 +34,7 @@
 
     ```powershell
     $tag = "vX.Y.Z"
-    if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+ "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
-    if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
-    if ((git rev-parse HEAD).Trim() -cne $sha) { throw "RELEASE_WRONG_HEAD_SHA" }
-    $taggedManifest = git show "${sha}:MANIFEST.json" | ConvertFrom-Json
-    if ($taggedManifest.version -cne $tag.Substring(1)) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
-    ```
-
-    Также проверьте CI на этом SHA, итоговый diff и отдельное разрешение владельца на точный выпускаемый артефакт. Не переиспользуйте ранее опубликованные теги.
-12. Только после успешного CI на `main` **и** отдельного release rights gate создайте тег на точном проверенном SHA, опубликуйте примечания о совместимости и проверьте фактический архив. Не объявляйте релиз проверенным на реальных агентах без соответствующих испытаний.
-
-Текущие настройки Ruleset: [защита ветки (EN)](../BRANCH_PROTECTION.md). CI проверяет структуру навыков, но переносимость и эффективность реальных агентов требуют отдельных испытаний.
-
-## Независимая проверка GitHub-архива исходников
-
-До публикации нового релиза скачайте **фактический** ZIP, созданный GitHub, и распакуйте в **новую пустую папку**, не в Git clone или уже использовавшийся worktree. Пример для Windows (замените тег проверяемого релиза):
-
-```powershell
-$tag = "vX.Y.Z"
-$zip = Join-Path $env:TEMP "adt-$tag.zip"
-$dest = Join-Path $env:TEMP "adt-$tag-source"
-if (Test-Path $dest) { throw "Destination must be fresh: $dest" }
-Invoke-WebRequest "https://github.com/MikeMoore1337/ai-development-toolkit/archive/refs/tags/$tag.zip" -OutFile $zip
-Expand-Archive -LiteralPath $zip -DestinationPath $dest
-$root = Get-ChildItem $dest -Directory | Select-Object -First 1
-python scripts/verify_checksums.py --archive-root $root.FullName
-$manifest = Get-Content (Join-Path $root.FullName "MANIFEST.json") -Raw | ConvertFrom-Json
-if ("v$($manifest.version)" -cne $tag) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
-```
-
-Проверка архива сравнивает SHA256 и требует, чтобы **каждый извлечённый исходный файл встретился ровно один раз** в `SHA256SUMS.txt`. Отклоняются недостающие, лишние, неучтённые файлы и пути через ссылки. В Git worktree режим `git ls-files -z` даёт канонический список отслеживаемых файлов, поэтому новые отслеживаемые файлы тоже требуют контрольных сумм.
-
-Проверка сама по себе **не удостоверяет загруженный архив и издателя**: отдельно проверяйте ожидаемый SHA тега и результат workflow GitHub. Для публикации нужен **реально выполненный и зафиксированный** архивный тест; описание инструкции не доказывает, что архив когда-либо был скачан.
-
-После публикации GitHub Actions `Verify release source archive` запускается при отправке релизного тега и событии `release: published`. Его также можно вызвать вручную для допустимого тега `vX.Y.Z`. Перед подтверждением приёмки архива проверьте фактически завершённый job и артефакт `release-source-verification`. В отличие от статической проверки дерева Git, этот workflow сверяет **реально загруженные байты** и блокирует архив, где манифест не соответствует тегу. Это проверка после публикации, которая не может отменить созданный неверный тег.
-
-Новые архивы проходят release provenance gate после проверки SHA. Исторические архивы без соответствующего скрипта получают `NOT_VERIFIED` по лицензиям, сохраняя независимый результат проверки хешей: права на их повторное распространение **не считаются подтверждёнными задним числом**.
-) { throw "RELEASE_TAG_NOT_SELECTED" }
+    if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw "RELEASE_TAG_NOT_SELECTED" }
     if (git tag --list $tag) { throw "RELEASE_TAG_EXISTS_LOCALLY" }
     $sha = "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
     if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
@@ -79,7 +43,7 @@ if ("v$($manifest.version)" -cne $tag) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
     if ($taggedManifest.version -cne $tag.Substring(1)) { throw "TAG_MANIFEST_VERSION_MISMATCH" }
     ```
 
-    Также проверьте CI на этом SHA, итоговый diff и отдельное разрешение владельца на точный выпускаемый артефакт. Не переиспользуйте уже опубликованные теги `v5.5.0` и `v5.5.1`.
+    Также проверьте CI на этом SHA, итоговый diff и отдельное разрешение владельца на точный выпускаемый артефакт. Не переиспользуйте ранее опубликованные теги.
 12. Только после успешного CI на `main` **и** отдельного release rights gate создайте тег на точном проверенном SHA, опубликуйте примечания о совместимости и проверьте фактический архив. Не объявляйте релиз проверенным на реальных агентах без соответствующих испытаний.
 
 Текущие настройки Ruleset: [защита ветки (EN)](../BRANCH_PROTECTION.md). CI проверяет структуру навыков, но переносимость и эффективность реальных агентов требуют отдельных испытаний.
