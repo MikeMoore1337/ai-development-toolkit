@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "description": "Untuned holdout authored separately from the lexical-alias training fixtures. Report baseline verbatim; do not optimize aliases against these cases.",
+  "cases": [
+    {
+      "id": "h01",
+      "kind": "single",
+      "query": "После разблокировки телефона завершение подхода перестало обновлять состояние тренировки.",
+      "expected": [
+        "state-management",
+        "cross-layer-debugging",
+        "defect-management"
+      ]
+    },
+    {
+      "id": "h02",
+      "kind": "single",
+      "query": "Keyboard users cannot reach the dismiss icon in the mobile rest timer.",
+      "expected": [
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "h03",
+      "kind": "single",
+      "query": "В приложении повторное получение одного сообщения запускает отправку двух уведомлений.",
+      "expected": [
+        "reliability-testing",
+        "background-processing"
+      ]
+    },
+    {
+      "id": "h04",
+      "kind": "single",
+      "query": "Evaluate whether the login callback can be replayed across user sessions.",
+      "expected": [
+        "authentication-authorization",
+        "security-engineering",
+        "security-review"
+      ]
+    },
+    {
+      "id": "h05",
+      "kind": "single",
+      "query": "Разработчики удалили необязательное поле события, а подписчики перестали принимать сообщения.",
+      "expected": [
+        "contract-testing"
+      ]
+    },
+    {
+      "id": "h06",
+      "kind": "single",
+      "query": "An LLM answer cites documents that retrieval never returned; design reproducible checks.",
+      "expected": [
+        "ai-engineering-qa"
+      ]
+    },
+    {
+      "id": "h07",
+      "kind": "single",
+      "query": "В продакшене алерт сработал сильно позже начала недоступности сервиса. Найди почему.",
+      "expected": [
+        "observability-sre",
+        "failure-triage"
+      ]
+    },
+    {
+      "id": "h08",
+      "kind": "single",
+      "query": "We receive messy CSV exports and need daily deduplication and incremental loading.",
+      "expected": [
+        "data-engineering"
+      ]
+    },
+    {
+      "id": "h09",
+      "kind": "single",
+      "query": "Интернет-магазин не отображается в результатах поиска, хотя страницы опубликованы.",
+      "expected": [
+        "seo-audit"
+      ]
+    },
+    {
+      "id": "h10",
+      "kind": "single",
+      "query": "The labels sound robotic; rewrite them in plain language while keeping factual claims.",
+      "expected": [
+        "editorial-naturalness",
+        "clear-voice"
+      ]
+    },
+    {
+      "id": "h11",
+      "kind": "single",
+      "query": "Заказчик сказал «сделай приложение удобнее», нужно определить границы и критерии завершения.",
+      "expected": [
+        "task-scoping",
+        "requirement-analysis"
+      ]
+    },
+    {
+      "id": "h12",
+      "kind": "single",
+      "query": "Review a downloaded agent extension's license and startup hooks before adoption.",
+      "expected": [
+        "external-skill-review"
+      ]
+    },
+    {
+      "id": "h13",
+      "kind": "single",
+      "query": "Нужно сравнить реальный мобильный экран с утверждённым эталоном изображения.",
+      "expected": [
+        "screenshot-fidelity"
+      ]
+    },
+    {
+      "id": "h14",
+      "kind": "single",
+      "query": "Parametrized Python tests leak fixture state into the next test case.",
+      "expected": [
+        "pytest-test-design",
+        "test-data-management"
+      ]
+    },
+    {
+      "id": "h15",
+      "kind": "single",
+      "query": "Первый экран сайта загружается медленно из-за большого клиентского набора модулей.",
+      "expected": [
+        "frontend-performance"
+      ]
+    },
+    {
+      "id": "h16",
+      "kind": "single",
+      "query": "Create a bounded throughput experiment with p95 latency and error rate.",
+      "expected": [
+        "performance-load-testing"
+      ]
+    },
+    {
+      "id": "h17",
+      "kind": "single",
+      "query": "Before choosing CrewAI, assess whether a simple coordinator would suffice.",
+      "expected": [
+        "agent-framework-fit"
+      ]
+    },
+    {
+      "id": "h18",
+      "kind": "single",
+      "query": "Перед выпуском проверь, получится ли восстановить данные после изменения схемы таблицы.",
+      "expected": [
+        "database-migrations",
+        "database-validation"
+      ]
+    },
+    {
+      "id": "h19",
+      "kind": "single",
+      "query": "We have dependencies between tickets and no clear ownership or delivery sequence.",
+      "expected": [
+        "project-delivery-management"
+      ]
+    },
+    {
+      "id": "h20",
+      "kind": "single",
+      "query": "Сравни реальные ограничения бесплатных провайдеров распознавания изображений.",
+      "expected": [
+        "provider-reality-check"
+      ]
+    },
+    {
+      "id": "h21",
+      "kind": "single",
+      "query": "Map the user's onboarding journey and rough screen sketches before coding.",
+      "expected": [
+        "ux-design-process",
+        "product-discovery"
+      ]
+    },
+    {
+      "id": "h22",
+      "kind": "single",
+      "query": "При правке общего пакета неизвестно, какие публичные контракты и тесты затронуты.",
+      "expected": [
+        "change-impact-analysis"
+      ]
+    },
+    {
+      "id": "h23",
+      "kind": "single",
+      "query": "Our SQL lookup gets slower each week despite unchanged API traffic.",
+      "expected": [
+        "data-access",
+        "frontend-performance"
+      ]
+    },
+    {
+      "id": "h24",
+      "kind": "single",
+      "query": "Нужно подготовить отчёт о причине сбоя в CI, не называя предположения доказанными.",
+      "expected": [
+        "failure-triage",
+        "observability-sre"
+      ]
+    },
+    {
+      "id": "h25",
+      "kind": "compound",
+      "query": "Проверь индексацию сайта и доступность управления с клавиатуры.",
+      "expected": [
+        "seo-audit",
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "h26",
+      "kind": "compound",
+      "query": "Check whether API messages remain compatible and design negative permission tests.",
+      "expected": [
+        "contract-testing",
+        "security-testing"
+      ]
+    },
+    {
+      "id": "h27",
+      "kind": "compound",
+      "query": "Спроектируй сценарии нового интерфейса и сравни готовый экран с эталоном.",
+      "expected": [
+        "ux-design-process",
+        "screenshot-fidelity"
+      ]
+    },
+    {
+      "id": "h28",
+      "kind": "compound",
+      "query": "Design retries for the job queue; assess the production rollback procedure.",
+      "expected": [
+        "background-processing",
+        "release-safety"
+      ]
+    },
+    {
+      "id": "h29",
+      "kind": "compound",
+      "query": "Выясни причину падения тестов CI и оформи воспроизводимый баг-репорт.",
+      "expected": [
+        "failure-triage",
+        "defect-management"
+      ]
+    },
+    {
+      "id": "h30",
+      "kind": "compound",
+      "query": "Review permissions of a REST endpoint and design response validation checks.",
+      "expected": [
+        "authentication-authorization",
+        "api-testing"
+      ]
+    },
+    {
+      "id": "h31",
+      "kind": "compound",
+      "query": "Разбери влияние изменения схемы базы данных и определи регрессионные проверки.",
+      "expected": [
+        "change-impact-analysis",
+        "database-validation",
+        "database-migrations"
+      ]
+    },
+    {
+      "id": "h32",
+      "kind": "compound",
+      "query": "Improve UI animation smoothness and check reduced-motion accessibility.",
+      "expected": [
+        "motion-quality",
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "h33",
+      "kind": "negative",
+      "query": "Не нужен SEO-аудит: перепиши тексты кнопок естественным языком.",
+      "expected": [
+        "editorial-naturalness",
+        "clear-voice"
+      ],
+      "avoid_top1": [
+        "seo-audit"
+      ]
+    },
+    {
+      "id": "h34",
+      "kind": "negative",
+      "query": "Do not prepare a release: investigate why workers replay the same queue message.",
+      "expected": [
+        "reliability-testing",
+        "background-processing"
+      ],
+      "avoid_top1": [
+        "release-safety"
+      ]
+    },
+    {
+      "id": "h35",
+      "kind": "negative",
+      "query": "Не создавай новый дизайн, исправь обработку блокировок SQL-транзакций.",
+      "expected": [
+        "data-access"
+      ],
+      "avoid_top1": [
+        "ux-ui-design-orchestra"
+      ]
+    },
+    {
+      "id": "h36",
+      "kind": "negative",
+      "query": "Skip database migration planning; check keyboard focus and screen reader labels.",
+      "expected": [
+        "accessibility-testing"
+      ],
+      "avoid_top1": [
+        "database-migrations"
+      ]
+    },
+    {
+      "id": "h37",
+      "kind": "negative",
+      "query": "Не проводи нагрузочное тестирование, проверь секреты и границы доверия MCP.",
+      "expected": [
+        "security-boundaries",
+        "security-engineering"
+      ],
+      "avoid_top1": [
+        "performance-load-testing"
+      ]
+    },
+    {
+      "id": "h38",
+      "kind": "negative",
+      "query": "We are not comparing model providers; write deterministic pytest tests for a function.",
+      "expected": [
+        "pytest-test-design"
+      ],
+      "avoid_top1": [
+        "provider-reality-check"
+      ]
+    }
+  ]
+}
