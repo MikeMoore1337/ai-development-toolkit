@@ -193,6 +193,19 @@ class CuratedProfileTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Linked"):
                 audit_directives(root, manifest)
 
+    def test_real_toolkit_directive_inventory_audit_is_bounded_and_honest(self):
+        """Run the optional read-only audit on actual declared source files."""
+        result = audit_directives(ROOT, MANIFEST)
+        self.assertGreater(result["sources_scanned"], 0)
+        self.assertGreater(result["directive_lines_examined"], 0)
+        self.assertLessEqual(result["sources_scanned"], 500)
+        self.assertLessEqual(result["directive_lines_examined"], 1500)
+        self.assertEqual("NOT_VERIFIED", result["semantic_equivalence"])
+        self.assertEqual("NOT_MEASURED", result["model_tokens_saved"])
+        self.assertEqual("NOT_TESTED", result["runtime_effect"])
+        self.assertEqual("OFFLINE_LEXICAL_OVERLAP_CANDIDATES", result["classification"])
+        self.assertTrue(all(item["review_only"] for item in result["near_lexical_candidates"]))
+
     def test_both_client_previews_leave_files_untouched(self):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
