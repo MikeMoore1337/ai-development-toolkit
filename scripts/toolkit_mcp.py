@@ -81,6 +81,11 @@ def _tool_defs() -> list[dict]:
          "inputSchema": {"type": "object", "properties": {"query": string("Task or skill keywords")},
                          "required": ["query"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_assess_skill_coverage",
+         "description": "Check if a task exactly names a local skill, has ambiguous lexical matches, or lacks lexical matches. Advisory only; no external search or install.",
+         "inputSchema": {"type": "object", "properties": {"query": string("Task or exact skill slug")},
+                         "required": ["query"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_read_skill", "description": "Read a declared local SKILL.md or a reference inside that skill.",
          "inputSchema": {"type": "object",
                          "properties": {"skill": string("Exact skill name from catalog"),
@@ -169,11 +174,44 @@ def _search(query: str) -> list[dict]:
     return sorted(results, key=lambda x: (-x["score"], x["skill"]))[:MAX_SEARCH]
 
 
+def _assess_skill_coverage(query: str, matches: list[dict] | None = None) -> dict:
+    """Conservative source-only coverage, never inferred semantic confidence.
+
+    FOUND_LOCAL is restricted to a literally named, readable declared skill.
+    A lexical hit alone is ambiguous; no hits mean lexical evidence is absent,
+    not that no semantically useful skill exists.
+    """
+    if matches is None:
+        matches = _search(query)
+    # Validate even when a caller supplies an already-computed search result.
+    if not isinstance(query, str) or not query.strip() or len(query) > 500:
+        raise ValueError("query must be 1-500 characters")
+    exact = query.strip().casefold()
+    if any(item["skill"] == exact for item in matches):
+        status, evidence = "FOUND_LOCAL", "exact_declared_readable_skill_name"
+    elif matches:
+        status, evidence = "AMBIGUOUS", "lexical_matches_not_coverage_proof"
+    else:
+        status, evidence = "MISSING", "no_local_lexical_match_not_semantic_absence"
+    return {
+        "coverage": status, "evidence": evidence,
+        "candidates": [{"skill": item["skill"], "score": item["score"]}
+                       for item in matches[:5]],
+        "external_skill_search": "NOT_RUN",
+        "external_skill_install": "NOT_AUTHORIZED",
+        "client_activation": "NOT_OBSERVED",
+        "requires_review": True,
+        "status": "SOURCE_ONLY_ADVISORY",
+    }
+
+
 def invoke(tool: str, args: dict) -> dict:
     if not isinstance(args, dict):
         raise ValueError("Tool arguments must be an object")
     if tool == "toolkit_catalog":
         return catalog()
+    if tool == "toolkit_assess_skill_coverage":
+        return _assess_skill_coverage(args.get("query"))
     if tool == "toolkit_list_roles":
         return {"roles": sorted(_roles()), "status": "REFERENCE_ONLY"}
     if tool == "toolkit_read_role":
@@ -210,6 +248,7 @@ def invoke(tool: str, args: dict) -> dict:
                         if any(word in name for word in role_words if len(word) >= 4)]
         return {"profile": candidates[0] if candidates else ("general" if "general" in profiles else None),
                 "skills": matches[:5], "roles": role_matches[:5],
+                "skill_coverage": _assess_skill_coverage(query, matches=matches),
                 "status": "ADVISORY_ONLY", "requires_review": True}
     if tool == "toolkit_read_skill":
         name = _name(args.get("skill"))
