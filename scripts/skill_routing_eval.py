@@ -150,9 +150,18 @@ def recommend(prompt: str, catalog: dict[str, str],
         raise RoutingInputError("Request must be nonempty and at most 2000 characters")
     if not 1 <= top_k <= min(5, len(catalog)):
         raise RoutingInputError("top_k must be between 1 and 5")
-    parts = [p.strip() for p in re.split(r"\s+(?:and|и)\s+|\s*;\s*", prompt, flags=re.I)
-             if p.strip()]
-    if len(parts) > 3 or any(len(terms(part)) < 2 for part in parts):
+    # Split explicit semicolon boundaries first. A one-word conjunction
+    # fragment should not erase an otherwise actionable multi-part request.
+    parts = []
+    for clause in re.split(r"\s*;\s*", prompt):
+        if not clause.strip():
+            continue
+        pieces = [p.strip() for p in re.split(r"\s+(?:and|и)\s+", clause, flags=re.I)]
+        if len(pieces) > 1 and all(len(terms(piece)) >= 2 for piece in pieces):
+            parts.extend(pieces)
+        else:
+            parts.append(clause.strip())
+    if len(parts) > 3:
         parts = [prompt.strip()]
     # Explicit leading prohibitions must not be mistaken for tasks to perform.
     # This bounded rule recognizes simple prefixes, not arbitrary logical negation.
