@@ -135,5 +135,77 @@ class ChangeImpactTests(unittest.TestCase):
         self.assertTrue(all(x["changed_paths"] for x in result["recommendations"]))
 
 
+    def test_declared_mapping_keeps_every_test_not_run(self):
+        mapping = qa.load_test_map(ROOT / "fixtures/qa_change_impact_test_map.json")
+        result = qa.plan(["frontend/views/workout.tsx", "backend/api/schema.py"],
+                         test_map=mapping)
+        chosen = result["declared_test_candidates"]
+        self.assertTrue(chosen)
+        self.assertEqual("OWNER_DECLARED_NOT_VERIFIED", result["test_mapping_source"])
+        self.assertIn("targeted-unit", result["unmapped_check_ids"])
+        self.assertTrue(all(item["status"] == "NOT_RUN" for item in chosen))
+        self.assertTrue(all(item["source"] == "OWNER_DECLARED_NOT_VERIFIED" for item in chosen))
+        self.assertTrue(all(item["execution_receipt"] is None for item in chosen))
+        self.assertIn("tests/e2e/workout.spec.ts::restore_after_unlock",
+                      {item["test_id"] for item in chosen})
+        self.assertEqual("INSUFFICIENT_EVIDENCE", result["gate"])
+        self.assertEqual(0, result["executed_tests"])
+
+    def test_mapping_matches_whole_prefix_not_similar_directory(self):
+        example = {"schema_version": 1, "entries": [{
+            "id": "auth", "prefix": "backend/auth/", "check_ids": ["auth-boundary"],
+            "test_ids": ["tests/security/test_auth.py::deny"],
+            "requirement_ids": ["FIXTURE-DENY"],
+        }]}
+        result = qa.plan(["backend/authors/permissions.py"], test_map=example)
+        self.assertEqual([], result["declared_test_candidates"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", result["gate"])
+
+    def test_mapping_strict_schema_rejects_commands_and_injection(self):
+        fixture = qa.load_test_map(ROOT / "fixtures/qa_change_impact_test_map.json")
+        mutants = [
+            lambda x: x["entries"][0].update(run="curl https://evil.invalid"),
+            lambda x: x["entries"][0].update(prefix="../"),
+            lambda x: x["entries"][0].update(check_ids=["made-up"]),
+            lambda x: x["entries"][0].update(test_ids=["; rm -rf /"]),
+            lambda x: x["entries"][0].update(test_ids=["../secret"]),
+            lambda x: x["entries"][0].update(requirement_ids=["secret token"]),
+            lambda x: x["entries"][0].update(id=x["entries"][1]["id"]),
+            lambda x: x["entries"][0].update(test_ids=[]),
+            lambda x: x.update(schema_version=True),
+        ]
+        for mutation in mutants:
+            with self.subTest(mutation=str(mutation)):
+                data = copy.deepcopy(fixture)
+                mutation(data)
+                with self.assertRaises(qa.ImpactInputError):
+                    qa.plan(["frontend/views/workout.tsx"], test_map=data)
+
+    def test_file_size_and_bad_json_fail_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "owner-test-map.json"
+            path.write_text("x" * (qa.MAPPING_MAX_BYTES + 1), encoding="utf-8")
+            with self.assertRaisesRegex(qa.ImpactInputError, "too large"):
+                qa.load_test_map(path)
+            path.write_text("{invalid", encoding="utf-8")
+            with self.assertRaisesRegex(qa.ImpactInputError, "invalid JSON"):
+                qa.load_test_map(path)
+
+    def test_cli_test_map_never_executes_or_overwrites_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "report.json"
+            args = ["--paths", "backend/auth/permissions.py", "--test-map",
+                    str(ROOT / "fixtures/qa_change_impact_test_map.json"),
+                    "--output", str(output)]
+            self.assertEqual(0, qa.main(args))
+            report = json.loads(output.read_text(encoding="utf-8"))
+            self.assertTrue(report["declared_test_candidates"])
+            self.assertEqual("NOT_RUN", report["declared_test_candidates"][0]["status"])
+            self.assertEqual(0, report["executed_tests"])
+            original = output.read_bytes()
+            self.assertEqual(2, qa.main(args))
+            self.assertEqual(original, output.read_bytes())
+
+
 if __name__ == "__main__":
     unittest.main()
