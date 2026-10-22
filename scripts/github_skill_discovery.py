@@ -35,7 +35,7 @@ def _pin(raw: object) -> tuple[str, str, str, str]:
     canonical = _source(source)
     if canonical is None or not HEX.fullmatch(revision):
         raise DiscoveryError("INVALID_PINNED_SOURCE")
-    _, _, owner, repo = canonical.split("/")
+    owner, repo = canonical.removeprefix("https://github.com/").split("/")
     if not SAFE_SEGMENT.fullmatch(owner) or not SAFE_SEGMENT.fullmatch(repo):
         raise DiscoveryError("INVALID_PINNED_SOURCE")
     return canonical, owner, repo, revision
