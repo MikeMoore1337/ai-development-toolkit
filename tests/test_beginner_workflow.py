@@ -214,11 +214,11 @@ class BeginnerTaskRouteTests(unittest.TestCase):
 
     @staticmethod
     def section(content: str, title: str) -> str:
-        marker = title + "\\n"
+        marker = title + "\n"
         if content.count(marker) != 1:
             raise ValueError("Missing or repeated heading: " + title)
         tail = content.split(marker, 1)[1]
-        return tail.split("\\n## ", 1)[0]
+        return tail.split("\n## ", 1)[0]
 
     @staticmethod
     def rows(section: str) -> list[tuple[str, str]]:
@@ -226,7 +226,7 @@ class BeginnerTaskRouteTests(unittest.TestCase):
         matches = []
         for line in section.splitlines():
             match = re.fullmatch(
-                r"\\| \\*\\*([^*]+)\\*\\* \\| (.+) \\| (.+) \\|", line
+                r"\| \*\*([^*]+)\*\* \| (.+) \| (.+) \|", line
             )
             if match:
                 matches.append((match.group(1), match.group(2) + " " + match.group(3)))
@@ -253,12 +253,12 @@ class BeginnerTaskRouteTests(unittest.TestCase):
             content = document.read_text(encoding="utf-8")
             for title in (task_heading, access_heading):
                 block = self.section(content, title)
-                links = re.findall(r"\\[[^\\]]+\\]\\(([^)]+)\\)", block)
+                links = re.findall(r"\[[^\]]+\]\(([^)]+)\)", block)
                 self.assertGreaterEqual(len(links), 5)
                 for link in links:
                     with self.subTest(doc=path, link=link):
                         target = unquote(link.split("#", 1)[0])
-                        self.assertFalse(target.startswith(("/", "\\\\")))
+                        self.assertFalse(target.startswith(("/", "\\")))
                         self.assertNotIn(":", target)
                         file = (document.parent / target).resolve()
                         self.assertTrue(file.is_relative_to(ROOT.resolve()))
@@ -279,7 +279,7 @@ class BeginnerTaskRouteTests(unittest.TestCase):
         self.assertNotEqual([name for name, _ in self.rows(removed)],
                             list(self.ROUTES["docs/BEGINNER_START.md"][1]))
         with self.assertRaises(ValueError):
-            self.section(doc + "\\n" + title + "\\n", title)
+            self.section(doc + "\n" + title + "\n", title)
 
 
 
