@@ -88,11 +88,23 @@ def asset_record(entry: object, root: Path) -> dict:
     if ext != required[entry["kind"]]:
         raise EvidenceError("Visual extension disagrees with evidence kind")
     blob = resolved.read_bytes()
-    if entry["kind"] == "PNG_CAPTURE" and (
-            not blob.startswith(b"\x89PNG\r\n\x1a\n") or blob[12:16] != b"IHDR"):
-        raise EvidenceError("Unrecognized PNG capture")
-    if entry["kind"] == "SVG_SOURCE" and b"<svg" not in blob[:2048].lower():
-        raise EvidenceError("Not an SVG drawing")
+    if entry["kind"] == "PNG_CAPTURE":
+        if (not blob.startswith(b"\x89PNG\r\n\x1a\n")
+                or blob[12:16] != b"IHDR" or len(blob) < 45
+                or not blob.endswith(b"IEND\xaeB\x60\x82")):
+            raise EvidenceError("Unrecognized PNG capture")
+        width = int.from_bytes(blob[16:20], "big")
+        height = int.from_bytes(blob[20:24], "big")
+        if not 1 <= width <= 10000 or not 1 <= height <= 10000:
+            raise EvidenceError("Invalid capture dimensions")
+        if entry["viewport"] != f"{width}x{height}":
+            raise EvidenceError("PNG dimensions do not match claimed viewport")
+    if entry["kind"] == "SVG_SOURCE":
+        if b"<svg" not in blob[:2048].lower():
+            raise EvidenceError("Not an SVG drawing")
+        view_box = re.search(rb'viewBox\s*=\s*["\']\s*0\s+0\s+(\d+)\s+(\d+)\s*["\']', blob[:2048], re.I)
+        if view_box and entry["viewport"] != f"{int(view_box[1])}x{int(view_box[2])}":
+            raise EvidenceError("SVG viewBox does not match claimed viewport")
     if entry["kind"] == "HTML_SOURCE" and (
             b"<html" not in blob[:2048].lower()
             and b"<!doctype html" not in blob[:2048].lower()):
@@ -161,6 +173,7 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
             comparable = (
                 len({x["sha256"] for x in wire}) == 3
                 and len({x["viewport"] for x in wire}) == 1
+                and all(x["kind"] in {"PNG_CAPTURE", "SVG_SOURCE"} for x in wire)
             )
         risks = payload["template_risks"]
         if (not isinstance(risks, list) or len(risks) != 3
@@ -186,7 +199,11 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
             raise EvidenceError("Manual decision requires a specific rationale")
         if item["status"] == "NOT_REVIEWED" and item["rationale"].strip():
             raise EvidenceError("Unreviewed criterion cannot carry fabricated rationale")
-    desktop_mobile = "winner:desktop" in purposes and "winner:mobile" in purposes
+    desktop_mobile = (
+        all(purpose in purposes for purpose in ("winner:desktop", "winner:mobile"))
+        and all(purposes[purpose]["kind"] == "PNG_CAPTURE"
+                for purpose in ("winner:desktop", "winner:mobile"))
+    )
     if scenario["needs_three"]:
         preview_complete = comparable and desktop_mobile
     else:
