@@ -83,7 +83,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC001")
 
     def test_prepared_published_release(self):
-        self.replace("CHANGELOG.md", "5.5.3 (candidate,", "5.5.3 (released,")
+        self.replace("CHANGELOG.md", "5.5.3 (released,", "5.5.3 (candidate,")
         self.check("DOC004")
 
     def test_missing_unreleased(self):
@@ -91,7 +91,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC004")
 
     def test_published_release_cannot_reference_wrong_tag(self):
-        self.replace("README.md", "/releases/tag/v5.5.2", "/releases/tag/v5.5.1")
+        self.replace("README.md", "/releases/tag/v5.5.3", "/releases/tag/v5.5.2")
         self.check("DOC004")
 
     def test_release_candidate_requires_exact_tag_guard(self):
