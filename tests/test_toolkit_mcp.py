@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -94,7 +95,8 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertTrue(mcp.configure(str(self.project), "codex", apply=True)["applied"])
         raw = cfg.read_text(encoding="utf-8")
         self.assertIn("[mcp_servers.ai-development-toolkit]", raw)
-        self.assertIn(str((ROOT / "scripts/toolkit_mcp.py").resolve()), raw)
+        self.assertEqual(str((ROOT / "scripts/toolkit_mcp.py").resolve()),
+                         tomllib.loads(raw)["mcp_servers"][mcp.NAME]["args"][0])
         self.assertEqual("ALREADY_INSTALLED", mcp.configure(str(self.project), "codex", apply=True)["action"])
         self.assertFalse(mcp.configure(str(self.project), "codex", apply=False, remove=True)["applied"])
         self.assertTrue(cfg.exists())
