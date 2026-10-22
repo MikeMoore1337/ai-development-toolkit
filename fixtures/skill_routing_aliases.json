@@ -212,6 +212,48 @@
     ],
     "security-engineering": [
       "моделирование угроз безопасность границы доверия цепочка поставки"
+    ],
+    "code-review": [
+      "ревью кода diff регрессии"
+    ],
+    "playwright-testing": [
+      "playwright браузерные тесты трассировка"
+    ],
+    "state-management": [
+      "управление состоянием frontend асинхронные гонки"
+    ],
+    "feature-delivery": [
+      "реализация функции фича критерии приемки"
+    ],
+    "skill-portability": [
+      "переносимость навыков skill.md codex claude"
+    ],
+    "clear-voice": [
+      "естественный текст рассылка без канцеляризмов"
+    ],
+    "test-strategy": [
+      "стратегия тестирования сервиса риски покрытие"
+    ],
+    "product-discovery": [
+      "product discovery prd mvp гипотезы"
+    ],
+    "failure-triage": [
+      "failure triage упавший ci логи"
+    ],
+    "test-review": [
+      "ревью тестов оракулы assertions ложноположительный"
+    ],
+    "project-delivery-management": [
+      "управление поставкой проекта зависимости сроки риски"
+    ],
+    "ai-engineering-qa": [
+      "qa llm rag оценка промптов"
+    ],
+    "reliability-testing": [
+      "тестирование надежности повторы идемпотентность"
+    ],
+    "devops-infrastructure": [
+      "devops инфраструктура iac ci cd"
     ]
   }
 }
