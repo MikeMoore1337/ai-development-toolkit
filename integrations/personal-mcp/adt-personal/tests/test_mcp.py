@@ -294,7 +294,7 @@ class TestToolkitMCP(unittest.TestCase):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
         self.assertEqual(init['result']['serverInfo']['version'],'0.1.10')
-        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),9)
+        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),10)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
         self.assertIsNone(process(self.tk,{'jsonrpc':'2.0','method':'notifications/initialized'}))
