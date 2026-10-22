@@ -125,22 +125,29 @@ def surface_matches(path: str) -> dict[str, list[str]]:
 
 
 MAPPING_MAX_BYTES = 131072
-ID_PATTERN = re.compile(r"[a-zA-Z][a-zA-Z0-9_.-]{0,79}\\Z")
-TEST_REF_PATTERN = re.compile(r"[a-zA-Z0-9_./:-]{1,160}\\Z")
+ID_PATTERN = re.compile(r"[a-zA-Z][a-zA-Z0-9_.-]{0,79}\Z")
+TEST_REF_PATTERN = re.compile(r"[a-zA-Z0-9_./:-]{1,160}\Z")
 
 
 def load_test_map(path: Path) -> dict:
-    """Validate owner-declared, non-executable test references without claiming discovery."""
+    """Load bounded JSON; neither infer nor execute any test command."""
     try:
-        if path.stat().st_size > MAPPING_MAX_BYTES:
+        with path.open("rb") as handle:
+            raw = handle.read(MAPPING_MAX_BYTES + 1)
+        if len(raw) > MAPPING_MAX_BYTES:
             raise ImpactInputError("Test map too large")
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(raw.decode("utf-8"))
     except (OSError, UnicodeError, ValueError) as exc:
         raise ImpactInputError("Test map is unreadable or invalid JSON") from exc
+    return validate_test_map(data)
+
+
+def validate_test_map(data: dict) -> dict:
+    """Fail closed for optional project-owned mapping, including direct callers."""
     if not isinstance(data, dict) or set(data) != {"schema_version", "entries"}:
         raise ImpactInputError("Invalid test map schema")
     entries = data["entries"]
-    if data["schema_version"] != 1 or not isinstance(entries, list) or len(entries) > 100:
+    if type(data["schema_version"]) is not int or data["schema_version"] != 1 or not isinstance(entries, list) or len(entries) > 100:
         raise ImpactInputError("Invalid test map version or count")
     seen = set()
     for item in entries:
@@ -240,7 +247,8 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
             "test_command": None,
             "execution_receipt": None,
         })
-    declared_tests = select_declared_tests(paths, set(checks), test_map) if test_map is not None else []
+    declared_tests = (select_declared_tests(paths, set(checks), validate_test_map(test_map))
+                      if test_map is not None else [])
     mapped_checks = {x["check_id"] for x in declared_tests}
     return {
         "schema_version": 1,
