@@ -120,11 +120,17 @@ class ExternalSkillGateTests(unittest.TestCase):
         self._write_manifest()
         self.assertIn("OVERSIZED_FILE", self._codes())
 
+    def test_candidate_id_disagreement_is_rejected(self):
+        self._write_manifest(candidate_id="other-skill")
+        result = self._decision()
+        self.assertEqual("REJECT", result["decision"])
+        self.assertIn("SKILL_NAME_MISMATCH", self._codes())
+
     def test_invalid_manifest_and_binary_payload_never_execute(self):
         self.manifest.write_text("{ invalid json", encoding="utf-8")
         self.assertEqual("REJECT", self._decision()["decision"])
         self._write("payload.bin", "binary placeholder")
-        (self.candidate / "payload.bin").write_bytes(b"\\x00\\x01".decode("unicode_escape").encode("latin1"))
+        (self.candidate / "payload.bin").write_bytes(bytes((0, 1)))
         self._write_manifest()
         report = self._decision()
         self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
