@@ -27,6 +27,11 @@ MARKERS = {
                      r"sessionStorage|addEventListener)\b|aria-[a-z-]+", re.I),
     "ASYNC": re.compile(r"\b(?:idempotency|retry|retries|consumer|producer|"
                         r"enqueue|dead_letter|nack|ack_message)\b", re.I),
+    # A mutation token is an advisory risk hint, not proof of a migration or callers.
+    "PERSISTED_STATE": re.compile(
+        r"\b(?:mutation_id|expected_version|applied_version|request_fingerprint|"
+        r"replayed_workout_set|is_completed|version_conflict|state_transition|"
+        r"with_for_update)\b|\bversion\s*(?:\+=|=)", re.I),
     "PRIVACY": re.compile(r"\b(?:api_key|private_key|secret|password|pii|"
                           r"credential|sensitive_data|encrypt|decrypt)\b", re.I),
     "CI": re.compile(r"\b(?:cap_drop|no_new_privileges|deploy|workflow_call|"

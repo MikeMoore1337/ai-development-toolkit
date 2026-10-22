@@ -20,6 +20,15 @@ Existing commands are complementary:
 - scripts/skill_quality_metrics.py: read-only **per-skill** file inventory, declared size,
   link/frontmatter diagnostics and comparative change indicators.
 
+## Optional lexical overlap diagnostics (#194)
+
+Run: `python scripts/profile_metrics.py --audit-duplicates --audit-directives`.
+
+The additional `directive_overlap_audit` is an offline, read-only review queue: it finds normalized, identical directive lines and candidate word-set overlaps (Jaccard >= 0.85) across different skills' `SKILL.md` and Markdown references. It ignores metadata and fenced code, rejects linked and oversized sources, and returns only relative file paths, line numbers and SHA-256 digests - never source excerpts.
+
+This is **not semantic equivalence**, an instruction conflict judgment, a measured context saving, or proof of which references a client actually loaded. Negation, reordering and paraphrases may cause false positives or missed matches. Result fields explicitly state `NOT_VERIFIED`, `NOT_MEASURED` and `NOT_TESTED`; candidate counts are capped with truncation flags.
+
+Treat conditional reference loading as a manual design opportunity, not an installer/runtime change. Never rewrite protected QA, Make Feature or third-party skill sources based on lexical matches. Reuse existing quality/routing contracts and require paired real-task evidence before claiming improved performance.
 ## Commands
 
 Run at the actual repository checkout. No model download, agent runtime or external

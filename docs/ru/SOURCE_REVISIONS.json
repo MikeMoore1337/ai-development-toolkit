@@ -115,7 +115,7 @@
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
       "translation": "docs/ru/SKILL_QUALITY_METRICS.md",
-      "source_sha256": "0a007abdf7594e653fe799e5881bf70a6ec8cd9edc38393d0a90eff9a6b78c72"
+      "source_sha256": "303086e57ea5ea91d6b65e347306d7854c80c89d5520a3c77c5ff89dfc474186"
     },
     {
       "source": "docs/PRODUCT_DISCOVERY.md",
@@ -320,7 +320,7 @@
     {
       "source": "docs/QA_CHANGE_IMPACT.md",
       "translation": "docs/ru/QA_CHANGE_IMPACT.md",
-      "source_sha256": "f87fe5f3fe5a08d240f8d98500400e07a3f279877eb133351dc6b9ef0117b4e0"
+      "source_sha256": "8cf0b7161f15e5086affdcbd0c7c8d6ac4d25f9ebf8c4f30089442e6d3ddc2d8"
     },
     {
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
@@ -331,6 +331,11 @@
       "source": "docs/UX_UI_EVALS.md",
       "translation": "docs/ru/UX_UI_EVALS.md",
       "source_sha256": "55f8e0b89855f9a03f646613d1db043a8f500523ddbe33e1e8c0425055060883"
+    },
+    {
+      "source": "docs/PACKAGE_REPRODUCIBILITY.md",
+      "translation": "docs/ru/PACKAGE_REPRODUCIBILITY.md",
+      "source_sha256": "730b27d8a19e53de9f709c69d4445d0fac98faf21c8a2956ffb8c6254caa27d2"
     }
   ]
 }
