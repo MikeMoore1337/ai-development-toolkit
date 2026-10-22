@@ -70,6 +70,57 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
         self.assertEqual("NOT_TESTED", report["client_effectiveness"])
 
+    def test_exclusion_clause_does_not_rank_sql_as_data_engineering(self):
+        catalog = {
+            "data-engineering": (
+                "Build ETL pipelines, lineage, analytics metrics. "
+                "Not for ordinary SQL queries, migrations or API fixes."
+            ),
+            "data-access": "Fix SQL queries, transaction boundaries and persistence code.",
+        }
+        docs, idf = routing.vectors(catalog)
+        self.assertNotIn("sql", docs["data-engineering"])
+        self.assertEqual(
+            "data-access",
+            routing.ranking("Fix an ordinary SQL query", catalog, docs, idf)[0],
+        )
+
+    def test_cyrillic_prefix_matching_is_scoped_to_aliases(self):
+        self.assertEqual(routing.alias_stem("скриншотом"),
+                         routing.alias_stem("скриншот"))
+        self.assertEqual(routing.terms("скриншотом"), ["скриншотом"])
+        catalog = {
+            "screenshot-fidelity": "Compare reference screenshots.",
+            "api-testing": "Verify API status codes.",
+        }
+        cases = [{
+            "id": "screen",
+            "target": "screenshot-fidelity",
+            "positive": ["Сравни интерфейс с эталонным скриншотом."],
+            "negative": ["Проверь HTTP статус API."],
+        }]
+        aliases = {
+            "screenshot-fidelity": ["скриншот эталон визуальное сравнение интерфейса"],
+            "api-testing": ["проверка http статусы api"],
+        }
+        report = routing.evaluate(catalog, cases, top_k=1, aliases=aliases)
+        self.assertEqual(0, report["failed"], report["observations"])
+
+    def test_explicit_english_aliases_are_supported(self):
+        catalog = {
+            "make-feature": "Сделай функцию из короткого запроса пользователя.",
+            "product-discovery": "Discover the product problem and requirements.",
+        }
+        docs, idf = routing.vectors(catalog)
+        prompt = "Build an entire new function from a short product request."
+        self.assertEqual("product-discovery",
+                         routing.ranking(prompt, catalog, docs, idf)[0])
+        aliases = {
+            "make-feature": ["build an entire new function from short product request"],
+        }
+        self.assertEqual("make-feature",
+                         routing.ranking(prompt, catalog, docs, idf, aliases)[0])
+
     def test_aliases_unknown_skill_and_duplicates_blocked(self):
         (self.root / "aliases.json").write_text(json.dumps({
             "schema_version": 1, "aliases": {"invented": ["проверка схем"]}
@@ -134,8 +185,15 @@ class SkillRoutingTests(unittest.TestCase):
         report = routing.evaluate(catalog, cases, aliases=aliases)
         self.assertGreaterEqual(len(cases), 12)
         self.assertEqual(82, report["coverage"]["catalog_total"])
-        self.assertEqual(8, report["coverage"]["languages"]["ru"]["tested_target_count"])
-        self.assertGreater(len(report["coverage"]["uncovered_targets"]), 0)
+        # Full RU/EN fixture inventory is not proof of real client activation.
+        self.assertEqual(len(catalog), report["coverage"]["curated_targets"])
+        self.assertEqual([], report["coverage"]["uncovered_targets"])
+        for language in ("ru", "en"):
+            self.assertEqual(len(catalog), report["coverage"]["languages"][language]["tested_target_count"])
+            self.assertGreaterEqual(report["coverage"]["languages"][language]["positive_prompts"], len(catalog))
+            self.assertGreaterEqual(report["coverage"]["languages"][language]["negative_prompts"], len(catalog))
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
         self.assertTrue({"qa-failure-triage-versus-generic-tests",
                          "qa-test-oracle-review-versus-code-review"} <=
                         {case["id"] for case in cases})
