@@ -47,6 +47,32 @@ class ReadmePresentationTests(unittest.TestCase):
                     )
                 self.assertIn("README.ru.md" if name == "README.md" else "README.md", text)
 
+    def test_release_documents_match_published_manifest(self) -> None:
+        """Offline current-release copy contract, not live GitHub evidence."""
+        version = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))["version"]
+        sources = (
+            ("README.md", "**Latest published release:**"),
+            ("README.ru.md", "**Последний опубликованный релиз:**"),
+            ("docs/RELEASE_PROCESS.md", "Last published tag:"),
+            ("docs/ru/RELEASE_PROCESS.md", "Последний публичный тег:"),
+        )
+        for path, prefix in sources:
+            with self.subTest(path=path):
+                lines = (ROOT / path).read_text(encoding="utf-8").splitlines()
+                status = [line for line in lines if line.startswith(prefix)]
+                self.assertEqual(len(status), 1, "Missing or duplicate latest-release marker")
+                self.assertIn(f"[v{version}]", status[0])
+        changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        self.assertIn(f"## {version} (released,", changelog)
+        self.assertIn(f"v{version} publication confirmed", changelog)
+
+    def test_release_status_negative_fixture_detects_stale_version(self) -> None:
+        """A stale current-release declaration cannot pass the same exact match."""
+        expected = "[v5.5.3]"
+        stale = "Last published tag: [v5.5.2]"
+        self.assertNotIn(expected, stale)
+        self.assertIn(expected, "Last published tag: [v5.5.3]")
+
     def test_vector_assets_are_local_and_without_dynamic_counts(self) -> None:
         for name, dimensions in (
             ("docs/visuals/hero-evidence.svg", ("1440", "690")),
