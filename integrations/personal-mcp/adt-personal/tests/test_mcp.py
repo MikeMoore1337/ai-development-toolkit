@@ -109,7 +109,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.9')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.10')
         self.assertEqual(self.tk.info()['mcp_protocol_version'], '2025-06-18')
         self.assertEqual(self.tk.read('skill','test-analysis-design')['content'], '# Original skill\n')
         self.assertEqual(self.tk.read('role','test-designer')['content'], '# test-designer')
@@ -293,7 +293,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.9')
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.10')
         self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),9)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
@@ -311,11 +311,12 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr + completed.stdout)
         summary = json.loads(completed.stdout)
         self.assertEqual(summary['status'], 'PASS')
-        self.assertEqual(summary['request_count'], 48)
-        self.assertEqual(summary['response_count'], 48)
+        self.assertEqual(summary['request_count'], 49)
+        self.assertEqual(summary['response_count'], 49)
         self.assertEqual(summary['skill_coverage_local'], 'FOUND_LOCAL')
         self.assertEqual(summary['skill_coverage_missing'], 'MISSING')
         self.assertEqual(summary['skill_installation'], 'NOT_AUTHORIZED')
+        self.assertEqual(summary['external_without_consent'], 'NO_NETWORK')
         self.assertEqual(summary['transport'], 'DIRECT_STDIO_NOT_CODEX')
         self.assertEqual(summary['pilot_profile'], 'backend')
         self.assertEqual(summary['pilot_secondary_profiles'], ['qa-core'])
