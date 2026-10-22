@@ -28,7 +28,7 @@ The assertions cover exact local name, ambiguous lexical query, missing match, o
 
 - [#199](https://github.com/MikeMoore1337/ai-development-toolkit/issues/199): improve discovery/relevance, clarify external source allowlists and real-client acceptance.
 - [#200](https://github.com/MikeMoore1337/ai-development-toolkit/issues/200): provenance, license, package/security and explicit import approval. No automatic remote import before this gate.
-- [#190](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190): separately shipped personal MCP / ChatGPT plugin update and exact-client compatibility. The repository also includes this advisory in the personal MCP source at `integrations/personal-mcp/adt-personal/mcp/adt_mcp.py` (v0.1.9 source). **Do not assume** an already installed personal MCP or ChatGPT plugin exposes it; publishing, installation and live client invocation are separate evidence gates.
+- [#190](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190): separately shipped personal MCP / ChatGPT plugin update and exact-client compatibility. The repository also includes this advisory in the personal MCP source at `integrations/personal-mcp/adt-personal/mcp/adt_mcp.py` (v0.1.10 source). **Do not assume** an already installed personal MCP or ChatGPT plugin exposes it; publishing, installation and live client invocation are separate evidence gates.
 - [#11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11): paired effectiveness trials, never inferred from lexical ranks.
 
 No production runtime or user-project data is modified by this advisory.
