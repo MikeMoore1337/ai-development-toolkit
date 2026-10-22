@@ -16,13 +16,14 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
-def minimal_png(red: int) -> bytes:
+def minimal_png(red: int, width: int = 1, height: int = 1) -> bytes:
     def chunk(kind: bytes, data: bytes) -> bytes:
         return (struct.pack("!I", len(data)) + kind + data
                 + struct.pack("!I", zlib.crc32(kind + data) & 0xffffffff))
     header = b"\x89PNG\r\n\x1a\n"
-    ihdr = struct.pack("!IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
-    pixels = zlib.compress(bytes([0, red, 0, 0]))
+    ihdr = struct.pack("!IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    row = b"\x00" + bytes([red, 0, 0]) * width
+    pixels = zlib.compress(row * height, level=6)
     return header + chunk(b"IHDR", ihdr) + chunk(b"IDAT", pixels) + chunk(b"IEND", b"")
 
 
@@ -39,7 +40,8 @@ class UXUIEvidenceTests(unittest.TestCase):
     def asset(self, name, kind, purpose, viewport):
         path = self.root / name
         if kind == "PNG_CAPTURE":
-            path.write_bytes(minimal_png((len(self.root.iterdir().__class__.__name__) + len(name)) % 250))
+            width, height = (int(x) for x in viewport.split("x"))
+            path.write_bytes(minimal_png((len(name) * 17) % 250, width, height))
         else:
             path.write_text(
                 f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><rect width="400" height="500" /><text>{name}</text></svg>',
@@ -164,6 +166,26 @@ class UXUIEvidenceTests(unittest.TestCase):
         report["manual_reviews"][0]["status"] = "REVISE"
         self.assertEqual("NEEDS_DESIGN_REVISION",
                          module.audit(report, self.root, self.scenarios)["gate"])
+
+    def test_small_png_cannot_claim_desktop_viewport(self):
+        path = self.root / "fraud.png"
+        path.write_bytes(minimal_png(11, 1, 1))
+        record = {"id": "fraud", "purpose": "winner:desktop",
+                  "kind": "PNG_CAPTURE", "viewport": "1440x900", "path": "fraud.png"}
+        with self.assertRaisesRegex(module.EvidenceError, "dimensions do not match"):
+            module.asset_record(record, self.root)
+
+    def test_html_source_is_not_automatically_rendered_winner(self):
+        report = self.request("minor-ui-fix", with_art=True)
+        (self.root / "desktop.png").unlink()
+        (self.root / "desktop.html").write_text("<!doctype html><html><body>Preview</body></html>",
+                                                 encoding="utf-8")
+        for artifact in report["visual_assets"]:
+            if artifact["purpose"] == "winner:desktop":
+                artifact.update(path="desktop.html", kind="HTML_SOURCE")
+        result = module.audit(report, self.root, self.scenarios)
+        self.assertEqual("VISUAL_PACKAGE_MISSING", result["gate"])
+        self.assertFalse(result["desktop_mobile_present"])
 
     def test_symlink_traversal_and_missing_artifacts_rejected(self):
         r = self.request("minor-ui-fix")
