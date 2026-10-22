@@ -7,17 +7,17 @@ substitute for independently verifying a tagged public release.
 
 ## Published v5.5.0 and v5.5.1 archive errata (2026-10-21)
 
-The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), tagged at `04d60055e93c04dda26fb3868689ab4031fbf617`. **The published tag still contains `MANIFEST.json.version = 5.4.0`, and its changelog/release instructions still describe v5.4.0 as the last release.** This is a documented metadata discrepancy, not a reason to move or rewrite an immutable release tag. Treat the tag as the published identity, report the stale in-archive version accurately, and track corrective forward-only work in [Issue #153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153). **The subsequently published [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) is also mismatched:** immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46` includes `MANIFEST.json.version = 5.4.0`. The intended fix from PR #169 was not merged before the tag was created. Do not rewrite either tag. The next proposal is `v5.5.2` (**NOT PUBLISHED**). The previous release workflow lacked tag/manifest matching; the new source-archive workflow includes a fail-closed guard but cannot prevent a release already published. Verify both identities BEFORE creating tags and recheck rights/archives.
+The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0), tagged at `04d60055e93c04dda26fb3868689ab4031fbf617`. **The published tag still contains `MANIFEST.json.version = 5.4.0`, and its changelog/release instructions still describe v5.4.0 as the last release.** This is a documented metadata discrepancy, not a reason to move or rewrite an immutable release tag. Treat the tag as the published identity, report the stale in-archive version accurately, and track corrective forward-only work in [Issue #153](https://github.com/MikeMoore1337/ai-development-toolkit/issues/153). **The subsequently published [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) is also mismatched:** immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46` includes `MANIFEST.json.version = 5.4.0`. The intended fix from PR #169 was not merged before the tag was created. Do not rewrite either tag. The v5.5.2 GitHub Release was subsequently published on 2026-10-21 with a matching manifest. The next proposal is `v5.5.3` (**NOT PUBLISHED**). The previous release workflow lacked tag/manifest matching; the new source-archive workflow includes a fail-closed guard but cannot prevent a release already published. Verify both identities BEFORE creating tags and recheck rights/archives.
 
 ## Version and release state
 
-- `MANIFEST.json.version` in this proposed release tree is **`5.5.2` (candidate, NOT PUBLISHED)**. The last actually published tag is `v5.5.1` and its embedded manifest still says `5.4.0`; neither a branch nor a candidate field constitutes a released artifact.
+- `MANIFEST.json.version` in this proposed release tree is **`5.5.3` (candidate, NOT PUBLISHED)**. The last published tag is `v5.5.2`, with matching embedded version `5.5.2`; neither a branch nor a candidate field constitutes a released artifact.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Last published tag: [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) at SHA `64f163acc322acc6aecf5b1f44b6f76744505f46` (2026-10-21), **with stale embedded version 5.4.0**. Compare [v5.5.1...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.1...main) for subsequent source changes; never label this candidate published in advance.
+Last published tag: [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) at SHA `bf8d469f7402ed1a99e19ba6797d841751801ea5` (2026-10-21), with matching embedded version `5.5.2`. Compare [v5.5.2...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.2...main) for subsequent source changes; never label this candidate published in advance.
 
 
 1. Work on a feature branch and document what changed and any migration risks.
@@ -49,7 +49,7 @@ Last published tag: [v5.5.1](https://github.com/MikeMoore1337/ai-development-too
 11. Before tagging, verify the intended release **on the exact commit** rather than assuming `main` and the PR HEAD are identical. The example is read-only and does not create a tag:
 
     ```powershell
-    $tag = "v5.5.2"
+    $tag = "v5.5.3"
     $sha = "<EXACT_MERGED_AND_CI_VERIFIED_40_CHAR_SHA>"
     if ($sha -notmatch '^[0-9a-f]{40}$') { throw "RELEASE_SHA_NOT_PINNED" }
     if ((git rev-parse HEAD).Trim() -cne $sha) { throw "RELEASE_WRONG_HEAD_SHA" }
@@ -74,7 +74,7 @@ extract it into a **fresh, empty folder**, not a Git clone or reused worktree.
 For example, on Windows (replace the tag for the release under review):
 
 ```powershell
-$tag = "v5.5.2"
+$tag = "v5.5.3"
 $zip = Join-Path $env:TEMP "adt-$tag.zip"
 $dest = Join-Path $env:TEMP "adt-$tag-source"
 if (Test-Path $dest) { throw "Destination must be fresh: $dest" }

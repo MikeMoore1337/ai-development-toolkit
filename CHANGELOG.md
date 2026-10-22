@@ -13,7 +13,23 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.2)
+## Unreleased (main after v5.5.3)
+
+No additional changes recorded after the v5.5.3 release candidate.
+
+## 5.5.3 (candidate, 2026-10-22)
+
+**Status: prepared for owner-authorized release, not yet tagged or published.** Changes merged since [v5.5.2](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2):
+
+- Added portable ChatGPT plugin source with task routing, engineering, QA and UX/UI guidance, without local project access or paid API requirements (#184).
+- Added user-level read-only Codex MCP and source auto-update support on Windows, Linux and macOS, including tests and bilingual installation guides (#183, #184).
+- Added project-scoped MCP for Codex/Claude Code with guarded installation and removal flows (#183).
+- Added Prompt Refinement, SEO audit and cross-client routing skills, while documenting truthful activation and access limits (#182).
+- Fixed colloquial RU/EN task routing for prompt refinement, SEO and visual requests in the bundled and project-scoped MCP adapters, with offline regressions (#187).
+- Improved macOS ARM64/Intel portability checks and complete Windows/Linux/macOS setup documentation (#181).
+- Enforced equal visibility of ChatGPT and Codex integrations, added regression coverage and updated provenance inventory (#185).
+- Expanded bilingual documentation and refreshed the evidence-first repository presentation (#87, #178).
+
 
 - Added dependency-free local stdio Toolkit MCP server, read-only skill routing/search/preview/status and guarded per-project Codex/Claude Code installer for Windows, Linux and macOS.
 - Added bilingual MCP installation, removal and safe update instructions with regression tests on all five CI environments.

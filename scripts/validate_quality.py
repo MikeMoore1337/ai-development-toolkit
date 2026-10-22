@@ -440,9 +440,12 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
         if candidate_marker in body:
             expected = ("**NOT PUBLISHED**" if path == "README.md"
                         else "**НЕ ОПУБЛИКОВАН**")
+            major, minor, patch = (int(item) for item in version.split("."))
+            prior = f"{major}.{minor}.{patch - 1}" if patch > 0 else None
+            published = re.search(r"/releases/tag/v(\d+\.\d+\.\d+)", body)
             if (f"`v{version}`" not in body or expected not in body
-                    or "CHANGELOG.md" not in body or
-                    "/releases/tag/v5.5.1" not in body):
+                    or "CHANGELOG.md" not in body or prior is None
+                    or published is None or published.group(1) != prior):
                 add(findings, "DOC004", path, 1, "Unpublished release candidate metadata differs")
         else:
             released = re.search(r"/releases/tag/v(\d+\.\d+\.\d+)", body)
@@ -494,8 +497,10 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
     if (root / path).is_file():
         body = (root / path).read_text(encoding="utf-8")
         if "## Published v5.5.0 and v5.5.1 archive errata" in body:
+            major, minor, patch = (int(item) for item in version.split("."))
+            prior = f"{major}.{minor}.{patch - 1}" if patch > 0 else None
             if (f"`{version}` (candidate, NOT PUBLISHED)" not in body
-                    or "/releases/tag/v5.5.1" not in body
+                    or prior is None or f"/releases/tag/v{prior}" not in body
                     or body.count("TAG_MANIFEST_VERSION_MISMATCH") < 2
                     or '$taggedManifest.version' not in body
                     or '$manifest.version' not in body):
