@@ -50,11 +50,31 @@ def _name(value: object) -> str:
     return value
 
 
+def _roles() -> dict[str, Path]:
+    found = {}
+    for folder in (ROOT / ".agents" / "roles", ROOT / "extensions" / "qa" / "roles"):
+        if not folder.is_dir() or folder.is_symlink():
+            continue
+        for path in folder.glob("*.md"):
+            if path.is_file() and not path.is_symlink() and path.resolve().is_relative_to(ROOT.resolve()):
+                if path.stem in found:
+                    raise ValueError("Duplicate declared role")
+                found[path.stem] = path
+    return found
+
+
 def _tool_defs() -> list[dict]:
     string = lambda description: {"type": "string", "description": description}
     return [
         {"name": "toolkit_catalog", "description": "List local Toolkit skills/profiles and version. Read only.",
          "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_list_roles", "description": "List available specialist and QA reference roles.",
+         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_read_role", "description": "Read a reference role without creating or starting an autonomous agent.",
+         "inputSchema": {"type": "object", "properties": {"role": string("Exact name from toolkit_list_roles")},
+                         "required": ["role"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_search_skills",
          "description": "Find potentially relevant skills by words in names and summaries. Results are suggestions, not proof of activation.",
@@ -129,6 +149,16 @@ def invoke(tool: str, args: dict) -> dict:
         raise ValueError("Tool arguments must be an object")
     if tool == "toolkit_catalog":
         return catalog()
+    if tool == "toolkit_list_roles":
+        return {"roles": sorted(_roles()), "status": "REFERENCE_ONLY"}
+    if tool == "toolkit_read_role":
+        name = _name(args.get("role"))
+        path = _roles().get(name)
+        if path is None or path.stat().st_size > MAX_TEXT:
+            raise ValueError("Unknown or oversized reference role")
+        _ensure_no_symlink_chain(path)
+        return {"role": name, "text": path.read_text(encoding="utf-8"),
+                "status": "ROLE_REFERENCE_NOT_STARTED_AGENT"}
     if tool in ("toolkit_search_skills", "toolkit_route_task"):
         query = args.get("query") if tool == "toolkit_search_skills" else args.get("task")
         matches = _search(query)
@@ -138,8 +168,12 @@ def invoke(tool: str, args: dict) -> dict:
         query_terms = set(re.findall(r"[a-z0-9-]+", query.casefold()))
         candidates = [profile for profile in profiles
                       if any(part in query_terms for part in profile.split("-"))]
+        role_words = set(re.findall(r"[a-z0-9-]+", query.casefold()))
+        role_matches = [name for name in sorted(_roles())
+                        if any(word in name for word in role_words if len(word) >= 4)]
         return {"profile": candidates[0] if candidates else ("general" if "general" in profiles else None),
-                "skills": matches[:5], "status": "ADVISORY_ONLY", "requires_review": True}
+                "skills": matches[:5], "roles": role_matches[:5],
+                "status": "ADVISORY_ONLY", "requires_review": True}
     if tool == "toolkit_read_skill":
         name = _name(args.get("skill"))
         sources = _sources()
