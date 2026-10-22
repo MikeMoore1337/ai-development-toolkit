@@ -50,6 +50,14 @@ class ReadmePresentationTests(unittest.TestCase):
     def test_release_documents_match_published_manifest(self) -> None:
         """Offline current-release copy contract, not live GitHub evidence."""
         version = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))["version"]
+        is_candidate = "**Next release candidate:**" in (
+            ROOT / "README.md").read_text(encoding="utf-8")
+        if is_candidate:
+            major, minor, patch = (int(p) for p in version.split("."))
+            self.assertGreater(patch, 0)
+            published_version = f"{major}.{minor}.{patch - 1}"
+        else:
+            published_version = version
         sources = (
             ("README.md", "**Latest published release:**"),
             ("README.ru.md", "**Последний опубликованный релиз:**"),
@@ -61,10 +69,11 @@ class ReadmePresentationTests(unittest.TestCase):
                 lines = (ROOT / path).read_text(encoding="utf-8").splitlines()
                 status = [line for line in lines if line.startswith(prefix)]
                 self.assertEqual(len(status), 1, "Missing or duplicate latest-release marker")
-                self.assertIn(f"[v{version}]", status[0])
+                self.assertIn(f"[v{published_version}]", status[0])
         changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-        self.assertIn(f"## {version} (released,", changelog)
-        self.assertIn(f"v{version} publication confirmed", changelog)
+        self.assertIn(f"## {version} ({'candidate' if is_candidate else 'released'},", changelog)
+        if not is_candidate:
+            self.assertIn(f"v{version} publication confirmed", changelog)
 
     def test_release_status_negative_fixture_detects_stale_version(self) -> None:
         """A stale current-release declaration cannot pass the same exact match."""
