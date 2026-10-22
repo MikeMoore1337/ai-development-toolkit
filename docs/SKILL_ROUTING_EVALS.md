@@ -87,3 +87,9 @@ python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_holdout.js
 The JSON report shows `hit_at_k`, avoidance of forbidden top-1 choices, passed/failed counts by request type and every observed recommendation. The benchmark is **diagnostic** (`strict_gate = false`); its score is not a model probability or proof of runtime activation. The expected labels were authored manually and have not been independently adjudicated. A failing query should be investigated and reported, not silently rewritten to produce 100%.
 
 CI prints this baseline separately from the original strict curated-fixture gate. Client integration and real-task acceptance still belong to #141.
+
+### Safer recommendations when evidence is absent
+
+The read-only `--recommend` mode no longer presents alphabetically sorted zero-evidence skill names as suggestions. If no ranked candidate has any verifiable name, description or curated-alias support, `candidates` is empty and the status is `INSUFFICIENT_EVIDENCE`. The evaluator does **not** silently infer a skill or assign a confidence score.
+
+Simple explicit negative prefixes (e.g. `Skip database migration planning; ...` or `Не нужен SEO-аудит: ...`) are separated from actionable instructions. The output lists `excluded_negated_clauses`; a purely negative request returns `NO_POSITIVE_INTENT`. This conservative pattern is **not** a complete natural-language negation parser. The prior untuned holdout remains unchanged so regressions are measurable.
