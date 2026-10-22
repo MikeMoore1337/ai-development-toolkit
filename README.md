@@ -61,6 +61,12 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 </details>
 
+## Platform installation
+
+[Windows](docs/INSTALL_WINDOWS.md) · [Linux](docs/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/INSTALL_MACOS.md) · [Safe updates](docs/UPDATING.md)
+
+All three platforms use the same Skill Manager; commands and Python launchers differ. macOS is tested on hosted CI runners, not a personal Mac or a live AI client.
+
 ## Quick start
 
 **Local installation is optional.** You need Python 3.12+, a project directory and a separately installed AI client for the command-line route. Read [the no-terminal guide](docs/BEGINNER_START.md) if you only want to describe a task.

@@ -15,6 +15,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.2)
 
+- Added bilingual Windows, Linux and macOS installation and update instructions, preserving client/file ownership boundaries.
+- Added focused macOS ARM64/Intel GitHub Actions portability checks without paid runners or real agent clients.
+
 - Reorganized bilingual README onboarding around tasks, real execution boundaries, and compact navigation.
 - Added the Evidence Desk vector hero and count-free social preview proposal without modifying approved legacy PNG files.
 - Added offline README/presentation regression checks and recorded the verified v5.5.2 release status.
