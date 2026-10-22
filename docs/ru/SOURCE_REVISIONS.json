@@ -5,7 +5,7 @@
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "1141038a9595dabfd2356ea26313c8bb3e54debe00cd82d7d4735180fe0b0f8d"
+      "source_sha256": "a320d2623ae01ffd5e32623e3fb98d357c38cd12d9090c291ae2a8707b2b79dc"
     },
     {
       "source": "docs/SKILLS_CATALOG.md",
@@ -20,7 +20,7 @@
     {
       "source": "docs/CLIENT_MIGRATION.md",
       "translation": "docs/ru/CLIENT_MIGRATION.md",
-      "source_sha256": "eb5be28cd5526885dd341db6ac632d6866931bce3210e15c02706a9b35f26c21"
+      "source_sha256": "68f2ca6bd4508f133a2ad8b955b9e6f868ee92f8eacd4ef566854e26bd3f93a5"
     },
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
@@ -286,6 +286,26 @@
       "source": "docs/ORCHESTRATION_PILOT.md",
       "translation": "docs/ru/ORCHESTRATION_PILOT.md",
       "source_sha256": "219979f12c39f01d6d4bfcbfd526839943b03ecb9490478ec4030fbe09a3786c"
+    },
+    {
+      "source": "docs/INSTALL_WINDOWS.md",
+      "translation": "docs/ru/INSTALL_WINDOWS.md",
+      "source_sha256": "5ecf3caad28c8f5b2b3e258d7d2ad8cd49ec59533a4bf516bd5fa4efd94e41d4"
+    },
+    {
+      "source": "docs/INSTALL_LINUX.md",
+      "translation": "docs/ru/INSTALL_LINUX.md",
+      "source_sha256": "37044350ddeebd0d58dee427388bb92aebdb4d67953f08ffec292caa45a7d8d3"
+    },
+    {
+      "source": "docs/INSTALL_MACOS.md",
+      "translation": "docs/ru/INSTALL_MACOS.md",
+      "source_sha256": "4c1afd8be5d9eb5586b382381239cc1d4f5cec6eb99ab9cf28f290a35bb76301"
+    },
+    {
+      "source": "docs/UPDATING.md",
+      "translation": "docs/ru/UPDATING.md",
+      "source_sha256": "0cc36a4b4a40c9fb89796f27750e6dff3442b78c61585f81bd3aaa568e130452"
     }
   ]
 }
