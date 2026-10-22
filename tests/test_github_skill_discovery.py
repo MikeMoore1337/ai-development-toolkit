@@ -27,6 +27,9 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
         return {"sha": self.TREE, "truncated": False, "tree": [
             {"type": "blob", "path": "skills/backend/SKILL.md"},
             {"type": "blob", "path": "skills/design/SKILL.md"},
+            {"type": "blob", "path": ".agents/skills/qa-strategy/SKILL.md"},
+            {"type": "blob", "path": ".agents/skills/ui-design/SKILL.md"},
+            {"type": "blob", "path": "../unexpected/qa/SKILL.md"},
             {"type": "tree", "path": "skills/backend"},
             {"type": "blob", "path": "../secret/SKILL.md"},
             {"type": "blob", "path": "scripts/install.sh"},
@@ -54,6 +57,21 @@ class GitHubSkillDiscoveryTests(unittest.TestCase):
         self.assertEqual("NOT_RUN", result["remote_security_gate"])
         self.assertEqual("NOT_AUTHORIZED", result["installation"])
         self.assertEqual(2, len(self.calls))
+
+    def test_qa_and_ui_short_terms_match_real_hidden_skills(self):
+        source = (self.URL+"@"+self.SHA,)
+        for query, path in (
+            ("QA", ".agents/skills/qa-strategy/SKILL.md"),
+            ("UI", ".agents/skills/ui-design/SKILL.md"),
+            ("qa-strategy", ".agents/skills/qa-strategy/SKILL.md"),
+        ):
+            with self.subTest(query=query):
+                result = discovery.discover(query, opt_in=True,
+                    allowed_sources=source, fetch_json=self.fetcher)
+                self.assertEqual("REVIEW_ONLY", result["status"])
+                paths = {item["path"] for item in result["candidates"]}
+                self.assertIn(path, paths)
+                self.assertNotIn("../unexpected/qa/SKILL.md", paths)
 
     def test_optin_and_pin_required(self):
         source = self.URL+"@"+self.SHA
