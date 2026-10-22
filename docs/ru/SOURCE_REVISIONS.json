@@ -316,6 +316,11 @@
       "source": "docs/PROMPT_AND_SEO_SKILLS.md",
       "translation": "docs/ru/PROMPT_AND_SEO_SKILLS.md",
       "source_sha256": "7d2a6123ff7a08ddb7500833657dc7e36d8925a565a41b98ff90216dd33c5982"
+    },
+    {
+      "source": "docs/QA_CHANGE_IMPACT.md",
+      "translation": "docs/ru/QA_CHANGE_IMPACT.md",
+      "source_sha256": "882c4e836a4a81c1d716cb726475af7f7694eb94e7f88cc6b4cee50e839c7ca3"
     }
   ]
 }
