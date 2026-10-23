@@ -512,10 +512,93 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
     return summary
 
 
+
+def external_preview(target: Path, candidate_dir: Path, manifest_file: Path,
+                     *, layout: str = "codex") -> dict:
+    """Preview a separately supplied Skill candidate. NEVER install an external Skill.
+
+    This deliberately shares the existing ownership and file-diff machinery
+    but not the internal installer / staging / transaction path.
+    """
+    from external_skill_gate import review
+
+    target = target.expanduser().absolute()
+    candidate_dir = candidate_dir.expanduser().absolute()
+    manifest_file = manifest_file.expanduser().absolute()
+    if layout not in ("codex", "claude"):
+        raise ManagerError("Unsupported layout")
+    if not target.is_dir():
+        raise ManagerError("Target must be an existing directory")
+    _ensure_no_symlink_chain(target)
+    _ensure_no_symlink_chain(target / ".adt")
+    _ensure_no_symlink_chain(candidate_dir)
+    _ensure_no_symlink_chain(manifest_file)
+    if (candidate_dir.resolve().is_relative_to(target.resolve())
+            or target.resolve().is_relative_to(candidate_dir.resolve())):
+        raise ManagerError("Candidate directory must be separate from target project")
+    if manifest_file.resolve().is_relative_to(candidate_dir.resolve()):
+        raise ManagerError("Review manifest must be outside candidate tree")
+    if manifest_file.resolve().is_relative_to(target.resolve()):
+        raise ManagerError("Review manifest must be outside target project")
+    no_pending(target)
+
+    gate = review(candidate_dir, manifest_file)
+    report = {
+        "action": "external-preview",
+        "layout": layout,
+        "gate": gate,
+        "applied": False,
+        "installation": "NOT_AUTHORIZED",
+        "external_execution": "NOT_RUN",
+        "external_network": "NOT_RUN",
+        "provenance_verified": False,
+        "manual_owner_approval_required": True,
+        "file_diffs": [],
+    }
+    if gate["decision"] == "REJECT":
+        return {**report, "status": "REFUSED_SECURITY_GATE"}
+
+    # The static review established schema/filename bounds and checksums.
+    # These attributes are still self-declared, NOT upstream provenance.
+    source = json.loads(manifest_file.read_text(encoding="utf-8"))
+    name = source["candidate_id"]
+    root = skill_root(target, layout)
+    dest = root / name
+    _ensure_no_symlink_chain(dest)
+    state = read_state(target, layout)
+    if dest.exists() or dest.is_symlink() or dest.is_junction():
+        if name not in state["skills"]:
+            return {**report, "status": "REFUSED_UNMANAGED_DESTINATION",
+                    "candidate_id": name}
+        # Refuse to use changed or missing owned files as a trustworthy
+        # before-snapshot; never modify/recover the project here.
+        if tree_digest(dest) != state["skills"][name]["digest"]:
+            return {**report, "status": "REFUSED_OWNED_DRIFT",
+                    "candidate_id": name}
+        prior = dest
+    elif name in state["skills"]:
+        return {**report, "status": "REFUSED_OWNED_DRIFT",
+                "candidate_id": name}
+    else:
+        prior = None
+    changes = file_changes(prior, candidate_dir)
+    return {
+        **report,
+        "status": ("NEEDS_MANUAL_REVIEW" if gate["decision"] == "NEEDS_MANUAL_REVIEW"
+                   else "CANDIDATE_ONLY"),
+        "candidate_id": name,
+        "source_url": source["source_url"],
+        "source_revision": source["source_revision"],
+        "license": source["license"],
+        "source_metadata": "OPERATOR_DECLARED_NOT_INDEPENDENTLY_VERIFIED",
+        "destination_status": "OWNED_CLEAN" if prior is not None else "EMPTY",
+        "file_diffs": changes,
+    }
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["catalog", "install", "migrate", "status",
-                                           "update", "uninstall", "rollback", "recover"])
+                                           "update", "uninstall", "rollback", "recover", "external-preview"])
     parser.add_argument("--target", type=Path)
     parser.add_argument("--layout", choices=["codex", "claude"], default="codex")
     parser.add_argument("--from-layout", choices=["codex", "claude"],
@@ -524,10 +607,13 @@ def main() -> int:
     selection.add_argument("--profile")
     selection.add_argument("--skills", help="Comma-separated explicit skill names")
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--candidate-dir", type=Path, help="External candidate files; preview only")
+    parser.add_argument("--manifest", type=Path, help="Operator-supplied pinned review manifest")
     args = parser.parse_args()
     try:
         if args.action == "catalog":
-            if args.target or args.skills or args.apply or args.from_layout:
+            if (args.target or args.skills or args.apply or args.from_layout
+                    or args.candidate_dir or args.manifest):
                 raise ManagerError("catalog is read-only; use only optional --profile")
             manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
             if args.profile:
@@ -541,6 +627,17 @@ def main() -> int:
                           "skills": sorted(skill_sources(manifest))}
             print(json.dumps(result, indent=2, ensure_ascii=False))
             return 0
+        if args.action == "external-preview":
+            if args.target is None or args.candidate_dir is None or args.manifest is None:
+                raise ManagerError("external-preview requires --target, --candidate-dir and --manifest")
+            if args.apply or args.profile or args.skills or args.from_layout:
+                raise ManagerError("external-preview forbids --apply and skill/profile selection")
+            result = external_preview(args.target, args.candidate_dir, args.manifest,
+                                      layout=args.layout)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 2 if result["status"].startswith("REFUSED") else 0
+        if args.candidate_dir is not None or args.manifest is not None:
+            raise ManagerError("External candidate parameters require external-preview")
         if args.target is None:
             raise ManagerError("--target is required except for catalog")
         chosen = []
