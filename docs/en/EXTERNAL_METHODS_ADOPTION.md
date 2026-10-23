@@ -29,11 +29,11 @@ This policy complements `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING
 6. Choose `reuse existing`, `reference only`, `adapt`, `isolated install`, or `reject`. For adaptation author original minimal instructions instead of copying content with incompatible terms.
 7. Update manifests, tests and bilingual documentation in the normal PR if a real skill changes. Never persist other users' reports, logs or code inside Toolkit.
 
-## Project routing
+## Routing by task type
 
-- **YFC:** retain visual design and existing Playwright; improve evidenced UI QA, motion/performance and SEO conversion.
-- **Hermes:** Control Center is a **real React/Vite UI** needing visual evidence; Research Scout gets source verification. No UI skills in the resident agent runtime.
-- **Second Brain:** preserve approved v7 visuals, existing Motion and browser checks; strengthen evidence, not runtime dependencies.
+- **Product UI:** verify user journeys, responsive states, accessibility and performance; retain approved visual contracts rather than imposing a generic style.
+- **Agent infrastructure:** separate interface development from resident runtime permissions, model budgets and service activation gates.
+- **Privacy-sensitive applications:** respect local data boundaries and require explicit confirmation before state-changing operations.
 - **Toolkit:** prioritize real skill quality measurement and activation routing over catalog size.
 
 This document does not install any external tool or establish real-agent performance. Representative original repositories: https://github.com/obra/superpowers · https://github.com/anthropics/skills · https://github.com/daymade/claude-code-skills/tree/main/frontend-visual-qa.
