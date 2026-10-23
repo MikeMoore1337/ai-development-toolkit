@@ -27,7 +27,7 @@ class HoldoutAdjudicationTests(unittest.TestCase):
         self.assertEqual(packet["catalog_sha256"], data["catalog_sha256"])
         self.assertEqual("blinded_review_skill_catalog", data["purpose"])
         self.assertEqual(len(data["skills"]), data["skill_count"])
-        self.assertEqual(82, data["skill_count"])
+        self.assertEqual(len(review.read_catalog(ROOT)), data["skill_count"])
         self.assertEqual(sorted(row["name"] for row in data["skills"]),
                          [row["name"] for row in data["skills"]])
         self.assertTrue(all(row["description"] for row in data["skills"]))
