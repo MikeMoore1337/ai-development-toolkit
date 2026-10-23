@@ -17,7 +17,7 @@ python -m unittest tests.test_diagram_pilot -v
 
 Open `example-diagram.html` locally. No account, network, third-party package or paid API is needed. The generator refuses to overwrite an existing output file.
 
-The input JSON has `version: 1`, a `title`, nodes with `id`, `label`, `column` (0..3), `evidence`, and edges with `from`, `to`, `label`, `evidence`. The example is synthetic, **not** a deployed YFC/Hermes/Second Brain topology.
+The input JSON has `version: 1`, a `title`, nodes with `id`, `label`, `column` (0..3), `evidence`, and edges with `from`, `to`, `label`, `evidence`. The example is synthetic, **not** a deployed any real topology.
 
 ## What this does and does not prove
 
@@ -38,13 +38,3 @@ Source inspiration: [Diagram Design](https://github.com/cathrynlavery/diagram-de
 The exported HTML now puts the full-size SVG inside a keyboard-focusable horizontal-scroll region so labels stay legible at 390 px, rather than scaling the full graph down to 6 px text. Relation captions are placed by the arrows; labels over 14 characters show an abbreviated visible caption with the original in SVG title and the evidence list. The strict pilot rejects multiple relations between the same pair of nodes (to avoid caption collision).
 
 Rendering and interactive scroll behavior still require an actual browser review; static tests do not prove contrast/UX quality. Test long node labels and diagonal edges before production adoption.
-
-## Source-grounded example from Hermes
-
-`docs/examples/hermes-research.source.json` maps only relationships documented in the public Hermes `research_scout/europe_pmc.py`, `research_scout/crossref.py`, `research_scout/daily_digest.py` and `research_scout/README.md` on 2026-10-23. It does not claim production connectivity, installed services or privileged access. To generate:
-
-```bash
-python scripts/diagram_pilot.py docs/examples/hermes-research.source.json --output hermes-research-diagram.html
-```
-
-The diagram is intended to make reviews easier, not replace source inspection. Human contrast/accessibility review and Mermaid comparisons remain outstanding unless independently recorded.
