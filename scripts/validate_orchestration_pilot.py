@@ -13,6 +13,15 @@ REPO_CASES = {
     "Hermes": "MikeMoore1337/hermes",
     "SecondBrain": "MikeMoore1337/second-brain",
 }
+# Pin complete AC lists to the issue contracts, not just arm-to-arm equality.
+# YFC #1157: https://github.com/MikeMoore1337/your-fitness-coach/issues/1157
+# Hermes #453: https://github.com/MikeMoore1337/hermes/issues/453
+# Second Brain #412: https://github.com/MikeMoore1337/second-brain/issues/412
+REQUIRED_ACCEPTANCE_IDS = {
+    "YFC": ("YFC-A1", "YFC-A2", "YFC-A3", "YFC-A4"),
+    "Hermes": ("H-A1", "H-A2", "H-A3", "H-A4", "H-A5"),
+    "SecondBrain": ("SB-A1", "SB-A2", "SB-A3", "SB-A4", "SB-A5"),
+}
 HEX40 = re.compile(r"[a-f0-9]{40}\Z")
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\Z")
 RUN_FIELDS = {"status", "revision", "acceptance_ids", "client", "model",
@@ -91,6 +100,10 @@ def _validate(doc: Any) -> list[str]:
             not isinstance(a, str) or not ID.fullmatch(a) for a in acs
         ) or len(set(acs)) != len(acs):
             errors.append("ACCEPTANCE")
+        # A and B can be equally incomplete. Require the full source-issue
+        # registry before accepting even a NOT_RUN declaration as complete.
+        if cid in REQUIRED_ACCEPTANCE_IDS and acs != list(REQUIRED_ACCEPTANCE_IDS[cid]):
+            errors.append("ACCEPTANCE_REGISTRY")
         pair_status = []
         for arm in ("baseline", "orchestra"):
             run = case[arm]
