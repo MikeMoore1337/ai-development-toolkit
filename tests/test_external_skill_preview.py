@@ -32,7 +32,7 @@ class ExternalPreviewTests(unittest.TestCase):
                         files=None):
         body = self.text if text is None else text
         (self.candidate / "SKILL.md").write_text(body, encoding="utf-8")
-        inventory = files or {"SKILL.md": hashlib.sha256(body.encode()).hexdigest()}
+        inventory = files or {"SKILL.md": hashlib.sha256((self.candidate / "SKILL.md").read_bytes()).hexdigest()}
         self.manifest.write_text(json.dumps({
             "schema_version": 1, "candidate_id": "sample-skill",
             "source_url": "https://github.com/example/approved",
@@ -64,6 +64,17 @@ class ExternalPreviewTests(unittest.TestCase):
         self.assertEqual("SKILL.md", result["file_diffs"][0]["path"])
         self.assertEqual(before, (self.manifest.read_bytes(),
                                   (self.candidate / "SKILL.md").read_bytes()))
+        self.assert_no_installed_skills()
+
+    def test_crlf_source_bytes_hash_correctly_and_preview_remains_read_only(self):
+        content = self.text.replace("\n", "\r\n").encode("utf-8")
+        (self.candidate / "SKILL.md").write_bytes(content)
+        data = json.loads(self.manifest.read_text(encoding="utf-8"))
+        data["files"]["SKILL.md"] = hashlib.sha256(content).hexdigest()
+        self.manifest.write_text(json.dumps(data), encoding="utf-8")
+        result = self.preview()
+        self.assertEqual("CANDIDATE_ONLY", result["status"])
+        self.assertEqual("ALLOW_FOR_REVIEW", result["gate"]["decision"])
         self.assert_no_installed_skills()
 
     def test_unknown_license_needs_review_never_permits_install(self):
