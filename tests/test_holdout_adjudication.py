@@ -21,6 +21,37 @@ class HoldoutAdjudicationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.template = review.prepare(ROOT, HOLDOUT)
 
+    def test_review_catalog_matches_packet_digest_without_reference_labels(self):
+        data = review.catalog_for_reviewer(ROOT)
+        packet = self.template
+        self.assertEqual(packet["catalog_sha256"], data["catalog_sha256"])
+        self.assertEqual("blinded_review_skill_catalog", data["purpose"])
+        self.assertEqual(len(data["skills"]), data["skill_count"])
+        self.assertEqual(len(review.read_catalog(ROOT)), data["skill_count"])
+        self.assertEqual(sorted(row["name"] for row in data["skills"]),
+                         [row["name"] for row in data["skills"]])
+        self.assertTrue(all(row["description"] for row in data["skills"]))
+        self.assertNotIn("cases", data)
+        self.assertNotIn("expected", data)
+        self.assertNotIn("predictions", data)
+        self.assertNotIn("proposed_targets", data)
+        self.assertEqual("NOT_VERIFIED", data["reviewer_independence"])
+        self.assertEqual("NOT_TESTED", data["client_effectiveness"])
+        self.assertEqual(data, review.catalog_for_reviewer(ROOT))
+
+    def test_catalog_cli_is_read_only_and_refuses_to_overwrite(self):
+        with tempfile.TemporaryDirectory() as folder:
+            where = Path(folder) / "skill-choices.json"
+            self.assertEqual(0, review.main(["catalog", "--output", str(where)]))
+            first = where.read_bytes()
+            self.assertEqual(2, review.main(["catalog", "--output", str(where)]))
+            self.assertEqual(first, where.read_bytes())
+            choices = json.loads(where.read_text(encoding="utf-8"))
+            self.assertEqual(self.template["catalog_sha256"], choices["catalog_sha256"])
+            self.assertFalse(any("expected" in row or "query" in row
+                                 for row in choices["skills"]))
+            self.assertEqual(2, review.main(["catalog", "--packet", str(where)]))
+
     def test_blinded_packet_never_contains_original_expected_labels(self):
         packet = self.template
         self.assertEqual(38, len(packet["cases"]))
