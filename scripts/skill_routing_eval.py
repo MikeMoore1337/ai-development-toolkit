@@ -161,8 +161,8 @@ def recommend(prompt: str, catalog: dict[str, str],
             parts.extend(pieces)
         else:
             parts.append(clause.strip())
-    if len(parts) > 3:
-        parts = [prompt.strip()]
+    # Do not merge raw clauses before filtering prohibitions. A fourth clause
+    # must never turn an explicit "Skip ..." into the prefix of the whole query.
     # Explicit leading prohibitions must not be mistaken for tasks to perform.
     # This bounded rule recognizes simple prefixes, not arbitrary logical negation.
     negative_start = re.compile(
@@ -183,7 +183,21 @@ def recommend(prompt: str, catalog: dict[str, str],
                 actionable.append(clauses[1])
         else:
             actionable.append(part)
-    parts = actionable
+    # If a prohibition explicitly names a declared skill, never present it
+    # as either a primary or an alternative recommendation. The exact-name
+    # rule avoids guessing which skill an arbitrary negated phrase describes.
+    excluded_words = [" ".join(terms(clause)) for clause in excluded_clauses]
+    excluded_names = set()
+    for name in catalog:
+        phrase = " ".join(terms(name.replace("-", " ")))
+        if phrase and any(re.search(r"\b" + re.escape(phrase) + r"\b", words)
+                          for words in excluded_words):
+            excluded_names.add(name)
+    # Preserve the three-segment presentation bound without reintroducing
+    # excluded instructions. Combine only actionable overflow into the final
+    # segment; its candidates can still include several relevant skills.
+    parts = (actionable[:2] + ["; ".join(actionable[2:])]
+             if len(actionable) > 3 else actionable)
     docs, idf = vectors(catalog)
     profiles = manifest.get("profiles", {})
     roles = sorted(set(manifest.get("core_roles", [])) |
@@ -218,6 +232,8 @@ def recommend(prompt: str, catalog: dict[str, str],
 
         candidates = []
         for original_rank, name in enumerate(ordered, start=1):
+            if name in excluded_names:
+                continue
             supported, evidence = evidence_for(name)
             if not supported:
                 continue  # Raw top-k may contain single-token or zero-evidence matches.
@@ -235,7 +251,8 @@ def recommend(prompt: str, catalog: dict[str, str],
         # rank lies beyond top_k; otherwise the same skill is shown twice.
         selected = {item["skill"] for item in candidates}
         alternatives = ([name for name in ordered
-                         if name not in selected and evidence_for(name)[0]][:3]
+                         if name not in selected and name not in excluded_names
+                         and evidence_for(name)[0]][:3]
                         if candidates else [])
         results.append({
             "text": part,
