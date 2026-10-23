@@ -54,7 +54,7 @@ def validate(spec: object) -> dict:
         if type(column) is not int or not 0 <= column <= 3:
             raise ValueError(f"nodes[{i}]: column must be integer 0..3")
         seen[identifier] = column
-    pairs: set[tuple[str, str, str]] = set()
+    pairs: set[tuple[str, str]] = set()
     for i, edge in enumerate(edges):
         if not isinstance(edge, dict):
             raise ValueError(f"edges[{i}]: expected object")
@@ -66,7 +66,7 @@ def validate(spec: object) -> dict:
             raise ValueError(f"edges[{i}]: both endpoints must exist")
         if seen[source] >= seen[target]:
             raise ValueError(f"edges[{i}]: pilot requires left-to-right forward edges")
-        key = (source, target, label)
+        key = (source, target)
         if key in pairs:
             raise ValueError(f"edges[{i}]: duplicate edge")
         pairs.add(key)
@@ -94,7 +94,13 @@ def render(spec: dict) -> str:
         a, b, c, d = x1 + 180, y1 + 37, x2 - 8, y2 + 37
         delta = max(25, (c - a) // 3)
         path = f"M {a} {b} C {a + delta} {b}, {c - delta} {d}, {c} {d}"
+        caption = escape(edge["label"][:14] + ("..." if len(edge["label"]) > 14 else ""), quote=True)
+        full_caption = escape(edge["label"], quote=True)
+        lx, ly = (a + c) // 2, (b + d) // 2 - 10
         shapes.append(f'<path d="{path}" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>')
+        shapes.append(f'<g><title>{full_caption}</title>'
+                      f'<rect x="{lx - 54}" y="{ly - 16}" width="108" height="21" rx="4" fill="white" stroke="#cbd5e1"/>'
+                      f'<text x="{lx}" y="{ly}" fill="#334155" font-size="12" text-anchor="middle">{caption}</text></g>')
     for node in nodes:
         x, y = positions[node["id"]]
         label = escape(node["label"], quote=True)
@@ -116,16 +122,21 @@ def render(spec: dict) -> str:
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>{title}</title><style>
 :root {{color-scheme:light;--accent:{accent}}}
-body {{font-family:system-ui,sans-serif;color:#0f172a;background:#fff;margin:2rem;line-height:1.5}}
+body {{font-family:system-ui,sans-serif;color:#0f172a;background:#fff;margin:clamp(0.5rem,3vw,2rem);line-height:1.5}}
 main {{max-width:1100px;margin:auto}} h1 {{border-left:4px solid var(--accent);padding-left:1rem}}
-svg {{display:block;width:100%;height:auto;border:1px solid #cbd5e1;border-radius:8px}}
+.diagram-scroll {{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid #cbd5e1;border-radius:8px}}
+.diagram-scroll:focus-visible {{outline:3px solid var(--accent);outline-offset:3px}}
+svg {{display:block;width:{width}px;height:auto;max-width:none}}
+@media (max-width:600px) {{h1 {{font-size:1.35rem}}}}
 details {{margin-top:1.5rem}} code {{overflow-wrap:anywhere}}
 </style></head><body><main><h1>{title}</h1>
+<p class="diagram-hint">Схему можно прокручивать вбок. Подписи и источники также доступны в списке под ней.</p>
+<div class="diagram-scroll" role="region" tabindex="0" aria-label="Схема с горизонтальной прокруткой">
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="svgtitle svgdesc" viewBox="0 0 {width} {height}">
 <title id="svgtitle">{title}</title><desc id="svgdesc">{description}</desc>
 <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
 <path d="M0,0 L6,3 L0,6 Z" fill="#64748b"/></marker></defs>
-{svg_body}</svg>
+{svg_body}</svg></div>
 <details><summary>Происхождение элементов схемы</summary><ul>{refs}</ul></details>
 <p>Синтетический или предоставленный пользователем вход. Точность источников и визуальное качество не подтверждаются генератором.</p>
 </main></body></html>
