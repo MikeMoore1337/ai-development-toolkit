@@ -108,7 +108,10 @@ The fixed 38-case holdout labels are *maintainer-authored, not independently adj
 
 ```bash
 python scripts/holdout_adjudication.py prepare --output human-review.json
+python scripts/holdout_adjudication.py catalog --output skill-choices.json
 ```
+
+Give **only** `human-review.json` and `skill-choices.json` to a reviewer who has not seen the frozen reference labels, ranking output or previous failure analysis. The catalog lists every declared skill `name` and frontmatter `description`, sorted, without any holdout labels or predictions. Its `catalog_sha256` must match the packet to keep decisions tied to the same inventory. Neither file proves reviewer independence; disclose any prior exposure. Do not send the original holdout fixture to a blind reviewer.
 
 Fill each row's `decision` (`ACCEPT`, `CHALLENGE`, or leave `PENDING`), `proposed_targets` and, for negative cases, `proposed_avoid_top1`, plus the self-declared `reviewer_id` and a specific `rationale`. Only `ACCEPT` provides reviewer-proposed labels; `CHALLENGE` records ambiguity with empty proposed labels. The packet pins the exact holdout file and skill catalog digests. The output file must not already exist; existing evidence is never overwritten.
 
