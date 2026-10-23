@@ -17,6 +17,9 @@ permissions:
 
 jobs:
   release-archive:
+    # A separate source-only integration release uses adt-integrations-<SHA>;
+    # the Toolkit application archive gate accepts only vX.Y.Z releases.
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
