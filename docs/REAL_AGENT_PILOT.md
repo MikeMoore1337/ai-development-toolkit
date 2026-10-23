@@ -165,26 +165,15 @@ blocked and a separate explicit owner decision is required for any future
 real-agent experiment.
 
 
-## Pinned Hermes compatibility gate (offline and source-only)
+## Optional external compatibility checks (source-only)
 
-On the Ubuntu/Python 3.12 validation job, CI checks out **public** Hermes at
-commit db7ed22d4faef39af3d5aafa0cc6f20b91b23a3a in a separate, untracked
-directory after the toolkit inventory and unit tests have completed. This is a
-source checkout, not worker installation or production deployment.
+In CI, an independently pinned external source contract may be inspected in a
+temporary checkout. The check compares declared interfaces and permission
+boundaries without installing an agent or calling a model. GitHub access is
+required to retrieve the source, but the inspection itself is offline.
 
-The checker uses Git and Python AST only. It verifies that the external Hermes
-checkout is clean and pinned; that Hermes #349 case IDs, providers, job kind and
-fixed CLI argument flags agree with ADT #11; and that both owner-denial guards
-are still present in their expected source positions.
-
-    python scripts/agent_eval_hermes_contract.py --hermes-root /path/to/pinned/hermes
-
-CI fetches the public source from GitHub, so the checkout step itself uses
-GitHub network access. The **inspection and tests** do not make provider,
-agent, or billing calls. No Hermes source is imported or executed.
-Changes to the Hermes contract require a deliberate pin update and review
-of compatibility on both sides; this check cannot automatically notice
-future Hermes main changes until the pin is updated.
+This evidence is limited to that exact revision. It does not prove execution,
+compatibility with newer upstream revisions, or permission to use paid APIs.
 
 The offline hidden-oracle runner now starts Python/Node/Go oracles with a
 minimal environment rather than forwarding credentials, NODE_OPTIONS,

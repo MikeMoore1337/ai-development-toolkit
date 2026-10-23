@@ -306,7 +306,7 @@ def validate(root: Path) -> list[str]:
         "REAL_AGENT_PILOT.md": ("ZERO-SPEND", "--execute", "NOT_MEASURED",
                                 "NOT_PERFORMED", "NOT_VERIFIED",
                                 "SYNTHETIC_OFFLINE_HARNESS_SMOKE_NOT_MODEL_EVAL",
-                                "agent_eval_offline_smoke.py", "agent_eval_hermes_contract.py"),
+                                "agent_eval_offline_smoke.py", "Дополнительная проверка совместимости"),
         "SKILL_EVALS.md": ("schema_version", "baseline", "candidate",
                            "tokens", "duration_seconds", "exploratory",
                            "NOT_MEASURED", "ZERO-SPEND", "--execute"),
