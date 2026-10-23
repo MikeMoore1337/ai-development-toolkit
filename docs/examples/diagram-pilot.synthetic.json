@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "title": "Пример: синтетический поток данных (НЕ production)",
+  "accent": "#2563eb",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Пользователь",
+      "column": 0,
+      "evidence": "Synthetic fixture: scenario D-01"
+    },
+    {
+      "id": "api",
+      "label": "API",
+      "column": 1,
+      "evidence": "Synthetic fixture: scenario D-01"
+    },
+    {
+      "id": "queue",
+      "label": "Очередь",
+      "column": 2,
+      "evidence": "Synthetic fixture: scenario D-01"
+    },
+    {
+      "id": "worker",
+      "label": "Обработчик",
+      "column": 3,
+      "evidence": "Synthetic fixture: scenario D-01"
+    }
+  ],
+  "edges": [
+    {
+      "from": "client",
+      "to": "api",
+      "label": "Запрос",
+      "evidence": "Synthetic fixture: scenario D-01"
+    },
+    {
+      "from": "api",
+      "to": "queue",
+      "label": "Задача",
+      "evidence": "Synthetic fixture: scenario D-01"
+    },
+    {
+      "from": "queue",
+      "to": "worker",
+      "label": "Получение",
+      "evidence": "Synthetic fixture: scenario D-01"
+    }
+  ]
+}
