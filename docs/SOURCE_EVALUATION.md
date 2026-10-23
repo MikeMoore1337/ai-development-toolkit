@@ -28,7 +28,7 @@
 | [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Критика анимации и дизайна | Использовать motion-quality; исходные материалы частично есть в архиве |
 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | Команды для аудита и оформления frontend | В исходном архиве уже были навык и EXE; избегать дубликатов и бинарного файла |
 | [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | Приложение для переноса скриншота в UI | Только идеи screenshot-fidelity; самому приложению нужны ключи API |
-| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Отдельный агентный runtime и навыки | Архитектурный пример для Hermes, не тот же продукт и не готовое обновление |
+| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Отдельный агентный runtime и навыки | Сторонний пример архитектуры агентного окружения; не готовая замена существующей системы |
 | [mnfst/awesome-free-llm-apis](https://github.com/mnfst/awesome-free-llm-apis) | P2 | Общественный список бесплатных тарифов LLM API | В provider-reality-check каждый раз проверять официальные лимиты и условия |
 | [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | P2 | Маршрутизатор бесплатных тарифов LLM | Внешний кандидат для runtime; заявления о бесплатных квотах не проверены |
 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | P2 | Полноценная среда работы агентов | Только альтернативная архитектура продукта; переработка 1.x не является готовой заменой |
