@@ -26,7 +26,7 @@ The script matches file-path tokens to surface rules for AUTH, PRIVACY, API, DB,
 
 Each recommendation includes `changed_paths`, `risk`, `purpose`, `status = NOT_RUN`, `evidence = PATH_HEURISTIC_ONLY` and empty execution receipts. Even with a pinned git diff, the helper cannot establish all transitive callers, changes hidden in differently named files, API contract details, available tests, acceptance criteria, or production results. For these, an engineer must inspect actual code, consumer traces, issue AC and target project's `AGENTS.md`. Additional tests may be necessary; never interpret this as permission to skip existing required CI or owner gates.
 
-The `fixtures/qa_change_impact_cases.json` cases are **synthetic** YFC/Hermes/Second Brain-like PR examples. Passing their oracles proves deterministic lower-bound check suggestions, *not* that those applications were accessed or their tests executed.
+The `fixtures/qa_change_impact_cases.json` cases are **synthetic** examples of changes to UI, APIs, background jobs and private-data boundaries. Passing their oracles proves deterministic lower-bound check suggestions, *not* that those applications were accessed or their tests executed.
 
 ## Persisted-state and dependent-consumer risk hints
 
@@ -51,7 +51,7 @@ The optional map uses schema version 1 and `entries` with an `id`, a **directory
 
 The additional `declared_test_candidates` contain the mapping ID, test ID, requirement IDs, matched changed paths, and explicit `NOT_RUN` / `OWNER_DECLARED_NOT_VERIFIED`. The `unmapped_check_ids` list identifies recommended checks with **no declared mapping**. Neither mapping entry existence nor syntactic validation proves a test exists, is relevant, or has passed. All critical checks from the original risk plan remain mandatory; the map can never suppress them.
 
-The supplied `fixtures/qa_change_impact_test_map.json` is **synthetic only**: its test IDs and acceptance IDs are not claims about YFC, Hermes or Second Brain. A real project's owner must approve a local mapping and inspect actual test files, changed behavior and AC before assigning work. Never treat declared tests as execution evidence or bypass protected project release rules.
+The supplied `fixtures/qa_change_impact_test_map.json` is **synthetic only**: its test IDs and acceptance IDs are not facts about any real application. A real project's owner must approve a local mapping and inspect actual test files, changed behavior and AC before assigning work. Never treat declared tests as execution evidence or bypass protected project release rules.
 
 
 ## Optional bounded inspection of changed source lines
