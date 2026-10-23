@@ -27,7 +27,7 @@ jobs:
     env:
       SOURCE_SHA: ${{ inputs.source_sha }}
       GH_TOKEN: ${{ github.token }}
-      OUTPUT_DIR: ${{ runner.temp }}/integration-release
+      OUTPUT_DIR: .adt-integration-release-output
     steps:
       - name: Refuse malformed or mutable revision
         shell: bash
