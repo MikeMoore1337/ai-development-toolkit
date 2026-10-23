@@ -110,3 +110,49 @@ MCP только читает и передаёт инструкции. Реал
 Linux-тест и статическая проверка PowerShell; реальный Windows/macOS хост,
 обновление личного Codex и работа модели **NOT_VERIFIED**. Сторонние
 `SKILL.md` не выполняются и не устанавливаются.
+
+## Обновление уже подключённого MCP без Codex CLI (#190)
+
+Если `toolkit_info` показывает `mcp_server_version=0.1.6` при версии
+библиотеки Toolkit `5.5.3`, планировщик обновил **только инструкции**.
+Новый MCP `0.1.10` нужно поставить отдельно. Для уже установленного в
+`%LOCALAPPDATA%\ADT-Personal\mcp\adt_mcp.py` сервера
+используйте режим `-McpOnly` установщика из **нового проверенного ZIP**.
+Он не вызывает Codex CLI/Claude CLI, не пишет в `config.toml`,
+`AGENTS.md` или проект, не регистрирует MCP и не делает `git clone`.
+Требуется уже существующий источник `toolkit-source`; сохраните
+прежнюю настройку регистрации. Штатные резервные копии и откат при
+ошибке относятся только к двум файлам MCP.
+
+1. Скачайте версионированный ZIP из **последнего проверенного GitHub Actions
+   artifact** для коммита, содержащего режим `-McpOnly`, в
+   [списке запусков Validate toolkit](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
+   (`AI-Development-Toolkit-Personal-MCP-0.1.10.zip`). Не загружайте
+   скрипт из произвольной ветки.
+2. Проверьте SHA-256 архива по записи CI для **соответствующего SHA**;
+   распакуйте за пределами рабочих проектов. Если код установщика
+   отличается от документации, проверьте его перед применением.
+3. В PowerShell (путь к распакованной папке задайте явно):
+
+   ```powershell
+   $package = 'C:\Downloads\ADT-Personal-0.1.10\adt-personal'
+   powershell.exe -NoProfile -File "$package\Install-ADT-Personal.ps1" -McpOnly -WhatIf
+   powershell.exe -NoProfile -File "$package\Install-ADT-Personal.ps1" -McpOnly
+   py -3 "$env:LOCALAPPDATA\ADT-Personal\mcp\adt_mcp.py" --source "$env:LOCALAPPDATA\ADT-Personal\toolkit-source" --check
+   ```
+
+   Эти команды **не используют Codex CLI**. На компьютере с политиками
+   ограничения PowerShell соблюдайте правила организации; не обходите
+   ограничения исполнения сценариев.
+4. Полностью закройте и откройте Codex Desktop. В новом диалоге
+   реально вызовите `toolkit_info` и `toolkit_prepare_task`; ожидается
+   `mcp_server_version=0.1.10`. Результат проверки без вызова в
+   установленном клиенте - `NOT_VERIFIED`.
+
+**Важно:** режим `-McpOnly` не переподключает регистрацию на другой
+путь. Если ранее MCP зарегистрирован не в стандартном пользовательском
+каталоге, **не выполняйте обновление вслепую**: сначала
+проинспектируйте разрешённым read-only способом `~/.codex/config.toml`
+и сравните используемый путь с указанным выше. Отсутствие
+`toolkit_prepare_task` после обновления обычно означает, что Codex
+всё ещё запускает старый путь или не был перезапущен.
