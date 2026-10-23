@@ -9068,6 +9068,26 @@
       "notes": "ChatGPT/Codex integration source; separate installation and release checks apply."
     },
     {
+      "id": "integration-integrations-tests-test-windows-mcp-only-py",
+      "path": "integrations/tests/test_windows_mcp_only.py",
+      "name": "test_windows_mcp_only.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Owner-reported original integration package; independent rights verification not performed",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-23",
+      "distribution": "included",
+      "notes": "New offline Windows installer smoke: MCP-only upgrade without Codex CLI; real user Codex activation NOT_VERIFIED."
+    },
+    {
       "id": "toolkit-extensions-ai-skills-prompt-refinement",
       "path": "extensions/ai/skills/prompt-refinement",
       "name": "prompt-refinement",

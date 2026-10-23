@@ -68,3 +68,32 @@ tests, not a real Windows user-profile test. macOS native installation and
 real Codex model calls remain `NOT_VERIFIED`.
 
 No third-party Skill code is installed or executed by this change.
+
+## Existing Windows MCP: offline package update without Codex CLI (#190)
+
+For a known existing global user launcher at
+`%LOCALAPPDATA%\ADT-Personal\mcp\adt_mcp.py`, a reviewed
+MCP package's `Install-ADT-Personal.ps1 -McpOnly` updates the
+`adt_mcp.py` / `adt_discovery.py` pair after a self-check, with
+backups and rollback. `-McpOnly` does not call client CLIs, clone
+Toolkit, edit Codex/Claude config or global agent guidance, or install
+skills into a project. An existing local Toolkit source checkout is
+required. If the Codex registration uses a nonstandard path, stop and
+inspect its path first; `-McpOnly` does not re-register MCP.
+
+Use the verified versioned source ZIP from a [passing CI
+artifact](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml)
+**whose commit contains the `-McpOnly` switch**
+and validate the expected ZIP SHA-256 before extraction. On an
+unrestricted Windows PowerShell installation, from the extracted
+`adt-personal` directory run:
+
+```powershell
+powershell.exe -NoProfile -File ".\Install-ADT-Personal.ps1" -McpOnly -WhatIf
+powershell.exe -NoProfile -File ".\Install-ADT-Personal.ps1" -McpOnly
+py -3 "$env:LOCALAPPDATA\ADT-Personal\mcp\adt_mcp.py" --source "$env:LOCALAPPDATA\ADT-Personal\toolkit-source" --check
+```
+
+Do not bypass corporate execution policies. Restart Codex Desktop
+and actually call `toolkit_info` / `toolkit_prepare_task` in a
+new session. A direct self-check is not native client activation evidence.

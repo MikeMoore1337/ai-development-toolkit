@@ -5,12 +5,14 @@ param(
     [string]$ToolkitPath = '',
     [switch]$Codex,
     [switch]$ClaudeCode,
+    [switch]$McpOnly,
     [switch]$SkipGlobalInstructions
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-if (-not $Codex -and -not $ClaudeCode) { $Codex = $true }
+if ($McpOnly -and ($Codex -or $ClaudeCode)) { throw '-McpOnly cannot be combined with client registration switches.' }
+if (-not $Codex -and -not $ClaudeCode -and -not $McpOnly) { $Codex = $true }
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $server = Join-Path $packageRoot 'mcp\adt_mcp.py'
 $discovery = Join-Path $packageRoot 'mcp\adt_discovery.py'
@@ -23,6 +25,9 @@ if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
 $homeRoot = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME 'AppData\Local' }
 $source = if ($ToolkitPath) { (Resolve-Path -LiteralPath $ToolkitPath).Path } else { Join-Path $homeRoot 'ADT-Personal\toolkit-source' }
 $source = [IO.Path]::GetFullPath($source)
+if ($McpOnly -and -not (Test-Path -LiteralPath (Join-Path $source 'MANIFEST.json') -PathType Leaf)) {
+    throw '-McpOnly requires an existing local Toolkit source; refusing Git clone or client configuration.'
+}
 if (-not $ToolkitPath -and -not (Test-Path -LiteralPath (Join-Path $source 'MANIFEST.json'))) {
     if (Test-Path -LiteralPath $source) { throw "Existing directory is not a Toolkit checkout: $source" }
     $git = Get-Command git -ErrorAction SilentlyContinue
@@ -63,6 +68,19 @@ function Test-ClaudeMcpExists([string]$Executable) {
     return ($LASTEXITCODE -eq 0)
 }
 
+# Built-in SHA256 works even when PowerShell's Get-FileHash module cannot
+# auto-load (e.g. a tightly isolated/locked-down user profile).
+function Get-ADTFileSHA256([string]$File) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [IO.File]::OpenRead($File)
+        try {
+            return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '')
+        }
+        finally { $stream.Dispose() }
+    }
+    finally { $sha.Dispose() }
+}
 function Backup-IfExists([string]$File) {
     if (Test-Path -LiteralPath $File -PathType Leaf) {
         $backup = "$File.adt-backup-$(Get-Date -Format yyyyMMdd-HHmmss)"
@@ -109,15 +127,18 @@ For every software engineering, QA, UI/UX, security or DevOps task in the active
 $targetDir = Join-Path $homeRoot 'ADT-Personal\mcp'
 $installedServer = Join-Path $targetDir 'adt_mcp.py'
 $installedDiscovery = Join-Path $targetDir 'adt_discovery.py'
-if ($Codex -or $ClaudeCode) {
+if ($McpOnly -and -not (Test-Path -LiteralPath $installedServer -PathType Leaf)) {
+    throw '-McpOnly requires an existing MCP launcher at the standard user-local path; refusing new registration.'
+}
+if ($Codex -or $ClaudeCode -or $McpOnly) {
     # Installing only adt_mcp.py would break imports introduced in MCP 0.1.10.
     $needsBundle = (-not (Test-Path -LiteralPath $installedServer -PathType Leaf) -or
                     -not (Test-Path -LiteralPath $installedDiscovery -PathType Leaf))
     if (-not $needsBundle) {
-        $needsBundle = ((Get-FileHash -LiteralPath $server -Algorithm SHA256).Hash -ne
-                        (Get-FileHash -LiteralPath $installedServer -Algorithm SHA256).Hash -or
-                        (Get-FileHash -LiteralPath $discovery -Algorithm SHA256).Hash -ne
-                        (Get-FileHash -LiteralPath $installedDiscovery -Algorithm SHA256).Hash)
+        $needsBundle = ((Get-ADTFileSHA256 $server) -ne
+                        (Get-ADTFileSHA256 $installedServer) -or
+                        (Get-ADTFileSHA256 $discovery) -ne
+                        (Get-ADTFileSHA256 $installedDiscovery))
     }
     if ($needsBundle -and $PSCmdlet.ShouldProcess($targetDir, 'Install verified MCP module pair')) {
         foreach ($destination in @($installedServer, $installedDiscovery)) {
