@@ -175,6 +175,43 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertIn("qa-api", second["candidates"][0]["candidate_profiles"])
         self.assertIn("test-designer", result["available_roles_not_automatically_selected"])
 
+    def test_unselected_neighbors_require_positive_lexical_evidence(self):
+        catalog = {
+            "seo-audit": "Audit search indexing and metadata.",
+            "seo-check": "Check SEO indexing crawlability.",
+            "database-migrations": "Plan database migrations and rollback.",
+            "api-testing": "Test HTTP API error responses.",
+            "code-review": "Review source code diffs.",
+        }
+        result = routing.recommend(
+            "Audit SEO indexing", catalog, {},
+            {"profiles": {}, "core_roles": [], "extension_packs": {}}, top_k=1,
+        )
+        segment = result["segments"][0]
+        self.assertEqual("seo-audit", segment["candidates"][0]["skill"])
+        self.assertEqual(["seo-check"], segment["other_not_selected"])
+        self.assertEqual("SUGGESTIONS_ONLY", result["status"])
+        self.assertEqual("NOT_OBSERVED", result["client_skill_selection"])
+        self.assertFalse(result["installs_or_executes"])
+
+    def test_unselected_neighbors_never_emit_unsupported_alphabetical_fallback(self):
+        catalog = {
+            "api-testing": "Check HTTP API status codes.",
+            "code-review": "Review source diffs for regressions.",
+            "database-migrations": "Plan schema migrations.",
+            "seo-audit": "Audit site search indexing and crawlability.",
+        }
+        result = routing.recommend(
+            "Audit site search indexing", catalog, {},
+            {"profiles": {}, "core_roles": [], "extension_packs": {}}, top_k=1,
+        )
+        segment = result["segments"][0]
+        self.assertEqual("seo-audit", segment["candidates"][0]["skill"])
+        self.assertEqual([], segment["other_not_selected"])
+        weak = routing.recommend("nonsenseplaceholderxyz", catalog, {}, {}, top_k=1)
+        self.assertEqual([], weak["segments"][0]["other_not_selected"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", weak["status"])
+
     def test_recommend_weak_evidence_does_not_claim_confidence(self):
         manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
         result = routing.recommend(
