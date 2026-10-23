@@ -130,7 +130,9 @@ def _context(path: Path, candidate: Path) -> dict:
         values = document[field]
         if (not isinstance(values, list) or len(values) > maximum
                 or (not allow_empty and not values)
-                or any(not isinstance(v, str) or not REVIEW_ID.fullmatch(v) for v in values)
+                or any(not isinstance(v, str) or
+                       (field != "requested_permissions" and not REVIEW_ID.fullmatch(v))
+                       for v in values)
                 or len(set(values)) != len(values)):
             raise ValueError("Invalid context value: " + field)
     if not set(document["requested_permissions"]) <= PERMISSIONS:
