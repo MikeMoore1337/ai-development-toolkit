@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "description": "Exploratory 18-case RU/EN paraphrase stress diagnostic, authored by an AI assistant on 2026-10-23 after prior holdout context. NOT independent/blind/human adjudicated, NOT a strict CI threshold, NOT semantic accuracy. Pin without using cases to tune aliases, rankings or frozen holdout. Scope: #189.",
+  "cases": [
+    {
+      "id": "novel-ru-01",
+      "kind": "single",
+      "query": "После изменения обработчика POST старые интеграции начали получать другой набор полей ответа. Какие проверки совместимости нужны?",
+      "expected": [
+        "contract-testing"
+      ]
+    },
+    {
+      "id": "novel-ru-02",
+      "kind": "single",
+      "query": "Несколько прогонов одного pytest-кейса дают разные результаты только в CI. Помоги отделить нестабильность теста от дефекта продукта.",
+      "expected": [
+        "flaky-analysis"
+      ]
+    },
+    {
+      "id": "novel-ru-03",
+      "kind": "single",
+      "query": "Пользователь с клавиатурой застревает внутри всплывающего окна. Проверь управление фокусом и доступность.",
+      "expected": [
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "novel-ru-04",
+      "kind": "single",
+      "query": "Повторная доставка задания приводит к двойному выполнению операции. Предложи сценарий воспроизведения и проверку идемпотентности.",
+      "expected": [
+        "reliability-testing"
+      ]
+    },
+    {
+      "id": "novel-ru-05",
+      "kind": "negative",
+      "query": "Не меняй оформление: разберись, почему SQL-запрос ждёт блокировку транзакции после UPDATE.",
+      "expected": [
+        "data-access"
+      ],
+      "avoid_top1": [
+        "ux-ui-design-orchestra"
+      ]
+    },
+    {
+      "id": "novel-ru-06",
+      "kind": "single",
+      "query": "Проверь, может ли расширение MCP прочитать файл за пределами разрешённого рабочего каталога через символическую ссылку.",
+      "expected": [
+        "security-boundaries"
+      ]
+    },
+    {
+      "id": "novel-ru-07",
+      "kind": "single",
+      "query": "Нужно составить матрицу рисков для рефакторинга общего пакета и определить обязательные регрессионные проверки.",
+      "expected": [
+        "change-impact-analysis"
+      ]
+    },
+    {
+      "id": "novel-ru-08",
+      "kind": "compound",
+      "query": "Проверь поисковую видимость страниц; отдельно оцени управление диалогами с клавиатуры.",
+      "expected": [
+        "seo-audit",
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "novel-ru-09",
+      "kind": "negative",
+      "query": "Не запускай нагрузочные тесты: оцени, есть ли обход проверки разрешений для чтения чужих записей.",
+      "expected": [
+        "security-testing"
+      ],
+      "avoid_top1": [
+        "performance-load-testing"
+      ]
+    },
+    {
+      "id": "novel-en-10",
+      "kind": "single",
+      "query": "A downloaded agent extension registers startup hooks. Assess its provenance and possible unsafe execution before approval.",
+      "expected": [
+        "external-skill-review"
+      ]
+    },
+    {
+      "id": "novel-en-11",
+      "kind": "single",
+      "query": "The dashboard jumps between frames during a transition on budget Android phones; assess animation smoothness.",
+      "expected": [
+        "motion-quality"
+      ]
+    },
+    {
+      "id": "novel-en-12",
+      "kind": "single",
+      "query": "Identify who owns each blocked ticket and establish the dependency order for delivering the feature.",
+      "expected": [
+        "project-delivery-management"
+      ]
+    },
+    {
+      "id": "novel-en-13",
+      "kind": "single",
+      "query": "Find the cause of the red CI job using the traceback, and distinguish evidence from speculation.",
+      "expected": [
+        "failure-triage"
+      ]
+    },
+    {
+      "id": "novel-en-14",
+      "kind": "single",
+      "query": "Database transaction latency keeps increasing even though the request count has not changed; identify query-level risks.",
+      "expected": [
+        "data-access"
+      ]
+    },
+    {
+      "id": "novel-en-15",
+      "kind": "compound",
+      "query": "Verify event consumer compatibility; additionally design tests for unauthorized REST access.",
+      "expected": [
+        "contract-testing",
+        "security-testing"
+      ]
+    },
+    {
+      "id": "novel-en-16",
+      "kind": "negative",
+      "query": "Don't rewrite the UI. Improve the wording of the payment error message so customers understand it.",
+      "expected": [
+        "editorial-naturalness"
+      ],
+      "avoid_top1": [
+        "ux-design-process"
+      ]
+    },
+    {
+      "id": "novel-en-17",
+      "kind": "single",
+      "query": "We changed a table constraint and need to verify both old data and integrity after rollback.",
+      "expected": [
+        "database-validation"
+      ]
+    },
+    {
+      "id": "novel-en-18",
+      "kind": "negative",
+      "query": "Skip the release preparation: investigate why the queue worker consumes an already acknowledged event twice.",
+      "expected": [
+        "background-processing"
+      ],
+      "avoid_top1": [
+        "release-safety"
+      ]
+    }
+  ]
+}
