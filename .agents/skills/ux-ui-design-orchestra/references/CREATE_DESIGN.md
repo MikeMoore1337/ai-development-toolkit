@@ -42,7 +42,7 @@ Compare them using the same product goals and available evidence. Include `selec
 - Record a `visual_comparison` receipt with `status: RENDERED`, three unique `direction_id` to `evidence_id` mappings, and each frame's `layout_signature` as 3-12 ordered semantic region names. The evidence ledger's linked `RENDERED` row must include a real artifact reference, viewport and provenance. A single combined sheet is allowed via an actual separate crop/panel reference for each direction.
 - Observe the actual rendered frames before writing `selection_rationale` and rejection reasons; show the user the three sketches along with the polished winning design and a short, plain-language explanation of why it won.
 - If no renderer is available, use `visual_comparison.status: MISSING`, `frames: []`; this is a legitimate but **incomplete** report with `VISUAL_PACKAGE_MISSING`. Never represent this as `AWAITING_VISUAL_APPROVAL`.
-- Do not use screenshots of another client's app as an unstated candidate; YFC/Hermes designs are not reusable defaults.
+- Do not use screenshots or the design system of another application as an unstated candidate; unrelated design systems are not reusable defaults.
 - A checker can compare declared frame references and signatures; **it does not verify files or visual novelty**. Only real visual inspection and owner acceptance establish the result.
 
 ## Example with no prior project knowledge
