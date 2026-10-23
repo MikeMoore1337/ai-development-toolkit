@@ -9,7 +9,7 @@
 | Domain backend | feature-delivery, qa-strategy, research-verification | Непроверенные предметно-специфичные формулы, правила и выводы из внешних навыков (например, медицинские, финансовые или инженерные утверждения без источников) |
 | Agent runtime | agent-framework-fit, codebase-knowledge-map, provider-reality-check, external-skill-review | NousResearch/hermes-agent целиком, непроверенные хранилища cookies, autopilot/deploy hooks |
 | knowledge base | codebase-knowledge-map при масштабном импорте, editorial-naturalness, qa-strategy | Ненужные браузерные движки, LLM-провайдеры и дизайн-генераторы |
-| Research Scout | provider-reality-check, research-verification | Бесплатность/качество API без проверки условий и реальных запросов |
+| Научный исследовательский сервис | provider-reality-check, research-verification | Бесплатность/качество API без проверки условий и реальных запросов |
 
 Критерии перед активацией любого внешнего проекта:
 1. Реальное отсутствие требуемой функции в текущем стеке;
