@@ -330,6 +330,46 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual([], result["segments"])
         self.assertFalse(result["installs_or_executes"])
 
+    def test_recommend_recovers_supported_skill_beyond_weak_raw_top_k(self):
+        # Three one-token description matches outrank the two-token match
+        # diluted by nonmatching text; none of them passes the evidence gate.
+        noisy = " ".join(f"noise{i}" for i in range(240))
+        catalog = {
+            "weak-a": "alpha",
+            "weak-b": "alpha",
+            "weak-c": "alpha",
+            "strong-candidate": f"alpha beta {noisy}",
+            "supported-alternative": f"alpha beta gamma {noisy}",
+        }
+        docs, idf = routing.vectors(catalog)
+        order = routing.ranking("alpha beta", catalog, docs, idf)
+        self.assertEqual(["weak-a", "weak-b", "weak-c"], order[:3])
+        advice = routing.recommend("alpha beta", catalog, {}, {}, top_k=1)
+        row = advice["segments"][0]
+        self.assertEqual("SUGGESTIONS_ONLY", advice["status"])
+        self.assertEqual("PRESENT", row["candidates"][0]["lexical_support"])
+        self.assertGreater(row["candidates"][0]["rank"], 1)
+        self.assertNotIn(row["candidates"][0]["skill"], row["other_not_selected"])
+        self.assertTrue(set(row["other_not_selected"]).isdisjoint(
+            {item["skill"] for item in row["candidates"]}))
+        self.assertFalse(advice["installs_or_executes"])
+        wider = routing.recommend("alpha beta", catalog, {}, {}, top_k=3)
+        selections = [item["skill"] for item in wider["segments"][0]["candidates"]]
+        self.assertEqual(2, len(selections))
+        self.assertTrue(all(item["rank"] > 3 for item in
+                            wider["segments"][0]["candidates"]))
+        self.assertTrue(set(selections).isdisjoint(
+            wider["segments"][0]["other_not_selected"]))
+
+    def test_recommend_never_invents_supported_skill_if_all_weak(self):
+        catalog = {"a": "alpha", "b": "alpha", "c": "alpha"}
+        advice = routing.recommend("alpha beta", catalog, {}, {}, top_k=2)
+        self.assertEqual("INSUFFICIENT_EVIDENCE", advice["status"])
+        self.assertEqual([], advice["segments"][0]["candidates"])
+        self.assertEqual([], advice["segments"][0]["other_not_selected"])
+        self.assertEqual("NOT_OBSERVED", advice["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", advice["client_effectiveness"])
+
     def test_recommend_invalid_input_fails_closed(self):
         with self.assertRaises(routing.RoutingInputError):
             routing.recommend(" ", self.catalog, {}, {}, top_k=1)
