@@ -35,7 +35,7 @@ py -3 scripts/agent_eval_runner.py --provider claude
 
 Real runs require an installed/authenticated CLI, suitable model access, a
 disposable externally isolated VM/container, and a known spending limit.
-Desktop Commander device availability is not an agent runtime or evidence.
+A connected remote device is not an agent runtime or evidence.
 Do not run the pilot on production folders, with live credentials inside
 the scratch workspaces, or without understanding CLI/provider billing.
 
@@ -165,26 +165,9 @@ blocked and a separate explicit owner decision is required for any future
 real-agent experiment.
 
 
-## Pinned Hermes compatibility gate (offline and source-only)
+## Optional external compatibility checks
 
-On the Ubuntu/Python 3.12 validation job, CI checks out **public** Hermes at
-commit db7ed22d4faef39af3d5aafa0cc6f20b91b23a3a in a separate, untracked
-directory after the toolkit inventory and unit tests have completed. This is a
-source checkout, not worker installation or production deployment.
-
-The checker uses Git and Python AST only. It verifies that the external Hermes
-checkout is clean and pinned; that Hermes #349 case IDs, providers, job kind and
-fixed CLI argument flags agree with ADT #11; and that both owner-denial guards
-are still present in their expected source positions.
-
-    python scripts/agent_eval_hermes_contract.py --hermes-root /path/to/pinned/hermes
-
-CI fetches the public source from GitHub, so the checkout step itself uses
-GitHub network access. The **inspection and tests** do not make provider,
-agent, or billing calls. No Hermes source is imported or executed.
-Changes to the Hermes contract require a deliberate pin update and review
-of compatibility on both sides; this check cannot automatically notice
-future Hermes main changes until the pin is updated.
+When integration contracts are pinned to another repository, verify that checkout against a fixed revision with a source-only checker. This validates only declared interfaces and explicit owner-denial gates; it neither runs the external service nor proves agent behavior. Treat repository-specific CI jobs as implementation details rather than installation instructions for Toolkit users.
 
 The offline hidden-oracle runner now starts Python/Node/Go oracles with a
 minimal environment rather than forwarding credentials, NODE_OPTIONS,
