@@ -85,6 +85,47 @@ class PilotLedgerTests(unittest.TestCase):
         doc["cases"][0]["acceptance_ids"] = []
         self.reject("ACCEPTANCE", doc)
 
+    def test_reference_uses_all_source_issue_acceptance_ids(self):
+        doc = self.fresh()
+        self.assertEqual([], pilot.validate(doc))
+        for case in doc["cases"]:
+            required = list(pilot.REQUIRED_ACCEPTANCE_IDS[case["id"]])
+            self.assertEqual(case["acceptance_ids"], required)
+            self.assertEqual(case["baseline"]["acceptance_ids"], required)
+            self.assertEqual(case["orchestra"]["acceptance_ids"], required)
+
+    def test_consistent_but_incomplete_pair_is_rejected(self):
+        # Two shortened arms used to pass: equality is not issue coverage.
+        doc = self.fresh()
+        row = doc["cases"][0]
+        shortened = ["YFC-A1", "YFC-A2"]
+        for key in ("acceptance_ids",):
+            row[key] = shortened
+            row["baseline"][key] = shortened
+            row["orchestra"][key] = shortened
+        self.reject("ACCEPTANCE_REGISTRY", doc)
+        self.assertNotIn("UNEQUAL_INPUTS", pilot.validate(doc))
+
+    def test_incorrect_issue_id_is_rejected_even_if_arms_match(self):
+        doc = self.fresh()
+        row = doc["cases"][1]
+        ids = ["H-A1", "H-A2", "H-A3", "H-A4", "HERMES_AC5"]
+        row["acceptance_ids"] = ids
+        row["baseline"]["acceptance_ids"] = ids
+        row["orchestra"]["acceptance_ids"] = ids
+        self.reject("ACCEPTANCE_REGISTRY", doc)
+
+    def test_incorrect_issue_registry_rejected_for_all_projects(self):
+        for index in range(3):
+            doc = self.fresh()
+            row = doc["cases"][index]
+            reduced = row["acceptance_ids"][:-1]
+            row["acceptance_ids"] = reduced
+            row["baseline"]["acceptance_ids"] = reduced
+            row["orchestra"]["acceptance_ids"] = reduced
+            with self.subTest(project=row["id"]):
+                self.reject("ACCEPTANCE_REGISTRY", doc)
+
     def test_unequal_baseline_source(self):
         doc = self.fresh()
         doc["cases"][0]["baseline"]["revision"] = "f" * 40
