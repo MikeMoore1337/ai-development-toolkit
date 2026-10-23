@@ -34,6 +34,9 @@ class TestUpdater(unittest.TestCase):
         git('checkout', '-b', 'main', cwd=self.author)
         git('config', 'user.name', 'Updater CI', cwd=self.author)
         git('config', 'user.email', 'updater-ci@example.invalid', cwd=self.author)
+        # Synthetic remote must preserve canonical LF blobs on Windows.
+        git('config', 'core.autocrlf', 'false', cwd=self.author)
+        (self.author/'.gitattributes').write_bytes(b'*.md -text\n')
         self.source = self.root/'toolkit-source'
         self.state = self.root/'updater-state'
         self._save_toolkit('1.0.0')

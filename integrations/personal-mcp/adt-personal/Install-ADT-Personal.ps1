@@ -68,6 +68,19 @@ function Test-ClaudeMcpExists([string]$Executable) {
     return ($LASTEXITCODE -eq 0)
 }
 
+# Built-in SHA256 works even when PowerShell's Get-FileHash module cannot
+# auto-load (e.g. a tightly isolated/locked-down user profile).
+function Get-ADTFileSHA256([string]$File) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [IO.File]::OpenRead($File)
+        try {
+            return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '')
+        }
+        finally { $stream.Dispose() }
+    }
+    finally { $sha.Dispose() }
+}
 function Backup-IfExists([string]$File) {
     if (Test-Path -LiteralPath $File -PathType Leaf) {
         $backup = "$File.adt-backup-$(Get-Date -Format yyyyMMdd-HHmmss)"
@@ -122,10 +135,10 @@ if ($Codex -or $ClaudeCode -or $McpOnly) {
     $needsBundle = (-not (Test-Path -LiteralPath $installedServer -PathType Leaf) -or
                     -not (Test-Path -LiteralPath $installedDiscovery -PathType Leaf))
     if (-not $needsBundle) {
-        $needsBundle = ((Get-FileHash -LiteralPath $server -Algorithm SHA256).Hash -ne
-                        (Get-FileHash -LiteralPath $installedServer -Algorithm SHA256).Hash -or
-                        (Get-FileHash -LiteralPath $discovery -Algorithm SHA256).Hash -ne
-                        (Get-FileHash -LiteralPath $installedDiscovery -Algorithm SHA256).Hash)
+        $needsBundle = ((Get-ADTFileSHA256 $server) -ne
+                        (Get-ADTFileSHA256 $installedServer) -or
+                        (Get-ADTFileSHA256 $discovery) -ne
+                        (Get-ADTFileSHA256 $installedDiscovery))
     }
     if ($needsBundle -and $PSCmdlet.ShouldProcess($targetDir, 'Install verified MCP module pair')) {
         foreach ($destination in @($installedServer, $installedDiscovery)) {
