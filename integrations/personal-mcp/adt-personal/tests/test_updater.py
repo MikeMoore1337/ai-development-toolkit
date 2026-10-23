@@ -53,8 +53,10 @@ class TestUpdater(unittest.TestCase):
         (self.author/'.agents/skills/implementation').mkdir(parents=True, exist_ok=True)
         (self.author/'.agents/roles').mkdir(parents=True, exist_ok=True)
         (self.author/'MANIFEST.json').write_text(json.dumps(manifest), encoding='utf-8')
-        (self.author/'.agents/skills/implementation/SKILL.md').write_text(
-            f'---\nname: implementation\ndescription: {skill_desc}\n---\n\nInstructions.\n', encoding='utf-8')
+        # Git fixture blobs use canonical LF on Windows too; write_text()
+        # otherwise converts '\n' to CRLF on some Windows runners.
+        (self.author/'.agents/skills/implementation/SKILL.md').write_bytes(
+            f'---\nname: implementation\ndescription: {skill_desc}\n---\n\nInstructions.\n'.encode('utf-8'))
         (self.author/'.agents/roles/orchestrator.md').write_text('Review and coordinate.\n', encoding='utf-8')
         if extra:
             (self.author/'README.md').write_text('A revised project.\n', encoding='utf-8')

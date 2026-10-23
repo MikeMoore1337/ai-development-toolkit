@@ -24,19 +24,30 @@ class TestMcpOnlyUpgrade(unittest.TestCase):
             config = home / "codex" / "config.toml"
             config.parent.mkdir()
             config.write_text('[mcp_servers.other]\ncommand="python"\n', encoding="utf-8")
-            env = {**os.environ, "LOCALAPPDATA": str(home),
+            env = {**os.environ, "ADT_MCP_TEST_LOCAL": str(home),
                    "CODEX_HOME": str(config.parent)}
-            command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass",
-                       "-File", str(PACKAGE / "Install-ADT-Personal.ps1"),
-                       "-McpOnly", "-ToolkitPath", str(ROOT)]
+            # PowerShell 5.1 may depend on the real LOCALAPPDATA to auto-load
+            # Microsoft.PowerShell.Utility (Get-FileHash). Load it FIRST,
+            # then isolate the installer target within this subprocess.
+            installer = str(PACKAGE / "Install-ADT-Personal.ps1").replace("'", "''")
+            toolkit = str(ROOT).replace("'", "''")
+            base = ("$ErrorActionPreference='Stop'; "
+                    "Import-Module Microsoft.PowerShell.Utility -ErrorAction Stop; "
+                    "$env:LOCALAPPDATA=$env:ADT_MCP_TEST_LOCAL; "
+                    f"& '{installer}' -McpOnly -ToolkitPath '{toolkit}'")
+            def execute(extra=""):
+                ps = base + extra
+                return subprocess.run(
+                    ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                     "-Command", ps], env=env,
+                    capture_output=True, text=True, timeout=35)
 
-            preview = subprocess.run(command + ["-WhatIf"], env=env,
-                                     capture_output=True, text=True, timeout=30)
+            preview = execute(" -WhatIf")
             self.assertEqual(preview.returncode, 0, preview.stderr + preview.stdout)
             self.assertEqual(launcher.read_bytes(), original)
             self.assertFalse((installed / "adt_discovery.py").exists())
 
-            applied = subprocess.run(command, env=env, capture_output=True, text=True, timeout=30)
+            applied = execute()
             self.assertEqual(applied.returncode, 0, applied.stderr + applied.stdout)
             self.assertIn("Installed MCP module pair:", applied.stdout)
             for name in ("adt_mcp.py", "adt_discovery.py"):
@@ -48,7 +59,7 @@ class TestMcpOnlyUpgrade(unittest.TestCase):
             self.assertFalse((config.parent / "AGENTS.md").exists())
 
             backup_count = len(list(installed.glob("*.adt-backup-*")))
-            second = subprocess.run(command, env=env, capture_output=True, text=True, timeout=30)
+            second = execute()
             self.assertEqual(second.returncode, 0, second.stderr + second.stdout)
             self.assertEqual(backup_count, len(list(installed.glob("*.adt-backup-*"))))
 
