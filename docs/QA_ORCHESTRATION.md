@@ -29,10 +29,10 @@ Use `PASS`, `FAIL`, `NOT_RUN`, `BLOCKED`, `UNKNOWN`. Test/CI/browser PASS requir
 
 The optional `scripts/validate_qa_orchestration.py fixtures/qa_orchestra_valid.json` checks **internal consistency of declarations**, not that URLs, logs, agents or tests existed. The sample is synthetic with `NOT_RUN`. Do not require JSON for ordinary chat QA. The validator rejects false-green labels and fabricated parallel counts; it cannot authenticate worker provenance.
 
-## Project adapters
+## Task-specific QA adapters
 
-- **YFC:** use existing `qa-engineer` router and `qa-verifier`, protect frontend/TMA/API/database contracts, visual package and owner gates; GitHub Actions owns deployment.
-- **Hermes:** development-only QA of Ops Watch, Control Center and Research Scout; never turn QA roles into resident agent capabilities. Keep model budget and service activation gates.
-- **Second Brain:** review against Stage 19/20 explicit action authority and vault privacy; do not write vault or activate background agents. Existing Night Shift policy retains its own permission gates.
+- **Web application:** reuse `qa-engineer` and `qa-verifier` to check frontend/API/database contracts, visual evidence and release gates; deployment remains a separate authorized action.
+- **Service with background agents and a dashboard:** limit QA to development-time evidence; never grant runtime privileges to QA roles or bypass cost and service-activation rules.
+- **Privacy-sensitive local application:** verify explicit consent and foreground execution boundaries; do not write private data or enable hidden background workflows.
 
 No extra dependencies, paid API, unsolicited report files or unattended execution are required.
