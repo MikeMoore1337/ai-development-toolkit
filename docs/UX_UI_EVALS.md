@@ -26,7 +26,7 @@ For a new/substantially redesigned site include three distinct local `wireframe:
 
 Manual review IDs come from the scenario, e.g. `product-fit`, `task-hierarchy`, `compositional-originality`, `cross-domain-swap`, `mobile-desktop`, `states`, `accessibility`, `motion`, `design-authority`. Give each status `NOT_REVIEWED`, `ACCEPT` or `REVISE`; any non-pending decision needs a specific explanation. The checker cannot verify human identity, browser interaction, accessible focus, real reduced-motion preferences, font loading, or the owner's actual approval.
 
-A visual result may report `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION`, or `AWAITING_HUMAN_VISUAL_REVIEW`. It **never** returns `OWNER_ACCEPTED` or authorizes changes in YFC, Hermes Control Center, Second Brain or other applications. Any stated manual approvals remain self-declared and actual visual quality is `NOT_VERIFIED`.
+A visual result may report `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION`, or `AWAITING_HUMAN_VISUAL_REVIEW`. It **never** returns `OWNER_ACCEPTED` or authorizes changes in any application without its owner's explicit approval. Any stated manual approvals remain self-declared and actual visual quality is `NOT_VERIFIED`.
 
 ## Real evaluation procedure
 
