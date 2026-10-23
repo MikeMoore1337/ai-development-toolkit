@@ -221,6 +221,67 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertEqual(1, len(result["segments"]))
         self.assertEqual("clear-voice", result["segments"][0]["candidates"][0]["skill"])
 
+    def test_natural_language_explicit_english_negations_are_not_tasks(self):
+        catalog = {
+            "seo-audit": "Inspect search indexing and site metadata.",
+            "api-testing": "Test HTTP API response status and error handling.",
+            "ux-ui-design-orchestra": "Design UX UI pages and workflows.",
+        }
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        prompts = (
+            ("We are not planning a new UI design; test HTTP API response status.",
+             "We are not planning a new UI design"),
+            ("We're not reviewing search indexing: test HTTP API error handling.",
+             "We're not reviewing search indexing"),
+            ("I am not designing a landing page; check HTTP API status codes.",
+             "I am not designing a landing page"),
+            ("No need to inspect search metadata; test HTTP API error handling.",
+             "No need to inspect search metadata"),
+        )
+        for prompt, excluded in prompts:
+            with self.subTest(prompt=prompt):
+                result = routing.recommend(prompt, catalog, {}, manifest, top_k=3)
+                self.assertEqual([excluded], result["excluded_negated_clauses"])
+                self.assertEqual(1, len(result["segments"]))
+                selected = [row["skill"] for row in result["segments"][0]["candidates"]]
+                self.assertIn("api-testing", selected)
+                self.assertNotIn("seo-audit", selected)
+                self.assertNotIn("ux-ui-design-orchestra", selected)
+                self.assertEqual("NOT_OBSERVED", result["client_skill_selection"])
+                self.assertFalse(result["installs_or_executes"])
+
+    def test_natural_language_explicit_russian_negations_are_not_tasks(self):
+        catalog = {
+            "seo-audit": "SEO indexing audits.",
+            "api-testing": "Check HTTP API response status and errors.",
+        }
+        for prompt, excluded in (
+            ("Не хочу SEO аудит; проверь HTTP API ответы и ошибки.",
+             "Не хочу SEO аудит"),
+            ("Мы не сравниваем SEO инструменты: проверь HTTP API ответы.",
+             "Мы не сравниваем SEO инструменты"),
+            ("Я не планирую SEO аудит: проверь HTTP API ответы.",
+             "Я не планирую SEO аудит"),
+        ):
+            with self.subTest(prompt=prompt):
+                result = routing.recommend(prompt, catalog, {}, {}, top_k=2)
+                self.assertEqual([excluded], result["excluded_negated_clauses"])
+                self.assertEqual(1, len(result["segments"]))
+                self.assertEqual("api-testing", result["segments"][0]["candidates"][0]["skill"])
+                self.assertNotIn(
+                    "seo-audit",
+                    [r["skill"] for r in result["segments"][0]["candidates"]],
+                )
+
+    def test_negated_gerund_only_abstains_and_uncertainty_is_not_negation(self):
+        catalog = {"api-testing": "Test HTTP API status and errors."}
+        negative = routing.recommend("We are not testing HTTP APIs.", catalog, {}, {}, top_k=1)
+        self.assertEqual("NO_POSITIVE_INTENT", negative["status"])
+        self.assertEqual([], negative["segments"])
+        uncertain = routing.recommend("We are not sure if the API works.", catalog, {}, {}, top_k=1)
+        self.assertNotEqual("NO_POSITIVE_INTENT", uncertain["status"])
+        self.assertFalse(uncertain["installs_or_executes"])
+
     def test_recommend_negative_only_abstains(self):
         catalog = {"database-migrations": "Plan migration rollback.",
                    "api-testing": "Test API responses."}

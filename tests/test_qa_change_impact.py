@@ -45,12 +45,47 @@ class ChangeImpactTests(unittest.TestCase):
         self.assertEqual(2, len(a["changed_paths"]))
         self.assertIn("cross-layer", {r["id"] for r in a["recommendations"]})
 
-    def test_unknown_only_requires_inspection_not_green_gate(self):
-        p = qa.plan(["docs/README.md"])
+    def test_docs_only_requires_review_without_runtime_test_claims(self):
+        p = qa.plan([".agents/README.md", "ai/README.md"])
         checks = {x["id"] for x in p["recommendations"]}
-        self.assertEqual({"change-review", "targeted-unit", "unmapped-impact"}, checks)
-        self.assertEqual(["docs/README.md"], p["unmapped_paths"])
+        self.assertEqual({"change-review", "documentation-review"}, checks)
+        self.assertEqual([], p["unmapped_paths"])
+        self.assertEqual([], p["surfaces"] if isinstance(p["surfaces"], list) else list(p["surfaces"]))
         self.assertEqual([], p["required_critical_check_ids"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", p["gate"])
+
+    def test_unknown_source_still_requires_human_inspection(self):
+        p = qa.plan(["misc/custom_extension.xyz"])
+        self.assertIn("unmapped-impact", {x["id"] for x in p["recommendations"]})
+        self.assertEqual(["misc/custom_extension.xyz"], p["unmapped_paths"])
+
+    def test_docs_mixed_with_source_never_create_false_runtime_paths(self):
+        p = qa.plan(["docs/API.md", "backend/api/routes.py"])
+        rec = {r["id"]: r for r in p["recommendations"]}
+        self.assertEqual(["docs/API.md"], rec["documentation-review"]["changed_paths"])
+        self.assertEqual(["backend/api/routes.py"], rec["targeted-unit"]["changed_paths"])
+        self.assertEqual(["backend/api/routes.py"], rec["api-contract"]["changed_paths"])
+        self.assertNotIn("docs/API.md", p["unmapped_paths"])
+
+    def test_changed_tests_are_reviewed_without_unknown_file_alarm(self):
+        p = qa.plan(["backend/tests/test_workout_noop_patch.py"])
+        rec = {r["id"]: r for r in p["recommendations"]}
+        self.assertIn("test-review", rec)
+        self.assertIn("targeted-unit", rec)
+        self.assertNotIn("unmapped-impact", rec)
+        self.assertEqual([], p["unmapped_paths"])
+        self.assertTrue(all(r["status"] == "NOT_RUN" for r in rec.values()))
+
+    def test_hermes_server_and_legacy_web_are_path_hints_only(self):
+        p = qa.plan(["control_center/server.py", "control_center/web/app.js",
+                     ".github/workflows/control-center-ui.yml"])
+        rec = {r["id"]: r for r in p["recommendations"]}
+        self.assertIn("api-contract", rec)
+        self.assertIn("api-negative", rec)
+        self.assertIn("ui-state", rec)
+        self.assertIn("cross-layer", rec)
+        self.assertIn("deployment-safety", p["required_critical_check_ids"])
+        self.assertTrue(all(r["evidence"] == "PATH_HEURISTIC_ONLY" for r in rec.values()))
         self.assertEqual("INSUFFICIENT_EVIDENCE", p["gate"])
 
     def test_high_risk_never_dropped_from_critical_set(self):
