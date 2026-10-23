@@ -17,6 +17,24 @@ REVIEW_KEYS = frozenset({
 })
 
 
+def classify_label_difference(reference_targets: list[str], reviewer_targets: list[str],
+                              reference_forbidden: list[str],
+                              reviewer_forbidden: list[str]) -> str:
+    """Classify label-set differences; this does not measure router accuracy."""
+    reference = set(reference_targets)
+    reviewed = set(reviewer_targets)
+    # Called only for disagreements. If targets agree, only negative controls differ.
+    if reference == reviewed:
+        return "forbidden_only"
+    if not reference & reviewed:
+        return "disjoint_targets"
+    if reviewed < reference:
+        return "reviewer_subset"
+    if reference < reviewed:
+        return "reviewer_superset"
+    return "partial_overlap"
+
+
 def canonical_digest(catalog: dict[str, str]) -> str:
     serialized = json.dumps(catalog, sort_keys=True, ensure_ascii=False,
                             separators=(",", ":")).encode("utf-8")
@@ -79,6 +97,10 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
     counts = {"pending": 0, "accepted": 0, "challenged": 0,
               "agreement": 0, "disagreement": 0}
     disagreements = []
+    breakdown = dict.fromkeys((
+        "reviewer_subset", "reviewer_superset", "partial_overlap",
+        "disjoint_targets", "forbidden_only",
+    ), 0)
     # IDs make an incomplete or disputed packet actionable without exposing
     # frozen reference labels or changing the independently reviewed input.
     pending_case_ids = []
@@ -130,12 +152,20 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
             counts["agreement"] += 1
         else:
             counts["disagreement"] += 1
+            kind = classify_label_difference(
+                original["expected"], proposed, original.get("avoid_top1", []), forbidden,
+            )
+            breakdown[kind] += 1
             disagreements.append({
                 "id": original["id"],
+                "difference_kind": kind,
                 "reference_targets": original["expected"],
                 "reviewer_targets": proposed,
+                "reference_only_targets": sorted(set(original["expected"]) - set(proposed)),
+                "reviewer_only_targets": sorted(set(proposed) - set(original["expected"])),
                 "reference_forbidden": original.get("avoid_top1", []),
                 "reviewer_forbidden": forbidden,
+                "forbidden_changed": set(forbidden) != set(original.get("avoid_top1", [])),
             })
 
     if packet["review_status"] != (
@@ -155,6 +185,7 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
         **counts,
         "pending_case_ids": pending_case_ids,
         "challenged_case_ids": challenged_case_ids,
+        "disagreement_breakdown": breakdown,
         "disagreements": disagreements,
     }
 

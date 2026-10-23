@@ -92,8 +92,36 @@ class HoldoutAdjudicationTests(unittest.TestCase):
         self.assertEqual(1, report["agreement"])
         self.assertEqual(1, report["disagreement"])
         self.assertEqual("h01", report["disagreements"][0]["id"])
+        self.assertEqual("reviewer_subset", report["disagreements"][0]["difference_kind"])
+        self.assertEqual(["cross-layer-debugging", "defect-management"],
+                         report["disagreements"][0]["reference_only_targets"])
+        self.assertEqual([], report["disagreements"][0]["reviewer_only_targets"])
+        self.assertFalse(report["disagreements"][0]["forbidden_changed"])
+        self.assertEqual(1, report["disagreement_breakdown"]["reviewer_subset"])
+        self.assertEqual(1, sum(report["disagreement_breakdown"].values()))
         self.assertEqual(36, report["pending"])
         self.assertFalse(report["ready_for_independent_accuracy_claim"])
+
+    def test_disagreement_classifications_do_not_imply_semantic_accuracy(self):
+        classify = review.classify_label_difference
+        self.assertEqual("reviewer_subset",
+                         classify(["state-management", "defect-management"],
+                                  ["state-management"], [], []))
+        self.assertEqual("reviewer_superset",
+                         classify(["state-management"],
+                                  ["state-management", "defect-management"], [], []))
+        self.assertEqual("partial_overlap",
+                         classify(["state-management", "defect-management"],
+                                  ["state-management", "qa-strategy"], [], []))
+        self.assertEqual("disjoint_targets",
+                         classify(["authentication-authorization"],
+                                  ["security-testing"], [], []))
+        self.assertEqual("forbidden_only",
+                         classify(["data-access"], ["data-access"],
+                                  ["ux-ui-design-orchestra"],
+                                  ["ux-ui-design-orchestra", "ux-design-process"]))
+        self.assertEqual("NOT_VERIFIED", review.audit(
+            ROOT, HOLDOUT, copy.deepcopy(self.template))["reviewer_independence"])
 
     def test_pending_and_challenged_ids_are_visible_without_labels(self):
         packet = copy.deepcopy(self.template)
