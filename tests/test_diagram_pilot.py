@@ -43,6 +43,18 @@ class DiagramPilotTests(unittest.TestCase):
         self.assertIn(">Задача</text>", page)
         self.assertIn(">Получение</text>", page)
 
+    def test_grounded_hermes_reference_diagram(self):
+        path = ROOT / "docs/examples/hermes-research.source.json"
+        case = json.loads(path.read_text(encoding="utf-8"))
+        page = render(case)
+        self.assertIn("Research Scout", page)
+        self.assertIn("Europe PMC", page)
+        self.assertIn("Crossref DOI", page)
+        self.assertIn("Control Center", page)
+        self.assertEqual(4, len(case["edges"]))
+        self.assertTrue(all("evidence" in node for node in case["nodes"]))
+        self.assertTrue(all("evidence" in edge for edge in case["edges"]))
+
     def test_long_node_label_keeps_full_accessible_name(self):
         case = self.sample()
         case["nodes"][1]["label"] = "Продолжительное название компонента архитектуры проекта"
