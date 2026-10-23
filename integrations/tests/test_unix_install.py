@@ -65,5 +65,38 @@ fi
             self.assertEqual(global_agents.read_text(encoding='utf-8'), before)
             self.assertEqual(len(log.read_text().splitlines()), 2)
             self.assertIn('--source', log.read_text())
-            self.assertTrue((fake_home/'.local/share/adt-personal/mcp/adt_mcp.py').is_file())
+            installed = fake_home/'.local/share/adt-personal/mcp'
+            self.assertTrue((installed/'adt_mcp.py').is_file())
+            self.assertTrue((installed/'adt_discovery.py').is_file())
+            # Real process import from installed user directory, not source ZIP.
+            direct = subprocess.run([
+                'python3', str(installed/'adt_mcp.py'), '--source', str(source), '--check'
+            ], capture_output=True, text=True, timeout=8)
+            self.assertEqual(0, direct.returncode, direct.stderr)
             self.assertFalse((source/'.adt').exists())
+
+            # A corrupt/missing support module gets repaired with backup, without
+            # re-registering the MCP or changing organization instructions.
+            (installed/'adt_discovery.py').write_text('not valid python syntax\n', encoding='utf-8')
+            repaired = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=25)
+            self.assertEqual(0, repaired.returncode, repaired.stderr)
+            self.assertEqual((BASE/'mcp'/'adt_discovery.py').read_bytes(),
+                             (installed/'adt_discovery.py').read_bytes())
+            self.assertEqual(global_agents.read_text(encoding='utf-8'), before)
+            self.assertEqual(len(log.read_text().splitlines()), 3)
+            self.assertTrue(list(installed.glob('adt_discovery.py.adt-backup-*')))
+            previous_server = (installed/'adt_mcp.py').read_bytes()
+            previous_discovery = (installed/'adt_discovery.py').read_bytes()
+            # A truncated candidate must not change an existing installation.
+            invalid = root/'invalid-package'
+            (invalid/'mcp').mkdir(parents=True)
+            shutil.copy2(BASE/'Install-ADT-Personal.sh', invalid/'Install-ADT-Personal.sh')
+            shutil.copy2(BASE/'mcp'/'adt_mcp.py', invalid/'mcp'/'adt_mcp.py')
+            broken = subprocess.run([
+                'sh', str(invalid/'Install-ADT-Personal.sh'), '--source', str(source)
+            ], env=env, capture_output=True, text=True, timeout=15)
+            self.assertEqual(2, broken.returncode)
+            self.assertIn('Incomplete MCP source bundle', broken.stderr)
+            self.assertEqual(previous_server, (installed/'adt_mcp.py').read_bytes())
+            self.assertEqual(previous_discovery, (installed/'adt_discovery.py').read_bytes())
+            self.assertEqual(len(log.read_text().splitlines()), 3)

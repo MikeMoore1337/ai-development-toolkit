@@ -19,7 +19,11 @@ command -v codex >/dev/null 2>&1 || { echo 'ERROR: Codex CLI is required.' >&2; 
 
 package=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 server="$package/mcp/adt_mcp.py"
-[ -f "$server" ] || { echo 'ERROR: Missing MCP source file.' >&2; exit 2; }
+discovery="$package/mcp/adt_discovery.py"
+[ -f "$server" ] && [ -f "$discovery" ] || {
+  echo 'ERROR: Incomplete MCP source bundle (adt_mcp.py + adt_discovery.py required).' >&2
+  exit 2
+}
 root="${XDG_DATA_HOME:-$HOME/.local/share}/adt-personal"
 source="$root/toolkit-source"
 if [ "$#" -eq 2 ]; then source=$2; fi
@@ -35,9 +39,58 @@ fi
 # Verify the read-only server before changing Codex configuration.
 python3 "$server" --source "$source" --check
 launcher="$root/mcp/adt_mcp.py"
-if [ ! -f "$launcher" ] || ! cmp -s "$server" "$launcher"; then
-  if [ -e "$launcher" ]; then cp -p "$launcher" "$launcher.adt-backup-$(date '+%Y%m%d-%H%M%S')"; fi
-  cp "$server" "$launcher"
+installed_discovery="$root/mcp/adt_discovery.py"
+# Never follow user-owned links when replacing files in the persistent launcher.
+if [ -L "$launcher" ] || [ -L "$installed_discovery" ]; then
+  echo 'ERROR: Linked MCP installation destination is unsafe.' >&2
+  exit 2
+fi
+# Both Python modules must be from the same package revision. Existing
+# single-file installs are transparently upgraded without re-registering MCP.
+if [ ! -f "$launcher" ] || ! cmp -s "$server" "$launcher" ||
+   [ ! -f "$installed_discovery" ] || ! cmp -s "$discovery" "$installed_discovery"; then
+  stage=$(mktemp -d "$root/mcp/.adt-stage.XXXXXXXX") || exit 2
+  # Stage and validate both files before touching an existing installation.
+  cp "$server" "$stage/adt_mcp.py"
+  cp "$discovery" "$stage/adt_discovery.py"
+  if ! python3 "$stage/adt_mcp.py" --source "$source" --check; then
+    rm -rf -- "$stage"
+    echo 'ERROR: Staged MCP bundle failed validation; previous installation preserved.' >&2
+    exit 2
+  fi
+  had_launcher=no
+  had_discovery=no
+  stamp=$(date '+%Y%m%d-%H%M%S')
+  if [ -f "$launcher" ]; then
+    cp -p "$launcher" "$stage/old_launcher"
+    cp -p "$launcher" "$launcher.adt-backup-$stamp"
+    had_launcher=yes
+  fi
+  if [ -f "$installed_discovery" ]; then
+    cp -p "$installed_discovery" "$stage/old_discovery"
+    cp -p "$installed_discovery" "$installed_discovery.adt-backup-$stamp"
+    had_discovery=yes
+  fi
+  if mv -f "$stage/adt_discovery.py" "$installed_discovery" &&
+     mv -f "$stage/adt_mcp.py" "$launcher" &&
+     python3 "$launcher" --source "$source" --check; then
+    rm -rf -- "$stage"
+  else
+    # Only restore files owned by this installer. Preserve previous backups.
+    if [ "$had_launcher" = yes ]; then
+      cp -p "$stage/old_launcher" "$launcher"
+    else
+      rm -f -- "$launcher"
+    fi
+    if [ "$had_discovery" = yes ]; then
+      cp -p "$stage/old_discovery" "$installed_discovery"
+    else
+      rm -f -- "$installed_discovery"
+    fi
+    rm -rf -- "$stage"
+    echo 'ERROR: MCP upgrade failed; previous files restored.' >&2
+    exit 2
+  fi
 fi
 
 # Explicitly check for an existing registration. Never modify unknown entries.

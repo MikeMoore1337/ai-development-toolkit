@@ -13,7 +13,11 @@ Set-StrictMode -Version Latest
 if (-not $Codex -and -not $ClaudeCode) { $Codex = $true }
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $server = Join-Path $packageRoot 'mcp\adt_mcp.py'
-if (-not (Test-Path -LiteralPath $server -PathType Leaf)) { throw "MCP file not found: $server" }
+$discovery = Join-Path $packageRoot 'mcp\adt_discovery.py'
+if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $discovery -PathType Leaf)) {
+    throw 'Incomplete MCP package: adt_mcp.py and adt_discovery.py are both required.'
+}
 
 # Preserve existing data and never place Toolkit in a workspace/project folder.
 $homeRoot = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME 'AppData\Local' }
@@ -102,16 +106,75 @@ For every software engineering, QA, UI/UX, security or DevOps task in the active
 
 # Register the MCP from a stable user-local location, not from Downloads.
 # No changes to the caller's project or the Toolkit source checkout.
-$installedServer = Join-Path (Join-Path $homeRoot 'ADT-Personal\mcp') 'adt_mcp.py'
+$targetDir = Join-Path $homeRoot 'ADT-Personal\mcp'
+$installedServer = Join-Path $targetDir 'adt_mcp.py'
+$installedDiscovery = Join-Path $targetDir 'adt_discovery.py'
 if ($Codex -or $ClaudeCode) {
-    if (-not (Test-Path -LiteralPath $installedServer -PathType Leaf) -or
-        (Get-FileHash -LiteralPath $server -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $installedServer -Algorithm SHA256).Hash) {
-        if ($PSCmdlet.ShouldProcess($installedServer, 'Install verified read-only MCP launcher')) {
-            $targetDir = Split-Path -Parent $installedServer
-            if (-not (Test-Path -LiteralPath $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
-            Backup-IfExists $installedServer
-            Copy-Item -LiteralPath $server -Destination $installedServer -Force -ErrorAction Stop
-            Write-Host "Installed MCP launcher: $installedServer"
+    # Installing only adt_mcp.py would break imports introduced in MCP 0.1.10.
+    $needsBundle = (-not (Test-Path -LiteralPath $installedServer -PathType Leaf) -or
+                    -not (Test-Path -LiteralPath $installedDiscovery -PathType Leaf))
+    if (-not $needsBundle) {
+        $needsBundle = ((Get-FileHash -LiteralPath $server -Algorithm SHA256).Hash -ne
+                        (Get-FileHash -LiteralPath $installedServer -Algorithm SHA256).Hash -or
+                        (Get-FileHash -LiteralPath $discovery -Algorithm SHA256).Hash -ne
+                        (Get-FileHash -LiteralPath $installedDiscovery -Algorithm SHA256).Hash)
+    }
+    if ($needsBundle -and $PSCmdlet.ShouldProcess($targetDir, 'Install verified MCP module pair')) {
+        foreach ($destination in @($installedServer, $installedDiscovery)) {
+            if ((Test-Path -LiteralPath $destination) -and
+                ((Get-Item -LiteralPath $destination -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "Refusing linked MCP destination: $destination"
+            }
+        }
+        if (-not (Test-Path -LiteralPath $targetDir)) {
+            New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+        }
+        $stage = Join-Path $targetDir ('.adt-stage-' + [guid]::NewGuid().ToString('N'))
+        New-Item -ItemType Directory -Path $stage -ErrorAction Stop | Out-Null
+        $stageServer = Join-Path $stage 'adt_mcp.py'
+        $stageDiscovery = Join-Path $stage 'adt_discovery.py'
+        $hadServer = Test-Path -LiteralPath $installedServer -PathType Leaf
+        $hadDiscovery = Test-Path -LiteralPath $installedDiscovery -PathType Leaf
+        $changedInstalled = $false
+        try {
+            Copy-Item -LiteralPath $server -Destination $stageServer -ErrorAction Stop
+            Copy-Item -LiteralPath $discovery -Destination $stageDiscovery -ErrorAction Stop
+            & $python.Source @pyArgs $stageServer --source $source --check
+            if ($LASTEXITCODE -ne 0) { throw 'Staged MCP module pair self-check failed.' }
+
+            if ($hadServer) {
+                Copy-Item -LiteralPath $installedServer -Destination (Join-Path $stage 'old_mcp.py') -ErrorAction Stop
+                Backup-IfExists $installedServer
+            }
+            if ($hadDiscovery) {
+                Copy-Item -LiteralPath $installedDiscovery -Destination (Join-Path $stage 'old_discovery.py') -ErrorAction Stop
+                Backup-IfExists $installedDiscovery
+            }
+            $changedInstalled = $true
+            # The support module must be present before the new entrypoint runs.
+            Copy-Item -LiteralPath $stageDiscovery -Destination $installedDiscovery -Force -ErrorAction Stop
+            Copy-Item -LiteralPath $stageServer -Destination $installedServer -Force -ErrorAction Stop
+            & $python.Source @pyArgs $installedServer --source $source --check
+            if ($LASTEXITCODE -ne 0) { throw 'Installed MCP module pair self-check failed.' }
+            Write-Host "Installed MCP module pair: $targetDir"
+        }
+        catch {
+            if ($changedInstalled) {
+                if ($hadServer) {
+                    Copy-Item -LiteralPath (Join-Path $stage 'old_mcp.py') -Destination $installedServer -Force
+                } else {
+                    Remove-Item -LiteralPath $installedServer -Force -ErrorAction SilentlyContinue
+                }
+                if ($hadDiscovery) {
+                    Copy-Item -LiteralPath (Join-Path $stage 'old_discovery.py') -Destination $installedDiscovery -Force
+                } else {
+                    Remove-Item -LiteralPath $installedDiscovery -Force -ErrorAction SilentlyContinue
+                }
+            }
+            throw
+        }
+        finally {
+            Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }

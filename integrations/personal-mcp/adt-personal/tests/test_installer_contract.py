@@ -22,6 +22,17 @@ class TestInstallerContract(unittest.TestCase):
         self.assertIn('Malformed ADT block', content)
         self.assertIn('Backup-IfExists $File', content)
 
+    def test_installed_windows_pair_has_staged_check_and_rollback(self):
+        content = SCRIPT.read_text(encoding='utf-8')
+        self.assertIn("'mcp\\adt_discovery.py'", content)
+        self.assertIn("'adt_discovery.py'", content)
+        self.assertIn("Install verified MCP module pair", content)
+        self.assertIn("Staged MCP module pair self-check failed", content)
+        self.assertIn("Installed MCP module pair self-check failed", content)
+        self.assertIn("Copy-Item -LiteralPath $stageDiscovery -Destination $installedDiscovery", content)
+        self.assertIn("Copy-Item -LiteralPath (Join-Path $stage 'old_discovery.py')", content)
+        self.assertIn("Backup-IfExists $installedDiscovery", content)
+
     def test_claude_missing_server_probe_nonterminating(self):
         content = SCRIPT.read_text(encoding='utf-8')
         self.assertIn('function Test-ClaudeMcpExists', content)

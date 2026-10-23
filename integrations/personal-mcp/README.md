@@ -48,3 +48,23 @@ Finally restart Codex. Run `codex mcp get ai-development-toolkit`, then **actual
 With an up-to-date Toolkit source, `toolkit_prepare_task` can select the `prompt-refinement` and `seo-audit` profiles from plain-language requests. For example, "write a good prompt for Codex from these notes" selects prompt export, while "audit my site's SEO" selects evidence-based SEO guidance. An ordinary "build a site" request **must be fulfilled**, not converted into a prompt for resubmission; new design remains subject to UX/UI approval.
 
 These are read-only **MCP routing and guidance** features: Codex must invoke the tools and perform actual project or website checks using its available permissions. A source-level or offline MCP test is not proof that the user’s Codex installation activated the new skills.
+
+## MCP 0.1.10: bundled launcher and safe upgrade (#190)
+
+For the v0.1.10 source MCP, **both** `mcp/adt_mcp.py` and
+`mcp/adt_discovery.py` must be installed beside each other. Copying only the
+old single-file launcher makes its `adt_discovery` import fail. The Windows
+PowerShell and Linux/macOS shell installers stage and self-check the pair
+before updating the persistent user directory. They back up previous files,
+check the relocated launcher and restore the prior files on an upgrade
+failure. Existing MCP registrations are not deliberately replaced.
+
+The separate daily Toolkit updater does **not** update these two Python files.
+The upgrade should use a reviewed, pinned MCP package, not the moving
+`main` checkout. Do not consider the install verified until the relocated
+launcher's own `--check` and a real invocation in a restarted client both
+succeed. Linux has a synthetic installer test; PowerShell has source/contract
+tests, not a real Windows user-profile test. macOS native installation and
+real Codex model calls remain `NOT_VERIFIED`.
+
+No third-party Skill code is installed or executed by this change.
