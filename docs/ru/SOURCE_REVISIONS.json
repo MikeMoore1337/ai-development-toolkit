@@ -52,7 +52,7 @@
       "source": "docs/INTEGRATION_MATRIX.md",
       "translation": "docs/en/INTEGRATION_MATRIX.md",
       "source_language": "ru",
-      "source_sha256": "0a517349e7f3e6ad78dfebfed833d4ac469895a4cca279e98ea5da2d91c367a0"
+      "source_sha256": "1ba2295117f3a019b1d213c0febc812035fb09d54d078e0725d9e81c0514355d"
     },
     {
       "source": "docs/PORTABILITY_EVAL_SCENARIOS.md",
@@ -140,7 +140,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "f3762b1b787349e916b5db76751af8763cc168fa3beb9334dc88825525bfcaca"
+      "source_sha256": "3943504444bb7eced2b7bb90a054274426e22ddd9e15c3df0d680b509a41768d"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",
@@ -245,7 +245,7 @@
     {
       "source": "docs/QA_PORTABILITY.md",
       "translation": "docs/ru/QA_PORTABILITY.md",
-      "source_sha256": "19f16bf6ec02aaa075692d4339e156d66ebc9618db0b674d155b6f47f156175c"
+      "source_sha256": "0d192c1de6b8242040e6dcf93457fac17e895106d55fc9b59efa8fae16970dc0"
     },
     {
       "source": "docs/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
@@ -285,7 +285,7 @@
     {
       "source": "docs/ORCHESTRATION_PILOT.md",
       "translation": "docs/ru/ORCHESTRATION_PILOT.md",
-      "source_sha256": "219979f12c39f01d6d4bfcbfd526839943b03ecb9490478ec4030fbe09a3786c"
+      "source_sha256": "6b4c4a6e4db216e161ff256be3d51888d8b651591f77eb68ddeb47815c61943f"
     },
     {
       "source": "docs/INSTALL_WINDOWS.md",
@@ -320,17 +320,17 @@
     {
       "source": "docs/QA_CHANGE_IMPACT.md",
       "translation": "docs/ru/QA_CHANGE_IMPACT.md",
-      "source_sha256": "8cf0b7161f15e5086affdcbd0c7c8d6ac4d25f9ebf8c4f30089442e6d3ddc2d8"
+      "source_sha256": "d4a074bf1503f55c3602db849ac35fb9dc188f54fc9ae8f6bbb4f7389f32a851"
     },
     {
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
       "translation": "docs/ru/PROJECT_ADOPTION_PREFLIGHT.md",
-      "source_sha256": "5706461ffd9e307c86149dcae9e61a33a85247313ddc563ec5d56e6555ab9a8b"
+      "source_sha256": "3600ebe1c72ba5c7e3a9718f816b4bf9097e93df06e091a317d221ac3ed7ec59"
     },
     {
       "source": "docs/UX_UI_EVALS.md",
       "translation": "docs/ru/UX_UI_EVALS.md",
-      "source_sha256": "55f8e0b89855f9a03f646613d1db043a8f500523ddbe33e1e8c0425055060883"
+      "source_sha256": "eedc702f00cd563de6a70401a48f65b0c40efbd4fd6565ae831a1a38568067b6"
     },
     {
       "source": "docs/PACKAGE_REPRODUCIBILITY.md",

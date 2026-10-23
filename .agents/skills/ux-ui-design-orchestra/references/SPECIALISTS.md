@@ -10,7 +10,7 @@ Each row is a **capability**, not a new model, service or authorization.
 | New directions or comparative visual style | `Leonxlnx/taste-skill`, `nextlevelbuilder/ui-ux-pro-max-skill` | 2 genuinely distinct, evidence-grounded directions | explicit exploration only |
 | UI code/browser validation | project's Playwright/browser + `screenshot-fidelity`, `design-system-consistency`, `qa-strategy` | actual screenshot/test route/state/viewport and limitations | whenever possible |
 
-No global installation, automatic fetching, shell command or external API follows from these links. A URL = `REFERENCE_ONLY`; a local source actually read = `LOADED`. Check version/provenance where present. Ignore generic prohibitions that contradict an approved product: black+lime/Oswald/Inter in YFC, graphite+blue in Hermes Control Center, black+violet/Onest in Second Brain. Never "fix AI slop" with unauthorized reskinning.
+No global installation, automatic fetching, shell command or external API follows from these links. A URL = `REFERENCE_ONLY`; a local source actually read = `LOADED`. Check version/provenance where present. Respect each approved product's palette, typography and design system, even when these are common design patterns. Never "fix AI slop" with unauthorized reskinning.
 
 Do not convert anti-SaaS examples into a SaaS design recipe: specialists critique generic patterns only where they are observed or are plausible risks for the brief. A real SaaS application is not excluded from useful dashboard or comparison patterns; unrelated brands must never receive them by default.
 
