@@ -1,0 +1,130 @@
+name: Publish pinned integration source ZIPs
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: "Exact 40-char main commit SHA with successful Validate toolkit main-push CI"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-release-${{ inputs.source_sha }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # Deliberately not triggered by push, tag or other releases.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+      actions: read
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      GH_TOKEN: ${{ github.token }}
+      OUTPUT_DIR: .adt-integration-release-output
+    steps:
+      - name: Refuse malformed or mutable revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "BLOCKED: expected exact lowercase commit SHA"
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Verify reviewed main ancestry, checked-out SHA and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git fetch --no-tags origin refs/heads/main
+          git merge-base --is-ancestor "$SOURCE_SHA" FETCH_HEAD || {
+            echo "BLOCKED: source revision is not an ancestor of main"
+            exit 1
+          }
+          python scripts/verify_checksums.py
+          python scripts/validate_provenance.py --mode release --report "$RUNNER_TEMP/integration-rights.json"
+      - name: Require successful exact-SHA six-job main CI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUTPUT_DIR"
+          gh api --method GET "repos/$GITHUB_REPOSITORY/actions/workflows/validate.yml/runs?head_sha=$SOURCE_SHA&event=push&per_page=100" > "$RUNNER_TEMP/integration-runs.json"
+          run_id="$(python integrations/release_gate.py --source-sha "$SOURCE_SHA" --runs-json "$RUNNER_TEMP/integration-runs.json")"
+          if [[ ! "$run_id" =~ ^[0-9]+$ ]]; then
+            echo "BLOCKED: unexpected CI run ID"
+            exit 1
+          fi
+          echo "$run_id" > "$RUNNER_TEMP/integration-run-id"
+          gh api --method GET "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100" > "$RUNNER_TEMP/integration-jobs.json"
+      - name: Rebuild and verify the two source packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python integrations/build_packages.py --output "$OUTPUT_DIR" > "$RUNNER_TEMP/integration-build.json"
+          python integrations/release_gate.py --source-sha "$SOURCE_SHA" \
+            --runs-json "$RUNNER_TEMP/integration-runs.json" \
+            --jobs-json "$RUNNER_TEMP/integration-jobs.json" \
+            --build-json "$RUNNER_TEMP/integration-build.json" --output "$OUTPUT_DIR"
+          cat > "$OUTPUT_DIR/RELEASE_NOTES.md" <<EOF
+          Source-only AI Development Toolkit integration archives. Pinned source commit:
+          \`$SOURCE_SHA\`
+
+          This is NOT a replacement for the Toolkit v5.x application release.
+          The MCP version and ChatGPT plugin source version are independent.
+          These archives do NOT prove installation/activation of a personal
+          ChatGPT plugin, Codex client or native skills. No automatic update
+          or external skill import is authorized.
+
+          Verify \`INTEGRATION_SHA256SUMS.txt\` before using the archives.
+          Provenance and exact-source six-job CI evidence:
+          \`INTEGRATION_EVIDENCE.json\`.
+          The release includes only source ZIPs and evidence, not credentials
+          or compiled executable installers.
+          EOF
+      - name: Publish unique SHA-pinned draft and verify downloaded assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="adt-integrations-$SOURCE_SHA"
+          if git ls-remote --tags --exit-code origin "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "BLOCKED: tag already exists; never overwrite a published or draft release"
+            exit 1
+          fi
+          gh release create "$tag" "$OUTPUT_DIR"/*.zip \
+            "$OUTPUT_DIR/INTEGRATION_SHA256SUMS.txt" \
+            "$OUTPUT_DIR/INTEGRATION_EVIDENCE.json" \
+            --target "$SOURCE_SHA" --title "ADT integration sources ($SOURCE_SHA)" \
+            --notes-file "$OUTPUT_DIR/RELEASE_NOTES.md" \
+            --latest=false --draft
+          mkdir "$RUNNER_TEMP/downloaded-release"
+          gh release download "$tag" --dir "$RUNNER_TEMP/downloaded-release"
+          python - <<'PY'
+          import hashlib, os, pathlib
+          local = pathlib.Path(os.environ["OUTPUT_DIR"])
+          remote = pathlib.Path(os.environ["RUNNER_TEMP"]) / "downloaded-release"
+          expected = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                      for p in local.iterdir() if p.suffix == ".zip" or
+                      p.name in {"INTEGRATION_SHA256SUMS.txt", "INTEGRATION_EVIDENCE.json"}}
+          actual = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in remote.iterdir() if p.is_file()}
+          if actual != expected:
+              raise SystemExit("BLOCKED: downloaded draft assets differ from checked sources")
+          print("PASS: re-downloaded exact four GitHub draft release assets")
+          PY
+          # Publish only after all downloaded assets match byte-for-byte.
+          gh release edit "$tag" --draft=false
+          gh release view "$tag" --json tagName,isDraft,url

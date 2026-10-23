@@ -25,3 +25,7 @@ The ChatGPT plugin ZIP is **not a universal plugin standard** for Claude, DeepSe
 For a normal informal request ("build a site", "fix this bug", "audit SEO"), the plugin should understand the intent internally and **fulfill the task** within available tools and permissions, not ask the user to resubmit a rewritten prompt. The bundled `toolkit-seo-audit` produces evidence-labelled observations with unknown index/rank data marked `NOT_VERIFIED`.
 
 For an explicit "turn these notes into a better prompt for Codex" request, the bundled `toolkit-prompt-refinement` produces one copy-ready prompt without pretending to execute it. Both modes are skills-only and require no paid API.
+
+## Public source release vs owned ChatGPT plugin (#190)
+
+The [pinned source ZIP release](../../docs/INTEGRATION_SOURCE_RELEASES.md) is **not** a replacement for the installed personal ChatGPT plugin. Verify its independently managed identity and version before any separately authorized update.

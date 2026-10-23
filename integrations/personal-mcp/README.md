@@ -97,3 +97,7 @@ py -3 "$env:LOCALAPPDATA\ADT-Personal\mcp\adt_mcp.py" --source "$env:LOCALAPPDAT
 Do not bypass corporate execution policies. Restart Codex Desktop
 and actually call `toolkit_info` / `toolkit_prepare_task` in a
 new session. A direct self-check is not native client activation evidence.
+
+## Pinned integration source releases (#190)
+
+See [manual SHA-pinned publishing and rollback](../../docs/INTEGRATION_SOURCE_RELEASES.md). CI artifacts expire after 14 days; published source GitHub Release assets are separate from live Codex/ChatGPT plugin installation.
