@@ -319,6 +319,71 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertNotEqual("NO_POSITIVE_INTENT", uncertain["status"])
         self.assertFalse(uncertain["installs_or_executes"])
 
+    def test_four_clauses_do_not_erase_positive_tasks_after_exclusion(self):
+        catalog = {
+            "seo-audit": "Inspect SEO search metadata and ranking.",
+            "api-testing": "Inspect HTTP API responses and errors.",
+            "accessibility-testing": "Audit keyboard focus and navigation.",
+            "database-validation": "Validate database constraints and integrity.",
+        }
+        report = routing.recommend(
+            "Skip SEO audit; inspect HTTP API responses; "
+            "audit keyboard focus; validate database constraints",
+            catalog, {}, {}, top_k=2,
+        )
+        self.assertEqual(["Skip SEO audit"],
+                         report["excluded_negated_clauses"])
+        self.assertEqual("SUGGESTIONS_ONLY", report["status"])
+        self.assertEqual(3, len(report["segments"]))
+        self.assertEqual(
+            ["api-testing", "accessibility-testing", "database-validation"],
+            [segment["candidates"][0]["skill"] for segment in report["segments"]],
+        )
+        self.assertNotIn(
+            "seo-audit",
+            [c["skill"] for s in report["segments"] for c in s["candidates"]],
+        )
+        self.assertFalse(report["installs_or_executes"])
+
+    def test_explicitly_excluded_skill_is_not_a_secondary_suggestion(self):
+        catalog = {
+            "seo-audit": "Audit search crawlability and metadata.",
+            "api-testing": "Audit HTTP API responses and failures.",
+        }
+        report = routing.recommend(
+            "Don't do SEO audit; audit HTTP API responses",
+            catalog, {}, {}, top_k=2,
+        )
+        self.assertEqual(["Don't do SEO audit"], report["excluded_negated_clauses"])
+        self.assertEqual("api-testing",
+                         report["segments"][0]["candidates"][0]["skill"])
+        self.assertNotIn(
+            "seo-audit",
+            [c["skill"] for s in report["segments"] for c in s["candidates"]]
+            + [n for s in report["segments"] for n in s["other_not_selected"]],
+        )
+
+    def test_four_positive_clauses_keep_three_bounded_segments(self):
+        catalog = {
+            "api-testing": "Inspect HTTP API responses and errors.",
+            "accessibility-testing": "Audit keyboard focus and navigation.",
+            "database-validation": "Validate database constraints and integrity.",
+            "code-review": "Review source code diffs and changes.",
+        }
+        report = routing.recommend(
+            "inspect HTTP API responses; audit keyboard focus; "
+            "validate database constraints; review source code diffs",
+            catalog, {}, {}, top_k=3,
+        )
+        self.assertEqual(3, len(report["segments"]))
+        self.assertEqual("api-testing", report["segments"][0]["candidates"][0]["skill"])
+        self.assertEqual("accessibility-testing",
+                         report["segments"][1]["candidates"][0]["skill"])
+        tail = {item["skill"] for item in report["segments"][2]["candidates"]}
+        self.assertIn("database-validation", tail)
+        self.assertIn("code-review", tail)
+        self.assertEqual([], report["excluded_negated_clauses"])
+
     def test_recommend_negative_only_abstains(self):
         catalog = {"database-migrations": "Plan migration rollback.",
                    "api-testing": "Test API responses."}
