@@ -4,7 +4,7 @@
 
 ## Purpose, not an execution claim
 
-Evaluate whether bounded, genuinely independent **read-only QA/analysis** specialists improve results compared with one development agent, without another controller. The three target revisions and hypothetical review tasks are pinned in [the registry](../fixtures/orchestration_pilot_reference.json). **All runs remain NOT_RUN.** Zero-cost source inspection, existing GitHub checks and offline fixtures do not prove actual Codex/Claude agent performance.
+Evaluate whether bounded, genuinely independent **read-only QA/analysis** specialists improve results compared with one development agent, without another controller. The three synthetic review case definitions are pinned in [the registry](../fixtures/orchestration_pilot_reference.json). **All runs remain NOT_RUN.** Zero-cost source inspection, existing GitHub checks and offline fixtures do not prove actual Codex/Claude agent performance.
 
 The existing `scripts/agent_eval_runner.py` has a hard owner zero-spend execution lock. **Do not alter it or call `--execute`**, rent a VM, use production hosts, connect a new provider or assume a subscription is free of overages. A genuinely no-charge, isolated authenticated real-agent executor and the appropriate distinct owner approval are prerequisites, not defaults. The H15 sandbox CLI discovery on 21 October 2026 found no `codex` or `claude` binaries; it did not call a model.
 
@@ -12,9 +12,9 @@ The existing `scripts/agent_eval_runner.py` has a hard owner zero-spend executio
 
 | Case | Frozen source | Proposed read-only task and acceptance |
 | --- | --- | --- |
-| YFC | `efbf14b453bae3d3c2ba32b2cf04784c47fd8968` | Workout-set completion: identify the persistence check and duplicate-action behavior (YFC_AC1, YFC_AC2), respecting TMA vs actual Telegram |
-| Hermes | `46ba2ee26cb89e87c3c7580e2579db8e75a7f151` | Trace a synthetic Ops Watch incident through evidence and alert boundary; reject unsupported incident claims (HERMES_AC1, HERMES_AC2) |
-| Second Brain | `e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384` | Verify Stage 19 consent and Stage 20 foreground contract from **public code only**; never access the vault (BRAIN_AC1, BRAIN_AC2) |
+| Example A | See pinned registry | Verify that a repeated write cannot silently duplicate a business effect |
+| Example B | See pinned registry | Trace a synthetic service alert without claiming unavailable runtime evidence |
+| Example C | See pinned registry | Check explicit consent and foreground-only behavior without accessing private data |
 
 For each case, run **A**: one real agent with source-only/read-only permissions; then **B**: the *same client and model* with a coordinator plus 2–3 actually invoked independent reviewers, no overlapping source writes. Counterbalance order across cases, keep acceptance criteria and exact baseline SHA unchanged, require independent inspection of returned evidence. If the client cannot create real independent workers, label the execution `SEQUENTIAL`; do not populate the comparative result as multiagent performance.
 
