@@ -10,10 +10,10 @@ From a Toolkit checkout, with Python 3.12+:
 
 ```bash
 python scripts/project_adoption_preflight.py --target /path/to/project --task qa --layout codex --archetype generic
-python scripts/project_adoption_preflight.py --target /path/to/project --task ui --layout claude --archetype yfc
+python scripts/project_adoption_preflight.py --target /path/to/project --task ui --layout claude --archetype generic
 ```
 
-Use the actual local project path on Windows, Linux or macOS. `--archetype` is **explicitly user-chosen** (`generic`, `yfc`, `hermes`, `second-brain`), never detected from private project content. The tool reuses the existing `adt.choose` and `adt.diagnose` functions: it only checks the *existence* of a bounded list of named configuration/policy markers and the existing Skill Manager's owned/unowned status. It never reads `AGENTS.md`, `CLAUDE.md`, application code or vault notes, and never writes into the project.
+Use the actual local project path on Windows, Linux or macOS. `--archetype` is **explicitly user-chosen** (use `generic` for the portable workflow; repository-specific options require separate review), never detected from private project content. The tool reuses the existing `adt.choose` and `adt.diagnose` functions: it only checks the *existence* of a bounded list of named configuration/policy markers and the existing Skill Manager's owned/unowned status. It never reads `AGENTS.md`, `CLAUDE.md`, application code or vault notes, and never writes into the project.
 
 ## Interpret the output
 
@@ -31,13 +31,13 @@ python scripts/adt.py profile plan --target /path/to/project --task qa --layout 
 
 `--apply` is permitted only in the separately authorized `init` workflow after reviewing the proposed changes, sources, existing ownership and version. This preflight has **no** apply mode.
 
-## Project-specific review reminders
+## Review reminders for any project
 
-| Archetype | Checklist, not verified project facts |
+| Area | Checklist, not verified project facts |
 | --- | --- |
-| YFC | Visual approval before UI changes; live owner policy and user-data restrictions |
-| Hermes | Secrets/runtime boundaries; agent/BRC access must not imply deployment permission |
-| Second Brain | Private vault data boundaries; prepare/review/confirm before writes |
-| Generic or work project | Identify local rules, company policies and user-owned skills first |
+| User interface | Obtain visual approval before design changes; respect live user-data constraints |
+| Agent-based services | Verify credentials, tools and runtime boundaries; remote access does not grant deployment permission |
+| Private data and external actions | Check access boundaries and require explicit preparation, review and confirmation before writes |
+| Work repositories | Follow organizational policies, existing skills and authorization rules |
 
-The offline tests use disposable empty, existing, conflicting and linked-marker projects. They prove **source-only safety properties**, not real workflow success on YFC, Hermes, Second Brain or a work laptop. Real-client evidence belongs to [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
+The offline tests use disposable empty, existing, conflicting and linked-marker projects. They prove **source-only safety properties**, not real workflow success on live production projects or a work laptop. Real-client evidence belongs to [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141).
