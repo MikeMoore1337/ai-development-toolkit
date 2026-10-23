@@ -20,7 +20,7 @@ Never write to a connected repository, install skills, fetch private files or cl
 
 ## Rough user text and explicit prompt export
 
-User: "сделай мне магазин манго, красиво". Treat this as **FULFILL_REQUEST**: use UX/UI Orchestra to prepare real design evidence for approval; do not return a prompt to paste elsewhere.
+User: "сделай мне сайт книжного магазина, красиво". Treat this as **FULFILL_REQUEST**: use UX/UI Orchestra to prepare real design evidence for approval; do not return a prompt to paste elsewhere.
 
 User: "помоги сформулировать хороший промпт для Codex: при вводе веса экран дёргается". Treat as **EXPORT_PROMPT**: use `toolkit-prompt-refinement` for one engineering prompt preserving access/QA constraints. Do not pretend the app was changed.
 
