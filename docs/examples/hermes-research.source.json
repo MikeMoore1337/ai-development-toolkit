@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "title": "Hermes - проверяемый поток научных метаданных",
+  "accent": "#2563eb",
+  "nodes": [
+    {
+      "id": "europe",
+      "label": "Europe PMC",
+      "column": 0,
+      "evidence": "MikeMoore1337/hermes: research_scout/europe_pmc.py @ main, reviewed 2026-10-23"
+    },
+    {
+      "id": "crossref",
+      "label": "Crossref DOI",
+      "column": 0,
+      "evidence": "MikeMoore1337/hermes: research_scout/crossref.py @ main, reviewed 2026-10-23"
+    },
+    {
+      "id": "scout",
+      "label": "Research Scout",
+      "column": 1,
+      "evidence": "MikeMoore1337/hermes: research_scout/daily_digest.py @ main, reviewed 2026-10-23"
+    },
+    {
+      "id": "digest",
+      "label": "Отчёт о кандидатах",
+      "column": 2,
+      "evidence": "MikeMoore1337/hermes: research_scout/README.md @ main, reviewed 2026-10-23"
+    },
+    {
+      "id": "center",
+      "label": "Control Center",
+      "column": 3,
+      "evidence": "MikeMoore1337/hermes: research_scout/README.md @ main (owner-only reporting), reviewed 2026-10-23"
+    }
+  ],
+  "edges": [
+    {
+      "from": "europe",
+      "to": "scout",
+      "label": "Метаданные",
+      "evidence": "Europe PMC JSON metadata GET: research_scout/europe_pmc.py"
+    },
+    {
+      "from": "crossref",
+      "to": "scout",
+      "label": "Проверка DOI",
+      "evidence": "Crossref DOI metadata GET: research_scout/crossref.py"
+    },
+    {
+      "from": "scout",
+      "to": "digest",
+      "label": "Сводка",
+      "evidence": "daily_digest.py bounded scientific metadata packet"
+    },
+    {
+      "from": "digest",
+      "to": "center",
+      "label": "Просмотр",
+      "evidence": "research_scout/README.md owner-only read-only reporting through Control Center"
+    }
+  ]
+}
