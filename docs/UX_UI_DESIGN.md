@@ -8,7 +8,7 @@
 
 > Plan an app for household expenses. I need to add entries, see totals and edit or delete them. Describe the screens, navigation and errors first. Do not implement code yet.
 
-An ordinary idea is enough. Use the optional `ux-design` profile with a capable AI client or reference Toolkit in a chat. Figma, terminal commands, paid APIs and a chosen frontend framework are not requirements. Default output is in chat.
+An ordinary description is enough. **For text-only user journeys and screen structure**, the optional `ux-design` profile is appropriate. **For a new site, landing page, visual mockup or substantial UI redesign**, start with `ui-orchestra` / `ux-ui-design-orchestra`: compare three genuinely distinct low-fidelity visual sketches, then prepare detailed desktop and mobile views of the selected direction and request explicit visual approval. Linking Toolkit in a chat provides guidance but does not grant access to your project. Figma, terminal commands, paid APIs and a chosen frontend framework are not required just to discuss an idea.
 
 ## Design journey
 
@@ -44,19 +44,28 @@ For each important screen propose representative mobile/desktop viewports (table
 
 For professional teams see the [UX/UI contract](../extensions/design/skills/ux-design-process/references/UX_UI_CONTRACT.json), [manual acceptance](../extensions/design/skills/ux-design-process/references/MANUAL_ACCEPTANCE.md), and [read-only validator](../scripts/validate_ux_ui_spec.py). Structural PASS is not a browser or aesthetic test.
 
-## Optional preview and installation
+## Optional installation for text-only flow planning
+
+The commands below install **`ux-design` for nonvisual planning only**. Run Python 3.12+ from the Toolkit root and replace `/path/to/project` with an existing project directory.
 
 ```bash
 python scripts/skill_manager.py catalog --profile ux-design
 python scripts/skill_manager.py install --target /path/to/project --profile ux-design
+```
+
+Check the proposed file list first. Only if it is correct, run installation and the illustrative validation separately:
+
+```bash
 python scripts/skill_manager.py install --target /path/to/project --profile ux-design --apply
 python scripts/validate_ux_ui_spec.py extensions/design/skills/ux-design-process/references/EXAMPLE_EXPENSES.json
 ```
 
+For visual design, start with `ui-orchestra` and follow the [new-design workflow](../.agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md). Copying files does not demonstrate live skill activation.
+
 Preview writes nothing and install requires explicit `--apply`. Toolkit copies referenced for another person's task stay **read-only**; return their designs and reports in chat unless another destination is explicitly authorized. Actual AI-client skill activation, render, owner review and usability trials remain NOT_MEASURED / NOT_TESTED until performed.
 
 
-## UX/UI Design Orchestra - ordinary idea to one reviewed design
+## UX/UI Design Orchestra - three sketches, one selected direction
 
 **Three-direction visual concept search:** substantial design work explores three *structurally different* hypotheses and **renders three low-fidelity, comparably sized concept wireframes before selecting a winner**. Three descriptions or differently colored versions of one grid do not count. Compare information architecture, spatial rhythm, imagery, domain-specific shopping/booking task, responsive behavior, accessibility and feasibility. Record selected versus two discarded directions and a cross-domain swap test; only the winning concept gets full polished desktop/mobile mockups, **but all three preliminary sketches must be visually reviewed and attached to the approval package**. If tools cannot render the sketches, report `VISUAL_COMPARISON_MISSING` / `VISUAL_PACKAGE_MISSING` and do not ask for approval. New unrelated projects must not inherit YFC, Hermes or other clients' palettes, typography or layout as implicit defaults. The structural validator checks declared visual references and distinct ordered layouts, not real pixels or artistic originality. Mobile review checks readable labels and usable navigation, not only overflow. This remains a critique protocol, not an automated human visual-quality certificate.
 
