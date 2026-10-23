@@ -26,3 +26,20 @@ The output status `SOURCE_ARCHIVES_BUILT_NOT_INSTALLED` is intentional. A bundle
 ### Negative cases
 
 Offline regressions cover missing/dynamic version constants, unsafe prefixes, symlinks, oversized files, source change hashes and repeat builds. These checks do not validate an installed Codex/Claude/ChatGPT session, a GitHub release, a user's privileges or network availability. No paid APIs or external executable downloads are used.
+
+### CI candidate artifact after verified main changes (#190)
+
+The `Validate toolkit` workflow builds and uploads two integration source
+ZIP files **only on a push to protected `main` after all Linux/Windows/macOS
+validation jobs pass**. In the passing GitHub Actions run, download the
+`adt-integration-sources-<full-commit-sha>` artifact. It contains the two
+versioned ZIP files, `build-result.json`, `SOURCE_EVIDENCE.json` with pinned
+source SHA and archive digests, and release-provenance preflight evidence.
+These files are **temporary CI artifacts** (14-day retention): **not** GitHub
+Release assets, signed binary releases, native Codex skills, or an installer
+that executes automatically. Do not confuse the bundled ChatGPT plugin ZIP
+with the separate personal live plugin. Check SHA-256 and provenance before
+using an archive. Install or roll back a local MCP only through the reviewed
+installer and with explicit approval; actual client activation needs its own
+live tool-call evidence. No paid API or remote execution is involved in this
+build.

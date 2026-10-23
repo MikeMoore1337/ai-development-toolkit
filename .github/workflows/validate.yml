@@ -195,6 +195,83 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: python scripts/agent_eval_hermes_contract.py --hermes-root .hermes-compat
 
+
+  # The archive is an expiring CI source candidate, NEVER a published Release.
+  # Require success across Linux, Windows and macOS before exposing bytes.
+  integration-source-candidates:
+    name: Integration source archives (main only)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [tests, macos-portability]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Validate exact source snapshot before building
+        run: |
+          python scripts/verify_checksums.py
+          python scripts/validate_provenance.py --mode release --report "$RUNNER_TEMP/adt-package-rights.json"
+      - name: Build and verify integration source candidates (not installed)
+        env:
+          OUT_DIR: ${{ runner.temp }}/adt-integration-sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT_DIR"
+          python integrations/build_packages.py --output "$OUT_DIR" > "$OUT_DIR/build-result.json"
+          python - <<'PYCODE'
+          import hashlib, json, os, pathlib, zipfile
+          out = pathlib.Path(os.environ['OUT_DIR']).resolve()
+          data = json.loads((out / 'build-result.json').read_text(encoding='utf-8'))
+          if (data.get('status') != 'SOURCE_ARCHIVES_BUILT_NOT_INSTALLED'
+                  or len(data.get('results', [])) != 2):
+              raise SystemExit('BLOCKED: unexpected source bundle set')
+          seen = set()
+          for result in data['results']:
+              path = pathlib.Path(result['path']).resolve()
+              if (path.parent != out or path.suffix != '.zip' or path.name in seen
+                      or path.stat().st_size > 32 * 1024 * 1024):
+                  raise SystemExit('BLOCKED: unexpected bundle path or size')
+              seen.add(path.name)
+              if hashlib.sha256(path.read_bytes()).hexdigest() != result['sha256']:
+                  raise SystemExit('BLOCKED: bundle SHA256 mismatch')
+              with zipfile.ZipFile(path) as archive:
+                  if archive.testzip() is not None or len(archive.namelist()) != result['members']:
+                      raise SystemExit('BLOCKED: corrupt bundle')
+                  if 'Personal-MCP-' in path.name and not {
+                      'adt-personal/mcp/adt_mcp.py',
+                      'adt-personal/mcp/adt_discovery.py',
+                  }.issubset(archive.namelist()):
+                      raise SystemExit('BLOCKED: incomplete MCP 0.1.10 modules')
+          (out / 'SOURCE_EVIDENCE.json').write_text(
+              json.dumps({
+                  'git_sha': os.environ['GITHUB_SHA'],
+                  'git_ref': os.environ['GITHUB_REF'],
+                  'status': 'CI_SOURCE_CANDIDATE_NOT_GITHUB_RELEASE',
+                  'installed_mcp': 'NOT_VERIFIED',
+                  'chatgpt_live_plugin': 'NOT_UPDATED',
+                  'source_archives': data['results'],
+              }, indent=2) + '\n', encoding='utf-8')
+          print('Verified', ', '.join(sorted(seen)))
+          PYCODE
+      - name: Preserve candidate ZIPs and SHA256 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: adt-integration-sources-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/adt-integration-sources/*.zip
+            ${{ runner.temp }}/adt-integration-sources/*.json
+            ${{ runner.temp }}/adt-package-rights.json
+          if-no-files-found: error
+          retention-days: 14
+
   macos-portability:
     name: macOS portability (${{ matrix.os }}, Python 3.12)
     runs-on: ${{ matrix.os }}
