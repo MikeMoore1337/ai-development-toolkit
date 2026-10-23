@@ -9368,6 +9368,26 @@
       "notes": "Original conservative read-only MCP skill coverage advisory for Issue #199; no third-party source copied or installed."
     },
     {
+      "id": "test-fixtures-skill-routing-exploratory-20261023-json",
+      "path": "fixtures/skill_routing_exploratory_20261023.json",
+      "name": "skill_routing_exploratory_20261023.json",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-23",
+      "distribution": "included",
+      "notes": "AI-authored exploratory RU/EN routing paraphrases, separate from frozen holdout and curated regression set. Not independently adjudicated, not an accuracy or client-activation claim (#189)."
+    },
+    {
       "id": "test-fixtures-skill-routing-holdout-json",
       "path": "fixtures/skill_routing_holdout.json",
       "name": "skill_routing_holdout.json",
