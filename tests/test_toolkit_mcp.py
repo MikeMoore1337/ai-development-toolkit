@@ -222,5 +222,23 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual("", p.stderr)
 
 
+    def test_mcp_install_guides_separate_preview_from_writes(self):
+        """Both languages must stop between preview and each explicit apply."""
+        import re
+
+        for name in ("docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md"):
+            with self.subTest(path=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                blocks = re.findall(r"~~~(?:powershell|bash)\n(.*?)\n~~~", text, re.S)
+                self.assertEqual(8, len(blocks))
+                preview = [b for b in blocks if "scripts/toolkit_mcp.py" in b and "--apply" not in b]
+                apply = [b for b in blocks if "scripts/toolkit_mcp.py" in b and "--apply" in b]
+                self.assertEqual(4, len(preview))
+                self.assertEqual(4, len(apply))
+                self.assertTrue(all("--apply" not in b for b in preview))
+                self.assertTrue(all("doctor" in b for b in apply[:3]))
+                self.assertIn("--client claude", text)
+                self.assertIn("Python 3.12", text)
+
 if __name__ == "__main__":
     unittest.main()
