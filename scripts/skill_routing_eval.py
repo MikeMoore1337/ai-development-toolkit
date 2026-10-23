@@ -217,21 +217,25 @@ def recommend(prompt: str, catalog: dict[str, str],
             return supported, evidence
 
         candidates = []
-        for original_rank, name in enumerate(ordered[:top_k], start=1):
+        for original_rank, name in enumerate(ordered, start=1):
             supported, evidence = evidence_for(name)
             if not supported:
-                continue  # Do not present alphabetically sorted zero-evidence fallback.
+                continue  # Raw top-k may contain single-token or zero-evidence matches.
             candidates.append({
                 "skill": name,
-                "rank": original_rank,
+                "rank": original_rank,  # Preserve raw rank for auditability.
                 "lexical_support": "PRESENT",
                 "evidence": evidence,
                 "candidate_profiles": sorted(p for p, skills in profiles.items()
                                              if isinstance(skills, list) and name in skills)[:8],
             })
-        # Alternatives are still only names, not recommendations or activated skills.
-        # Never expose arbitrary alphabetical neighbors without positive evidence.
-        alternatives = ([name for name in ordered[top_k:] if evidence_for(name)[0]][:3]
+            if len(candidates) >= top_k:
+                break
+        # Alternatives must exclude primary names, including ones whose raw
+        # rank lies beyond top_k; otherwise the same skill is shown twice.
+        selected = {item["skill"] for item in candidates}
+        alternatives = ([name for name in ordered
+                         if name not in selected and evidence_for(name)[0]][:3]
                         if candidates else [])
         results.append({
             "text": part,
