@@ -70,7 +70,7 @@ The current curated corpus contains **104 target cases** for **all 82 declared s
 python scripts/skill_routing_eval.py --recommend "Audit SEO metadata and verify API contracts"
 ```
 
-The optional `--recommend` mode reuses the same lexical ranker. It provides matching description, name and alias tokens as evidence, associated profile names, available roles (not automatically selected), and additional candidates outside the top three. It heuristically splits at `and`, `и` or `;`, with at most three segments. No skill is installed, loaded by a client or executed.
+The optional `--recommend` mode reuses the same lexical ranker. It provides matching description, name and alias tokens as evidence, associated profile names, available roles (not automatically selected), and up to three **evidence-supported** unselected alternatives beyond the requested top-k. Unmatched alphabetical neighbors are never included. These remain candidate names only, not verified skills or model confidence. It heuristically splits at `and`, `и` or `;`, with at most three segments. No skill is installed, loaded by a client or executed.
 
 `confidence = NOT_CALIBRATED` is intentional: keyword overlap is not a probability of correctness. `client_skill_selection = NOT_OBSERVED` and `client_effectiveness = NOT_TESTED` remain explicit. An ambiguous or weakly supported suggestion is for human review.
 

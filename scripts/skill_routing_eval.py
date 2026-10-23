@@ -195,8 +195,8 @@ def recommend(prompt: str, catalog: dict[str, str],
         language = prompt_language(part)
         tokens = set(terms(part))
         normalized_query = {alias_stem(t) if language == "ru" else t for t in tokens}
-        candidates = []
-        for original_rank, name in enumerate(ordered[:top_k], start=1):
+        def evidence_for(name: str) -> tuple[bool, dict]:
+            """Require the same lexical support for primary and alternate names."""
             positive_desc = re.split(r"\bnot for\b", catalog[name], maxsplit=1, flags=re.I)[0]
             description_hits = sorted(tokens & set(terms(positive_desc)))
             name_hits = sorted(tokens & set(terms(name.replace("-", " "))))
@@ -208,26 +208,36 @@ def recommend(prompt: str, catalog: dict[str, str],
                     match = normalized_query & normalized_alias
                     if len(match) >= 2:
                         alias_hits.update(match)
+            evidence = {
+                "name_tokens": name_hits[:6],
+                "description_tokens": description_hits[:6],
+                "alias_tokens": sorted(alias_hits)[:8],
+            }
             supported = bool(name_hits or len(description_hits) >= 2 or len(alias_hits) >= 2)
+            return supported, evidence
+
+        candidates = []
+        for original_rank, name in enumerate(ordered[:top_k], start=1):
+            supported, evidence = evidence_for(name)
             if not supported:
                 continue  # Do not present alphabetically sorted zero-evidence fallback.
             candidates.append({
                 "skill": name,
                 "rank": original_rank,
                 "lexical_support": "PRESENT",
-                "evidence": {
-                    "name_tokens": name_hits[:6],
-                    "description_tokens": description_hits[:6],
-                    "alias_tokens": sorted(alias_hits)[:8],
-                },
+                "evidence": evidence,
                 "candidate_profiles": sorted(p for p, skills in profiles.items()
                                              if isinstance(skills, list) and name in skills)[:8],
             })
+        # Alternatives are still only names, not recommendations or activated skills.
+        # Never expose arbitrary alphabetical neighbors without positive evidence.
+        alternatives = ([name for name in ordered[top_k:] if evidence_for(name)[0]][:3]
+                        if candidates else [])
         results.append({
             "text": part,
             "language": language,
             "candidates": candidates,
-            "other_not_selected": ordered[top_k:top_k + 3] if candidates else [],
+            "other_not_selected": alternatives,
             "status": "SUGGESTIONS_ONLY" if candidates else "INSUFFICIENT_EVIDENCE",
         })
     leaders = {row["candidates"][0]["skill"] for row in results
