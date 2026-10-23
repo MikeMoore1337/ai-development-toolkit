@@ -95,7 +95,7 @@ class TestMcpOnlyUpgrade(unittest.TestCase):
             # source package or staged self-check. No injected paid tooling.
             shim.write_text(
                 "@echo off\n"
-                'echo %* | findstr /I /L /C:"\\ADT-Personal\\mcp\\adt_mcp.py" >nul\n'
+                'echo %* | findstr /I /L /C:"%ADT_MCP_TEST_LOCAL%\\ADT-Personal\\mcp\\adt_mcp.py" >nul\n'
                 "if not errorlevel 1 exit /b 87\n"
                 f'"{original_py}" %*\n',
                 encoding="ascii",
