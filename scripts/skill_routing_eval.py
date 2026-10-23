@@ -166,8 +166,12 @@ def recommend(prompt: str, catalog: dict[str, str],
     # Explicit leading prohibitions must not be mistaken for tasks to perform.
     # This bounded rule recognizes simple prefixes, not arbitrary logical negation.
     negative_start = re.compile(
-        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|делай|проводи|создавай)|"
-        r"do\s+not|don't|skip)\b", re.I
+        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|надо|хочу|интересует|"
+        r"делай|проводи|создавай)|"
+        r"(?:я|мы)\s+не\s+(?:планирую|планируем|сравниваю|сравниваем)|"
+        r"do\s+not|don't|skip|no\s+need\s+to|"
+        r"(?:we|they)(?:\s+are|'re)\s+not\s+[a-z]{4,}ing|"
+        r"i(?:\s+am|'m)\s+not\s+[a-z]{4,}ing)\b", re.I
     )
     excluded_clauses = []
     actionable = []
