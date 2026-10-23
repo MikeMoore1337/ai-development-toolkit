@@ -8,6 +8,13 @@ Toolkit содержит настоящий **MCP-сервер stdio** (`scripts
 
 **Через MCP доступно только чтение.** Агент не может незаметно установить навык или изменить пользовательский проект. Когда требуется установка, агент предлагает предварительный план, а человек отдельно запускает Skill Manager с `--apply`. Установщик ниже меняет лишь конфигурацию MCP выбранного проекта **после явного --apply**. ИИ-клиенты автоматически не устанавливаются.
 
+## Перед первым запуском
+
+1. Установите Codex или Claude Code отдельно. MCP не является ИИ-клиентом.
+2. Откройте терминал **в корне клонированного Toolkit**. Требуется Python 3.12+. `py -3.12` и `python3.12` ниже - примеры: при установленной Python 3.13/3.14 замените **все** вызовы соответствующей командой (`py -3.14` или `python3.14`).
+3. Замените пример пути к проекту на **существующий каталог**. Установщик не создаёт проект.
+4. Выберите клиент через `--client codex` или `--client claude`, просмотрите план **без `--apply`** и только затем разрешайте запись.
+
 ## Windows (PowerShell)
 
 Команды из корня Toolkit; выбранный рабочий проект должен уже существовать.
@@ -15,7 +22,11 @@ Toolkit содержит настоящий **MCP-сервер stdio** (`scripts
 ~~~powershell
 $project = 'C:\Work\existing-project'
 py -3.12 scripts/toolkit_mcp.py install --client codex --project $project
-# Сначала проверьте предложенное изменение конфигурации:
+~~~
+
+**Остановитесь и проверьте план.** Убедитесь, что выбраны правильный проект, имя MCP и только ожидаемые изменения конфигурации. Затем выполните следующую команду отдельно:
+
+~~~powershell
 py -3.12 scripts/toolkit_mcp.py install --client codex --project $project --apply
 py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
 ~~~
@@ -25,6 +36,11 @@ py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
 ~~~bash
 project="$HOME/projects/existing-project"
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project"
+~~~
+
+**Остановитесь и проверьте план.** Убедитесь, что выбраны правильный проект, имя MCP и только ожидаемые изменения конфигурации. Затем выполните следующую команду отдельно:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project" --apply
 python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 ~~~
@@ -35,11 +51,18 @@ python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 python3.12 --version
 project="$HOME/Projects/existing-project"
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project"
+~~~
+
+**Остановитесь и проверьте план.** Убедитесь, что выбраны правильный проект, имя MCP и только ожидаемые изменения конфигурации. Затем выполните следующую команду отдельно:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project" --apply
 python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 ~~~
 
 Для **Claude Code** используйте `--client claude` вместо `--client codex`. Codex получает проектный `.codex/config.toml`, Claude Code - `.mcp.json`. Существующие чужие настройки сохраняются; конфликты и символические ссылки блокируются. Глобальные настройки не изменяются. После применения переподключите MCP, при необходимости подтвердите доверие к проекту и проверьте список инструментов. Для Codex может помочь `codex mcp list`, но наличие записи **не доказывает активацию**.
+
+**Проверка результата:** `doctor` сообщает состояние конфигурации. Затем переподключите Codex/Claude Code и проверьте **в самом клиенте**, появился ли Toolkit MCP и его инструменты. Если их нет, проверьте исполняемый Python, путь к Toolkit, доверие к проекту и настройки клиента. Запись файла сама по себе не доказывает обнаружение или использование инструментов моделью.
 
 ## Удаление и обновление
 
@@ -47,6 +70,11 @@ python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 
 ~~~bash
 python3.12 scripts/toolkit_mcp.py uninstall --client codex --project /absolute/existing-project
+~~~
+
+**Остановитесь и проверьте план.** Убедитесь, что выбраны правильный проект, имя MCP и только ожидаемые изменения конфигурации. Затем выполните следующую команду отдельно:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py uninstall --client codex --project /absolute/existing-project --apply
 ~~~
 
