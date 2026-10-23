@@ -73,7 +73,8 @@ python -m unittest tests.test_reliability -v
 **Для специалиста:** «Подготовь модель at-least-once, dedup,
 ack-after-commit и recovery после restart. Зафиксируй контролируемые
 порядки операций, инварианты, независимые проверки состояния и пределы
-выполнения».
+выполнения. Свойства реального брокера сообщений пометь как NOT_MEASURED,
+пока они не подтверждены отдельным испытанием».
 
 Повторно используются background-processing, integration-testing,
 database-validation, contract-testing и failure-triage. Toolkit и его

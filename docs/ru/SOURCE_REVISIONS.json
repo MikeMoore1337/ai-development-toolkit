@@ -5,7 +5,7 @@
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "ebdf8cfa58b5367eeb27857b911ee5c4903fc63a8b758de768b2e2b56a2f7626"
+      "source_sha256": "e231a2d4d00926435cef5032de926bbd6d35cf04633bfb022ab09470f63e6a2f"
     },
     {
       "source": "docs/SKILLS_CATALOG.md",
@@ -100,7 +100,7 @@
     {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "3c27c4c360591380727c2b719d80a467fe554ddfb1ba0b46302eb1c729f8353e"
+      "source_sha256": "849a60fdb9906cb3bdc0c3bb8a638f4e205ca28e9e4ac0aef4fbcb99b1338958"
     },
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
@@ -140,7 +140,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "e28f6278bc3b483fd65657303ff033390e2d9615b1a47a8b55b7ae5ab2eaa625"
+      "source_sha256": "f3762b1b787349e916b5db76751af8763cc168fa3beb9334dc88825525bfcaca"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",
@@ -290,17 +290,17 @@
     {
       "source": "docs/INSTALL_WINDOWS.md",
       "translation": "docs/ru/INSTALL_WINDOWS.md",
-      "source_sha256": "5ecf3caad28c8f5b2b3e258d7d2ad8cd49ec59533a4bf516bd5fa4efd94e41d4"
+      "source_sha256": "3acf1e6563706c6b602f35f6612fd94ce0325ae099e6b4d33d6b42130041d676"
     },
     {
       "source": "docs/INSTALL_LINUX.md",
       "translation": "docs/ru/INSTALL_LINUX.md",
-      "source_sha256": "37044350ddeebd0d58dee427388bb92aebdb4d67953f08ffec292caa45a7d8d3"
+      "source_sha256": "347b19bd01ed57817030c1be753fabf2f2f413fe7c2fe62ef9095e6e71a8e650"
     },
     {
       "source": "docs/INSTALL_MACOS.md",
       "translation": "docs/ru/INSTALL_MACOS.md",
-      "source_sha256": "4c1afd8be5d9eb5586b382381239cc1d4f5cec6eb99ab9cf28f290a35bb76301"
+      "source_sha256": "9b375ace811d8c8fa1c16c20dbfd363dbef70db812d24fc2bfc71fd9ff8e17e3"
     },
     {
       "source": "docs/UPDATING.md",
@@ -310,7 +310,7 @@
     {
       "source": "docs/MCP_INSTALL.md",
       "translation": "docs/ru/MCP_INSTALL.md",
-      "source_sha256": "d0f3bee545c66146d0c7fe092aed402185b8a9f363ee63b33e8ee38b892136ec"
+      "source_sha256": "ecd9202164af2012321f454bce36e1e0a448685a59958f0eed83f67c211b3948"
     },
     {
       "source": "docs/PROMPT_AND_SEO_SKILLS.md",
@@ -341,6 +341,11 @@
       "source": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "translation": "docs/ru/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "source_sha256": "58a55ace57ec4dcd02b67f126920bca1f20b59d3253d7507ffdd1838804bc894"
+    },
+    {
+      "source": "docs/GLOSSARY.md",
+      "translation": "docs/ru/GLOSSARY.md",
+      "source_sha256": "fc49a959b924886728a2474257c1b74f26f76663ef847c5499d542bf7af68a34"
     }
   ]
 }

@@ -8,6 +8,13 @@ Toolkit includes a real **stdio MCP server** (`scripts/toolkit_mcp.py`) built wi
 
 **All MCP tools are read-only.** They do not install skills or alter a user's project. When an agent needs to add skills, it can show a preview and ask the operator to use Skill Manager with explicit `--apply`. The separate installer below writes only a project-scoped MCP configuration **after the user executes --apply**. Neither process automatically installs an AI client.
 
+## Before you start
+
+1. Install Codex or Claude Code separately. MCP is not an AI client.
+2. Open a terminal **in the cloned Toolkit root**. Python 3.12+ is required; `py -3.12` and `python3.12` below are examples. Replace **all** commands with your actual 3.12+ interpreter (for example `py -3.14` or `python3.14`).
+3. Replace example project paths with **existing directories**. The installer does not create projects.
+4. Choose `--client codex` or `--client claude`. Review the plan **without `--apply`** before authorizing a write.
+
 ## Windows PowerShell
 
 Run from the Toolkit checkout; the selected project directory must already exist.
@@ -15,7 +22,11 @@ Run from the Toolkit checkout; the selected project directory must already exist
 ~~~powershell
 $project = 'C:\Work\existing-project'
 py -3.12 scripts/toolkit_mcp.py install --client codex --project $project
-# Review the plan before authorizing the exact config write:
+~~~
+
+**Stop and review the preview.** Verify the project path, MCP server name and proposed config changes, then run the following command separately:
+
+~~~powershell
 py -3.12 scripts/toolkit_mcp.py install --client codex --project $project --apply
 py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
 ~~~
@@ -25,6 +36,11 @@ py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
 ~~~bash
 project="$HOME/projects/existing-project"
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project"
+~~~
+
+**Stop and review the preview.** Verify the project path, MCP server name and proposed config changes, then run the following command separately:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project" --apply
 python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 ~~~
@@ -35,11 +51,18 @@ python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 python3.12 --version
 project="$HOME/Projects/existing-project"
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project"
+~~~
+
+**Stop and review the preview.** Verify the project path, MCP server name and proposed config changes, then run the following command separately:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py install --client codex --project "$project" --apply
 python3.12 scripts/toolkit_mcp.py doctor --client codex --project "$project"
 ~~~
 
 For **Claude Code**, replace `--client codex` with `--client claude`. Codex uses project `.codex/config.toml`, Claude Code project `.mcp.json`. The installer preserves unrelated entries, refuses conflicts or linked paths, and never edits global settings. Restart/reconnect your client, enable project trust as needed and inspect its MCP tool list. `codex mcp list` may assist, but config existence alone **does not prove client activation**.
+
+**Verify the result:** `doctor` checks configuration state. Reconnect Codex/Claude Code and inspect **the client's actual MCP tool list**. If Toolkit is missing, check Python executable paths, the Toolkit checkout path, project trust and client settings. A written config file alone does not prove tool discovery or use by the model.
 
 ## Removal and updating
 
@@ -47,6 +70,11 @@ First preview; then, only if correct, remove a matching Toolkit entry with `--ap
 
 ~~~bash
 python3.12 scripts/toolkit_mcp.py uninstall --client codex --project /absolute/existing-project
+~~~
+
+**Stop and review the preview.** Verify the project path, MCP server name and proposed config changes, then run the following command separately:
+
+~~~bash
 python3.12 scripts/toolkit_mcp.py uninstall --client codex --project /absolute/existing-project --apply
 ~~~
 

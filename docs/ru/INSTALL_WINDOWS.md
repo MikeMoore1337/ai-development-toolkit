@@ -14,6 +14,8 @@
 
 ## Установка в существующий проект
 
+**Перед запуском:** значение переменной `$project` в примере - условный путь. Укажите папку **уже существующего** проекта; Toolkit её не создаёт. `py -3.12` требует установленной Python 3.12: если доступна только 3.13 или 3.14, замените **каждый** вызов на `py -3.13` или `py -3.14`. Список установленных версий покажет `py -0p`.
+
 Из каталога Toolkit. Перед применением проверьте AGENTS.md / CLAUDE.md и чужие навыки в своём проекте:
 
 ~~~powershell
@@ -25,7 +27,11 @@ $project = Join-Path $HOME "Projects\existing-project"
 py -3.12 scripts/adt.py profile list
 py -3.12 scripts/adt.py doctor --target $project
 py -3.12 scripts/skill_manager.py install --target $project --layout codex --profile general
-# Только после проверки предпросмотра:
+~~~
+
+**Остановитесь после предварительного просмотра.** Проверьте путь, перечень файлов и отсутствие конфликтов. Только после этого отдельно выполните команды применения и проверки:
+
+~~~powershell
 py -3.12 scripts/skill_manager.py install --target $project --layout codex --profile general --apply
 py -3.12 scripts/skill_manager.py status --target $project --layout codex
 ~~~

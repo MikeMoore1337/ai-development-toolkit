@@ -14,6 +14,8 @@ Apple Silicon and Intel use identical Toolkit commands. `python` and Apple-provi
 
 ## Install into an existing project
 
+**Before running the commands:** replace the example `project=...` path with an **existing** project directory. Toolkit will not create it. Every `python3.12` command below is an example: if you have Python 3.13/3.14, replace **every** invocation, including the version check, with the actual executable, such as `python3.14`.
+
 From the Toolkit directory. Inspect project AGENTS.md / CLAUDE.md and unmanaged skills first:
 
 ~~~bash
@@ -27,7 +29,11 @@ project="$HOME/Projects/existing-project"
 python3.12 scripts/adt.py profile list
 python3.12 scripts/adt.py doctor --target "$project"
 python3.12 scripts/skill_manager.py install --target "$project" --layout codex --profile general
-# Only after reviewing the preview:
+~~~
+
+**Stop after the preview.** Check the destination, file list and conflicts before running the following apply and status commands separately:
+
+~~~bash
 python3.12 scripts/skill_manager.py install --target "$project" --layout codex --profile general --apply
 python3.12 scripts/skill_manager.py status --target "$project" --layout codex
 ~~~
