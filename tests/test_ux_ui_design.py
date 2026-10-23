@@ -160,5 +160,23 @@ class UXUIDesignTests(unittest.TestCase):
         self.assertIn("NOT_TESTED", {x["status"] for x in PRO["accessibility"]})
 
 
+    def test_bilingual_ux_docs_distinguish_visual_design_and_preview(self):
+        import re
+
+        for path, visual_phrase in (
+            ("docs/UX_UI_DESIGN.md", "three genuinely distinct"),
+            ("docs/ru/UX_UI_DESIGN.md", "трёх действительно разных"),
+        ):
+            with self.subTest(path=path):
+                text = (ROOT / path).read_text(encoding="utf-8")
+                first_section = text[:2200]
+                self.assertIn("ui-orchestra", first_section)
+                self.assertIn("ux-design", first_section)
+                self.assertIn(visual_phrase, first_section)
+                blocks = re.findall(r"```bash\n(.*?)\n```", text, re.S)
+                self.assertEqual(2, len(blocks))
+                self.assertNotIn("--apply", blocks[0])
+                self.assertIn("--apply", blocks[1])
+
 if __name__ == "__main__":
     unittest.main()

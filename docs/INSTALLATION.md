@@ -9,6 +9,11 @@ python scripts/adt.py profile list
 python scripts/adt.py doctor --target /path/to/repo
 python scripts/adt.py profile plan --target /path/to/repo --task qa
 python scripts/adt.py init --target /path/to/repo --profile general
+~~~
+
+**Inspect the preview first.** Replace `/path/to/repo` with an existing project directory. Only then apply the change and check status in a separate block:
+
+~~~bash
 python scripts/adt.py init --target /path/to/repo --profile general --apply
 python scripts/adt.py status --target /path/to/repo
 ~~~
@@ -23,11 +28,16 @@ Client layouts, pinned source evidence and offline verification: [CLIENT_COMPATI
 
 **New project? Start with Skill Manager v2.** You need Python 3.12+, a clone of this Toolkit and an existing target project. The Toolkit does not install an AI client. Choose a profile with `python scripts/skill_manager.py catalog`, then:
 
-```bash
+~~~bash
 python scripts/skill_manager.py install --target /path/to/repo --profile qa-core
+~~~
+
+**After reviewing the proposed plan**, apply the installation and check its status separately:
+
+~~~bash
 python scripts/skill_manager.py install --target /path/to/repo --profile qa-core --apply
 python scripts/skill_manager.py status --target /path/to/repo
-```
+~~~
 
 The first command previews file-level changes; only `--apply` writes. Review the target project's existing `AGENTS.md`, `CLAUDE.md` and skill folders first; these files are never automatically rewritten. For Claude Code, use `--layout claude` consistently. Manager ownership and backups apply only to its own installations.
 
@@ -80,24 +90,23 @@ new `skill_manager.py` maintains an **ownership lockfile** and local history
 only for skills installed with the manager. It never adopts or overwrites an
 unmanaged skill or edits `AGENTS.md` / `CLAUDE.md`.
 
-```powershell
+~~~powershell
 $project = "D:\Work\example-project"
-
-# All modifying operations PREVIEW changes by default:
 py -3 scripts/skill_manager.py install --target $project --profile qa-python
+py -3 scripts/skill_manager.py update --target $project
+py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing
+py -3 scripts/skill_manager.py rollback --target $project
+py -3 scripts/skill_manager.py recover --target $project
+~~~
+
+**These are five alternative previews, not a sequence of required actions.** Pick only the operation you need, inspect its plan, and then run **only the corresponding** `--apply` command. For example, to install a profile:
+
+~~~powershell
 py -3 scripts/skill_manager.py install --target $project --profile qa-python --apply
 py -3 scripts/skill_manager.py status --target $project
-py -3 scripts/skill_manager.py update --target $project
-py -3 scripts/skill_manager.py update --target $project --apply
-py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing
-py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing --apply
-# Restore the most recent managed transaction:
-py -3 scripts/skill_manager.py rollback --target $project
-py -3 scripts/skill_manager.py rollback --target $project --apply
-# If a process was interrupted, inspect and recover:
-py -3 scripts/skill_manager.py recover --target $project
-py -3 scripts/skill_manager.py recover --target $project --apply
-```
+~~~
+
+For other operations use `update --apply`, `uninstall --apply`, `rollback --apply` or `recover --apply` as appropriate. Do not run them in sequence. Review the selected plan, its consequences and recovery options first.
 
 The manager stores the first client's schema-v1 lock in `.adt/skills-lock.json`.
 For a second client it uses the independently owned
@@ -127,13 +136,18 @@ the recorded lockfile digest, the operation stops rather than overwriting it.
 
 ### Discover profiles and copy managed skills between clients
 
-```bash
+~~~bash
 python scripts/skill_manager.py catalog
 python scripts/skill_manager.py catalog --profile qa-python
 python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude
+~~~
+
+Migration also requires review. **Only if the preview matches the intended changes and avoids unmanaged files**, run separately:
+
+~~~bash
 python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude --apply
 python scripts/skill_manager.py status --target /path/to/repo --layout claude
-```
+~~~
 
 Migrate **copies**, never removes, the clean, Manager-owned source skills,
 with exact SHA256 match to the current Toolkit source. It refuses collisions,

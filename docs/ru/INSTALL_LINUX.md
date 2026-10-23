@@ -14,6 +14,8 @@
 
 ## Установка в существующий проект
 
+**Перед запуском:** `project=...` ниже - пример пути, а не папка, которую Toolkit создаёт сам. Укажите каталог **существующего** проекта. Все вызовы `python3.12` (включая проверку версии) замените на реально установленный Python 3.12 или новее, например `python3.14`. Сначала проверьте его командой `python3.14 --version`.
+
 Из каталога Toolkit. Перед применением проверьте AGENTS.md / CLAUDE.md и чужие навыки в своём проекте:
 
 ~~~bash
@@ -26,7 +28,11 @@ project="$HOME/projects/existing-project"
 python3.12 scripts/adt.py profile list
 python3.12 scripts/adt.py doctor --target "$project"
 python3.12 scripts/skill_manager.py install --target "$project" --layout codex --profile general
-# Только после проверки предпросмотра:
+~~~
+
+**Остановитесь после предварительного просмотра.** Проверьте путь, перечень файлов и отсутствие конфликтов. Только после этого отдельно выполните команды применения и проверки:
+
+~~~bash
 python3.12 scripts/skill_manager.py install --target "$project" --layout codex --profile general --apply
 python3.12 scripts/skill_manager.py status --target "$project" --layout codex
 ~~~

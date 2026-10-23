@@ -9,6 +9,11 @@ python scripts/adt.py profile list
 python scripts/adt.py doctor --target /path/to/repo
 python scripts/adt.py profile plan --target /path/to/repo --task qa
 python scripts/adt.py init --target /path/to/repo --profile general
+~~~
+
+**Сначала проверьте предварительный план.** `/path/to/repo` - пример пути к существующему проекту. Только затем примените изменения и проверьте состояние:
+
+~~~bash
 python scripts/adt.py init --target /path/to/repo --profile general --apply
 python scripts/adt.py status --target /path/to/repo
 ~~~
@@ -25,6 +30,11 @@ python scripts/adt.py status --target /path/to/repo
 
 ~~~bash
 python scripts/skill_manager.py install --target /path/to/repo --profile qa-core
+~~~
+
+**После проверки предложенного плана** выполните установку и проверку статуса отдельным блоком:
+
+~~~bash
 python scripts/skill_manager.py install --target /path/to/repo --profile qa-core --apply
 python scripts/skill_manager.py status --target /path/to/repo
 ~~~
@@ -72,22 +82,21 @@ python scripts/recommend_profile.py --target /path/to/repo --task feature
 
 ~~~powershell
 $project = "D:\Work\example-project"
-
-# Без --apply команды, способные менять файлы, только показывают план:
 py -3 scripts/skill_manager.py install --target $project --profile qa-python
+py -3 scripts/skill_manager.py update --target $project
+py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing
+py -3 scripts/skill_manager.py rollback --target $project
+py -3 scripts/skill_manager.py recover --target $project
+~~~
+
+**Это пять альтернативных предварительных просмотров, а не список команд для последовательного выполнения.** Выберите нужную операцию, проверьте план и затем выполните **только соответствующую команду** с `--apply`. Например, для установки:
+
+~~~powershell
 py -3 scripts/skill_manager.py install --target $project --profile qa-python --apply
 py -3 scripts/skill_manager.py status --target $project
-py -3 scripts/skill_manager.py update --target $project
-py -3 scripts/skill_manager.py update --target $project --apply
-py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing
-py -3 scripts/skill_manager.py uninstall --target $project --skills api-testing --apply
-# Откат последней управляемой операции:
-py -3 scripts/skill_manager.py rollback --target $project
-py -3 scripts/skill_manager.py rollback --target $project --apply
-# После прерванной операции сначала просмотрите восстановление:
-py -3 scripts/skill_manager.py recover --target $project
-py -3 scripts/skill_manager.py recover --target $project --apply
 ~~~
+
+Для обновления, удаления, отката или восстановления используйте соответственно `update --apply`, `uninstall --apply`, `rollback --apply` или `recover --apply`. Не запускайте их подряд: проверьте последствия и возможность восстановления.
 
 Для первого клиента менеджер использует файл учёта схемы v1 `.adt/skills-lock.json`. Для второго клиента применяются независимые файлы `.adt/skills-lock-codex.json` или `.adt/skills-lock-claude.json`. Общий `.adt/manager.lock` и снимки операций в `.adt/history/` хранятся **внутри целевого проекта**.
 
@@ -109,6 +118,11 @@ py -3 scripts/skill_manager.py recover --target $project --apply
 python scripts/skill_manager.py catalog
 python scripts/skill_manager.py catalog --profile qa-python
 python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude
+~~~
+
+Миграция также требует подтверждения. **Если план не затрагивает чужие файлы**, отдельно выполните:
+
+~~~bash
 python scripts/skill_manager.py migrate --target /path/to/repo --from-layout codex --layout claude --apply
 python scripts/skill_manager.py status --target /path/to/repo --layout claude
 ~~~
