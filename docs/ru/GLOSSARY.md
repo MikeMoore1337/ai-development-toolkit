@@ -1,6 +1,6 @@
 # Словарь терминов AI Development Toolkit
 
-[Документация на русском](README.md) | [Первый запуск](GETTING_STARTED.md) | [English README](../../README.md)
+[Документация на русском](README.md) | [English glossary](../GLOSSARY.md) | [Первый запуск](GETTING_STARTED.md) | [English README](../../README.md)
 
 | Термин | Значение |
 | --- | --- |
