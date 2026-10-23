@@ -258,7 +258,24 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
                 fail("SOURCE_MISSING", label)
             if isinstance(item["license"], str) and item["license"] in {"NONE", ""}:
                 fail("LICENSE_MISSING", label)
+
+        # New external Skill releases need independently reviewable source pin
+        # and an allowed license. Legacy owner-approved snapshots are retained
+        # by exact-file SHA256 and frozen owner classification checks below.
+        if (mode == "release" and item["kind"] == "skill"
+                and item["distribution"] == "included"
+                and item["origin"] in {"adapted", "redistributed"}
+                and raw_path not in approved):
+            if (not isinstance(item["source_revision"], str)
+                    or not SHA.fullmatch(item["source_revision"])):
+                fail("EXTERNAL_RELEASE_PIN", f"{label}: source commit pin required")
+            if item["license"] in {"NONE", "NOASSERTION"}:
+                fail("EXTERNAL_RELEASE_LICENSE", f"{label}: allowed license required")
         if item["status"] == "verified":
+            if (item["kind"] == "skill" and item["origin"] in {"adapted", "redistributed"}
+                    and (not isinstance(item["source_revision"], str)
+                         or not SHA.fullmatch(item["source_revision"]))):
+                fail("UNPINNED_VERIFIED_EXTERNAL", f"{label}: verified claim requires pinned upstream SHA")
             if item["origin"] == "unknown" or (
                 isinstance(item["license"], str) and item["license"] in {"NOASSERTION", "NONE"}
             ):

@@ -104,6 +104,53 @@ class ProvenanceTests(unittest.TestCase):
                                           license="NONE")
         self.check("LICENSE_MISSING")
 
+
+    def test_new_external_skill_release_requires_pin_and_known_license(self):
+        item = self.data["components"][0]
+        item.update(
+            origin="redistributed", source_url="https://github.com/example/reviewed-skill",
+            source_revision=None, license="NOASSERTION", distribution="included",
+        )
+        report = self.check("EXTERNAL_RELEASE_PIN", mode="release")
+        self.assertIn("EXTERNAL_RELEASE_LICENSE",
+                      {x.split(":", 1)[0] for x in report["issues"]})
+        self.assertIn("OWNER_APPROVAL",
+                      {x.split(":", 1)[0] for x in report["issues"]})
+        # Supplying a syntactically valid upstream SHA fixes only the pin
+        # condition, never grants a license or owner publication authority.
+        item["source_revision"] = "a" * 40
+        report = self.check("EXTERNAL_RELEASE_LICENSE", mode="release")
+        self.assertNotIn("EXTERNAL_RELEASE_PIN",
+                         {x.split(":", 1)[0] for x in report["issues"]})
+        self.assertIn("OWNER_APPROVAL",
+                      {x.split(":", 1)[0] for x in report["issues"]})
+
+    def test_verified_external_skill_cannot_claim_verification_without_pin(self):
+        item = self.data["components"][0]
+        item.update(
+            origin="redistributed",
+            source_url="https://github.com/example/reviewed-skill",
+            source_revision=None,
+            status="verified",
+            distribution_basis="independently confirmed source rights in synthetic fixture",
+        )
+        report = self.check("UNPINNED_VERIFIED_EXTERNAL")
+        self.assertIn("OWNER_APPROVAL",
+                      {x.split(":", 1)[0] for x in report["issues"]})
+        item["source_revision"] = "b" * 40
+        self.write()
+        result = validate(self.root)
+        self.assertFalse(any(x.startswith("UNPINNED_VERIFIED_EXTERNAL:") for x in result["issues"]))
+        self.assertFalse(result["ok"])  # owner review still missing
+
+    def test_legacy_owner_snapshot_is_not_reinterpreted_as_new_external_skill(self):
+        self._approve_fixture()
+        item = self.data["components"][0]
+        self.assertIsNone(item["source_revision"])
+        self.write()
+        result = validate(self.root, "release")
+        self.assertTrue(result["ok"], result["issues"])
+
     def test_license_frontmatter_conflict(self):
         self.data["components"][0]["license"] = "Apache-2.0"
         self.check("LICENSE_CONFLICT")
