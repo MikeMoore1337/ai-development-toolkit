@@ -225,7 +225,7 @@
     {
       "source": "docs/REAL_AGENT_PILOT.md",
       "translation": "docs/ru/REAL_AGENT_PILOT.md",
-      "source_sha256": "d1485efd9887edc53359561be9800ac7db64cc7fd1f27f44d99667369ef95d6b"
+      "source_sha256": "b26be49df38d02aa2bcb55a67c8640c767cb816255f8219c5b83920fe61bc81c"
     },
     {
       "source": "docs/SKILL_EVALS.md",
@@ -285,7 +285,7 @@
     {
       "source": "docs/ORCHESTRATION_PILOT.md",
       "translation": "docs/ru/ORCHESTRATION_PILOT.md",
-      "source_sha256": "219979f12c39f01d6d4bfcbfd526839943b03ecb9490478ec4030fbe09a3786c"
+      "source_sha256": "3c4f1c9923df0dc5268a25cab6b47066e1dec95dfeefac859e44c26bb233f63f"
     },
     {
       "source": "docs/INSTALL_WINDOWS.md",
