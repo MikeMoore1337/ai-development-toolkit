@@ -135,7 +135,10 @@ def _context(path: Path, candidate: Path) -> dict:
             raise ValueError("Invalid context value: " + field)
     if not set(document["requested_permissions"]) <= PERMISSIONS:
         raise ValueError("Unknown requested permission")
-    if document["cost_class"] not in COST_CLASSES or document["removal_plan"] not in REMOVAL_PLANS:
+    if (not isinstance(document["cost_class"], str)
+            or not isinstance(document["removal_plan"], str)
+            or document["cost_class"] not in COST_CLASSES
+            or document["removal_plan"] not in REMOVAL_PLANS):
         raise ValueError("Unsupported cost or removal category")
     return document
 
