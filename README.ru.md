@@ -12,6 +12,8 @@
 
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md).
 
+**Кандидат следующего релиза:** `v5.5.4` — **НЕ ОПУБЛИКОВАН**. Последний опубликованный: [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3). [CHANGELOG.md](CHANGELOG.md).
+
 ## Начните с задачи
 
 AI Development Toolkit - **переносимая библиотека навыков, специализированных ролей и QA-процессов** для разработки с ИИ. Это не отдельный ИИ-агент, не хостинг и не разрешение на доступ к вашему проекту.
