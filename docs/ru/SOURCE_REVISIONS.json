@@ -110,7 +110,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "760d9ef7ff98b2f314b81051ceafa97d3f175e14cda5c86ffd823367be7cfb2e"
+      "source_sha256": "6f68f6087146c1c28d438695255bb17a9107d2a4ca821a52b23800476f5c80c3"
     },
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
@@ -125,7 +125,7 @@
     {
       "source": "docs/SKILL_ROUTING_EVALS.md",
       "translation": "docs/ru/SKILL_ROUTING_EVALS.md",
-      "source_sha256": "6150e485b8b2a10f500be792d0225b91d5ccb997ddd463c485d86f21536d1ffa"
+      "source_sha256": "8640149f88755ca6464677064f9b8a37cf9af4a60ddf763d8389e7b5d31d5e71"
     },
     {
       "source": "docs/PROJECT_DELIVERY_MANAGEMENT.md",

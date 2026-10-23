@@ -120,3 +120,20 @@ python scripts/holdout_adjudication.py audit --packet human-review.json --output
 ```
 
 The audit now returns `pending_case_ids` and `challenged_case_ids` to identify which cases need another human pass; these ID-only lists never expose expected labels, reviewer identity or skill predictions. The audit validates completeness, dataset integrity, unknown targets, label disagreements and pending reviews. It **never changes** benchmark labels automatically. Even a completed packet only establishes *self-declared* reviewer identity, not independent review: `reviewer_independence = NOT_VERIFIED` and `ready_for_independent_accuracy_claim = false` remain unchanged. The human must actually perform the review before any evaluation conclusions can rely on it. No AI/API/agent is invoked.
+
+
+### Release-candidate routing diagnostics (Issue #189)
+
+The offline router marks the first evidence-supported candidate within **each** actionable segment as `selection_role = PRIMARY`; subsequent supported candidates are `AUXILIARY`. These are *proposal positions*, not activation, calibrated probabilities, or a claim that only one skill can be correct. The three-segment display limit filters explicit prohibitions before grouping further actionable clauses. An explicitly excluded exact declared skill name cannot be suggested in either position.
+
+The `--holdout` JSON retains its historical fields and adds `label_diagnostics` plus case-level `supported_auxiliary_choices`, `primary_gold_match`, `auxiliary_only_gold_match`, `non_gold_primary_choices`, and `forbidden_supported_primary`. All diagnostics are also grouped by `by_kind` and `by_language`. The named counters distinguish primary matched manual gold, gold matched **only** via secondary suggestions, no matched gold and apparent *non-gold* primaries. A non-gold primary is **not** a verified false-positive: manually curated labels are non-exhaustive and not independently adjudicated. `forbidden_supported_primary_cases` counts observed `avoid_top1` violations among supported primaries; it is not a universal negation-error rate.
+
+Reproduce three independent report *files* (not statistically independent human samples):
+
+```bash
+python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_holdout.json
+python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_exploratory_20261023.json
+python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_release_probes_20261023.json
+```
+
+As evaluated at release-candidate preparation: strict curated 416/416; original frozen holdout 18/38 evidence-supported (12 abstentions; 15 primary-gold overlaps; 7 auxiliary-only overlaps); earlier AI exploratory 6/18 (6 abstentions); newly written RU/EN release diagnostic 4/12 (5 abstentions). The 12 extra prompts and their labels were authored by the assistant; **not** independent, blind or human-adjudicated, and not used to change descriptions, aliases or ranking. Do not sum the three datasets or quote percentages as semantic accuracy. The routing system is still bounded **lexical** selection; real client discovery and effectiveness remain NOT_OBSERVED and NOT_TESTED (separate #141).

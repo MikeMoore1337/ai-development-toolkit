@@ -17,9 +17,15 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.3)
+## Unreleased (main after v5.5.4)
 
-No additional changes recorded after the v5.5.3 release.
+## 5.5.4 (candidate, 2026-10-23)
+
+- Prepared a forward-only candidate bundling changes merged since v5.5.3. The tagged GitHub Release does **not** exist until separately published and archive-verified; do not call this section a released version.
+- Completed all five offline acceptance criteria for routing [#189](https://github.com/MikeMoore1337/ai-development-toolkit/issues/189): 82 current declared skills, 416/416 curated lexical checks, explicit unsupported abstentions, bounded negative clauses, auditable primary versus auxiliary candidate roles, and additional case-level RU/EN label diagnostics.
+- Added 12 additional AI-authored RU/EN **diagnostic-only** requests to inspect primary/auxiliary label overlap, non-gold candidate frequency and abstention. Historical untouched holdout 18/38 supported; prior exploratory 6/18 supported; fresh diagnostic 4/12 supported. These figures are **not** independently adjudicated semantic accuracy, and must not be tuned against their own prompts.
+- Added source-only comparison and negative-control unit tests, refreshed matching checksum/provenance inventory and translated diagnostic guidance.
+- **Limits:** Client skill choice NOT_OBSERVED, real task effectiveness NOT_TESTED, reviewer independence NOT_VERIFIED. Actual A/B client tests remain [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141); no paid API, provider setup or client activation is introduced.
 
 ## 5.5.3 (released, 2026-10-22)
 

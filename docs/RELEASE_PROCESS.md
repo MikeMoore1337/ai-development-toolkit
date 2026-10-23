@@ -11,6 +11,8 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
+- `5.5.4` (candidate, NOT PUBLISHED) is prepared on the release-candidate branch for #189. Last published tag remains [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3). Before publication validate its merged SHA, release provenance, and exact version/tag identity; no automatic release occurs.
+
 - The last published tag is **`v5.5.3`**, containing `MANIFEST.json.version = 5.5.3` at SHA `14b96569528ab9544c0d28aa1a00343496066445`. Later `main` commits are not automatically published.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.

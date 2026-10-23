@@ -241,6 +241,7 @@ def recommend(prompt: str, catalog: dict[str, str],
                 "skill": name,
                 "rank": original_rank,  # Preserve raw rank for auditability.
                 "lexical_support": "PRESENT",
+                "selection_role": "PRIMARY" if not candidates else "AUXILIARY",
                 "evidence": evidence,
                 "candidate_profiles": sorted(p for p, skills in profiles.items()
                                              if isinstance(skills, list) and name in skills)[:8],
@@ -367,6 +368,22 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
         ))
         supported_first = [part["candidates"][0]["skill"] for part in advice["segments"]
                            if part["candidates"]]
+        supported_auxiliary = list(dict.fromkeys(
+            item["skill"] for part in advice["segments"]
+            for item in part["candidates"][1:]
+            if item["skill"] not in supported_first
+        ))
+        gold = set(case["expected"])
+        primary_gold_match = any(skill in gold for skill in supported_first)
+        auxiliary_only_gold_match = (
+            not primary_gold_match and any(skill in gold for skill in supported_auxiliary)
+        )
+        # "Non-gold" is a diagnostic of declared labels, NOT ground truth
+        # false-positive rate: this manual gold set may omit valid alternates.
+        non_gold_primary = [skill for skill in supported_first if skill not in gold]
+        forbidden_supported_primary = any(
+            skill in case.get("avoid_top1", []) for skill in supported_first
+        )
         if case["kind"] == "compound":
             proposals = [item["skill"] for part in advice["segments"]
                          for item in part["candidates"]]
@@ -393,6 +410,11 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
             "hit_at_k": found, "negative_control_ok": avoided, "pass": ok,
             "supported_candidates": supported,
             "supported_top_choices": supported_first,
+            "supported_auxiliary_choices": supported_auxiliary,
+            "primary_gold_match": primary_gold_match,
+            "auxiliary_only_gold_match": auxiliary_only_gold_match,
+            "non_gold_primary_choices": non_gold_primary,
+            "forbidden_supported_primary": forbidden_supported_primary,
             "supported_hit_at_k": supported_found,
             "supported_negative_control_ok": supported_avoided,
             "supported_pass": supported_ok,
@@ -410,8 +432,23 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
             "recommended": sum(not row["abstained"] for row in items),
             "abstained": sum(row["abstained"] for row in items),
             "unverified_fallback": sum(row["unverified_fallback"] for row in items),
+            "primary_gold_match_cases": sum(row["primary_gold_match"] for row in items),
+            "auxiliary_only_gold_match_cases": sum(
+                row["auxiliary_only_gold_match"] for row in items
+            ),
+            "no_gold_match_cases": sum(
+                not row["primary_gold_match"] and
+                not row["auxiliary_only_gold_match"] for row in items
+            ),
+            "non_gold_primary_cases": sum(
+                bool(row["non_gold_primary_choices"]) for row in items
+            ),
+            "forbidden_supported_primary_cases": sum(
+                row["forbidden_supported_primary"] for row in items
+            ),
         }
 
+    totals = summary(observations)
     return {
         "classification": "untuned_holdout_diagnostic",
         "method": "lexical_ranker_not_semantic_model",
@@ -427,6 +464,13 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
         "supported_failed": sum(not row["supported_pass"] for row in observations),
         "abstained": sum(row["abstained"] for row in observations),
         "unverified_fallback": sum(row["unverified_fallback"] for row in observations),
+        "label_diagnostics": {
+            key: totals[key] for key in (
+                "primary_gold_match_cases", "auxiliary_only_gold_match_cases",
+                "no_gold_match_cases", "non_gold_primary_cases",
+                "forbidden_supported_primary_cases"
+            )
+        },
         "by_kind": {kind: summary([row for row in observations if row["kind"] == kind])
                     for kind in ("single", "compound", "negative")},
         "by_language": {language: summary([row for row in observations
@@ -434,6 +478,7 @@ def evaluate_holdout(catalog: dict[str, str], aliases: dict[str, list[str]],
                         for language in ("ru", "en")},
         "limitations": (
             "Legacy top-k and evidence-supported suggestions are distinct; "
+            "gold-label overlaps are not verified false-positive rates; "
             "none of these counts measures calibrated semantic accuracy or client activation."
         ),
         "observations": observations,
