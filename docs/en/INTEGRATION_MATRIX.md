@@ -9,7 +9,7 @@
 | Domain backend | feature-delivery, qa-strategy, research-verification | Unverified domain-specific calculations and external-skill claims (medical, financial and engineering facts need sources) |
 | Agent runtime | agent-framework-fit, codebase-knowledge-map, provider-reality-check, external-skill-review | The entire NousResearch/hermes-agent stack, unreviewed cookie stores, autopilot/deploy hooks |
 | Knowledge base | codebase-knowledge-map for large imports, editorial-naturalness, qa-strategy | Unnecessary browser engines, new LLM providers or design generators |
-| Research Scout | provider-reality-check, research-verification | Claims of free API quotas or quality without verifying terms and actual calls |
+| Scientific research service | provider-reality-check, research-verification | Claims of free API quotas or quality without verifying terms and actual calls |
 
 **Before using a tool in any external project:**
 
