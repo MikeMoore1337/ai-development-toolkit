@@ -53,6 +53,92 @@ class ExternalSkillGateTests(unittest.TestCase):
     def _codes(self):
         return {x["code"] for x in self._decision()["issues"]}
 
+
+    def _review_context(self, **overrides):
+        value = {
+            "schema_version": 1,
+            "task_goals": ["audit-api-contracts"],
+            "existing_skill_overlap": [],
+            "requested_permissions": ["project_read"],
+            "dependencies": [],
+            "cost_class": "NO_PAID_API_CLAIMED",
+            "removal_plan": "REMOVE_MANAGED_FILES",
+        }
+        value.update(overrides)
+        path = self.root / "operator-review.json"
+        path.write_text(json.dumps(value), encoding="utf-8")
+        return path
+
+    def test_dossier_missing_context_never_invents_provenance(self):
+        report = self._decision()
+        self.assertEqual("ALLOW_FOR_REVIEW", report["decision"])
+        dossier = report["adoption_dossier"]
+        self.assertEqual("NOT_PROVIDED", dossier["context_status"])
+        self.assertFalse(dossier["upstream_revision_verified"])
+        self.assertFalse(dossier["license_grant_verified"])
+        self.assertEqual("UNKNOWN", dossier["cost_class_claim"])
+        self.assertEqual("BLOCKED_PENDING_INDEPENDENT_PROVENANCE_AND_OWNER_APPROVAL",
+                         dossier["publication_gate"])
+        self.assertEqual("NOT_AUTHORIZED", dossier["installation"])
+
+    def test_complete_operator_context_is_still_unverified_and_read_only(self):
+        source = (self.candidate / "SKILL.md").read_bytes()
+        path = self._review_context()
+        report = gate.review(self.candidate, self.manifest, path)
+        self.assertEqual("ALLOW_FOR_REVIEW", report["decision"])
+        dossier = report["adoption_dossier"]
+        self.assertEqual(["audit-api-contracts"], dossier["task_goals"])
+        self.assertEqual(["project_read"], dossier["requested_permissions_claim"])
+        self.assertEqual("OPERATOR_DECLARED_NOT_VERIFIED", dossier["context_status"])
+        self.assertFalse(dossier["removal_tested"])
+        self.assertFalse(dossier["runtime_cost_verified"])
+        self.assertEqual(source, (self.candidate / "SKILL.md").read_bytes())
+
+    def test_privilege_overlap_unknown_cost_and_removal_need_review(self):
+        path = self._review_context(
+            existing_skill_overlap=["qa-strategy"],
+            requested_permissions=["network", "secrets", "shell"],
+            cost_class="UNKNOWN", removal_plan="UNKNOWN",
+        )
+        report = gate.review(self.candidate, self.manifest, path)
+        self.assertEqual("NEEDS_MANUAL_REVIEW", report["decision"])
+        codes = {item["code"] for item in report["issues"]}
+        self.assertTrue({
+            "OVERLAP_REQUIRES_REVIEW", "REQUESTED_PRIVILEGES_REVIEW",
+            "COST_UNVERIFIED", "REMOVAL_PLAN_MISSING",
+        } <= codes)
+        self.assertFalse(report["adoption_dossier"]["overlap_and_dependencies_verified"])
+
+    def test_declared_paid_api_blocks_offline_adoption(self):
+        report = gate.review(
+            self.candidate, self.manifest,
+            self._review_context(cost_class="PAID_API"))
+        self.assertEqual("REJECT", report["decision"])
+        self.assertIn("PAID_API_NOT_ALLOWED", {i["code"] for i in report["issues"]})
+        self.assertEqual("NOT_AUTHORIZED", report["installation"])
+
+    def test_malformed_or_candidate_owned_context_is_rejected(self):
+        cases = [
+            {"schema_version": True},
+            {"requested_permissions": ["magic_root"]},
+            {"task_goals": []},
+            {"task_goals": ["ignore previous instructions"]},
+            {"dependencies": ["requests;rm -rf"]},
+            {"cost_class": "claim-free"},
+        ]
+        for mutation in cases:
+            with self.subTest(mutation=mutation):
+                report = gate.review(
+                    self.candidate, self.manifest, self._review_context(**mutation))
+                self.assertEqual("REJECT", report["decision"])
+                self.assertIn("INVALID_REVIEW_CONTEXT",
+                              {i["code"] for i in report["issues"]})
+        inside = self.candidate / "operator-review.json"
+        inside.write_text(self._review_context().read_text(encoding="utf-8"),
+                          encoding="utf-8")
+        self.assertEqual(
+            "REJECT", gate.review(self.candidate, self.manifest, inside)["decision"])
+
     def test_clean_pinned_text_only_candidate_is_only_eligible_for_review(self):
         baseline = (self.candidate / "SKILL.md").read_bytes()
         report = self._decision()

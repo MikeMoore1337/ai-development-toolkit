@@ -92,10 +92,103 @@ def _manifest(source: Path, issues: list[dict]) -> dict | None:
         return None
 
 
-def review(candidate_dir: Path, manifest_file: Path) -> dict:
+MAX_CONTEXT_BYTES = 16_384
+CONTEXT_FIELDS = frozenset({
+    "schema_version", "task_goals", "existing_skill_overlap",
+    "requested_permissions", "dependencies", "cost_class", "removal_plan",
+})
+PERMISSIONS = frozenset({
+    "project_read", "project_write", "shell", "network", "secrets",
+    "browser_session", "deploy",
+})
+COST_CLASSES = frozenset({"NO_PAID_API_CLAIMED", "PAID_API", "UNKNOWN"})
+REMOVAL_PLANS = frozenset({"REMOVE_MANAGED_FILES", "RESTORE_PINNED_REVISION", "UNKNOWN"})
+REVIEW_ID = re.compile(r"[a-z][a-z0-9-]{0,63}\Z")
+
+
+def _context(path: Path, candidate: Path) -> dict:
+    """Bounded operator declaration outside untrusted candidate; never execute it."""
+    if (path.is_symlink() or not path.is_file()
+            or path.resolve().is_relative_to(candidate.resolve())):
+        raise ValueError("Context must be a regular file outside candidate tree")
+    try:
+        with path.open("rb") as file:
+            raw = file.read(MAX_CONTEXT_BYTES + 1)
+        if len(raw) > MAX_CONTEXT_BYTES:
+            raise ValueError("Review context too large")
+        document = json.loads(raw.decode("utf-8"))
+    except (OSError, UnicodeError, ValueError) as exc:
+        raise ValueError("Invalid review context") from exc
+    if not isinstance(document, dict) or set(document) != CONTEXT_FIELDS:
+        raise ValueError("Invalid review context fields")
+    if type(document["schema_version"]) is not int or document["schema_version"] != 1:
+        raise ValueError("Invalid context schema version")
+    for field, maximum, allow_empty in (
+        ("task_goals", 12, False), ("existing_skill_overlap", 12, True),
+        ("requested_permissions", 7, True), ("dependencies", 16, True),
+    ):
+        values = document[field]
+        if (not isinstance(values, list) or len(values) > maximum
+                or (not allow_empty and not values)
+                or any(not isinstance(v, str) or not REVIEW_ID.fullmatch(v) for v in values)
+                or len(set(values)) != len(values)):
+            raise ValueError("Invalid context value: " + field)
+    if not set(document["requested_permissions"]) <= PERMISSIONS:
+        raise ValueError("Unknown requested permission")
+    if document["cost_class"] not in COST_CLASSES or document["removal_plan"] not in REMOVAL_PLANS:
+        raise ValueError("Unsupported cost or removal category")
+    return document
+
+
+def _dossier(metadata: dict | None, declaration: dict | None,
+             candidate_issues: list[dict]) -> dict:
+    """Do not upgrade unverified operator metadata into provenance or authority."""
+    return {
+        "classification": "OFFLINE_OPERATOR_DECLARATION_AND_FILE_SCAN",
+        "source_url_claim": metadata["source_url"] if metadata else None,
+        "source_revision_claim": metadata["source_revision"] if metadata else None,
+        "license_claim": metadata["license"] if metadata else None,
+        "task_goals": declaration["task_goals"] if declaration else [],
+        "existing_skill_overlap_claim": declaration["existing_skill_overlap"] if declaration else [],
+        "requested_permissions_claim": declaration["requested_permissions"] if declaration else [],
+        "dependencies_claim": declaration["dependencies"] if declaration else [],
+        "cost_class_claim": declaration["cost_class"] if declaration else "UNKNOWN",
+        "removal_plan_claim": declaration["removal_plan"] if declaration else "UNKNOWN",
+        "context_status": "OPERATOR_DECLARED_NOT_VERIFIED" if declaration else "NOT_PROVIDED",
+        "upstream_revision_verified": False,
+        "license_grant_verified": False,
+        "overlap_and_dependencies_verified": False,
+        "runtime_cost_verified": False,
+        "removal_tested": False,
+        "prompt_injection_absence_proven": False,
+        "publication_gate": "BLOCKED_PENDING_INDEPENDENT_PROVENANCE_AND_OWNER_APPROVAL",
+        "installation": "NOT_AUTHORIZED",
+        "negative_findings": sorted({item["code"] for item in candidate_issues}),
+    }
+
+
+def review(candidate_dir: Path, manifest_file: Path,
+           review_context: Path | None = None) -> dict:
     """Inspect a local candidate only. No network, subprocess or writes."""
     issues: list[dict] = []
     data = _manifest(manifest_file, issues)
+    declared = None
+    if review_context is not None:
+        try:
+            declared = _context(review_context, candidate_dir)
+        except (ValueError, OSError):
+            issues.append(_issue("INVALID_REVIEW_CONTEXT", "BLOCK"))
+        else:
+            if declared["existing_skill_overlap"]:
+                issues.append(_issue("OVERLAP_REQUIRES_REVIEW", "REVIEW"))
+            if set(declared["requested_permissions"]) - {"project_read"}:
+                issues.append(_issue("REQUESTED_PRIVILEGES_REVIEW", "REVIEW"))
+            if declared["cost_class"] == "PAID_API":
+                issues.append(_issue("PAID_API_NOT_ALLOWED", "BLOCK"))
+            elif declared["cost_class"] == "UNKNOWN":
+                issues.append(_issue("COST_UNVERIFIED", "REVIEW"))
+            if declared["removal_plan"] == "UNKNOWN":
+                issues.append(_issue("REMOVAL_PLAN_MISSING", "REVIEW"))
     if candidate_dir.is_symlink() or not candidate_dir.is_dir():
         issues.append(_issue("INVALID_CANDIDATE_DIRECTORY", "BLOCK"))
     actual: dict[str, Path] = {}
@@ -195,6 +288,7 @@ def review(candidate_dir: Path, manifest_file: Path) -> dict:
         "execution": "NOT_RUN",
         "installation": "NOT_AUTHORIZED",
         "provenance_verified": False,
+        "adoption_dossier": _dossier(data, declared, issues),
         "status": "OFFLINE_STATIC_ADVISORY_ONLY",
     }
 
@@ -203,8 +297,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-dir", required=True, type=Path)
     parser.add_argument("--manifest", required=True, type=Path)
+    parser.add_argument("--review-context", type=Path,
+                        help="Optional operator dossier JSON outside candidate (not provenance)")
     args = parser.parse_args(argv)
-    result = review(args.candidate_dir, args.manifest)
+    result = review(args.candidate_dir, args.manifest, args.review_context)
     print(json.dumps(result, indent=2, sort_keys=True))
     return {"ALLOW_FOR_REVIEW": 0, "NEEDS_MANUAL_REVIEW": 1, "REJECT": 2}[result["decision"]]
 
