@@ -33,6 +33,23 @@ class DiagramPilotTests(unittest.TestCase):
         self.assertNotIn("<link ", page)
         self.assertNotIn("fetch(", page)
 
+    def test_mobile_scroll_and_visible_relationship_labels(self):
+        page = render(self.sample())
+        self.assertIn('class="diagram-scroll"', page)
+        self.assertIn('overflow-x:auto', page)
+        self.assertIn('tabindex="0"', page)
+        self.assertIn("width:1070px", page)
+        self.assertIn(">Запрос</text>", page)
+        self.assertIn(">Задача</text>", page)
+        self.assertIn(">Получение</text>", page)
+
+    def test_no_overlapping_duplicate_relations(self):
+        case = self.sample()
+        duplicate = dict(case["edges"][0], label="Another label")
+        case["edges"].append(duplicate)
+        with self.assertRaisesRegex(ValueError, "duplicate edge"):
+            render(case)
+
     def test_html_and_attributes_escaped(self):
         sample = self.sample()
         sample["title"] = "<script>alert('x')</script>"
