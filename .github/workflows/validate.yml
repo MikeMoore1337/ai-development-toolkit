@@ -42,6 +42,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Dependencies
         run: python -m pip install -r requirements-dev.txt
+      - name: Verify public Markdown is free from owner project names
+        run: python scripts/validate_public_docs_neutrality.py
       - name: Ruff Python correctness checks (pinned, Ubuntu only)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         shell: bash
@@ -100,8 +102,6 @@ jobs:
         run: python scripts/validate_tool_integrations.py
       - name: Validate links profiles and exclusive workflows (offline)
         run: python scripts/validate_quality.py
-      - name: Verify public Markdown is free from owner project names
-        run: python scripts/validate_public_docs_neutrality.py
       - name: Check skill selection descriptions with offline lexical fixtures
         run: python scripts/skill_routing_eval.py --strict
       - name: Report untuned holdout routing baseline (diagnostic, not a release gate)
