@@ -31,8 +31,8 @@ The optional `scripts/validate_qa_orchestration.py fixtures/qa_orchestra_valid.j
 
 ## Project adapters
 
-- **YFC:** use existing `qa-engineer` router and `qa-verifier`, protect frontend/TMA/API/database contracts, visual package and owner gates; GitHub Actions owns deployment.
-- **Hermes:** development-only QA of Ops Watch, Control Center and Research Scout; never turn QA roles into resident agent capabilities. Keep model budget and service activation gates.
-- **Second Brain:** review against Stage 19/20 explicit action authority and vault privacy; do not write vault or activate background agents. Existing Night Shift policy retains its own permission gates.
+- **Cross-layer product UI:** reuse existing QA roles; verify frontend/API/database contracts, accessible visual states, and the project's own release gates.
+- **Agent runtime and operations:** use development-only QA; never escalate QA roles into resident runtime permissions or waive model-budget and service activation gates.
+- **Privacy-sensitive workflow:** verify explicit action approval and local-data boundaries; do not access private storage or activate unattended background operations without separate authorization.
 
 No extra dependencies, paid API, unsolicited report files or unattended execution are required.
