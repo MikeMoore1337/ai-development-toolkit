@@ -26,7 +26,7 @@ python scripts/ux_ui_evals.py --packet review.json --asset-root /approved/local/
 
 Ручные критерии: `product-fit`, `task-hierarchy`, `compositional-originality`, `cross-domain-swap`, `mobile-desktop`, `states`, `accessibility`, `motion`, `design-authority`. Для каждого предусмотрены `NOT_REVIEWED`, `ACCEPT` или `REVISE`. Решение требует содержательного объяснения; реальную личность рецензента, работу клавиатуры и взаимодействий, фокус, уменьшение движения и согласие владельца программа самостоятельно не подтверждает.
 
-Результат может быть `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION` или `AWAITING_HUMAN_VISUAL_REVIEW`. Скрипт **никогда не выдаёт автоматический `OWNER_ACCEPTED`** и не даёт права изменять YFC, Hermes Control Center, Second Brain и другие продукты. Настоящее качество изображения остаётся `NOT_VERIFIED`.
+Результат может быть `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION` или `AWAITING_HUMAN_VISUAL_REVIEW`. Скрипт **никогда не выдаёт автоматический `OWNER_ACCEPTED`** и не даёт права изменять какой-либо продукт без отдельного согласования с его владельцем. Настоящее качество изображения остаётся `NOT_VERIFIED`.
 
 ## Процедура реальной проверки
 
