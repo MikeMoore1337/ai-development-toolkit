@@ -112,5 +112,35 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check()
 
 
+    def test_human_install_guides_separate_preview_and_apply(self):
+        """A newcomer must not copy preview and write operations together."""
+        import re
+
+        for path in ("docs/INSTALLATION.md", "docs/ru/INSTALLATION.md"):
+            with self.subTest(path=path):
+                body = (ROOT / path).read_text(encoding="utf-8")
+                blocks = [match.group(2) for match in re.finditer(
+                    r"(?m)^(```|~~~)(?:bash|powershell)\n([\s\S]*?)\n\1[ \t]*$",
+                    body,
+                )]
+                self.assertGreaterEqual(len(blocks), 7)
+                operations = ("adt.py init", "skill_manager.py install",
+                              "skill_manager.py migrate", "skill_manager.py update",
+                              "skill_manager.py uninstall", "skill_manager.py recover",
+                              "skill_manager.py rollback")
+                for block in blocks:
+                    commands = [line for line in block.splitlines()
+                                if any(op in line for op in operations)
+                                and not line.lstrip().startswith("#")]
+                    has_preview = any("--apply" not in line for line in commands)
+                    has_apply = any("--apply" in line for line in commands)
+                    self.assertFalse(has_preview and has_apply, path)
+
+    def test_russian_docs_index_starts_with_user_goals(self):
+        text = (ROOT / "docs/ru/README.md").read_text(encoding="utf-8")
+        self.assertLess(text.index("## С чего начать"), text.index("## Подключение Toolkit MCP"))
+        self.assertLess(text.index("## С чего начать"), text.index("## Установка по платформам"))
+        self.assertIn("BEGINNER_START.md", text)
+
 if __name__ == "__main__":
     unittest.main()
