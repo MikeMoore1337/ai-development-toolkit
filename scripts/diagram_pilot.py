@@ -78,14 +78,40 @@ def render(spec: dict) -> str:
     nodes, edges = spec["nodes"], spec["edges"]
     counts = Counter(n["column"] for n in nodes)
     columns = max(counts) + 1
-    width = max(360, 90 + columns * 245)
+    width = max(360, 90 + columns * 300)
     height = max(230, 142 + max(counts.values()) * 112)
     positions: dict[str, tuple[int, int]] = {}
     per_column: Counter = Counter()
     for node in nodes:
         col = node["column"]
-        positions[node["id"]] = (50 + col * 245, 65 + per_column[col] * 112)
+        positions[node["id"]] = (50 + col * 300, 65 + per_column[col] * 112)
         per_column[col] += 1
+
+    def node_lines(label: str) -> list[str]:
+        words = label.split()
+        lines: list[str] = []
+        current = ""
+        for word in words:
+            while len(word) > 20:
+                if current:
+                    lines.append(current)
+                    current = ""
+                lines.append(word[:20])
+                word = word[20:]
+            if word:
+                proposed = (current + " " + word).strip()
+                if len(proposed) > 20:
+                    if current:
+                        lines.append(current)
+                    current = word
+                else:
+                    current = proposed
+        if current:
+            lines.append(current)
+        if len(lines) > 3:
+            lines = lines[:3]
+            lines[-1] = lines[-1][:17] + "..."
+        return lines
 
     shapes: list[str] = []
     for edge in edges:
@@ -104,11 +130,20 @@ def render(spec: dict) -> str:
     for node in nodes:
         x, y = positions[node["id"]]
         label = escape(node["label"], quote=True)
-        shapes.append(f'<g><rect x="{x}" y="{y}" width="180" height="74" rx="8" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/>'
-                      f'<text x="{x + 90}" y="{y + 44}" text-anchor="middle" fill="#0f172a" font-size="14">{label}</text></g>')
+        lines = node_lines(node["label"])
+        first_y = y + 38 - (len(lines) - 1) * 10
+        spans = "".join(
+            f'<tspan x="{x + 90}" y="{first_y + n * 20}">{escape(line, quote=True)}</tspan>'
+            for n, line in enumerate(lines)
+        )
+        shapes.append(f'<g><title>{label}</title>'
+                      f'<rect x="{x}" y="{y}" width="180" height="74" rx="8" '
+                      f'fill="#f8fafc" stroke="#334155" stroke-width="1.5"/>'
+                      f'<text text-anchor="middle" fill="#0f172a" font-size="14">{spans}</text></g>')
     references = []
     for n in nodes:
-        references.append(f'<li>Узел <code>{escape(n["id"], quote=True)}</code>: {escape(n["evidence"], quote=True)}</li>')
+        references.append(f'<li>Узел <code>{escape(n["id"], quote=True)}</code> '
+                          f'({escape(n["label"], quote=True)}): {escape(n["evidence"], quote=True)}</li>')
     for e in edges:
         references.append(f'<li>Связь <code>{escape(e["from"], quote=True)} → {escape(e["to"], quote=True)}</code>: '
                           f'{escape(e["label"], quote=True)} - {escape(e["evidence"], quote=True)}</li>')
