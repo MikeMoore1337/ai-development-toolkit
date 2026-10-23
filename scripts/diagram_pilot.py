@@ -114,6 +114,7 @@ def render(spec: dict) -> str:
         return lines
 
     shapes: list[str] = []
+    captions: list[str] = []
     for edge in edges:
         x1, y1 = positions[edge["from"]]
         x2, y2 = positions[edge["to"]]
@@ -124,9 +125,11 @@ def render(spec: dict) -> str:
         full_caption = escape(edge["label"], quote=True)
         lx, ly = (a + c) // 2, (b + d) // 2 - 10
         shapes.append(f'<path d="{path}" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>')
-        shapes.append(f'<g><title>{full_caption}</title>'
+        captions.append(f'<g><title>{full_caption}</title>'
                       f'<rect x="{lx - 54}" y="{ly - 16}" width="108" height="21" rx="4" fill="white" stroke="#cbd5e1"/>'
                       f'<text x="{lx}" y="{ly}" fill="#334155" font-size="12" text-anchor="middle">{caption}</text></g>')
+    # Draw captions after all paths so crossing edges cannot cover their text.
+    shapes.extend(captions)
     for node in nodes:
         x, y = positions[node["id"]]
         label = escape(node["label"], quote=True)

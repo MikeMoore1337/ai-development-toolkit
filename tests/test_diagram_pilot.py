@@ -51,6 +51,25 @@ class DiagramPilotTests(unittest.TestCase):
         self.assertIn("<title>Продолжительное название компонента архитектуры проекта</title>", page)
         self.assertIn("(Продолжительное название компонента архитектуры проекта):", page)
 
+    def test_crossing_paths_cannot_paint_over_captions(self):
+        case = self.sample()
+        case["nodes"].append({
+            "id": "extra", "label": "Дополнительный обработчик",
+            "column": 2, "evidence": "Synthetic test case",
+        })
+        case["edges"].append({
+            "from": "api", "to": "extra",
+            "label": "Дополнительная связь", "evidence": "Synthetic test case",
+        })
+        page = render(case)
+        # The SVG renderer must paint every curve before any edge caption.
+        svg = page.split("<svg ", 1)[1].split("</svg>", 1)[0]
+        last_curve = svg.rfind('<path d="M ')
+        first_caption = svg.find("<g><title>", last_curve)
+        self.assertGreater(last_curve, 0)
+        self.assertGreater(first_caption, last_curve)
+        self.assertNotIn('<path d="M ', svg[first_caption:])
+
     def test_no_overlapping_duplicate_relations(self):
         case = self.sample()
         duplicate = dict(case["edges"][0], label="Another label")
