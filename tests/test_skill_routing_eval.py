@@ -275,10 +275,10 @@ class SkillRoutingTests(unittest.TestCase):
 
     def test_negated_gerund_only_abstains_and_uncertainty_is_not_negation(self):
         catalog = {"api-testing": "Test HTTP API status and errors."}
-        negative = routing.recommend("We are not testing HTTP APIs.", catalog, {}, {})
+        negative = routing.recommend("We are not testing HTTP APIs.", catalog, {}, {}, top_k=1)
         self.assertEqual("NO_POSITIVE_INTENT", negative["status"])
         self.assertEqual([], negative["segments"])
-        uncertain = routing.recommend("We are not sure if the API works.", catalog, {}, {})
+        uncertain = routing.recommend("We are not sure if the API works.", catalog, {}, {}, top_k=1)
         self.assertNotEqual("NO_POSITIVE_INTENT", uncertain["status"])
         self.assertFalse(uncertain["installs_or_executes"])
 
