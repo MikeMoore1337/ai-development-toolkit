@@ -92,7 +92,7 @@ CI prints this baseline separately from the original strict curated-fixture gate
 
 The read-only `--recommend` mode no longer presents alphabetically sorted zero-evidence skill names as suggestions. If no ranked candidate has any verifiable name, description or curated-alias support, `candidates` is empty and the status is `INSUFFICIENT_EVIDENCE`. The evaluator does **not** silently infer a skill or assign a confidence score.
 
-Simple explicit negative prefixes (e.g. `Skip database migration planning; ...` or `Не нужен SEO-аудит: ...`) are separated from actionable instructions. The output lists `excluded_negated_clauses`; a purely negative request returns `NO_POSITIVE_INTENT`. This conservative pattern is **not** a complete natural-language negation parser. The prior untuned holdout remains unchanged so regressions are measurable.
+Simple explicit negative prefixes (e.g. `Skip database migration planning; ...`, `We're not redesigning the UI; ...`, `No need to ...`, or `Не хочу SEO-аудит: ...`) are separated from actionable instructions. The output lists `excluded_negated_clauses`; a purely negative request returns `NO_POSITIVE_INTENT`. This conservative pattern is **not** a complete natural-language negation parser: it only recognizes explicit leading requests not to perform a task (including bounded English present-continuous phrases and a few RU forms). A sentence expressing uncertainty such as `We are not sure...` is not treated as a task prohibition. The prior untuned holdout remains unchanged so regressions are measurable.
 
 ### Evidence-supported selection vs raw lexical top-k
 
