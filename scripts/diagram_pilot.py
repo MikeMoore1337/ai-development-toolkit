@@ -158,7 +158,7 @@ def render(spec: dict) -> str:
 <title>{title}</title><style>
 :root {{color-scheme:light;--accent:{accent}}}
 body {{font-family:system-ui,sans-serif;color:#0f172a;background:#fff;margin:clamp(0.5rem,3vw,2rem);line-height:1.5}}
-main {{max-width:1100px;margin:auto}} h1 {{border-left:4px solid var(--accent);padding-left:1rem}}
+main {{max-width:1400px;margin:auto}} h1 {{border-left:4px solid var(--accent);padding-left:1rem}}
 .diagram-scroll {{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;border:1px solid #cbd5e1;border-radius:8px}}
 .diagram-scroll:focus-visible {{outline:3px solid var(--accent);outline-offset:3px}}
 svg {{display:block;width:{width}px;height:auto;max-width:none}}
