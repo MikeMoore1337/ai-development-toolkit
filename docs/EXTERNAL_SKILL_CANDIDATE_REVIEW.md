@@ -2,7 +2,7 @@
 
 [Русская версия](ru/EXTERNAL_SKILL_CANDIDATE_REVIEW.md) | [Local skill coverage](SKILL_COVERAGE.md) | [Static Security Gate](EXTERNAL_SKILL_GATE.md)
 
-This is **not** a marketplace, online search, Skill Manager importer, trust certification or installation path. The command `scripts/skill_candidate_review.py` combines the existing Toolkit-local lexical coverage result with the existing external Skill Security Gate. A candidate must already be provided locally by an authorized operator. No network request, LLM, package manager, shell script or project mutation is made.
+This is **not** a marketplace, Skill Manager importer, trust certification or installation path. The offline CLI described below does not perform online search; a separately consented pinned metadata discovery route exists in personal MCP (#199). The command `scripts/skill_candidate_review.py` combines the existing Toolkit-local lexical coverage result with the existing external Skill Security Gate. A candidate must already be provided locally by an authorized operator. No network request, LLM, package manager, shell script or project mutation is made.
 
 Default read-only task check (no opt-in, never inspects any external directory):
 
@@ -26,7 +26,7 @@ The local result can be `FOUND_LOCAL` (readable exact skill name), `AMBIGUOUS` (
 
 ## Security and acceptance
 
-There is **no online discovery** yet. This is an offline bridge for a human-presented allowlisted candidate, not an automated candidate source search. No direct import into Skill Manager; no auto-install or auto-update. Untrusted SKILL.md content is read as data for static patterns only. Static checks cannot prove safety, authorship or licensing. Do not use this command to inspect production secret directories. Recheck upstream sources in an approved separate procedure and use existing Skill Manager preview / explicit human apply after a security review.
+The offline wrapper itself performs **no online discovery**. The separate, explicitly consented personal MCP metadata search does not download Skill contents. This is an offline bridge for a human-presented allowlisted candidate, not an automated candidate source search. No direct import into Skill Manager; no auto-install or auto-update. Untrusted SKILL.md content is read as data for static patterns only. Static checks cannot prove safety, authorship or licensing. Do not use this command to inspect production secret directories. Recheck upstream sources in an approved separate procedure and use the read-only external candidate preview described below. The preview does **not** authorize an external apply; the existing install/apply path only accepts Toolkit-owned catalog skills.
 
 ```bash
 python -m unittest tests.test_skill_candidate_review -v
@@ -34,4 +34,39 @@ python scripts/validate_pack.py
 python scripts/verify_checksums.py
 ```
 
-Source tests are not live Codex or ChatGPT plugin verification. Further work: an explicit, audited network discovery provider (if separately authorized), provenance attestations and cross-platform client validation under #190.
+Source tests are not live Codex or ChatGPT plugin verification. Remaining work: independent provenance attestations, manual source/rights review, and live installed-client validation under #190. A source-only opt-in pinned metadata discovery exists in personal MCP v0.1.10.
+
+
+## External candidate preview in the existing Skill Manager (#199)
+
+An operator can examine a **separately provided, pinned, fully inventoried**
+candidate on an **existing disposable target directory**, after using the
+Security Gate. The candidate and its manifest must live outside both the target
+project and each other. This action does not import the candidate into Toolkit.
+
+```bash
+python3.12 scripts/skill_manager.py external-preview \
+  --target /isolated/existing-target \
+  --candidate-dir /isolated/external-skill \
+  --manifest /isolated/review-manifest.json
+```
+
+The command reuses the offline Security Gate and Skill Manager's bounded file
+diff/ownership checks. Output lists file paths, added/changed/deleted status,
+and SHA-256 digests, **never file contents**. Its outcomes are
+`CANDIDATE_ONLY`, `NEEDS_MANUAL_REVIEW`, or a `REFUSED_*` code for invalid
+metadata, unmanaged destination collision, or modified managed state.
+`--apply`, `--skills`, `--profile` and `--from-layout` are forbidden for
+this action. A rejected preview exits 2. Even `CANDIDATE_ONLY` means only
+*eligible for additional human review*, not authorization to install.
+
+Operator-declared license, GitHub URL, pinned commit and hashes are **not**
+independently verified provenance. The static gate cannot establish safety.
+No network, subprocesses, Codex, plugins, auto-install or project writes occur.
+Any future external import would need a separate explicitly approved design,
+implementation and acceptance; do not pass an external candidate through the
+existing Toolkit-owned `install --apply` operation.
+
+```bash
+python3.12 -m unittest tests.test_external_skill_preview -v
+```

@@ -10126,6 +10126,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Anonymous pinned GitHub metadata-only opt-in smoke using real MCP stdio; no external Skill download, install or code execution; Codex client not verified."
+    },
+    {
+      "id": "test-tests-test-external-skill-preview-py",
+      "path": "tests/test_external_skill_preview.py",
+      "name": "test_external_skill_preview.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Owner-reported original; independent rights verification not performed",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
+      "last_reviewed": "2026-10-23",
+      "distribution": "included",
+      "notes": "Synthetic offline external candidate preview and read-only negative gates. No foreign skill install or client proof."
     }
   ],
   "owner_review_record": {
