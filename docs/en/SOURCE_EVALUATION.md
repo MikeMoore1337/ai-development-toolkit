@@ -27,7 +27,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 | [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Animation and design critique | Use motion-quality; portions of originals were already in the source archive |
 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | Frontend audit and styling commands | Original archive already contained a skill and EXE; avoid duplicates and the binary |
 | [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | Screenshot-to-UI application | Screenshot-fidelity process only; the application needs API keys |
-| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Standalone agent runtime and skills | Architectural reference for Hermes, not the same project or a drop-in update |
+| [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Standalone agent runtime and skills | Third-party agent-runtime architecture reference; not a drop-in replacement for an existing system |
 | [mnfst/awesome-free-llm-apis](https://github.com/mnfst/awesome-free-llm-apis) | P2 | Community listing of LLM free tiers | Verify official quotas and terms each time with provider-reality-check |
 | [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | P2 | LLM free-tier router | External runtime candidate; free-quota claims are unverified |
 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | P2 | Complete agent harness | Alternative product architecture only; 1.x rework is not a drop-in replacement |
