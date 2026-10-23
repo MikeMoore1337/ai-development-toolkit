@@ -23,6 +23,24 @@ def canonical_digest(catalog: dict[str, str]) -> str:
     return hashlib.sha256(serialized).hexdigest()
 
 
+def catalog_for_reviewer(root: Path) -> dict:
+    """Show the skill choices without holdout labels or router predictions."""
+    catalog = read_catalog(root)
+    return {
+        "schema_version": SCHEMA,
+        "purpose": "blinded_review_skill_catalog",
+        "catalog_sha256": canonical_digest(catalog),
+        "source": "declared_SKILL.md_frontmatter_name_and_description_only",
+        "skill_count": len(catalog),
+        "skills": [
+            {"name": name, "description": description}
+            for name, description in sorted(catalog.items())
+        ],
+        "reviewer_independence": "NOT_VERIFIED",
+        "client_effectiveness": "NOT_TESTED",
+    }
+
+
 def prepare(root: Path, holdout_file: Path) -> dict:
     """Suppress original labels and model predictions to reduce reviewer anchoring."""
     catalog = read_catalog(root)
@@ -135,7 +153,7 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("prepare", "audit"))
+    parser.add_argument("action", choices=("prepare", "catalog", "audit"))
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--holdout", type=Path,
                         default=ROOT / "fixtures/skill_routing_holdout.json")
@@ -145,11 +163,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.action == "audit" and args.packet is None:
             raise RoutingInputError("Audit requires --packet")
-        if args.action == "prepare" and args.packet is not None:
-            raise RoutingInputError("Prepare does not accept --packet")
-        result = prepare(args.root.resolve(), args.holdout) if args.action == "prepare" else audit(
-            args.root.resolve(), args.holdout,
-            json.loads(args.packet.read_text(encoding="utf-8")))
+        if args.action in {"prepare", "catalog"} and args.packet is not None:
+            raise RoutingInputError("Review preparation does not accept --packet")
+        if args.action == "prepare":
+            result = prepare(args.root.resolve(), args.holdout)
+        elif args.action == "catalog":
+            result = catalog_for_reviewer(args.root.resolve())
+        else:
+            result = audit(args.root.resolve(), args.holdout,
+                           json.loads(args.packet.read_text(encoding="utf-8")))
         output = json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
         if args.output:
             with args.output.open("x", encoding="utf-8") as handle:
