@@ -38,10 +38,18 @@ class DiagramPilotTests(unittest.TestCase):
         self.assertIn('class="diagram-scroll"', page)
         self.assertIn('overflow-x:auto', page)
         self.assertIn('tabindex="0"', page)
-        self.assertIn("width:1070px", page)
+        self.assertIn("width:1290px", page)
         self.assertIn(">Запрос</text>", page)
         self.assertIn(">Задача</text>", page)
         self.assertIn(">Получение</text>", page)
+
+    def test_long_node_label_keeps_full_accessible_name(self):
+        case = self.sample()
+        case["nodes"][1]["label"] = "Продолжительное название компонента архитектуры проекта"
+        page = render(case)
+        self.assertIn("<tspan", page)
+        self.assertIn("<title>Продолжительное название компонента архитектуры проекта</title>", page)
+        self.assertIn("(Продолжительное название компонента архитектуры проекта):", page)
 
     def test_no_overlapping_duplicate_relations(self):
         case = self.sample()
