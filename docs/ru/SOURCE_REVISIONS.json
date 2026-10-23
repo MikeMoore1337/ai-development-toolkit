@@ -100,7 +100,7 @@
     {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "3c27c4c360591380727c2b719d80a467fe554ddfb1ba0b46302eb1c729f8353e"
+      "source_sha256": "849a60fdb9906cb3bdc0c3bb8a638f4e205ca28e9e4ac0aef4fbcb99b1338958"
     },
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
@@ -341,6 +341,11 @@
       "source": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "translation": "docs/ru/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "source_sha256": "58a55ace57ec4dcd02b67f126920bca1f20b59d3253d7507ffdd1838804bc894"
+    },
+    {
+      "source": "docs/GLOSSARY.md",
+      "translation": "docs/ru/GLOSSARY.md",
+      "source_sha256": "fc49a959b924886728a2474257c1b74f26f76663ef847c5499d542bf7af68a34"
     }
   ]
 }
