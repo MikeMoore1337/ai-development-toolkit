@@ -207,3 +207,16 @@ py -3 "$HOME\Downloads\ADT-Personal-0.1.6\adt-personal\pilot\run_pilot.py" verif
 ### Live smoke-test MCP без установки Codex
 
 Отдельный бесплатный GitHub Actions workflow `.github/workflows/personal-mcp-optin-discovery-smoke.yml` запускает исходный MCP-сервер как stdio subprocess на Ubuntu, делает вызов без согласия (`NO_NETWORK`), а затем вызов с явным opt-in и закреплённым публичным коммитом. Ожидает `MCP_OPTIN_PUBLIC_DISCOVERY_SMOKE=PASS` и `THIRD_PARTY_INSTALL=NOT_AUTHORIZED`; даже PASS подтверждает лишь реальный MCP JSON-RPC + публичный API на CI-runner, **не** установленный Codex пользователя. До успешного exact-head CI результат обозначается `NOT_VERIFIED`.
+
+## Исправление установщика для исходной версии MCP 0.1.10 (#190)
+
+`adt_mcp.py` теперь импортирует соседний `adt_discovery.py`.
+Старый установщик одного файла непригоден для этой версии. Исправленные
+установщики переносят **оба модуля**, сохраняют резервные копии, проверяют
+реальную точку запуска из пользовательского каталога и восстанавливают
+предыдущее состояние при сбое. Автоматический updater исходников навыков
+не обновляет MCP и не заменяет этот отдельный шаг.
+
+Это проверка установочных **исходников**: до выпуска пакета, проверки
+на реальном Windows/macOS и вызова из установленного Codex статусы
+`MCP_INSTALLED=NOT_VERIFIED` и `CODEX_CLIENT=NOT_VERIFIED`.
