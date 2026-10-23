@@ -32,3 +32,9 @@ The input JSON has `version: 1`, a `title`, nodes with `id`, `label`, `column` (
 For Issue #265 compare 2-3 real source-grounded diagrams against existing Mermaid, check missing/incorrect nodes and links, keyboard readability, responsive behavior and contrast. Only promote to an opt-in Toolkit capability if it adds measurable value over Mermaid without unnecessary maintenance.
 
 Source inspiration: [Diagram Design](https://github.com/cathrynlavery/diagram-design), publicly MIT licensed. Its third-party executables, skills and playbooks are **not included**.
+
+## Mobile follow-up
+
+The exported HTML now puts the full-size SVG inside a keyboard-focusable horizontal-scroll region so labels stay legible at 390 px, rather than scaling the full graph down to 6 px text. Relation captions are placed by the arrows; labels over 14 characters show an abbreviated visible caption with the original in SVG title and the evidence list. The strict pilot rejects multiple relations between the same pair of nodes (to avoid caption collision).
+
+Rendering and interactive scroll behavior still require an actual browser review; static tests do not prove contrast/UX quality. Test long node labels and diagonal edges before production adoption.
