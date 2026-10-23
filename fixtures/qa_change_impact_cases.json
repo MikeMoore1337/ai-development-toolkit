@@ -95,7 +95,7 @@
         "docs/architecture/OVERVIEW.md"
       ],
       "required_checks": [
-        "unmapped-impact"
+        "documentation-review"
       ]
     },
     {
