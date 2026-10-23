@@ -22,11 +22,12 @@ SURFACES = {
     "AUTH": ("auth", "oauth", "login", "permission", "policy", "tenant", "jwt",
              "session", "rbac", "acl", "credential"),
     "API": ("api", "openapi", "swagger", "graphql", "endpoint", "router",
-            "contract", "schema", "serializer", "dto"),
+            "contract", "schema", "serializer", "dto", "server", "http",
+            "routes"),
     "DB": ("database", "migrations", "migration", "models", "sql", "alembic",
            "prisma", "db", "persistence", "repository"),
     "UI": ("frontend", "components", "views", "screens", "react", "ui",
-           "widget", "forms", "pages"),
+           "widget", "forms", "pages", "web"),
     "ASYNC": ("worker", "queue", "tasks", "jobs", "events", "consumer",
               "producer", "scheduler", "broker"),
     "PRIVACY": ("security", "secret", "secrets", "pii", "vault", "personal", "gdpr"),
@@ -38,6 +39,8 @@ SURFACES = {
 CHECKS = {
     "change-review": ("Source-focused review of changed behavior and callers", "LOW"),
     "targeted-unit": ("Targeted unit and relevant negative regressions", "LOW"),
+    "documentation-review": ("Documentation, links, instructions and policy consistency", "LOW"),
+    "test-review": ("Review test oracles, fixtures and regressions introduced by changed tests", "LOW"),
     "api-contract": ("Producer/consumer API and schema backward compatibility", "HIGH"),
     "api-negative": ("Invalid request, authorization and response error handling", "HIGH"),
     "db-migration": ("Migration forward/backward, schema and integrity assertions", "CRITICAL"),
@@ -125,6 +128,21 @@ def surface_matches(path: str) -> dict[str, list[str]]:
     if path.startswith(".github/workflows/"):
         matches["CI"] = sorted(set(matches.get("CI", [])) | {"workflows"})
     return matches
+
+
+def is_documentation_path(path: str) -> bool:
+    """Documentation is a separate review surface, not evidence of executable code."""
+    return PurePosixPath(path).suffix.lower() in {".md", ".mdx", ".rst", ".adoc"}
+
+
+def is_test_path(path: str) -> bool:
+    """Narrow test naming conventions; names alone never assert execution."""
+    parts = path.casefold().split("/")
+    name = parts[-1]
+    return (any(part in {"test", "tests", "__tests__", "spec", "specs", "qa"}
+                for part in parts[:-1])
+            or name.startswith(("test_", "spec_"))
+            or any(part in name for part in (".test.", ".spec.", "_test.", "_spec.")))
 
 
 MAPPING_MAX_BYTES = 131072
@@ -222,14 +240,23 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
         if rev != "UNKNOWN" and (not isinstance(rev, str) or not SHA_RE.fullmatch(rev)):
             raise ImpactInputError("Revision must be exact SHA or UNKNOWN")
     mapped: dict[str, list[str]] = {}
-    checks: dict[str, set[str]] = {"change-review": set(paths),
-                                    "targeted-unit": set(paths)}
+    checks: dict[str, set[str]] = {"change-review": set(paths)}
+    executable = {path for path in paths if not is_documentation_path(path)}
+    if executable:
+        checks["targeted-unit"] = executable
     unknown = []
     surfaces: dict[str, set[str]] = {}
     for path in paths:
+        if is_documentation_path(path):
+            checks.setdefault("documentation-review", set()).add(path)
+            continue
+        test_path = is_test_path(path)
+        if test_path:
+            checks.setdefault("test-review", set()).add(path)
         evidence = surface_matches(path)
         if not evidence:
-            unknown.append(path)
+            if not test_path:
+                unknown.append(path)
             continue
         mapped[path] = sorted(evidence)
         for surface in evidence:
@@ -288,6 +315,9 @@ def add_content_evidence(report: dict, inspection: dict,
     enriched["diff_content"] = inspection
     by_id = {item["id"]: dict(item) for item in report["recommendations"]}
     for path, data in inspection["files"].items():
+        if is_documentation_path(path):
+            # Documentation prose may mention auth/API tokens without modifying runtime.
+            continue
         if data["binary_or_unparsed"]:
             cid = "unmapped-impact"
             if cid not in by_id:
