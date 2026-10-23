@@ -95,6 +95,28 @@ class HoldoutAdjudicationTests(unittest.TestCase):
         self.assertEqual(36, report["pending"])
         self.assertFalse(report["ready_for_independent_accuracy_claim"])
 
+    def test_pending_and_challenged_ids_are_visible_without_labels(self):
+        packet = copy.deepcopy(self.template)
+        # A declared challenge gives rationale, not replacement expected labels.
+        row = packet["cases"][3]
+        row.update({
+            "decision": "CHALLENGE",
+            "reviewer_id": "self-declared-reviewer",
+            "rationale": "Several distinct security roles could reasonably apply.",
+        })
+        report = review.audit(ROOT, HOLDOUT, packet)
+        self.assertEqual(37, report["pending"])
+        self.assertEqual(1, report["challenged"])
+        self.assertEqual(["h04"], report["challenged_case_ids"])
+        self.assertEqual([item["id"] for item in packet["cases"] if item["id"] != "h04"],
+                         report["pending_case_ids"])
+        self.assertFalse(report["ready_for_independent_accuracy_claim"])
+        self.assertNotIn("reference_targets", str(report["challenged_case_ids"]))
+        self.assertNotIn("proposed_targets", str(report["pending_case_ids"]))
+        # Review progress IDs must remain deterministic and never include gold labels.
+        self.assertEqual(report["pending_case_ids"],
+                         review.audit(ROOT, HOLDOUT, packet)["pending_case_ids"])
+
     def test_negative_review_requires_explicit_avoided_skill(self):
         packet = copy.deepcopy(self.template)
         row = next(item for item in packet["cases"] if item["kind"] == "negative")

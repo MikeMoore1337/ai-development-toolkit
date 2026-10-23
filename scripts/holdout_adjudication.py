@@ -79,6 +79,10 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
     counts = {"pending": 0, "accepted": 0, "challenged": 0,
               "agreement": 0, "disagreement": 0}
     disagreements = []
+    # IDs make an incomplete or disputed packet actionable without exposing
+    # frozen reference labels or changing the independently reviewed input.
+    pending_case_ids = []
+    challenged_case_ids = []
     for row, original, blank in zip(cases, reference, template["cases"]):
         if (not isinstance(row, dict) or set(row) != REVIEW_KEYS
                 or any(row.get(k) != blank[k] for k in ("id", "kind", "query"))):
@@ -107,6 +111,7 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
                     or row["rationale"].strip()):
                 raise RoutingInputError("Pending decision cannot contain reviewer evidence")
             counts["pending"] += 1
+            pending_case_ids.append(original["id"])
             continue
         if (not row["reviewer_id"].strip() or len(row["rationale"].strip()) < 12):
             raise RoutingInputError("Reviewed decision requires reviewer and rationale")
@@ -114,6 +119,7 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
             if proposed or forbidden:
                 raise RoutingInputError("Challenged reference cannot contain approved labels")
             counts["challenged"] += 1
+            challenged_case_ids.append(original["id"])
             continue
         if not proposed or (original["kind"] == "negative" and not forbidden):
             raise RoutingInputError("Accepted review requires independent target labels")
@@ -147,6 +153,8 @@ def audit(root: Path, holdout_file: Path, packet: dict) -> dict:
         "status": "REVIEW_INCOMPLETE" if counts["pending"] else "DECLARATIONS_COMPLETE_UNVERIFIED",
         "cases": len(cases),
         **counts,
+        "pending_case_ids": pending_case_ids,
+        "challenged_case_ids": challenged_case_ids,
         "disagreements": disagreements,
     }
 
