@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fail when public Markdown documentation names private/owner-specific projects.
+"""Fail when public Markdown names the owner\'s unrelated projects.
 
-Repository identity and third-party upstream package names are not restricted.
+Repository identity, the upstream Hermes Agent client, and third-party package names are not restricted.
 This check reads local Markdown only; it does not call APIs or alter files.
 """
 from __future__ import annotations
@@ -17,7 +17,10 @@ PROJECT_NAMES = re.compile(
     r"(?i)(?<![A-Za-z0-9])(?:"
     r"your[-_ ]fitness[-_ ]coach|"
     r"YFC|"
-    r"hermes(?:[-_ ](?:agent|control[-_ ]center|brc))?|"
+    r"hermes[-_ ](?:control[-_ ]center|brc)|"
+    r"hermes[-_ ]agent[-_ ]owner|"
+    r"MikeMoore1337/hermes|"
+    r"Ops Watch|Research Scout|"
     r"second[-_ ]brain|second brain|"
     r"mikemoore\\.top"
     r")(?![A-Za-z0-9])"
