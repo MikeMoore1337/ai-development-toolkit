@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "description": "AI-authored, 12 fresh RU/EN release-diagnostic prompts after v5.5.3; labels not independently reviewed. Dataset fixed BEFORE metrics-only code change, not used to tune ranking, aliases, descriptions or manually update gold. Diagnostic, not semantic accuracy.",
+  "cases": [
+    {
+      "id": "fresh-ru-01",
+      "kind": "single",
+      "query": "У меня тест на Python иногда падает в сборке, а после повторного запуска проходит; найди источник нестабильности.",
+      "expected": [
+        "flaky-analysis"
+      ]
+    },
+    {
+      "id": "fresh-ru-02",
+      "kind": "single",
+      "query": "Выдели причинную цепочку из аварийного лога CI и предложи минимальные шаги диагностики.",
+      "expected": [
+        "failure-triage"
+      ]
+    },
+    {
+      "id": "fresh-ru-03",
+      "kind": "single",
+      "query": "Оцени, способен ли MCP-коннектор открыть путь вне рабочей папки после перехода по символической ссылке.",
+      "expected": [
+        "security-boundaries"
+      ]
+    },
+    {
+      "id": "fresh-ru-04",
+      "kind": "single",
+      "query": "После правки общего модуля рассчитай радиус затронутых функций и набор обязательных проверок.",
+      "expected": [
+        "change-impact-analysis"
+      ]
+    },
+    {
+      "id": "fresh-ru-05",
+      "kind": "compound",
+      "query": "Проверь HTTP API ответы и ошибки; отдельно оцени клавиатурную навигацию и управление фокусом.",
+      "expected": [
+        "api-testing",
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "fresh-ru-06",
+      "kind": "negative",
+      "query": "Не нужен SEO аудит; проведи тестирование ответов HTTP API и кодов ошибок.",
+      "expected": [
+        "api-testing"
+      ],
+      "avoid_top1": [
+        "seo-audit"
+      ]
+    },
+    {
+      "id": "fresh-en-07",
+      "kind": "single",
+      "query": "Investigate an increasing SQL transaction wait and review persistence-layer query boundaries.",
+      "expected": [
+        "data-access"
+      ]
+    },
+    {
+      "id": "fresh-en-08",
+      "kind": "single",
+      "query": "Check whether search crawlers can discover canonical pages and metadata across the site.",
+      "expected": [
+        "seo-audit"
+      ]
+    },
+    {
+      "id": "fresh-en-09",
+      "kind": "single",
+      "query": "Review an untrusted plugin's install hooks and source provenance before use.",
+      "expected": [
+        "external-skill-review"
+      ]
+    },
+    {
+      "id": "fresh-en-10",
+      "kind": "single",
+      "query": "Inspect dropped animation frames and interaction jank on a midrange phone.",
+      "expected": [
+        "motion-quality"
+      ]
+    },
+    {
+      "id": "fresh-en-11",
+      "kind": "compound",
+      "query": "Check backward compatibility of HTTP response fields; separately design tests for forbidden user API access.",
+      "expected": [
+        "contract-testing",
+        "security-testing"
+      ]
+    },
+    {
+      "id": "fresh-en-12",
+      "kind": "negative",
+      "query": "Skip SEO auditing; check API response status codes and error contracts.",
+      "expected": [
+        "api-testing"
+      ],
+      "avoid_top1": [
+        "seo-audit"
+      ]
+    }
+  ]
+}

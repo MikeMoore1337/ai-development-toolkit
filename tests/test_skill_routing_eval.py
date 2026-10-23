@@ -384,6 +384,60 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertIn("code-review", tail)
         self.assertEqual([], report["excluded_negated_clauses"])
 
+    def test_selection_roles_are_stable_and_do_not_claim_activation(self):
+        catalog = {
+            "seo-audit": "Audit SEO indexing and crawlability.",
+            "seo-check": "Check SEO indexing and metadata.",
+            "api-testing": "Test HTTP API responses and status codes.",
+        }
+        report = routing.recommend(
+            "Audit SEO indexing and metadata",
+            catalog, {}, {}, top_k=3,
+        )
+        roles = [candidate["selection_role"]
+                 for candidate in report["segments"][0]["candidates"]]
+        self.assertEqual(["PRIMARY", "AUXILIARY"], roles)
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual("NOT_CALIBRATED", report["confidence"])
+
+    def test_diagnostic_roles_and_manual_label_proxies(self):
+        catalog = {
+            "seo-audit": "Audit SEO indexing and crawlability.",
+            "seo-check": "Check SEO indexing and metadata.",
+            "api-testing": "Test HTTP API responses and status codes.",
+            "database-validation": "Validate database schema constraints.",
+        }
+        cases = [
+            {"id": "hit-primary", "kind": "single",
+             "query": "Audit SEO indexing", "expected": ["seo-audit"]},
+            {"id": "hit-auxiliary", "kind": "single",
+             "query": "Audit SEO indexing", "expected": ["seo-check"]},
+            {"id": "miss", "kind": "single",
+             "query": "Audit SEO indexing", "expected": ["database-validation"]},
+            {"id": "abstain", "kind": "single",
+             "query": "nomatchzzzzzzz", "expected": ["api-testing"]},
+            {"id": "forbidden", "kind": "negative",
+             "query": "Audit SEO indexing", "expected": ["seo-check"],
+             "avoid_top1": ["seo-audit"]},
+        ]
+        report = routing.evaluate_holdout(catalog, {}, {}, cases, top_k=3)
+        observed = {row["id"]: row for row in report["observations"]}
+        self.assertTrue(observed["hit-primary"]["primary_gold_match"])
+        self.assertTrue(observed["hit-auxiliary"]["auxiliary_only_gold_match"])
+        self.assertFalse(observed["hit-auxiliary"]["primary_gold_match"])
+        self.assertTrue(observed["miss"]["non_gold_primary_choices"])
+        self.assertTrue(observed["forbidden"]["forbidden_supported_primary"])
+        self.assertTrue(observed["abstain"]["abstained"])
+        stats = report["label_diagnostics"]
+        self.assertEqual(5, sum(stats[key] for key in (
+            "primary_gold_match_cases", "auxiliary_only_gold_match_cases",
+            "no_gold_match_cases"
+        )))
+        self.assertEqual(1, stats["forbidden_supported_primary_cases"])
+        self.assertEqual(2, stats["no_gold_match_cases"])
+        self.assertEqual(5, report["count"])
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
+
     def test_recommend_negative_only_abstains(self):
         catalog = {"database-migrations": "Plan migration rollback.",
                    "api-testing": "Test API responses."}
