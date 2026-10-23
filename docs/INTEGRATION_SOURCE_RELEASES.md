@@ -31,6 +31,14 @@ ChatGPT plugin version are **three distinct values**.
    leaving the latest Toolkit application release unaffected. Use the
    archived release assets rather than a 14-day Actions artifact.
 
+**Latest-label safety:** GitHub may still select a newly published source
+release as `/releases/latest` even if `--latest=false` was passed. The
+manual workflow now requires a pre-existing stable `vX.Y.Z` Latest,
+restores that exact tag if GitHub changes the pointer, and checks it again.
+If the repository currently shows an integration source tag as Latest, a
+maintainer must first mark the actual Toolkit application release Latest
+using GitHub's release edit UI. Do not move or recreate ZIP assets.
+
 Do not assume the plugin ZIP from the public repository upgrades a
 **separately installed, privately owned ChatGPT plugin**. Confirm the
 installed plugin ID and version with the authorized Plugin Creator metadata;
