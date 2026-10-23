@@ -104,6 +104,14 @@ jobs:
             echo "BLOCKED: tag already exists; never overwrite a published or draft release"
             exit 1
           fi
+          # GitHub can pick the newest release as Latest even with
+          # --latest=false when no stable release is explicitly marked.
+          # Snapshot the pre-existing application Latest before any publish.
+          stable_latest="$(gh api --method GET "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name')"
+          if [[ ! "$stable_latest" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "BLOCKED: existing Latest is not a stable Toolkit vX.Y.Z release"
+            exit 1
+          fi
           gh release create "$tag" "$OUTPUT_DIR"/*.zip \
             "$OUTPUT_DIR/INTEGRATION_SHA256SUMS.txt" \
             "$OUTPUT_DIR/INTEGRATION_EVIDENCE.json" \
@@ -127,4 +135,16 @@ jobs:
           PY
           # Publish only after all downloaded assets match byte-for-byte.
           gh release edit "$tag" --draft=false
+          # The CLI flag is not sufficient on repositories using automatic
+          # Latest selection. Restore the exact previously-observed stable tag.
+          latest_after="$(gh api --method GET "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name')"
+          if [[ "$latest_after" != "$stable_latest" ]]; then
+            gh release edit "$stable_latest" --latest
+          fi
+          latest_final="$(gh api --method GET "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name')"
+          if [[ "$latest_final" != "$stable_latest" ]]; then
+            echo "BLOCKED: Latest stable Toolkit release not preserved"
+            exit 1
+          fi
+          echo "PASS: stable Toolkit Latest preserved: $stable_latest"
           gh release view "$tag" --json tagName,isDraft,url

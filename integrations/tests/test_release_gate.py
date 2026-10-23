@@ -30,6 +30,12 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertIn("integrations/release_gate.py", text)
         self.assertIn("gh release create", text)
         self.assertIn("--latest=false --draft", text)
+        # Regression: GitHub's /releases/latest can change despite --latest=false.
+        self.assertIn('stable_latest="$(gh api --method GET', text)
+        self.assertIn('if [[ ! "$stable_latest" =~ ^v[0-9]+', text)
+        self.assertIn('if [[ "$latest_after" != "$stable_latest" ]]', text)
+        self.assertIn('gh release edit "$stable_latest" --latest', text)
+        self.assertIn('if [[ "$latest_final" != "$stable_latest" ]]', text)
         self.assertIn("gh release download", text)
         self.assertIn("gh release edit", text)
         text = (root / ".github/workflows/release-archive.yml").read_text()
