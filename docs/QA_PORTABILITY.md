@@ -8,4 +8,4 @@ The original `AGENTS.md` and domain-specific link paths were excluded: they refe
 
 The author's statement is recorded for provenance but employer IP terms are not independently verified. No private original archive, usernames, internal issue trackers, personalized licenses or CI secrets are distributed.
 
-Run full tests and evaluate actual false-positive tests, breakages caught, task duration, regression quality and context cost on product app, Hermes and one unrelated repository before claiming effectiveness gains.
+Run full tests and evaluate actual false-positive tests, breakages caught, task duration, regression quality and context cost on two different application repositories and one independent demonstration repository before claiming effectiveness gains.
