@@ -14,6 +14,8 @@ Install Python 3.12+ and Git through an approved method. `py -3.12` requires Pyt
 
 ## Install into an existing project
 
+**Before running the commands:** set `$project` to the path of an **existing** project directory; the shown path is a placeholder, not a folder Toolkit creates. Every `py -3.12` command assumes Python 3.12 is installed. If you have 3.13 or 3.14 instead, replace **all** occurrences with `py -3.13` or `py -3.14`. Use `py -0p` to list installed versions.
+
 From the Toolkit directory. Inspect project AGENTS.md / CLAUDE.md and unmanaged skills first:
 
 ~~~powershell
@@ -25,7 +27,11 @@ $project = Join-Path $HOME "Projects\existing-project"
 py -3.12 scripts/adt.py profile list
 py -3.12 scripts/adt.py doctor --target $project
 py -3.12 scripts/skill_manager.py install --target $project --layout codex --profile general
-# Only after reviewing the preview:
+~~~
+
+**Stop after the preview.** Check the destination, file list and conflicts before running the following apply and status commands separately:
+
+~~~PowerShell
 py -3.12 scripts/skill_manager.py install --target $project --layout codex --profile general --apply
 py -3.12 scripts/skill_manager.py status --target $project --layout codex
 ~~~
