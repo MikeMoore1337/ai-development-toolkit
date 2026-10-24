@@ -216,6 +216,11 @@
       "source_sha256": "730a6f614a7ee28a880df8c10820707a71dd2b4a31378a8ad46928c56a588978"
     },
     {
+      "source": "docs/PROJECT_PORTABILITY_MATRIX.md",
+      "translation": "docs/ru/PROJECT_PORTABILITY_MATRIX.md",
+      "source_sha256": "0aeedcfb6b6e14987512a8de7adbbd2c766dab92618d832c24a86a30d30d2c8b"
+    },
+    {
       "source": "docs/PROMPT_AND_SEO_SKILLS.md",
       "translation": "docs/ru/PROMPT_AND_SEO_SKILLS.md",
       "source_sha256": "7d2a6123ff7a08ddb7500833657dc7e36d8925a565a41b98ff90216dd33c5982"
