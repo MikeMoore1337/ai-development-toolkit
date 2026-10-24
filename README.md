@@ -167,6 +167,7 @@ effectiveness, execution safety or client compatibility.
 ## Documentation
 
 - [Start without a terminal](docs/BEGINNER_START.md) - choose Codex, ChatGPT, Claude Code or Claude and copy a request
+- [Four verified offline examples](docs/VERIFIED_EXAMPLES.md) - reproducible source-only commands, with explicit evidence limits
 - [Full skills & roles catalog](docs/SKILLS_CATALOG.md) - discover exactly what's included
 - [Installation](docs/INSTALLATION.md) - safety, options and client layouts
 - [Adaptation guide](docs/ADAPTATION.md) - apply skills to an existing project
