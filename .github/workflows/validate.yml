@@ -106,6 +106,8 @@ jobs:
         run: python scripts/skill_routing_eval.py --strict
       - name: Report untuned holdout routing baseline (diagnostic, not a release gate)
         run: python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_holdout.json
+      - name: Report fresh bilingual untuned routing stress diagnostic (no accuracy gate)
+        run: python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_untuned_20261024.json
       - name: Check Russian translation source revisions (warnings do not block unrelated PRs)
         run: python scripts/check_translation_freshness.py
       - name: Verify per-skill quality metrics (offline source only)
