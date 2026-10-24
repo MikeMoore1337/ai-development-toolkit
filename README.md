@@ -10,7 +10,7 @@
 
 </div>
 
-**Next release candidate:** `v5.5.4` — **NOT PUBLISHED**. Last published: [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3). [CHANGELOG.md](CHANGELOG.md).
+**Last published release:** [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) (2026-10-23). [CHANGELOG.md](CHANGELOG.md).
 
 **Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md).
 
