@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "description": "Five independent, wholly synthetic project archetypes for offline read-only Toolkit QA/UX/UI portability tests. No private project sources, model sessions or design artifacts.",
+  "baseline_sha": "3fb90c41162da1cb4f0fb58c15dc72729feb5703",
+  "author": "AI_ASSISTED_UNREVIEWED_SCENARIOS",
+  "cases": [
+    {
+      "id": "python-backend",
+      "markers": [
+        "AGENTS.md",
+        "README.md",
+        "pyproject.toml",
+        "pytest.ini"
+      ],
+      "changed_paths": [
+        "src/api/routes.py",
+        "src/db/migrations/001_init.py"
+      ],
+      "qa_profile": "qa-python",
+      "expected_checks": [
+        "api-contract",
+        "api-negative",
+        "db-migration",
+        "db-rollback"
+      ],
+      "visual_scenario": null
+    },
+    {
+      "id": "frontend-ui",
+      "markers": [
+        "AGENTS.md",
+        "README.md",
+        "package.json",
+        "playwright.config.ts"
+      ],
+      "changed_paths": [
+        "src/ui/components/SignupForm.tsx",
+        "src/ui/screens/Signup.tsx"
+      ],
+      "qa_profile": "qa-ui",
+      "expected_checks": [
+        "ui-state",
+        "browser-flow"
+      ],
+      "visual_scenario": "new-site"
+    },
+    {
+      "id": "fullstack",
+      "markers": [
+        "AGENTS.md",
+        "README.md",
+        "pyproject.toml",
+        "package.json",
+        "playwright.config.ts"
+      ],
+      "changed_paths": [
+        "web/ui/forms/ProfileForm.tsx",
+        "server/api/routes.py",
+        "server/db/migrations/002_profile.sql"
+      ],
+      "qa_profile": "qa-fullstack",
+      "expected_checks": [
+        "ui-state",
+        "browser-flow",
+        "api-contract",
+        "db-migration",
+        "db-rollback",
+        "cross-layer"
+      ],
+      "visual_scenario": "substantial-redesign"
+    },
+    {
+      "id": "agent-service",
+      "markers": [
+        "AGENTS.md",
+        "README.md",
+        "pyproject.toml"
+      ],
+      "changed_paths": [
+        "services/worker/queue.py",
+        "services/auth/session.py"
+      ],
+      "qa_profile": "qa-python",
+      "expected_checks": [
+        "async-replay",
+        "auth-boundary",
+        "privacy-boundary"
+      ],
+      "visual_scenario": null
+    },
+    {
+      "id": "docs-heavy",
+      "markers": [
+        "AGENTS.md",
+        "README.md",
+        "docs/architecture/README.md"
+      ],
+      "changed_paths": [
+        "docs/README.md",
+        "docs/architecture/ADR.md"
+      ],
+      "qa_profile": "qa-core",
+      "expected_checks": [
+        "documentation-review"
+      ],
+      "visual_scenario": null
+    }
+  ]
+}
