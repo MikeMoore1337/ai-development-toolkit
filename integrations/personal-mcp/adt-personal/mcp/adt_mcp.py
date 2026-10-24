@@ -330,7 +330,7 @@ class Toolkit:
 
     def prepare_task(self, task: str, existing_skills: list[str] | None = None,
                      existing_roles: list[str] | None = None, profile: str = '',
-                     max_skills: int = 5) -> dict[str, Any]:
+                     max_skills: int = 3) -> dict[str, Any]:
         """Load narrow task guidance by comparing inventories supplied by Codex.
 
         This does NOT scan or write the corporate workspace. An omitted inventory is
@@ -384,6 +384,19 @@ class Toolkit:
             except (ToolkitError, OSError, UnicodeError) as exc:
                 errors.append({'name': role_name, 'error_type': type(exc).__name__})
 
+        # Count actually returned instruction bytes; this is not runtime token use.
+        skill_bytes = sum(len(item['content'].encode('utf-8')) for item in loaded_skills)
+        role_bytes = sum(len(item['content'].encode('utf-8')) for item in loaded_roles)
+        context_load_metrics = {
+            'measurement': 'RETURNED_SOURCE_TEXT_UTF8_BYTES_NOT_MODEL_TOKENS',
+            'skill_source_bytes': skill_bytes,
+            'role_source_bytes': role_bytes,
+            'total_source_bytes': skill_bytes + role_bytes,
+            'deferred_skill_count': len(ordered[max_skills:]),
+            'reference_files_preloaded': 0,
+            'model_tokens': 'NOT_MEASURED',
+            'client_usefulness': 'NOT_TESTED',
+        }
         return {
             'primary_profile': routing['profile'],
             'secondary_profiles': routing['secondary_profiles'],
@@ -396,6 +409,7 @@ class Toolkit:
             'missing_skills': missing if skill_inventory_status != 'NOT_PROVIDED' else [],
             'skills_to_consult': ordered,
             'loaded_skills': loaded_skills,
+            'context_load_metrics': context_load_metrics,
             'diagnostics': self.diagnostic(loaded_skills=[row['name'] for row in loaded_skills]),
             'remaining_skills_to_consult': ordered[max_skills:],
             'role_to_consult': role_name,
@@ -410,6 +424,7 @@ class Toolkit:
                 'Client must inspect applicable workspace, ancestor and user-level skill/role inventories before calling this tool; missing inventories remain unknown.',
                 'Read target AGENTS.md and follow project-specific rules and approvals. Existing project skills and roles take precedence.',
                 'Use returned instructions as task guidance in the current conversation, not as automatically installed native Codex skills or spawned subagents.',
+                'Additional skills remain available in remaining_skills_to_consult: read them via toolkit_get_skill when the task actually requires them.',
                 'Inspect original references with toolkit_get_reference only when task requires them.',
                 'Never write Toolkit skills, roles, reports or caches into a corporate project by default.',
                 'If a native file-based installation is requested, preview Skill Manager changes and obtain explicit approval before --apply.',
@@ -649,7 +664,8 @@ TOOLS: list[dict[str, Any]] = [
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
          'existing_roles':{'type':'array','items':{'type':'string'},'maxItems':256},
-         'profile':{'type':'string'},'max_skills':{'type':'integer','minimum':1,'maximum':8}},
+         'profile':{'type':'string'},'max_skills':{'type':'integer','minimum':1,'maximum':8,
+             'description':'Default 3 priority skills, up to 8 on explicit request; remaining skills remain selectable'}},
          'required':['task'],'additionalProperties':False}},
     {'name':'toolkit_get_reference','description':'Read referenced Markdown/text/JSON/YAML files within one declared Toolkit skill (read-only).',
      'inputSchema':{'type':'object','properties':{'skill':{'type':'string'},'path':{'type':'string'},
@@ -682,7 +698,7 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
             args.get('query', ''), args.get('consent', False), args.get('allowed_repos'))
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
-                               args.get('existing_roles'), args.get('profile',''), args.get('max_skills',5))
+                               args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3))
     if name == 'toolkit_get_reference':
         return tk.reference(args.get('skill',''),args.get('path',''),args.get('offset',0),args.get('limit',16000))
     if name == 'toolkit_get_guide':
