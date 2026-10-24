@@ -21,6 +21,8 @@ env:
 
 jobs:
   tests:
+    # Required Ubuntu/Windows statuses stay blocked when either macOS variant fails.
+    needs: macos-portability
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
