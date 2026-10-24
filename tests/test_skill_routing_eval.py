@@ -175,6 +175,41 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertIn("qa-api", second["candidates"][0]["candidate_profiles"])
         self.assertIn("test-designer", result["available_roles_not_automatically_selected"])
 
+    def test_chained_prohibitions_never_promote_second_denial(self):
+        catalog = {
+            "seo-audit": "Audit SEO search indexing and metadata.",
+            "api-testing": "Test HTTP API responses and status codes.",
+            "code-review": "Review code changes for regressions.",
+        }
+        manifest = {"profiles": {}, "core_roles": [], "extension_packs": {}}
+        for request in (
+            "Skip seo-audit: don't run api-testing",
+            "Не нужно seo-audit: не делай api-testing",
+        ):
+            with self.subTest(request=request):
+                result = routing.recommend(request, catalog, {}, manifest)
+                self.assertEqual("NO_POSITIVE_INTENT", result["status"])
+                self.assertEqual([], result["routing_decision"]["primary_skills"])
+                self.assertEqual([], result["routing_decision"]["auxiliary_skills"])
+                self.assertEqual(2, len(result["routing_decision"]["excluded_clauses"]))
+
+    def test_chained_prohibitions_keep_genuine_positive_tail(self):
+        catalog = {
+            "seo-audit": "Audit SEO search indexing and metadata.",
+            "api-testing": "Test HTTP API responses and status codes.",
+            "code-review": "Review code changes for regressions.",
+        }
+        result = routing.recommend(
+            "Skip seo-audit: don't run api-testing: Review code changes for regressions.",
+            catalog, {}, {"profiles": {}, "core_roles": [], "extension_packs": {}},
+        )
+        decision = result["routing_decision"]
+        self.assertEqual("SUGGESTIONS_ONLY", result["status"])
+        self.assertEqual("code-review", decision["primary_skills"][0])
+        self.assertNotIn("seo-audit", decision["primary_skills"] + decision["auxiliary_skills"])
+        self.assertNotIn("api-testing", decision["primary_skills"] + decision["auxiliary_skills"])
+        self.assertEqual(["Skip seo-audit", "don't run api-testing"], decision["excluded_clauses"])
+
     def test_cross_client_lexical_decision_contract(self):
         catalog = {
             "seo-audit": "Audit SEO indexing and search metadata.",

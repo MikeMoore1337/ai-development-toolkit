@@ -176,13 +176,18 @@ def recommend(prompt: str, catalog: dict[str, str],
     excluded_clauses = []
     actionable = []
     for part in parts:
-        if negative_start.search(part):
-            clauses = re.split(r"[:,]\s*", part, maxsplit=1)
-            excluded_clauses.append(clauses[0])
-            if len(clauses) == 2 and len(terms(clauses[1])) >= 2:
-                actionable.append(clauses[1])
-        else:
-            actionable.append(part)
+        # A colon/comma tail may itself begin with a prohibition.
+        # Re-check it instead of promoting negative text to a task.
+        pending = [part]
+        while pending:
+            current = pending.pop()
+            if negative_start.search(current):
+                clauses = re.split(r"[:,]\s*", current, maxsplit=1)
+                excluded_clauses.append(clauses[0])
+                if len(clauses) == 2 and len(terms(clauses[1])) >= 2:
+                    pending.append(clauses[1])
+            else:
+                actionable.append(current)
     # If a prohibition explicitly names a declared skill, never present it
     # as either a primary or an alternative recommendation. The exact-name
     # rule avoids guessing which skill an arbitrary negated phrase describes.
