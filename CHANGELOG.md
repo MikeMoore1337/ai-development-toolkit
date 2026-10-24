@@ -21,9 +21,11 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.4)
+## Unreleased (main after v5.5.5)
 
-### Proposed v5.6.0 release candidate (NOT PUBLISHED; Issue #293)
+## 5.5.5 (candidate, 2026-10-24)
+
+**NOT PUBLISHED** - candidate for Issue #293, no tag/release/archive yet.
 
 Source scope: protected main after published tag v5.5.4, including #259, #141 and roadmap #271-#280. This candidate label does not mean a tag, release, installed Personal MCP, ChatGPT plugin update, or live client activation exists. Publication requires an exact-SHA preflight and separate owner permission for the exact archive and distribution rights.
 
