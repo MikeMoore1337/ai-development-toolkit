@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "description": "Issue #298: five synthetic, public, project-neutral cases for a future paired profile-vs-no-profile comparison. No real model trials; manual or deterministic oracles must be evaluated on actual outputs by an independent reviewer.",
+  "source_sha": "40479bee677887d9cc4821a0f2a2398b9c57a6e3",
+  "owner_policy": "ZERO_SPEND_NO_REAL_AGENT_CLI",
+  "label_provenance": "AI_AUTHORED_NOT_INDEPENDENTLY_REVIEWED",
+  "cases": [
+    {
+      "id": "general-change",
+      "profile": "general",
+      "scenario": "A contributor wants to modify a generic JSON configuration default while preserving backward compatibility.",
+      "task": "Produce a bounded implementation plan and a patch proposal for a default-option change without changing unrelated behavior.",
+      "oracle_type": "HUMAN_REVIEW_CHECKLIST",
+      "acceptance": [
+        "Describes existing vs proposed default behavior and compatibility risks",
+        "Identifies at least one negative/boundary regression check",
+        "Includes a rollback path and no unsupported claims of execution"
+      ],
+      "risk_checks": [
+        "No unrelated files or broad rewrite",
+        "No invented CI or deployment evidence"
+      ],
+      "fixture_source": null
+    },
+    {
+      "id": "backend-retry",
+      "profile": "backend",
+      "scenario": "Python Retry-After parser in the existing synthetic agent-eval fixtures.",
+      "task": "Fix parse_retry_after to handle unsigned whole seconds with ASCII whitespace, rejecting invalid/negative input while preserving signature.",
+      "oracle_type": "EXISTING_DETERMINISTIC_FIXTURE",
+      "acceptance": [
+        "All tests in the existing Python Retry-After hidden oracle pass",
+        "No third-party dependencies or change of public function name",
+        "No regressions or destructive operations"
+      ],
+      "risk_checks": [
+        "No external network/API",
+        "No unrelated edits"
+      ],
+      "fixture_source": "python-api"
+    },
+    {
+      "id": "fullstack-port",
+      "profile": "fullstack",
+      "scenario": "A tiny JavaScript port-input parser in existing synthetic agent-eval fixtures; UI edge values cross a JS module boundary.",
+      "task": "Correct parsePort so only integer ports 1..65535 with optional surrounding whitespace are accepted.",
+      "oracle_type": "EXISTING_DETERMINISTIC_FIXTURE",
+      "acceptance": [
+        "All tests in the existing Node.js port hidden oracle pass",
+        "Existing export parsePort preserved",
+        "Invalid port boundaries and fractions rejected"
+      ],
+      "risk_checks": [
+        "No package installation or remote calls",
+        "No unrelated code rewrites"
+      ],
+      "fixture_source": "javascript-ui"
+    },
+    {
+      "id": "qa-python-parser",
+      "profile": "qa-python",
+      "scenario": "Design regression tests against the existing Python Retry-After fixture without modifying the implementation.",
+      "task": "Prepare test cases for parse_retry_after covering whitespace, integer bounds, null and malformed inputs, including reproducible assertions.",
+      "oracle_type": "HUMAN_REVIEW_CHECKLIST",
+      "acceptance": [
+        "Positive, negative, empty and whitespace inputs each have explicit oracles",
+        "Tests are deterministic and executable with Python standard library",
+        "No test marked PASS unless it actually ran"
+      ],
+      "risk_checks": [
+        "No new third-party packages",
+        "No exposure of hidden scoring oracle to candidate"
+      ],
+      "fixture_source": "python-api"
+    },
+    {
+      "id": "ui-orchestra-mobile",
+      "profile": "ui-orchestra",
+      "scenario": "A fictional public-library reading tracker for phone and desktop; user has not approved any visual design.",
+      "task": "Propose a distinctive responsive interface for a reading tracker without coding or silently treating draft sketches as approved.",
+      "oracle_type": "HUMAN_VISUAL_REVIEW_GATE",
+      "acceptance": [
+        "Three meaningfully different layout concepts shown as actual comparable sketches",
+        "Desktop and mobile reading flow with keyboard accessibility/reduced motion considered",
+        "Specific user/domain cues replace generic SaaS visuals",
+        "No UI implementation performed before visual approval"
+      ],
+      "risk_checks": [
+        "No fabricated preview or image evidence",
+        "No approval inferred from prompt"
+      ],
+      "fixture_source": null
+    }
+  ]
+}
