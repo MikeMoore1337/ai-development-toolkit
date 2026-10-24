@@ -26,6 +26,22 @@ AI Development Toolkit offers **two equally important integrations** built on sh
 | Installs native skills or modifies project automatically | No | No |
 | Paid API requirement | None for this skills-only package | None for this local server |
 
+## Bounded on-demand guidance and source-byte measurements (#276)
+
+`toolkit_prepare_task` now returns at most **three** priority `SKILL.md` instructions by default (formerly five); callers needing a larger initial load may explicitly set `max_skills=4..8`. The unchanged `selected_skills` and `remaining_skills_to_consult` identify all eligible skills: request deferred instructions through `toolkit_get_skill` and optional references individually through `toolkit_get_reference`. File-based native skill installations and the ChatGPT plugin's own context handling are **not modified**.
+
+`context_load_metrics` measures only UTF-8 instruction bytes **actually returned** by Personal MCP: skill bytes, role bytes, total bytes, count deferred and zero automatically loaded reference files. No additional source is read to produce the metric. The metric excludes JSON-RPC envelope/duplicate text-vs-structured serialization, and is **not** a network payload byte count. `model_tokens=NOT_MEASURED` and `client_usefulness=NOT_TESTED`; smaller source output is **not** proof of fewer billed model tokens or unchanged live-model effectiveness.
+
+Reproducible baseline proxy at Toolkit commit `053a200f4215162340ab5d1d4ff7ac9c13c8db5e` (manifest-list order, `SKILL.md` sizes, **not** priority-adjusted runtime payload):
+
+| Profile | First five source bytes | First three source bytes | Source bytes omitted initially |
+| --- | ---: | ---: | ---: |
+| backend | 5,502 | 2,727 | 2,775 |
+| fullstack | 6,994 | 4,441 | 2,553 |
+| general | 5,664 | 3,477 | 2,187 |
+
+Actual selection can reorder skills; run `toolkit_prepare_task` with explicit `max_skills=5` and compare its `context_load_metrics` against the default to measure the specific request. Earlier profile byte metrics account for all installed files, including references, and therefore must **not** be equated with MCP request payload.
+
 ## Installation and usage
 
 **ChatGPT:** [English instructions](../integrations/chatgpt-plugin/README.md) · [Инструкция на русском](../integrations/chatgpt-plugin/README.ru.md)
