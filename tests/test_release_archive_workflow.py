@@ -44,6 +44,18 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
                      "docs/RELEASE_PROCESS.md", "docs/ru/RELEASE_PROCESS.md"):
             self.assertIn(path, script)
 
+    def test_release_docs_keep_archive_and_documentation_status_separate(self):
+        en = (ROOT / "docs/RELEASE_PROCESS.md").read_text(encoding="utf-8")
+        ru = (ROOT / "docs/ru/RELEASE_PROCESS.md").read_text(encoding="utf-8")
+        config = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        self.assertIn("release-archive", config["jobs"])
+        self.assertIn("published-documentation", config["jobs"])
+        for page in (en, ru):
+            self.assertIn("PUBLICATION_DOCS_STALE", page)
+            self.assertIn("release-archive=SUCCESS", page)
+            self.assertIn("published-documentation", page)
+            self.assertIn("LOCAL_PRETAG_BLOCKED", page)
+
     def test_required_matrix_enforces_release_snapshot(self):
         workflow = ROOT / ".github" / "workflows" / "validate.yml"
         text = workflow.read_text(encoding="utf-8")

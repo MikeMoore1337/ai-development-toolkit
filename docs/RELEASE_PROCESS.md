@@ -26,7 +26,12 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 Last published tag: [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) at commit SHA `490cec222c4c2551a7bbe6f20bb0e9a316af13e1` (2026-10-24), matching archived manifest version `5.5.6`. [Compare v5.5.6...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.6...main) for later unreleased changes.
 
 
-After publication of a new GitHub Release, align both README files, this RU/EN guide and the latest CHANGELOG section in a follow-up PR. The `release: published` workflow independently compares the published tag with the documents on `main`; a stale reference fails a separate documentation job. This cannot undo a published release or rewrite historical tags.
+### Two-phase publication and documentation acceptance (#323)
+
+1. **Phase 1 - source publication:** before tagging, satisfy the explicit owner rights decision and the exact-SHA pre-tag gates described below. Publish the immutable tag and GitHub Release only after approval, then verify the downloaded archive, checksum and provenance results. `release-archive=SUCCESS` proves the archive checks alone, **not** the state of the documentation or rights ownership.
+2. **Phase 2 - current documentation:** after publication, align both README files, this EN/RU guide and the most recent CHANGELOG release section in a small follow-up PR. Verify exact-head PR CI, merge and re-run/check the `published-documentation` job against current `main`. Until it passes, label documentation `PUBLICATION_DOCS_STALE` rather than declaring the entire release process fully complete. The `release: published` workflow may initially report a **documentation-only FAIL** while the tag and archive remain valid; such a result does **not** justify rewriting the tag or mislabelling the archive verification.
+
+These are two evidence gates, not two releases. The archive job cannot retrospectively validate a previously blocked local pre-tag check, and post-publication documentation repair cannot undo or authenticate publication.
 
 1. Work on a feature branch and document what changed and any migration risks.
 2. Run `python -m pip install -r requirements-dev.txt`.

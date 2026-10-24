@@ -26,7 +26,7 @@
     {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "3de7ac497a09401ae2d21032ee7e9462a223ef048cbdb5c5354e3ecae87ee350"
+      "source_sha256": "eb9b93e8d18525ad7ebf557a331a1f7c263e201f033e9de7ff448938826294ce"
     },
     {
       "source": "docs/BEGINNER_WORKFLOW.md",
@@ -51,7 +51,7 @@
     {
       "source": "docs/CLIENT_CAPABILITIES.md",
       "translation": "docs/ru/CLIENT_CAPABILITIES.md",
-      "source_sha256": "e4089e536f2f78e116523384f9b5e08ff8e9d0c13ffdeadeb2a1bbfe794cfa6e"
+      "source_sha256": "c88c2f4d868b9488c0019a97b970c78422a26319ded1cf1e5f19485d34d57237"
     },
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
@@ -273,7 +273,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "2d28f338ffd4c3b2f2b7b1ccba7ff0ccb05b4d16f542df5ac0c9dd600200990f"
+      "source_sha256": "6fe1b7f9860e7f808d47e3e7308b05836a71c19aec86541892e69b95d79024e0"
     },
     {
       "source": "docs/RELIABILITY_TESTING.md",
