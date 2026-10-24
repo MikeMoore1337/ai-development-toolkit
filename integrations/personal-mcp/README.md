@@ -54,6 +54,10 @@ Finally restart Codex. Run `codex mcp get ai-development-toolkit`, then **actual
 
 [Russian guide](README.ru.md) | [Comparison](../../docs/INTEGRATIONS.md)
 
+## Smaller initial guidance responses (#276)
+
+The Personal MCP `toolkit_prepare_task` tool reads **three** priority `SKILL.md` files by default instead of five. It retains the complete `selected_skills` and `remaining_skills_to_consult` lists. Ask for up to eight with `max_skills`, or read a particular remaining skill through `toolkit_get_skill`; `references` remain on-demand via `toolkit_get_reference`. `context_load_metrics` measures only the actually returned skill/role UTF-8 source bytes (not model tokens). The installed MCP adapter must be updated separately to acquire this behavior; a source checkout refresh alone does not change the installed adapter.
+
 ## Prompt refinement and SEO routing
 
 With an up-to-date Toolkit source, `toolkit_prepare_task` can select the `prompt-refinement` and `seo-audit` profiles from plain-language requests. For example, "write a good prompt for Codex from these notes" selects prompt export, while "audit my site's SEO" selects evidence-based SEO guidance. An ordinary "build a site" request **must be fulfilled**, not converted into a prompt for resubmission; new design remains subject to UX/UI approval.
