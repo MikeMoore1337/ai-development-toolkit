@@ -68,6 +68,12 @@ def check_origin(source: Path, expected_origin: str) -> None:
         raise UpdateError("local_changes_present")
 
 
+def version_tuple(value: object) -> tuple[int, int, int]:
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", value):
+        raise UpdateError("unsupported_toolkit_version_format")
+    return tuple(int(part) for part in value.split("."))
+
+
 def safe_name(value: str) -> str:
     if not isinstance(value, str) or not value or "\\" in value:
         raise UpdateError("invalid_declared_path")
@@ -115,6 +121,7 @@ def validate_commit(source: Path, sha: str) -> dict[str, Any]:
         raise UpdateError("candidate_manifest_invalid") from exc
     if not isinstance(manifest, dict) or manifest.get("package") != "ai-development-toolkit":
         raise UpdateError("candidate_wrong_package")
+    version_tuple(manifest.get("version"))
     profiles = manifest.get("profiles")
     if not isinstance(profiles, dict) or not profiles:
         raise UpdateError("candidate_profiles_invalid")
@@ -210,7 +217,8 @@ def self_version(source: Path) -> str:
     if not isinstance(manifest, dict) or manifest.get("package") != "ai-development-toolkit":
         raise UpdateError("current_manifest_invalid")
     value = manifest.get("version")
-    return value if isinstance(value, str) and value else "NOT_VERIFIED"
+    version_tuple(value)
+    return value
 
 
 def preflight(source: Path, state_dir: Path, *,
@@ -334,6 +342,8 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
                 if ancestor.returncode != 0:
                     raise UpdateError("non_fast_forward_remote_history")
                 info = validate_commit(source, candidate)
+                if version_tuple(info["toolkit_version"]) < version_tuple(self_version(source)):
+                    raise UpdateError("candidate_toolkit_version_downgrade")
                 # Must still be the same clean source immediately before mutation.
                 check_origin(source, expected_origin)
                 if git_text(source, "rev-parse", "HEAD") != old:
