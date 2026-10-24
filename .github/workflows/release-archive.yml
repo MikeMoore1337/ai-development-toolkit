@@ -121,7 +121,7 @@ jobs:
           import re
 
           tag = os.environ["RELEASE_TAG"]
-          if not re.fullmatch(r"v[0-9]+\\.[0-9]+\\.[0-9]+", tag):
+          if not re.fullmatch(r"v[0-9]+[.][0-9]+[.][0-9]+", tag):
               raise SystemExit("Unexpected GitHub Release tag")
           version = tag[1:]
           expected = {
