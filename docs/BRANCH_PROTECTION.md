@@ -22,10 +22,12 @@ The first invocation is read-only. The second adds and verifies three required G
 
 **macOS merge gate:** `tests` now depends on the existing `macos-portability`
 matrix (`macos-15` and `macos-15-intel`). If either macOS job fails or is
-skipped, the three required Ubuntu/Windows checks cannot all succeed, so the
-active ruleset blocks the PR. This adds no new required check contexts or
-administrator-only ruleset mutation. Both macOS jobs are still shown separately
-in CI; the extra dependency can delay the required checks.
+skipped, the three required Ubuntu/Windows jobs still start under `always()`
+but a first-step guard explicitly **fails** each required check. Without this
+guard, GitHub could accept skipped required checks as successful. The active
+ruleset therefore blocks the PR on an actual failure. This adds no new required
+check contexts or administrator-only ruleset mutation. Both macOS jobs remain
+visible separately; the dependency can delay required checks.
 
 The checks are pinned to the GitHub Actions app (ID `15368`, verified from the repository's check runs), and branches must be up to date before merge. The script does **not** bypass the pull request requirement, grant bypass privileges, or modify the workflow itself.
 
