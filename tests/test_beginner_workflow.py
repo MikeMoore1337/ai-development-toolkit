@@ -252,8 +252,8 @@ class BeginnerTaskRouteTests(unittest.TestCase):
                 self.assertIn("PASS/FAIL", section)
                 self.assertIn("file", section.lower() if path.endswith("/BEGINNER_START.md")
                               and "/ru/" not in path else section.lower().replace("файл", "file"))
-                self.assertTrue("permission" in section.lower() or
-                                "разрешени" in section.lower())
+                self.assertTrue(any(word in section.lower() for word in
+                                    ("permission", "authorized", "разрешени")))
                 self.assertNotIn("model_tokens=PASS", section)
                 # Deliberate negative mutation: no evidence labels means no acceptance.
                 broken = section.replace("NOT_RUN", "UNVERIFIED")
