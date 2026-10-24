@@ -41,7 +41,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Dependencies
-        run: python -m pip install -r requirements-dev.txt
+        run: python -m pip install --only-binary=:all: -r requirements-dev.txt
       - name: Reject references to owner projects in public Markdown (offline)
         run: python scripts/validate_public_docs_neutrality.py
       - name: Ruff Python correctness checks (pinned, Ubuntu only)
@@ -78,7 +78,7 @@ jobs:
               echo "FAIL: actionlint missed a synthetic missing dependency"
               exit 1
             } || test "$?" -eq 1
-      - name: Check public package
+      - name: Fail on mutable or unreviewed GitHub Actions references (offline)\n        run: python scripts/validate_action_pins.py\n      - name: Check public package
         run: python scripts/check_public_package.py
       - name: Validate provenance inventory (not release permission)
         run: python scripts/validate_provenance.py --mode inventory --report "${{ runner.temp }}/provenance-inventory.json"
