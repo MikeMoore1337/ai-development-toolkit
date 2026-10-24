@@ -51,12 +51,12 @@
     {
       "source": "docs/CLIENT_CAPABILITIES.md",
       "translation": "docs/ru/CLIENT_CAPABILITIES.md",
-      "source_sha256": "6962de7e6ab9e1f9389e20616d50e746052ad9ed90e2425d8ebfc963b14c141c"
+      "source_sha256": "e4089e536f2f78e116523384f9b5e08ff8e9d0c13ffdeadeb2a1bbfe794cfa6e"
     },
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
       "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
-      "source_sha256": "596737f33fced632668c46bbb0def534b07d87187df5b223a9e797fdcf40a772"
+      "source_sha256": "282ded3cec8f832755929f007d4e8dc04a432b59dd5652a4e408ab8156ca8fe4"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
