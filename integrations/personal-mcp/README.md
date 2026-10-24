@@ -39,6 +39,17 @@ launchctl print "gui/$(id -u)/com.ai-development-toolkit.personal-updater"
 
 Replace the sample checkout path with the location of the extracted package or repository. The Linux/macOS shell installer registers a global `ai-development-toolkit` MCP and maintains a bounded global `AGENTS.md` block, with backups. The updater is optional: Linux uses systemd --user, macOS uses launchd in an interactive GUI session. On machines without these supported schedulers, do not claim automatic updates; run the updater manually with explicit `--source` and `--state-dir`.
 
+## Check source version or roll back the dedicated reference checkout
+
+From an **installed** Personal MCP package (not the moving development checkout), use its updater in your user data directory:
+
+- **Windows:** `py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --preflight`
+- **Linux/macOS:** `python3 "${XDG_DATA_HOME:-$HOME/.local/share}/adt-personal/updater/update_toolkit.py" --preflight`
+
+The offline `--preflight` command reports actual local Toolkit version/SHA, last known Git revision/version, and whether a previously saved clean revision can be restored. It does not fetch, update the binary, or touch the work project. `--status` shows only the saved update log.
+
+To undo **only** a last successful reference-checkout update, use the same path with `--rollback` to preview, then `--rollback --apply` after reviewing revisions. A dirty or noncanonical checkout, changed state, or missing previous-good revision blocks the operation. Pause its scheduled updater to keep a rollback pinned; otherwise the next permitted refresh can fast-forward again. The separately installed MCP files and ChatGPT plugin are not changed or confirmed compatible by preflight. Hashes and the Git origin are not a cryptographic signature; see [RU/EN updating instructions](../../docs/UPDATING.md).
+
 Finally restart Codex. Run `codex mcp get ai-development-toolkit`, then **actually invoke** `toolkit_info` and `toolkit_prepare_task` in Codex. Direct stdio diagnostics alone cannot prove Codex activation. Loaded instructions are not native installed skills or spawned agents. The updater refreshes **only Toolkit source**, not the MCP executable or ChatGPT plugin. Respect employer security restrictions and avoid connecting corporate repositories without permission.
 
 [Russian guide](README.ru.md) | [Comparison](../../docs/INTEGRATIONS.md)

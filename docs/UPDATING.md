@@ -18,7 +18,28 @@ git fetch --tags origin
 git log --oneline HEAD..origin/main
 ~~~
 
-Fetching updates Git metadata, not worktree files. Review differences before intentionally moving a clean local main branch with `git pull --ff-only origin main`. If you require a published release rather than development main, use a clean clone and the exact reviewed tag (example: `git switch --detach v5.5.2`); verify tag contents and `MANIFEST.json.version`. Never discard local changes just to update.
+Fetching updates Git metadata, not worktree files. Review differences before intentionally moving a clean local main branch with `git pull --ff-only origin main`. If you require a published release rather than development main, use a clean clone and the exact reviewed tag (example: `git switch --detach v5.5.4`); verify tag contents and `MANIFEST.json.version`. Never discard local changes just to update.
+
+## Dedicated Personal MCP reference-checkout preflight and rollback
+
+The optional **Personal MCP reference-source updater** is separate from a general developer checkout and from the installed MCP adapter or ChatGPT plugin. Run it only against the dedicated copy created by the Personal MCP installer.
+
+~~~bash
+# Offline, no network and no file changes:
+python3 integrations/personal-mcp/adt-personal/updater/update_toolkit.py --preflight
+# Saved last known Git information only:
+python3 integrations/personal-mcp/adt-personal/updater/update_toolkit.py --status
+# Explicitly preview an eligible previous-good Git revision:
+python3 integrations/personal-mcp/adt-personal/updater/update_toolkit.py --rollback
+# Only after checking the exact revisions, allow changes to that dedicated checkout:
+python3 integrations/personal-mcp/adt-personal/updater/update_toolkit.py --rollback --apply
+~~~
+
+When using source code directly instead of an installed updater, supply the **actual** dedicated `--source` and `--state-dir` paths; defaults refer to the installed Personal MCP layout. Windows can use `py -3`; use a verified Python 3.12+ interpreter for repository tooling.
+
+`--preflight` verifies a clean checkout, expected Git origin, current Toolkit version, last *known* (not necessarily current remote) revision/version, and availability of a previously pinned commit. **It never fetches GitHub**. An unrecorded version is `NOT_VERIFIED`; installed MCP binary, ChatGPT plugin version and client runtime compatibility are independently `NOT_VERIFIED` / `NOT_TESTED`. The official Git remote, commit hashes and SHA256 checks are source-integrity signals, **not cryptographic signatures or a guarantee that source code is safe**.
+
+Unattended refresh permits only fast-forward and rejects a manifest version downgrade. Rollback is a separate user-requested operation on a clean, pinned reference checkout: preview by default, `--apply` required to change files, and no writes to the working project. Local changes, origin mismatch, source-state divergence, missing previous-good ref and a concurrent updater block rollback. Disable automatic source refresh before rollback if an older revision must remain pinned; the next scheduled update can otherwise fast-forward again. The installed MCP adapter and ChatGPT plugin **never** update through these commands.
 
 ## 2. Preview project skill changes before applying
 

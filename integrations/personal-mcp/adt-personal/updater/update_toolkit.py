@@ -68,6 +68,12 @@ def check_origin(source: Path, expected_origin: str) -> None:
         raise UpdateError("local_changes_present")
 
 
+def version_tuple(value: object) -> tuple[int, int, int]:
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", value):
+        raise UpdateError("unsupported_toolkit_version_format")
+    return tuple(int(part) for part in value.split("."))
+
+
 def safe_name(value: str) -> str:
     if not isinstance(value, str) or not value or "\\" in value:
         raise UpdateError("invalid_declared_path")
@@ -115,6 +121,7 @@ def validate_commit(source: Path, sha: str) -> dict[str, Any]:
         raise UpdateError("candidate_manifest_invalid") from exc
     if not isinstance(manifest, dict) or manifest.get("package") != "ai-development-toolkit":
         raise UpdateError("candidate_wrong_package")
+    version_tuple(manifest.get("version"))
     profiles = manifest.get("profiles")
     if not isinstance(profiles, dict) or not profiles:
         raise UpdateError("candidate_profiles_invalid")
@@ -202,6 +209,102 @@ def write_state(state_file: Path, state: dict[str, Any]) -> None:
     os.replace(temp, state_file)
 
 
+def self_version(source: Path) -> str:
+    try:
+        manifest = json.loads((source / "MANIFEST.json").read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError) as exc:
+        raise UpdateError("current_manifest_invalid") from exc
+    if not isinstance(manifest, dict) or manifest.get("package") != "ai-development-toolkit":
+        raise UpdateError("current_manifest_invalid")
+    value = manifest.get("version")
+    version_tuple(value)
+    return value
+
+
+def preflight(source: Path, state_dir: Path, *,
+              expected_origin: str = EXPECTED_ORIGIN) -> dict[str, Any]:
+    """Offline read-only status of the dedicated checkout; no fetch or writes."""
+    source = source.resolve()
+    check_origin(source, expected_origin)
+    revision = check_sha(git_text(source, "rev-parse", "HEAD"))
+    state = read_state(state_dir / "state.json")
+    previous = state.get("previous_good_revision")
+    eligible = False
+    if isinstance(previous, str):
+        try:
+            previous = check_sha(previous)
+            pinned = check_sha(git_text(source, "rev-parse", "refs/adt-personal/previous-good"))
+            eligible = (state.get("active_revision") == revision and previous == pinned
+                        and previous != revision
+                        and run_git(source, "merge-base", "--is-ancestor",
+                                    previous, revision, check=False).returncode == 0)
+        except UpdateError:
+            eligible = False
+    return {
+        "status": "PREFLIGHT",
+        "toolkit_version": self_version(source),
+        "active_revision": revision,
+        "last_known_revision": state.get("last_known_revision", "NOT_VERIFIED"),
+        "last_known_toolkit_version": state.get("last_known_toolkit_version", "NOT_VERIFIED"),
+        "state_matches_checkout": state.get("active_revision") == revision,
+        "rollback_eligible": eligible,
+        "previous_good_revision": previous if eligible else None,
+        "mcp_adapter_version": "NOT_VERIFIED",
+        "chatgpt_plugin_version": "NOT_VERIFIED",
+        "client_runtime_compatibility": "NOT_TESTED",
+        "source_trust": "EXPECTED_GIT_ORIGIN_NOT_CRYPTOGRAPHIC_SIGNATURE",
+        "scope": "DEDICATED_REFERENCE_CHECKOUT_ONLY",
+        "network_used": False,
+        "project_files_changed": False,
+    }
+
+
+def rollback(source: Path, state_dir: Path, *, apply: bool = False,
+             expected_origin: str = EXPECTED_ORIGIN) -> dict[str, Any]:
+    """Explicit safe rollback of only the clean dedicated reference checkout."""
+    source = source.resolve()
+    state_dir = state_dir.resolve()
+    report = preflight(source, state_dir, expected_origin=expected_origin)
+    if not report["rollback_eligible"]:
+        raise UpdateError("rollback_unavailable_or_checkout_state_mismatch")
+    target = report["previous_good_revision"]
+    old = report["active_revision"]
+    info = validate_commit(source, target)
+    if not apply:
+        return {"status": "ROLLBACK_PREVIEW", "active_revision": old,
+                "previous_good_revision": target, "would_restore": info,
+                "project_files_changed": False, "network_used": False}
+    state_dir.mkdir(parents=True, exist_ok=True)
+    lock = state_dir / "update.lock"
+    try:
+        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError as exc:
+        raise UpdateError("another_update_is_in_progress") from exc
+    os.close(fd)
+    try:
+        current = preflight(source, state_dir, expected_origin=expected_origin)
+        if not current["rollback_eligible"] or current["active_revision"] != old:
+            raise UpdateError("source_changed_before_rollback")
+        run_git(source, "reset", "--hard", target)
+        if (check_sha(git_text(source, "rev-parse", "HEAD")) != target or
+                run_git(source, "status", "--porcelain", "--untracked-files=all").stdout.strip()):
+            raise UpdateError("rollback_result_requires_manual_review")
+        state_file = state_dir / "state.json"
+        state = read_state(state_file)
+        write_state(state_file, {**state,
+                                 "active_revision": target,
+                                 "previous_good_revision": None,
+                                 "last_success_local_date": None,
+                                 "last_attempt_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+                                 "last_attempt_status": "ROLLED_BACK",
+                                 "last_error": None})
+        return {"status": "ROLLED_BACK", "previous_revision": old,
+                "active_revision": target, **info,
+                "project_files_changed": False, "network_used": False}
+    finally:
+        lock.unlink(missing_ok=True)
+
+
 def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORIGIN,
            force: bool = False, today: str | None = None) -> dict[str, Any]:
     source = source.resolve()
@@ -229,7 +332,8 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
         state_file = state_dir / "state.json"
         state = read_state(state_file)
         if not force and state.get("last_success_local_date") == day and state.get("active_revision") == old:
-            return {"status": "SKIPPED_ALREADY_CHECKED_TODAY", "active_revision": old}
+            return {"status": "SKIPPED_ALREADY_CHECKED_TODAY", "active_revision": old,
+                    "toolkit_version": state.get("last_known_toolkit_version", "NOT_VERIFIED")}
         try:
             run_git(source, "fetch", "--no-tags", "origin", "refs/heads/main", timeout=65)
             candidate = check_sha(git_text(source, "rev-parse", "FETCH_HEAD"))
@@ -238,6 +342,8 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
                 if ancestor.returncode != 0:
                     raise UpdateError("non_fast_forward_remote_history")
                 info = validate_commit(source, candidate)
+                if version_tuple(info["toolkit_version"]) < version_tuple(self_version(source)):
+                    raise UpdateError("candidate_toolkit_version_downgrade")
                 # Must still be the same clean source immediately before mutation.
                 check_origin(source, expected_origin)
                 if git_text(source, "rev-parse", "HEAD") != old:
@@ -262,7 +368,8 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
                 result = {"status": "UPDATED", "previous_revision": old,
                           "active_revision": candidate, **info}
             else:
-                result = {"status": "UP_TO_DATE", "active_revision": old}
+                result = {"status": "UP_TO_DATE", "active_revision": old,
+                          "toolkit_version": self_version(source)}
         except UpdateError as exc:
             write_state(state_file, {**state, "last_attempt_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
                                      "last_attempt_status": "FAIL", "last_error": str(exc)})
@@ -270,6 +377,8 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
         write_state(state_file, {**state, "last_attempt_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
                                  "last_attempt_status": result["status"], "last_success_local_date": day,
                                  "active_revision": result["active_revision"],
+                                 "last_known_revision": candidate,
+                                 "last_known_toolkit_version": result["toolkit_version"],
                                  "previous_good_revision": result.get("previous_revision", state.get("previous_good_revision")),
                                  "last_error": None})
         return result
@@ -292,14 +401,29 @@ def main(argv: list[str] | None = None) -> int:
              if os.name == "nt" else Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local" / "share"))) / "adt-personal")
     parser.add_argument("--source", type=Path, default=local / "toolkit-source")
     parser.add_argument("--state-dir", type=Path, default=local / "updater" / "state")
-    parser.add_argument("--status", action="store_true", help="Read saved status without network access")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--status", action="store_true", help="Read saved state without network access")
+    selection.add_argument("--preflight", action="store_true",
+                           help="Inspect versions without network or changes")
+    selection.add_argument("--rollback", action="store_true",
+                           help="Preview clean-checkout rollback; requires --apply to mutate")
+    parser.add_argument("--apply", action="store_true", help="Explicitly apply only --rollback")
     parser.add_argument("--force", action="store_true", help="Ignore once-per-day throttle; never force Git history")
     args = parser.parse_args(argv)
+    if args.apply and not args.rollback:
+        parser.error("--apply requires --rollback")
+    if args.force and (args.rollback or args.preflight or args.status):
+        parser.error("--force is only for source refresh")
     if args.status:
         print(json.dumps({"status": "STATE", **read_state(args.state_dir / "state.json")}, ensure_ascii=False))
         return 0
     try:
-        result = update(args.source, args.state_dir, force=args.force)
+        if args.preflight:
+            result = preflight(args.source, args.state_dir)
+        elif args.rollback:
+            result = rollback(args.source, args.state_dir, apply=args.apply)
+        else:
+            result = update(args.source, args.state_dir, force=args.force)
         print(json.dumps(result, ensure_ascii=False))
         return 0
     except UpdateError as exc:

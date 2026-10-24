@@ -139,6 +139,97 @@ class TestUpdater(unittest.TestCase):
             self._check(today='2026-10-21')
         self.assertEqual(git('rev-parse', 'HEAD', cwd=self.source), self.old_head)
 
+    def test_offline_version_preflight_and_last_known(self):
+        untouched = (self.source / 'MANIFEST.json').read_bytes()
+        before = git('rev-parse', 'HEAD', cwd=self.source)
+        first = updater.preflight(self.source, self.state, expected_origin=str(self.remote))
+        self.assertEqual('PREFLIGHT', first['status'])
+        self.assertEqual('1.0.0', first['toolkit_version'])
+        self.assertEqual('NOT_VERIFIED', first['last_known_revision'])
+        self.assertFalse(first['state_matches_checkout'])
+        self.assertFalse(first['rollback_eligible'])
+        self.assertFalse(first['network_used'])
+        self.assertFalse(first['project_files_changed'])
+        self.assertEqual('NOT_VERIFIED', first['mcp_adapter_version'])
+        self.assertEqual('NOT_VERIFIED', first['chatgpt_plugin_version'])
+        self.assertEqual('NOT_TESTED', first['client_runtime_compatibility'])
+        self.assertFalse(self.state.exists())
+        self.assertEqual(before, git('rev-parse', 'HEAD', cwd=self.source))
+        self.assertEqual(untouched, (self.source / 'MANIFEST.json').read_bytes())
+        self._check(today='2026-10-21')
+        verified = updater.preflight(self.source, self.state, expected_origin=str(self.remote))
+        self.assertTrue(verified['state_matches_checkout'])
+        self.assertEqual(before, verified['last_known_revision'])
+        self.assertEqual('1.0.0', verified['last_known_toolkit_version'])
+
+    def test_clean_explicit_preview_and_rollback(self):
+        target_project = self.root / 'unrelated-project'
+        target_project.mkdir()
+        original = b'UNMANAGED PROJECT MUST REMAIN UNCHANGED'
+        (target_project / 'AGENTS.md').write_bytes(original)
+        self._push('1.1.0')
+        result = self._check(today='2026-10-21')
+        current = result['active_revision']
+        state_file = self.state/'state.json'
+        state_bytes = state_file.read_bytes()
+        preview = updater.rollback(self.source, self.state, expected_origin=str(self.remote))
+        self.assertEqual('ROLLBACK_PREVIEW', preview['status'])
+        self.assertEqual(self.old_head, preview['previous_good_revision'])
+        self.assertEqual('1.0.0', preview['would_restore']['toolkit_version'])
+        self.assertEqual(state_bytes, state_file.read_bytes())
+        self.assertEqual(current, git('rev-parse', 'HEAD', cwd=self.source))
+        actual = updater.rollback(self.source, self.state, apply=True,
+                                  expected_origin=str(self.remote))
+        self.assertEqual('ROLLED_BACK', actual['status'])
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+        self.assertEqual('1.0.0', actual['toolkit_version'])
+        self.assertEqual('ROLLED_BACK', updater.read_state(state_file)['last_attempt_status'])
+        self.assertIsNone(updater.read_state(state_file)['previous_good_revision'])
+        self.assertEqual(original, (target_project / 'AGENTS.md').read_bytes())
+        self.assertFalse((self.source / 'updater-state').exists())
+        with self.assertRaisesRegex(updater.UpdateError, 'rollback_unavailable'):
+            updater.rollback(self.source, self.state, apply=True,
+                             expected_origin=str(self.remote))
+
+    def test_dirty_or_tampered_checkout_cannot_rollback(self):
+        self._push('1.1.0')
+        upgraded = self._check(today='2026-10-21')
+        (self.source / 'OWNED_NOTES.txt').write_text('do not delete', encoding='utf-8')
+        with self.assertRaisesRegex(updater.UpdateError, 'local_changes_present'):
+            updater.rollback(self.source, self.state, apply=True,
+                             expected_origin=str(self.remote))
+        self.assertEqual('do not delete', (self.source / 'OWNED_NOTES.txt').read_text())
+        (self.source / 'OWNED_NOTES.txt').unlink()
+        state_file = self.state / 'state.json'
+        state = updater.read_state(state_file)
+        state['previous_good_revision'] = upgraded['active_revision']
+        updater.write_state(state_file, state)
+        with self.assertRaisesRegex(updater.UpdateError, 'rollback_unavailable'):
+            updater.rollback(self.source, self.state, apply=True,
+                             expected_origin=str(self.remote))
+        self.assertEqual(upgraded['active_revision'], git('rev-parse', 'HEAD', cwd=self.source))
+
+    def test_rollback_refuses_wrong_origin_and_invalid_version(self):
+        with self.assertRaisesRegex(updater.UpdateError, 'unexpected_git_origin'):
+            updater.preflight(self.source, self.state)
+        self._push('0.9.0')
+        with self.assertRaisesRegex(updater.UpdateError, 'candidate_toolkit_version_downgrade'):
+            self._check(today='2026-10-21')
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+        with self.assertRaisesRegex(updater.UpdateError, 'unsupported_toolkit_version_format'):
+            updater.version_tuple('1.0.beta')
+
+    def test_rollback_respects_active_update_lock(self):
+        self._push('1.1.0')
+        self._check(today='2026-10-21')
+        self.state.mkdir(exist_ok=True)
+        lock = self.state / 'update.lock'
+        lock.write_text('reserved', encoding='utf-8')
+        with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
+            updater.rollback(self.source, self.state, apply=True,
+                             expected_origin=str(self.remote))
+        self.assertTrue(lock.exists())
+
     def test_status_has_no_network_side_effect(self):
         result = subprocess.run([os.sys.executable, str(SCRIPT), '--state-dir', str(self.state), '--status'],
                                 capture_output=True, text=True, timeout=5)

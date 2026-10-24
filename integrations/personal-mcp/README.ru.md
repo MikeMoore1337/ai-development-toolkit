@@ -44,6 +44,16 @@ python3 "$package/diagnose_mcp.py" \
 
 После установки полностью перезапустите Codex и проверьте `codex mcp get ai-development-toolkit`, затем **реальный вызов** `toolkit_info` и `toolkit_prepare_task` в самом Codex. Только локальная диагностика MCP не доказывает автоматическую активацию.
 
+## Проверка версии и откат выделенной Git-копии
+
+Команда `--preflight` у установленного Personal MCP показывает текущую версию/SHA Toolkit, последнюю известную ревизию и возможность отката, **без сети и изменений**. Для Windows:
+
+```powershell
+py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --preflight
+```
+
+Для Linux/macOS используйте установленный `~/.local/share/adt-personal/updater/update_toolkit.py` или `$XDG_DATA_HOME` со своим реальным путём. Сначала `--rollback` показывает только план; `--rollback --apply` явно возвращает выделенную чистую Git-копию к закреплённой прежней ревизии. Рабочий проект и файлы MCP/ChatGPT не меняются. При локальных изменениях, неверном origin или несовпадении сохранённого состояния операция запрещается. Для длительного отката отключите планировщик, иначе он позже снова подтянет `main`. Подробности — в [руководстве по обновлению](../../docs/ru/UPDATING.md).
+
 ## Автообновление навыков из GitHub
 
 ### Windows
