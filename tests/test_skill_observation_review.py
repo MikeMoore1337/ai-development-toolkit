@@ -98,7 +98,10 @@ class ObservationReviewTest(unittest.TestCase):
             target = Path(d) / "valid.json"
             target.write_text(json.dumps(self.packet()), encoding="utf-8")
             link = Path(d) / "link.json"
-            link.symlink_to(target)
+            try:
+                link.symlink_to(target)
+            except (OSError, NotImplementedError):
+                self.skipTest("Symlinks unavailable on this runner")
             self.assertEqual(2, gate.main(["--input", str(link)]))
 
 
