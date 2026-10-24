@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "description": "Untuned 16-case RU/EN stress diagnostic authored 2026-10-24, independently separated from existing fixtures but NOT independently human-reviewed. AI-authored proposed labels are non-exhaustive; no ranking/alias tuning, no semantic accuracy or client activation claim. Source-only, no model calls.",
+  "cases": [
+    {
+      "id": "untuned-ru-01",
+      "kind": "single",
+      "query": "Найди причину: один API-тест иногда завершается отказом после смены часового пояса, а повторный прогон проходит.",
+      "expected": [
+        "flaky-analysis"
+      ]
+    },
+    {
+      "id": "untuned-ru-02",
+      "kind": "single",
+      "query": "Перед включением расширения проверь, может ли его инструкция получить доступ к секретам за пределами разрешённой области.",
+      "expected": [
+        "security-boundaries"
+      ]
+    },
+    {
+      "id": "untuned-ru-03",
+      "kind": "single",
+      "query": "После новой сериализации клиенты перестали получать обязательное поле ответа. Какие контрактные проверки добавить?",
+      "expected": [
+        "contract-testing"
+      ]
+    },
+    {
+      "id": "untuned-ru-04",
+      "kind": "single",
+      "query": "Спроектируй выразительный новый лендинг с собственным визуальным характером и несколькими действительно разными макетами.",
+      "expected": [
+        "ux-ui-design-orchestra"
+      ]
+    },
+    {
+      "id": "untuned-ru-05",
+      "kind": "compound",
+      "query": "Проверь возможность безопасного отката миграции схемы БД; отдельно составь тесты запрета доступа к чужому API-ресурсу.",
+      "expected": [
+        "database-migrations",
+        "security-testing"
+      ]
+    },
+    {
+      "id": "untuned-ru-06",
+      "kind": "compound",
+      "query": "Проверь переход фокуса при клавиатурной навигации; отдельно оцени задержку загрузки интерфейса на медленном устройстве.",
+      "expected": [
+        "accessibility-testing",
+        "frontend-performance"
+      ]
+    },
+    {
+      "id": "untuned-ru-07",
+      "kind": "negative",
+      "query": "Не проводи редизайн: выясни, почему запрос SQL возвращает повторяющиеся строки после JOIN.",
+      "expected": [
+        "data-access"
+      ],
+      "avoid_top1": [
+        "ux-ui-design-orchestra"
+      ]
+    },
+    {
+      "id": "untuned-ru-08",
+      "kind": "negative",
+      "query": "Не нужно SEO-продвижение: проверь, почему обработчик фоновой очереди повторно запускает одну и ту же задачу.",
+      "expected": [
+        "background-processing"
+      ],
+      "avoid_top1": [
+        "seo-audit"
+      ]
+    },
+    {
+      "id": "untuned-en-09",
+      "kind": "single",
+      "query": "After the build cache is restored, a previously green job fails in the CI workflow; isolate the failure chain before changing code.",
+      "expected": [
+        "failure-triage"
+      ]
+    },
+    {
+      "id": "untuned-en-10",
+      "kind": "single",
+      "query": "A screen reader skips the dialog label and focus escapes behind the modal. Audit its accessibility behavior.",
+      "expected": [
+        "accessibility-testing"
+      ]
+    },
+    {
+      "id": "untuned-en-11",
+      "kind": "single",
+      "query": "An imported agent skill proposes post-install command hooks. Review its source rights and execution boundary before adoption.",
+      "expected": [
+        "external-skill-review"
+      ]
+    },
+    {
+      "id": "untuned-en-12",
+      "kind": "single",
+      "query": "For an empty JSON PATCH payload, design checks of API response codes, validation, and backward compatibility.",
+      "expected": [
+        "api-testing"
+      ]
+    },
+    {
+      "id": "untuned-en-13",
+      "kind": "compound",
+      "query": "Design negative-path tests for retry handling; separately assess bounded synthetic load and latency limits.",
+      "expected": [
+        "test-analysis-design",
+        "performance-load-testing"
+      ]
+    },
+    {
+      "id": "untuned-en-14",
+      "kind": "compound",
+      "query": "Investigate duplicate SQL rows under concurrent writes; separately verify that API response fields remain backward-compatible.",
+      "expected": [
+        "data-access",
+        "contract-testing"
+      ]
+    },
+    {
+      "id": "untuned-en-15",
+      "kind": "negative",
+      "query": "Skip interface animation changes; audit authorization failures that could reveal another user's records.",
+      "expected": [
+        "security-testing"
+      ],
+      "avoid_top1": [
+        "motion-quality"
+      ]
+    },
+    {
+      "id": "untuned-en-16",
+      "kind": "negative",
+      "query": "Do not redesign the website; trace why an HTTP API responds with an incorrect error code.",
+      "expected": [
+        "api-testing"
+      ],
+      "avoid_top1": [
+        "ux-ui-design-orchestra"
+      ]
+    }
+  ]
+}
