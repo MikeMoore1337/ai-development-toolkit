@@ -64,6 +64,15 @@ def diagnose(target: Path, layout: str, selected: dict | None = None) -> dict:
     target = target.expanduser().absolute()
     report = {"action": "doctor", "target": str(target), "layout": layout,
               "client_activation": "NOT_VERIFIED", "checks": {},
+              "diagnostics": {"schema_version": 1, "adapter": "LOCAL_CLI",
+                  "adapter_version": "UNVERSIONED_SCRIPT",
+                  "toolkit_version": manifest_data().get("version", "NOT_VERIFIED"),
+                  "source_sha": "NOT_VERIFIED", "source_worktree": "NOT_CHECKED",
+                  "loaded_skills": [], "loaded_skill_evidence": "NO_GUIDANCE_RETURNED_BY_THIS_CALL",
+                  "fallback": "NONE", "l4_client_discovery": "NOT_VERIFIED",
+                  "l5_client_invocation": "NOT_VERIFIED", "l6_client_benefit": "NOT_MEASURED",
+                  "client_activation": "NOT_VERIFIED", "target_execution": "NOT_RUN",
+                  "project_files_changed": False},
               "warnings": [], "errors": [], "managed": [],
               "unmanaged": [], "conflicts": [], "result": "OK"}
     checks, errors, warnings = report["checks"], report["errors"], report["warnings"]
