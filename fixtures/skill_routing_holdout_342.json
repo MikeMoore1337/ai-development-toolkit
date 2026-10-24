@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "description": "Issue #342: a second synthetic holdout authored before evaluation, distinct in wording from existing fixtures and containing narrow independently mechanically checkable exact-name exclusions. All proposed positive labels are AI-authored and non-exhaustive; no human blind review, real-client run, L6, or semantic accuracy claim.",
+  "label_author": "AI_ASSISTANT",
+  "reviewer_independence": "NOT_VERIFIED",
+  "scoring": "DIAGNOSTIC_NON_GATING",
+  "baseline_sha": "71a5faaea542a4214b8fb9e0db0ae6909947a3b8",
+  "cases": [
+    {
+      "id": "s342-ru-01",
+      "kind": "single",
+      "query": "Проверь контракты между сервисами после переименования обязательного поля API и найди несовместимых потребителей.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-02",
+      "kind": "single",
+      "query": "Нестабильный автотест проходит при повторном запуске; исследуй причины flaky test и условия воспроизведения.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "failure-triage"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-03",
+      "kind": "single",
+      "query": "Составь план проверки доступности формы с клавиатуры, включая управление фокусом и экранный диктор.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-04",
+      "kind": "single",
+      "query": "Оцени риск SQL-миграции с переименованием колонок и возможность обратимого отката.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [
+        "database-validation"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-05",
+      "kind": "compound",
+      "query": "Проверь контракт API после изменения схемы; затем составь отдельные негативные API тесты.",
+      "expected_primary": [
+        "contract-testing",
+        "api-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-06",
+      "kind": "compound",
+      "query": "Проверь безопасность прав доступа для расширения; отдельно оцени цепочку поставки зависимостей.",
+      "expected_primary": [
+        "security-review",
+        "dependency-maintenance"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-07",
+      "kind": "negative",
+      "query": "Не нужно seo-audit; проверь API contract testing после удаления обязательного поля.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "seo-audit"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-08",
+      "kind": "negative",
+      "query": "Не нужен playwright-testing; проверь контракт API без запуска браузера.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "playwright-testing"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-09",
+      "kind": "negative",
+      "query": "Не делай security-review: нужны контрактные проверки API при ошибочном заголовке.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "security-review"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-10",
+      "kind": "negative",
+      "query": "Не нужен database-validation; проверь flaky-analysis нестабильного автотеста.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "database-validation"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-ru-11",
+      "kind": "ambiguous",
+      "query": "Есть сомнения насчёт качества, что посоветуешь?",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s342-ru-12",
+      "kind": "missing_skill",
+      "query": "Составь медицинское назначение пациенту по анализам и назначь лекарство.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s342-en-01",
+      "kind": "single",
+      "query": "Review backward compatibility of required API payload fields between the service and its consumers.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-02",
+      "kind": "single",
+      "query": "Investigate an intermittent flaky integration test that passes after the same CI job is rerun.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "failure-triage"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-03",
+      "kind": "single",
+      "query": "Audit keyboard navigation and focus trapping on an accessible modal form.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-04",
+      "kind": "single",
+      "query": "Assess a rollback strategy for a database schema migration before shipping a breaking rename.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-05",
+      "kind": "compound",
+      "query": "Review the changed API contract; then design negative API tests for malformed requests.",
+      "expected_primary": [
+        "contract-testing",
+        "api-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-06",
+      "kind": "compound",
+      "query": "Audit the permissions of an external plugin; separately review the dependency supply chain.",
+      "expected_primary": [
+        "security-review",
+        "dependency-maintenance"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-07",
+      "kind": "negative",
+      "query": "Skip seo-audit; review the API contract after a required response field disappears.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "seo-audit"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-08",
+      "kind": "negative",
+      "query": "Skip playwright-testing; evaluate an API contract without opening a browser.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "playwright-testing"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-09",
+      "kind": "negative",
+      "query": "Do not do security-review; draft contract tests for a missing required API header.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "security-review"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-10",
+      "kind": "negative",
+      "query": "No need to run database-validation; investigate flaky-analysis for this CI-only test.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "database-validation"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s342-en-11",
+      "kind": "ambiguous",
+      "query": "I'm unsure whether the current approach is good. Thoughts?",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s342-en-12",
+      "kind": "missing_skill",
+      "query": "Diagnose a patient's condition and prescribe a restricted medication.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    }
+  ]
+}

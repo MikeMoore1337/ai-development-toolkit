@@ -166,3 +166,14 @@ The new report separates `primary`, `auxiliary`, `forbidden_selected`, and `abst
 **Keep earlier evidence separated:** 416/416 curated source checks; frozen 38-case evidence-supported diagnostic 18/38; exploratory 18-case diagnostic 6/18; release 12-case diagnostic 4/12; untuned 16-case exploratory diagnostic reported separately. These runs have different methods/label provenance, **must not be pooled** and are not real-client L4-L6. The new stress output is reproducible offline at a pinned Git SHA. Dataset author and reviewer independence are explicit machine-readable fields; no AI provider/model/API is called.
 
 **Baseline observation (frozen fixture, first execution on PR #307):** 48 cases, including 36 actionable and 12 ambiguous/out-of-catalog. Proposed primary-label overlap in **26/36 actionable**; all required labels appeared among supported choices in **22/36 actionable**; 11/48 total abstentions; 8/12 proposed abstentions satisfied; **3/36** actionable prompts unexpectedly received no supported suggestion; **4/12** proposed abstentions received a suggestion; **0/12** explicitly negative cases selected a forbidden skill in primary/auxiliary positions. RU and EN each recorded 13 cases with a primary-label overlap, but RU had 9 abstentions versus 2 EN. The unreviewed labels may be incomplete and many skills are defensible; these counts are **not semantic accuracy, error rates for real users, or measured L4-L6 performance**. No ranker, alias or original fixture was tuned to these observations; prioritize independently reviewed real-world failures before any changes.
+
+### Issue #342: second frozen RU/EN holdout (synthetic, untuned)
+
+[fixtures/skill_routing_holdout_342.json](../fixtures/skill_routing_holdout_342.json) freezes **24 additional prompts**, 12 RU and 12 EN, before the first diagnostic run: 8 single, 4 compound, 8 explicit skill exclusions, 2 ambiguous and 2 outside the catalog. All positive labels are **AI-authored and non-exhaustive**, and independent human adjudication is **NOT_VERIFIED**. Exact-name prohibition is the only gating behavioral oracle; proposed label overlaps and abstentions remain observations, not semantic accuracy. No changes to the ranker, alias registry, or previous fixtures are made for this dataset.
+
+```bash
+python scripts/skill_routing_stress.py --cases fixtures/skill_routing_holdout_342.json --summary-only
+python -m unittest tests.test_skill_routing_holdout_342 -v
+```
+
+Record per-language `primary`, `auxiliary`, `abstained`, and `forbidden_selected` separately. Results are offline lexical advice, **not** L4/L5 client invocation, native skill activation, or L6 outcome. Additional client evidence belongs to #343; conditional zero-spend L6 is #344. The original 48-case benchmark from #296 remains unchanged.
