@@ -40,6 +40,14 @@
 
 L1-L3 не доказывают L4-L6. Исторические испытания ZIP + URL от 20.10.2026 для ChatGPT, Claude, DeepSeek, Qwen - **OWNER_REPORTED_PASS**; подробные журналы и версии отсутствуют (**EVIDENCE_NOT_ATTACHED**), сравнение эффективности - **NOT_MEASURED**. Для DeepSeek/Qwen отдельные обязательные интеграции не нужны.
 
+## Диагностика источников и фактического чтения (Issue #274)
+
+Существующие read-only команды `toolkit_info`, `toolkit_prepare_task` и `adt.py doctor --json` возвращают `diagnostics` (схема v1): `adapter`, `adapter_version`, `toolkit_version`, `source_sha`, `source_worktree`, `loaded_skills`, `loaded_skill_evidence`, `fallback`, `l4_client_discovery`, `l5_client_invocation`, `l6_client_benefit`, `client_activation`, `target_execution`, `project_files_changed`.
+
+`loaded_skills` содержит только те инструкции, которые команда **действительно прочитала и вернула** в своём ответе. `toolkit_info` и `doctor` не возвращают тексты навыков и поэтому показывают `[]`. У `toolkit_prepare_task` значение `RETURNED_LOCAL_GUIDANCE` подтверждает только чтение исходников, **не** автоматическую активацию навыка в клиенте и не эффективность. Отсутствующий SHA остаётся `UNAVAILABLE` (MCP) или `NOT_VERIFIED` (CLI). У CLI нет отдельной версии пакета, поэтому его `adapter_version = UNVERSIONED_SCRIPT`.
+
+ChatGPT-плагин использует те же названия признаков в инструкциях, но не исполняет код Python, не получает доступ к ПК сам по себе и не выдаёт неизвестную версию за проверенную. Бандл-фолбэк можно указать, только когда он наблюдался; в остальных случаях — `NOT_VERIFIED`. Новый контракт не повышает уровень L4-L6 ни у одного клиента.
+
 ## Официальная документация (перепроверена 21.10.2026)
 
 - [Agent Skills](https://agentskills.io/specification): единый переносимый `SKILL.md`, обязательные метаданные, необязательные ресурсы.
