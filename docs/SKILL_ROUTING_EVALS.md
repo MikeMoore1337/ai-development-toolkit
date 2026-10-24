@@ -149,3 +149,20 @@ python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_release_pr
 ```
 
 As evaluated at release-candidate preparation: strict curated 416/416; original frozen holdout 18/38 evidence-supported (12 abstentions; 15 primary-gold overlaps; 7 auxiliary-only overlaps); earlier AI exploratory 6/18 (6 abstentions); newly written RU/EN release diagnostic 4/12 (5 abstentions). The 12 extra prompts and their labels were authored by the assistant; **not** independent, blind or human-adjudicated, and not used to change descriptions, aliases or ranking. Do not sum the three datasets or quote percentages as semantic accuracy. The routing system is still bounded **lexical** selection; real client discovery and effectiveness remain NOT_OBSERVED and NOT_TESTED (separate #141).
+
+### Roadmap IV/#296: a new frozen bilingual stress diagnostic
+
+The 48 previously unseen prompts in [fixtures/skill_routing_stress_20261024.json](../fixtures/skill_routing_stress_20261024.json) are organized as **24 Russian / 24 English** and, independently of the earlier benchmarks, cover 12 single-intent, 12 compound, 12 explicit-negative, 6 ambiguous and 6 out-of-catalog requests. They were written **by the AI assistant, not an independent human reviewer**. Proposed labels and expected abstentions were frozen **before** running their diagnostic scorer or changing any ranker/aliases. This does **not** make them independently validated or blind in the scientific sense.
+
+```bash
+python scripts/skill_routing_stress.py --summary-only
+python scripts/skill_routing_stress.py
+python -m unittest tests.test_skill_routing_stress -v
+python scripts/skill_routing_eval.py --strict
+```
+
+The new report separates `primary`, `auxiliary`, `forbidden_selected`, and `abstained` for **every case**; by-language and by-kind totals distinguish proposed-label overlap, exact forbidden selected skills, missed proposed abstentions and unexpected abstentions. A primary suggestion outside this **non-exhaustive** label set is not a verified false positive. The new fixture is **diagnostic, not a strict CI gate**: making every label match would be benchmark overfitting, not proof of meaningful skill selection. Explicit exact-name prohibition is separately protected by a synthetic unit test. `calibrated_semantic_accuracy = NOT_MEASURED`, `client_discovery = NOT_OBSERVED`, `client_effectiveness = NOT_TESTED`.
+
+**Keep earlier evidence separated:** 416/416 curated source checks; frozen 38-case evidence-supported diagnostic 18/38; exploratory 18-case diagnostic 6/18; release 12-case diagnostic 4/12; untuned 16-case exploratory diagnostic reported separately. These runs have different methods/label provenance, **must not be pooled** and are not real-client L4-L6. The new stress output is reproducible offline at a pinned Git SHA. Dataset author and reviewer independence are explicit machine-readable fields; no AI provider/model/API is called.
+
+**Baseline observation (frozen fixture, first execution on PR #307):** 48 cases, including 36 actionable and 12 ambiguous/out-of-catalog. Proposed primary-label overlap in **26/36 actionable**; all required labels appeared among supported choices in **22/36 actionable**; 11/48 total abstentions; 8/12 proposed abstentions satisfied; **3/36** actionable prompts unexpectedly received no supported suggestion; **4/12** proposed abstentions received a suggestion; **0/12** explicitly negative cases selected a forbidden skill in primary/auxiliary positions. RU and EN each recorded 13 cases with a primary-label overlap, but RU had 9 abstentions versus 2 EN. The unreviewed labels may be incomplete and many skills are defensible; these counts are **not semantic accuracy, error rates for real users, or measured L4-L6 performance**. No ranker, alias or original fixture was tuned to these observations; prioritize independently reviewed real-world failures before any changes.
