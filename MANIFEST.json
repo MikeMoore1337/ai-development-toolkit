@@ -1,6 +1,6 @@
 {
   "package": "ai-development-toolkit",
-  "version": "5.5.5",
+  "version": "5.5.6",
   "scope": "Portable skill and QA library, including full generic Clear Voice and Make Feature 0.3.0 source with recorded owner-reported permission ID1337 (independent rights verification pending); no personal project references or personal-issued license documents",
   "skill_root": ".agents/skills",
   "core_skills": [
