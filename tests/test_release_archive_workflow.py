@@ -62,6 +62,13 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
         config = yaml.load(workflow.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
         jobs = config["jobs"]
         self.assertEqual("macos-portability", jobs["tests"]["needs"])
+        self.assertEqual("${{ always() }}", jobs["tests"]["if"])
+        gate = jobs["tests"]["steps"][0]
+        self.assertEqual(
+            "${{ needs.macos-portability.result != 'success' }}",
+            gate["if"],
+        )
+        self.assertIn('exit 1', gate["run"])
         self.assertNotIn("if", jobs["macos-portability"])
         self.assertEqual(
             ["macos-15", "macos-15-intel"],
