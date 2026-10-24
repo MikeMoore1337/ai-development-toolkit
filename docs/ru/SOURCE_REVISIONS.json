@@ -134,6 +134,11 @@
       "source_sha256": "3acf1e6563706c6b602f35f6612fd94ce0325ae099e6b4d33d6b42130041d676"
     },
     {
+      "source": "docs/INTEGRATIONS.md",
+      "translation": "docs/ru/INTEGRATIONS.md",
+      "source_sha256": "3c0c85637959350e5e105a617490b496306279714284fe0be546e9e0bccf8bb8"
+    },
+    {
       "source": "docs/INTEGRATION_MATRIX.md",
       "translation": "docs/en/INTEGRATION_MATRIX.md",
       "source_language": "ru",
@@ -157,7 +162,7 @@
     {
       "source": "docs/MCP_INSTALL.md",
       "translation": "docs/ru/MCP_INSTALL.md",
-      "source_sha256": "ecd9202164af2012321f454bce36e1e0a448685a59958f0eed83f67c211b3948"
+      "source_sha256": "55fe7bf593ea638bd2af6ae77ef8f869925a680a28d4c401af15b113f2d9f266"
     },
     {
       "source": "docs/OBSERVABILITY_SRE.md",
