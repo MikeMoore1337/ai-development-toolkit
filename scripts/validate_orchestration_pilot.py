@@ -172,6 +172,64 @@ def _validate(doc: Any) -> list[str]:
     return errors
 
 
+def recommend_execution_mode(
+    *, needs_review: bool = False, reviewer_available: bool = False,
+    independent_readonly_scopes: int = 0, independence_verified: bool = False,
+    writes_requested: bool = False, client_parallel_verified: bool = False,
+    owner_parallel_approved: bool = False,
+    verified_zero_incremental_cost: bool = False,
+    verified_isolation: bool = False,
+) -> dict[str, Any]:
+    """Offline advisory selection; never instantiate agents or perform writes."""
+    flags = (needs_review, reviewer_available, independence_verified,
+             writes_requested, client_parallel_verified, owner_parallel_approved,
+             verified_zero_incremental_cost, verified_isolation)
+    if any(type(flag) is not bool for flag in flags):
+        raise ValueError("mode selector flags must be booleans")
+    if (type(independent_readonly_scopes) is not int
+            or not 0 <= independent_readonly_scopes <= 3):
+        raise ValueError("independent_readonly_scopes must be an integer 0..3")
+
+    approved_parallel = (
+        independent_readonly_scopes >= 2 and independence_verified
+        and not writes_requested and client_parallel_verified
+        and owner_parallel_approved and verified_zero_incremental_cost
+        and verified_isolation
+    )
+    if approved_parallel:
+        mode = "OPTIONAL_PARALLEL_READ_ONLY"
+        rationale = "All opt-in, zero-cost, isolation and independent-read-only gates declared true"
+    elif needs_review and reviewer_available:
+        mode = "SEQUENTIAL_REVIEW"
+        rationale = "Reviewer available; no unverified parallel delegation or concurrent writes"
+    else:
+        mode = "SINGLE_AGENT"
+        rationale = "Conservative default; no verified need or permission for parallel execution"
+
+    return {
+        "schema_version": 1,
+        "mode": mode,
+        "rationale": rationale,
+        "parallel_candidate_only": mode == "OPTIONAL_PARALLEL_READ_ONLY",
+        "safety_gates": {
+            "writes_requested": writes_requested,
+            "independent_readonly_scopes": independent_readonly_scopes,
+            "independence_verified": independence_verified,
+            "client_parallel_verified": client_parallel_verified,
+            "owner_parallel_approved": owner_parallel_approved,
+            "verified_zero_incremental_cost": verified_zero_incremental_cost,
+            "verified_isolation": verified_isolation,
+        },
+        "evidence_status": "DECLARED_GATES_NOT_RUNTIME_PROOF",
+        "model_tokens": "NOT_MEASURED",
+        "expected_speedup": "NOT_MEASURED",
+        "actual_worker_invocations": 0,
+        "execution": "NOT_RUN",
+        "project_files_changed": False,
+        "paid_api_invoked": False,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", type=Path)
