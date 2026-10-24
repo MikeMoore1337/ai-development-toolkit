@@ -34,10 +34,10 @@ jobs:
           - os: windows-latest
             python-version: '3.14'
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Dependencies
@@ -114,7 +114,7 @@ jobs:
         run: python scripts/skill_quality_metrics.py --check-repeat --json-report "${{ runner.temp }}/skill-quality.json" --summary
       - name: Preserve per-skill quality report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: skill-quality-${{ matrix.os }}-${{ matrix.python-version }}
           path: ${{ runner.temp }}/skill-quality.json
@@ -163,7 +163,7 @@ jobs:
           python scripts/validate_provenance.py --root "$staging/unpacked" --mode release --report "$RUNNER_TEMP/provenance-archive-preflight.json"
       - name: Preserve provenance JSON report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: provenance-${{ matrix.os }}-${{ matrix.python-version }}
           path: |
@@ -189,7 +189,7 @@ jobs:
         run: python scripts/agent_eval_offline_smoke.py --strict-runtimes
       - name: Checkout pinned Hermes contract (source only)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: MikeMoore1337/hermes
           ref: db7ed22d4faef39af3d5aafa0cc6f20b91b23a3a
@@ -211,11 +211,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.12'
       - name: Validate exact source snapshot before building
@@ -266,7 +266,7 @@ jobs:
           print('Verified', ', '.join(sorted(seen)))
           PYCODE
       - name: Preserve candidate ZIPs and SHA256 evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: adt-integration-sources-${{ github.sha }}
           path: |
@@ -285,10 +285,10 @@ jobs:
       matrix:
         os: [macos-15, macos-15-intel]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.12'
       - name: Confirm macOS architecture
