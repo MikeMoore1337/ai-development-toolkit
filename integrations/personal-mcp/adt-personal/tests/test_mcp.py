@@ -138,6 +138,30 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertIn('make-feature', self.tk.route('anything', profile='make-feature')['unavailable'])
         with self.assertRaises(ToolkitError):self.tk.route('anything',profile='qa-all')
 
+    def test_routing_decision_contract_and_bounded_negation(self):
+        route = self.tk.route("Create REST API with FastAPI and test it with pytest")
+        decision = route["routing_decision"]
+        self.assertEqual(1, decision["schema_version"])
+        self.assertEqual("FULFILL_REQUEST", decision["intent_mode"])
+        self.assertEqual("SUGGESTIONS_ONLY", decision["status"])
+        self.assertEqual("backend", decision["primary_profile"])
+        self.assertIn("qa-python", decision["auxiliary_profiles"])
+        self.assertEqual("NOT_OBSERVED", decision["client_activation"])
+        self.assertEqual("NOT_RUN", decision["execution"])
+        self.assertFalse(decision["installation_performed"])
+        self.assertFalse(decision["project_files_changed"])
+
+        negated = self.tk.route("Не нужен SEO-аудит: проверь REST API")
+        self.assertEqual("backend", negated["profile"])
+        self.assertNotIn("seo-audit", negated["skills"])
+        self.assertEqual(["Не нужен SEO-аудит"], negated["routing_decision"]["excluded_clauses"])
+        forbidden_only = self.tk.route("No need to audit SEO")
+        self.assertEqual("NO_POSITIVE_INTENT", forbidden_only["routing_decision"]["status"])
+        self.assertEqual([], forbidden_only["routing_decision"]["primary_skills"])
+        self.assertFalse(forbidden_only["routing_decision"]["project_files_changed"])
+        exported = self.tk.route("Составь промпт для тестирования API")
+        self.assertEqual("EXPORT_PROMPT", exported["routing_decision"]["intent_mode"])
+
     def test_prompt_and_seo_intent_routing(self):
         cases = (
             ('Сделай хороший промпт для Codex из черновика', 'prompt-refinement'),
