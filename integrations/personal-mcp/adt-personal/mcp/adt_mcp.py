@@ -528,6 +528,13 @@ class Toolkit:
                 raise ToolkitError('Unknown profile; see toolkit_catalog(kind=profiles)')
             chosen = profile
             matched = ['explicit-profile']
+            # An explicit profile is not approval to skip visual acceptance.
+            # Keep the same create-design gate as automatic routing for a
+            # requested new site/screen or major redesign.
+            if chosen == 'ui-orchestra' and any(
+                match_term(text, term) for term in VISUAL_CREATION_TERMS
+            ):
+                visual_phase = 'create-design'
         else:
             chosen = next(iter(matches), 'general')
             building = has_build_intent(text)

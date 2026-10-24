@@ -201,6 +201,11 @@
       "source_sha256": "786619920b3b60ccf380b625ca73b5fbb04fa08e5d61133e7bca4fb4c6827693"
     },
     {
+      "source": "docs/PROFILE_CONTEXT_AUDIT.md",
+      "translation": "docs/ru/PROFILE_CONTEXT_AUDIT.md",
+      "source_sha256": "8bf507d48e3c2aa2e142f4871287350d19cc267aaf166cee029e8d5296c004cc"
+    },
+    {
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
       "translation": "docs/ru/PROJECT_ADOPTION_PREFLIGHT.md",
       "source_sha256": "3600ebe1c72ba5c7e3a9718f816b4bf9097e93df06e091a317d221ac3ed7ec59"
