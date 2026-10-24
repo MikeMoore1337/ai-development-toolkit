@@ -264,8 +264,41 @@ def recommend(prompt: str, catalog: dict[str, str],
         })
     leaders = {row["candidates"][0]["skill"] for row in results
                if row["candidates"] and row["candidates"][0]["lexical_support"] == "PRESENT"}
+    primary_skills: list[str] = []
+    auxiliary_skills: list[str] = []
+    for segment in results:
+        for candidate in segment["candidates"]:
+            name = candidate["skill"]
+            if candidate["selection_role"] == "PRIMARY":
+                if name not in primary_skills:
+                    primary_skills.append(name)
+            elif name not in primary_skills and name not in auxiliary_skills:
+                auxiliary_skills.append(name)
+    auxiliary_skills = [name for name in auxiliary_skills if name not in primary_skills]
+    status = ("NO_POSITIVE_INTENT" if not parts else
+              "SUGGESTIONS_ONLY" if primary_skills else "INSUFFICIENT_EVIDENCE")
+    requested_prompt = bool(re.search(
+        r"(?:сделай|составь|напиши|улучши|адаптируй|перепиши)\s+промпт|"
+        r"(?:write|create|improve|rewrite)\s+(?:a\s+)?prompt", prompt, re.I))
+    routing_decision = {
+        "schema_version": 1,
+        "intent_mode": "EXPORT_PROMPT" if requested_prompt else "FULFILL_REQUEST",
+        "status": status,
+        "primary_profile": None,  # Lexical skill hints do not justify a profile choice.
+        "primary_skills": primary_skills,
+        "auxiliary_profiles": [],
+        "auxiliary_skills": auxiliary_skills,
+        "excluded_clauses": excluded_clauses,
+        "evidence_basis": "LEXICAL_SUPPORT",
+        "uncertainty": "NOT_CALIBRATED",
+        "client_activation": "NOT_OBSERVED",
+        "execution": "NOT_RUN",
+        "installation_performed": False,
+        "project_files_changed": False,
+    }
     return {
         "classification": "offline_lexical_advice",
+        "routing_decision": routing_decision,
         "confidence": "NOT_CALIBRATED",
         "client_skill_selection": "NOT_OBSERVED",
         "client_effectiveness": "NOT_TESTED",
