@@ -42,7 +42,7 @@ def load_stress(path: Path, catalog: dict[str, str]) -> dict:
             raise router.RoutingInputError("Invalid stress case fields")
         ident, kind, query = row["id"], row["kind"], row["query"]
         if (not isinstance(ident, str) or ident in ids or
-                not (ident.startswith("s296-ru-") or ident.startswith("s296-en-"))):
+                not ident.startswith(("s296-ru-", "s296-en-", "s342-ru-", "s342-en-"))):
             raise router.RoutingInputError("Invalid/duplicate stress id")
         ids.add(ident)
         if kind not in KINDS or not isinstance(query, str) or not query.strip() or len(query) > 1000:
