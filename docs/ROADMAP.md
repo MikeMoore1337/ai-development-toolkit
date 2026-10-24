@@ -4,7 +4,7 @@
 
 ## Current baseline (24 October 2026)
 
-The latest **published source release** is [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5), with `MANIFEST.json.version = 5.5.5` at the immutable release commit `2fcc1efb858670a17aa251ba7264cef89cab1c71`. Later `main` commits are **unreleased** unless a subsequent GitHub Release is published. Refer to [release procedure](RELEASE_PROCESS.md) for exact-version and archive verification.
+The latest **published source release** is [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6), with `MANIFEST.json.version = 5.5.6` at immutable tag commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`. The [archive CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) verified SHA256 and technical provenance; publication-time docs were stale and are corrected separately. Real-agent effectiveness and independent legal rights remain unverified. Later `main` commits are not automatically released. See [release procedure](RELEASE_PROCESS.md).
 
 The declared catalog at this revision contains **82 skills, 45 profiles and 16 roles**. Use [MANIFEST.json](../MANIFEST.json) for the authoritative current counts. CI checks source format, packaging, provenance, release integrity and offline contracts; it does **not** prove actual agent discovery or improved task outcomes.
 
@@ -20,9 +20,9 @@ This page is a development guide, **not an auto-updating Issue tracker**. Click 
 
 These completed Issues demonstrate their **stated scopes**, not universal real-agent compatibility or effectiveness.
 
-## Next development queue (Roadmap IV)
+## Roadmap IV (completed within stated scope)
 
-Priority and implementation evidence belong to the linked Issues:
+All eight issues below are closed in their limited accepted scopes; links provide implementation evidence. Source validation does not prove independent real-agent benefit:
 
 1. **P0:** [#294](https://github.com/MikeMoore1337/ai-development-toolkit/issues/294) current-state bilingual documentation and roadmap.
 2. **P1:** [#295](https://github.com/MikeMoore1337/ai-development-toolkit/issues/295) clearer ChatGPT / Personal MCP / Project MCP / Skill Manager selection; [#296](https://github.com/MikeMoore1337/ai-development-toolkit/issues/296) new RU/EN routing stress cases.
