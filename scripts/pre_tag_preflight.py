@@ -113,13 +113,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sha", required=True, help="Exact validated 40-character SHA")
     parser.add_argument("--root", type=Path, default=ROOT)
     args = parser.parse_args(argv)
+    stage = "LOCAL"
     try:
         root = args.root.resolve()
         local_preflight(root, args.tag, args.sha)
+        stage = "REMOTE"
         remote_preflight(args.tag, args.sha, os.environ.get("GITHUB_TOKEN"))
     except GateBlocked as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
+        print(stage + "_PRETAG_BLOCKED", file=sys.stderr)
+        print("RELEASE_ACCEPTANCE=BLOCKED", file=sys.stderr)
         return 2
+    print("LOCAL_PRETAG_PASS")
+    print("REMOTE_PRETAG_PASS")
+    print("RIGHTS_ATTESTATION=NOT_ATTESTED_BY_PREFLIGHT")
+    print("RELEASE_ACCEPTANCE=AWAITING_OWNER_APPROVAL")
     print("READY_FOR_OWNER_APPROVAL: local SHA, clean worktree, tag absence, remote main and required CI verified")
     print("NOT_PUBLISHED: owner rights/provenance decision and publication remain separate")
     return 0
