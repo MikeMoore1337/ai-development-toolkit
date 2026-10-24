@@ -12,8 +12,6 @@
 
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md).
 
-**Последний опубликованный релиз:** [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) (23.10.2026). [CHANGELOG.md](CHANGELOG.md).
-
 ## Начните с задачи
 
 AI Development Toolkit - **переносимая библиотека навыков, специализированных ролей и QA-процессов** для разработки с ИИ. Это не отдельный ИИ-агент, не хостинг и не разрешение на доступ к вашему проекту.
@@ -79,7 +77,7 @@ Toolkit служит **источником инструкций, а не мес
 
 **Локальная установка не обязательна.** Для командного способа нужны Python 3.12+, папка проекта и отдельно установленный ИИ-клиент. Если хотите только сформулировать задачу, начните с [варианта без терминала](docs/ru/BEGINNER_START.md).
 
-**Последний опубликованный релиз:** [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3) (22 октября 2026 года). SHA тега `14b96569528ab9544c0d28aa1a00343496066445`; `MANIFEST.json.version = 5.5.3`. Исторические расхождения v5.5.0/v5.5.1 описаны в [CHANGELOG.md](CHANGELOG.md). В `main` могут появляться ещё не опубликованные изменения.
+**Последний опубликованный релиз:** [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) (23 октября 2026 года). SHA тега `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`; `MANIFEST.json.version = 5.5.4`. Исторические расхождения v5.5.0/v5.5.1 описаны в [CHANGELOG.md](CHANGELOG.md). В `main` могут появляться ещё не опубликованные изменения.
 
 
 Для новой установки рекомендуется **Skill Manager v2**: предпросмотр, учёт установленных им файлов, безопасное обновление и восстановление.
