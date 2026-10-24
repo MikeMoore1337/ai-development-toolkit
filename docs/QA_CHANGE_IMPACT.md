@@ -28,6 +28,12 @@ Each recommendation includes `changed_paths`, `risk`, `purpose`, `status = NOT_R
 
 The `fixtures/qa_change_impact_cases.json` cases are **synthetic** PR examples spanning different application architectures. Passing their oracles proves deterministic lower-bound check suggestions, *not* that those applications were accessed or their tests executed.
 
+## Catalog-backed QA guidance (Issue #278)
+
+Each suggested check now includes a `guidance` object with a **profile hint**, **skill hint** and **candidate test scenario**. All profile/skill pairs belong to the existing `MANIFEST.json` catalog; no profile or test runner is installed or invoked. For example, AUTH links to `qa-security` / `security-testing` and a deny-by-default access scenario, API links to `qa-contract` / `contract-testing`, DB to `data-engineering` / `database-validation`, UI to `qa-ui` / `playwright-testing`, ASYNC to `reliability-testing` / `background-processing`, PRIVACY to `qa-security`, and CI to `devops-infrastructure` / `release-safety`.
+
+The `source` marker is `STATIC_MANIFEST_CATALOG_HINT`: the suggestion is **only** a source-declared starting point. `client_skill_activation=NOT_VERIFIED`, `test_execution=NOT_RUN`, and `test_command=null` remain unchanged. Unknown file paths recommend `change-impact-analysis` to investigate the subsystem instead of inventing a concrete test or claiming a safe release. The same guidance is attached to checks added by optional bounded diff inspection, without removing any original critical test. It cannot identify unobserved call sites, affected consumers or passing tests.
+
 ## Persisted-state and dependent-consumer risk hints
 
 With `--inspect-diff`, added or removed markers such as `mutation_id`, `expected_version`, `request_fingerprint`, `is_completed` and version assignments produce the **PERSISTED_STATE** signal. It adds `state-integrity` (version, persistence and no-op-write invariants), `async-replay` (idempotency, retries and conflicts), and `consumer-review` (manual search for direct callers). API hints also add `consumer-review`. A token match is **not** proof of known consumers, database migrations, test results or a call graph.
