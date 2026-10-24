@@ -196,6 +196,11 @@
       "source_sha256": "04a0e372054a8204427628dfdbd00ddc00031f92ea7f0d8e128dad147b025d08"
     },
     {
+      "source": "docs/PROFILE_BENEFIT_EVAL.md",
+      "translation": "docs/ru/PROFILE_BENEFIT_EVAL.md",
+      "source_sha256": "786619920b3b60ccf380b625ca73b5fbb04fa08e5d61133e7bca4fb4c6827693"
+    },
+    {
       "source": "docs/PROJECT_ADOPTION_PREFLIGHT.md",
       "translation": "docs/ru/PROJECT_ADOPTION_PREFLIGHT.md",
       "source_sha256": "3600ebe1c72ba5c7e3a9718f816b4bf9097e93df06e091a317d221ac3ed7ec59"
@@ -288,7 +293,7 @@
     {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
-      "source_sha256": "5be3263d30186a0e89265fdd58c2560e23906908bcf03dd0f85bf96105802aa1"
+      "source_sha256": "c2ae49622d3c6bd7ac9e86869e67299c81b0db6e7f521c3a07257aee6f3542b0"
     },
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
