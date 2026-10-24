@@ -83,6 +83,8 @@ def inspect(root: Path = ROOT) -> dict:
         if rules_c != rules_e or any(missing not in rules_c
                                    for missing in MANDATORY_INSTRUCTIONS):
             raise AuditError("Mandatory instructions missing in compact response")
+        if len(adt_mcp.CONFLICT_GROUP & set(compact["selected_skills"])) > 1:
+            raise AuditError("Multiple conflicting feature controllers selected")
         if profile == "ui-orchestra" and compact["visual_phase"] != "create-design":
             raise AuditError("Visual approval gate suppressed by explicit profile")
         if c["total_source_bytes"] > e["total_source_bytes"]:
@@ -154,9 +156,22 @@ def inspect(root: Path = ROOT) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--audit-duplicates", action="store_true",
+                        help="Read-only exact source hashes and profile overlap")
+    parser.add_argument("--audit-directives", action="store_true",
+                        help="Read-only bounded lexical directive candidates")
     args = parser.parse_args()
     try:
-        result = inspect(args.root.resolve())
+        root = args.root.resolve()
+        result = inspect(root)
+        if args.audit_duplicates or args.audit_directives:
+            manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
+            if args.audit_duplicates:
+                result["source_duplicates"] = profile_metrics.audit_exact_sources(
+                    root, manifest)
+            if args.audit_directives:
+                result["directive_candidates"] = profile_metrics.audit_directives(
+                    root, manifest)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print("ERROR: " + str(exc), file=sys.stderr)
         return 2
