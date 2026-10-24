@@ -11,6 +11,24 @@ This is an **optional task-scoped QA process**, not a runtime, agent scheduler, 
 - **Up to three perspectives:** risky cross-layer changes, inconsistent signals, broad E2E migrations or release-critical evidence. Three is a maximum, not a quota.
 - For product implementation, use only one controlling process (`feature-delivery` or explicitly available `make-feature`). This guide coordinates *QA evidence only* and never owns the PR or task lifecycle.
 
+## Offline adaptive decision (Issue #279)
+
+The optional `scripts/orchestration_decision.py INPUT.json` is a **read-only, deterministic advice tool**, not a worker orchestrator. Declare exactly: `schema_version=1`, `scope=SMALL|MEDIUM|LARGE`, `independent_readonly_streams=0..3`, `writes_required` (boolean), `parallel_capability=VERIFIED|NOT_VERIFIED|UNAVAILABLE`, `owner_parallel_approval`, `zero_incremental_cost_verified`, and `isolation_verified` (booleans).
+
+- A small task stays `SINGLE_AGENT`. Medium/large work stays `SEQUENTIAL_REVIEW` with a single controller unless **all** parallel gates hold: at least two separate read-only streams, verified available client capability, explicit owner approval, verified no incremental cost, verified isolation, and **no writes required**.
+- Even then `OPTIONAL_PARALLEL_READONLY_REVIEW` is only a suggestion: it launches zero workers. The actual client must independently check permissions and provide invocation traces. A mixed read/write task never authorizes parallel writers.
+- The output includes blockers and reason codes. Execution is always `NOT_RUN`; activation `NOT_VERIFIED`; time, tokens and benefit `NOT_MEASURED`. Claimed input evidence is not independently authenticated. Reuse the existing `validate_qa_orchestration.py` for later declared QA execution reports; do not alter the historical A/B pilot ledger.
+- The three previously reported A/B examples were directionally mixed (one approximately 49% faster, two approximately 6% and 4% slower), with differing tasks and no defensible universal improvement claim. These are **not** thresholds used by the selector.
+
+Minimal synthetic input:
+
+```json
+{"schema_version":1,"scope":"SMALL","independent_readonly_streams":0,
+ "writes_required":false,"parallel_capability":"NOT_VERIFIED",
+ "owner_parallel_approval":false,"zero_incremental_cost_verified":false,
+ "isolation_verified":false}
+```
+
 ## Procedure
 
 1. **Preflight:** capture exact owner request, Issue acceptance criteria, target repo/revision, changed files, declared risk, available clients/tools and data boundaries. Identify the smallest independent test oracles.
