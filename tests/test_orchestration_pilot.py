@@ -201,5 +201,71 @@ class PilotLedgerTests(unittest.TestCase):
         self.reject("FAKE_OBSERVATION", doc)
 
 
+class ExecutionModeDecisionTests(unittest.TestCase):
+    """No runtime calls, paid API, other repositories or synthetic performance PASS."""
+
+    def test_default_is_one_agent_and_never_runs(self):
+        result = pilot.recommend_execution_mode()
+        self.assertEqual("SINGLE_AGENT", result["mode"])
+        self.assertEqual(0, result["actual_worker_invocations"])
+        self.assertEqual("NOT_RUN", result["execution"])
+        self.assertEqual("NOT_MEASURED", result["model_tokens"])
+        self.assertEqual("NOT_MEASURED", result["expected_speedup"])
+        self.assertFalse(result["paid_api_invoked"])
+        self.assertFalse(result["project_files_changed"])
+
+    def test_sequential_review_without_parallel_activation(self):
+        result = pilot.recommend_execution_mode(
+            needs_review=True, reviewer_available=True, writes_requested=True)
+        self.assertEqual("SEQUENTIAL_REVIEW", result["mode"])
+        self.assertFalse(result["parallel_candidate_only"])
+        self.assertEqual(0, result["actual_worker_invocations"])
+
+    def test_parallel_only_after_every_explicit_gate(self):
+        gates = {
+            "needs_review": True, "reviewer_available": True,
+            "independent_readonly_scopes": 2, "independence_verified": True,
+            "writes_requested": False, "client_parallel_verified": True,
+            "owner_parallel_approved": True,
+            "verified_zero_incremental_cost": True,
+            "verified_isolation": True,
+        }
+        full = pilot.recommend_execution_mode(**gates)
+        self.assertEqual("OPTIONAL_PARALLEL_READ_ONLY", full["mode"])
+        self.assertTrue(full["parallel_candidate_only"])
+        self.assertEqual("DECLARED_GATES_NOT_RUNTIME_PROOF", full["evidence_status"])
+        self.assertEqual(0, full["actual_worker_invocations"])
+        for key in ("independence_verified", "client_parallel_verified",
+                    "owner_parallel_approved", "verified_zero_incremental_cost",
+                    "verified_isolation"):
+            with self.subTest(gate=key):
+                missing = pilot.recommend_execution_mode(
+                    **{**gates, key: False})
+                self.assertEqual("SEQUENTIAL_REVIEW", missing["mode"])
+                self.assertEqual("NOT_RUN", missing["execution"])
+        for key, value in (("independent_readonly_scopes", 1),
+                           ("writes_requested", True)):
+            with self.subTest(gate=key):
+                blocked = pilot.recommend_execution_mode(**{**gates, key: value})
+                self.assertNotEqual("OPTIONAL_PARALLEL_READ_ONLY", blocked["mode"])
+
+    def test_unverified_client_cannot_spawn_parallel_on_user_request(self):
+        result = pilot.recommend_execution_mode(
+            independent_readonly_scopes=3, independence_verified=True,
+            owner_parallel_approved=True, verified_zero_incremental_cost=True,
+            verified_isolation=True, client_parallel_verified=False)
+        self.assertEqual("SINGLE_AGENT", result["mode"])
+        self.assertEqual("NOT_RUN", result["execution"])
+
+    def test_invalid_flags_and_ranges_fail_closed(self):
+        for kwargs in ({"needs_review": "yes"},
+                       {"verified_isolation": 1},
+                       {"independent_readonly_scopes": True},
+                       {"independent_readonly_scopes": -1},
+                       {"independent_readonly_scopes": 4}):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                pilot.recommend_execution_mode(**kwargs)
+
+
 if __name__ == "__main__":
     unittest.main()
