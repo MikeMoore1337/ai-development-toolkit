@@ -1,6 +1,6 @@
 # Local Toolkit MCP for Codex and Claude Code
 
-[Русский](ru/MCP_INSTALL.md) · [Installation](INSTALLATION.md) · [Updates](UPDATING.md)
+[Русский](ru/MCP_INSTALL.md) · [Installation](INSTALLATION.md) · [Updates](UPDATING.md) · [Choose an integration](INTEGRATIONS.md)
 
 ## Features and boundaries
 

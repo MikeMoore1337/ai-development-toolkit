@@ -1,6 +1,6 @@
 # Локальный Toolkit MCP для Codex и Claude Code
 
-[English](../MCP_INSTALL.md) · [Установка](INSTALLATION.md) · [Обновление](UPDATING.md)
+[English](../MCP_INSTALL.md) · [Установка](INSTALLATION.md) · [Обновление](UPDATING.md) · [Выбор интеграции](INTEGRATIONS.md)
 
 ## Возможности и ограничения
 
