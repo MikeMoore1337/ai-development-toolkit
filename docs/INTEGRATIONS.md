@@ -10,7 +10,29 @@ AI Development Toolkit offers **two equally important integrations** built on sh
 - **Access updated Toolkit sources.** The plugin can read a consistent GitHub revision at task time *when supported tools and required verification are available*; otherwise it reports a bundled fallback. The local MCP reads a separately maintained checkout, with an optional scheduled updater. **Neither automatically upgrades its own installed package.**
 - **Respect project boundaries.** Work occurs only with project content the selected host is authorized to access. Skills and MCP tools alone do not grant new filesystem, repository or execution permissions.
 
-## Choose an integration for the actual environment
+## Choose one of four paths first
+
+Choose by **where the task is performed**. The ChatGPT and Codex integrations are equally important; the other two paths serve different setup needs.
+
+| Need | Route | Required environment | How to verify |
+| --- | --- | --- | --- |
+| Advice **inside ChatGPT** | [ChatGPT plugin](../integrations/chatgpt-plugin/README.md) | Host account/client supports plugin import; no local Python or MCP | Select the imported plugin, ask for a specific skill, inspect the actual source revision or declared fallback; uploaded/connected project files still need separate authorization |
+| Read-only Toolkit guidance **across Codex projects** | [Personal MCP](../integrations/personal-mcp/README.md) (global user registration) | Codex, Git, **Python 3.10+**, separate Toolkit reference checkout | Restart Codex, inspect `codex mcp get ai-development-toolkit`, then call real `toolkit_info` and `toolkit_prepare_task` **inside Codex** |
+| Read-only MCP **in one Codex or Claude Code project** | [Project MCP](MCP_INSTALL.md) (`scripts/toolkit_mcp.py`) | Existing project, Toolkit checkout, **Python 3.12+**; preview configuration, explicit `--apply` | Run the installer's `doctor --client codex|claude --project <existing-path>`, reconnect, inspect actual client MCP tools |
+| **Copy native skill files** into an existing project (no MCP) | [Skill Manager v2](INSTALLATION.md) | Existing project and Toolkit checkout, **Python 3.12+**; preview and explicit `--apply` | `python scripts/adt.py status --target <existing-path>` verifies files/drift, **not** client activation |
+
+If you only want to describe your task without installing anything, use [the beginner guide](BEGINNER_START.md). Other conversational clients can follow [AGENT_START.md](../AGENT_START.md); a ChatGPT plugin ZIP is **not** a universal plugin or MCP package.
+
+### Verify versions and updates independently
+
+- **Source:** compare the Git SHA and `MANIFEST.json.version` in the specific Toolkit checkout; publishing a new source tag does **not** install anything on user computers.
+- **Personal MCP:** `toolkit_info` exposes the installed MCP adapter version separately from its source checkout. Optional Windows Task Scheduler, Linux systemd user and macOS launchd jobs refresh **only the separate checkout**. They do **not** upgrade installed MCP files.
+- **Project MCP:** uses the configured checkout; it has **no background updater**. `doctor` proves the on-disk config only, not that the client invoked the tools.
+- **ChatGPT plugin:** source ZIP version, installed personal plugin version and dynamically loaded GitHub revision can differ. GitHub read-on-demand is not automatic installed-plugin upgrade.
+- **Skill Manager:** file changes happen only after preview plus explicit `--apply`; `status` proves the managed file state, not that an AI client used the skills.
+- **Evidence:** local configuration/stdio checks are not L4 live client discovery, L5 actual skill use or L6 measured benefit. Use `NOT_VERIFIED` / `NOT_MEASURED` when evidence is missing.
+
+## Compare ChatGPT and Codex conversational integrations
 
 | Capability | ChatGPT plugin | Codex local MCP |
 | --- | --- | --- |
