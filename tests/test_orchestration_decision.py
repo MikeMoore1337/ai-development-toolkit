@@ -1,7 +1,6 @@
 """Read-only deterministic policy tests; no clients, agent runtimes, or paid APIs."""
 from __future__ import annotations
 
-import copy
 import importlib.util
 import json
 from pathlib import Path
