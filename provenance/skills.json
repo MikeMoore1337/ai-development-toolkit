@@ -6708,6 +6708,26 @@
       "notes": "AI-authored fresh RU/EN release diagnostics for #189. Not independent, blind or human-adjudicated. No ranking/alias tuning or semantic-accuracy claim."
     },
     {
+      "id": "test-fixtures-skill-routing-untuned-20261024-json",
+      "path": "fixtures/skill_routing_untuned_20261024.json",
+      "name": "skill_routing_untuned_20261024.json",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "AI-authored 16-case RU/EN untuned natural-language routing stress diagnostic; labels unreviewed by an independent human and not a model semantic-accuracy, client-discovery, installation, or effectiveness claim (#273)."
+    },
+    {
       "id": "issue69-fixtures-tool-integrations",
       "path": "fixtures/tool-integrations",
       "name": "Synthetic permission and tool fixtures",
