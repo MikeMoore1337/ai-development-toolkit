@@ -15,16 +15,9 @@
 
 ## Установка
 
-Скачать и распаковать архив в `Downloads`, затем в PowerShell:
+Используйте актуальный [универсальный установщик и инструкции Windows/Linux/macOS](../README.ru.md) из **проверенного пакета**. Прежние команды с архивом `0.1.7` были примером конкретного исторического выпуска; не принимайте его за текущую или автоматически установленную версию MCP.
 
-```powershell
-$target = "$HOME\Downloads\ADT-Personal-0.1.7"
-$zip = "$HOME\Downloads\AI-Development-Toolkit-Personal-MCP-0.1.7.zip"
-Expand-Archive -LiteralPath $zip -DestinationPath $target -Force
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$target\adt-personal\Enable-ADT-AutoUpdate.ps1"
-```
-
-Текущий сервер MCP v0.1.7 и его подключение сохраняются. Дальнейшее обновление навыков происходит без скачивания ZIP. Для новых экземпляров MCP/перезапущенного Codex новая ревизия доступна автоматически; уже запущенный процесс MCP может продолжать использовать старый каталог до перезапуска клиента.
+Установленная оболочка MCP сохраняет собственную версию; обновление отдельной Git-копии меняет только инструкции Toolkit. Новые сведения становятся доступны перезапущенному MCP-клиенту; уже открытая сессия может продолжать использовать прежние инструкции.
 
 ## Проверка
 
@@ -32,6 +25,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$target\adt-personal\En
 Get-ScheduledTask -TaskName ADT-Personal-Toolkit-Update | Select-Object TaskName, State
 Get-ScheduledTaskInfo -TaskName ADT-Personal-Toolkit-Update | Select-Object LastRunTime, LastTaskResult, NextRunTime
 py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --status
+py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --preflight
+# Предпросмотр отката (без файловых изменений):
+py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --rollback
 ```
 
 Значения `UP_TO_DATE`, `UPDATED` и `SKIPPED_ALREADY_CHECKED_TODAY` показывают успешную синхронизацию/пропуск. `FAIL` показывает причину в `last_error`. Если штатная ежедневная проверка не удалась, можно запустить вручную, **без обхода проверок сохранности**:
@@ -41,6 +37,9 @@ py -3 "$env:LOCALAPPDATA\ADT-Personal\updater\update_toolkit.py" --force
 ```
 
 ## Безопасность и откат
+
+Чтобы **явно применить** допустимый откат **только выделенной Git-копии**, после предпросмотра и проверки SHA используйте `--rollback --apply`. Без `--apply` изменений нет. Если нужно удерживать старую ревизию, сначала отключите задание автообновления. Проверка `--preflight` не обращается к сети; last-known SHA не означает проверку самого последнего GitHub `main`. Версия установленного MCP и ChatGPT-плагина остаётся отдельной и может быть `NOT_VERIFIED`. Git origin и SHA256 — не криптографическая подпись.
+
 
 - `git fetch` используется только для `main` из официального `https://github.com/MikeMoore1337/ai-development-toolkit.git`.
 - Допускается только fast-forward. Переписанная история, локальные изменения или добавленные файлы **блокируют обновление**.
