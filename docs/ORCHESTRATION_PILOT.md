@@ -27,6 +27,28 @@ Record real CLI tool invocation IDs/traces, test outputs, provider/client/model 
 
 The offline validator checks **internal assertions**, not the authenticity of logs or owner grants: no invented observed runs, positive timestamps without execution, model mismatch, bogus parallel workers, missing evidence, or unauthorized paid API. `PENDING_INDEPENDENT_REVIEW` is the most advanced representable conclusion; there is intentionally **no automatic PASS or measured speedup status**. The supplied registry reports zero real agents.
 
+## Safe adaptive mode decision (Issue #279)
+
+The existing `scripts/validate_orchestration_pilot.py` also exposes an **offline, pure** `recommend_execution_mode(...)` helper. This is **advice**, not an agent orchestrator, task executor, benchmark or permission grant.
+
+- **SINGLE_AGENT** is the default when only a task is described or capabilities are unknown. No automatic specialists or extra model/API calls are launched.
+- **SEQUENTIAL_REVIEW** is suggested when review is requested and a reviewer is explicitly available. File changes remain sequential and subject to existing project approvals.
+- **OPTIONAL_PARALLEL_READ_ONLY** can only be a *candidate* with 2–3 genuinely independent read-only scopes, independently confirmed separation, a client actually verified to support parallel workers, explicit owner approval, confirmed zero incremental cost and isolation, and **no writes requested**. A missing gate falls back to sequential review (when appropriate) or one agent. An approved candidate is not a worker invocation.
+
+Example for an offline decision (no agent runs):
+
+```python
+from scripts.validate_orchestration_pilot import recommend_execution_mode
+
+decision = recommend_execution_mode(
+    needs_review=True, reviewer_available=True, writes_requested=True
+)
+assert decision["mode"] == "SEQUENTIAL_REVIEW"
+assert decision["execution"] == "NOT_RUN"
+```
+
+All responses retain `actual_worker_invocations=0`, `project_files_changed=false`, `model_tokens=NOT_MEASURED`, `expected_speedup=NOT_MEASURED`, and `evidence_status=DECLARED_GATES_NOT_RUNTIME_PROOF`. Passing offline tests proves only the selection rule. The small mixed #141 A/B pilot does not establish a universal speedup; no additional paid providers or model calls are authorized by this helper. Real invocation, cost and source isolation require separate observation and authorization.
+
 ## Release provenance (verified 2026-10-21)
 
 Toolkit [`v5.5.0`](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.0) was published at immutable tag SHA `04d60055e93c04dda26fb3868689ab4031fbf617`. The newer published [`v5.5.2`](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.2) points to tag SHA `bf8d469f7402ed1a99e19ba6797d841751801ea5` and **does include** this source-only pilot guide, its Russian counterpart, fixture and validator. Presence was checked at that tag, not inferred from the moving `main` branch. No new release was created by this documentation correction.
