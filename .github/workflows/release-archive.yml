@@ -126,10 +126,10 @@ jobs:
           version = tag[1:]
           expected = {
               "README.md": f"**Latest published release:** [{tag}]",
-              "README.ru.md": f"**Последний опубликованный релиз:** [{tag}]",
+              "README.ru.md": f"**\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0440\u0435\u043b\u0438\u0437:** [{tag}]",
               "CHANGELOG.md": f"## {version} (released,",
               "docs/RELEASE_PROCESS.md": f"Last published tag: [{tag}]",
-              "docs/ru/RELEASE_PROCESS.md": f"Последний публичный тег: [{tag}]",
+              "docs/ru/RELEASE_PROCESS.md": f"\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043f\u0443\u0431\u043b\u0438\u0447\u043d\u044b\u0439 \u0442\u0435\u0433: [{tag}]",
           }
           bad = [name for name, marker in expected.items()
                  if marker not in Path(name).read_text(encoding="utf-8")]
