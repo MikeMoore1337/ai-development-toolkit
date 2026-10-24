@@ -21,6 +21,8 @@ DOCUMENTS = (
     "docs/ru/RELEASE_PROCESS.md",
     "docs/ROADMAP.md", "docs/ru/ROADMAP.md",
     "docs/SKILL_EVALS.md", "docs/ru/SKILL_EVALS.md",
+    "docs/INTEGRATIONS.md", "docs/ru/INTEGRATIONS.md",
+    "docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md",
 )
 
 
@@ -188,6 +190,25 @@ class DocumentationConsistencyTests(unittest.TestCase):
                 self.assertIn("#141", text)
                 self.assertIn("#11", text)
                 self.assertNotIn("all 65 declared skills", text)
+
+
+    def test_all_four_integration_paths_are_honest_and_verifiable(self):
+        for path in ("docs/INTEGRATIONS.md", "docs/ru/INTEGRATIONS.md"):
+            with self.subTest(path=path):
+                text = (self.root / path).read_text(encoding="utf-8")
+                for value in ("ChatGPT", "Personal MCP", "Project MCP",
+                              "Skill Manager", "Python 3.10+", "Python 3.12+",
+                              "toolkit_info", "toolkit_prepare_task", "--apply",
+                              "NOT_VERIFIED", "NOT_MEASURED",
+                              "MCP_INSTALL.md", "INSTALLATION.md", "L4", "L5", "L6"):
+                    self.assertIn(value, text)
+
+    def test_project_mcp_docs_link_to_single_integration_guide(self):
+        for path in ("docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md"):
+            with self.subTest(path=path):
+                text = (self.root / path).read_text(encoding="utf-8")
+                self.assertIn("(INTEGRATIONS.md)", text)
+                self.assertIn("Python 3.12+", text)
 
 
 if __name__ == "__main__":
