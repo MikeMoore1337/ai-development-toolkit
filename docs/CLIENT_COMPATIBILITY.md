@@ -1,5 +1,10 @@
 # AI client compatibility: offline contracts
 
+
+## Subsequent scoped client evidence (Issue #297, 2026-10-24)
+
+The L4-L6 `NOT_TESTED` cells below describe **this older offline client-layout study** (reviewed 2026-10-19), not a denial of later limited observations. [Live-client evidence ledger](../compatibility/live_client_evidence.json) and [interpretation](CLIENT_CAPABILITIES.md) separately distinguish a real installed ChatGPT plugin skill read in one turn, prior owner-observed Codex Personal MCP tool calls, and **NOT_RUN** project-scoped Codex/Claude MCP sessions. No native skill activation or L6 improvement is claimed. Original `compatibility/clients.json` remains a static L1-L3 filesystem contract, not a live telemetry source.
+
 [Русская версия](ru/CLIENT_COMPATIBILITY.md)
 
 Reviewed: **2026-10-19**. Machine-readable evidence: [compatibility/clients.json](../compatibility/clients.json), schema v1. The checks cover **contracts and filesystem structure**, not a real AI-client execution. Installed versions, trust decisions and configuration may change behavior.
