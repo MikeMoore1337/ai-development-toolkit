@@ -263,7 +263,7 @@
     {
       "source": "docs/ROADMAP.md",
       "translation": "docs/ru/ROADMAP.md",
-      "source_sha256": "ecfbda0010dbe3be292aa778cb83c2cac8d121d91acac6447bdbee152c4ac277"
+      "source_sha256": "c936fe14a5c0bc5d804fdb700fb7b131250973d4e60009a8324a35ee056fc775"
     },
     {
       "source": "docs/SECURITY_DEVSECOPS.md",
@@ -283,7 +283,7 @@
     {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
-      "source_sha256": "56529b79b753c98b0c78439efa73a5f398f1810aa845e2b5cc712aecd82c696b"
+      "source_sha256": "5be3263d30186a0e89265fdd58c2560e23906908bcf03dd0f85bf96105802aa1"
     },
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
