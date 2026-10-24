@@ -37,6 +37,52 @@ class ChangeImpactTests(unittest.TestCase):
                     self.assertIsNone(item["execution_receipt"])
                     self.assertIsNone(item["test_command"])
 
+    def test_every_check_has_safe_catalog_backed_scenario(self):
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(qa.CHECKS), set(qa.CHECK_GUIDANCE))
+        for check_id, (profile, skill, scenario) in qa.CHECK_GUIDANCE.items():
+            with self.subTest(check=check_id):
+                self.assertIn(profile, manifest["profiles"])
+                self.assertIn(skill, manifest["profiles"][profile])
+                self.assertGreater(len(scenario), 22)
+
+        for paths in (
+            ["backend/auth/session.py", "frontend/components/LoginForm.tsx"],
+            ["backend/api/routes.py", "db/migrations/002.sql"],
+            ["src/queue/worker.py", "src/security/pii.py"],
+            [".github/workflows/release.yml", "misc/unknown.extension"],
+            ["docs/README.md"],
+        ):
+            for item in qa.plan(paths)["recommendations"]:
+                with self.subTest(paths=paths, check=item["id"]):
+                    hint = item["guidance"]
+                    self.assertIn(hint["profile_hint"], manifest["profiles"])
+                    self.assertIn(hint["skill_hint"],
+                                  manifest["profiles"][hint["profile_hint"]])
+                    self.assertEqual("STATIC_MANIFEST_CATALOG_HINT", hint["source"])
+                    self.assertEqual("NOT_VERIFIED", hint["client_skill_activation"])
+                    self.assertEqual("NOT_RUN", hint["test_execution"])
+                    self.assertEqual("NOT_RUN", item["status"])
+                    self.assertIsNone(item["test_command"])
+                    self.assertIsNone(item["execution_receipt"])
+
+    def test_content_enrichment_adds_hints_without_execution_claim(self):
+        path = "src/misc/feature.py"
+        report = qa.plan([path])
+        inspected = {
+            "files": {path: {"signals": ["AUTH", "API"],
+                             "binary_or_unparsed": False}},
+            "requires_manual_review": False,
+        }
+        enriched = qa.add_content_evidence(report, inspected)
+        by_id = {item["id"]: item for item in enriched["recommendations"]}
+        for check_id in ("auth-boundary", "api-contract", "privacy-boundary"):
+            self.assertEqual("CONTENT_TOKEN_HINT_ONLY", by_id[check_id]["evidence"])
+            self.assertEqual("NOT_RUN", by_id[check_id]["guidance"]["test_execution"])
+            self.assertIsNone(by_id[check_id]["test_command"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", enriched["gate"])
+        self.assertEqual(0, enriched["executed_tests"])
+
     def test_path_inventory_deduplicated_deterministically(self):
         a = qa.plan(["backend/db/schema.sql", "frontend/components/SetForm.tsx",
                      "backend/db/schema.sql"])

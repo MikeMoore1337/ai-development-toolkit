@@ -28,6 +28,12 @@ python scripts/qa_change_impact.py --root /path/to/repo --repository org/repo --
 
 `fixtures/qa_change_impact_cases.json` содержит **синтетические** примеры PR для разных типов приложений. Их успешный прогон не является проверкой настоящих проектов.
 
+## Подсказки по QA на основе каталога (Issue #278)
+
+У каждой предложенной проверки появился объект `guidance`: **рекомендуемый профиль**, **навык** и **предполагаемый тестовый сценарий**. Все пары профилей и навыков объявлены в `MANIFEST.json`; эти рекомендации не устанавливают навыки и не запускают тесты. Например: AUTH — `qa-security` / `security-testing` (запрет чужого доступа), API — `qa-contract` / `contract-testing`, DB — `data-engineering` / `database-validation`, UI — `qa-ui` / `playwright-testing`, ASYNC — `reliability-testing` / `background-processing`, PRIVACY — `qa-security`, CI — `devops-infrastructure` / `release-safety`.
+
+Маркер `source=STATIC_MANIFEST_CATALOG_HINT` означает **рекомендацию по исходникам**, а не проведённую проверку. Статусы `client_skill_activation=NOT_VERIFIED`, `test_execution=NOT_RUN` и `test_command=null` сохраняются. Для неизвестного файла предлагается `change-impact-analysis` с необходимостью определить подсистему, а не выдуманный тест и не разрешение на релиз. Те же подсказки получают проверки, добавленные при ограниченном анализе diff: важные первоначальные проверки не исключаются. Зависимые потребители, вызовы функций и PASS не выводятся из совпадения пути.
+
 ## Признаки изменения сохранённого состояния и зависимых компонентов
 
 При `--inspect-diff` содержимое документационных файлов не используется для выводов о runtime API/auth/DB: упоминание термина в README не равно изменению реализации. Добавленные или удалённые маркеры `mutation_id`, `expected_version`, `request_fingerprint`, `is_completed` и присваивания версии создают сигнал **PERSISTED_STATE**. Он добавляет `state-integrity` (версии, целостность данных и отсутствие пустых записей), `async-replay` (идемпотентность, повторы, конфликты), `consumer-review` (ручной поиск вызывающих компонентов). Признаки API также добавляют `consumer-review`. Совпадение токена **не доказывает** наличие графа вызовов, миграции БД, известных потребителей или выполненных тестов.

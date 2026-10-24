@@ -56,6 +56,41 @@ CHECKS = {
     "cross-layer": ("End-to-end check across changed frontend/API/DB boundaries", "HIGH"),
     "unmapped-impact": ("Inspect unknown paths and choose concrete risk tests", "UNKNOWN"),
 }
+# Catalog-backed skills only; recommendations never prove client activation.
+CHECK_GUIDANCE = {
+    "change-review": ("qa-core", "change-impact-analysis", "Review changed lines and direct callers; flag missing context."),
+    "targeted-unit": ("qa-core", "test-analysis-design", "Exercise changed behavior and a rejected/invalid-input case."),
+    "documentation-review": ("docs-technical", "documentation-maintenance", "Check local links, procedures and corresponding translations."),
+    "test-review": ("qa-core", "test-review", "Ensure the edited test fails against a known-bad mutation."),
+    "api-contract": ("qa-contract", "contract-testing", "Compare request/response fields across the change."),
+    "api-negative": ("qa-contract", "api-testing", "Reject invalid or unauthorized requests without side effects."),
+    "db-migration": ("data-engineering", "database-validation", "Verify data preservation and schema invariants."),
+    "db-rollback": ("data-engineering", "database-validation", "Rehearse rollback or report the unsupported recovery case."),
+    "auth-boundary": ("qa-security", "security-testing", "Deny cross-tenant and unauthorized access without leaking records."),
+    "privacy-boundary": ("qa-security", "security-testing", "Ensure restricted fields and secrets stay out of responses."),
+    "ui-state": ("qa-ui", "playwright-testing", "Verify focus, field state, scroll and restoration."),
+    "browser-flow": ("qa-ui", "e2e-testing", "Exercise a critical journey including one negative case."),
+    "async-replay": ("reliability-testing", "background-processing", "Repeat an event and check idempotency and ordering."),
+    "state-integrity": ("data-engineering", "database-validation", "Verify no-op writes preserve state and versions."),
+    "consumer-review": ("qa-contract", "contract-testing", "Inspect direct consumers and their version/error expectations."),
+    "deployment-safety": ("devops-infrastructure", "release-safety", "Check release safeguards and documented rollback."),
+    "cross-layer": ("qa-fullstack", "integration-testing", "Verify UI to API to stored-state behavior."),
+    "unmapped-impact": ("qa-core", "change-impact-analysis", "Identify the subsystem and owners before specifying tests."),
+}
+
+
+def guidance_for_check(check_id: str) -> dict:
+    """Deterministic source guidance, not an executable test or activation."""
+    profile, skill, scenario = CHECK_GUIDANCE[check_id]
+    return {
+        "profile_hint": profile, "skill_hint": skill,
+        "candidate_test_scenario": scenario,
+        "source": "STATIC_MANIFEST_CATALOG_HINT",
+        "client_skill_activation": "NOT_VERIFIED",
+        "test_execution": "NOT_RUN",
+    }
+
+
 RISK_ORDER = {"LOW": 0, "HIGH": 1, "CRITICAL": 2, "UNKNOWN": 3}
 RULE_CHECKS = {
     "AUTH": ("auth-boundary", "privacy-boundary", "api-negative"),
@@ -278,6 +313,7 @@ def plan(paths: list[str], *, repository: str = "UNKNOWN",
             "changed_paths": sorted(matching_paths),
             "test_command": None,
             "execution_receipt": None,
+            "guidance": guidance_for_check(cid),
         })
     declared_tests = (select_declared_tests(paths, set(checks), validate_test_map(test_map))
                       if test_map is not None else [])
@@ -327,6 +363,7 @@ def add_content_evidence(report: dict, inspection: dict,
                     "status": "NOT_RUN", "evidence": "CONTENT_UNINSPECTED",
                     "changed_paths": [], "test_command": None,
                     "execution_receipt": None,
+                    "guidance": guidance_for_check(cid),
                 }
             by_id[cid]["changed_paths"] = sorted(set(by_id[cid]["changed_paths"]) | {path})
         for surface in data["signals"]:
@@ -340,6 +377,7 @@ def add_content_evidence(report: dict, inspection: dict,
                         "status": "NOT_RUN", "evidence": "CONTENT_TOKEN_HINT_ONLY",
                         "changed_paths": [], "test_command": None,
                         "execution_receipt": None,
+                        "guidance": guidance_for_check(cid),
                     }
                 by_id[cid]["changed_paths"] = sorted(set(by_id[cid]["changed_paths"]) | {path})
     enriched["recommendations"] = [by_id[cid] for cid in sorted(by_id)]
