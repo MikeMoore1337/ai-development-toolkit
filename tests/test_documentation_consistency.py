@@ -19,6 +19,8 @@ DOCUMENTS = (
     "docs/AGENT_SKILLS_SPEC.md", "docs/UNIVERSAL_ENGINEERING.md",
     "docs/SKILLS_CATALOG.md", "docs/RELEASE_PROCESS.md",
     "docs/ru/RELEASE_PROCESS.md",
+    "docs/ROADMAP.md", "docs/ru/ROADMAP.md",
+    "docs/SKILL_EVALS.md", "docs/ru/SKILL_EVALS.md",
 )
 
 
@@ -164,6 +166,29 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.assertLess(text.index("## С чего начать"), text.index("## Подключение Toolkit MCP"))
         self.assertLess(text.index("## С чего начать"), text.index("## Установка по платформам"))
         self.assertIn("BEGINNER_START.md", text)
+
+    def test_roadmap_mirrors_completed_delivery_and_live_followups(self):
+        """Current roadmaps must not omit closed delivery or imply paid trials."""
+        for path in ("docs/ROADMAP.md", "docs/ru/ROADMAP.md"):
+            with self.subTest(path=path):
+                text = (self.root / path).read_text(encoding="utf-8")
+                for number in (*range(271, 281), 293, *range(294, 302), 11, 141):
+                    self.assertIn(f"#{number}", text)
+                self.assertIn("NOT_PLANNED", text)
+                self.assertIn("ZERO-SPEND", text)
+                self.assertIn("NOT_MEASURED", text)
+                self.assertIn("MANIFEST.json", text)
+
+    def test_historical_skill_fixture_does_not_claim_current_catalog(self):
+        for path in ("docs/SKILL_EVALS.md", "docs/ru/SKILL_EVALS.md"):
+            with self.subTest(path=path):
+                text = (self.root / path).read_text(encoding="utf-8")
+                self.assertIn("65", text)
+                self.assertIn("82", text)
+                self.assertIn("#141", text)
+                self.assertIn("#11", text)
+                self.assertNotIn("all 65 declared skills", text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,29 +2,37 @@
 
 [Русская версия](ru/ROADMAP.md)
 
-## Near term
+## Current baseline (24 October 2026)
 
-- [x] Add pinned official upstream `skills-ref` validation in the existing required CI job (Issue #24). Structural validation only; see [specification](AGENT_SKILLS_SPEC.md).
-- [ ] Run controlled Codex/Claude/Hermes activation trials on independent demo repositories.
-- [x] Record published component provenance and enforce inventory/release preflight (Issue #28). Owner reports ID1337 permission for exact snapshotted files; release still requires separate owner sign-off and independent legal verification is not asserted; see [audit](PROVENANCE_AUDIT.md).
-- [x] Add deterministic checks for broken local links, anchors, profile inventories and declared workflow exclusions (Issue #26). Semantic instruction conflicts and agent discovery behavior remain manual/live checks.
-- [x] Document CLI catalog and safe managed Codex/Claude migration (Issue #30; filesystem acceptance only, live client trials remain open).
-- [x] Add versioned Codex/Claude/Hermes source-contract matrix and offline compatibility checks (Issue #32; L1-L3 only, no live discovery or activation). See [client evidence](CLIENT_COMPATIBILITY.md).
+The latest **published source release** is [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5), with `MANIFEST.json.version = 5.5.5` at the immutable release commit `2fcc1efb858670a17aa251ba7264cef89cab1c71`. Later `main` commits are **unreleased** unless a subsequent GitHub Release is published. Refer to [release procedure](RELEASE_PROCESS.md) for exact-version and archive verification.
 
-## Medium term
+The declared catalog at this revision contains **82 skills, 45 profiles and 16 roles**. Use [MANIFEST.json](../MANIFEST.json) for the authoritative current counts. CI checks source format, packaging, provenance, release integrity and offline contracts; it does **not** prove actual agent discovery or improved task outcomes.
 
-- [x] Add technology-neutral Frontend, Backend and Fullstack engineering extensions with focused opt-in profiles (Issue #40, source-only; live agent outcomes not yet measured).
+This page is a development guide, **not an auto-updating Issue tracker**. Click the linked GitHub Issues for current status and acceptance evidence.
 
-- [ ] Evaluate the private optional skill inventory individually; publish only items with verified rights and project-neutral content.
-- [ ] Benchmark quick/normal/deep feature-delivery against a plain agent baseline.
-- [x] Add offline per-skill source quality metrics (structure, file bytes, repeatability, regression indicators) with independent empirical results still NOT_MEASURED (Issue #38; see [methodology](SKILL_QUALITY_METRICS.md)).
-- [x] Improve portable install/update/uninstall with explicit ownership, file-level diff previews, rollback and recovery (Skill Manager v2, #12; passed cross-platform CI).
-- [ ] Add optional adapters to real workflow runtimes; no forced framework dependency.
+## Completed delivery
 
-## Later
+- **Earlier foundations:** pinned upstream `skills-ref` structural checks [#24](https://github.com/MikeMoore1337/ai-development-toolkit/issues/24); provenance inventory and publication gate [#28](https://github.com/MikeMoore1337/ai-development-toolkit/issues/28); documentation integrity [#26](https://github.com/MikeMoore1337/ai-development-toolkit/issues/26); safe installation/ownership and rollback [#12](https://github.com/MikeMoore1337/ai-development-toolkit/issues/12); client layout/contract docs [#30](https://github.com/MikeMoore1337/ai-development-toolkit/issues/30) and [#32](https://github.com/MikeMoore1337/ai-development-toolkit/issues/32); engineering packs and profiles [#40](https://github.com/MikeMoore1337/ai-development-toolkit/issues/40) / [#36](https://github.com/MikeMoore1337/ai-development-toolkit/issues/36); offline source metrics [#38](https://github.com/MikeMoore1337/ai-development-toolkit/issues/38).
+- **Roadmap I, closed:** [#271](https://github.com/MikeMoore1337/ai-development-toolkit/issues/271) published-release identity, [#272](https://github.com/MikeMoore1337/ai-development-toolkit/issues/272) shared client routing contracts, [#273](https://github.com/MikeMoore1337/ai-development-toolkit/issues/273) additional negative/diagnostic routing checks.
+- **Roadmap II, closed:** [#274](https://github.com/MikeMoore1337/ai-development-toolkit/issues/274) source/version diagnostics, [#275](https://github.com/MikeMoore1337/ai-development-toolkit/issues/275) guarded source update/rollback, [#276](https://github.com/MikeMoore1337/ai-development-toolkit/issues/276) bounded context measurement, [#277](https://github.com/MikeMoore1337/ai-development-toolkit/issues/277) task-first onboarding.
+- **Roadmap III, closed:** [#278](https://github.com/MikeMoore1337/ai-development-toolkit/issues/278) QA change-impact evidence, [#279](https://github.com/MikeMoore1337/ai-development-toolkit/issues/279) offline orchestration decision checks, [#280](https://github.com/MikeMoore1337/ai-development-toolkit/issues/280) pinned supply chain and reproducible zero-cost examples.
+- **Publication, closed:** [#293](https://github.com/MikeMoore1337/ai-development-toolkit/issues/293) released v5.5.5, verified downloadable source ZIP, provenance and post-release documentation. Prior [#259](https://github.com/MikeMoore1337/ai-development-toolkit/issues/259) completed the bilingual editorial baseline.
 
-- [x] Document filesystem layouts and explicit client-support limitations for Codex, Claude Code, Hermes and custom clients (Issue #30; no live execution).
-- [x] Curate task-based Backend, Frontend, QA, Agent Engineering and Research profiles (Issue #36, source-only; live-client activation unverified).
-- [ ] Add automated provenance and release verification to community submissions.
+These completed Issues demonstrate their **stated scopes**, not universal real-agent compatibility or effectiveness.
 
-Only checked items with actual results are marked complete.
+## Next development queue (Roadmap IV)
+
+Priority and implementation evidence belong to the linked Issues:
+
+1. **P0:** [#294](https://github.com/MikeMoore1337/ai-development-toolkit/issues/294) current-state bilingual documentation and roadmap.
+2. **P1:** [#295](https://github.com/MikeMoore1337/ai-development-toolkit/issues/295) clearer ChatGPT / Personal MCP / Project MCP / Skill Manager selection; [#296](https://github.com/MikeMoore1337/ai-development-toolkit/issues/296) new RU/EN routing stress cases.
+3. **P1:** [#297](https://github.com/MikeMoore1337/ai-development-toolkit/issues/297) observable L4/L5 client discovery and use; [#298](https://github.com/MikeMoore1337/ai-development-toolkit/issues/298) measured baseline-vs-skill task benefit, only where free and permitted.
+4. **P2:** [#299](https://github.com/MikeMoore1337/ai-development-toolkit/issues/299) evidence-driven context de-duplication; [#300](https://github.com/MikeMoore1337/ai-development-toolkit/issues/300) portable synthetic QA/UX/UI scenarios.
+5. **P3:** [#301](https://github.com/MikeMoore1337/ai-development-toolkit/issues/301) lean catalog/provenance maintenance.
+
+## Explicitly limited or deferred
+
+- [#11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11) real Codex/Claude CLI evaluation is **CLOSED / NOT_PLANNED** under the owner's **ZERO-SPEND** restriction. The trial harness exists but cannot be executed to generate paid model runs, including with acknowledgement flags. Do not mark its real executions complete or reopen paid trials implicitly.
+- [#141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141) is **CLOSED / COMPLETED for a narrower zero-cost exploratory orchestration pilot**. It does not substantiate independent L4-L6 compatibility, skill efficacy, universal time savings, or statistically valid A/B results. See [client compatibility](CLIENT_COMPATIBILITY.md) and [pilot protocol](REAL_AGENT_PILOT.md).
+- Full live client discovery/activation and measured benefits remain `NOT_TESTED` / `NOT_MEASURED` unless separately supported by execution records. The deterministic lexical router is not a semantic model; curated fixture passes are not independent semantic accuracy.
+- Private optional skill submissions and community components require proven rights, project-neutral content and [provenance gates](PUBLICATION_POLICY.md) before redistribution. Do not introduce a second runtime framework or force a paid API to meet this roadmap.
