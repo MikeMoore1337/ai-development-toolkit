@@ -1,5 +1,9 @@
 # Changelog
 
+**v5.5.6 publication confirmed (2026-10-24)**
+
+[GitHub Release v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) was published on 24 October 2026 from the annotated tag pointing to commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`. The tagged `MANIFEST.json.version` is `5.5.6`. Both tag-push and release-published archive jobs verified the downloaded GitHub ZIP's source checksums and technical provenance (549 components, 82 skills). The release-published **documentation job failed** because README and release guides still named v5.5.5; this follow-up updates `main`, not the immutable archive. The owner-side local pre-tag gate was blocked by four untracked review files, and separate independent rights confirmation for this exact archive was not recorded in #313. Do not retroactively claim those gates passed. The archive checks do not prove real-agent performance, client activation or independent license clearance.
+
 **v5.5.5 publication confirmed (2026-10-24)**
 
 [GitHub Release v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) was published on 24 October 2026 from the annotated tag pointing to commit `2fcc1efb858670a17aa251ba7264cef89cab1c71`. The tagged `MANIFEST.json.version` is `5.5.5`. Both tag-push and release-published jobs verified the downloaded source ZIP; checksums and provenance passed. The release-published documentation guard correctly flagged stale `main` README/release status pending this follow-up PR. The ZIP is immutable at the tag; any post-publication documentation changes belong only to `main`.
@@ -27,9 +31,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.6)
 
-## 5.5.6 (candidate, 2026-10-24)
+## 5.5.6 (released, 2026-10-24)
 
-Release candidate after v5.5.5, covering Roadmap IV #294-#301. Publication requires a new exact-SHA tag, owner rights check and archive verification; this source change **does not publish** a release or update installed MCP/ChatGPT clients.
+Published after v5.5.5 from exact tag commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`, covering Roadmap IV #294-#301. Actual source archive verification passed in GitHub Actions. Local pre-tag checks were blocked by untracked review JSON files before publication and must not be reported as successful. The technical provenance gate is not independent rights approval. This release does not update installed MCP/ChatGPT clients.
 
 - **Guides and integrations (#294, #295):** updated RU/EN roadmap, source/version boundaries and practical ChatGPT, Personal MCP, project MCP and Skill Manager selection; published-tag identity remains independent from `main`.
 - **Routing and observation (#296, #297):** 48 fresh bilingual adversarial routing samples (diagnostic, not verified semantic accuracy) and scoped observed client L4/L5 traces where real evidence exists. Results do not establish universal client support.
