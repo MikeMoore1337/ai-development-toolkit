@@ -32,6 +32,18 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
         self.assertIn('manifest.get("version")', text)
         self.assertIn('"BLOCKED: release tag and MANIFEST.json.version disagree"', text)
 
+    def test_published_release_checks_live_main_documentation(self):
+        config = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        job = config["jobs"]["published-documentation"]
+        self.assertIn("release", job["if"])
+        self.assertIn("published", job["if"])
+        self.assertEqual("main", job["steps"][0]["with"]["ref"])
+        script = job["steps"][1]["run"]
+        self.assertIn("PUBLICATION_DOCS_STALE", script)
+        for path in ("README.md", "README.ru.md", "CHANGELOG.md",
+                     "docs/RELEASE_PROCESS.md", "docs/ru/RELEASE_PROCESS.md"):
+            self.assertIn(path, script)
+
     def test_required_matrix_enforces_release_snapshot(self):
         workflow = ROOT / ".github" / "workflows" / "validate.yml"
         text = workflow.read_text(encoding="utf-8")
