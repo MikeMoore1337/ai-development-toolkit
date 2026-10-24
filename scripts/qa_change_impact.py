@@ -377,7 +377,7 @@ def add_content_evidence(report: dict, inspection: dict,
                         "status": "NOT_RUN", "evidence": "CONTENT_TOKEN_HINT_ONLY",
                         "changed_paths": [], "test_command": None,
                         "execution_receipt": None,
-                    "guidance": guidance_for_check(cid),
+                        "guidance": guidance_for_check(cid),
                     }
                 by_id[cid]["changed_paths"] = sorted(set(by_id[cid]["changed_paths"]) | {path})
     enriched["recommendations"] = [by_id[cid] for cid in sorted(by_id)]
