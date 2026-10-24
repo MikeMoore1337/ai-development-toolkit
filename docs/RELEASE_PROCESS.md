@@ -11,17 +11,17 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
-**Next release candidate:** `5.5.5` (candidate, NOT PUBLISHED). This version belongs only to the development source candidate under Issue #293; v5.5.4 remains the latest published immutable release. The future tag is prohibited until exact SHA and manifest checks pass and the owner signs off on this exact release archive and distribution rights. Preparing this candidate does not update any installed MCP or ChatGPT plugin.
+**Latest published release:** [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) (2026-10-24), annotated tag pointing to `2fcc1efb858670a17aa251ba7264cef89cab1c71`. The published archive's `MANIFEST.json.version = 5.5.5`; SHA256 and provenance release checks passed in [tag/release archive CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40090538576). The owner's exact-source rights approval is recorded in [Issue #293](https://github.com/MikeMoore1337/ai-development-toolkit/issues/293#issuecomment-6383332045), not an independent legal assessment. Installed MCP packages and ChatGPT plugins have NOT been updated by this release.
 
 - `v5.5.4` was published on 2026-10-23 from immutable tag commit `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` ([GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4)); `MANIFEST.json.version = 5.5.4` in the tag. Later `main` commits do not become part of this release automatically.
 
-- The last published tag is **`v5.5.4`**, containing `MANIFEST.json.version = 5.5.4` at SHA `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`. Later `main` commits are not automatically published.
+- The last published tag is **`v5.5.5`**, containing `MANIFEST.json.version = 5.5.5` at commit SHA `2fcc1efb858670a17aa251ba7264cef89cab1c71`. Later `main` commits are not automatically published.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Last published tag: [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) at SHA `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` (2026-10-23), with matching manifest version `5.5.4`. [Compare v5.5.4...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.4...main) for subsequent changes.
+Last published tag: [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) at commit SHA `2fcc1efb858670a17aa251ba7264cef89cab1c71` (2026-10-24), with matching manifest version `5.5.5`. [Compare v5.5.5...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.5...main) for subsequent changes.
 
 
 After publication of a new GitHub Release, align both README files, this RU/EN guide and the latest CHANGELOG section in a follow-up PR. The `release: published` workflow independently compares the published tag with the documents on `main`; a stale reference fails a separate documentation job. This cannot undo a published release or rewrite historical tags.
