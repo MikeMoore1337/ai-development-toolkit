@@ -23,6 +23,17 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.4)
 
+### Proposed v5.6.0 release candidate (NOT PUBLISHED; Issue #293)
+
+Source scope: protected main after published tag v5.5.4, including #259, #141 and roadmap #271-#280. This candidate label does not mean a tag, release, installed Personal MCP, ChatGPT plugin update, or live client activation exists. Publication requires an exact-SHA preflight and separate owner permission for the exact archive and distribution rights.
+
+- Routing: shared advisory decisions across CLI, Personal MCP and ChatGPT sources, additional bounded RU/EN negative tests and independent-label limitations (#272, #273); no certified semantic precision.
+- Integrations: source/adapter version diagnostics, Git-backed update preflight and explicit rollback (#274, #275); installed MCP and plugin packages are separate from updated source.
+- Context and onboarding: bounded default three-skill Personal MCP guidance with measured UTF-8 source bytes, plus clearer RU/EN beginner task entry (#276, #277); tokens and live model benefit remain unmeasured.
+- QA and orchestration: catalog-backed regression scenarios and offline adaptive orchestration decisions (#278, #279). The earlier #141 research pilot was closed in its limited scope; this is not a proven cost/time saving.
+- Supply chain: SHA-pinned GitHub Actions, pinned PyYAML test dependency, and four reproducible zero-cost offline examples (#280), without claiming signed binaries or real client trial execution.
+- Public documentation neutrality and bilingual editorial checks improved under #259.
+
 ## 5.5.4 (released, 2026-10-23)
 
 - Published the forward-only changes since v5.5.3 as [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4), at immutable commit `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`.
