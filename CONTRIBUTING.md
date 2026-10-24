@@ -20,6 +20,36 @@ Thanks for improving AI Development Toolkit.
 - Is its cost (latency, context, maintenance) justified by an observed benefit?
 - Does it respect user-granted execution/release permissions?
 
+## Keep the skill catalog current (#301)
+
+This is a **manual, change-scoped maintenance process**, not a second skill manager or a background updater. Start with the concrete task, not a target catalog size. To check local lexical coverage without installing anything, run `python scripts/skill_candidate_review.py --query "your task"`. `FOUND_LOCAL` means a readable matching skill name; `MISSING` does **not** prove a semantic gap.
+
+| Decision | Minimum evidence and required action |
+| --- | --- |
+| **Add** | Show an actual uncovered task, expected improvement and acceptance example; inspect overlap with existing skills/profiles; define a precise trigger in `SKILL.md`, owner/rights/source evidence, tests and affected catalog/profile/docs entries. Decline additions with no measurable benefit. |
+| **Update** | State why the existing skill needs a change; pin the before/after scope, client compatibility and regressions; update only affected references, profiles, examples and tests. Upstream freshness alone is not sufficient. |
+| **Deprecate** | Document the reason, supported alternative, impacted clients/profiles and migration instructions; give notice through the relevant guides. Keep it usable during the agreed transition unless a specific risk requires immediate restriction. No universal retirement date is assumed. |
+| **Revoke / remove** | For a confirmed rights, security or compatibility problem, block further distribution/installation of the affected material, identify dependent profiles and documentation, and record an owner-approved removal/migration decision. Do not silently delete history or assume that removing repository files also uninstalls copies in client projects. |
+
+**Reuse existing gates rather than introducing another runtime.** For third-party candidates, use the existing [local coverage and pinned-source review](docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md) (#199), [offline security gate](docs/EXTERNAL_SKILL_GATE.md) (#200) and [provenance/publication review](docs/PROVENANCE_AUDIT.md) (#195). Review an independently sourced exact commit, hashes, license, dependencies, permissions, cost and removal plan. The candidate and its review manifest must be separate, and an allowed source must be explicitly supplied. An offline `ALLOW_FOR_REVIEW` is **not** permission to import, enable, install or publish. No automatic remote refresh, paid API or unreviewed redistribution.
+
+### Check only what changed, while retaining required CI
+
+Inspect `git diff --name-only origin/main...HEAD` on a feature branch and record the base/head SHA. These additional checks are selected by affected files; **do not skip repository-wide required CI**:
+
+| Changed area | Specific review |
+| --- | --- |
+| Skills, roles, profiles, catalog or external candidate | Verify `SKILL.md` trigger/format, references, overlapping skill choice, manifest/profile links, provenance, source pin, rights, offline security gate when applicable, and focused regressions. Run `python scripts/validate_pack.py` and `python scripts/validate_provenance.py --mode inventory`; release eligibility additionally requires `--mode release` and manual owner review where applicable. |
+| A user-facing guide (EN or RU) | Review the corresponding translation and links. If a registered source changes, update its entry in `docs/ru/SOURCE_REVISIONS.json` **after human translation review**, then run `python scripts/check_translation_freshness.py --strict`. This verifies source revision, not meaning or readability. |
+| Versions, packaging, installation or release process | Compare `MANIFEST.json`, `CHANGELOG.md`, installation/migration instructions and the exact Git tag versus `main`. Only change the version when a release decision requires it; a docs-only PR is **not** a new release. Never claim installed MCP/ChatGPT clients were upgraded by a repository merge. |
+| Client support, compatibility or deprecation | Update only affected support, compatibility, migration and Known Issues sections with actual tested environments, limitations and rollback guidance. Distinguish source validation, real client activation and production behavior; mark unavailable evidence `NOT_TESTED` / `NOT_VERIFIED`. |
+
+For every PR, existing CI retains public-content checks, metadata, provenance, checksum integrity and relevant offline tests. When source files change, regenerate `SHA256SUMS.txt` with `python scripts/verify_checksums.py --write`, review the **actual checksum diff**, then run `python scripts/verify_checksums.py` and `python -m unittest discover -s tests -v`. A successful CI run does not supersede human rights, translation, client-runtime or release acceptance.
+
+### Periodic reconciliation and evidence
+
+**Once per quarter**, and before a release that alters the skill catalog, a maintainer manually compares `MANIFEST.json`, skill/profile references, `provenance/skills.json`, relevant support docs and published release identity. Recheck external upstream sources **only when a pin, advisory or affected skill calls for it**; do not expand the catalog or bump all dependencies on a schedule. Record in the existing Issue/PR: checked source SHA/date, changed paths or `NO_CHANGE`, mismatch or decision, existing gate/test run links with actual results, and unresolved limitations/owner approval. Create a focused Issue only for an actionable discrepancy. This procedure needs **no cron, new CI service, new tracker, paid model/API or write access to other projects**.
+
 ## Source material
 
 Include upstream repository, commit/tag, license and a clear explanation of what is copied versus independently adapted. Personal license grants and source repositories are not assumed to allow public redistribution. See `docs/PUBLICATION_POLICY.md`.
