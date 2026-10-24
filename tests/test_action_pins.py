@@ -44,6 +44,23 @@ class ActionPinTests(unittest.TestCase):
             errors, _ = action_pins.validate_directory(path / "workflows")
             self.assertIn("WORKFLOWS_EMPTY", errors)
 
+    def test_bilingual_demo_guides_are_reproducible_and_truthful(self):
+        names = ("scripts/adt.py --json profile list",
+                 "scripts/skill_routing_eval.py --strict",
+                 "fixtures/skill_routing_untuned_20261024.json",
+                 "scripts/validate_provenance.py --mode inventory",
+                 "scripts/validate_action_pins.py",
+                 "scripts/verify_checksums.py")
+        for relative in ("docs/INTEGRATIONS.md", "docs/ru/INTEGRATIONS.md"):
+            with self.subTest(relative=relative):
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                for name in names:
+                    self.assertIn(name, text)
+                self.assertIn("NOT_RUN", text)
+                self.assertIn("NOT_MEASURED", text)
+                self.assertIn("PyYAML==6.0.3", text)
+                self.assertIn("SHA256SUMS.txt", text)
+
     def test_dev_dependency_is_fixed_and_binary_only_in_ci(self):
         self.assertEqual("PyYAML==6.0.3",
                          (ROOT / "requirements-dev.txt").read_text(encoding="utf-8").strip())
