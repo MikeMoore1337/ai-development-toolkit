@@ -2726,7 +2726,7 @@
       "notes": "English evaluation evidence guide; no automatic visual conformance claims (#192)."
     },
     {
-      "id": "supply-chain-280-docs-VERIFIED_EXAMPLES-md",
+      "id": "supply-chain-280-docs-verified-examples-md",
       "path": "docs/VERIFIED_EXAMPLES.md",
       "name": "VERIFIED_EXAMPLES.md",
       "kind": "documentation",
@@ -4346,7 +4346,7 @@
       "notes": "Russian evaluation evidence guide and manual owner-gate limitations (#192)."
     },
     {
-      "id": "supply-chain-280-docs-ru-VERIFIED_EXAMPLES-md",
+      "id": "supply-chain-280-docs-ru-verified-examples-md",
       "path": "docs/ru/VERIFIED_EXAMPLES.md",
       "name": "VERIFIED_EXAMPLES.md",
       "kind": "documentation",
@@ -10248,7 +10248,7 @@
       "notes": "Issue #103 source-target separation contract. Offline tests only; actual Codex behavior NOT_TESTED."
     },
     {
-      "id": "supply-chain-280-tests-test_supply_chain_pins-py",
+      "id": "supply-chain-280-tests-test-supply-chain-pins-py",
       "path": "tests/test_supply_chain_pins.py",
       "name": "test_supply_chain_pins.py",
       "kind": "test",
@@ -10608,7 +10608,7 @@
       "distribution": "included"
     },
     {
-      "id": "supply-chain-280-tests-test_verified_examples-py",
+      "id": "supply-chain-280-tests-test-verified-examples-py",
       "path": "tests/test_verified_examples.py",
       "name": "test_verified_examples.py",
       "kind": "test",
