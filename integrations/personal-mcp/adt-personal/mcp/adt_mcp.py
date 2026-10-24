@@ -258,6 +258,19 @@ class Toolkit:
             'toolkit_version': self.manifest.get('version', 'NOT_VERIFIED'),
             'source_sha': self.source_revision,
             'source_worktree': self.working_tree_status,
+            # These are distinct identities. This stdio process has no access to
+            # ChatGPT installation state or GitHub release status.
+            'version_boundaries': {
+                'running_mcp_adapter': VERSION,
+                'toolkit_checkout_manifest': self.manifest.get('version', 'NOT_VERIFIED'),
+                'toolkit_checkout_sha': self.source_revision,
+                'published_github_release': 'NOT_VERIFIED',
+                'installed_chatgpt_plugin': 'NOT_VERIFIED',
+                'public_chatgpt_plugin_source': 'NOT_VERIFIED',
+                'source_checkout_updater_enabled': 'NOT_VERIFIED',
+                'mcp_package_auto_upgrade': False,
+                'chatgpt_plugin_auto_upgrade': False,
+            },
             'loaded_skills': observed,
             'loaded_skill_evidence': ('RETURNED_LOCAL_GUIDANCE' if observed else
                                       'NO_GUIDANCE_RETURNED_BY_THIS_CALL'),

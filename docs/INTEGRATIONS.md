@@ -32,6 +32,8 @@ If you only want to describe your task without installing anything, use [the beg
 - **Skill Manager:** file changes happen only after preview plus explicit `--apply`; `status` proves the managed file state, not that an AI client used the skills.
 - **Evidence:** local configuration/stdio checks are not L4 live client discovery, L5 actual skill use or L6 measured benefit. Use `NOT_VERIFIED` / `NOT_MEASURED` when evidence is missing.
 
+**Minimal diagnostic record (#317):** call `toolkit_info` in the **actual connected Codex client** and inspect `diagnostics.version_boundaries`. This exposes the running Personal MCP adapter, the exact local Toolkit manifest and the local Git SHA when available; it does **not** detect installed ChatGPT plugins or prove the latest published GitHub Release. The statuses `published_github_release`, `installed_chatgpt_plugin` and `public_chatgpt_plugin_source` are deliberately `NOT_VERIFIED` from Personal MCP. Cross-check the published Toolkit tag on GitHub and the separately installed ChatGPT plugin version using its own client/Plugin Creator UI. Never copy a public ZIP version into the installed plugin field. The optional checkout updater and the installed adapters are separate; neither installed MCP nor ChatGPT plugin is upgraded by a source checkout update. The returned diagnostic is read-only and does not establish actual skill activation or effectiveness.
+
 ## Compare ChatGPT and Codex conversational integrations
 
 | Capability | ChatGPT plugin | Codex local MCP |
