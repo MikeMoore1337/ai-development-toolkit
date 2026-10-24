@@ -76,11 +76,10 @@ A strictly opt-in Codex/Claude CLI trial runner, three synthetic
 Python/JavaScript/Go demonstrators with hidden oracle tests, and a separate
 human-review gate are now described in [REAL_AGENT_PILOT.md](REAL_AGENT_PILOT.md).
 
-This does **not** mean real model runs have occurred. Model and tool costs,
-CLI authentication, an externally isolated runner, and independent review
-are required. Never treat a synthetic CI test or file-installed skill as
-proof of a model's effectiveness or of skill activation.
+**Issue #11 is CLOSED / NOT_PLANNED under the owner's ZERO-SPEND rule.** The existing runner blocks real agent execution, including with cost/isolation acknowledgement flags. The source harness and offline tests do **not** establish that model runs happened. Running real clients would require independently verified zero-cost conditions and separate authorization; do not infer skill activation from installation or authentication. See [the real-agent pilot policy](REAL_AGENT_PILOT.md).
+
+Issue #141 completed a **narrower zero-cost exploratory orchestration pilot**, not L4-L6 coverage or independently measured effectiveness.
 
 ## Free lexical routing regressions
 
-[Offline skill routing regression checks](SKILL_ROUTING_EVALS.md) test curated positive and negative prompts against the descriptions of all 65 declared skills. This is a deterministic **source-only** approximation, not actual model discovery, activation or effectiveness. Real Codex/Claude comparisons remain separately restricted by Issue #11.
+[Offline skill routing regression checks](SKILL_ROUTING_EVALS.md) began from a **historical 65-skill fixture**; the present [manifest](../MANIFEST.json) declares **82 skills**. A fixture's historical count must not be presented as the size of the current catalog. These are deterministic **source-only, lexical** checks of curated positive and negative prompts, not independent semantic accuracy, live client discovery, activation or demonstrated task benefit. Actual Codex/Claude CLI comparisons remain prohibited by the ZERO-SPEND gate in [Issue #11](https://github.com/MikeMoore1337/ai-development-toolkit/issues/11); [Issue #141](https://github.com/MikeMoore1337/ai-development-toolkit/issues/141) was completed only within its limited exploratory pilot scope.
