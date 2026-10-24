@@ -161,6 +161,20 @@ class NoTerminalOnboardingTests(unittest.TestCase):
                         self.assertIn(f"**{label}:**", body)
                     self.assertIn("NOT_RUN", body if key == "A" else text)
 
+    def test_six_task_categories_and_five_optional_worked_examples_are_clear(self):
+        en = EN.read_text(encoding="utf-8")
+        ru = RU.read_text(encoding="utf-8")
+        self.assertIn("six rows above", en.lower())
+        self.assertIn("five worked requests", en)
+        self.assertIn("шесть категорий задач", ru)
+        self.assertIn("пять подробных сценариев", ru)
+        self.assertIn("not four consecutive setup steps", en)
+        self.assertIn("не четыре последовательных шага установки", ru)
+        for page in (en, ru):
+            self.assertIn("NOT_RUN", page)
+            self.assertIn("MCP", page)
+            self.assertIn("Skill Manager", page)
+
     def test_local_links_really_resolve(self):
         for path in (EN, RU, ROOT / "README.md", ROOT / "README.ru.md",
                      ROOT / "docs/ru/README.md", ROOT / "docs/ru/GETTING_STARTED.md"):

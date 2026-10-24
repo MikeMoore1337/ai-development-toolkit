@@ -3,7 +3,7 @@
 
 ## Issue #297: scoped live observations (2026-10-24)
 
-The **2026-10-21 matrix above remains the historical offline baseline** of Issue #68, not a claim that later client sessions never happened. New read-only observations are recorded **separately** in [the versioned L4/L5 evidence ledger](../compatibility/live_client_evidence.json) and checked by `python scripts/verify_client_live_evidence.py`. Do not promote static `compatibility/clients.json` or `conversational_clients.json` to universal `VERIFIED` based on one chat or a user's report.
+The **2026-10-21 matrix below is the historical offline baseline** of Issue #68, not a claim that later client sessions never happened. The table immediately below is a **dated 2026-10-24 snapshot**, not live telemetry; installed versions and capabilities must be checked again for a new session. New read-only observations are recorded **separately** in [the versioned L4/L5 evidence ledger](../compatibility/live_client_evidence.json) and checked by `python scripts/verify_client_live_evidence.py`. Do not promote static `compatibility/clients.json` or `conversational_clients.json` to universal `VERIFIED` based on one chat or a user's report.
 
 | Route | Scope actually observed | L4 | L5 guidance | Native skill activation | L6 |
 | --- | --- | --- | --- | --- | --- |

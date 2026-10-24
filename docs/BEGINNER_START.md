@@ -29,7 +29,7 @@ You can copy one request below into any AI client that can read the necessary ma
 | **Research** | "Research my question using accessible reliable sources. Distinguish verified facts, uncertainties and recommendations." | [Research guidance](../.agents/skills/research-verification/SKILL.md) |
 | **Maintenance** | "Review the current project's documented incidents and risks. Recommend safe next steps without starting automatic updates or monitoring." | [Beginner workflow](BEGINNER_WORKFLOW.md) |
 
-For more detailed examples of creating an app, checking a project, fixing a bug, adding a feature and maintenance, see the [five worked requests](#five-requests-to-copy). The [full skills catalog](SKILLS_CATALOG.md) is optional reference material, **not a prerequisite**.
+The six rows above are **task categories** for quick selection. The [five worked requests](#five-requests-to-copy) are **longer example scenarios**, not five more requirements or a second installation step. Start with one relevant example; the [full skills catalog](SKILLS_CATALOG.md) is optional reference material, **not a prerequisite**.
 
 ## Choose an access route
 
@@ -41,6 +41,8 @@ Pick **one** route based on your actual tools and permission; none is more impor
 | **Installed ChatGPT plugin** | Open the *separately installed* Toolkit plugin and describe the task; see [plugin source contract](../AGENT_START.md). | Available only where the plugin is actually connected. A GitHub source refresh is not a plugin binary update or proof of skill activation. |
 | **Toolkit MCP for Codex or Claude Code** | Read the [MCP installation/doctor instructions](MCP_INSTALL.md), preview project configuration and explicitly authorize `--apply` if appropriate. | Read-only MCP tools can suggest relevant skills/roles; configuration is not evidence that the client discovered or used them. |
 | **Local managed skills for Codex or Claude Code** | Read the [project adoption preflight](PROJECT_ADOPTION_PREFLIGHT.md) and review a [local install plan](INSTALLATION.md) before any explicit `--apply`. | Filesystem installation is separate from client discovery and actual skill use. Existing project rules and user-owned skills take precedence. |
+
+**Quick choice:** no setup or only a question - use chat. Already using the Toolkit plugin - choose the plugin. Need read-only guidance in your IDE - use MCP. Need actual skill files managed inside a project - use Skill Manager after preview and permission. These are alternatives, **not four consecutive setup steps**.
 
 **Evidence boundary:** a guide was read, a connection was configured, the client discovered a skill, the skill was used and the application was tested are *different observations*. Client discovery/use and benefit are **NOT_TESTED** until actual client evidence exists. Deployment, paid services or external actions are never implied by any route.
 
