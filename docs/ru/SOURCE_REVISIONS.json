@@ -273,7 +273,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "5d211b54db64e7bf4dd25acb996e6644247db00c8db932524c1f7acba8c5a548"
+      "source_sha256": "7cf9b7de39d6cfed30bcbbc6a008515fc3c3dfed55b10501581349f2b8a3b9fd"
     },
     {
       "source": "docs/RELIABILITY_TESTING.md",
@@ -283,7 +283,7 @@
     {
       "source": "docs/ROADMAP.md",
       "translation": "docs/ru/ROADMAP.md",
-      "source_sha256": "c936fe14a5c0bc5d804fdb700fb7b131250973d4e60009a8324a35ee056fc775"
+      "source_sha256": "a5a10578054429de1214fbd0c58933d47ef387d31c8489f0b352645619215fba"
     },
     {
       "source": "docs/SECURITY_DEVSECOPS.md",
