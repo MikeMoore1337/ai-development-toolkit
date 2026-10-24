@@ -614,6 +614,45 @@ class SkillRoutingTests(unittest.TestCase):
         with self.assertRaisesRegex(routing.RoutingInputError, "overlap"):
             routing.load_holdout(test_file, self.catalog)
 
+    def test_new_untuned_bilingual_probe_is_disjoint_and_diagnostic_only(self):
+        catalog = routing.read_catalog(ROOT)
+        new = routing.load_holdout(
+            ROOT / "fixtures/skill_routing_untuned_20261024.json", catalog)
+        self.assertEqual(16, len(new))
+        self.assertEqual(16, len({case["query"].casefold() for case in new}))
+        self.assertEqual({"single": 8, "compound": 4, "negative": 4},
+                         {kind: sum(case["kind"] == kind for case in new)
+                          for kind in ("single", "compound", "negative")})
+        self.assertEqual(8, sum(case["id"].startswith("untuned-ru-") for case in new))
+        self.assertEqual(8, sum(case["id"].startswith("untuned-en-") for case in new))
+        prior_queries = set()
+        for name in ("skill_routing_holdout.json",
+                     "skill_routing_exploratory_20261023.json",
+                     "skill_routing_release_probes_20261023.json"):
+            for case in routing.load_holdout(ROOT / "fixtures" / name, catalog):
+                prior_queries.add(case["query"].strip().casefold())
+        curated = routing.load_cases(
+            ROOT / "fixtures/skill_routing_cases.json", catalog)
+        for case in curated:
+            prior_queries.update(q.strip().casefold()
+                                 for key in ("positive", "negative")
+                                 for q in case[key])
+        self.assertTrue({case["query"].strip().casefold()
+                         for case in new}.isdisjoint(prior_queries))
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        aliases = routing.read_aliases(
+            ROOT / "fixtures/skill_routing_aliases.json", catalog)
+        report = routing.evaluate_holdout(catalog, aliases, manifest, new)
+        self.assertEqual(16, report["count"])
+        self.assertEqual(16, report["supported_passed"] + report["supported_failed"])
+        self.assertFalse(report["strict_gate"])
+        self.assertEqual("NOT_CALIBRATED", report["confidence"])
+        self.assertEqual("NOT_OBSERVED", report["client_skill_selection"])
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
+        self.assertEqual(4, report["by_kind"]["negative"]["cases"])
+        self.assertEqual(8, report["by_language"]["ru"]["cases"])
+        self.assertEqual(8, report["by_language"]["en"]["cases"])
+
     def test_holdout_fixture_not_copied_from_curated_routing_cases(self):
         catalog = routing.read_catalog(ROOT)
         curated = routing.load_cases(ROOT / "fixtures/skill_routing_cases.json", catalog)
