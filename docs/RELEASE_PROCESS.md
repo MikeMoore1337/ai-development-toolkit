@@ -11,6 +11,8 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
+**Next release candidate:** `5.5.5` (candidate, NOT PUBLISHED). This version belongs only to the development source candidate under Issue #293; v5.5.4 remains the latest published immutable release. The future tag is prohibited until exact SHA and manifest checks pass and the owner signs off on this exact release archive and distribution rights. Preparing this candidate does not update any installed MCP or ChatGPT plugin.
+
 - `v5.5.4` was published on 2026-10-23 from immutable tag commit `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` ([GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4)); `MANIFEST.json.version = 5.5.4` in the tag. Later `main` commits do not become part of this release automatically.
 
 - The last published tag is **`v5.5.4`**, containing `MANIFEST.json.version = 5.5.4` at SHA `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`. Later `main` commits are not automatically published.
