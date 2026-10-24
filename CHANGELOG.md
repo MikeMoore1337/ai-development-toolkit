@@ -25,7 +25,19 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.5)
+## Unreleased (main after v5.5.6)
+
+## 5.5.6 (candidate, 2026-10-24)
+
+Release candidate after v5.5.5, covering Roadmap IV #294-#301. Publication requires a new exact-SHA tag, owner rights check and archive verification; this source change **does not publish** a release or update installed MCP/ChatGPT clients.
+
+- **Guides and integrations (#294, #295):** updated RU/EN roadmap, source/version boundaries and practical ChatGPT, Personal MCP, project MCP and Skill Manager selection; published-tag identity remains independent from `main`.
+- **Routing and observation (#296, #297):** 48 fresh bilingual adversarial routing samples (diagnostic, not verified semantic accuracy) and scoped observed client L4/L5 traces where real evidence exists. Results do not establish universal client support.
+- **Value and context (#298, #299):** zero-cost five-profile baseline-versus-skill source preflight with measured source/context characteristics; protected explicit UI design approval gate and bounded context audit. No causal L6 quality/time/cost improvement established.
+- **QA/UI portability (#300):** five independent synthetic project classes validate read-only QA profile paths and fail-closed visual review instructions; no real rendered UI, model evaluation or human design approval observed.
+- **Maintenance (#301):** bilingual addition/update/deprecation/revocation criteria, reuse of provenance/security/review checks and manual quarterly review; no background service or automatic updates.
+
+Source compatibility: no planned breaking changes to documented client APIs; packaged MCP adapters and Plugin Creator installations remain separately versioned, independently verified artifacts. CI/fixtures are **not** real agent execution, private project modification or production readiness evidence.
 
 ## 5.5.5 (released, 2026-10-24)
 

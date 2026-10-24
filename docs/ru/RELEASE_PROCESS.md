@@ -10,6 +10,8 @@
 
 ## Версии и состояние выпуска
 
+**Подготовка релиза:** `5.5.6` (candidate, NOT PUBLISHED) - пока **не опубликован**. Манифест ветки подготовки опережает публичный тег `v5.5.5`. До публикации обязательны проверка SHA, новый тег и проверка реально скачанного архива.
+
 **Последний опубликованный релиз:** [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) (24.10.2026), аннотированный тег на коммите `2fcc1efb858670a17aa251ba7264cef89cab1c71`. В архиве `MANIFEST.json.version = 5.5.5`; [GitHub Actions](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40090538576) подтвердил контрольные суммы и provenance. Согласие владельца на распространение точного состава записано в [Issue #293](https://github.com/MikeMoore1337/ai-development-toolkit/issues/293#issuecomment-6383332045); независимая юридическая экспертиза не проводилась. Установленные MCP и ChatGPT-плагин не обновляются публикацией.
 
 - `v5.5.4` опубликован 23.10.2026 с неизменяемым SHA тега `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` ([GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4)). В теге `MANIFEST.json.version = 5.5.4`. Более поздние коммиты `main` не входят в опубликованный релиз автоматически.
