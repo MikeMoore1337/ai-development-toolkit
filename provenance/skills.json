@@ -2726,6 +2726,26 @@
       "notes": "English evaluation evidence guide; no automatic visual conformance claims (#192)."
     },
     {
+      "id": "supply-chain-280-docs-verified-examples-md",
+      "path": "docs/VERIFIED_EXAMPLES.md",
+      "name": "VERIFIED_EXAMPLES.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/VERIFIED_EXAMPLES.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Original four zero-cost verified source-only demonstrations or immutable action pin contract; no claims of live skill activation, real project execution or end-to-end wheel provenance (#280)."
+    },
+    {
       "id": "documentation-docs-windows-publishing-md",
       "path": "docs/WINDOWS_PUBLISHING.md",
       "name": "WINDOWS_PUBLISHING.md",
@@ -4324,6 +4344,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Russian evaluation evidence guide and manual owner-gate limitations (#192)."
+    },
+    {
+      "id": "supply-chain-280-docs-ru-verified-examples-md",
+      "path": "docs/ru/VERIFIED_EXAMPLES.md",
+      "name": "VERIFIED_EXAMPLES.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/VERIFIED_EXAMPLES.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Original four zero-cost verified source-only demonstrations or immutable action pin contract; no claims of live skill activation, real project execution or end-to-end wheel provenance (#280)."
     },
     {
       "id": "documentation-docs-ru-windows-publishing-md",
@@ -10208,6 +10248,26 @@
       "notes": "Issue #103 source-target separation contract. Offline tests only; actual Codex behavior NOT_TESTED."
     },
     {
+      "id": "supply-chain-280-tests-test-supply-chain-pins-py",
+      "path": "tests/test_supply_chain_pins.py",
+      "name": "test_supply_chain_pins.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/VERIFIED_EXAMPLES.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Original four zero-cost verified source-only demonstrations or immutable action pin contract; no claims of live skill activation, real project execution or end-to-end wheel provenance (#280)."
+    },
+    {
       "id": "issue69-tests-test-tool-integrations-py",
       "path": "tests/test_tool_integrations.py",
       "name": "Tool integration contract regressions",
@@ -10546,6 +10606,26 @@
       "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-23",
       "distribution": "included"
+    },
+    {
+      "id": "supply-chain-280-tests-test-verified-examples-py",
+      "path": "tests/test_verified_examples.py",
+      "name": "test_verified_examples.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/VERIFIED_EXAMPLES.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Original four zero-cost verified source-only demonstrations or immutable action pin contract; no claims of live skill activation, real project execution or end-to-end wheel provenance (#280)."
     }
   ],
   "owner_review_record": {

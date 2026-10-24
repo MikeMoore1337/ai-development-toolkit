@@ -140,7 +140,7 @@ python scripts/validate_with_skills_ref.py --scope all
 
 ## Документация и участие
 
-[Все русские материалы](docs/ru/README.md) · [Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Маршрут новичка](docs/ru/BEGINNER_WORKFLOW.md) · [Совместимость клиентов](docs/ru/CLIENT_COMPATIBILITY.md)
+[Четыре проверяемых офлайн-примера](docs/ru/VERIFIED_EXAMPLES.md) · [Все русские материалы](docs/ru/README.md) · [Первый запуск](docs/ru/GETTING_STARTED.md) · [Словарь терминов](docs/ru/GLOSSARY.md) · [Установка](docs/ru/INSTALLATION.md) · [Каталог](docs/ru/SKILLS_CATALOG.md) · [Проверка первого запуска](docs/ru/ACCEPTANCE.md) · [Маршрут новичка](docs/ru/BEGINNER_WORKFLOW.md) · [Совместимость клиентов](docs/ru/CLIENT_COMPATIBILITY.md)
 
 [Make Feature](docs/ru/MAKE_FEATURE_INTEGRATION.md) · [Clear Voice](docs/ru/CLEAR_VOICE_INTEGRATION.md) · [Актуальность переводов](docs/ru/LANGUAGE_POLICY.md) · [Качество навыков](docs/ru/SKILL_QUALITY_V2.md) · [Универсальная разработка](docs/ru/UNIVERSAL_ENGINEERING.md) · [Agent Skills](docs/ru/AGENT_SKILLS_SPEC.md) · [Порядок релиза](docs/ru/RELEASE_PROCESS.md)
 
