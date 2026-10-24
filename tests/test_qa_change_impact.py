@@ -91,6 +91,35 @@ class ChangeImpactTests(unittest.TestCase):
         self.assertEqual(2, len(a["changed_paths"]))
         self.assertIn("cross-layer", {r["id"] for r in a["recommendations"]})
 
+    def test_public_pr_328_path_only_pilot_has_explicit_evidence_limit(self):
+        # Actual public PR #328 path inventory, inspected separately on GitHub:
+        # https://github.com/MikeMoore1337/ai-development-toolkit/pull/328/files
+        # The exact base/head SHAs are identifiers, not local Git-diff evidence.
+        paths = ["SHA256SUMS.txt", "scripts/skill_routing_eval.py",
+                 "tests/test_skill_routing_eval.py"]
+        report = qa.plan(
+            paths,
+            repository="MikeMoore1337/ai-development-toolkit",
+            base="4ce69a4f27331bf57a8a5644ae22f24c096ba5a8",
+            head="0cef0c90563f5b58ff376eef90f203d63c7d5249",
+            source="SUPPLIED_PATH_LIST",
+        )
+        checks = {row["id"]: row for row in report["recommendations"]}
+        self.assertEqual(sorted(paths), report["changed_paths"])
+        self.assertTrue({"change-review", "targeted-unit", "test-review",
+                         "unmapped-impact"} <= set(checks))
+        self.assertIn("scripts/skill_routing_eval.py", report["unmapped_paths"])
+        self.assertIn("SHA256SUMS.txt", report["unmapped_paths"])
+        self.assertEqual("SUPPLIED_PATH_LIST", report["source_verification"])
+        self.assertEqual("INSUFFICIENT_EVIDENCE", report["gate"])
+        self.assertEqual(0, report["executed_tests"])
+        self.assertTrue(all(item["status"] == "NOT_RUN"
+                            and item["execution_receipt"] is None
+                            for item in checks.values()))
+        # The nested-negation regression was reviewed from the real PR diff;
+        # the path-only classifier does not claim to understand it.
+        self.assertEqual("NOT_TESTED", report["client_effectiveness"])
+
     def test_docs_only_requires_review_without_runtime_test_claims(self):
         p = qa.plan([".agents/README.md", "ai/README.md"])
         checks = {x["id"] for x in p["recommendations"]}
