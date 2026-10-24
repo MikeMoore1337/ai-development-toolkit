@@ -30,7 +30,7 @@ AI Development Toolkit offers **two equally important integrations** built on sh
 
 `toolkit_prepare_task` now returns at most **three** priority `SKILL.md` instructions by default (formerly five); callers needing a larger initial load may explicitly set `max_skills=4..8`. The unchanged `selected_skills` and `remaining_skills_to_consult` identify all eligible skills: request deferred instructions through `toolkit_get_skill` and optional references individually through `toolkit_get_reference`. File-based native skill installations and the ChatGPT plugin's own context handling are **not modified**.
 
-`context_load_metrics` measures only UTF-8 instruction bytes **actually returned** by Personal MCP: skill bytes, role bytes, total bytes, count deferred and zero automatically loaded reference files. No additional source is read to produce the metric. `model_tokens=NOT_MEASURED` and `client_usefulness=NOT_TESTED`; smaller source output is **not** proof of fewer billed model tokens or unchanged live-model effectiveness.
+`context_load_metrics` measures only UTF-8 instruction bytes **actually returned** by Personal MCP: skill bytes, role bytes, total bytes, count deferred and zero automatically loaded reference files. No additional source is read to produce the metric. The metric excludes JSON-RPC envelope/duplicate text-vs-structured serialization, and is **not** a network payload byte count. `model_tokens=NOT_MEASURED` and `client_usefulness=NOT_TESTED`; smaller source output is **not** proof of fewer billed model tokens or unchanged live-model effectiveness.
 
 Reproducible baseline proxy at Toolkit commit `053a200f4215162340ab5d1d4ff7ac9c13c8db5e` (manifest-list order, `SKILL.md` sizes, **not** priority-adjusted runtime payload):
 
