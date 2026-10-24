@@ -94,6 +94,12 @@ The read-only `--recommend` mode no longer presents alphabetically sorted zero-e
 
 Simple explicit negative prefixes (e.g. `Skip database migration planning; ...`, `We're not redesigning the UI; ...`, `No need to ...`, or `Не хочу SEO-аудит: ...`) are separated from actionable instructions. The output lists `excluded_negated_clauses`; a purely negative request returns `NO_POSITIVE_INTENT`. This conservative pattern is **not** a complete natural-language negation parser: it only recognizes explicit leading requests not to perform a task (including bounded English present-continuous phrases and a few RU forms). A sentence expressing uncertainty such as `We are not sure...` is not treated as a task prohibition. The prior untuned holdout remains unchanged so regressions are measurable.
 
+### Additional untuned RU/EN probes (#273)
+
+The new `fixtures/skill_routing_untuned_20261024.json` contains 16 separately authored, frozen RU/EN task descriptions (8 Russian, 8 English; 8 single, 4 compound, 4 explicit-negative) disjoint from the curated, original holdout, 18 exploratory and 12 release-diagnostic prompts. Their labels were proposed by an AI assistant and are **not independent human judgments** or exhaustive acceptable answers. No skill aliases, ranking, frozen sets or real-client settings were tuned against these examples.
+
+Run `python scripts/skill_routing_eval.py --holdout fixtures/skill_routing_untuned_20261024.json` for a **non-gating** report of supported primary/auxiliary overlap, refusals, forbidden candidates and RU/EN breakdown. The CI runs the same offline diagnostic with exit code 0 on valid data regardless of its match rate. Record misses and abstentions as findings, not as model semantic accuracy; L4-L6 remain unobserved/unmeasured. This uses zero AI/provider calls.
+
 ### Cross-client routing decision (#272)
 
 The CLI lexical evaluator and the standalone Personal MCP emit a common, **advisory** `routing_decision` object without sharing a runtime or duplicating the skill inventory. Contract v1 fields: `schema_version`, `intent_mode`, `status`, `primary_profile`, `primary_skills`, `auxiliary_profiles`, `auxiliary_skills`, `excluded_clauses`, `evidence_basis`, `uncertainty`, `client_activation`, `execution`, `installation_performed`, and `project_files_changed`. A null `primary_profile` from lexical routing is intentional, not a missing activation. The MCP preserves its existing `profile` and `skills` response for compatibility; its profile suggestion is heuristic.
