@@ -513,10 +513,15 @@ def check_current_docs(root: Path, manifest: dict, findings: list[Finding]) -> N
                 or "$manifest.version" not in body):
             add(findings, "DOC004", path, 1, "Published release identity or pre-tag guard mismatch")
     path = "docs/ru/RELEASE_PROCESS.md"
-    if (root / path).is_file() and not candidate:
+    if (root / path).is_file():
         body = (root / path).read_text(encoding="utf-8")
-        if (f"Последний публичный тег: [v{version}]" not in body
-                or f"/releases/tag/v{version}" not in body):
+        major, minor, patch = (int(item) for item in version.split("."))
+        published_version = (f"{major}.{minor}.{patch - 1}"
+                             if candidate and patch > 0 else
+                             version if not candidate else None)
+        if (published_version is None
+                or f"Последний публичный тег: [v{published_version}]" not in body
+                or f"/releases/tag/v{published_version}" not in body):
             add(findings, "DOC004", path, 1, "Russian published release identity differs")
 
 

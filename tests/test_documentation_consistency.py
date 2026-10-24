@@ -83,12 +83,17 @@ class DocumentationConsistencyTests(unittest.TestCase):
                      "51 in the checked revision")
         self.check("DOC001")
 
-    def test_published_release_must_not_be_marked_candidate(self):
-        self.replace("CHANGELOG.md", "5.5.4 (released,", "5.5.4 (candidate,")
+    def test_current_release_status_must_match_candidate_or_published(self):
+        version = self.manifest["version"]
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+        status = "candidate" if "**Next release candidate:**" in readme else "released"
+        opposite = "released" if status == "candidate" else "candidate"
+        self.replace("CHANGELOG.md", f"{version} ({status},", f"{version} ({opposite},")
         self.check("DOC004")
 
     def test_missing_unreleased(self):
-        self.replace("CHANGELOG.md", "## Unreleased (main after v5.5.4)", "## Upcoming")
+        version = self.manifest["version"]
+        self.replace("CHANGELOG.md", f"## Unreleased (main after v{version})", "## Upcoming")
         self.check("DOC004")
 
     def test_published_release_cannot_reference_wrong_tag(self):
@@ -101,9 +106,14 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC004")
 
     def test_russian_release_process_version_drift(self):
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+        version = self.manifest["version"]
+        if "**Next release candidate:**" in readme:
+            major, minor, patch = (int(value) for value in version.split("."))
+            version = f"{major}.{minor}.{patch - 1}"
         self.replace("docs/ru/RELEASE_PROCESS.md",
-                     "Последний публичный тег: [v5.5.4]",
-                     "Последний публичный тег: [v5.5.3]")
+                     f"Последний публичный тег: [v{version}]",
+                     "Последний публичный тег: [v0.0.0]")
         self.check("DOC004")
 
     def test_manifest_version_drift(self):

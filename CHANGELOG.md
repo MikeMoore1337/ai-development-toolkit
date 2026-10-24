@@ -21,7 +21,20 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.4)
+## Unreleased (main after v5.5.5)
+
+## 5.5.5 (candidate, 2026-10-24)
+
+**NOT PUBLISHED** - candidate for Issue #293, no tag/release/archive yet.
+
+Source scope: protected main after published tag v5.5.4, including #259, #141 and roadmap #271-#280. This candidate label does not mean a tag, release, installed Personal MCP, ChatGPT plugin update, or live client activation exists. Publication requires an exact-SHA preflight and separate owner permission for the exact archive and distribution rights.
+
+- Routing: shared advisory decisions across CLI, Personal MCP and ChatGPT sources, additional bounded RU/EN negative tests and independent-label limitations (#272, #273); no certified semantic precision.
+- Integrations: source/adapter version diagnostics, Git-backed update preflight and explicit rollback (#274, #275); installed MCP and plugin packages are separate from updated source.
+- Context and onboarding: bounded default three-skill Personal MCP guidance with measured UTF-8 source bytes, plus clearer RU/EN beginner task entry (#276, #277); tokens and live model benefit remain unmeasured.
+- QA and orchestration: catalog-backed regression scenarios and offline adaptive orchestration decisions (#278, #279). The earlier #141 research pilot was closed in its limited scope; this is not a proven cost/time saving.
+- Supply chain: SHA-pinned GitHub Actions, pinned PyYAML test dependency, and four reproducible zero-cost offline examples (#280), without claiming signed binaries or real client trial execution.
+- Public documentation neutrality and bilingual editorial checks improved under #259.
 
 ## 5.5.4 (released, 2026-10-23)
 
