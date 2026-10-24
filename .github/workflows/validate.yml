@@ -21,6 +21,10 @@ env:
 
 jobs:
   tests:
+    # Required Ubuntu/Windows statuses stay blocked when either macOS variant fails.
+    needs: macos-portability
+    # Skipped required checks are accepted by GitHub; run and FAIL on failed macOS.
+    if: ${{ always() }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
@@ -34,6 +38,11 @@ jobs:
           - os: windows-latest
             python-version: '3.14'
     steps:
+      - name: Reject failed or skipped macOS matrix with a real required-check failure
+        if: ${{ needs.macos-portability.result != 'success' }}
+        run: |
+          echo "BLOCKED: macOS ARM/Intel portability did not pass"
+          exit 1
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
