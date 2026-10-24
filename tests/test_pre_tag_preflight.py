@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -102,6 +103,42 @@ class PreTagGateTests(unittest.TestCase):
         with patch.object(gate, "github_get", side_effect=gate.GateBlocked("GitHub unavailable")):
             with self.assertRaises(gate.GateBlocked):
                 gate.remote_preflight(TAG, SHA)
+
+
+    def test_main_local_block_does_not_claim_pass_or_run_remote(self) -> None:
+        with patch.object(gate, "local_preflight", side_effect=gate.GateBlocked("WORKTREE_NOT_CLEAN")), \
+             patch.object(gate, "remote_preflight") as remote, \
+             patch("sys.stdout", new_callable=io.StringIO) as out, \
+             patch("sys.stderr", new_callable=io.StringIO) as err:
+            result = gate.main(["--tag", TAG, "--sha", SHA, "--root", str(self.root)])
+        self.assertEqual(result, 2)
+        remote.assert_not_called()
+        self.assertIn("LOCAL_PRETAG_BLOCKED", err.getvalue())
+        self.assertIn("RELEASE_ACCEPTANCE=BLOCKED", err.getvalue())
+        self.assertNotIn("PRETAG_PASS", out.getvalue())
+
+    def test_main_remote_block_does_not_claim_release_ready(self) -> None:
+        with patch.object(gate, "local_preflight"), \
+             patch.object(gate, "remote_preflight", side_effect=gate.GateBlocked("REQUIRED_CI_NOT_GREEN")), \
+             patch("sys.stdout", new_callable=io.StringIO) as out, \
+             patch("sys.stderr", new_callable=io.StringIO) as err:
+            result = gate.main(["--tag", TAG, "--sha", SHA, "--root", str(self.root)])
+        self.assertEqual(result, 2)
+        self.assertIn("REMOTE_PRETAG_BLOCKED", err.getvalue())
+        self.assertIn("RELEASE_ACCEPTANCE=BLOCKED", err.getvalue())
+        self.assertNotIn("RELEASE_ACCEPTANCE=AWAITING_OWNER_APPROVAL", out.getvalue())
+
+    def test_main_success_is_not_rights_or_publication_approval(self) -> None:
+        with patch.object(gate, "local_preflight"), \
+             patch.object(gate, "remote_preflight"), \
+             patch("sys.stdout", new_callable=io.StringIO) as out:
+            result = gate.main(["--tag", TAG, "--sha", SHA, "--root", str(self.root)])
+        self.assertEqual(result, 0)
+        self.assertIn("LOCAL_PRETAG_PASS", out.getvalue())
+        self.assertIn("REMOTE_PRETAG_PASS", out.getvalue())
+        self.assertIn("RIGHTS_ATTESTATION=NOT_ATTESTED_BY_PREFLIGHT", out.getvalue())
+        self.assertIn("RELEASE_ACCEPTANCE=AWAITING_OWNER_APPROVAL", out.getvalue())
+        self.assertNotIn("RELEASE_ACCEPTANCE=VERIFIED", out.getvalue())
 
 
 if __name__ == "__main__":
