@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "description": "Issue #296 pre-evaluation freeze: 48 new RU/EN prompts written by the assistant, 24 each. Proposed primary/auxiliary/forbidden/abstention labels are maintainer/AI-authored, NOT independently human-adjudicated. Diagnostic-only lexical advice; no paid API, client activation, semantic accuracy or model-use claim. Fixed before implementing any ranker changes. Existing curated/holdout fixtures must not be tuned or edited.",
+  "label_author": "AI_ASSISTANT",
+  "reviewer_independence": "NOT_VERIFIED",
+  "scoring": "DIAGNOSTIC_NON_GATING",
+  "baseline_sha": "c1bfe52d24fb6691a0ec7ed4f28dcd7bcd76225f",
+  "cases": [
+    {
+      "id": "s296-ru-01",
+      "kind": "single",
+      "query": "Проследи, где теряется обратная совместимость ответа API после обновления поля и проверь потребителей контракта.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-02",
+      "kind": "single",
+      "query": "После ручного повторного прогона пропадает ошибка теста: собери признаки нестабильного сценария.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "failure-triage"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-03",
+      "kind": "single",
+      "query": "В новом экране невозможно закрыть модальное окно с клавиатуры; проверь управление фокусом.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [
+        "forms-validation"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-04",
+      "kind": "single",
+      "query": "После расширения таблицы откат миграции базы данных уничтожает старые записи, проверь безопасный rollback.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [
+        "release-safety"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-05",
+      "kind": "single",
+      "query": "Определи, почему события фонового воркера обрабатываются повторно после повторной доставки очереди.",
+      "expected_primary": [
+        "background-processing"
+      ],
+      "acceptable_auxiliary": [
+        "reliability-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-06",
+      "kind": "single",
+      "query": "Перед публикацией проверь, что символическая ссылка не позволяет выйти из разрешённого каталога MCP.",
+      "expected_primary": [
+        "security-boundaries"
+      ],
+      "acceptable_auxiliary": [
+        "security-review"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-01",
+      "kind": "single",
+      "query": "After changing the schema a client rejects an API response; design backward compatibility contract checks.",
+      "expected_primary": [
+        "contract-testing"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-02",
+      "kind": "single",
+      "query": "The same Python test fails once per day but passes on rerun; inspect flaky-test causes.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "pytest-test-design"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-03",
+      "kind": "single",
+      "query": "A modal loses the visible focus ring when navigating by keyboard; check accessibility.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [
+        "forms-validation"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-04",
+      "kind": "single",
+      "query": "Schema migration rollback must preserve existing rows after an unexpected deployment failure.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [
+        "release-safety"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-05",
+      "kind": "single",
+      "query": "Queued background tasks execute twice after delivery retries; analyze worker processing.",
+      "expected_primary": [
+        "background-processing"
+      ],
+      "acceptable_auxiliary": [
+        "reliability-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-06",
+      "kind": "single",
+      "query": "Reject filesystem symlink traversal outside the authorized workspace in a local MCP tool.",
+      "expected_primary": [
+        "security-boundaries"
+      ],
+      "acceptable_auxiliary": [
+        "security-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-07",
+      "kind": "compound",
+      "query": "Проверь ответы HTTP API и отрицательные сценарии; отдельно проверь доступность формы с клавиатуры.",
+      "expected_primary": [
+        "api-testing",
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [
+        "forms-validation"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-08",
+      "kind": "compound",
+      "query": "Сначала проведи аудит индексации и canonical страниц; затем подготовь проверку миграции схемы БД.",
+      "expected_primary": [
+        "seo-audit",
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [
+        "database-validation"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-09",
+      "kind": "compound",
+      "query": "Оцени задержки рендера интерфейса; отдельно проверь ограничения безопасности доступа к секретам.",
+      "expected_primary": [
+        "frontend-performance",
+        "security-boundaries"
+      ],
+      "acceptable_auxiliary": [
+        "performance-load-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-10",
+      "kind": "compound",
+      "query": "Разбери нестабильные тесты сборки; отдельно оцени корректность метрик и логов инцидента.",
+      "expected_primary": [
+        "flaky-analysis",
+        "observability-sre"
+      ],
+      "acceptable_auxiliary": [
+        "failure-triage"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-11",
+      "kind": "compound",
+      "query": "Оформи тесты контрактов между сервисами; после этого проверь SQL запросы на дублирование строк.",
+      "expected_primary": [
+        "contract-testing",
+        "data-access"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-12",
+      "kind": "compound",
+      "query": "Проверь план безопасного выката релиза; отдельно проверь экран читателем и клавиатурой.",
+      "expected_primary": [
+        "release-safety",
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [
+        "quality-gate-assessment"
+      ],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-07",
+      "kind": "compound",
+      "query": "Inspect HTTP API errors and response codes; separately verify keyboard focus and screen-reader labels.",
+      "expected_primary": [
+        "api-testing",
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-08",
+      "kind": "compound",
+      "query": "Audit site SEO indexing and canonical metadata; separately plan a database schema migration rollback.",
+      "expected_primary": [
+        "seo-audit",
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-09",
+      "kind": "compound",
+      "query": "Investigate frontend render latency; separately review permission boundaries around secret files.",
+      "expected_primary": [
+        "frontend-performance",
+        "security-boundaries"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-10",
+      "kind": "compound",
+      "query": "Diagnose flaky pipeline tests; separately review incident telemetry and SLO alerts.",
+      "expected_primary": [
+        "flaky-analysis",
+        "observability-sre"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-11",
+      "kind": "compound",
+      "query": "Check API contract compatibility; separately fix duplicate records returned by SQL JOIN.",
+      "expected_primary": [
+        "contract-testing",
+        "data-access"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-12",
+      "kind": "compound",
+      "query": "Assess release safety and rollback gates; separately test keyboard accessibility.",
+      "expected_primary": [
+        "release-safety",
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-13",
+      "kind": "negative",
+      "query": "Не нужен seo-audit; проверь HTTP API ответы и коды ошибок.",
+      "expected_primary": [
+        "api-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "seo-audit"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-14",
+      "kind": "negative",
+      "query": "Не делай ux-design-process; проверь SQL-запросы и границы транзакций.",
+      "expected_primary": [
+        "data-access"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "ux-design-process"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-15",
+      "kind": "negative",
+      "query": "Не нужен database-migrations; проверь клавиатурную доступность интерфейса.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "database-migrations"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-16",
+      "kind": "negative",
+      "query": "Не делай frontend-performance; исследуй повторную доставку сообщений фоновому воркеру.",
+      "expected_primary": [
+        "background-processing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "frontend-performance"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-17",
+      "kind": "negative",
+      "query": "Не нужен prompt-refinement; выясни, почему тест API иногда проходит только со второго запуска.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [
+        "prompt-refinement"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-18",
+      "kind": "negative",
+      "query": "Не создавай security-testing; проверь безопасный откат схемы базы данных.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "security-testing"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-13",
+      "kind": "negative",
+      "query": "Skip seo-audit; test HTTP API responses and status codes.",
+      "expected_primary": [
+        "api-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "seo-audit"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-14",
+      "kind": "negative",
+      "query": "Do not use ux-design-process; review SQL queries and transaction boundaries.",
+      "expected_primary": [
+        "data-access"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "ux-design-process"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-15",
+      "kind": "negative",
+      "query": "Skip database-migrations; audit keyboard navigation and accessibility.",
+      "expected_primary": [
+        "accessibility-testing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "database-migrations"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-16",
+      "kind": "negative",
+      "query": "Do not run frontend-performance; diagnose duplicate background worker execution.",
+      "expected_primary": [
+        "background-processing"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "frontend-performance"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-17",
+      "kind": "negative",
+      "query": "Skip prompt-refinement; investigate an intermittently failing API test.",
+      "expected_primary": [
+        "flaky-analysis"
+      ],
+      "acceptable_auxiliary": [
+        "api-testing"
+      ],
+      "forbidden": [
+        "prompt-refinement"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-en-18",
+      "kind": "negative",
+      "query": "Do not perform security-testing; verify schema migration rollback safety.",
+      "expected_primary": [
+        "database-migrations"
+      ],
+      "acceptable_auxiliary": [],
+      "forbidden": [
+        "security-testing"
+      ],
+      "expect_abstain": false
+    },
+    {
+      "id": "s296-ru-19",
+      "kind": "ambiguous",
+      "query": "Я пока не определился с направлением; давай потом решим, что делать.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-ru-20",
+      "kind": "ambiguous",
+      "query": "Возможно, это станет отдельным проектом, но требований и задачи пока нет.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-ru-21",
+      "kind": "ambiguous",
+      "query": "Может быть, стоит вернуться к обсуждению позже? Конкретных работ не назначено.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-19",
+      "kind": "ambiguous",
+      "query": "We have not decided what the project is about, and no task has been assigned.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-20",
+      "kind": "ambiguous",
+      "query": "Perhaps later we can determine the goal, but there is no actionable request yet.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-21",
+      "kind": "ambiguous",
+      "query": "Not sure which direction we will take; no implementation or review is requested.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-ru-22",
+      "kind": "missing_skill",
+      "query": "Найди значение вымышленного кваркоблоба в алфавитной игре из звёздного языка.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-ru-23",
+      "kind": "missing_skill",
+      "query": "Объясни, как выращивают фиолетовые зернолапки на далёкой вымышленной планете.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-ru-24",
+      "kind": "missing_skill",
+      "query": "Какова погода на несуществующем острове Сквозезвёздье в сказочном океане?",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-22",
+      "kind": "missing_skill",
+      "query": "Describe a mythical starfruit ceremony in an imaginary underwater kingdom.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-23",
+      "kind": "missing_skill",
+      "query": "Invent a recipe for lunar marshmallow sprites from a fictional world.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    },
+    {
+      "id": "s296-en-24",
+      "kind": "missing_skill",
+      "query": "Explain the fictional constellation of the silver cloud otter in a fairy tale.",
+      "expected_primary": [],
+      "acceptable_auxiliary": [],
+      "forbidden": [],
+      "expect_abstain": true
+    }
+  ]
+}
