@@ -27,6 +27,18 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.5)
 
+## 5.5.6 (prepared, NOT PUBLISHED)
+
+Release candidate after v5.5.5, covering Roadmap IV #294-#301. Publication requires a new exact-SHA tag, owner rights check and archive verification; this source change **does not publish** a release or update installed MCP/ChatGPT clients.
+
+- **Guides and integrations (#294, #295):** updated RU/EN roadmap, source/version boundaries and practical ChatGPT, Personal MCP, project MCP and Skill Manager selection; published-tag identity remains independent from `main`.
+- **Routing and observation (#296, #297):** 48 fresh bilingual adversarial routing samples (diagnostic, not verified semantic accuracy) and scoped observed client L4/L5 traces where real evidence exists. Results do not establish universal client support.
+- **Value and context (#298, #299):** zero-cost five-profile baseline-versus-skill source preflight with measured source/context characteristics; protected explicit UI design approval gate and bounded context audit. No causal L6 quality/time/cost improvement established.
+- **QA/UI portability (#300):** five independent synthetic project classes validate read-only QA profile paths and fail-closed visual review instructions; no real rendered UI, model evaluation or human design approval observed.
+- **Maintenance (#301):** bilingual addition/update/deprecation/revocation criteria, reuse of provenance/security/review checks and manual quarterly review; no background service or automatic updates.
+
+Source compatibility: no planned breaking changes to documented client APIs; packaged MCP adapters and Plugin Creator installations remain separately versioned, independently verified artifacts. CI/fixtures are **not** real agent execution, private project modification or production readiness evidence.
+
 ## 5.5.5 (released, 2026-10-24)
 
 Published after exact-SHA release preflight and owner rights approval under [Issue #293](https://github.com/MikeMoore1337/ai-development-toolkit/issues/293). Source scope: protected main after v5.5.4, including completed work #259, #141 and #271-#280. Source-only validation is not evidence of active client skill selection or measurable agent benefit. The release does not update installed Personal MCP or ChatGPT plugin packages.
