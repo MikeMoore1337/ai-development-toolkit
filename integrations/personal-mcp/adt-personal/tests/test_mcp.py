@@ -265,6 +265,44 @@ class TestToolkitMCP(unittest.TestCase):
                  for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(before, after)
 
+    def test_default_compact_guidance_saves_measured_text_and_can_expand(self):
+        snapshot = {str(path.relative_to(self.path)): path.read_bytes()
+                    for path in self.path.rglob('*') if path.is_file()}
+        task = 'Создать REST API и описать изменения backend'
+        compact = self.tk.prepare_task(task, profile='backend')
+        original = self.tk.prepare_task(task, profile='backend', max_skills=5)
+        self.assertEqual(compact['selected_skills'], original['selected_skills'])
+        self.assertEqual(compact['skills_to_consult'], original['skills_to_consult'])
+        self.assertEqual(3, len(compact['loaded_skills']))
+        self.assertGreater(len(original['loaded_skills']), 3)
+        self.assertEqual(
+            [x['name'] for x in original['loaded_skills'][:3]],
+            [x['name'] for x in compact['loaded_skills']])
+        self.assertEqual(
+            [x['name'] for x in original['loaded_skills'][3:]],
+            compact['remaining_skills_to_consult'][:len(original['loaded_skills']) - 3])
+        small = compact['context_load_metrics']
+        large = original['context_load_metrics']
+        self.assertLess(small['total_source_bytes'], large['total_source_bytes'])
+        self.assertEqual(
+            sum(len(item['content'].encode('utf-8')) for item in compact['loaded_skills']),
+            small['skill_source_bytes'])
+        self.assertEqual(
+            sum(len(item['content'].encode('utf-8')) for item in compact['loaded_roles']),
+            small['role_source_bytes'])
+        self.assertEqual('NOT_MEASURED', small['model_tokens'])
+        self.assertEqual('NOT_TESTED', small['client_usefulness'])
+        self.assertEqual(0, small['reference_files_preloaded'])
+        self.assertEqual(len(compact['remaining_skills_to_consult']),
+                         small['deferred_skill_count'])
+        next_skill = compact['remaining_skills_to_consult'][0]
+        self.assertTrue(self.tk.read('skill', next_skill)['content'])
+        self.assertEqual('Guardrails',
+                         self.tk.reference('qa-strategy', 'references/rules.md')['content'].strip('# \n'))
+        self.assertFalse(compact['project_files_changed'])
+        self.assertEqual(snapshot, {str(path.relative_to(self.path)): path.read_bytes()
+                                    for path in self.path.rglob('*') if path.is_file()})
+
     def test_prepare_task_no_inventory_is_unknown_and_role_loads(self):
         result = self.tk.prepare_task('Реализуй новую функцию', max_skills=3)
         self.assertEqual(result['existing_skills_status'], 'NOT_PROVIDED')
