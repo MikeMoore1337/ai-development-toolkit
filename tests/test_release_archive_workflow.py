@@ -56,6 +56,20 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
             self.assertIn("published-documentation", page)
             self.assertIn("LOCAL_PRETAG_BLOCKED", page)
 
+    def test_macos_gate_is_a_dependency_of_required_checks(self):
+        """macOS ARM/Intel failure prevents required Linux/Windows jobs from passing."""
+        workflow = ROOT / ".github" / "workflows" / "validate.yml"
+        config = yaml.load(workflow.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        jobs = config["jobs"]
+        self.assertEqual("macos-portability", jobs["tests"]["needs"])
+        self.assertNotIn("if", jobs["macos-portability"])
+        self.assertEqual(
+            ["macos-15", "macos-15-intel"],
+            jobs["macos-portability"]["strategy"]["matrix"]["os"],
+        )
+        self.assertIn("tests", jobs["integration-source-candidates"]["needs"])
+        self.assertIn("macos-portability", jobs["integration-source-candidates"]["needs"])
+
     def test_required_matrix_enforces_release_snapshot(self):
         workflow = ROOT / ".github" / "workflows" / "validate.yml"
         text = workflow.read_text(encoding="utf-8")
