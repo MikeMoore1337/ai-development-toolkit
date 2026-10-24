@@ -10808,7 +10808,7 @@
       "notes": "Deterministic offline tests with synthetic fabricated acceptance rates explicitly not real model metrics and negative evidence controls (#298)."
     },
     {
-      "id": "profile-benefit-298-docs-PROFILE_BENEFIT_EVAL-md",
+      "id": "profile-benefit-298-docs-profile_benefit_eval-md",
       "path": "docs/PROFILE_BENEFIT_EVAL.md",
       "name": "PROFILE_BENEFIT_EVAL.md",
       "kind": "documentation",
@@ -10828,7 +10828,7 @@
       "notes": "Read-only reproducible profile evaluation protocol and evidence limitations RU/EN; no real L6 measurements or model execution (#298)."
     },
     {
-      "id": "profile-benefit-298-docs-ru-PROFILE_BENEFIT_EVAL-md",
+      "id": "profile-benefit-298-docs-ru-profile_benefit_eval-md",
       "path": "docs/ru/PROFILE_BENEFIT_EVAL.md",
       "name": "PROFILE_BENEFIT_EVAL.md",
       "kind": "documentation",
