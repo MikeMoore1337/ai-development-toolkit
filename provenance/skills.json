@@ -8028,6 +8028,26 @@
       "notes": ""
     },
     {
+      "id": "orchestration-policy-279-scripts-orchestration_decision-py",
+      "path": "scripts/orchestration_decision.py",
+      "name": "orchestration_decision.py",
+      "kind": "script",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/QA_ORCHESTRATION.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "AI Development Toolkit original offline deterministic advisory policy and negative tests (#279). No runtime agents, model calls or measured efficiency."
+    },
+    {
       "id": "toolkit-scripts-pre-tag-preflight-py",
       "path": "scripts/pre_tag_preflight.py",
       "name": "pre_tag_preflight.py",
@@ -9546,6 +9566,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": ""
+    },
+    {
+      "id": "orchestration-policy-279-tests-test_orchestration_decision-py",
+      "path": "tests/test_orchestration_decision.py",
+      "name": "test_orchestration_decision.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/QA_ORCHESTRATION.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "AI Development Toolkit original offline deterministic advisory policy and negative tests (#279). No runtime agents, model calls or measured efficiency."
     },
     {
       "id": "orchestration-pilot-141-tests-test-orchestration-pilot-py",
