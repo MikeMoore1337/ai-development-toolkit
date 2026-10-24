@@ -6,14 +6,15 @@
 
 AI Development Toolkit is a library of reusable task instructions and selected skill profiles. It is **not** an AI app, one-click app builder, hosting service, or a set of permissions. Reading this page does not install or activate its skills. The [canonical beginner workflow](BEGINNER_WORKFLOW.md) governs the conversation; this page tells you **where to start**. For unfamiliar terms, see the [English glossary](GLOSSARY.md) ([Russian version](ru/GLOSSARY.md)).
 
-## First four actions
+## Your first result in three steps
 
-1. **Choose where you want to work** in the [client table](#choose-your-ai-client). If unsure, use ChatGPT or Claude in the browser to discuss your goal first.
-2. **Choose one task** from the [six quick starts](#pick-your-task-first) or [five detailed worked requests](#five-requests-to-copy). You do not have to choose a programming language, skill or profile.
-3. **Attach only the information needed**: an idea needs a description; an existing app needs accessible files, a repository or a reproducible problem report. Never paste secrets.
-4. **Check the actual result**. Ask what was read, changed and tested. A plan or code pasted into chat is not an installed, tested or published application.
+1. **Say what you want to achieve.** Pick one of the [six task examples](#pick-your-task-first), or simply describe a problem in your own words. No programming language, skill name or profile is required.
+2. **Give the AI access only to what it needs.** For a new idea, a description is enough. For an existing project, choose an available [client and access route](#choose-an-access-route), then supply authorized files, a repository or reproduction details. Do not share passwords or tokens.
+3. **Check the result, not the promise.** Ask: *What was actually read or changed? Which checks ran and what were their PASS/FAIL results? Which checks are NOT_RUN?* If no project access or execution tool exists, accept an explicit plan or prepared files instead of a claim that the application was fixed or tested.
 
-If a button or capability described below is not available on your account, **stop at planning** and use the fallback. Do not assume every AI client has identical UI or Agent Skills support.
+**One copyable example:** "My Save button stopped working. Use the project files I share to find the cause. Change only what you are authorized to change, and report the actual tests and anything NOT_RUN." A quick outcome is useful even when it is only a diagnosis or a safely blocked next step. For complete acceptance rules, use the [existing beginner workflow](BEGINNER_WORKFLOW.md), not a second checklist.
+
+If a button or capability is unavailable in your account, choose the [documented fallback](#when-something-is-missing); the client does not gain filesystem access or native skill activation merely from this guide.
 
 ## Pick your task first
 

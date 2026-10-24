@@ -232,6 +232,33 @@ class BeginnerTaskRouteTests(unittest.TestCase):
                 matches.append((match.group(1), match.group(2) + " " + match.group(3)))
         return matches
 
+    def test_first_result_three_step_route_and_evidence(self):
+        for path, heading, prompt_marker in (
+            ("docs/BEGINNER_START.md", "## Your first result in three steps",
+             "**One copyable example:**"),
+            ("docs/ru/BEGINNER_START.md", "## Первый результат за три шага",
+             "**Один готовый пример:**"),
+        ):
+            with self.subTest(path=path):
+                page = (ROOT / path).read_text(encoding="utf-8")
+                section = self.section(page, heading)
+                numbered = [line for line in section.splitlines()
+                            if line.startswith(("1. ", "2. ", "3. "))]
+                self.assertEqual(["1. ", "2. ", "3. "],
+                                 [line[:3] for line in numbered])
+                self.assertIn(prompt_marker, section)
+                self.assertIn("(BEGINNER_WORKFLOW.md)", section)
+                self.assertIn("NOT_RUN", section)
+                self.assertIn("PASS/FAIL", section)
+                self.assertIn("file", section.lower() if path.endswith("/BEGINNER_START.md")
+                              and "/ru/" not in path else section.lower().replace("файл", "file"))
+                self.assertTrue(any(word in section.lower() for word in
+                                    ("permission", "authorized", "разрешени")))
+                self.assertNotIn("model_tokens=PASS", section)
+                # Deliberate negative mutation: no evidence labels means no acceptance.
+                broken = section.replace("NOT_RUN", "UNVERIFIED")
+                self.assertNotIn("NOT_RUN", broken)
+
     def test_all_six_tasks_and_four_routes_exist_in_both_languages(self):
         for path, (task_heading, labels, access_heading, access_labels) in self.ROUTES.items():
             with self.subTest(path=path):
