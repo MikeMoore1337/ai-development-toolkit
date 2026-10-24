@@ -1,5 +1,19 @@
 # Client capabilities, evidence and routing (Issue #68)
 
+
+## Issue #297: scoped live observations (2026-10-24)
+
+The **2026-10-21 matrix above remains the historical offline baseline** of Issue #68, not a claim that later client sessions never happened. New read-only observations are recorded **separately** in [the versioned L4/L5 evidence ledger](../compatibility/live_client_evidence.json) and checked by `python scripts/verify_client_live_evidence.py`. Do not promote static `compatibility/clients.json` or `conversational_clients.json` to universal `VERIFIED` based on one chat or a user's report.
+
+| Route | Scope actually observed | L4 | L5 guidance | Native skill activation | L6 |
+| --- | --- | --- | --- | --- | --- |
+| Installed **private ChatGPT plugin 0.1.8** | This ChatGPT turn: installed skill registry listed Toolkit skills; `toolkit-task-router`, `toolkit-intent-normalization`, `toolkit-qa-review` and `toolkit-implementation` SKILL.md content read; matching immutable Toolkit `main@b26041ea4fe87b52bd04540d456b2d237d3e0d4e` and the 3 required successful CI checks verified, manifest protocol compatible, QA catalog and one focused QA skill loaded from the same SHA | OBSERVED_THIS_SESSION (plugin host skills) | READ_THIS_SESSION | NOT_OBSERVED | NOT_MEASURED |
+| **Codex Desktop / Personal MCP 0.1.10** | [Owner-observed 2026-10-23 5/5 read-only calls](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190#issuecomment-6363045693), Toolkit **5.5.3** with historical SHA `a738402ba29536fb18022fa7aaf8fbc63355d211` | OWNER_REPORTED_PASS (MCP tools) | OWNER_REPORTED_GUIDANCE_RETURNED | NOT_OBSERVED | NOT_MEASURED |
+| **Codex Project MCP** | Source-only MCP tests; no current real Codex project client connection | NOT_RUN | NOT_RUN | NOT_OBSERVED | NOT_MEASURED |
+| **Claude Code Project MCP** | Source-only MCP tests; no current Claude Code client connection | NOT_RUN | NOT_RUN | NOT_OBSERVED | NOT_MEASURED |
+
+**Boundaries:** plugin skill presence/read is not automatic native Agent Skills invocation. Returning `SKILL.md` from MCP is not proof that a model acted on it, nor that a target project's files were touched. This issue performed no project execution, account changes, client installation, paid API calls or Codex/Claude CLI calls. The 0.1.8 *installed personal plugin* is distinct from the public ChatGPT *source ZIP* version 0.1.2. Historical Codex 0.1.10 was **not** retested against the current 5.5.5 source. Claims about cost/time/accuracy benefit need a controlled L6 design and remain **NOT_MEASURED**. The live observations are deliberately not written into original offline L1-L3 registry status fields.
+
 [Русский](ru/CLIENT_CAPABILITIES.md) | [Client compatibility](CLIENT_COMPATIBILITY.md) | [Beginner workflow](BEGINNER_WORKFLOW.md)
 
 **Reviewed 2026-10-21.** These are **offline documentation and contract tests**. Runtime sessions of Codex, Claude Code, ChatGPT and Claude.ai were **not** conducted. Keep Issue #11 zero-spend and explicit-permission gates.

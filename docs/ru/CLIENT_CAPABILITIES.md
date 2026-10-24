@@ -1,5 +1,19 @@
 # Возможности клиентов, доказательства и маршруты работы (Issue #68)
 
+
+## Issue #297: ограниченные реальные наблюдения (24.10.2026)
+
+Таблица выше - **историческая автономная проверка Issue #68 от 21.10.2026**, а не утверждение, будто последующих сеансов не было. Новые наблюдения сохранены **отдельно** в [реестре доказательств L4/L5](../../compatibility/live_client_evidence.json). Проверка: `python scripts/verify_client_live_evidence.py`. Не меняем общие статусы `compatibility/clients.json` и `conversational_clients.json` на `VERIFIED` из-за одного сеанса или слов владельца.
+
+| Способ | Фактически проверено | L4 | L5: чтение инструкций | Нативная активация навыка | L6 |
+| --- | --- | --- | --- | --- | --- |
+| **Приватный плагин ChatGPT 0.1.8** | В этом сеансе список установленных Toolkit-навыков получен из клиента; прочитаны `toolkit-task-router`, `toolkit-intent-normalization`, `toolkit-qa-review`, `toolkit-implementation`. Для `main@b26041ea4fe87b52bd04540d456b2d237d3e0d4e` подтверждены три обязательных CI, совместимость manifest protocol, прочитаны каталог и профильный QA-навык по неизменяемому SHA | OBSERVED_THIS_SESSION (навыки плагина) | READ_THIS_SESSION | NOT_OBSERVED | NOT_MEASURED |
+| **Codex Desktop / Personal MCP 0.1.10** | [Ранее подтверждённые владельцем 5/5 реальных вызовов](https://github.com/MikeMoore1337/ai-development-toolkit/issues/190#issuecomment-6363045693) от 23.10.2026; Toolkit **5.5.3**, исходный SHA `a738402ba29536fb18022fa7aaf8fbc63355d211` | OWNER_REPORTED_PASS (MCP) | OWNER_REPORTED_GUIDANCE_RETURNED | NOT_OBSERVED | NOT_MEASURED |
+| **Codex Project MCP** | Только исходники и автономные тесты, нет реального подключения проектного клиента | NOT_RUN | NOT_RUN | NOT_OBSERVED | NOT_MEASURED |
+| **Claude Code Project MCP** | Только исходники и автономные тесты, нет реального подключения Claude Code | NOT_RUN | NOT_RUN | NOT_OBSERVED | NOT_MEASURED |
+
+**Ограничения:** присутствие и чтение инструкций плагина не доказывают нативную активацию Agent Skills. Выданный MCP файл `SKILL.md` не означает применения его моделью и не доказывает изменений проекта. Не выполнялись действия с рабочими проектами, установка клиентского ПО, платные API и Codex/Claude CLI. Установленный персональный плагин **0.1.8** не совпадает с публичным ZIP исходников **0.1.2**. Codex MCP 0.1.10 повторно на Toolkit 5.5.5 не испытывался. Измеренная польза (L6) остаётся **NOT_MEASURED**, а старые статические реестры L1-L3 не искажаются новыми доказательствами одного сеанса.
+
 [English](../CLIENT_CAPABILITIES.md) | [Совместимость клиентов](CLIENT_COMPATIBILITY.md) | [Для начинающих](BEGINNER_WORKFLOW.md)
 
 **Проверено 21.10.2026.** Проверки выполняются офлайн и касаются документации и контрактов. Реальные сессии Codex, Claude Code, ChatGPT и Claude.ai **не запускались**. Сохраняются нулевые дополнительные расходы и ограничения Issue #11.

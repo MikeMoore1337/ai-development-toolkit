@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "description": "Scoped observational client evidence for Issue #297. Not a global compatibility score. No paid AI, agent CLI, project execution, private transcripts or stored secrets.",
+  "review_date": "2026-10-24",
+  "collection": "OBSERVED_CURRENT_AND_HISTORICAL_WITH_EXPLICIT_PROVENANCE",
+  "current_source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
+  "zero_spend_gate": "ACTIVE_ISSUE_11_NOT_PLANNED",
+  "scenarios": [
+    {
+      "id": "chatgpt-personal-plugin-session",
+      "client": "ChatGPT",
+      "mode": "INSTALLED_PRIVATE_PLUGIN_GUIDANCE",
+      "client_version": "HOST_VERSION_NOT_EXPOSED",
+      "adapter_version": "0.1.8",
+      "toolkit_version": "5.5.5",
+      "source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
+      "observation_date": "2026-10-24",
+      "evidence_origin": "ASSISTANT_OBSERVED_CURRENT_SESSION",
+      "l4": "OBSERVED_THIS_SESSION",
+      "l5_guidance": "READ_THIS_SESSION",
+      "l5_native_skill_activation": "NOT_OBSERVED",
+      "l6_benefit": "NOT_MEASURED",
+      "target_execution": "NOT_RUN",
+      "project_files_changed": false,
+      "cost": "NO_INCREMENTAL_API_COST_OBSERVED",
+      "evidence": [
+        "Plugin Creator user-scoped metadata for private ai-development-toolkit-personal v0.1.8.",
+        "Installed host skill registry enumerated toolkit-task-router, toolkit-intent-normalization, toolkit-qa-review and toolkit-implementation; exact installed skill.md files read in this session.",
+        "Exact main SHA above returned 6 completed/success checks, including Ubuntu 3.12/3.13 and Windows 3.14; matching manifest chatgpt_personal_live generation 1 with min_plugin_version 0.1.5 and no automatic upgrades.",
+        "At that immutable SHA, manifest-declared docs/SKILLS_CATALOG.md and task-relevant extensions/qa/skills/quality-gate-assessment/SKILL.md were actually retrieved read-only. No independent assertion that the model complied with every instruction."
+      ],
+      "limitations": "This is observed installed ChatGPT plugin skill availability and actual guidance read in one assistant turn, not native hosted Toolkit skill activation, not a user-host plugin update, not a measured task benefit. Tool responses are not a persistent raw host audit log."
+    },
+    {
+      "id": "codex-personal-mcp-owner-20261023",
+      "client": "Codex Desktop",
+      "mode": "PERSONAL_MCP_READ_ONLY_TOOLS",
+      "client_version": "NOT_RECORDED",
+      "adapter_version": "0.1.10",
+      "toolkit_version": "5.5.3",
+      "source_sha": "a738402ba29536fb18022fa7aaf8fbc63355d211",
+      "observation_date": "2026-10-23",
+      "evidence_origin": "HISTORICAL_OWNER_REPORTED_FROM_ISSUE_190",
+      "l4": "OWNER_REPORTED_PASS",
+      "l5_guidance": "OWNER_REPORTED_GUIDANCE_RETURNED",
+      "l5_native_skill_activation": "NOT_OBSERVED",
+      "l6_benefit": "NOT_MEASURED",
+      "target_execution": "NOT_RUN",
+      "project_files_changed": false,
+      "cost": "NO_INCREMENTAL_API_COST_REPORTED",
+      "evidence": [
+        "https://github.com/MikeMoore1337/ai-development-toolkit/issues/190#issuecomment-6363045693",
+        "Owner reported five real Codex Desktop MCP operations: toolkit_info, toolkit_get_skill FOUND_LOCAL, unknown name MISSING, toolkit_prepare_task returning three skills and one role, unauthorized source NO_NETWORK/NOT_AUTHORIZED."
+      ],
+      "limitations": "Historical owner-observed real Codex Desktop read-only MCP call, not re-executed in this Issue. Exact installed native Skill invocation by model and current Toolkit v5.5.5 upgrade were not verified."
+    },
+    {
+      "id": "codex-project-mcp",
+      "client": "Codex",
+      "mode": "PROJECT_SCOPED_MCP",
+      "client_version": "NOT_OBSERVED",
+      "adapter_version": "SOURCE_SCRIPT_NO_PACKAGE_VERSION",
+      "toolkit_version": "5.5.5",
+      "source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
+      "observation_date": "2026-10-24",
+      "evidence_origin": "SOURCE_ONLY_NO_HOST_SESSION",
+      "l4": "NOT_RUN",
+      "l5_guidance": "NOT_RUN",
+      "l5_native_skill_activation": "NOT_OBSERVED",
+      "l6_benefit": "NOT_MEASURED",
+      "target_execution": "NOT_RUN",
+      "project_files_changed": false,
+      "cost": "NONE",
+      "evidence": [
+        "scripts/toolkit_mcp.py",
+        "tests/test_toolkit_mcp.py"
+      ],
+      "limitations": "Offline MCP source/stdio tests and doctor are L1-L3 or local protocol evidence only. No real Codex project client was connected in this session, and Codex CLI was not invoked."
+    },
+    {
+      "id": "claude-code-project-mcp",
+      "client": "Claude Code",
+      "mode": "PROJECT_SCOPED_MCP",
+      "client_version": "NOT_OBSERVED",
+      "adapter_version": "SOURCE_SCRIPT_NO_PACKAGE_VERSION",
+      "toolkit_version": "5.5.5",
+      "source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
+      "observation_date": "2026-10-24",
+      "evidence_origin": "SOURCE_ONLY_NO_HOST_SESSION",
+      "l4": "NOT_RUN",
+      "l5_guidance": "NOT_RUN",
+      "l5_native_skill_activation": "NOT_OBSERVED",
+      "l6_benefit": "NOT_MEASURED",
+      "target_execution": "NOT_RUN",
+      "project_files_changed": false,
+      "cost": "NONE",
+      "evidence": [
+        "scripts/toolkit_mcp.py",
+        "docs/MCP_INSTALL.md"
+      ],
+      "limitations": "No Claude Code host session or model operation was available; no actual tool discovery or instruction use is claimed."
+    }
+  ]
+}
