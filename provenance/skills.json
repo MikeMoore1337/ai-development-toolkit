@@ -7948,6 +7948,26 @@
       "notes": "Original deterministic, offline Russian documentation source-freshness record and check (#78), not a semantic translation validator."
     },
     {
+      "id": "cli-mcp-latency-334-script",
+      "path": "scripts/cli_mcp_latency.py",
+      "name": "cli_mcp_latency.py",
+      "kind": "script",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independent rights verification is not claimed",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PROFILE_CONTEXT_AUDIT.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Offline wall-clock timing of existing CLI/MCP handlers. Does not run client models or call providers (#334)."
+    },
+    {
       "id": "script-scripts-client-capabilities-py",
       "path": "scripts/client_capabilities.py",
       "name": "client_capabilities.py",
@@ -9166,6 +9186,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": ""
+    },
+    {
+      "id": "cli-mcp-latency-334-test",
+      "path": "tests/test_cli_mcp_latency.py",
+      "name": "test_cli_mcp_latency.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independent rights verification is not claimed",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PROFILE_CONTEXT_AUDIT.md",
+      "last_reviewed": "2026-10-24",
+      "distribution": "included",
+      "notes": "Bounded offline ten-sample regression and evidence limits; no model latency claim (#334)."
     },
     {
       "id": "test-tests-test-client-capabilities-py",

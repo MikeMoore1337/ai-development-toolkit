@@ -25,3 +25,29 @@ The five **same-task** comparisons run `general`, `backend`, `fullstack`, `qa-py
 ## Decision
 
 Retain the already optimized default of **3** instructions introduced under #276, with opt-in **5** and deferred reads available. No further trimming of protected/reused SKILL.md contents is justified by this dataset. The only behavioral change is restoring the **previously intended mandatory visual gate** on explicit UI profile selection. Report observed source-byte differences from exact-head CI; do not translate them into model token savings. No model, API, project execution, background installation or paid runtime was used.
+
+## Separate, measured offline CLI/MCP latency baseline (Roadmap VI/#334)
+
+Context source bytes above are **not performance timings**. A new independent
+read-only diagnostic measures process startup or in-process handler duration:
+
+```bash
+python scripts/cli_mcp_latency.py --samples 12
+python -m unittest tests.test_cli_mcp_latency -v
+```
+
+The diagnostic runs 6 local operations: two cold CLI subprocess commands
+(profile list and status against a disposable temporary directory), two
+in-process Project MCP handlers (catalog and skill read), and two in-process
+Personal MCP handlers (info and prepare_task). Each operation has one untimed
+warmup and at least 10 actual wall-clock samples. It reports median,
+nearest-rank p95, min/max, Python, OS and exact local Git SHA. No project,
+real AI client, model, network provider, cost or tokens are exercised.
+
+**Measurement boundaries:** in-process MCP timings exclude stdio IPC and
+client/model/tool scheduling. Cold CLI timings include Python startup.
+Small-sample CI latencies are environment-specific diagnostics, **not**
+production SLAs, evidence of speedup or justification for automatic
+optimization. A slower case requires further reproduction and a real impact
+assessment before code changes. The optional test prints one scoped sample
+report into exact-head CI logs without adding a benchmark pass/fail threshold.
