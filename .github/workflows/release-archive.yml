@@ -125,7 +125,7 @@ jobs:
               raise SystemExit("Unexpected GitHub Release tag")
           version = tag[1:]
           expected = {
-              "README.md": f"**Last published release:** [{tag}]",
+              "README.md": f"**Latest published release:** [{tag}]",
               "README.ru.md": f"**Последний опубликованный релиз:** [{tag}]",
               "CHANGELOG.md": f"## {version} (released,",
               "docs/RELEASE_PROCESS.md": f"Last published tag: [{tag}]",
