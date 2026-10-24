@@ -248,12 +248,35 @@ class Toolkit:
                     found.setdefault(name, f'{root}/{name}.md')
         return found
 
+    def diagnostic(self, *, loaded_skills: list[str] | None = None) -> dict[str, Any]:
+        """Local-source evidence only; never attest to host-client activation."""
+        observed = [] if loaded_skills is None else list(dict.fromkeys(loaded_skills))
+        return {
+            'schema_version': 1,
+            'adapter': 'PERSONAL_MCP',
+            'adapter_version': VERSION,
+            'toolkit_version': self.manifest.get('version', 'NOT_VERIFIED'),
+            'source_sha': self.source_revision,
+            'source_worktree': self.working_tree_status,
+            'loaded_skills': observed,
+            'loaded_skill_evidence': ('RETURNED_LOCAL_GUIDANCE' if observed else
+                                      'NO_GUIDANCE_RETURNED_BY_THIS_CALL'),
+            'fallback': 'NONE',
+            'l4_client_discovery': 'NOT_VERIFIED',
+            'l5_client_invocation': 'NOT_VERIFIED',
+            'l6_client_benefit': 'NOT_MEASURED',
+            'client_activation': 'NOT_VERIFIED',
+            'target_execution': 'NOT_RUN',
+            'project_files_changed': False,
+        }
+
     def info(self) -> dict[str, Any]:
         return {'source': str(self.source), 'toolkit_version': self.manifest.get('version'),
                 'mcp_server_version': VERSION, 'mcp_protocol_version': PROTOCOL,
                 'skills': len(self.skills), 'profiles': len(self.profiles), 'roles': len(self.roles),
                 'mode': 'READ_ONLY', 'execution': 'NONE', 'client_activation': 'NOT_VERIFIED',
-                'source_revision': self.source_revision, 'working_tree_status': self.working_tree_status}
+                'source_revision': self.source_revision, 'working_tree_status': self.working_tree_status,
+                'diagnostics': self.diagnostic()}
 
     def catalog(self, kind: str, query: str = '') -> dict[str, Any]:
         data = {'skills': self.skills, 'roles': self.roles, 'profiles': self.profiles}.get(kind)
@@ -373,6 +396,7 @@ class Toolkit:
             'missing_skills': missing if skill_inventory_status != 'NOT_PROVIDED' else [],
             'skills_to_consult': ordered,
             'loaded_skills': loaded_skills,
+            'diagnostics': self.diagnostic(loaded_skills=[row['name'] for row in loaded_skills]),
             'remaining_skills_to_consult': ordered[max_skills:],
             'role_to_consult': role_name,
             'loaded_roles': loaded_roles,

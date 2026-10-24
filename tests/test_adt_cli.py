@@ -210,6 +210,15 @@ class BeginnerCliTests(unittest.TestCase):
         self.assertIn(result["checks"]["write_access"], ("NOT_VERIFIED", "UNKNOWN"))
         self.assertEqual("NOT_INSTALLED", result["checks"]["lockfile"])
         self.assertEqual("OK", result["result"])
+        diagnostics = result["diagnostics"]
+        self.assertEqual("LOCAL_CLI", diagnostics["adapter"])
+        self.assertEqual(self.manifest["version"], diagnostics["toolkit_version"])
+        self.assertEqual("NOT_VERIFIED", diagnostics["source_sha"])
+        self.assertEqual([], diagnostics["loaded_skills"])
+        self.assertEqual("NOT_VERIFIED", diagnostics["l4_client_discovery"])
+        self.assertEqual("NOT_VERIFIED", diagnostics["l5_client_invocation"])
+        self.assertEqual("NOT_MEASURED", diagnostics["l6_client_benefit"])
+        self.assertFalse(diagnostics["project_files_changed"])
 
     def test_profile_task_does_not_install_automatically(self):
         (self.target / "pyproject.toml").touch()

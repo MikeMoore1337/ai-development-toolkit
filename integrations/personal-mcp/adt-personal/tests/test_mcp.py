@@ -110,6 +110,18 @@ class TestToolkitMCP(unittest.TestCase):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
         self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.10')
+        diagnostic = self.tk.info()['diagnostics']
+        self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
+        self.assertEqual('0.1.10', diagnostic['adapter_version'])
+        self.assertEqual('5.4.0', diagnostic['toolkit_version'])
+        self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
+        self.assertEqual([], diagnostic['loaded_skills'])
+        self.assertEqual('NO_GUIDANCE_RETURNED_BY_THIS_CALL', diagnostic['loaded_skill_evidence'])
+        self.assertEqual('NOT_VERIFIED', diagnostic['l4_client_discovery'])
+        self.assertEqual('NOT_VERIFIED', diagnostic['l5_client_invocation'])
+        self.assertEqual('NOT_MEASURED', diagnostic['l6_client_benefit'])
+        self.assertEqual('NOT_RUN', diagnostic['target_execution'])
+        self.assertFalse(diagnostic['project_files_changed'])
         self.assertEqual(self.tk.info()['mcp_protocol_version'], '2025-06-18')
         self.assertEqual(self.tk.read('skill','test-analysis-design')['content'], '# Original skill\n')
         self.assertEqual(self.tk.read('role','test-designer')['content'], '# test-designer')
@@ -261,6 +273,11 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(len(result['loaded_roles']), 1)
         self.assertTrue(result['loaded_skills'])
         self.assertEqual(result['loaded_skills'][0]['provenance'], 'LOCAL_SOURCE_GUIDANCE_ONLY')
+        diagnostic = result['diagnostics']
+        self.assertEqual('RETURNED_LOCAL_GUIDANCE', diagnostic['loaded_skill_evidence'])
+        self.assertEqual([skill['name'] for skill in result['loaded_skills']], diagnostic['loaded_skills'])
+        self.assertEqual('NOT_VERIFIED', diagnostic['l5_client_invocation'])
+        self.assertFalse(diagnostic['project_files_changed'])
 
     def test_prepare_task_validation_and_rpc(self):
         for kwargs in ({'existing_skills':'api-design'},

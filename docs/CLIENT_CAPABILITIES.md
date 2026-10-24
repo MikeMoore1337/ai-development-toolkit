@@ -40,6 +40,14 @@ The original [filesystem registry](../compatibility/clients.json) remains **sche
 
 L1-L3 **never imply** L4-L6. The live discovery/invocation and usefulness of separately installed *hosted* Skills also remain NOT_TESTED / NOT_MEASURED for Toolkit. A user-reported ZIP+URL success on 2026-10-20 for ChatGPT, Claude, DeepSeek and Qwen is **OWNER_REPORTED_PASS** only: detailed client versions, invocation logs and baseline results were not attached (**EVIDENCE_NOT_ATTACHED**). DeepSeek/Qwen require no new mandatory adapter.
 
+## Cross-client diagnostic evidence (Issue #274)
+
+The read-only `toolkit_info`, `toolkit_prepare_task` and `adt.py doctor --json` surfaces expose a `diagnostics` contract (schema v1): `adapter`, `adapter_version`, `toolkit_version`, `source_sha`, `source_worktree`, `loaded_skills`, `loaded_skill_evidence`, `fallback`, `l4_client_discovery`, `l5_client_invocation`, `l6_client_benefit`, `client_activation`, `target_execution` and `project_files_changed`.
+
+`loaded_skills` lists only guidance actually **read and returned by that specific tool call**. The MCP `toolkit_info` and CLI `doctor` do not return any skill guidance and therefore report `[]`. In `toolkit_prepare_task`, successfully returned local skill content is `RETURNED_LOCAL_GUIDANCE`, **not** native skill activation or benefit. An unavailable Git revision remains `UNAVAILABLE` (MCP) or `NOT_VERIFIED` (CLI), not a manufactured SHA. The CLI is not a separately versioned package, so its adapter version is `UNVERSIONED_SCRIPT`.
+
+The ChatGPT skills-only plugin documents the same evidence keys for honest user-facing diagnostics but does **not** execute this Python logic, inspect the user's computer, or claim its own version when it cannot read a matching manifest. Record `NOT_VERIFIED` for missing source or client evidence and distinguish an actually observed bundled fallback from an assumed one. This contract does not alter L1-L6 status of any runtime client.
+
 ## Verified vendor documentation (2026-10-21)
 
 - [Agent Skills specification](https://agentskills.io/specification) - SKILL.md required frontmatter; optional references/scripts, does not mandate discovery in every client.
