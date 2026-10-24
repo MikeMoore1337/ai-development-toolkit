@@ -125,6 +125,26 @@ def match_term(text: str, term: str) -> bool:
     return term in text
 
 
+def _split_explicit_prohibitions(task: str) -> tuple[str, list[str]]:
+    """Bounded prefix-only exclusions, not semantic language understanding."""
+    negative_start = re.compile(
+        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|надо|хочу|делай|проводи|создавай)|"
+        r"do\s+not|don't|skip|no\s+need\s+to)\b", re.I)
+    actionable, excluded = [], []
+    for chunk in re.split(r"\s*;\s*", task):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if negative_start.match(chunk):
+            pieces = re.split(r"[:,]\s*", chunk, maxsplit=1)
+            excluded.append(pieces[0])
+            if len(pieces) == 2 and len(pieces[1].split()) >= 2:
+                actionable.append(pieces[1])
+        else:
+            actionable.append(chunk)
+    return "; ".join(actionable), excluded
+
+
 def has_build_intent(text: str) -> bool:
     """Distinguish code implementation from commands that only create tests."""
     without_test_commands = text
@@ -450,7 +470,9 @@ class Toolkit:
             raise ToolkitError('task must be nonempty text up to 12000 characters')
         if not isinstance(profile, str):
             raise ToolkitError('profile must be a string')
-        text = re.sub(r'\s+', ' ', task.casefold().replace('ё', 'е'))
+        actionable_task, excluded_clauses = _split_explicit_prohibitions(task)
+        text = re.sub(r'\s+', ' ', actionable_task.casefold().replace('ё', 'е'))
+        no_positive_intent = bool(excluded_clauses) and not actionable_task
         matches = {
             candidate: [term for term in terms if match_term(text, term)]
             for candidate, terms in ROUTES if candidate in self.profiles
@@ -515,6 +537,8 @@ class Toolkit:
                 if name not in self.skills:
                     if name not in unavailable:
                         unavailable.append(name)
+                elif no_positive_intent or any(name.replace('-', ' ') in ' '.join(re.findall(r'[a-zа-яё0-9]+', clause.casefold().replace('ё', 'е'))) for clause in excluded_clauses):
+                    continue
                 elif name in CONFLICT_GROUP and active_controller and name != active_controller:
                     if name not in dropped_controllers:
                         dropped_controllers.append(name)
@@ -529,8 +553,28 @@ class Toolkit:
                     priority.append(name)
         if not priority:
             priority = selected[:4]
+        intent_mode = 'EXPORT_PROMPT' if explicit_prompt else 'FULFILL_REQUEST'
+        route_status = ('NO_POSITIVE_INTENT' if no_positive_intent else
+                        'SUGGESTIONS_ONLY' if matched else 'INSUFFICIENT_EVIDENCE')
+        routing_decision = {
+            'schema_version': 1,
+            'intent_mode': intent_mode,
+            'status': route_status,
+            'primary_profile': chosen if matched and not no_positive_intent else None,
+            'primary_skills': priority[:1] if matched and not no_positive_intent else [],
+            'auxiliary_profiles': profiles[1:],
+            'auxiliary_skills': priority[1:8] if matched and not no_positive_intent else [],
+            'excluded_clauses': excluded_clauses,
+            'evidence_basis': 'EXPLICIT_PROFILE' if profile else 'HEURISTIC_KEYWORD_MATCH',
+            'uncertainty': 'NOT_CALIBRATED',
+            'client_activation': 'NOT_OBSERVED',
+            'execution': 'NOT_RUN',
+            'installation_performed': False,
+            'project_files_changed': False,
+        }
         return {
             'profile': chosen, 'secondary_profiles': profiles[1:], 'profiles': profiles,
+            'routing_decision': routing_decision,
             'deferred_profiles': deferred, 'visual_phase': visual_phase,
             'matched': matched, 'matches_by_profile': {k: v for k, v in matches.items() if k in profiles},
             'skills': selected, 'priority_skills': priority[:8],
