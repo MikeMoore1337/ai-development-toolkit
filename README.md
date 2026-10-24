@@ -77,9 +77,7 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 **Local installation is optional.** You need Python 3.12+, a project directory and a separately installed AI client for the command-line route. Read [the no-terminal guide](docs/BEGINNER_START.md) if you only want to describe a task.
 
-**Latest published release:** [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) (23 October 2026). Exact tag SHA `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`; `MANIFEST.json.version = 5.5.4`. Historical v5.5.0/v5.5.1 version mismatches are recorded in [CHANGELOG.md](CHANGELOG.md). `main` may contain later unreleased changes.
-
-**Next release candidate:** `v5.5.5` **NOT PUBLISHED**. The current `main` sources are undergoing exact-SHA and rights preflight for [CHANGELOG.md](CHANGELOG.md); do not interpret the candidate as a published tag or installed MCP/ChatGPT plugin update.
+**Latest published release:** [v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) (24 October 2026). Exact commit SHA `2fcc1efb858670a17aa251ba7264cef89cab1c71`; `MANIFEST.json.version = 5.5.5` inside the published archive. The GitHub release archive passed source checksums and provenance verification ([CI evidence](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40090538576)); its publication does not auto-update installed MCP or ChatGPT plugins. Historical v5.5.0/v5.5.1 metadata mismatches remain documented in [CHANGELOG.md](CHANGELOG.md).
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 

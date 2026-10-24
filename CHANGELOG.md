@@ -1,5 +1,9 @@
 # Changelog
 
+**v5.5.5 publication confirmed (2026-10-24)**
+
+[GitHub Release v5.5.5](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.5) was published on 24 October 2026 from the annotated tag pointing to commit `2fcc1efb858670a17aa251ba7264cef89cab1c71`. The tagged `MANIFEST.json.version` is `5.5.5`. Both tag-push and release-published jobs verified the downloaded source ZIP; checksums and provenance passed. The release-published documentation guard correctly flagged stale `main` README/release status pending this follow-up PR. The ZIP is immutable at the tag; any post-publication documentation changes belong only to `main`.
+
 **v5.5.4 publication confirmed (2026-10-23)**
 
 [GitHub Release v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) was published on 23 October 2026 from tag commit `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7`. The tagged manifest version is `5.5.4`. Later `main` changes are not part of this release.
@@ -23,11 +27,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.5)
 
-## 5.5.5 (candidate, 2026-10-24)
+## 5.5.5 (released, 2026-10-24)
 
-**NOT PUBLISHED** - candidate for Issue #293, no tag/release/archive yet.
-
-Source scope: protected main after published tag v5.5.4, including #259, #141 and roadmap #271-#280. This candidate label does not mean a tag, release, installed Personal MCP, ChatGPT plugin update, or live client activation exists. Publication requires an exact-SHA preflight and separate owner permission for the exact archive and distribution rights.
+Published after exact-SHA release preflight and owner rights approval under [Issue #293](https://github.com/MikeMoore1337/ai-development-toolkit/issues/293). Source scope: protected main after v5.5.4, including completed work #259, #141 and #271-#280. Source-only validation is not evidence of active client skill selection or measurable agent benefit. The release does not update installed Personal MCP or ChatGPT plugin packages.
 
 - Routing: shared advisory decisions across CLI, Personal MCP and ChatGPT sources, additional bounded RU/EN negative tests and independent-label limitations (#272, #273); no certified semantic precision.
 - Integrations: source/adapter version diagnostics, Git-backed update preflight and explicit rollback (#274, #275); installed MCP and plugin packages are separate from updated source.

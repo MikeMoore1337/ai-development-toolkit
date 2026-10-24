@@ -97,7 +97,13 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC004")
 
     def test_published_release_cannot_reference_wrong_tag(self):
-        self.replace("README.md", "/releases/tag/v5.5.4", "/releases/tag/v5.5.3")
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+        candidate = "**Next release candidate:**" in readme
+        version = self.manifest["version"]
+        if candidate:
+            major, minor, patch = (int(value) for value in version.split("."))
+            version = f"{major}.{minor}.{patch - 1}"
+        self.replace("README.md", f"/releases/tag/v{version}", "/releases/tag/v0.0.0")
         self.check("DOC004")
 
     def test_published_release_requires_exact_tag_guard(self):
