@@ -175,6 +175,34 @@ class SkillRoutingTests(unittest.TestCase):
         self.assertIn("qa-api", second["candidates"][0]["candidate_profiles"])
         self.assertIn("test-designer", result["available_roles_not_automatically_selected"])
 
+    def test_cross_client_lexical_decision_contract(self):
+        catalog = {
+            "seo-audit": "Audit SEO indexing and search metadata.",
+            "api-testing": "Test API HTTP behavior and error responses.",
+            "code-review": "Review code changes for regressions.",
+        }
+        manifest = {"profiles": {"qa-api": ["api-testing"]},
+                    "core_roles": [], "extension_packs": {}}
+        output = routing.recommend(
+            "Skip seo-audit; Test API HTTP responses",
+            catalog, {}, manifest, top_k=2,
+        )
+        decision = output["routing_decision"]
+        self.assertEqual(1, decision["schema_version"])
+        self.assertEqual(output["status"], decision["status"])
+        self.assertEqual(["Skip seo-audit"], decision["excluded_clauses"])
+        self.assertNotIn("seo-audit", decision["primary_skills"])
+        self.assertIn("api-testing", decision["primary_skills"])
+        self.assertIsNone(decision["primary_profile"])
+        self.assertEqual("LEXICAL_SUPPORT", decision["evidence_basis"])
+        self.assertEqual("NOT_OBSERVED", decision["client_activation"])
+        self.assertEqual("NOT_RUN", decision["execution"])
+        self.assertFalse(decision["project_files_changed"])
+        self.assertFalse(decision["installation_performed"])
+        empty = routing.recommend("Skip seo-audit", catalog, {}, manifest)
+        self.assertEqual("NO_POSITIVE_INTENT", empty["routing_decision"]["status"])
+        self.assertEqual([], empty["routing_decision"]["primary_skills"])
+
     def test_unselected_neighbors_require_positive_lexical_evidence(self):
         catalog = {
             "seo-audit": "Audit search indexing and metadata.",

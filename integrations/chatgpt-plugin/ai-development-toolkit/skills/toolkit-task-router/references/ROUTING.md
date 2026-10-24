@@ -17,4 +17,6 @@
 - Project-native skills and rules take precedence; never silently overwrite unmanaged skills.
 - The Toolkit MCP in Codex is **independent** of the ChatGPT skills-only plugin.
 - A GitHub link is not a local filesystem bridge.
+- Share the **decision contract**, not the CLI/MCP implementation: distinguish `intent_mode` (`FULFILL_REQUEST` by default or explicit `EXPORT_PROMPT`), `status`, primary profile/skills, auxiliary candidates, excluded clauses, evidence basis, uncertainty, and client activation. Do not infer a primary profile from lexical skill hints alone.
+- The ChatGPT plugin cannot execute Python routing code by merely reading this document. Use actual available project context, ignore explicit prohibited work, and state `NOT_OBSERVED` when client skill activation was not verified. Never claim `execution`, `installation_performed` or `project_files_changed` without observed actions.
 - For unavailable content use `SOURCE_UNAVAILABLE` rather than pretending to have activated it.
