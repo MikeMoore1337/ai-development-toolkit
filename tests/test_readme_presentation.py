@@ -77,10 +77,10 @@ class ReadmePresentationTests(unittest.TestCase):
 
     def test_release_status_negative_fixture_detects_stale_version(self) -> None:
         """A stale current-release declaration cannot pass the same exact match."""
-        expected = "[v5.5.3]"
-        stale = "Last published tag: [v5.5.2]"
+        expected = "[v5.5.4]"
+        stale = "Last published tag: [v5.5.3]"
         self.assertNotIn(expected, stale)
-        self.assertIn(expected, "Last published tag: [v5.5.3]")
+        self.assertIn(expected, "Last published tag: [v5.5.4]")
 
     def test_vector_assets_are_local_and_without_dynamic_counts(self) -> None:
         for name, dimensions in (

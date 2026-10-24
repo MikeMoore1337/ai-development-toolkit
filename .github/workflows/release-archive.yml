@@ -101,3 +101,39 @@ jobs:
             release-archive-verification.log
             ${{ runner.temp }}/provenance-release.json
           if-no-files-found: ignore
+
+  published-documentation:
+    name: Verify newly published version in main documentation
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Detect stale public release references
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import re
+
+          tag = os.environ["RELEASE_TAG"]
+          if not re.fullmatch(r"v[0-9]+[.][0-9]+[.][0-9]+", tag):
+              raise SystemExit("Unexpected GitHub Release tag")
+          version = tag[1:]
+          expected = {
+              "README.md": f"**Latest published release:** [{tag}]",
+              "README.ru.md": f"**\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0440\u0435\u043b\u0438\u0437:** [{tag}]",
+              "CHANGELOG.md": f"## {version} (released,",
+              "docs/RELEASE_PROCESS.md": f"Last published tag: [{tag}]",
+              "docs/ru/RELEASE_PROCESS.md": f"\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u043f\u0443\u0431\u043b\u0438\u0447\u043d\u044b\u0439 \u0442\u0435\u0433: [{tag}]",
+          }
+          bad = [name for name, marker in expected.items()
+                 if marker not in Path(name).read_text(encoding="utf-8")]
+          if bad:
+              raise SystemExit("PUBLICATION_DOCS_STALE: " + ", ".join(bad))
+          print("PUBLICATION_DOCS_MATCH_RELEASE=" + tag)
+          PY

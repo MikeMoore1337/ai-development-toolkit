@@ -18,6 +18,7 @@ DOCUMENTS = (
     "README.md", "README.ru.md", "CHANGELOG.md",
     "docs/AGENT_SKILLS_SPEC.md", "docs/UNIVERSAL_ENGINEERING.md",
     "docs/SKILLS_CATALOG.md", "docs/RELEASE_PROCESS.md",
+    "docs/ru/RELEASE_PROCESS.md",
 )
 
 
@@ -82,8 +83,8 @@ class DocumentationConsistencyTests(unittest.TestCase):
                      "51 in the checked revision")
         self.check("DOC001")
 
-    def test_prepared_published_release(self):
-        self.replace("CHANGELOG.md", "5.5.4 (candidate,", "5.5.4 (released,")
+    def test_published_release_must_not_be_marked_candidate(self):
+        self.replace("CHANGELOG.md", "5.5.4 (released,", "5.5.4 (candidate,")
         self.check("DOC004")
 
     def test_missing_unreleased(self):
@@ -91,12 +92,18 @@ class DocumentationConsistencyTests(unittest.TestCase):
         self.check("DOC004")
 
     def test_published_release_cannot_reference_wrong_tag(self):
-        self.replace("README.md", "/releases/tag/v5.5.3", "/releases/tag/v5.5.2")
+        self.replace("README.md", "/releases/tag/v5.5.4", "/releases/tag/v5.5.3")
         self.check("DOC004")
 
-    def test_release_candidate_requires_exact_tag_guard(self):
+    def test_published_release_requires_exact_tag_guard(self):
         self.replace("docs/RELEASE_PROCESS.md",
                      "TAG_MANIFEST_VERSION_MISMATCH", "IGNORE_RELEASE_VERSION")
+        self.check("DOC004")
+
+    def test_russian_release_process_version_drift(self):
+        self.replace("docs/ru/RELEASE_PROCESS.md",
+                     "Последний публичный тег: [v5.5.4]",
+                     "Последний публичный тег: [v5.5.3]")
         self.check("DOC004")
 
     def test_manifest_version_drift(self):

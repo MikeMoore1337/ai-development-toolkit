@@ -38,7 +38,7 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertIn('if [[ "$latest_final" != "$stable_latest" ]]', text)
         self.assertIn("gh release download", text)
         self.assertIn("gh release edit", text)
-        text = (root / ".github/workflows/release-archive.yml").read_text()
+        text = (root / ".github/workflows/release-archive.yml").read_text(encoding="utf-8")
         self.assertIn("github.event_name != 'release' || startsWith", text)
 
     def test_exact_main_successful_run_only(self):
