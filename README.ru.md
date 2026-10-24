@@ -12,7 +12,7 @@
 
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md).
 
-**Кандидат следующего релиза:** `v5.5.4` — **НЕ ОПУБЛИКОВАН**. Последний опубликованный: [v5.5.3](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.3). [CHANGELOG.md](CHANGELOG.md).
+**Последний опубликованный релиз:** [v5.5.4](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4) (23.10.2026). [CHANGELOG.md](CHANGELOG.md).
 
 ## Начните с задачи
 
