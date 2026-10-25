@@ -57,7 +57,7 @@ class AdvisorSourceContract(unittest.TestCase):
         self.assertIn("toolkit_codex_prepare_delegation", src)
         self.assertIn("toolkit_codex_review_delegation", src)
         self.assertIn("host-owned one-shot claim", src)
-        self.assertIn("no retry", src)
+        self.assertIn("without retry", src)
         self.assertIn("not claim a native", src)
         self.assertNotIn("codex mcp add", src)
         self.assertNotIn("invoke-webrequest", src.casefold())
