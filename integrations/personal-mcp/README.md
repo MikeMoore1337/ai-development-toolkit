@@ -1,5 +1,24 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.11 — Codex #357 read-only orchestration
+
+Source version 0.1.11 adds `toolkit_codex_prepare_delegation` and
+`toolkit_codex_review_delegation` to the existing ten Personal MCP tools.
+Both call the **local Toolkit source** `scripts/codex_host_orchestration.py`
+with per-call SHA256SUMS integrity verification. They cannot invoke Codex
+Desktop session tools, consume model credits, authorize a host atomic lease,
+or independently attest backend model identity or billing.
+
+On Windows, the existing `Install-ADT-Personal.ps1 -McpOnly` mode can upgrade
+only the installed user-local MCP module pair with backup/rollback and no Codex
+CLI, re-registration, or global instruction edits. Preview with `-WhatIf`.
+The dedicated source checkout must also contain the current orchestration
+contract and valid checksums. Source updates do not automatically upgrade the
+MCP launcher. Restart Codex Desktop and check *live* `toolkit_info` and
+`tools/list` before calling the new read-only tools. Unknown incremental
+cost must remain blocked, and native host model calls are separate actions.
+
+
 This is a local read-only stdio MCP for Codex, independent of the [ChatGPT plugin](../chatgpt-plugin/README.md), not a hosted ChatGPT integration. It uses a **separate** Toolkit reference checkout and does not write to your work project.
 
 Prerequisites: Codex CLI, Python 3.10+, Git and organization-approved GitHub access. Copy the installer files outside of your work repository. Your Codex client is responsible for reading project-level skill/role names; the MCP only uses the inventory provided.
