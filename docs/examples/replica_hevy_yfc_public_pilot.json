@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "PUBLIC_READ_ONLY",
+  "upstream_sha": "77c9436fb3d18c3d58169efb8caf4fe906b0dc51",
+  "features": [
+    {
+      "feature": "Show previous set performance during active workout",
+      "competitor": "VERIFIED",
+      "competitor_source": "https://www.hevyapp.com/features/track-workouts/",
+      "yfc": "UNVERIFIED",
+      "yfc_source": "https://github.com/MikeMoore1337/your-fitness-coach/issues/1166",
+      "gap": "CANDIDATE"
+    },
+    {
+      "feature": "Support exercise-specific notes",
+      "competitor": "VERIFIED",
+      "competitor_source": "https://www.hevyapp.com/features/track-workouts/",
+      "yfc": "UNVERIFIED",
+      "yfc_source": "https://github.com/MikeMoore1337/your-fitness-coach/issues/995",
+      "gap": "CANDIDATE"
+    },
+    {
+      "feature": "Show workout history per exercise",
+      "competitor": "VERIFIED",
+      "competitor_source": "https://help.hevyapp.com/hc/en-us/articles/35382889578135-Exercise-Performance-Tracking-in-Library-Weight-Bodyweight-Cardio-and-Duration-Based-Exercises",
+      "yfc": "UNVERIFIED",
+      "yfc_source": "https://github.com/MikeMoore1337/your-fitness-coach/issues/833",
+      "gap": "CANDIDATE"
+    }
+  ]
+}
