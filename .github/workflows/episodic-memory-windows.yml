@@ -100,5 +100,16 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Windows TypeScript compile FAILED' }
           npm run bundle
           if ($LASTEXITCODE -ne 0) { throw 'Windows bundle FAILED' }
-          npx --no-install vitest run test/mcp-server.test.ts test/verify.test.ts --maxWorkers=1
+          # These suites mock embeddings and the summarizer. Legacy verify tests
+          # intentionally assert that missing summaries count as errors when
+          # skip-summaries is DISABLED; separate them from the zero-inference
+          # security test to prevent contradictory test expectations.
+          npx --no-install vitest run test/mcp-server.test.ts --maxWorkers=1
           if ($LASTEXITCODE -ne 0) { throw 'Windows patched MCP tests FAILED' }
+          $env:EPISODIC_MEMORY_SKIP_SUMMARIES = '0'
+          try {
+            npx --no-install vitest run test/verify.test.ts --maxWorkers=1
+            if ($LASTEXITCODE -ne 0) { throw 'Windows legacy verify tests FAILED' }
+          } finally {
+            $env:EPISODIC_MEMORY_SKIP_SUMMARIES = '1'
+          }
