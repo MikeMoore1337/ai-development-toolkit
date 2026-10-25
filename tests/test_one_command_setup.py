@@ -42,14 +42,25 @@ class OneCommandDistributionTests(unittest.TestCase):
             self.assertIn("--source \"$d\"", text)
             self.assertNotIn("ExecutionPolicy Bypass", text)
             self.assertNotIn(" | iex", text.lower())
-            self.assertIn("PUBLIC_DIRECTORY_NOT_SUBMITTED", text)
-            self.assertIn("REPO_MARKETPLACE_READY_FOR_CLIENT_TEST", text)
+            self.assertIn("REPO_SELF_INSTALL_SOURCE_READY", text)
+            self.assertIn("LIVE_DESKTOP_INSTALL_NOT_VERIFIED", text)
+            self.assertIn("codex plugin marketplace add MikeMoore1337/ai-development-toolkit", text)
+            self.assertIn("codex plugin marketplace list", text)
+            self.assertNotIn("PUBLIC_DIRECTORY_NOT_SUBMITTED", text)
+            self.assertNotIn("submission and review", text)
             powershell = text.split("~~~powershell\n", 1)[1].split("\n~~~", 1)[0]
             shell = text.split("~~~sh\n", 1)[1].split("\n~~~", 1)[0]
             self.assertEqual(1, len(powershell.splitlines()))
             self.assertEqual(1, len(shell.splitlines()))
             commands.append((powershell, shell))
         self.assertEqual(commands[0], commands[1])
+
+    def test_plugin_repo_install_documented_without_public_publication(self):
+        for relative in ("integrations/chatgpt-plugin/README.md", "integrations/chatgpt-plugin/README.ru.md"):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn("codex plugin marketplace add MikeMoore1337/ai-development-toolkit", text)
+            self.assertIn("AI Development Toolkit (local)", text)
+            self.assertIn("0.1.2", text)
 
     def test_installers_are_reused_not_duplicated(self):
         package = ROOT / "integrations/personal-mcp/adt-personal"
