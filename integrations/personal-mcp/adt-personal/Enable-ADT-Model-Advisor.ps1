@@ -1,0 +1,140 @@
+# Enables one-time proactive model-advice guidance in Codex Desktop.
+# Never invokes Codex CLI, model APIs, native agents, or Toolkit MCP.
+# The user must opt in explicitly; merely installing Personal MCP leaves it off.
+[CmdletBinding(SupportsShouldProcess=$true)]
+param(
+    [switch]$Disable,
+    [string]$InstructionsPath = ''
+)
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$defaultPath = Join-Path (Join-Path $HOME '.codex') 'AGENTS.md'
+$path = if ($InstructionsPath) { [IO.Path]::GetFullPath($InstructionsPath) } else { $defaultPath }
+$path = [IO.Path]::GetFullPath($path)
+$dir = Split-Path -Parent $path
+
+# A linked user instruction file (or parent) could modify unrelated content.
+foreach ($candidate in @($path, $dir)) {
+    if (Test-Path -LiteralPath $candidate) {
+        $item = Get-Item -LiteralPath $candidate -Force
+        if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+            throw "Linked instruction path refused: $candidate"
+        }
+    }
+}
+if ((Test-Path -LiteralPath $path) -and -not
+    (Test-Path -LiteralPath $path -PathType Leaf)) {
+    throw 'Instruction destination is not a file.'
+}
+
+$begin = '<!-- ADT-MODEL-ADVISOR BEGIN -->'
+$end = '<!-- ADT-MODEL-ADVISOR END -->'
+$raw = if (Test-Path -LiteralPath $path -PathType Leaf) {
+    [IO.File]::ReadAllText($path, [Text.Encoding]::UTF8)
+} else { '' }
+$first = $raw.IndexOf($begin, [StringComparison]::Ordinal)
+$last = $raw.IndexOf($end, [StringComparison]::Ordinal)
+if (($first -ge 0) -ne ($last -ge 0)) {
+    throw 'Malformed advisor instruction markers; refusing to modify.'
+}
+if ($first -ge 0) {
+    if ($last -lt $first -or
+        $raw.IndexOf($begin, $first + $begin.Length, [StringComparison]::Ordinal) -ge 0 -or
+        $raw.IndexOf($end, $last + $end.Length, [StringComparison]::Ordinal) -ge 0) {
+        throw 'Duplicate or out-of-order advisor markers; refusing to modify.'
+    }
+}
+
+# This is a Codex chat instruction overlay, NOT a custom native dialog/widget.
+# The model/client must actually comply; activation requires a live ordinary-task test.
+$block = @'
+<!-- ADT-MODEL-ADVISOR BEGIN -->
+Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
+engineering, QA, architecture, UX/UI, DevOps and security requests, without
+asking the user to mention Toolkit, call the connected ai-development-toolkit
+MCP `toolkit_prepare_task` as directed by the existing ADT-PERSONAL block.
+Use its task profiles and source guidance plus the actual task to assess,
+once per task and at genuine new risk boundaries, whether independent model
+review may materially improve correctness. This assessment is ADVISORY,
+not proof of semantic/model inference. Do not call external models for assessment.
+
+For simple, routine or self-contained changes, do the work silently using
+the current primary model. Do NOT present the advisor choice on every turn.
+Consider proactively proposing an expert for architectural trade-offs, unclear
+data migrations or concurrency, high-impact security, repeated debugging
+failures, complex cross-system changes, or independent verification of an
+important result. Briefly explain the concrete reason, expected benefit,
+possible latency, extra context transfer and possible included-usage impact.
+Quality improvement is not guaranteed.
+
+When worth proposing and no applicable user permission exists, show a small
+TEXT recommendation within the current Codex chat, in the user's language:
+  "A second opinion could help: <one specific reason>.
+   1. Continue on current model (SINGLE_MODEL).
+   2. Ask an available expert once, with my confirmation
+      (RECOMMEND_WITH_CONFIRMATION).
+   3. Allow selected experts automatically within a task-specific call cap
+      (AUTO_OPT_IN), only after explicit opt-in.
+   Extra consultation may use more time and subscription quota.
+   Choose 1/2/3."
+No separate template prompt, manual Toolkit invocation, or GitHub URL from
+the user is needed. This is a CHAT text fallback; do not claim a native
+Codex Desktop modal/overlay exists.
+
+Only suggest named models when the active Codex client's CURRENT native
+model inventory provides them. Never invent entitlement, model availability,
+quota, billing provenance or backend model identity. If inventory or
+native delegation is unavailable, continue with the primary model and
+briefly say no verified model choice exists; do not loop.
+
+No reply means NO permission. Honor a user's refusal for the current task;
+do not ask again unless its material scope changes. An explicit approval
+must be tied to the current task and bounded by selected model(s), call cap,
+client account/session policy and optional revocation. Do not interpret a
+general preference as unlimited approval. A chosen AUTO_OPT_IN mode requires
+a separate, explicit scoped agreement, NOT an automatic persistent default.
+Never call subagents simply because this instruction block was installed.
+
+If and only if a permissible delegated execution is approved, use the
+existing ADT #357 read-only `toolkit_codex_prepare_delegation`, trusted
+host-owned one-shot claim, native spawn/wait and
+`toolkit_codex_review_delegation`, without retry or silent fallback.
+Respect real cost gates, project AGENTS.md, security/network/visual/release
+approval rules, and the user's restrictions. Never use paid APIs or CLI
+unless an individual user explicitly permits those routes.
+
+Uninstalling this opt-in block restores ordinary Toolkit skill routing.
+<!-- ADT-MODEL-ADVISOR END -->
+'@
+$nl = if ($raw.Contains("`r`n")) { "`r`n" } else { "`n" }
+$block = $block.Replace("`r`n", "`n").Replace("`n", $nl)
+if ($Disable) {
+    if ($first -lt 0) {
+        Write-Host 'Model advisor already disabled; no changes.'
+        return
+    }
+    $updated = $raw.Substring(0, $first) + $raw.Substring($last + $end.Length)
+} elseif ($first -ge 0) {
+    $updated = $raw.Substring(0, $first) + $block + $raw.Substring($last + $end.Length)
+} else {
+    $prefix = if ($raw.Length -eq 0) { '' } elseif ($raw.EndsWith($nl)) { $nl } else { $nl + $nl }
+    $updated = $raw + $prefix + $block + $nl
+}
+if ([string]::Equals($raw, $updated, [StringComparison]::Ordinal)) {
+    Write-Host 'Model advisor instructions already up to date; no changes.'
+    return
+}
+$verb = if ($Disable) { 'Disable proactive model advisor' } else { 'Enable proactive model advisor' }
+if (-not $PSCmdlet.ShouldProcess($path, $verb)) { return }
+if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
+    [void](New-Item -ItemType Directory -Force -Path $dir)
+}
+if (Test-Path -LiteralPath $path -PathType Leaf) {
+    $backup = $path + '.adt-model-advisor-backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fffffff')
+    Copy-Item -LiteralPath $path -Destination $backup -ErrorAction Stop
+    Write-Host "Backup: $backup"
+}
+[IO.File]::WriteAllText($path, $updated, [Text.UTF8Encoding]::new($false))
+Write-Host "Model advisor: $(if ($Disable) { 'DISABLED' } else { 'ENABLED' })"
+Write-Host 'Restart Codex Desktop and test a normal task without mentioning Toolkit.'
