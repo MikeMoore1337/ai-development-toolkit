@@ -70,3 +70,52 @@ existing Toolkit-owned `install --apply` operation.
 ```bash
 python3.12 -m unittest tests.test_external_skill_preview -v
 ```
+
+
+## Optional NVIDIA SkillSpector static review (#358)
+
+The original offline Security Gate and Skill Manager ownership/preview rules remain
+unchanged. After independent source/manifest checks and explicit candidate consent,
+you may request a **second** static scan in the same candidate-review command:
+
+```bash
+python scripts/skill_candidate_review.py --query "new specialization" \
+  --review-external --scan-with-skillspector \
+  --candidate-dir /isolated/candidate \
+  --manifest /isolated/review-manifest.json \
+  --allow-source https://github.com/approved-owner/approved-repo
+```
+
+Requires `uvx` (uv). The adapter runs `skillspector scan` from pinned
+NVIDIA commit `d162d9b343e559be13df8ebba093df3bc9d58c90` with
+`--no-llm --format json --fail-on-incomplete`, requesting JSON on stdout
+(the secure `--output` file option is not portable to Windows). It passes
+only a minimal allowlist of process environment variables, never API keys,
+model/provider settings, HTTP proxy credentials or package index credentials.
+
+**Network boundary:** this opt-in invocation can download pinned scanner
+dependencies via uv and the upstream scanner may query OSV.dev using dependency
+coordinates. It is **not** an offline operation; omit the flag to retain the
+previous fully offline workflow. No paid API or Codex CLI is required. Scan
+only a separate disposable candidate tree without secrets.
+
+The result includes `skillspector.status`: `NOT_RUN`, `PASS`,
+`REVIEW_REQUIRED` or `BLOCKED`. Missing scanner, malformed/incomplete report,
+unexpected LLM usage, unsupported result schema, timeout or scan failure all
+fail closed as `BLOCKED`. A scanner PASS is only an **advisory input**:
+the outer candidate decision remains `MANUAL_REVIEW_REQUIRED`, never automatic
+install or `--apply`. `BLOCKED` becomes outer `REJECT`.
+
+Static patterns are not a comprehensive semantic audit, especially for Russian
+or mixed-language instructions. Manually examine high-risk instructions,
+permissions, references and scripts regardless of scanner score. The untrusted
+candidate never gets a shell execution path or access to the internal Skill
+Manager installer. `external-preview` is still a read-only diff, not a
+separate approval path and not evidence that SkillSpector ran.
+
+```bash
+python -m unittest tests.test_skillspector_adapter -v
+```
+
+Synthetic tests verify the adapter and negative outcomes; they do **not**
+establish that a live upstream scan has completed on a particular machine.

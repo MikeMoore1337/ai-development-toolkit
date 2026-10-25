@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import Callable
 from urllib.parse import urlsplit
 
 from external_skill_gate import _manifest, review
@@ -56,6 +57,8 @@ def evaluate(
     candidate_dir: Path | None = None,
     manifest: Path | None = None,
     allow_sources: tuple[str, ...] = (),
+    scan_with_skillspector: bool = False,
+    scan_fn: Callable[[Path], dict] | None = None,
 ) -> dict:
     """Never mutate files and never treat a reviewed package as safe-to-install."""
     local = _assess_skill_coverage(query)
@@ -85,7 +88,7 @@ def evaluate(
     if declared is None or declared not in canonical:
         return {**result, "decision": "REJECT", "reason": "SOURCE_NOT_ALLOWLISTED"}
     verdict = review(candidate_dir, manifest)
-    return {
+    result = {
         **result,
         "decision": "REJECT" if verdict["decision"] == "REJECT" else "MANUAL_REVIEW_REQUIRED",
         "reason": "STATIC_SECURITY_GATE",
@@ -98,12 +101,29 @@ def evaluate(
         },
         "security_gate_verdict": verdict["decision"],
         "security_findings": verdict["issues"],
+        "skillspector": {"status": "NOT_RUN", "installation": "NOT_AUTHORIZED"},
     }
+    if not scan_with_skillspector or verdict["decision"] == "REJECT":
+        return result
+    # Only run after consent, allowlist and full offline file/digest validation.
+    if scan_fn is None:
+        from skillspector_adapter import scan
+        scan_fn = scan
+    scanner = scan_fn(candidate_dir)
+    result["skillspector"] = scanner
+    if scanner.get("status") not in ("PASS", "REVIEW_REQUIRED"):
+        result["decision"] = "REJECT"
+        result["reason"] = "SKILLSPECTOR_BLOCKED"
+    else:
+        result["reason"] = "SKILLSPECTOR_REVIEW"
+    return result
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--query", required=True, help="Local task or exact skill slug (1..500 chars)")
+    parser.add_argument("--scan-with-skillspector", action="store_true",
+                        help="Opt-in pinned external analyzer after offline gate")
     parser.add_argument("--review-external", action="store_true",
                         help="Explicit consent to review one already-local external candidate")
     parser.add_argument("--candidate-dir", type=Path)
@@ -114,7 +134,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         outcome = evaluate(args.query, opt_in=args.review_external,
                            candidate_dir=args.candidate_dir, manifest=args.manifest,
-                           allow_sources=tuple(args.allow_source))
+                           allow_sources=tuple(args.allow_source),
+                           scan_with_skillspector=args.scan_with_skillspector)
     except (ValueError, TypeError):
         outcome = {**BASE, "decision": "REJECT", "reason": "INVALID_TASK"}
     print(json.dumps(outcome, ensure_ascii=False, indent=2, sort_keys=True))
