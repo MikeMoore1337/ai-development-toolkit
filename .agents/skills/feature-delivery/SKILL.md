@@ -22,10 +22,18 @@ Never escalate merely to satisfy a process. Never downgrade when the risk remain
 1. **Understand:** Write C1..Cn acceptance criteria, scope, current behavior and a reproducible baseline where possible. For a bug, establish root cause instead of asserting it.
 2. **Choose:** Inspect reuse and existing architecture. Record one decision D1 and why it beats meaningful alternatives. If uncertain, validate the critical assumption first.
 3. **Implement:** Make a minimal diff, keep compatibility, provide error and retry behavior where applicable. Protect unrelated files and other agents' work.
-4. **Verify:** Map every C* to an observed check or explicitly unverified condition. Run focused tests and relevant regressions. Distinguish mock, local, staging and production evidence. For UI, visually inspect real renders when tools permit.
+4. **Verify:** Map every C* to an observed check or explicitly unverified condition. Run focused tests and project-defined regression checks. Distinguish mock, local, staging and production evidence. For UI, visually inspect real renders when tools permit.
 5. **Handoff:** Report changed files, checks/results, remaining risks, and exact continuation. Do not declare merge or production deploy performed without evidence.
 
 For `normal`/`deep`, use a separate implementer/reviewer **only if** the environment actually supports independent contexts. Never pretend a second agent exists. Acceptance independence after a change means re-checking touched evidence.
+
+## Evidence-driven diagnosis and completion
+
+Before changing a suspected defect, establish the observed failure, minimal reproduction (or explain why it is unsafe/unavailable), relevant recent changes, and the earliest failing boundary. Separate a confirmed cause from a hypothesis. For complex paths (for example UI -> API -> persistence), trace input/output at the boundaries while redacting secrets; avoid repeated speculative fixes.
+
+Before saying a requirement is done, link each acceptance criterion to **fresh** evidence from the exact current revision: command or observation, execution environment, outcome and remaining limits. A prior run, a synthetic fixture, another agent's claim, a screenshot alone, or green CI on a different commit is not completion evidence. If the tool or target environment is unavailable, say `NOT_VERIFIED` and preserve the blocker rather than inferring success.
+
+For work needing isolation, first detect whether the host already owns a worktree or sandbox. Use the host-native workflow when available; do not create an extra worktree behind its back. Repository-controlled leases, protected branches, permission gates, and the project's existing finish/cleanup procedure prevail. See `docs/en/SUPERPOWERS_EVIDENCE.md` for the read-only decision tree.
 
 ## Durable state
 
