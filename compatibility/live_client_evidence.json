@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Scoped observational client evidence for Issue #297. Not a global compatibility score. No paid AI, agent CLI, project execution, private transcripts or stored secrets.",
+  "description": "Scoped real-client evidence for Issues #297 and #343; owner-reported results are not independently replayed and do not imply global compatibility.",
   "review_date": "2026-10-25",
   "collection": "OBSERVED_CURRENT_AND_HISTORICAL_WITH_EXPLICIT_PROVENANCE",
   "current_source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
@@ -56,26 +56,30 @@
     },
     {
       "id": "codex-project-mcp",
-      "client": "Codex",
+      "client": "Codex CLI",
       "mode": "PROJECT_SCOPED_MCP",
-      "client_version": "NOT_OBSERVED",
+      "client_version": "Codex CLI 0.163.0; Desktop build 26.1021.31345 (not restarted)",
       "adapter_version": "SOURCE_SCRIPT_NO_PACKAGE_VERSION",
-      "toolkit_version": "5.5.5",
-      "source_sha": "b26041ea4fe87b52bd04540d456b2d237d3e0d4e",
-      "observation_date": "2026-10-24",
-      "evidence_origin": "SOURCE_ONLY_NO_HOST_SESSION",
-      "l4": "NOT_RUN",
-      "l5_guidance": "NOT_RUN",
+      "toolkit_version": "5.5.6",
+      "source_sha": "71a5faaea542a4214b8fb9e0db0ae6909947a3b8",
+      "observation_date": "2026-10-25",
+      "evidence_origin": "OWNER_REPORTED_CODEX_CLI_PROJECT_MCP_20261025",
+      "l4": "OWNER_REPORTED_PASS",
+      "l5_guidance": "OWNER_REPORTED_GUIDANCE_RETURNED",
       "l5_native_skill_activation": "NOT_OBSERVED",
       "l6_benefit": "NOT_MEASURED",
       "target_execution": "NOT_RUN",
       "project_files_changed": false,
-      "cost": "NONE",
+      "cost": "ADDITIONAL_COST_NOT_INDEPENDENTLY_VERIFIED",
       "evidence": [
-        "scripts/toolkit_mcp.py",
-        "tests/test_toolkit_mcp.py"
+        "https://github.com/MikeMoore1337/ai-development-toolkit/issues/343",
+        "Owner reported fresh Codex CLI tool calls: toolkit_catalog (82 skills / 45 profiles), toolkit_route_task (qa-python), toolkit_read_skill (api-testing guidance returned).",
+        "Owner reported disposable project only: preview applied=false, apply applied=true, no secrets in MCP config; no tracked Toolkit changes.",
+        "Owner reported Codex CLI 0.163.0, Desktop build 26.1021.31345 (not restarted), and separate Personal MCP 0.1.10 excluded.",
+        "Toolkit 5.5.6 and toolkit_mcp.py at 71a5faaea542a4214b8fb9e0db0ae6909947a3b8 independently checked on GitHub; CI #40129931707 success.",
+        "Owner reported validate_pack PASS, Project MCP tests 15 passed/1 skipped and full suite 1039 passed/22 skipped with PYTHONUTF8=1; default Windows harness had two UnicodeDecodeError failures."
       ],
-      "limitations": "Offline MCP source/stdio tests and doctor are L1-L3 or local protocol evidence only. No real Codex project client was connected in this session, and Codex CLI was not invoked."
+      "limitations": "OWNER_REPORTED Codex CLI invocation, not independently replayed in this chat; raw client trace not attached. Desktop Project MCP NOT_VERIFIED until restart. Native activation NOT_OBSERVED, L6 NOT_MEASURED. Configuration was changed only in disposable project; target code execution NOT_RUN. Incremental costs not independently verified; Windows default harness had reported UnicodeDecodeError failures."
     },
     {
       "id": "claude-code-project-mcp",
