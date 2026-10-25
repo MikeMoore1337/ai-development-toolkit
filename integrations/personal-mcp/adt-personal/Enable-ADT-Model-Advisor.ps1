@@ -4,18 +4,29 @@
 [CmdletBinding(SupportsShouldProcess=$true)]
 param(
     [switch]$Disable,
+    [switch]$Check,
     [string]$InstructionsPath = ''
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$defaultPath = Join-Path (Join-Path $HOME '.codex') 'AGENTS.md'
+if ($Disable -and $Check) {
+    throw '-Check and -Disable are mutually exclusive.'
+}
+# Codex reads global instructions from CODEX_HOME, when set, rather than ~/.codex.
+$codexHome = if (-not [string]::IsNullOrWhiteSpace($env:CODEX_HOME)) {
+    [IO.Path]::GetFullPath($env:CODEX_HOME)
+} else {
+    Join-Path $HOME '.codex'
+}
+$defaultPath = Join-Path $codexHome 'AGENTS.md'
 $path = if ($InstructionsPath) { [IO.Path]::GetFullPath($InstructionsPath) } else { $defaultPath }
 $path = [IO.Path]::GetFullPath($path)
 $dir = Split-Path -Parent $path
+$overridePath = Join-Path $dir 'AGENTS.override.md'
 
 # A linked user instruction file (or parent) could modify unrelated content.
-foreach ($candidate in @($path, $dir)) {
+foreach ($candidate in @($path, $dir, $overridePath)) {
     if (Test-Path -LiteralPath $candidate) {
         $item = Get-Item -LiteralPath $candidate -Force
         if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
@@ -27,6 +38,15 @@ if ((Test-Path -LiteralPath $path) -and -not
     (Test-Path -LiteralPath $path -PathType Leaf)) {
     throw 'Instruction destination is not a file.'
 }
+if ((Test-Path -LiteralPath $overridePath) -and -not
+    (Test-Path -LiteralPath $overridePath -PathType Leaf)) {
+    throw 'Global instruction override destination is not a file.'
+}
+# Codex loads a non-empty AGENTS.override.md INSTEAD of AGENTS.md in the same
+# directory. Do not report enabled when the managed block would be masked.
+$overrideActive = (Test-Path -LiteralPath $overridePath -PathType Leaf) -and
+    -not [string]::IsNullOrWhiteSpace(
+        [IO.File]::ReadAllText($overridePath, [Text.Encoding]::UTF8))
 
 $begin = '<!-- ADT-MODEL-ADVISOR BEGIN -->'
 $end = '<!-- ADT-MODEL-ADVISOR END -->'
@@ -44,6 +64,21 @@ if ($first -ge 0) {
         $raw.IndexOf($end, $last + $end.Length, [StringComparison]::Ordinal) -ge 0) {
         throw 'Duplicate or out-of-order advisor markers; refusing to modify.'
     }
+}
+
+# A static check cannot prove which instructions Codex Desktop actually loaded.
+if ($Check) {
+    if ($overrideActive) {
+        Write-Host 'Model advisor check: MASKED_BY_GLOBAL_OVERRIDE'
+    } elseif ($first -lt 0) {
+        Write-Host 'Model advisor check: NOT_INSTALLED'
+    } else {
+        Write-Host 'Model advisor check: SOURCE_PRESENT_CLIENT_UNVERIFIED'
+    }
+    return
+}
+if (-not $Disable -and $overrideActive) {
+    throw 'AGENTS.override.md takes precedence over AGENTS.md. No changes; resolve the override before enabling.'
 }
 
 # This is a Codex chat instruction overlay, NOT a custom native dialog/widget.
