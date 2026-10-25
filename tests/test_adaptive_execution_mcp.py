@@ -1,5 +1,6 @@
 """Offline MCP exposure for advisor - no agents or network."""
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -21,7 +22,7 @@ class AdvisorMcpTests(unittest.TestCase):
         with subprocess.Popen([sys.executable, str(SERVER), "serve"],
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, text=True, encoding="utf-8",
-                              cwd=ROOT) as process:
+                              cwd=ROOT, env={**os.environ, "PYTHONIOENCODING": "utf-8"}) as process:
             stdout, stderr = process.communicate(json.dumps(message)+"\n", timeout=15)
             self.assertEqual(0, process.returncode, stderr)
         return json.loads(stdout.strip().splitlines()[-1])["result"]
