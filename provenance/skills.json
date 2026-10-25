@@ -11157,15 +11157,15 @@
       "path": "integrations/episodic-memory",
       "name": "Episodic Memory pinned upstream patch",
       "kind": "reference",
-      "origin": "adapted",
+      "origin": "inspired_by",
       "source_url": "https://github.com/obra/episodic-memory",
       "source_reference": "https://github.com/obra/episodic-memory/blob/7e06519357777badd7a115d2014a7ef845904310/src/mcp-server.ts",
       "source_revision": "7e06519357777badd7a115d2014a7ef845904310",
-      "distribution_basis": "Upstream source is MIT-licensed; this repository distributes only a small attributed source patch and guidance, not the original plugin.",
+      "distribution_basis": "Toolkit-authored patch hunks implementing a new MCP path guard and zero-inference compatibility, plus short MIT upstream source context. No original package or session data is bundled; attribution retained.",
       "attribution_required": true,
       "attribution_path": "integrations/episodic-memory/README.md",
       "evidence": "integrations/episodic-memory/README.md",
-      "notes": "Issue #338; optional pinned upstream modification; native client installation and Windows proof not verified."
+      "notes": "Issue #338: original small patch against pinned MIT upstream API, no plugin copy or automatic installation; upstream source context is included to make git apply work. Native client activation NOT_VERIFIED."
     },
     {
       "author": "Toolkit maintainers (AI-assisted, claimed)",
