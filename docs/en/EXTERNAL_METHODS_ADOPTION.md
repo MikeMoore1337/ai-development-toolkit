@@ -29,6 +29,10 @@ This policy complements `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING
 6. Choose `reuse existing`, `reference only`, `adapt`, `isolated install`, or `reject`. For adaptation author original minimal instructions instead of copying content with incompatible terms.
 7. Update manifests, tests and bilingual documentation in the normal PR if a real skill changes. Never persist other users' reports, logs or code inside Toolkit.
 
+## Applying selected Superpowers methods (#400)
+
+See [evidence, worktrees and session diagnosis](SUPERPOWERS_EVIDENCE.md). Existing `feature-delivery`, `code-review` and `release-safety` skills reference the methodology without a new execution controller. Host-native isolation, target-repository leases, actual test evidence and release authorization prevail. Session token/retry observations must not become automatic telemetry collection.
+
 ## Applying methods across project types
 
 - **User-facing application:** improve visual QA, accessibility, animation and performance while respecting its established design system and approval workflow.
