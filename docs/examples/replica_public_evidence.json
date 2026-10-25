@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "mode": "PUBLIC_READ_ONLY",
+  "upstream_sha": "77c9436fb3d18c3d58169efb8caf4fe906b0dc51",
+  "features": [
+    {
+      "feature": "Workout history / История тренировок",
+      "competitor": "UNVERIFIED",
+      "competitor_source": "https://github.com/Jakeschincariol/replica-skill",
+      "yfc": "UNVERIFIED",
+      "yfc_source": "https://github.com/MikeMoore1337/your-fitness-coach/issues/1166",
+      "gap": "CANDIDATE"
+    }
+  ]
+}
