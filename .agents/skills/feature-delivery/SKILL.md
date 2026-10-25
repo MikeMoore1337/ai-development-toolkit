@@ -27,6 +27,14 @@ Never escalate merely to satisfy a process. Never downgrade when the risk remain
 
 For `normal`/`deep`, use a separate implementer/reviewer **only if** the environment actually supports independent contexts. Never pretend a second agent exists. Acceptance independence after a change means re-checking touched evidence.
 
+## Evidence-driven diagnosis and completion
+
+Before changing a suspected defect, establish the observed failure, minimal reproduction (or explain why it is unsafe/unavailable), relevant recent changes, and the earliest failing boundary. Separate a confirmed cause from a hypothesis. For complex paths (for example UI -> API -> persistence), trace input/output at the boundaries while redacting secrets; avoid repeated speculative fixes.
+
+Before saying a requirement is done, link each acceptance criterion to **fresh** evidence from the exact current revision: command or observation, execution environment, outcome and remaining limits. A prior run, a synthetic fixture, another agent's claim, a screenshot alone, or green CI on a different commit is not completion evidence. If the tool or target environment is unavailable, say `NOT_VERIFIED` and preserve the blocker rather than inferring success.
+
+For work needing isolation, first detect whether the host already owns a worktree or sandbox. Use the host-native workflow when available; do not create an extra worktree behind its back. Repository-controlled leases, protected branches, permission gates, and the project's existing finish/cleanup procedure prevail. See `docs/en/SUPERPOWERS_EVIDENCE.md` for the read-only decision tree.
+
 ## Durable state
 
 Prefer existing issue/PR/tracker. For complex or interruptible tasks, store a small index with owner, request, C*, chosen D*, artifact paths, current step, test commands and unresolved blockers. Do not create parallel source-of-truth documents. Do not reset counters after resume.
