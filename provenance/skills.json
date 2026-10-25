@@ -7033,19 +7033,19 @@
       "name": "SKILL.md",
       "kind": "reference",
       "author": "Toolkit maintainers (claimed)",
-      "origin": "original",
-      "source_url": null,
-      "source_reference": null,
-      "source_revision": null,
+      "origin": "inspired_by",
+      "source_url": "https://github.com/iamneilroberts/claude-skills",
+      "source_reference": "https://github.com/iamneilroberts/claude-skills/blob/947953f2a0664ac95996a4c7b35794a7cc8fc93a/skills/curate/SKILL.md",
+      "source_revision": "947953f2a0664ac95996a4c7b35794a7cc8fc93a",
       "license": "MIT",
-      "distribution_basis": "Owner-reported original integration package; independent rights verification not performed",
+      "distribution_basis": "Original Toolkit prose inspired by the pinned MIT upstream curate/curator method. No Claude Agent or third-party skill code bundled; Task Observer CC BY is acknowledged but not copied.",
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-22",
+      "last_reviewed": "2026-10-25",
       "distribution": "included",
-      "notes": "ChatGPT/Codex integration source; separate installation and release checks apply."
+      "notes": "Issue #337 opt-in read-only claim verification. Uses existing QA skill and observation gate; no client activation or model-call claim."
     },
     {
       "id": "integration-integrations-chatgpt-plugin-ai-development-toolkit-skills-toolkit-seo-audit-skill-md",
@@ -11346,6 +11346,26 @@
       "name": "Headroom gate regression tests",
       "kind": "test",
       "notes": "12 synthetic offline decision tests, no model access or third-party runtime dependency."
+    },
+    {
+      "id": "curator-337-chatgpt-adapter-tests",
+      "path": "tests/test_curator_readonly_chatgpt_adapter.py",
+      "name": "Curator read-only ChatGPT adapter tests",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; original synthetic static tests for issue #337, chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-qa-review/SKILL.md",
+      "last_reviewed": "2026-10-25",
+      "distribution": "included",
+      "notes": "Six source-contract checks; not actual upstream Claude agent execution or native installation."
     }
   ],
   "owner_review_record": {
