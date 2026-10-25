@@ -6,9 +6,11 @@
 
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml) · [Latest release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/latest) · [Skills catalog](docs/SKILLS_CATALOG.md)
 
-**[Start without a terminal](docs/BEGINNER_START.md)** · **[Use Toolkit with your project](AGENT_START.md)** · **[Local installation](#quick-start)** · **[Documentation](#documentation)**
+**[Start without a terminal](docs/BEGINNER_START.md)** · **[I have an existing project](docs/EXISTING_PROJECT.md)** · **[Local installation](#quick-start)** · **[Documentation](#documentation)**
 
 </div>
+
+**Already have a project?** Start with the [human-first guide](docs/EXISTING_PROJECT.md). The [coding agent contract](AGENT_START.md) is separate and is not required reading for a first request.
 
 **Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md).
 
@@ -19,7 +21,7 @@ AI Development Toolkit is a **portable library of reusable instructions, special
 | You want to… | Start here | What to expect |
 | :--- | :--- | :--- |
 | **Describe an idea without using a terminal** | [Beginner guide](docs/BEGINNER_START.md) | Five copy-ready requests and honest limits for each AI client |
-| **Work on an already-open project** | [Give your coding agent the Toolkit link](AGENT_START.md) | Read relevant guidance before proposing changes; no Toolkit installation required just to use the reference |
+| **Work on an already-open project** | [I already have a project](docs/EXISTING_PROJECT.md) | Read relevant guidance before proposing changes; no Toolkit installation required just to use the reference |
 | **Install and manage local skills** | [Safe installation](docs/INSTALLATION.md) | Profile selection, preview, explicit apply, status and rollback |
 
 For a coding agent that **can actually access your existing project**, a useful first request is:
@@ -81,7 +83,7 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 
 
-**Latest published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) (24 October 2026), immutable tag at `490cec222c4c2551a7bbe6f20bb0e9a316af13e1` with `MANIFEST.json.version = 5.5.6`. The [release archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) passed source SHA256 and technical provenance gates, while the publication-time documentation job detected outdated release references (being corrected in this follow-up). The archived source is not proof of real client activation, independent rights verification or model quality. The release does not automatically update installed MCP/ChatGPT clients. See [CHANGELOG.md](CHANGELOG.md) for scope and historical errata.
+**Latest published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6). For technical checksums, commit SHAs and verification history see [CHANGELOG.md](CHANGELOG.md) and [release process](docs/RELEASE_PROCESS.md). Publishing Toolkit does not automatically update installed MCP or ChatGPT plugins.
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 
