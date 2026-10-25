@@ -76,13 +76,6 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Disable
 ## Проверки
 
 ```powershell
-py -3.14 -m unittest integrations.personal-mcp.adt-personal.tests.test_model_advisor_onboarding -v
-```
-
-В случае недоступности импорта из-за дефисов в каталогах воспользуйся
-универсальным discover:
-
-```powershell
 py -3.14 -m unittest discover -s integrations/personal-mcp/adt-personal/tests -p test_model_advisor_onboarding.py -v
 ```
 
