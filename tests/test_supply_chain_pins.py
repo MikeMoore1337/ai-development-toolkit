@@ -17,6 +17,9 @@ PINNED = {
         "6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
         "a26af69be951a213d495a4c3e4e4022e16d87065",
     },
+    "actions/setup-node": {
+        "49933ea5288caeca8642d1e84afbd3f7d6820020",
+    },
     "actions/upload-artifact": {
         "ea165f8d65b6e75b540449e92b4886f43607fa02",
     },
@@ -34,7 +37,7 @@ def valid_action(value: str) -> bool:
 class SupplyChainPinTests(unittest.TestCase):
     def test_all_workflows_use_only_approved_full_immutable_commit_pins(self):
         paths = sorted(WORKFLOWS.glob("*.yml"))
-        self.assertEqual(5, len(paths))
+        self.assertEqual(6, len(paths))
         observed = {}
         for path in paths:
             references = ACTION.findall(path.read_text(encoding="utf-8"))

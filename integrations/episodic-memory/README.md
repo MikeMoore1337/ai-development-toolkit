@@ -64,3 +64,12 @@ These are examples for a disposable Linux sandbox. Windows environment configura
 Do not publish the upstream plugin as bundled Toolkit content, expose a remote endpoint, grant vault access, or modify production services. The only change in Toolkit is this optional patch and its documentation. For rollback, discard the isolated patched upstream worktree and its dedicated synthetic-only archive, after confirming it is not the canonical vault. No production changes to revert.
 
 **Decision:** offline functional security patch `PASS`; real user-data activation `NO_GO` pending an allowed, verifiable local client pathway, native Windows proof, and explicit data-scope review.
+
+
+## Windows-hosted source compatibility smoke (no Codex CLI)
+
+A narrowly scoped GitHub Actions workflow (`.github/workflows/episodic-memory-windows.yml`) checks the **actual pinned upstream source** on a temporary Windows runner. It is invoked on related PRs / pushes and can be started manually. It fetches the exact upstream SHA, validates the patch checksum, applies the patch, installs npm dependencies with lifecycle scripts disabled, rebuilds local `better-sqlite3`, verifies `sqlite-vec`, compiles TypeScript, and exercises the real patched MCP/verify regression tests.
+
+The workflow has `contents: read` permissions. No API keys, external model calls, Codex CLI, native personal Windows files, or real chat history are supplied. All data and compiled files reside in the disposable runner. A Windows CI `SUCCESS` proves **source compatibility on that runner**, not installation, rollback, or activation on the owner's device.
+
+The upstream source intentionally lacks a committed npm lockfile; therefore this runner's dependency installation is **not fully reproducible**. A native client deployment still requires a separate reviewed dependency lock and an approved writable connection to the actual Windows host. The offline pilot remains opt-in and must not change `CODEX_HOME` for a real user.
