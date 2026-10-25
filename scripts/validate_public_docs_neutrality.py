@@ -1,75 +1,131 @@
 #!/usr/bin/env python3
-"""Reject references to private owner projects in public Markdown.
+"""Check tracked public sources for project-specific references without storing private names.
 
-Run from any directory; checks the entire repository without network or writes.
-The upstream Hermes Agent *client* and the Toolkit repository name are allowed.
+CI uses only generic namespace rules. A local operator can additionally supply an
+untracked denylist outside the repository to check exact private identifiers.
+No network, content execution, mutation, or project-source collection.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import re
+import os
 from pathlib import Path
+import re
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 SKIP_DIRS = frozenset({
     ".git", ".venv", "venv", "node_modules", ".artifacts",
     "__pycache__", ".pytest_cache", ".hermes-compat",
 })
-OWNER_PROJECT = re.compile(
-    r"(?i)(?<![a-z0-9])(?:"
-    r"yfc|your[-_ ]fitness[-_ ]coach|"
-    r"hermes[-_ ](?:control[-_ ]center|brc|agent[-_ ]owner)|"
-    r"MikeMoore1337/hermes|"
-    r"ops[-_ ]watch|research[-_ ]scout|"
-    r"second[-_ ]brain|night[-_ ]shift|"
-    r"mikemoore\.top"
-    r")(?![a-z0-9])"
-)
+BINARY_SUFFIXES = frozenset({
+    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf",
+    ".zip", ".gz", ".tgz", ".woff", ".woff2", ".ttf", ".otf",
+    ".exe", ".dll", ".so", ".dylib", ".pyc", ".db", ".sqlite",
+})
+MAX_SOURCE_BYTES = 4 * 1024 * 1024
 
 
-def audit(root: Path = ROOT) -> list[dict[str, object]]:
-    """Return findings for banned names, symlinks and unreadable Markdown."""
+def _paths(root: Path) -> list[Path]:
+    if (root / ".git").is_file() or (root / ".git" / "HEAD").exists():
+        run = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z", "--cached"],
+            capture_output=True, check=False, timeout=15,
+        )
+        if run.returncode:
+            raise ValueError("Cannot verify tracked-file inventory")
+        names = [os.fsdecode(v) for v in run.stdout.split(b"\0") if v]
+        return [root / name for name in names]
+    # Disposable synthetic fixtures in unit tests have no Git metadata.
+    return sorted(path for path in root.rglob("*") if path.is_file() or path.is_symlink())
+
+
+def _repo_namespace(repository: str | None) -> tuple[str, str] | None:
+    name = repository or os.environ.get("GITHUB_REPOSITORY")
+    if not name:
+        return None
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
+        raise ValueError("Invalid repository identity")
+    owner, project = name.split("/", 1)
+    return owner.casefold(), project.casefold()
+
+
+def audit(
+    root: Path = ROOT, *, deny_patterns: tuple[str, ...] = (),
+    repository: str | None = None,
+) -> list[dict[str, object]]:
+    """Read-only findings; no blocked private tokens included in reports."""
+    if not root.is_dir() or root.is_symlink():
+        return [{"file": ".", "line": 0, "token": "INVALID_ROOT"}]
     findings: list[dict[str, object]] = []
-    for path in sorted(root.rglob("*.md")):
-        relative = path.relative_to(root)
-        if not path.is_file() and not path.is_symlink():
+    try:
+        paths = _paths(root)
+        namespace = _repo_namespace(repository)
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return [{"file": ".", "line": 0, "token": "INVENTORY_UNAVAILABLE"}]
+    if any(not isinstance(v, str) or not v.strip() or len(v) > 256 for v in deny_patterns):
+        return [{"file": ".", "line": 0, "token": "INVALID_DENYLIST"}]
+    private = tuple(v.casefold() for v in deny_patterns)
+    for path in paths:
+        rel = path.relative_to(root)
+        name = rel.as_posix()
+        if SKIP_DIRS.intersection(rel.parts):
             continue
-        if SKIP_DIRS.intersection(relative.parts):
+        if path.is_symlink() or not path.is_file():
+            findings.append({"file": name, "line": 0, "token": "UNSAFE_LINK"})
             continue
-        if path.is_symlink():
-            findings.append({"file": relative.as_posix(), "line": 0, "token": "SYMLINK"})
+        if any(p in name.casefold() for p in private):
+            findings.append({"file": name, "line": 0, "token": "PRIVATE_NAME_IN_PATH"})
+        if path.suffix.casefold() in BINARY_SUFFIXES:
             continue
         try:
-            lines = path.read_text(encoding="utf-8").splitlines()
+            if path.stat().st_size > MAX_SOURCE_BYTES:
+                findings.append({"file": name, "line": 0, "token": "OVERSIZED_SOURCE"})
+                continue
+            data = path.read_bytes()
+            if b"\0" in data:
+                continue  # non-text tracked binary
+            lines = data.decode("utf-8-sig").splitlines()
         except (OSError, UnicodeError):
-            findings.append({"file": relative.as_posix(), "line": 0, "token": "UNREADABLE"})
+            findings.append({"file": name, "line": 0, "token": "UNREADABLE"})
             continue
         for number, line in enumerate(lines, 1):
-            match = OWNER_PROJECT.search(line)
-            if match:
-                findings.append({
-                    "file": relative.as_posix(),
-                    "line": number,
-                    "token": match.group(0),
-                })
+            lower = line.casefold()
+            if any(v in lower for v in private):
+                findings.append({"file": name, "line": number, "token": "PRIVATE_IDENTIFIER"})
+                continue
+            if namespace:
+                owner, project = namespace
+                # Other repositories of the same maintainer are integration data,
+                # not generic Toolkit fixtures or enforced project policy.
+                pattern = re.compile(r"(?<![\w.-])" + re.escape(owner) + r"/([a-z0-9_.-]+)", re.I)
+                for match in pattern.finditer(line):
+                    if match.group(1).casefold().rstrip(".,;").removesuffix(".git") != project:
+                        findings.append({"file": name, "line": number, "token": "FOREIGN_OWNER_REPOSITORY"})
+                        break
     return findings
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--repository", help="owner/repository; in CI defaults to GITHUB_REPOSITORY")
+    parser.add_argument("--local-denylist", type=Path, help="untracked local UTF-8 file, one literal per line")
     args = parser.parse_args()
-    root = args.root.resolve()
-    if not root.is_dir():
-        print(json.dumps({"status": "FAIL", "error": "Invalid root directory"}))
-        return 2
-    found = audit(root)
-    print(json.dumps(
-        {"status": "FAIL" if found else "PASS",
-         "markdown_hits": len(found), "findings": found},
-        indent=2, ensure_ascii=False,
-    ))
+    patterns: tuple[str, ...] = ()
+    if args.local_denylist:
+        source = args.local_denylist
+        if source.is_symlink() or not source.is_file() or source.stat().st_size > 8192:
+            print('{"status":"FAIL","error":"INVALID_DENYLIST"}')
+            return 2
+        patterns = tuple(line.strip() for line in source.read_text(encoding="utf-8").splitlines()
+                         if line.strip() and not line.strip().startswith("#"))
+    found = audit(args.root.resolve(), deny_patterns=patterns, repository=args.repository)
+    print(json.dumps({
+        "status": "FAIL" if found else "PASS",
+        "tracked_text_findings": len(found), "findings": found,
+    }, ensure_ascii=False, indent=2))
     return 1 if found else 0
 
 

@@ -56,4 +56,4 @@ jobs:
           python scripts/replica_public_parity.py --upstream "$REPLICA_UPSTREAM" --matrix integrations/replica-public-parity/pilot.csv > "$RUNNER_TEMP/replica-source-pilot.md"
           grep -q 'REPLICA_SOURCE=PASS' "$RUNNER_TEMP/replica-source-pilot.md"
           grep -q 'READ_ONLY=YES' "$RUNNER_TEMP/replica-source-pilot.md"
-          echo 'UPSTREAM_EXECUTION=PASS; INPUT=PUBLIC_SOURCE_BACKED; LIVE_YFC=NOT_TESTED'
+          echo 'UPSTREAM_EXECUTION=PASS; INPUT=PUBLIC_SOURCE_BACKED; TARGET_IMPLEMENTATION=NOT_TESTED'

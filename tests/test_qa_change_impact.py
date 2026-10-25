@@ -151,7 +151,7 @@ class ChangeImpactTests(unittest.TestCase):
         self.assertEqual([], p["unmapped_paths"])
         self.assertTrue(all(r["status"] == "NOT_RUN" for r in rec.values()))
 
-    def test_hermes_server_and_legacy_web_are_path_hints_only(self):
+    def test_agent_service_and_legacy_web_are_path_hints_only(self):
         p = qa.plan(["control_center/server.py", "control_center/web/app.js",
                      ".github/workflows/control-center-ui.yml"])
         rec = {r["id"]: r for r in p["recommendations"]}

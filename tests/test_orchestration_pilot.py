@@ -98,7 +98,7 @@ class PilotLedgerTests(unittest.TestCase):
         # Two shortened arms used to pass: equality is not issue coverage.
         doc = self.fresh()
         row = doc["cases"][0]
-        shortened = ["YFC-A1", "YFC-A2"]
+        shortened = ["WEB-A1", "WEB-A2"]
         for key in ("acceptance_ids",):
             row[key] = shortened
             row["baseline"][key] = shortened
@@ -109,7 +109,7 @@ class PilotLedgerTests(unittest.TestCase):
     def test_incorrect_issue_id_is_rejected_even_if_arms_match(self):
         doc = self.fresh()
         row = doc["cases"][1]
-        ids = ["H-A1", "H-A2", "H-A3", "H-A4", "HERMES_AC5"]
+        ids = ["AGENT-A1", "AGENT-A2", "AGENT-A3", "AGENT-A4", "MISSING_AC5"]
         row["acceptance_ids"] = ids
         row["baseline"]["acceptance_ids"] = ids
         row["orchestra"]["acceptance_ids"] = ids

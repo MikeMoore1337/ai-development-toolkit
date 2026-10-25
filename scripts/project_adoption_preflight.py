@@ -14,7 +14,7 @@ import sys
 import adt
 import recommend_profile
 
-ARCHETYPES = ("generic", "yfc", "hermes", "second-brain")
+ARCHETYPES = ("generic", "web-app", "agent-service", "private-data")
 CLIENT_LAYOUTS = ("codex", "claude")
 MARKERS = (
     "AGENTS.md", "CLAUDE.md", "README.md", "pyproject.toml", "package.json",
@@ -22,14 +22,14 @@ MARKERS = (
     ".claude/skills", ".hermes/skills", ".git",
 )
 # These are reminders to inspect policy, never inferred facts about a project.
-OWNER_GATES = {
+REVIEW_CHECKLISTS = {
     "generic": ("Read actual AGENTS.md/README and obtain change permission.",),
-    "yfc": ("Confirm product-specific visual approval before UI implementation.",
-            "Check release and user-data constraints from the live project policy."),
-    "hermes": ("Verify agent and server permissions, secrets and runtime boundaries.",
-               "Do not treat BRC access as permission to deploy or alter services."),
-    "second-brain": ("Keep private vault records, conversation history and exports private.",
-                     "Respect prepare/review/confirm before any write or publish."),
+    "web-app": ("Check the project's real visual approval and release policy.",
+                "Verify data-protection requirements before implementation."),
+    "agent-service": ("Verify permissions, secrets and runtime boundaries.",
+                      "Remote tool access does not grant deployment permission."),
+    "private-data": ("Keep private records and exports out of Toolkit outputs.",
+                     "Require explicit review and consent before writes or publishing."),
 }
 
 
@@ -73,7 +73,7 @@ def inspect(target: Path, layout: str, task: str, archetype: str,
         status = "REVIEW_REQUIRED"
     else:
         status = "READY_FOR_HUMAN_REVIEW"
-    advice = list(OWNER_GATES[archetype])
+    advice = list(REVIEW_CHECKLISTS[archetype])
     if not has_policy:
         advice.append("AGENTS.md not confirmed in project root; locate source-of-truth policy.")
     if doctor["unmanaged"]:

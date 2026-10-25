@@ -4,7 +4,7 @@
   "caveat": "Expected checks are lower bounds for rule fixtures, not results of real project tests or reviewed production diffs.",
   "cases": [
     {
-      "id": "yfc-workout-ui",
+      "id": "web-app-workout-ui",
       "changed_paths": [
         "frontend/components/workout/SetForm.tsx"
       ],
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "id": "yfc-auth-api",
+      "id": "web-app-auth-api",
       "changed_paths": [
         "backend/api/auth/session.py"
       ],
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "id": "yfc-migration",
+      "id": "web-app-migration",
       "changed_paths": [
         "backend/db/migrations/0040_exercise.sql"
       ],
@@ -36,7 +36,7 @@
       ]
     },
     {
-      "id": "hermes-worker",
+      "id": "agent-service-worker",
       "changed_paths": [
         "src/queue/consumer.py"
       ],
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "id": "hermes-secrets",
+      "id": "agent-service-secrets",
       "changed_paths": [
         "src/security/secrets.py"
       ],

@@ -63,7 +63,7 @@ class ContentDiffTests(unittest.TestCase):
         self.assertIn("db-rollback", output["required_critical_check_ids"])
 
 
-    def test_yfc_like_state_change_adds_replay_integrity_and_consumer_review(self):
+    def test_webapp_state_change_adds_replay_integrity_and_consumer_review(self):
         path = "backend/fitminiapp_api/services/workout_sync.py"
         patch = (
             b"diff --git a/backend/fitminiapp_api/services/workout_sync.py "

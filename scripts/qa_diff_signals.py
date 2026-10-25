@@ -30,7 +30,7 @@ MARKERS = {
     # A mutation token is an advisory risk hint, not proof of a migration or callers.
     "PERSISTED_STATE": re.compile(
         r"\b(?:mutation_id|expected_version|applied_version|request_fingerprint|"
-        r"replayed_workout_set|is_completed|version_conflict|state_transition|"
+        r"replayed_mutation|is_completed|version_conflict|state_transition|"
         r"with_for_update)\b|\bversion\s*(?:\+=|=)", re.I),
     "PRIVACY": re.compile(r"\b(?:api_key|private_key|secret|password|pii|"
                           r"credential|sensitive_data|encrypt|decrypt)\b", re.I),
