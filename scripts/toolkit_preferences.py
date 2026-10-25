@@ -89,7 +89,9 @@ def validate(document: object, scope: str) -> dict:
         raise PreferencesError("Unsupported configuration schema")
     if set(document) - ({"schema_version", "language"} | set(SECTION_FIELDS)):
         raise PreferencesError("Unknown top-level configuration key")
-    if "language" in document and document["language"] not in LANGUAGES:
+    if "language" in document and (
+        not isinstance(document["language"], str) or document["language"] not in LANGUAGES
+    ):
         raise PreferencesError("Invalid language")
     for section, allowed_fields in SECTION_FIELDS.items():
         if section not in document:
@@ -202,11 +204,12 @@ def preview(
         _safe_file(target)
         if not target.is_dir():
             raise PreferencesError("Existing project directory required")
+    explicit_project_config = project_path is not None
     if project_path is None and target is not None:
         project_path = target / ".adt" / "config.json"
     user_file = user_path if user_path is not None else user_config_path()
     user = read_optional(user_file, "user", required=user_path is not None)
-    project = read_optional(project_path, "project", required=False) if project_path else None
+    project = read_optional(project_path, "project", required=explicit_project_config) if project_path else None
     task = read_optional(task_path, "task", required=True) if task_path else None
     report = resolve(user, project, task)
     report["layers"] = {
