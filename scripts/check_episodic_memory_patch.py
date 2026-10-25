@@ -33,7 +33,9 @@ REQUIRED_PATTERNS = (
 def check() -> None:
     if PATCH.is_symlink():
         raise ValueError("Symlinked patch is not permitted")
-    raw = PATCH.read_bytes()
+    # Git checkout may write CRLF on Windows. Match Toolkit's text checksum
+    # contract while still rejecting any substantive patch-byte mutation.
+    raw = PATCH.read_bytes().replace(b"\r\n", b"\n")
     if hashlib.sha256(raw).hexdigest() != PATCH_SHA256:
         raise ValueError("Unexpected patch SHA256")
     text = raw.decode("utf-8")
