@@ -1,5 +1,30 @@
 # Локальный MCP для Codex (Windows, Linux и macOS)
 
+## Personal MCP 0.1.11 — оркестрация Codex #357 (только чтение)
+
+Исходная версия 0.1.11 добавляет инструменты `toolkit_codex_prepare_delegation` и
+`toolkit_codex_review_delegation` к прежним десяти инструментам. Они вызывают
+**только локальный контракт** `scripts/codex_host_orchestration.py` из
+выделенной копии Toolkit, сверяя его SHA256 с `SHA256SUMS.txt`.
+Никаких нативных Codex tools, моделей, платных API, shell-команд или записей
+в пользовательские проекты MCP не запускает. Подтверждение стоимости
+`zero_incremental_cost_verified=false` блокирует подготовку.
+
+**Обновление только установленного MCP на Windows без Codex CLI и без
+повторной регистрации:** в проверенном, обновлённом репозитории Toolkit
+запустите `integrations/personal-mcp/adt-personal/Install-ADT-Personal.ps1
+-McpOnly` (сначала `-WhatIf`). Установщик использует штатные проверки,
+резервное копирование и отказ при нетипичном пути. Убедитесь, что отдельная
+выделенная копия источника Toolkit, из которой MCP читает контракт, содержит
+новую версию `scripts/codex_host_orchestration.py` и корректный SHA256.
+**Обновление исходников не обновляет MCP-программу; MCP 0.1.11 не считается
+установленным до нового `toolkit_info` в Codex Desktop.**
+
+Следом проверьте `tools/list` в новой сессии Codex: оба инструмента должны
+иметь `readOnlyHint=true`. Без независимых сведений о денежной стоимости и
+атомарного host-only lease не выполняйте реальный `spawn_agent`.
+
+
 Это один из двух **равноправных способов подключения** к AI Development Toolkit наряду с [плагином ChatGPT](../chatgpt-plugin/README.ru.md). MCP предназначен для локального Codex, когда агент имеет разрешённый доступ к рабочему проекту. Локальный MCP не является удалённым подключением ChatGPT.
 
 ## Что делает MCP
