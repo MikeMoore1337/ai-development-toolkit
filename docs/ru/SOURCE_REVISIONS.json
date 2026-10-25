@@ -165,6 +165,11 @@
       "source_sha256": "55fe7bf593ea638bd2af6ae77ef8f869925a680a28d4c401af15b113f2d9f266"
     },
     {
+      "source": "docs/MCP_SECURITY_SCAN.md",
+      "translation": "docs/ru/MCP_SECURITY_SCAN.md",
+      "source_sha256": "92830c4366229d494f25d6ec132ae22293bc32bb87d667bb70a0384199fa9bff"
+    },
+    {
       "source": "docs/OBSERVABILITY_SRE.md",
       "translation": "docs/ru/OBSERVABILITY_SRE.md",
       "source_sha256": "7f879c0245a712d4f262eb7cae07079e389efa083417ca05728cdeb087a7a556"
