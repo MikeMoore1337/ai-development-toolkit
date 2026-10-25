@@ -23,6 +23,9 @@ PINNED = {
     "actions/upload-artifact": {
         "ea165f8d65b6e75b540449e92b4886f43607fa02",
     },
+    "astral-sh/setup-uv": {
+        "c771a70e6277c0a99b617c7a806ffedaca235ff9",
+    },
 }
 ACTION = re.compile(r"^\s*(?:-\s*)?uses:\s*(\S+)", re.MULTILINE)
 
@@ -37,7 +40,7 @@ def valid_action(value: str) -> bool:
 class SupplyChainPinTests(unittest.TestCase):
     def test_all_workflows_use_only_approved_full_immutable_commit_pins(self):
         paths = sorted(WORKFLOWS.glob("*.yml"))
-        self.assertEqual(6, len(paths))
+        self.assertEqual(7, len(paths))
         observed = {}
         for path in paths:
             references = ACTION.findall(path.read_text(encoding="utf-8"))
