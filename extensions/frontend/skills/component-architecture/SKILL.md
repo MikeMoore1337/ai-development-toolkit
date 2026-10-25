@@ -13,4 +13,6 @@ Inspect the actual frontend stack and project conventions before choosing tools 
 4. Check lifecycle, coupling, responsive behavior and compatibility with existing consumers.
 5. Implement a representative change, test its main interactions and adjacent reuse, and remove abstractions that do not help.
 
+**External component selection gate:** For concrete proposals involving shadcn/ui, Magic UI, Tailwind, Radix/Base UI, Motion or similar component registries, first apply `docs/en/UI_COMPONENT_SELECTION.md` (RU: `docs/ru/UI_COMPONENT_SELECTION.md`). Evaluate existing primitives and exact upstream provenance/license before considering a dependency. A proposal is not implementation approval; do not add packages, copy components, change product visuals or bypass the target owner's visual gate merely because a registry includes the pattern. The optional source-only packet validator cannot prove browser correctness.
+
 **Output:** Component map, public contracts, verified changes and remaining coupling.
