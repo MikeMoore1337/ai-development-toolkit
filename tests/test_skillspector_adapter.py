@@ -200,9 +200,11 @@ class CandidateIntegrationTests(unittest.TestCase):
     def test_untrusted_manifest_or_missing_consent_stops_scanner(self):
         def forbidden(_):
             self.fail("Scanner started before local gate")
+        # Stale SHA256 must short-circuit before invoking the external tool.
+        (self.candidate / "SKILL.md").write_text("changed", encoding="utf-8")
         self.assertEqual("REJECT", self.inspect(
-            scan_with_skillspector=True, scan_fn=forbidden,
-            ).get("decision") if False else "REJECT")
+            scan_with_skillspector=True, scan_fn=forbidden)["decision"])
+        self.write_skill("Clean text")
         self.manifest.write_text("{}", encoding="utf-8")
         self.assertEqual("REJECT", self.inspect(
             scan_with_skillspector=True, scan_fn=forbidden)["decision"])
