@@ -11468,7 +11468,7 @@
       "notes": "Issue #338 optional native Windows GitHub Actions smoke of exact pinned original upstream source + security patch in disposable runner. No Codex CLI, model API, real chats or client activation. GitHub runner source compatibility only; no owner-device proof."
     },
     {
-      "id": "beginner-333-docs-md",
+      "id": "beginner-333-docs-beginner-client-details-md",
       "path": "docs/BEGINNER_CLIENT_DETAILS.md",
       "name": "BEGINNER_CLIENT_DETAILS.md",
       "kind": "documentation",
@@ -11488,7 +11488,7 @@
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
     },
     {
-      "id": "beginner-333-docs-md",
+      "id": "beginner-333-docs-existing-project-md",
       "path": "docs/EXISTING_PROJECT.md",
       "name": "EXISTING_PROJECT.md",
       "kind": "documentation",
@@ -11508,7 +11508,7 @@
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
     },
     {
-      "id": "beginner-333-docs-ru-md",
+      "id": "beginner-333-docs-ru-beginner-client-details-md",
       "path": "docs/ru/BEGINNER_CLIENT_DETAILS.md",
       "name": "BEGINNER_CLIENT_DETAILS.md",
       "kind": "documentation",
@@ -11528,7 +11528,7 @@
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
     },
     {
-      "id": "beginner-333-docs-ru-md",
+      "id": "beginner-333-docs-ru-existing-project-md",
       "path": "docs/ru/EXISTING_PROJECT.md",
       "name": "EXISTING_PROJECT.md",
       "kind": "documentation",
