@@ -11482,7 +11482,7 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "https://github.com/MikeMoore1337/ai-development-toolkit/issues/333",
+      "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
@@ -11502,7 +11502,7 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "https://github.com/MikeMoore1337/ai-development-toolkit/issues/333",
+      "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
@@ -11522,7 +11522,7 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "https://github.com/MikeMoore1337/ai-development-toolkit/issues/333",
+      "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
@@ -11542,7 +11542,7 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "https://github.com/MikeMoore1337/ai-development-toolkit/issues/333",
+      "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
@@ -11562,7 +11562,7 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "https://github.com/MikeMoore1337/ai-development-toolkit/issues/333",
+      "evidence": "docs/PUBLICATION_POLICY.md",
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Toolkit-owned docs or offline regression test added to address two owner-submitted beginner navigation reports. No direct observation of participants, client activation or runtime benefit."
