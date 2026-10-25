@@ -762,7 +762,10 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(args, dict):
         raise ToolkitError('Arguments must be an object')
     if name in ('toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
-        return _host_orchestration_tool(tk, name, args)
+        try:
+            return _host_orchestration_tool(tk, name, args)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise ToolkitError(str(exc)[:160]) from exc
     if name == 'toolkit_info':
         return tk.info()
     if name == 'toolkit_catalog':
