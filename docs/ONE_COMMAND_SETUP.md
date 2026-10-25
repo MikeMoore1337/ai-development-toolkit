@@ -30,14 +30,22 @@ Restart Codex, inspect `codex mcp get ai-development-toolkit`, then actually ask
 
 The command is safe to repeat with an **unchanged clean** dedicated checkout. It neither updates the local Git source nor installs skills into projects. If the destination is owned by unrelated content or has modifications, stop and inspect rather than deleting or overwriting it. Source auto-update is [a separate opt-in](UPDATING.md); installed MCP launcher upgrades are separate too.
 
-## ChatGPT/Codex local plugin - installation from the interface
+## Install the plugin directly from the GitHub repository
 
-The repository now includes `.agents/plugins/marketplace.json`. In a **supported ChatGPT desktop Work/Codex surface**, open a trusted local checkout of this repository, restart the desktop app, open Plugins, choose **AI Development Toolkit (local)** as the marketplace source and install **AI Development Toolkit**. The marketplace references the existing skills-only plugin directly and does not copy, execute or register a local MCP server. Check the result in a new session.
+**No public plugin-directory publication is needed.** The Toolkit repository contains a valid `.agents/plugins/marketplace.json`, whose local plugin entry resolves to `integrations/chatgpt-plugin/ai-development-toolkit`. The marketplace is an installation source, not a local MCP server.
 
-This is a repository-local marketplace, **not** a public listing and not an automatic installation for ChatGPT web, Android or iOS. The existing privately owned plugin version `0.1.8` and the public source plugin manifest version `0.1.2` are distinct; do **not** overwrite one with the other. Users without the local marketplace surface can use the [documented ZIP import](../integrations/chatgpt-plugin/README.md) when their account allows it.
+On a machine with Codex CLI and the supported ChatGPT desktop Work/Codex experience, register the **GitHub repository** as a marketplace source with a single command:
 
-## Public plugin directory - separate publication gate
+~~~sh
+codex plugin marketplace add MikeMoore1337/ai-development-toolkit
+~~~
 
-OpenAI requires an owner-initiated [plugin submission and review](https://developers.openai.com/plugins/deploy/submission): developer identity/permissions, reviewed package, positive/negative test cases, walkthrough, automated checks, review and subsequent explicit publish. Only **after approval and actual publication** can other users install it by searching the universal directory. Source code, a repo marketplace and an installed PRIVATE plugin do not complete this gate. No publish action or public listing is claimed here.
+This command **adds the marketplace source only**. It does not install the plugin or upgrade an existing personal plugin. In the ChatGPT desktop app, restart the app, open the **Plugins Directory**, select **AI Development Toolkit (local)** as the source, select **AI Development Toolkit**, and choose **Install**. Start a new chat and test a task that should activate a bundled skill. Verify real use separately; source/CI validation does not prove successful installation on another device.
 
-Status: `REPO_MARKETPLACE_READY_FOR_CLIENT_TEST` / `PUBLIC_DIRECTORY_NOT_SUBMITTED`. Live ChatGPT desktop marketplace installation and public-directory review remain independent acceptance steps.
+Alternatively, if the user already has a trusted local checkout, open that repository as the workspace in the supported desktop client (or run `codex plugin marketplace add ./path/to/ai-development-toolkit` with a real path). The same checked-in marketplace exposes the plugin. Use `codex plugin marketplace list` to inspect configured sources.
+
+This installation path applies to **supported local Codex/ChatGPT desktop surfaces**, not to ChatGPT web, iOS or Android. Those may allow independent ZIP import through their own UI, depending on account and client support: [ChatGPT ZIP import](../integrations/chatgpt-plugin/README.md). The checked-in source plugin version is `0.1.2`; an existing private installed shell `0.1.8` is a separate installation. Do not overwrite it.
+
+**Scope:** self-service distribution from GitHub only. No universal-public-directory listing, developer review or publication is necessary or planned.
+
+Status: `REPO_SELF_INSTALL_SOURCE_READY`; `LIVE_DESKTOP_INSTALL_NOT_VERIFIED`.
