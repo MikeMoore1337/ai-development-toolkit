@@ -1,0 +1,171 @@
+diff --git a/src/mcp-server.ts b/src/mcp-server.ts
+index c1cbd0e..1695a8f 100644
+--- a/src/mcp-server.ts
++++ b/src/mcp-server.ts
+@@ -23,6 +23,10 @@ import {
+ import { formatConversationAsMarkdown } from './show.js';
+ import { VERSION } from './version.js';
+ import fs from 'fs';
++import path from 'path';
++import Database from 'better-sqlite3';
++import { getArchiveDir, getDbPath } from './paths.js';
++import { shouldSkipConversation } from './sync.js';
+ 
+ // Zod Schemas for Input Validation
+ 
+@@ -123,6 +127,33 @@ function handleError(error: unknown): string {
+   return `Error: ${String(error)}`;
+ }
+ 
++/**
++ * Restrict MCP read to conversations actually indexed under the local archive.
++ * A "DO NOT INDEX" marker must also block direct read by an agent.
++ */
++function indexedArchivePath(requested: string): string {
++  if (!path.isAbsolute(requested)) throw new Error('Archive path required');
++  const root = fs.realpathSync(getArchiveDir());
++  const resolved = fs.realpathSync(requested);
++  if (!path.resolve(requested).startsWith(root + path.sep) ||
++      !resolved.startsWith(root + path.sep)) {
++    throw new Error('Conversation is outside the permitted archive');
++  }
++  const db = new Database(getDbPath(), { readonly: true, fileMustExist: true });
++  try {
++    const found = db.prepare(
++      'SELECT 1 FROM exchanges WHERE archive_path = ? OR archive_path = ? LIMIT 1'
++    ).get(resolved, requested);
++    if (!found) throw new Error('Conversation is not indexed');
++  } finally {
++    db.close();
++  }
++  if (shouldSkipConversation(resolved)) {
++    throw new Error('Conversation is excluded from indexing');
++  }
++  return resolved;
++}
++
+ // Create MCP Server
+ 
+ const server = new Server(
+@@ -285,13 +316,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
+     if (name === 'read') {
+       const params = ShowConversationInputSchema.parse(args);
+ 
+-      // Verify file exists
+-      if (!fs.existsSync(params.path)) {
+-        throw new Error(`File not found: ${params.path}`);
+-      }
++      // Canonicalize and restrict the read to genuinely indexed archive files.
++      // Path existence alone is not authorization: DO NOT INDEX files may exist.
++      const verifiedPath = indexedArchivePath(params.path);
+ 
+       // Read and format conversation with optional line range
+-      const jsonlContent = fs.readFileSync(params.path, 'utf-8');
++      const jsonlContent = fs.readFileSync(verifiedPath, 'utf-8');
+       const markdownContent = formatConversationAsMarkdown(
+         jsonlContent,
+         params.startLine,
+diff --git a/src/verify.ts b/src/verify.ts
+index 0dd2c5d..8b2ec60 100644
+--- a/src/verify.ts
++++ b/src/verify.ts
+@@ -21,6 +21,7 @@ export async function verifyIndex(): Promise<VerificationResult> {
+   };
+ 
+   const archiveDir = getArchiveDir();
++  const skipSummaries = process.env.EPISODIC_MEMORY_SKIP_SUMMARIES === '1';
+ 
+   // Track all files we find
+   const foundFiles = new Set<string>();
+@@ -66,11 +67,12 @@ export async function verifyIndex(): Promise<VerificationResult> {
+       // Check for missing or errored summary. An error sentinel (#96) means a
+       // previous summarization failed — verify treats it as "missing" so repair
+       // re-attempts it rather than reporting the conversation as healthy.
+-      if (!fs.existsSync(summaryPath)) {
++      // Optional summaries are not a missing-index failure in zero-inference mode.
++      if (!skipSummaries && !fs.existsSync(summaryPath)) {
+         result.missing.push({ path: conversationPath, reason: 'No summary file' });
+         continue;
+       }
+-      if (isErroredSentinel(fs.readFileSync(summaryPath, 'utf-8'))) {
++      if (!skipSummaries && isErroredSentinel(fs.readFileSync(summaryPath, 'utf-8'))) {
+         result.missing.push({ path: conversationPath, reason: 'Previous summarization failed (error sentinel)' });
+         continue;
+       }
+@@ -158,11 +160,13 @@ export async function repairIndex(issues: VerificationResult): Promise<void> {
+         continue;
+       }
+ 
+-      // Generate/update summary
+-      const summaryPath = conversationPath.replace('.jsonl', '-summary.txt');
+-      const summary = await summarizeConversation(exchanges);
+-      fs.writeFileSync(summaryPath, summary, 'utf-8');
+-      console.log(`  Created summary: ${summary.split(/\s+/).length} words`);
++      // Respect explicit zero-inference mode even when repairing an index.
++      if (process.env.EPISODIC_MEMORY_SKIP_SUMMARIES !== '1') {
++        const summaryPath = conversationPath.replace('.jsonl', '-summary.txt');
++        const summary = await summarizeConversation(exchanges);
++        fs.writeFileSync(summaryPath, summary, 'utf-8');
++        console.log(`  Created summary: ${summary.split(/\s+/).length} words`);
++      }
+ 
+       // Index exchanges
+       for (const exchange of exchanges) {
+diff --git a/test/mcp-server.test.ts b/test/mcp-server.test.ts
+index 47382c9..b614542 100644
+--- a/test/mcp-server.test.ts
++++ b/test/mcp-server.test.ts
+@@ -1,7 +1,8 @@
+ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+-import { existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
++import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
++import Database from 'better-sqlite3';
+ import { tmpdir } from 'node:os';
+ import { join } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+@@ -121,4 +122,43 @@ describe('MCP search tool', () => {
+     });
+     expect(existsSync(testDbPath)).toBe(true);
+   });
++
++  it('refuses direct MCP reads of existing unindexed and out-of-scope files', async () => {
++    const unindexed = join(testDir!, 'archive', 'excluded.jsonl');
++    const outside = join(testDir!, 'private.jsonl');
++    for (const file of [unindexed, outside]) {
++      writeFileSync(file, '{"type":"user","message":{"role":"user","content":"HIDDEN_SYNTHETIC"}}\\n');
++      const result = await client.callTool({ name: 'read', arguments: { path: file } });
++      expect(result.isError).toBe(true);
++      expect(getTextContent(result.content as ToolContent[])).not.toContain('HIDDEN_SYNTHETIC');
++    }
++  });
++
++  it('reads a known indexed archive conversation', async () => {
++    const directory = join(testDir!, 'archive', 'synthetic');
++    mkdirSync(directory, { recursive: true });
++    const file = join(directory, 'indexed.jsonl');
++    writeFileSync(file, [
++      { type: 'user', timestamp: '2026-10-24T00:00:00Z', message: { role: 'user', content: 'SAFE_SYNTHETIC' } },
++      { type: 'assistant', timestamp: '2026-10-24T00:00:01Z', message: { role: 'assistant', content: 'Approved synthetic answer.' } },
++    ].map(JSON.stringify).join('\n') + '\n');
++    const db = new Database(testDbPath);
++    try {
++      db.prepare('INSERT INTO exchanges (id,project,timestamp,user_message,assistant_message,archive_path,line_start,line_end) VALUES (?,?,?,?,?,?,?,?)')
++        .run('safe-1', 'synthetic', '2026-10-24T00:00:00Z', 'SAFE_SYNTHETIC', 'ok', file, 1, 1);
++    } finally { db.close(); }
++    const result = await client.callTool({ name: 'read', arguments: { path: file } });
++    expect(result.isError, getTextContent(result.content as ToolContent[])).toBeFalsy();
++    expect(getTextContent(result.content as ToolContent[])).toContain('SAFE_SYNTHETIC');
++
++    // An indexed file that was later marked private must cease to be readable.
++    const privateMarker = '<INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>';
++    writeFileSync(file, JSON.stringify({
++      type: 'user', timestamp: '2026-10-24T00:00:00Z',
++      message: { role: 'user', content: privateMarker },
++    }) + '\n');
++    const excluded = await client.callTool({ name: 'read', arguments: { path: file } });
++    expect(excluded.isError).toBe(true);
++    expect(getTextContent(excluded.content as ToolContent[])).not.toContain(privateMarker);
++  });
+ });
