@@ -7,6 +7,7 @@ restricted to an explicit operator CLI action with --apply.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import re
@@ -91,6 +92,15 @@ def _tool_defs() -> list[dict]:
                          "properties": {"skill": string("Exact skill name from catalog"),
                                         "reference": string("Optional path inside the selected skill, e.g. references/checklist.md")},
                          "required": ["skill"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_advise_execution", "description": "Offer three model-use choices with benefits/risks. Read only; no model invocation.",
+         "inputSchema": {"type": "object", "properties": {"request": {"type": "object"}},
+                         "required": ["request"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_check_execution_consent", "description": "Validate explicit per-task model consent; never execute any model.",
+         "inputSchema": {"type": "object", "properties": {
+             "request": {"type": "object"}, "consent": {"type": "object"}},
+             "required": ["request", "consent"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_route_task", "description": "Return an advisory profile and matching skill suggestions for a task.",
          "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
@@ -205,9 +215,26 @@ def _assess_skill_coverage(query: str, matches: list[dict] | None = None) -> dic
     }
 
 
+def _adaptive_advice(request: object, consent: object | None = None) -> dict:
+    """Load sibling offline policy without assuming package import paths."""
+    path = ROOT / "scripts" / "adaptive_execution_advisor.py"
+    spec = importlib.util.spec_from_file_location("_adt_advisor", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Adaptive advisor unavailable")
+    advisor = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(advisor)
+    return advisor.authorize(request, consent) if consent is not None else advisor.advise(request)
+
+
 def invoke(tool: str, args: dict) -> dict:
     if not isinstance(args, dict):
         raise ValueError("Tool arguments must be an object")
+    if tool == "toolkit_advise_execution":
+        return _adaptive_advice(args.get("request"))
+    if tool == "toolkit_check_execution_consent":
+        if "consent" not in args:
+            raise ValueError("Explicit consent required")
+        return _adaptive_advice(args.get("request"), args["consent"])
     if tool == "toolkit_catalog":
         return catalog()
     if tool == "toolkit_assess_skill_coverage":
