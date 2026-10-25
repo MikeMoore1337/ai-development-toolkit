@@ -144,7 +144,7 @@ class LayeredPreferencesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             bad = root / "bad.json"
-            bad.write_bytes(b"\\xff\\xfe")
+            bad.write_bytes(b"\xff\xfe")
             with self.assertRaises(prefs.PreferencesError):
                 prefs.read_optional(bad, "user")
             bad.write_bytes(b" " * (prefs.MAX_BYTES + 1))
