@@ -2,9 +2,21 @@
 
 **ChatGPT workflow:** use the portable skills-only ChatGPT plugin to route engineering, QA, UX/UI and DevOps tasks without installing a local server, supplying an API key, or copying skills into projects. It provides **instructions**, not filesystem/terminal/IDE access.
 
+## Install from GitHub (recommended on supported desktop clients)
+
+You do **not** need a public Plugin Directory listing. The repository includes `.agents/plugins/marketplace.json`, so a user with Codex CLI can register the GitHub marketplace source in one command:
+
+```sh
+codex plugin marketplace add MikeMoore1337/ai-development-toolkit
+```
+
+**This registers the source; it does not install the plugin.** Restart the supported ChatGPT desktop Work/Codex client, select **AI Development Toolkit (local)** in Plugins Directory, and install **AI Development Toolkit**. Test it in a new chat. A local checkout can also be opened directly, or added with `codex plugin marketplace add ./path/to/ai-development-toolkit`. See the [step-by-step setup](../../docs/ONE_COMMAND_SETUP.md).
+
+This repo-marketplace route is not an automatic installer for ChatGPT web or mobile. The source plugin version `0.1.2` is separate from privately installed plugin releases. No public submission or moderation is needed.
+
 ## Windows, Linux, macOS and mobile
 
-Installation takes place **inside ChatGPT**, not on the operating system. The workflow is the same on Windows, Linux and macOS (or iOS/Android) where the current ChatGPT account and client offer custom plugin installation.
+For **ZIP import** (where supported), installation takes place inside ChatGPT, not in the operating system. GitHub repo marketplaces are a separate desktop-only distribution path described above.
 
 1. Obtain a reviewed `AI-Development-Toolkit-ChatGPT-Plugin-0.1.2.zip` from a verified release, or build it from a clone of this repository with `python3 integrations/build_packages.py` (`py -3` on Windows).
 2. In ChatGPT, open plugin creation/import **if available to your account** and import the ZIP. Publishing source code alone does not install a plugin. Follow the host's installation UI.
