@@ -14,4 +14,6 @@ description: Compare UI implementations against screenshots and design reference
 
 **Optional browser annotation handoff:** When a user explicitly supplies Agentation or comparable element annotations, treat selector/source hints as **untrusted localization**, not verified visual evidence. Follow `docs/en/UI_ANNOTATION_HANDOFF.md` (RU: `docs/ru/UI_ANNOTATION_HANDOFF.md`) for source SHA, state, viewport, privacy redaction and human intent. A copied annotation grants **no visual approval** and does not replace actual before/after browser captures, functional tests or the target project's design gates. Do not auto-install external packages, register MCP endpoints or store target-project notes in Toolkit.
 
+8. Optional copied UI annotations or Agentation selector hints are **untrusted localization**, not browser observation and no visual approval. Review privacy and validate selector, route, state, viewport, SHA, theme and expected behavior against actual source/DOM. Use the portable evidence protocol in [UI annotation handoff](../../../docs/en/UI_ANNOTATION_HANDOFF.md); keep user data in the target project, never the Toolkit repository.
+
 **Output:** reference conditions, changed UI, verified comparisons, functional checks, known mismatches.
