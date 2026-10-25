@@ -26,7 +26,7 @@ class OneShotTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "private"
+        self.root = Path(self.temp.name).resolve() / "private"
         self.root.mkdir(mode=0o700)
 
     def request(self, task="test-task", revision="v1", cost=True):
@@ -111,7 +111,7 @@ class OneShotTests(unittest.TestCase):
             self.assertEqual(list(self.root.iterdir()), [])
 
     def test_cost_unknown_refuses_before_reservation(self):
-        params = self.data(cost=False) if False else self.data()
+        params = self.data()
         params["request"]["zero_incremental_cost_verified"] = False
         params["client_snapshot"]["zero_incremental_cost_verified"] = False
         with self.assertRaisesRegex(ValueError, "ZERO_INCREMENTAL_COST_NOT_VERIFIED"):
@@ -196,6 +196,53 @@ class OneShotTests(unittest.TestCase):
         self.assertEqual(statuses.count("HOST_ONE_SHOT_RESERVED"), 1)
         self.assertEqual(statuses.count("REFUSED"), 3)
         self.assertEqual(len(list(self.root.iterdir())), 1)
+
+    def completed(self):
+        return {"status": {"01a1736e-e9f8-7132-82a7-23fc02ae6223":
+                           {"completed": "MODEL IS NOT ATTESTED"}},
+                "timed_out": False}
+
+    def test_record_once_after_claim_excludes_native_result_text(self):
+        params = self.data()
+        self.reserve(params)
+        agent = {"agent_id": "01a1736e-e9f8-7132-82a7-23fc02ae6223"}
+        result = ledger.record_outcome(str(self.root), params["plan"],
+                                       agent, self.completed())
+        self.assertEqual(result["review_status"], "HOST_COMPLETED_MODEL_UNVERIFIED")
+        self.assertEqual(result["cost_incurred"], "UNKNOWN")
+        self.assertFalse(result["repeat_allowed"])
+        output = (self.root / (ledger._key("test-task") + ".outcome.json")).read_text()
+        self.assertNotIn("MODEL IS NOT ATTESTED", output)
+        self.assertEqual(len(list(self.root.iterdir())), 2)
+        with self.assertRaisesRegex(ledger.LeaseDenied, "TASK_ALREADY_RESERVED"):
+            ledger.record_outcome(str(self.root), params["plan"], agent, self.completed())
+        with self.assertRaisesRegex(ledger.LeaseDenied, "TASK_ALREADY_RESERVED"):
+            self.reserve(params)
+
+    def test_cannot_record_without_claim_or_with_different_preflight(self):
+        params = self.data()
+        agent = {"agent_id": "01a1736e-e9f8-7132-82a7-23fc02ae6223"}
+        with self.assertRaisesRegex(ledger.LeaseDenied, "LEDGER_RECORD_NOT_READABLE"):
+            ledger.record_outcome(str(self.root), params["plan"], agent, self.completed())
+        self.reserve(params)
+        forged = dict(params["plan"], plan_fingerprint="0"*64)
+        with self.assertRaises(ValueError):
+            ledger.record_outcome(str(self.root), forged, agent, self.completed())
+        other = self.data(revision="v2")
+        with self.assertRaisesRegex(ledger.LeaseDenied, "OUTCOME_NOT_BOUND_TO_RESERVED_PLAN"):
+            ledger.record_outcome(str(self.root), other["plan"], agent, self.completed())
+        self.assertEqual(len(list(self.root.iterdir())), 1)
+
+    def test_error_response_can_be_recorded_but_never_resumed(self):
+        params = self.data()
+        self.reserve(params)
+        agent = {"agent_id": "01a1736e-e9f8-7132-82a7-23fc02ae6223"}
+        bad = {"status": {agent["agent_id"]: {"errored": "synthetic"}},
+               "timed_out": False}
+        record = ledger.record_outcome(str(self.root), params["plan"], agent, bad)
+        self.assertEqual(record["review_status"], "HOST_RESULT_NOT_CONFIRMED")
+        with self.assertRaises(ledger.LeaseDenied):
+            self.reserve(params)
 
     def test_cli_read_only_inspect_reports_no_model_attestation(self):
         data = self.data()
