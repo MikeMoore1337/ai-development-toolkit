@@ -12,4 +12,6 @@ description: Review and improve animation purpose, timing, accessibility and per
 6. Inspect trigger/cancellation, interrupted gestures, keyboard navigation and nested scrolling.
 7. Verify measured behavior in a browser/device; do not claim frame-rate improvements without measurements.
 
+**External effects gate:** If proposing Magic UI or comparable motion patterns, use `docs/en/UI_COMPONENT_SELECTION.md` (RU: `docs/ru/UI_COMPONENT_SELECTION.md`) to compare native CSS/Web Animations against new Motion/Tailwind runtime dependencies. Require a concrete UX benefit, reduced-motion behavior, measured bundle impact for added dependencies, real browser evidence and approval of the actual composition. Reference-only upstream effects do not justify animations or authorize an unapproved redesign.
+
 **Output:** interaction purpose, minimal implementation, reduced-motion fallback, actual performance observations.

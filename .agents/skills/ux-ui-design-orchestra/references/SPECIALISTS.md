@@ -10,6 +10,8 @@ Each row is a **capability**, not a new model, service or authorization.
 | New directions or comparative visual style | `Leonxlnx/taste-skill`, `nextlevelbuilder/ui-ux-pro-max-skill` | 2 genuinely distinct, evidence-grounded directions | explicit exploration only |
 | UI code/browser validation | project's Playwright/browser + `screenshot-fidelity`, `design-system-consistency`, `qa-strategy` | actual screenshot/test route/state/viewport and limitations | whenever possible |
 
+When a concrete component proposal cites shadcn-ui/ui or magicuidesign/magicui, apply the generic selection gate in `docs/en/UI_COMPONENT_SELECTION.md` (RU: `docs/ru/UI_COMPONENT_SELECTION.md`) **before** recommending installation or changing styles. Existing project components, required license/source pins, actual keyboard/reduced-motion checks, visual approval and measured dependency cost take precedence; `PROPOSAL_ONLY` never becomes `OWNER_ACCEPTED` by inference.
+
 No global installation, automatic fetching, shell command or external API follows from these links. A URL = `REFERENCE_ONLY`; a local source actually read = `LOADED`. Check version/provenance where present. Respect each approved product's palette, typography and design system, even when these are common design patterns. Never "fix AI slop" with unauthorized reskinning.
 
 Do not convert anti-SaaS examples into a SaaS design recipe: specialists critique generic patterns only where they are observed or are plausible risks for the brief. A real SaaS application is not excluded from useful dashboard or comparison patterns; unrelated brands must never receive them by default.
