@@ -40,7 +40,14 @@ def valid_action(value: str) -> bool:
 class SupplyChainPinTests(unittest.TestCase):
     def test_all_workflows_use_only_approved_full_immutable_commit_pins(self):
         paths = sorted(WORKFLOWS.glob("*.yml"))
-        self.assertEqual(7, len(paths))
+        # Explicitly reviewed workflow inventory: a new job is a supply-chain change.
+        expected = {
+            "cisco-mcp-smoke.yml", "episodic-memory-windows.yml",
+            "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
+            "publish-integration-sources.yml", "release-archive.yml",
+            "validate.yml", "replica-public-parity.yml",
+        }
+        self.assertEqual(expected, {path.name for path in paths})
         observed = {}
         for path in paths:
             references = ACTION.findall(path.read_text(encoding="utf-8"))
