@@ -64,3 +64,38 @@ host must bind *real* callbacks for an end-to-end runtime check; that check is
 still outstanding. With `zero_incremental_cost_verified=False`, policy
 continues to deny automatic dispatch. An approved manual host trial does not
 satisfy that zero-cost gate.
+
+
+## Two-phase Codex host orchestration (2026-10-25)
+
+Observed native Codex session tools differ from the generic Python callbacks:
+`multi_agent_v1__spawn_agent({model, message, fork_context, ...})` yields
+`{"agent_id": "...", "nickname": ...}`; `multi_agent_v1__wait_agent`
+takes `{"targets":[agent_id],"timeout_ms":10000..3600000}` and returns
+`{"status":{agent_id:{"completed":"text"}},"timed_out":false}`.
+
+`scripts/codex_host_orchestration.py` exposes two **read-only** MCP tools:
+
+1. `toolkit_codex_prepare_delegation` validates per-task consent, model
+   allowlist, snapshot/revision, quota cap, cost gate, and call confirmation.
+   Returns `PREFLIGHT_ONLY_NOT_EXECUTED` plus native spawn arguments.
+2. A **trusted Codex host**, *not Toolkit MCP*, must atomically reserve exactly
+   one permitted call in protected storage before the native spawn, then invoke
+   the native wait tool with exactly one returned agent ID and no hidden retry.
+3. `toolkit_codex_review_delegation` checks supplied native spawn and wait
+   responses: canonical UUID, one matching target, no timeout, nonempty
+   completed result. Success is `HOST_COMPLETED_MODEL_UNVERIFIED` and
+   `observed_model=UNKNOWN`; otherwise the result is not confirmed.
+
+The caller-supplied snapshot, `host_claimed_one_shot_lease`, and returned
+host outputs are **not independent evidence**. Toolkit MCP holds no shared
+atomic lease and cannot authenticate or launch native tools. Preview can be
+recomputed, and its SHA256 fingerprint is not a signed capability or replay
+protection. A host must enforce durable one-shot limits and prohibit fallback.
+Unknown zero-incremental-cost evidence blocks preparation. No Codex CLI,
+paid APIs or configuration changes are required by these read-only tools.
+Test with `python -m unittest tests.test_codex_host_orchestration -v`.
+
+An end-to-end host-owned launch through MCP preflight and review **has not
+yet been performed**. No backend `observed_model` receipt was available in
+the earlier direct native spawn pilot. Issue #357 remains open.
