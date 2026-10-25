@@ -185,6 +185,11 @@
       "source_sha256": "92830c4366229d494f25d6ec132ae22293bc32bb87d667bb70a0384199fa9bff"
     },
     {
+      "source": "docs/NEUTRALITY_RELEASE_GATE.md",
+      "translation": "docs/ru/NEUTRALITY_RELEASE_GATE.md",
+      "source_sha256": "07a597bc6769f592a0a38d4b5e07470ad65deb51c65af0c288bb819e161091be"
+    },
+    {
       "source": "docs/OBSERVABILITY_SRE.md",
       "translation": "docs/ru/OBSERVABILITY_SRE.md",
       "source_sha256": "7f879c0245a712d4f262eb7cae07079e389efa083417ca05728cdeb087a7a556"
