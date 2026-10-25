@@ -10,8 +10,6 @@ class SuperpowersEvidenceContractsTests(unittest.TestCase):
         feature = (ROOT / ".agents/skills/feature-delivery/SKILL.md").read_text(encoding="utf-8")
         review = (ROOT / ".agents/skills/code-review/SKILL.md").read_text(encoding="utf-8")
         release = (ROOT / ".agents/skills/release-safety/SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("ROOT_CAUSE", feature.upper().replace(" ", "_") if "ROOT_CAUSE" in feature else
-                      "ROOT_CAUSE") if False else None
         for phrase in ("earliest failing boundary", "NOT_VERIFIED", "host-native", "project-defined"):
             self.assertIn(phrase, feature)
         for phrase in ("receiving", "before accepting", "Never invent a second reviewer"):
