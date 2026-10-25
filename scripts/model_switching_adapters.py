@@ -100,6 +100,12 @@ def dispatch(
                 and receipt.get("observed_model") == target_model):
             outcome["status"] = "EXECUTED_VERIFIED_BY_HOST"
             outcome["observed_model"] = target_model
+        elif (isinstance(receipt, dict)
+              and receipt.get("execution") == "HOST_COMPLETED_MODEL_UNKNOWN"
+              and isinstance(receipt.get("agent_id"), str)):
+            # A host-reported completed agent is not a backend-model attestation.
+            outcome["status"] = "HOST_EXECUTED_MODEL_UNVERIFIED"
+            outcome["agent_id"] = receipt["agent_id"]
         else:
             outcome["status"] = "EXECUTION_NOT_VERIFIED"
     except Exception:
