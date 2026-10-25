@@ -1,0 +1,59 @@
+name: Replica source-backed parity (pinned original, free)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/replica-public-parity.yml"
+      - "scripts/replica_public_parity.py"
+      - "tests/test_replica_public_parity.py"
+      - "integrations/replica-public-parity/**"
+      - "docs/ru/REPLICA_PUBLIC_PARITY.md"
+      - "docs/en/REPLICA_PUBLIC_PARITY.md"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/replica-public-parity.yml"
+      - "scripts/replica_public_parity.py"
+      - "tests/test_replica_public_parity.py"
+      - "integrations/replica-public-parity/**"
+      - "docs/ru/REPLICA_PUBLIC_PARITY.md"
+      - "docs/en/REPLICA_PUBLIC_PARITY.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-original-public-source-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Fetch exact MIT original into disposable directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/replica-pinned"
+          git init "$work"
+          git -C "$work" remote add origin https://github.com/Jakeschincariol/replica-skill.git
+          git -C "$work" fetch --depth 1 origin 77c9436fb3d18c3d58169efb8caf4fe906b0dc51
+          git -C "$work" checkout --detach FETCH_HEAD
+          test "$(git -C "$work" rev-parse HEAD)" = 77c9436fb3d18c3d58169efb8caf4fe906b0dc51
+          echo "REPLICA_UPSTREAM=$work" >> "$GITHUB_ENV"
+      - name: Regress pinned source and evidence gate (zero inference)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p test_replica_public_parity.py -v
+          python scripts/replica_public_parity.py --upstream "$REPLICA_UPSTREAM"
+          python scripts/replica_public_parity.py --upstream "$REPLICA_UPSTREAM" --matrix integrations/replica-public-parity/pilot.csv > "$RUNNER_TEMP/replica-source-pilot.md"
+          grep -q 'REPLICA_SOURCE=PASS' "$RUNNER_TEMP/replica-source-pilot.md"
+          grep -q 'READ_ONLY=YES' "$RUNNER_TEMP/replica-source-pilot.md"
+          echo 'UPSTREAM_EXECUTION=PASS; INPUT=PUBLIC_SOURCE_BACKED; LIVE_YFC=NOT_TESTED'
