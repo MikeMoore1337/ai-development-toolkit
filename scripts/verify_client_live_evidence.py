@@ -24,8 +24,10 @@ ROLES = {
         "HISTORICAL_OWNER_REPORTED_FROM_ISSUE_190", "OWNER_REPORTED_PASS",
         "OWNER_REPORTED_GUIDANCE_RETURNED", "0.1.10"
     ),
-    "codex-project-mcp": ("SOURCE_ONLY_NO_HOST_SESSION", "NOT_RUN", "NOT_RUN",
-                          "SOURCE_SCRIPT_NO_PACKAGE_VERSION"),
+    "codex-project-mcp": (
+        "OWNER_REPORTED_CODEX_CLI_PROJECT_MCP_20261025", "OWNER_REPORTED_PASS",
+        "OWNER_REPORTED_GUIDANCE_RETURNED", "SOURCE_SCRIPT_NO_PACKAGE_VERSION"
+    ),
     "claude-code-project-mcp": ("SOURCE_ONLY_NO_HOST_SESSION", "NOT_RUN", "NOT_RUN",
                                 "SOURCE_SCRIPT_NO_PACKAGE_VERSION"),
 }
@@ -60,7 +62,7 @@ def validate(payload: object) -> dict:
            "Zero-spend gate may not be removed")
     _check(isinstance(payload["description"], str) and payload["description"],
            "Description missing")
-    _check(payload["review_date"] == "2026-10-24", "Review date drift")
+    _check(payload["review_date"] == "2026-10-25", "Review date drift")
     _check(isinstance(payload["current_source_sha"], str) and
            SHA.fullmatch(payload["current_source_sha"]) is not None,
            "Unpinned source SHA")
@@ -102,6 +104,33 @@ def validate(payload: object) -> dict:
                    "Codex owner assertion needs precise issue evidence")
             _check(row["toolkit_version"] == "5.5.3",
                    "Old Codex observation is not Toolkit v5.5.5")
+        elif origin == "OWNER_REPORTED_CODEX_CLI_PROJECT_MCP_20261025":
+            _check(row["client"] == "Codex CLI",
+                   "Project MCP owner evidence must name Codex CLI")
+            _check(row["mode"] == "PROJECT_SCOPED_MCP",
+                   "Project MCP owner evidence must be project-scoped")
+            _check(row["client_version"] ==
+                   "Codex CLI 0.163.0; Desktop build 26.1021.31345 (not restarted)",
+                   "Project MCP client version drift")
+            _check(row["toolkit_version"] == "5.5.6",
+                   "Project MCP owner evidence must pin Toolkit 5.5.6")
+            _check(row["source_sha"] ==
+                   "71a5faaea542a4214b8fb9e0db0ae6909947a3b8",
+                   "Project MCP owner evidence source SHA drift")
+            _check(row["observation_date"] == "2026-10-25",
+                   "Project MCP owner evidence date drift")
+            _check(any("issues/343" in item for item in row["evidence"]),
+                   "Project MCP owner assertion needs precise issue evidence")
+            _check(any("toolkit_catalog" in item and
+                       "toolkit_route_task" in item and
+                       "toolkit_read_skill" in item for item in row["evidence"]),
+                   "Project MCP owner assertion needs the three observed tools")
+            _check("Desktop Project MCP NOT_VERIFIED" in row["limitations"],
+                   "Desktop Project MCP status must remain NOT_VERIFIED")
+            _check("Native activation NOT_OBSERVED" in row["limitations"],
+                   "Native activation must remain NOT_OBSERVED")
+            _check("L6 NOT_MEASURED" in row["limitations"],
+                   "L6 must remain NOT_MEASURED")
         elif origin == "SOURCE_ONLY_NO_HOST_SESSION":
             _check(row["source_sha"] == payload["current_source_sha"],
                    "Project MCP source SHA mismatch")
@@ -116,7 +145,8 @@ def validate(payload: object) -> dict:
         "scenarios": len(items),
         "current_observed": 1,
         "historical_owner_reported": 1,
-        "not_run": 2,
+        "owner_reported": 2,
+        "not_run": 1,
         "native_activation": "NOT_OBSERVED",
         "benefit": "NOT_MEASURED",
         "zero_spend": True,
