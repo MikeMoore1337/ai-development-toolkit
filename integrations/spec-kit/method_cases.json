@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "upstream": "github/spec-kit",
+  "upstream_sha": "67e0f7294e6e728ab60bf7b4590deb470448bc2d",
+  "cases": [
+    {
+      "id": "bug-repro-ru",
+      "language": "ru",
+      "kind": "bug",
+      "observation": "Сбой API воспроизведён",
+      "reproduced": true,
+      "test_executed": true,
+      "expected": "READY_TO_VERIFY"
+    },
+    {
+      "id": "bug-hypothesis-en",
+      "language": "en",
+      "kind": "bug",
+      "observation": "Suspected timeout, no repro",
+      "reproduced": false,
+      "test_executed": false,
+      "expected": "NOT_REPRODUCED"
+    },
+    {
+      "id": "bug-no-test-ru",
+      "language": "ru",
+      "kind": "bug",
+      "observation": "Ошибка воспроизведена, но тест не запущен",
+      "reproduced": true,
+      "test_executed": false,
+      "expected": "NOT_VERIFIED"
+    },
+    {
+      "id": "idea-supported-en",
+      "language": "en",
+      "kind": "idea",
+      "evidence_verified": true,
+      "owner_gate_clear": true,
+      "needed": true,
+      "expected": "GO"
+    },
+    {
+      "id": "idea-missing-evidence-ru",
+      "language": "ru",
+      "kind": "idea",
+      "evidence_verified": false,
+      "owner_gate_clear": true,
+      "needed": true,
+      "expected": "CLARIFY"
+    },
+    {
+      "id": "idea-owner-gate-en",
+      "language": "en",
+      "kind": "idea",
+      "evidence_verified": true,
+      "owner_gate_clear": false,
+      "needed": true,
+      "expected": "CLARIFY"
+    },
+    {
+      "id": "idea-unnecessary-ru",
+      "language": "ru",
+      "kind": "idea",
+      "evidence_verified": true,
+      "owner_gate_clear": true,
+      "needed": false,
+      "expected": "STOP"
+    },
+    {
+      "id": "simple-quick-en",
+      "language": "en",
+      "kind": "quick",
+      "reversible": true,
+      "expected": "QUICK_EXISTING"
+    }
+  ]
+}
