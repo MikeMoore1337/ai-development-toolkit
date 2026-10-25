@@ -33,7 +33,8 @@ def validate(payload: object) -> list[str]:
     candidate = payload["candidate"]
     if not isinstance(candidate, str) or not candidate.strip() or len(candidate) > 128:
         errors.append("INVALID_CANDIDATE")
-    if payload["source"] not in SOURCES or payload["decision"] not in DECISIONS:
+    if (not isinstance(payload["source"], str) or payload["source"] not in SOURCES
+            or not isinstance(payload["decision"], str) or payload["decision"] not in DECISIONS):
         errors.append("INVALID_DECISION_OR_SOURCE")
     if not isinstance(payload["observed_problem"], str) or not payload["observed_problem"].strip():
         errors.append("MISSING_PROBLEM")
