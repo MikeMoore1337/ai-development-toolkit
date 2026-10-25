@@ -65,6 +65,8 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 ## Local MCP for coding agents
 
+**Fast start:** [Personal MCP - one-paste setup on Windows/Linux/macOS, plus ChatGPT/Codex local plugin marketplace](docs/ONE_COMMAND_SETUP.md). This reuses existing installers; public ChatGPT directory publication is a separate review.
+
 [Install Toolkit MCP on Windows, Linux or macOS](docs/MCP_INSTALL.md) - project-scoped Codex / Claude Code integration, read-only skill discovery and explicit config approval. ChatGPT plugin installation is separate.
 
 ## Platform installation
