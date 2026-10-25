@@ -34,6 +34,10 @@ This policy complements `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING
 
 See [evidence, worktrees and session diagnosis](SUPERPOWERS_EVIDENCE.md). Existing `feature-delivery`, `code-review` and `release-safety` skills reference the methodology without a new execution controller. Host-native isolation, target-repository leases, actual test evidence and release authorization prevail. Session token/retry observations must not become automatic telemetry collection.
 
+## Optional local UI annotations (#404)
+
+For a reusable manual UI observation contract, see [visual annotation handoff](UI_ANNOTATION_HANDOFF.md). Agentation is an **optional** desktop development browser tool licensed **PolyForm Shield 1.0.0**, not MIT, and never installed by Toolkit. Copied selectors are untrusted localization hints, not verified defects or design approval. Do not automatically transmit sensitive DOM/user data, and retain screenshots/feedback only in the target user's project.
+
 ## Applying methods across project types
 
 - **User-facing application:** improve visual QA, accessibility, animation and performance while respecting its established design system and approval workflow.
