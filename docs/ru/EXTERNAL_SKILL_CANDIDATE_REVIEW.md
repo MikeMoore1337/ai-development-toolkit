@@ -68,3 +68,51 @@ commit SHA и хеши из предоставленного манифеста 
 ```bash
 python3.12 -m unittest tests.test_external_skill_preview -v
 ```
+
+
+## Необязательная статическая проверка NVIDIA SkillSpector (#358)
+
+Имеющиеся офлайн-проверка Security Gate и правила владения Skill Manager
+сохраняются. После явного разрешения на проверку заранее полученного кандидата
+можно запустить **второй** анализатор той же командой:
+
+```bash
+python scripts/skill_candidate_review.py --query "новый навык" \
+  --review-external --scan-with-skillspector \
+  --candidate-dir /isolated/candidate \
+  --manifest /isolated/review-manifest.json \
+  --allow-source https://github.com/approved-owner/approved-repo
+```
+
+Нужен `uvx` (uv). NVIDIA SkillSpector фиксируется на commit
+`d162d9b343e559be13df8ebba093df3bc9d58c90`.
+Запуск строго `--no-llm --format json --fail-on-incomplete`. Отчёт читается
+из stdout: файловый `--output` в новых версиях upstream не переносим на Windows.
+Окружение процесса ограничено списком разрешённых переменных; API-токены,
+настройки LLM, proxy credentials и авторизованные package index URL
+не передаются. Платные API и Codex CLI не используются.
+
+**Сеть:** при явном запуске `uvx` может скачать pinned-версию инструмента
+и его зависимости, а проверка зависимостей SkillSpector может обращаться к
+OSV.dev с названиями/версиями пакетов. Это **не полностью офлайн-операция**.
+Без `--scan-with-skillspector` прежний режим остаётся локальным и не запускает
+внешний инструмент. Нельзя передавать реальные секреты или production-файлы.
+
+В поле `skillspector.status` выводится `NOT_RUN`, `PASS`,
+`REVIEW_REQUIRED` или `BLOCKED`. Отсутствие scanner, ошибки/таймаут,
+неполный JSON-отчёт и неожиданные LLM-вызовы дают `BLOCKED`.
+Даже после `PASS` внешнее решение остаётся `MANUAL_REVIEW_REQUIRED`,
+**не** разрешает импорт, выполнение или `--apply`. При `BLOCKED`
+результат становится `REJECT`.
+
+Статический анализ не доказывает безопасность, особенно для русскоязычных и
+смешанных инструкций. Важные команды, ссылки, права, исполняемые скрипты
+нужно изучать вручную. `external-preview` по-прежнему только сравнивает
+файлы и не считается проверкой SkillSpector или разрешением импорта.
+
+```bash
+python -m unittest tests.test_skillspector_adapter -v
+```
+
+Синтетические тесты проверяют защитные контракты, но сами по себе не
+подтверждают реальный запуск upstream-сканера на пользовательской машине.
