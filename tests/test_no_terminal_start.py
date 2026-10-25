@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "fixtures/no_terminal_acceptance.json"
 EN = ROOT / "docs/BEGINNER_START.md"
 RU = ROOT / "docs/ru/BEGINNER_START.md"
+EN_DETAILS = ROOT / "docs/BEGINNER_CLIENT_DETAILS.md"
+RU_DETAILS = ROOT / "docs/ru/BEGINNER_CLIENT_DETAILS.md"
 
 CLIENTS = {
     "codex": (".agents/skills", "OPTIONAL"),
@@ -145,10 +147,14 @@ class NoTerminalOnboardingTests(unittest.TestCase):
         self.assertTrue(any("fictional executed" in x for x in validate_contract(case)))
 
     def test_four_client_sections_and_six_required_fields(self):
-        for lang, path in (("en", EN), ("ru", RU)):
+        for lang, path, details in (
+            ("en", EN, EN_DETAILS), ("ru", RU, RU_DETAILS)
+        ):
             text = path.read_text(encoding="utf-8")
+            advanced = details.read_text(encoding="utf-8")
+            self.assertIn(f"({details.name})", text)
             for client in self.fixture["clients"]:
-                self.assertRegex(text, rf"(?m)^### {re.escape(client['heading'])}$")
+                self.assertRegex(advanced, rf"(?m)^### {re.escape(client['heading'])}$")
             for row in self.fixture["scenarios"]:
                 self.assertIn(f"### {row['id']}. {row[lang]}", text)
             parsed = sections(text)
@@ -201,8 +207,11 @@ class NoTerminalOnboardingTests(unittest.TestCase):
         self.assertIn("(docs/ru/GETTING_STARTED.md)", ru)  # technical route retained
 
     def test_explicit_sources_safety_and_evidence_levels(self):
-        for page in (EN, RU):
-            contents = page.read_text(encoding="utf-8")
+        for page, details in ((EN, EN_DETAILS), (RU, RU_DETAILS)):
+            # Detailed client evidence moved to a reference to keep first use short.
+            # The source dates and official URLs must remain present, not be dropped.
+            self.assertIn(f"({details.name})", page.read_text(encoding="utf-8"))
+            contents = page.read_text(encoding="utf-8") + "\n" + details.read_text(encoding="utf-8")
             self.assertIn("2026-10-20" if page == EN else "20.10.2026", contents)
             for host in ("learn.chatgpt.com", "help.openai.com", "code.claude.com",
                          "support.claude.com"):
