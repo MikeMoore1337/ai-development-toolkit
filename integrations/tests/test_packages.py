@@ -18,11 +18,11 @@ class SourcePackageTests(unittest.TestCase):
         folder = BASE / 'chatgpt-plugin/ai-development-toolkit'
         data = json.loads((folder / 'plugin.json').read_text(encoding='utf-8'))
         self.assertEqual(data['name'], folder.name)
-        self.assertEqual(data['version'], '0.1.2')
+        self.assertEqual(data['version'], '0.1.3')
         self.assertLessEqual(len(data['extensions']['com.openai']['interface']['shortDescription']), 30)
         self.assertNotIn('mcpServers', data)
         self.assertNotIn('apps', data.get('extensions', {}).get('com.openai', {}))
-        for skill in ('toolkit-prompt-refinement', 'toolkit-seo-audit'):
+        for skill in ('toolkit-prompt-refinement', 'toolkit-seo-audit', 'toolkit-evidence-curator', 'toolkit-task-observer-opt-in'):
             self.assertTrue((folder / 'skills' / skill / 'SKILL.md').is_file())
             self.assertTrue((folder / 'skills' / skill / 'references').is_dir())
         router = (folder / 'skills/toolkit-task-router/SKILL.md').read_text(encoding='utf-8')
