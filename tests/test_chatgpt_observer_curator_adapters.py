@@ -53,7 +53,7 @@ class ChatGPTObservationAdaptersTest(unittest.TestCase):
         self.assertIn("MIT", self.curator_ref)
         self.assertIn("Eoghan Henn", self.observer_ref)
         self.assertIn("CC BY 4.0", self.observer_ref)
-        self.assertIn("Changes", self.observer_ref)
+        self.assertIn("Adaptation", self.observer_ref)
 
     def test_no_original_transcript_logging_or_deploy(self) -> None:
         self.assertIn("never", self.curator.lower())
