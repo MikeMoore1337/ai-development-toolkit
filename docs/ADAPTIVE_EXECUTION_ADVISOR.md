@@ -62,3 +62,7 @@ Never interpret `zero_incremental_cost_verified=true` as automatically trustwort
 Run `python -m unittest tests.test_adaptive_execution_advisor` or the existing test discovery. The tests cover one-model clients, unknown inventories, unverified automatic execution, stale and cross-task consent, bounds, invalid schemas and both locales. These are **offline** tests, not live Codex/Claude/DeepSeek model activation, quota measurement or proof of improved outcomes.
 
 Client-specific invocation, real model inventory, quota information, cancellation and runtime evidence belong to **Issue #357**. Until its implementation is verified, use this advisor for explanations and policy decisions only.
+
+### MCP integration
+
+The project-scoped MCP exposes read-only `toolkit_advise_execution` (`request`) and `toolkit_check_execution_consent` (`request`, `consent`). These operations only return JSON advice or validation; they never switch or invoke models. Existing profile and skill routing remain separate and unchanged.
