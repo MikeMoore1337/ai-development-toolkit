@@ -368,6 +368,11 @@
       "source_sha256": "b74583863d3d3b3858abb59df6ec7e90093e2be8451642f68e3278f4ca3b8994"
     },
     {
+      "source": "docs/USER_SETTINGS.md",
+      "translation": "docs/ru/USER_SETTINGS.md",
+      "source_sha256": "cca5f820416087c190794e7ed4cea56633ced6d6ff32916540f38a7cc1fca948"
+    },
+    {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
       "source_sha256": "3943504444bb7eced2b7bb90a054274426e22ddd9e15c3df0d680b509a41768d"
