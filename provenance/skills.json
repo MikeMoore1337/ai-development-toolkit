@@ -8263,9 +8263,29 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-10-22",
+      "last_reviewed": "2026-10-25",
       "distribution": "included",
-      "notes": "Original offline opt-in security review bridge for #199/#200. No remote fetching, execution or import; source and licensing remain unverified until independent manual review."
+      "notes": "Original offline-by-default opt-in candidate review for #199/#200; #358 may run a pinned external static scanner only after explicit consent and local allowlist/digest gate; no external Skill install."
+    },
+    {
+      "id": "security-358-scripts-skillspector-adapter-py",
+      "path": "scripts/skillspector_adapter.py",
+      "name": "skillspector_adapter.py",
+      "kind": "script",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
+      "last_reviewed": "2026-10-25",
+      "distribution": "included",
+      "notes": "Original optional stdlib wrapper around separately installed SHA-pinned NVIDIA SkillSpector CLI; upstream source not redistributed, no provider keys or automatic installs."
     },
     {
       "id": "script-scripts-skill-eval-py",
@@ -10166,6 +10186,26 @@
       "last_reviewed": "2026-10-22",
       "distribution": "included",
       "notes": "Original offline opt-in security review bridge for #199/#200. No remote fetching, execution or import; source and licensing remain unverified until independent manual review."
+    },
+    {
+      "id": "security-358-tests-test-skillspector-adapter-py",
+      "path": "tests/test_skillspector_adapter.py",
+      "name": "test_skillspector_adapter.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
+      "last_reviewed": "2026-10-25",
+      "distribution": "included",
+      "notes": "Original synthetic static scan, bilingual, consent, malformed-output and fail-closed test suite for #358."
     },
     {
       "id": "test-tests-test-skill-eval-py",
