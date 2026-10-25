@@ -214,6 +214,8 @@ class NoTerminalOnboardingTests(unittest.TestCase):
             # Detailed client evidence moved to a reference to keep first use short.
             # The source dates and official URLs must remain present, not be dropped.
             self.assertIn(f"({details.name})", page.read_text(encoding="utf-8"))
+            self.assertIn("2026-10-20" if page == EN else "20.10.2026",
+                          details.read_text(encoding="utf-8"))
             contents = page.read_text(encoding="utf-8") + "\n" + details.read_text(encoding="utf-8")
             self.assertIn("2026-10-20" if page == EN else "20.10.2026", contents)
             for host in ("learn.chatgpt.com", "help.openai.com", "code.claude.com",
