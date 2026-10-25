@@ -45,7 +45,7 @@ These are examples for a disposable Linux sandbox. Windows environment configura
 
 ## Executed evidence (25 October 2026)
 
-- Hermes BRC, Linux/Docker isolated sandbox; Node `24.22.0`, upstream exact SHA as above.
+- Approved BRC Linux/Docker isolated sandbox; Node `24.22.0`, upstream exact SHA as above.
 - Original Episodic Memory offline search indexed one **synthetic** Codex-shaped JSONL session with two exchanges: English/Russian queries retrieved intended exchanges as top matches (64%, 73%, 71%). Local embeddings and SQLite; summaries disabled; no paid calls.
 - Confirmed original MCP `read` exposed a synthetic explicitly excluded file. Reproduced and fixed in isolated source.
 - Patched TypeScript `tsc --noEmit`: PASS; MCP bundler: PASS; `vitest test/mcp-server.test.ts test/verify.test.ts --maxWorkers=1`: **13/13 PASS**.
@@ -55,6 +55,6 @@ These are examples for a disposable Linux sandbox. Windows environment configura
 
 ## Promotion / removal
 
-Do not publish the upstream plugin as bundled Toolkit content, expose a remote endpoint, grant vault access, or modify Hermes/YFC production. The only change in Toolkit is this optional patch and its documentation. For rollback, discard the isolated patched upstream worktree and its dedicated synthetic-only archive, after confirming it is not the canonical vault. No production changes to revert.
+Do not publish the upstream plugin as bundled Toolkit content, expose a remote endpoint, grant vault access, or modify production services. The only change in Toolkit is this optional patch and its documentation. For rollback, discard the isolated patched upstream worktree and its dedicated synthetic-only archive, after confirming it is not the canonical vault. No production changes to revert.
 
 **Decision:** offline functional security patch `PASS`; real user-data activation `NO_GO` pending an allowed, verifiable local client pathway, native Windows proof, and explicit data-scope review.
