@@ -60,7 +60,7 @@ def validate(payload: object) -> dict:
            "Zero-spend gate may not be removed")
     _check(isinstance(payload["description"], str) and payload["description"],
            "Description missing")
-    _check(payload["review_date"] == "2026-10-24", "Review date drift")
+    _check(payload["review_date"] == "2026-10-25", "Review date drift")
     _check(isinstance(payload["current_source_sha"], str) and
            SHA.fullmatch(payload["current_source_sha"]) is not None,
            "Unpinned source SHA")
