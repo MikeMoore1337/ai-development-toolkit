@@ -69,6 +69,11 @@
       "source_sha256": "68f2ca6bd4508f133a2ad8b955b9e6f868ee92f8eacd4ef566854e26bd3f93a5"
     },
     {
+      "source": "docs/CLIENT_POLICY_ROUTES.md",
+      "translation": "docs/ru/CLIENT_POLICY_ROUTES.md",
+      "source_sha256": "a7f122c7538d55c8a5701ddba82852cb3fbe96a69902561b0785a79ae94ab6f0"
+    },
+    {
       "source": "docs/CURATED_SKILL_PACKS.md",
       "translation": "docs/ru/CURATED_SKILL_PACKS.md",
       "source_sha256": "fd1333fa85c1610e680b13c05ea6f87c7428ffe1ecea0e77e48ea928a1f3c6b4"
