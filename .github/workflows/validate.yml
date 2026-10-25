@@ -51,7 +51,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Dependencies
         run: python -m pip install -r requirements-dev.txt
-      - name: Reject references to owner projects in public Markdown (offline)
+      - name: Reject private project references in tracked source files (offline)
         run: python scripts/validate_public_docs_neutrality.py
       - name: Ruff Python correctness checks (pinned, Ubuntu only)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
@@ -196,17 +196,6 @@ jobs:
       - name: Offline hidden-oracle discrimination (no agent, no API)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: python scripts/agent_eval_offline_smoke.py --strict-runtimes
-      - name: Checkout pinned Hermes contract (source only)
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          repository: MikeMoore1337/hermes
-          ref: db7ed22d4faef39af3d5aafa0cc6f20b91b23a3a
-          path: .hermes-compat
-          persist-credentials: false
-      - name: Offline Hermes/Toolkit compatibility (no agent, no API)
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-        run: python scripts/agent_eval_hermes_contract.py --hermes-root .hermes-compat
 
 
   # The archive is an expiring CI source candidate, NEVER a published Release.

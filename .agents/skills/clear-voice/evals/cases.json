@@ -759,7 +759,7 @@
     "must_avoid": []
   },
   {
-    "id": "ss-yfc-empty-hype",
+    "id": "ss-webapp-empty-hype",
     "profile": "product-ui",
     "mode": "edit",
     "input": "Не просто тренировка, а революция! План на 3 недели готов, но результат не гарантирован.",
@@ -772,7 +772,7 @@
     ]
   },
   {
-    "id": "ss-yfc-useful-short-ui",
+    "id": "ss-webapp-useful-short-ui",
     "profile": "product-ui",
     "mode": "unchanged",
     "input": "Отдых 2 минуты. Добавить 30 секунд?",
@@ -805,7 +805,7 @@
     "must_avoid": []
   },
   {
-    "id": "ss-hermes-no-causality",
+    "id": "ss-research-no-causality",
     "profile": "research-digest",
     "mode": "unchanged",
     "input": "В исследовании участвовали 24 человека; причинная связь не установлена.",
@@ -816,7 +816,7 @@
     "must_avoid": []
   },
   {
-    "id": "ss-hermes-claim-correction",
+    "id": "ss-research-claim-correction",
     "profile": "research-digest",
     "mode": "edit",
     "input": "Исследование доказывает улучшение на 18%. Авторы сообщили лишь корреляцию.",

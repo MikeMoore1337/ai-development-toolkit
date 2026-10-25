@@ -48,9 +48,7 @@
     },
     {
       "id": "security-III",
-      "project": "MikeMoore1337/hermes",
-      "issue": 585,
-      "pr": 588,
+      "project": "External integration (historical acceptance; source links retained in issue record)",
       "merge_sha": "8148fcf2d06c14bf22254856e2bb3e30c206344b",
       "tested_head_sha": "19396bea2fd3217df870625849b27c20c5a6e734",
       "pr_ci": [
@@ -70,9 +68,7 @@
     },
     {
       "id": "security-IVa",
-      "project": "MikeMoore1337/your-fitness-coach",
-      "issue": 1211,
-      "pr": 1215,
+      "project": "External integration (historical acceptance; source links retained in issue record)",
       "merge_sha": "cf34d37fefb064dbf0bdf8d51a46abfc23fbfbd7",
       "tested_head_sha": "637433314b36674f2f77d7c218b77f16f43b3fe2",
       "pr_ci": [

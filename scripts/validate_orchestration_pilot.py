@@ -9,18 +9,15 @@ from pathlib import Path
 from typing import Any
 
 REPO_CASES = {
-    "YFC": "MikeMoore1337/your-fitness-coach",
-    "Hermes": "MikeMoore1337/hermes",
-    "SecondBrain": "MikeMoore1337/second-brain",
+    "WebApp": "example/web-application",
+    "AgentService": "example/agent-service",
+    "PrivateData": "example/private-data",
 }
-# Pin complete AC lists to the issue contracts, not just arm-to-arm equality.
-# YFC #1157: https://github.com/MikeMoore1337/your-fitness-coach/issues/1157
-# Hermes #453: https://github.com/MikeMoore1337/hermes/issues/453
-# Second Brain #412: https://github.com/MikeMoore1337/second-brain/issues/412
+# Frozen synthetic acceptance criteria; no private repositories or live execution.
 REQUIRED_ACCEPTANCE_IDS = {
-    "YFC": ("YFC-A1", "YFC-A2", "YFC-A3", "YFC-A4"),
-    "Hermes": ("H-A1", "H-A2", "H-A3", "H-A4", "H-A5"),
-    "SecondBrain": ("SB-A1", "SB-A2", "SB-A3", "SB-A4", "SB-A5"),
+    "WebApp": ("WEB-A1", "WEB-A2", "WEB-A3", "WEB-A4"),
+    "AgentService": ("AGENT-A1", "AGENT-A2", "AGENT-A3", "AGENT-A4", "AGENT-A5"),
+    "PrivateData": ("DATA-A1", "DATA-A2", "DATA-A3", "DATA-A4", "DATA-A5"),
 }
 HEX40 = re.compile(r"[a-f0-9]{40}\Z")
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}\Z")

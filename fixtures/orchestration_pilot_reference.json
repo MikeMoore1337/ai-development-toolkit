@@ -12,24 +12,24 @@
   },
   "cases": [
     {
-      "id": "YFC",
-      "repository": "MikeMoore1337/your-fitness-coach",
-      "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
-      "scope": "Read-only review of workout-set completion persistence and Web/TMA-to-API contracts; no private user data",
+      "id": "WebApp",
+      "repository": "example/web-application",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "scope": "Synthetic web application: UI/API persistence and replay.",
       "acceptance_ids": [
-        "YFC-A1",
-        "YFC-A2",
-        "YFC-A3",
-        "YFC-A4"
+        "WEB-A1",
+        "WEB-A2",
+        "WEB-A3",
+        "WEB-A4"
       ],
       "baseline": {
         "status": "NOT_RUN",
-        "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "acceptance_ids": [
-          "YFC-A1",
-          "YFC-A2",
-          "YFC-A3",
-          "YFC-A4"
+          "WEB-A1",
+          "WEB-A2",
+          "WEB-A3",
+          "WEB-A4"
         ],
         "client": null,
         "model": null,
@@ -41,12 +41,12 @@
       },
       "orchestra": {
         "status": "NOT_RUN",
-        "revision": "efbf14b453bae3d3c2ba32b2cf04784c47fd8968",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "acceptance_ids": [
-          "YFC-A1",
-          "YFC-A2",
-          "YFC-A3",
-          "YFC-A4"
+          "WEB-A1",
+          "WEB-A2",
+          "WEB-A3",
+          "WEB-A4"
         ],
         "client": null,
         "model": null,
@@ -58,26 +58,26 @@
       }
     },
     {
-      "id": "Hermes",
-      "repository": "MikeMoore1337/hermes",
-      "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
-      "scope": "Read-only review of Ops Watch evidence-to-alert contracts; no resident service activation",
+      "id": "AgentService",
+      "repository": "example/agent-service",
+      "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "scope": "Synthetic event service: evidence validation, retries and notification decisions.",
       "acceptance_ids": [
-        "H-A1",
-        "H-A2",
-        "H-A3",
-        "H-A4",
-        "H-A5"
+        "AGENT-A1",
+        "AGENT-A2",
+        "AGENT-A3",
+        "AGENT-A4",
+        "AGENT-A5"
       ],
       "baseline": {
         "status": "NOT_RUN",
-        "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "acceptance_ids": [
-          "H-A1",
-          "H-A2",
-          "H-A3",
-          "H-A4",
-          "H-A5"
+          "AGENT-A1",
+          "AGENT-A2",
+          "AGENT-A3",
+          "AGENT-A4",
+          "AGENT-A5"
         ],
         "client": null,
         "model": null,
@@ -89,13 +89,13 @@
       },
       "orchestra": {
         "status": "NOT_RUN",
-        "revision": "46ba2ee26cb89e87c3c7580e2579db8e75a7f151",
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "acceptance_ids": [
-          "H-A1",
-          "H-A2",
-          "H-A3",
-          "H-A4",
-          "H-A5"
+          "AGENT-A1",
+          "AGENT-A2",
+          "AGENT-A3",
+          "AGENT-A4",
+          "AGENT-A5"
         ],
         "client": null,
         "model": null,
@@ -107,26 +107,26 @@
       }
     },
     {
-      "id": "SecondBrain",
-      "repository": "MikeMoore1337/second-brain",
-      "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
-      "scope": "Read-only review of Stage 19 confirmation and Stage 20 foreground boundaries; no vault read/write",
+      "id": "PrivateData",
+      "repository": "example/private-data",
+      "revision": "cccccccccccccccccccccccccccccccccccccccc",
+      "scope": "Synthetic private-data workflow: confirmation, authorization and reconciliation.",
       "acceptance_ids": [
-        "SB-A1",
-        "SB-A2",
-        "SB-A3",
-        "SB-A4",
-        "SB-A5"
+        "DATA-A1",
+        "DATA-A2",
+        "DATA-A3",
+        "DATA-A4",
+        "DATA-A5"
       ],
       "baseline": {
         "status": "NOT_RUN",
-        "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
+        "revision": "cccccccccccccccccccccccccccccccccccccccc",
         "acceptance_ids": [
-          "SB-A1",
-          "SB-A2",
-          "SB-A3",
-          "SB-A4",
-          "SB-A5"
+          "DATA-A1",
+          "DATA-A2",
+          "DATA-A3",
+          "DATA-A4",
+          "DATA-A5"
         ],
         "client": null,
         "model": null,
@@ -138,13 +138,13 @@
       },
       "orchestra": {
         "status": "NOT_RUN",
-        "revision": "e1728a3fa7faaacb3bcb165f13ce8bbb9b78e384",
+        "revision": "cccccccccccccccccccccccccccccccccccccccc",
         "acceptance_ids": [
-          "SB-A1",
-          "SB-A2",
-          "SB-A3",
-          "SB-A4",
-          "SB-A5"
+          "DATA-A1",
+          "DATA-A2",
+          "DATA-A3",
+          "DATA-A4",
+          "DATA-A5"
         ],
         "client": null,
         "model": null,

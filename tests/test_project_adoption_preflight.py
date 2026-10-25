@@ -89,7 +89,7 @@ class ProjectAdoptionTests(unittest.TestCase):
     def test_other_client_layout_is_not_assumed(self):
         (self.target / "CLAUDE.md").write_text("do not change", encoding="utf-8")
         before = snapshot(self.target)
-        result = self.report(layout="claude", task="qa", archetype="hermes")
+        result = self.report(layout="claude", task="qa", archetype="agent-service")
         self.assertEqual(before, snapshot(self.target))
         self.assertEqual("claude", result["client_layout"])
         self.assertTrue(any("CLAUDE.md" in s for s in result["warnings"]))
@@ -118,11 +118,11 @@ class ProjectAdoptionTests(unittest.TestCase):
         stdout, stderr = io.StringIO(), io.StringIO()
         with redirect_stdout(stdout), redirect_stderr(stderr):
             code = adoption.main(["--target", str(self.target), "--task", "backend",
-                                  "--archetype", "second-brain"])
+                                  "--archetype", "private-data"])
         self.assertEqual(0, code, stderr.getvalue())
         self.assertEqual(before, snapshot(self.target))
         self.assertNotIn(secret, stdout.getvalue() + stderr.getvalue())
-        self.assertEqual("second-brain", json.loads(stdout.getvalue())["archetype"])
+        self.assertEqual("private-data", json.loads(stdout.getvalue())["archetype"])
         self.assertFalse((self.target / ".adt").exists())
 
     def test_linked_project_root_is_rejected_before_inspection(self):
