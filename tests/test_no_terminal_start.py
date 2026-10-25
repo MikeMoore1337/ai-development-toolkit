@@ -153,6 +153,9 @@ class NoTerminalOnboardingTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             advanced = details.read_text(encoding="utf-8")
             self.assertIn(f"({details.name})", text)
+            # First-use pages should not replicate advanced client instructions.
+            self.assertNotIn("### OpenAI Codex", text)
+            self.assertNotIn("### Claude Code", text)
             for client in self.fixture["clients"]:
                 self.assertRegex(advanced, rf"(?m)^### {re.escape(client['heading'])}$")
             for row in self.fixture["scenarios"]:
