@@ -24,9 +24,14 @@
       "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
     },
     {
+      "source": "docs/BEGINNER_CLIENT_DETAILS.md",
+      "translation": "docs/ru/BEGINNER_CLIENT_DETAILS.md",
+      "source_sha256": "b450a10a49bcb5606592777fc923d3d56e8bf591312a156337406d050edc7930"
+    },
+    {
       "source": "docs/BEGINNER_START.md",
       "translation": "docs/ru/BEGINNER_START.md",
-      "source_sha256": "eb9b93e8d18525ad7ebf557a331a1f7c263e201f033e9de7ff448938826294ce"
+      "source_sha256": "b83a66574b16098969daa34764f0dd0dc6daed3e14b627cb38c3c396b9a662b7"
     },
     {
       "source": "docs/BEGINNER_WORKFLOW.md",
@@ -94,6 +99,11 @@
       "source_sha256": "ac65101ebc32be4718f453ea6e7a548fc70ba8a5aba739d307bc4be2a607281d"
     },
     {
+      "source": "docs/EXISTING_PROJECT.md",
+      "translation": "docs/ru/EXISTING_PROJECT.md",
+      "source_sha256": "9050c8061882cd8f23095716c4003e2a0baaf5f8cd88dfe9ede41db0432bfe09"
+    },
+    {
       "source": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "translation": "docs/ru/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "source_sha256": "e5401845d00760da7118bb6067df9851c731e5922b94a9c561cafe81ac7863ae"
@@ -114,11 +124,6 @@
       "source_sha256": "fc49a959b924886728a2474257c1b74f26f76663ef847c5499d542bf7af68a34"
     },
     {
-      "source": "docs/INSTALLATION.md",
-      "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "e231a2d4d00926435cef5032de926bbd6d35cf04633bfb022ab09470f63e6a2f"
-    },
-    {
       "source": "docs/INSTALL_LINUX.md",
       "translation": "docs/ru/INSTALL_LINUX.md",
       "source_sha256": "347b19bd01ed57817030c1be753fabf2f2f413fe7c2fe62ef9095e6e71a8e650"
@@ -134,15 +139,20 @@
       "source_sha256": "3acf1e6563706c6b602f35f6612fd94ce0325ae099e6b4d33d6b42130041d676"
     },
     {
-      "source": "docs/INTEGRATIONS.md",
-      "translation": "docs/ru/INTEGRATIONS.md",
-      "source_sha256": "de545ba24c5402487776444aae15d92a912676f4976b898c92c9c2a93cae8c73"
+      "source": "docs/INSTALLATION.md",
+      "translation": "docs/ru/INSTALLATION.md",
+      "source_sha256": "e231a2d4d00926435cef5032de926bbd6d35cf04633bfb022ab09470f63e6a2f"
     },
     {
       "source": "docs/INTEGRATION_MATRIX.md",
       "translation": "docs/en/INTEGRATION_MATRIX.md",
       "source_language": "ru",
       "source_sha256": "1ba2295117f3a019b1d213c0febc812035fb09d54d078e0725d9e81c0514355d"
+    },
+    {
+      "source": "docs/INTEGRATIONS.md",
+      "translation": "docs/ru/INTEGRATIONS.md",
+      "source_sha256": "de545ba24c5402487776444aae15d92a912676f4976b898c92c9c2a93cae8c73"
     },
     {
       "source": "docs/LANGUAGE_POLICY.md",
@@ -266,14 +276,14 @@
       "source_sha256": "2f7d4b3525b2e96754e2f7be183ea0f5ae903bcd9ae724f2db0406c596b9665c"
     },
     {
-      "source": "docs/RELEASE_AUDIT_V5.md",
-      "translation": "docs/ru/RELEASE_AUDIT_V5.md",
-      "source_sha256": "938439e219590c45ee10a5ee4392659c5fc67a20224ef12be1afbceaa6cf1cc8"
-    },
-    {
       "source": "docs/RELEASE_AUDIT_V5_2.md",
       "translation": "docs/ru/RELEASE_AUDIT_V5_2.md",
       "source_sha256": "897d035ed0551b78aa6a4e64fe55c3897407360210b930a75cb8c6f11ca0adce"
+    },
+    {
+      "source": "docs/RELEASE_AUDIT_V5.md",
+      "translation": "docs/ru/RELEASE_AUDIT_V5.md",
+      "source_sha256": "938439e219590c45ee10a5ee4392659c5fc67a20224ef12be1afbceaa6cf1cc8"
     },
     {
       "source": "docs/RELEASE_PROCESS.md",
@@ -296,16 +306,6 @@
       "source_sha256": "e3f03dad3537cff829a664e51dfde16a30ead8cf77b305c9e3f7becaef3b4416"
     },
     {
-      "source": "docs/SKILLS_CATALOG.md",
-      "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "2844fcf5ab8ff385c215ef3450a647f4ba49a23cf99a11276b63a964688586a9"
-    },
-    {
-      "source": "docs/SKILLS_QUALITY_AUDIT.md",
-      "translation": "docs/ru/SKILLS_QUALITY_AUDIT.md",
-      "source_sha256": "0fcfe55152540397698ccf295e1d53808e620220152d78c72cd4fd754e8f10f9"
-    },
-    {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
       "source_sha256": "c2ae49622d3c6bd7ac9e86869e67299c81b0db6e7f521c3a07257aee6f3542b0"
@@ -316,19 +316,29 @@
       "source_sha256": "303086e57ea5ea91d6b65e347306d7854c80c89d5520a3c77c5ff89dfc474186"
     },
     {
-      "source": "docs/SKILL_QUALITY_V2.md",
-      "translation": "docs/ru/SKILL_QUALITY_V2.md",
-      "source_sha256": "2697c69905f76e54515a2b386809bf02fe7f56b8bb20c1646c2bfc6ca7873dd6"
-    },
-    {
       "source": "docs/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
       "translation": "docs/ru/SKILL_QUALITY_V2_ANTI_PATTERNS.md",
       "source_sha256": "b643946fb2e35485765da8f2d365ddf33b6ec170f91fa374711a1a7584fe1a8f"
     },
     {
+      "source": "docs/SKILL_QUALITY_V2.md",
+      "translation": "docs/ru/SKILL_QUALITY_V2.md",
+      "source_sha256": "2697c69905f76e54515a2b386809bf02fe7f56b8bb20c1646c2bfc6ca7873dd6"
+    },
+    {
       "source": "docs/SKILL_ROUTING_EVALS.md",
       "translation": "docs/ru/SKILL_ROUTING_EVALS.md",
       "source_sha256": "e8a75474d4b27f35d8cfe2a21ceaf7f55fa9e868ebdd3339d1f9a4f2c3012cdc"
+    },
+    {
+      "source": "docs/SKILLS_CATALOG.md",
+      "translation": "docs/ru/SKILLS_CATALOG.md",
+      "source_sha256": "2844fcf5ab8ff385c215ef3450a647f4ba49a23cf99a11276b63a964688586a9"
+    },
+    {
+      "source": "docs/SKILLS_QUALITY_AUDIT.md",
+      "translation": "docs/ru/SKILLS_QUALITY_AUDIT.md",
+      "source_sha256": "0fcfe55152540397698ccf295e1d53808e620220152d78c72cd4fd754e8f10f9"
     },
     {
       "source": "docs/SOURCE_EVALUATION.md",
