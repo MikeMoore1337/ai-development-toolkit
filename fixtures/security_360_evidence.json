@@ -1,0 +1,112 @@
+{
+  "schema": "adt-security-360-evidence-v1",
+  "as_of": "2026-10-25",
+  "purpose": "read-only cross-repository evidence inventory; no secrets or runtime authorization",
+  "verdicts": [
+    "PASS",
+    "REVIEW_REQUIRED",
+    "BLOCKED",
+    "NOT_RUN",
+    "NOT_APPLICABLE"
+  ],
+  "stages": [
+    {
+      "id": "security-I",
+      "project": "MikeMoore1337/ai-development-toolkit",
+      "issue": 358,
+      "pr": 362,
+      "merge_sha": "a688e4125f6344afb8e540ddd816647331855991",
+      "tested_head_sha": "3b2475951303658fa8ee5755a773ce67f9b26c24",
+      "pr_ci": [
+        40188789589
+      ],
+      "main_ci": [
+        40189121703
+      ],
+      "result": "PASS",
+      "limitations": "Static rule-and-verdict contract; not a semantic guarantee for RU/EN injections",
+      "pin": "d162d9b343e559be13df8ebba093df3bc9d58c90"
+    },
+    {
+      "id": "security-II",
+      "project": "MikeMoore1337/ai-development-toolkit",
+      "issue": 359,
+      "pr": 367,
+      "merge_sha": "e580ee2df09355ba224c42c8085c817067b65f06",
+      "tested_head_sha": "8bff87627e0c7d1c0cc9b5a0dd8f2466140614e3",
+      "pr_ci": [
+        40190948340,
+        40190948324
+      ],
+      "main_ci": [
+        40191285587,
+        40191285564
+      ],
+      "result": "PASS",
+      "limitations": "Live MCP, prompts, resources, server instructions, actual tool effects NOT_RUN",
+      "pin": "4dd0caae7b0d3a80c8c09ed7e4680a9911b0a86e"
+    },
+    {
+      "id": "security-III",
+      "project": "MikeMoore1337/hermes",
+      "issue": 585,
+      "pr": 588,
+      "merge_sha": "8148fcf2d06c14bf22254856e2bb3e30c206344b",
+      "tested_head_sha": "19396bea2fd3217df870625849b27c20c5a6e734",
+      "pr_ci": [
+        40202129284,
+        40202129283
+      ],
+      "main_ci": [
+        40202296575,
+        40202296529,
+        40202424782
+      ],
+      "result": "PASS",
+      "adoption": "NO_ADOPT",
+      "resident_activation": "NOT_RUN",
+      "limitations": "Disposable Linux CI; native Windows SRT and resident live sandbox NOT_RUN",
+      "pin": "c66fb77b28fdbea8b9788aca72377238ae67ca20"
+    },
+    {
+      "id": "security-IVa",
+      "project": "MikeMoore1337/your-fitness-coach",
+      "issue": 1211,
+      "pr": 1215,
+      "merge_sha": "cf34d37fefb064dbf0bdf8d51a46abfc23fbfbd7",
+      "tested_head_sha": "637433314b36674f2f77d7c218b77f16f43b3fe2",
+      "pr_ci": [
+        40204820042,
+        40204820061
+      ],
+      "main_ci": [
+        40205194820,
+        40205450060
+      ],
+      "result": "PASS",
+      "production_deploy": "NOT_APPLICABLE",
+      "release_scope": "NO_DEPLOY",
+      "limitations": "Static acceptance on Ubuntu and Windows CI, not owner's host; frontend/backend unrelated lanes skipped",
+      "pin": "d162d9b343e559be13df8ebba093df3bc9d58c90"
+    }
+  ],
+  "snyk": {
+    "project": "snyk/agent-scan",
+    "source_revision": "a8c8c5879a008edacb2a50d1a9fe0a40ee91d205",
+    "evaluation": "NO_ADOPT",
+    "local_binary_executed": "NOT_RUN",
+    "code_uploaded": "NOT_RUN",
+    "reason": "The documented scan pipeline sends component details to the Snyk analysis API; inspect is inventory without security analysis and may connect to MCP servers; v0.6 output experimental; not a verified zero-cloud offline Security Gate.",
+    "links": [
+      "https://github.com/snyk/agent-scan/blob/main/README.md",
+      "https://github.com/snyk/agent-scan/blob/main/docs/cli-reference.md"
+    ]
+  },
+  "requirements": {
+    "paid_api": "NOT_APPLICABLE",
+    "untrusted_mcp_execution": "NOT_RUN",
+    "automatic_external_skill_install": "NOT_RUN",
+    "windows_host_security_change": "NOT_RUN",
+    "production_secret_use": "NOT_RUN"
+  }
+}
