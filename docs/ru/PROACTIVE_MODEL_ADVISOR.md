@@ -30,6 +30,22 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer
 сохраняет чужой текст, создаёт резервную копию, повторный запуск
 идемпотентен, поддерживает `-WhatIf`.
 
+Перед перезапуском можно выполнить **проверку без изменений**:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Check
+```
+
+`SOURCE_PRESENT_CLIENT_UNVERIFIED` означает только наличие управляемого блока
+в активном источнике инструкций. `NOT_INSTALLED` означает его отсутствие, а
+`MASKED_BY_GLOBAL_OVERRIDE` - что непустой `AGENTS.override.md` перекрывает
+`AGENTS.md`. При таком перекрытии включение теперь безопасно завершается
+ошибкой и не изменяет файлы. Не удаляй пользовательский override автоматически.
+
+По умолчанию скрипт использует `~/.codex`, но при заданном `CODEX_HOME`
+использует этот каталог. Проверка файла не подтверждает загрузку инструкций
+Codex Desktop и вызов MCP: необходим отдельный реальный тест.
+
 Отключить в любой момент:
 
 ```powershell

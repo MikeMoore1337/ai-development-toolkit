@@ -5,6 +5,7 @@ No Codex CLI, subagent, account or remote provider is invoked.
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import shutil
 import subprocess
@@ -22,6 +23,10 @@ class AdvisorSourceContract(unittest.TestCase):
         installer = SCRIPT.with_name("Install-ADT-Personal.ps1").read_text(encoding="utf-8")
         self.assertIn("[CmdletBinding(SupportsShouldProcess=$true)]", src)
         self.assertIn("[switch]$Disable", src)
+        self.assertIn("[switch]$Check", src)
+        self.assertIn("$env:CODEX_HOME", src)
+        self.assertIn("MASKED_BY_GLOBAL_OVERRIDE", src)
+        self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", src)
         self.assertIn("Backup:", src)
         self.assertIn(BEGIN, src)
         self.assertIn(END, src)
@@ -122,6 +127,60 @@ class WindowsAdvisorLifecycle(unittest.TestCase):
         before = self.path.read_bytes()
         self.run_script("-Disable", "-WhatIf")
         self.assertEqual(before, self.path.read_bytes())
+
+    def test_read_only_check_identifies_installed_and_missing_block(self):
+        before = self.path.read_bytes()
+        result = self.run_script("-Check")
+        self.assertIn("NOT_INSTALLED", result.stdout)
+        self.assertEqual(before, self.path.read_bytes())
+        self.run_script()
+        enabled = self.path.read_bytes()
+        result = self.run_script("-Check")
+        self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", result.stdout)
+        self.assertEqual(enabled, self.path.read_bytes())
+        self.assertEqual(len(list(self.path.parent.glob("*.adt-model-advisor-backup-*"))), 1)
+
+    def test_nonempty_override_masks_block_and_refuses_enable(self):
+        override = self.path.with_name("AGENTS.override.md")
+        override.write_text("# Temporary override\n", encoding="utf-8")
+        before = self.path.read_bytes()
+        result = self.run_script("-Check")
+        self.assertIn("MASKED_BY_GLOBAL_OVERRIDE", result.stdout)
+        failure = self.run_script(expect=1)
+        self.assertIn("takes precedence", failure.stderr)
+        self.assertEqual(before, self.path.read_bytes())
+        self.assertEqual(list(self.path.parent.glob("*.adt-model-advisor-backup-*")), [])
+
+    def test_empty_override_does_not_block_enable(self):
+        override = self.path.with_name("AGENTS.override.md")
+        override.write_text("  \n", encoding="utf-8")
+        self.run_script()
+        self.assertIn(BEGIN, self.path.read_text(encoding="utf-8"))
+
+    def test_disable_remains_possible_with_active_override(self):
+        self.run_script()
+        override = self.path.with_name("AGENTS.override.md")
+        override.write_text("# Overrides global guidance\n", encoding="utf-8")
+        self.run_script("-Disable")
+        self.assertNotIn(BEGIN, self.path.read_text(encoding="utf-8"))
+
+    def test_codex_home_environment_is_install_target(self):
+        target = pathlib.Path(self.temp.name) / "custom-codex-home"
+        target.mkdir()
+        env = os.environ.copy()
+        env["CODEX_HOME"] = str(target)
+        cmd = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass",
+               "-File", str(SCRIPT)]
+        result = subprocess.run(cmd, capture_output=True, text=True,
+                                env=env, timeout=25)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        new_global = target / "AGENTS.md"
+        self.assertTrue(new_global.is_file())
+        self.assertIn(BEGIN, new_global.read_text(encoding="utf-8"))
+        check = subprocess.run(cmd + ["-Check"], capture_output=True,
+                               text=True, env=env, timeout=25)
+        self.assertEqual(check.returncode, 0, check.stderr)
+        self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", check.stdout)
 
 
 if __name__ == "__main__":

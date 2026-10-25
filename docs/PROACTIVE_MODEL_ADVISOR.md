@@ -21,6 +21,22 @@ Restart Codex Desktop completely. The script appends a distinct managed
 `ADT-MODEL-ADVISOR` block to `~/.codex/AGENTS.md` with backup,
 `-WhatIf`, idempotence, independent removal and no project writes.
 
+Read-only static diagnosis (no Codex CLI or model execution):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Check
+```
+
+`SOURCE_PRESENT_CLIENT_UNVERIFIED` only confirms the managed block is in
+the eligible instruction source. `NOT_INSTALLED` means absent, while
+`MASKED_BY_GLOBAL_OVERRIDE` means a nonempty `AGENTS.override.md`
+takes precedence. Enabling now fails closed on that override; it never
+silently rewrites the user's override. Disable remains possible.
+
+The installer honors `CODEX_HOME` when selecting the Codex user directory,
+instead of assuming `~/.codex` for every profile. Static checks do not
+prove that Codex Desktop loaded the instructions or called Personal MCP.
+
 Disable:
 
 ```powershell
