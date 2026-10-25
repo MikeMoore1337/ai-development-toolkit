@@ -102,6 +102,26 @@ def _tool_defs() -> list[dict]:
              "request": {"type": "object"}, "consent": {"type": "object"}},
              "required": ["request", "consent"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_codex_prepare_delegation",
+         "description": "Guarded native Codex delegation preview, read-only; never starts agents or reserves calls.",
+         "inputSchema": {"type": "object", "properties": {
+             "request": {"type": "object"}, "consent": {"type": "object"},
+             "target_model": {"type": "string"}, "state": {"type": "object"},
+             "client_snapshot": {"type": "object"}, "context": {"type": "string"},
+             "confirmed_for_this_call": {"type": "boolean"}},
+             "required": ["request", "consent", "target_model", "state",
+                          "client_snapshot", "context", "confirmed_for_this_call"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_codex_review_delegation",
+         "description": "Validate caller-supplied native Codex spawn/wait results; read-only, does not attest backend model.",
+         "inputSchema": {"type": "object", "properties": {
+             "plan": {"type": "object"}, "spawn_response": {"type": "object"},
+             "wait_response": {"type": "object"},
+             "host_claimed_one_shot_lease": {"type": "boolean"}},
+             "required": ["plan", "spawn_response", "wait_response"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_route_task", "description": "Return an advisory profile and matching skill suggestions for a task.",
          "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
                          "required": ["task"], "additionalProperties": False},
@@ -215,6 +235,17 @@ def _assess_skill_coverage(query: str, matches: list[dict] | None = None) -> dic
     }
 
 
+def _codex_orchestration_module():
+    """Load read-only native-tool contract, not a host runtime."""
+    path = ROOT / "scripts" / "codex_host_orchestration.py"
+    spec = importlib.util.spec_from_file_location("_adt_host_orchestration", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Codex host orchestration unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _adaptive_advice(request: object, consent: object | None = None) -> dict:
     """Load sibling offline policy without assuming package import paths."""
     path = ROOT / "scripts" / "adaptive_execution_advisor.py"
@@ -235,6 +266,22 @@ def invoke(tool: str, args: dict) -> dict:
         if "consent" not in args:
             raise ValueError("Explicit consent required")
         return _adaptive_advice(args.get("request"), args["consent"])
+    if tool in ("toolkit_codex_prepare_delegation", "toolkit_codex_review_delegation"):
+        if tool == "toolkit_codex_prepare_delegation":
+            expected = {"request", "consent", "target_model", "state",
+                        "client_snapshot", "context", "confirmed_for_this_call"}
+        else:
+            expected = {"plan", "spawn_response", "wait_response"}
+        extra = {"host_claimed_one_shot_lease"} if tool == "toolkit_codex_review_delegation" else set()
+        if not expected <= set(args) or set(args) - expected - extra:
+            raise ValueError("Invalid Codex orchestration arguments")
+        contract = _codex_orchestration_module()
+        if tool == "toolkit_codex_prepare_delegation":
+            return contract.prepare(args["request"], args["consent"], args["target_model"],
+                                    args["state"], args["client_snapshot"], args["context"],
+                                    confirmed_for_this_call=args["confirmed_for_this_call"])
+        return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
+                               host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
     if tool == "toolkit_catalog":
         return catalog()
     if tool == "toolkit_assess_skill_coverage":
