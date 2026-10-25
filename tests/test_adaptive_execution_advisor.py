@@ -1,6 +1,7 @@
 """Offline policy tests; no actual client, agent or paid API calls."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -119,7 +120,8 @@ class AdvisorTests(unittest.TestCase):
             before = file.read_bytes()
             with subprocess.Popen([sys.executable, str(SOURCE), str(file)],
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                  text=True, encoding="utf-8") as process:
+                                  text=True, encoding="utf-8",
+                                  env={**os.environ, "PYTHONIOENCODING": "utf-8"}) as process:
                 stdout, stderr = process.communicate(timeout=10)
                 self.assertEqual(0, process.returncode, stderr)
             self.assertEqual("NOT_RUN", json.loads(stdout)["execution"])
