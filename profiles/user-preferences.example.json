@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "language": "ru",
+  "clients": {
+    "preferred": "codex-desktop",
+    "allowed": ["codex-desktop", "chatgpt", "chatgpt-plugin"]
+  },
+  "execution": {
+    "real_agent_pilots": false,
+    "allow_paid_api": false,
+    "allow_cli_agents": false,
+    "additional_spend_allowed": false,
+    "allow_network": false
+  },
+  "skills": {
+    "selection": "auto",
+    "excluded": []
+  },
+  "approvals": {
+    "file_writes": "ask",
+    "git_merge": "ask",
+    "deployment": "ask"
+  }
+}
