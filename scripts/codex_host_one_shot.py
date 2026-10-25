@@ -169,9 +169,46 @@ def inspect(root: str, task_id: str) -> dict[str, Any]:
     return record
 
 
+
+def record_outcome(root: str, plan: dict, spawn_response: dict,
+                   wait_response: dict) -> dict[str, Any]:
+    """Durably record supplied native output exactly once, without raw content.
+
+    The host still independently runs toolkit_codex_review_delegation to
+    receive the same result through live MCP. A recorded result is not proof
+    that Codex really executed it, or that the billable model was observed.
+    """
+    if not isinstance(plan, dict):
+        raise LeaseDenied("INVALID_PREFLIGHT_PLAN")
+    contract = _contract()
+    # review checks full plan shape and one matching canonical native agent ID.
+    result = contract.review(plan, spawn_response, wait_response)
+    root_path = _safe_directory(root)
+    key = _key(plan["task_id"])
+    claim_file = root_path / (key + ".claim.json")
+    claimed = _read_record(claim_file)
+    if (claimed.get("task_key_sha256") != key or
+            claimed.get("plan_fingerprint") != plan.get("plan_fingerprint") or
+            claimed.get("attempts_reserved") != 1):
+        raise LeaseDenied("OUTCOME_NOT_BOUND_TO_RESERVED_PLAN")
+    summary = {
+        "schema": 1, "task_key_sha256": key,
+        "plan_fingerprint": plan["plan_fingerprint"],
+        "native_agent_id": result["agent_id"],
+        "review_status": result["status"],
+        "model_backend_attestation": "NOT_VERIFIED",
+        "host_source": "CALLER_SUPPLIED_NATIVE_RESPONSE_NOT_INDEPENDENTLY_ATTESTED",
+        "native_extra_calls_observed": "NOT_ATTESTED",
+        "cost_incurred": "UNKNOWN",
+        "repeat_allowed": False,
+    }
+    _write_once(root_path / (key + ".outcome.json"), summary)
+    return summary
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Codex host one-shot claim (no native invocation)")
-    parser.add_argument("action", choices=("claim", "inspect"))
+    parser.add_argument("action", choices=("claim", "inspect", "record"))
     parser.add_argument("--root", required=True, help="Prepared absolute private ledger folder")
     parser.add_argument("--task-id", help="Required for inspect only")
     args = parser.parse_args(argv)
@@ -182,21 +219,29 @@ def main(argv: list[str] | None = None) -> int:
             response = inspect(args.root, args.task_id)
         else:
             if args.task_id:
-                raise LeaseDenied("TASK_ID_NOT_ACCEPTED_WITH_CLAIM")
+                raise LeaseDenied("TASK_ID_NOT_ACCEPTED_WITH_STDIN")
             # Bounded stdin JSON avoids shell-escaping sensitive context.
             payload = sys.stdin.buffer.read(MAX_INPUT_BYTES + 1)
             if len(payload) > MAX_INPUT_BYTES:
                 raise LeaseDenied("REQUEST_TOO_LARGE")
             params = json.loads(payload)
-            if not isinstance(params, dict) or set(params) != {
-                "plan", "request", "consent", "state", "client_snapshot",
-                "context", "confirmed_for_this_call",
-            }:
-                raise LeaseDenied("INVALID_CLAIM_REQUEST")
-            response = claim(args.root, params["plan"], params["request"],
-                             params["consent"], params["state"],
-                             params["client_snapshot"], params["context"],
-                             confirmed_for_this_call=params["confirmed_for_this_call"])
+            if not isinstance(params, dict):
+                raise LeaseDenied("INVALID_STDIN_REQUEST")
+            if args.action == "record":
+                if set(params) != {"plan", "spawn_response", "wait_response"}:
+                    raise LeaseDenied("INVALID_RECORD_REQUEST")
+                response = record_outcome(args.root, params["plan"],
+                                          params["spawn_response"], params["wait_response"])
+            else:
+                if set(params) != {
+                    "plan", "request", "consent", "state", "client_snapshot",
+                    "context", "confirmed_for_this_call",
+                }:
+                    raise LeaseDenied("INVALID_CLAIM_REQUEST")
+                response = claim(args.root, params["plan"], params["request"],
+                                 params["consent"], params["state"],
+                                 params["client_snapshot"], params["context"],
+                                 confirmed_for_this_call=params["confirmed_for_this_call"])
     except (LeaseDenied, ValueError, TypeError, OSError) as exc:
         print(json.dumps({"status": "REFUSED", "reason": str(exc)[:120]}))
         return 2
