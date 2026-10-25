@@ -1,0 +1,104 @@
+name: Episodic Memory Windows native smoke (free, opt-in source)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/episodic-memory-windows.yml"
+      - "integrations/episodic-memory/**"
+      - "scripts/check_episodic_memory_patch.py"
+      - "tests/test_episodic_memory_patch.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/episodic-memory-windows.yml"
+      - "integrations/episodic-memory/**"
+      - "scripts/check_episodic_memory_patch.py"
+      - "tests/test_episodic_memory_patch.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: episodic-memory-windows-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  native-windows-pinned-upstream:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      CI: "true"
+      EPISODIC_MEMORY_SKIP_SUMMARIES: "1"
+      EPISODIC_MEMORY_DISABLE_AUTO_SYNC: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      NODE_OPTIONS: "--max-old-space-size=1024"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+
+      - name: Fetch exact open-source upstream without user client data
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Join-Path $env:RUNNER_TEMP 'episodic-upstream'
+          git init $source
+          git -C $source remote add origin https://github.com/obra/episodic-memory.git
+          git -C $source fetch --depth 1 origin 7e06519357777badd7a115d2014a7ef845904310
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to fetch pinned upstream' }
+          git -C $source checkout --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to check out pinned upstream' }
+          $actual = (git -C $source rev-parse HEAD).Trim()
+          if ($actual -ne '7e06519357777badd7a115d2014a7ef845904310') { throw 'Unexpected source SHA' }
+          "EPISODIC_UPSTREAM_SHA=$actual" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "EPISODIC_UPSTREAM_DIR=$source" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Validate pinned patch and apply to disposable source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python scripts/check_episodic_memory_patch.py --upstream-dir "$env:EPISODIC_UPSTREAM_DIR"
+          if ($LASTEXITCODE -ne 0) { throw 'Patch integrity/applicability FAILED' }
+          $patch = Join-Path $env:GITHUB_WORKSPACE 'integrations/episodic-memory/patches/0001-mcp-read-scoping-and-zero-inference-verify.patch'
+          git -C "$env:EPISODIC_UPSTREAM_DIR" apply --check "$patch"
+          if ($LASTEXITCODE -ne 0) { throw 'git apply preflight FAILED' }
+          git -C "$env:EPISODIC_UPSTREAM_DIR" apply "$patch"
+          if ($LASTEXITCODE -ne 0) { throw 'git apply FAILED' }
+
+      - name: Install free dependencies without lifecycle scripts in throwaway runner
+        shell: pwsh
+        working-directory: ${{ runner.temp }}/episodic-upstream
+        run: |
+          $ErrorActionPreference = 'Stop'
+          npm install --include=dev --ignore-scripts --package-lock=false --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency installation FAILED' }
+          npm rebuild better-sqlite3 --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { throw 'Local SQLite native rebuild FAILED' }
+
+      - name: Verify local SQLite and sqlite-vec, without prompts or AI calls
+        shell: pwsh
+        working-directory: ${{ runner.temp }}/episodic-upstream
+        run: |
+          node -e "const D=require('better-sqlite3');const v=require('sqlite-vec');const db=new D(':memory:');v.load(db);const r=db.prepare('select vec_version() as v').get();if(!r?.v)process.exit(2);console.log('WINDOWS_NATIVE_SQLITE_VEC=PASS');db.close();"
+          if ($LASTEXITCODE -ne 0) { throw 'SQLite native smoke FAILED' }
+
+      - name: Type-check and test actual patched MCP permission boundary
+        shell: pwsh
+        working-directory: ${{ runner.temp }}/episodic-upstream
+        run: |
+          $ErrorActionPreference = 'Stop'
+          npm run build
+          if ($LASTEXITCODE -ne 0) { throw 'Windows TypeScript compile FAILED' }
+          npm run bundle
+          if ($LASTEXITCODE -ne 0) { throw 'Windows bundle FAILED' }
+          npx --no-install vitest run test/mcp-server.test.ts test/verify.test.ts --maxWorkers=1
+          if ($LASTEXITCODE -ne 0) { throw 'Windows patched MCP tests FAILED' }
