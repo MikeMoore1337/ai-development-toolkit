@@ -22,7 +22,7 @@ Never escalate merely to satisfy a process. Never downgrade when the risk remain
 1. **Understand:** Write C1..Cn acceptance criteria, scope, current behavior and a reproducible baseline where possible. For a bug, establish root cause instead of asserting it.
 2. **Choose:** Inspect reuse and existing architecture. Record one decision D1 and why it beats meaningful alternatives. If uncertain, validate the critical assumption first.
 3. **Implement:** Make a minimal diff, keep compatibility, provide error and retry behavior where applicable. Protect unrelated files and other agents' work.
-4. **Verify:** Map every C* to an observed check or explicitly unverified condition. Run focused tests and relevant regressions. Distinguish mock, local, staging and production evidence. For UI, visually inspect real renders when tools permit.
+4. **Verify:** Map every C* to an observed check or explicitly unverified condition. Run focused tests and project-defined regression checks. Distinguish mock, local, staging and production evidence. For UI, visually inspect real renders when tools permit.
 5. **Handoff:** Report changed files, checks/results, remaining risks, and exact continuation. Do not declare merge or production deploy performed without evidence.
 
 For `normal`/`deep`, use a separate implementer/reviewer **only if** the environment actually supports independent contexts. Never pretend a second agent exists. Acceptance independence after a change means re-checking touched evidence.
