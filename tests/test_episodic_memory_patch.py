@@ -27,6 +27,13 @@ class EpisodicMemoryPatchContract(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "SHA256"):
                     MODULE.check()
 
+    def test_crlf_checkout_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            windows_copy = Path(folder) / "checkout.patch"
+            windows_copy.write_bytes(MODULE.PATCH.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+            with patch.object(MODULE, "PATCH", windows_copy):
+                MODULE.check()
+
     def test_symlinked_patch_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             fake = Path(folder) / "symlink.patch"
