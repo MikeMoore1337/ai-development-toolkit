@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -14,7 +16,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.10'
+VERSION = '0.1.11'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -661,7 +663,61 @@ class Toolkit:
                                      'requires_review': True}),
         }
 
+def _host_orchestration_tool(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
+    """Invoke vetted local read-only contract, never a Codex session tool.
+
+    The installed Personal MCP keeps its own launcher and imports the exact
+    declared module from the dedicated Toolkit source checkout. Verify the
+    tracked source digest on every call: a stale/missing source fails closed.
+    This does NOT attest host inventory, cost, native execution, or leases.
+    """
+    relative = 'scripts/codex_host_orchestration.py'
+    source = tk._safe_file(relative)
+    sums = tk._safe_file('SHA256SUMS.txt')
+    match = next((line[:64] for line in sums.read_text(encoding='utf-8').splitlines()
+                  if line[64:] == '  ' + relative and len(line) == 66 + len(relative)), None)
+    if match is None or hashlib.sha256(source.read_bytes().replace(b'\\r\\n', b'\\n')).hexdigest() != match:
+        raise ToolkitError('CODEX_CONTRACT_SOURCE_INTEGRITY_NOT_VERIFIED')
+    spec = importlib.util.spec_from_file_location('_adt_personal_codex_contract', source)
+    if spec is None or spec.loader is None:
+        raise ToolkitError('CODEX_CONTRACT_NOT_AVAILABLE')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    if name == 'toolkit_codex_prepare_delegation':
+        exact = {'request', 'consent', 'target_model', 'state',
+                 'client_snapshot', 'context', 'confirmed_for_this_call'}
+        if set(args) != exact:
+            raise ToolkitError('INVALID_PREPARE_ARGUMENTS')
+        return module.prepare(args['request'], args['consent'], args['target_model'],
+                              args['state'], args['client_snapshot'], args['context'],
+                              confirmed_for_this_call=args['confirmed_for_this_call'])
+    if name == 'toolkit_codex_review_delegation':
+        required = {'plan', 'spawn_response', 'wait_response'}
+        if not required <= set(args) or set(args) - required - {'host_claimed_one_shot_lease'}:
+            raise ToolkitError('INVALID_REVIEW_ARGUMENTS')
+        return module.review(args['plan'], args['spawn_response'], args['wait_response'],
+                             host_claimed_one_shot_lease=args.get('host_claimed_one_shot_lease', False))
+    raise ToolkitError('UNKNOWN_CODEX_CONTRACT_TOOL')
+
+
 TOOLS: list[dict[str, Any]] = [
+    {'name':'toolkit_codex_prepare_delegation',
+     'description':'Read-only policy preview for optional native Codex delegation. NEVER spawns agents, spends quotas, authenticates cost, or reserves leases.',
+     'inputSchema':{'type':'object','properties':{
+         'request':{'type':'object'},'consent':{'type':'object'},
+         'target_model':{'type':'string'},'state':{'type':'object'},
+         'client_snapshot':{'type':'object'},'context':{'type':'string'},
+         'confirmed_for_this_call':{'type':'boolean'}},
+         'required':['request','consent','target_model','state','client_snapshot',
+                     'context','confirmed_for_this_call'],'additionalProperties':False}},
+    {'name':'toolkit_codex_review_delegation',
+     'description':'Read-only review of host-supplied native spawn/wait outputs; NO execution or observed backend model attestation.',
+     'inputSchema':{'type':'object','properties':{
+         'plan':{'type':'object'},'spawn_response':{'type':'object'},
+         'wait_response':{'type':'object'},
+         'host_claimed_one_shot_lease':{'type':'boolean'}},
+         'required':['plan','spawn_response','wait_response'],'additionalProperties':False}},
+
     {'name':'toolkit_info','description':'Inspect installed AI Development Toolkit version and capabilities (read-only).',
      'inputSchema':{'type':'object','properties':{},'additionalProperties':False}},
     {'name':'toolkit_catalog','description':'List available real Toolkit skills, roles or profiles (read-only).',
@@ -705,6 +761,8 @@ for t in TOOLS:
 def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(args, dict):
         raise ToolkitError('Arguments must be an object')
+    if name in ('toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
+        return _host_orchestration_tool(tk, name, args)
     if name == 'toolkit_info':
         return tk.info()
     if name == 'toolkit_catalog':
