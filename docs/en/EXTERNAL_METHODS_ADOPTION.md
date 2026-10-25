@@ -34,6 +34,10 @@ This policy complements `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING
 
 See [evidence, worktrees and session diagnosis](SUPERPOWERS_EVIDENCE.md). Existing `feature-delivery`, `code-review` and `release-safety` skills reference the methodology without a new execution controller. Host-native isolation, target-repository leases, actual test evidence and release authorization prevail. Session token/retry observations must not become automatic telemetry collection.
 
+## UI primitives and effects (#408)
+
+The [portable shadcn/ui and Magic UI selection gate](UI_COMPONENT_SELECTION.md) supports the existing frontend and design skills. Prefer the consumer's current primitives before any external package. Verify component-specific source/license revision, Tailwind/Radix/Motion dependency cost, actual keyboard/reduced-motion checks and the owner's exact visual approval. `PROPOSAL_ONLY` does not imply `OWNER_ACCEPTED`. `scripts/validate_ui_component_adoption.py` is an optional offline structural check, not a package installer or proof of deployment.
+
 ## Applying methods across project types
 
 - **User-facing application:** improve visual QA, accessibility, animation and performance while respecting its established design system and approval workflow.
