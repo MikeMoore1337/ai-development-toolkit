@@ -12486,6 +12486,26 @@
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Security #360 independent static acceptance, zero paid API, no external runtime adoption or user data access."
+    },
+    {
+      "id": "integration-personal-mcp-adapter-codex-orchestration-tests",
+      "path": "integrations/personal-mcp/adt-personal/tests/test_codex_orchestration_tools.py",
+      "name": "test_codex_orchestration_tools.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Owner-reported original integration package; independent rights verification not performed",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-22",
+      "distribution": "included",
+      "notes": "Offline-only Personal MCP 0.1.11 read-only Codex preflight/review interface tests; no native tools invoked."
     }
   ],
   "owner_review_record": {
