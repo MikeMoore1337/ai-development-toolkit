@@ -24,7 +24,13 @@ The minimal patch:
 
 ## Reproduction and safety rules
 
-Use a **throwaway copy** of the original source, never the user's live Codex folder. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
+Use a **throwaway copy** of the original source, never the user's live Codex folder. Verify the patch integrity and upstream applicability without installation or execution of upstream code:
+
+```sh
+python3 scripts/check_episodic_memory_patch.py --upstream-dir /absolute/disposable/episodic-memory
+```
+
+The verifier checks the upstream SHA and patch digest `26202d49f6a37fa3dabbe53a4f048398b1a0e129624e1c20d2da90166c2ba5e6`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
 
 ```sh
 git rev-parse HEAD
