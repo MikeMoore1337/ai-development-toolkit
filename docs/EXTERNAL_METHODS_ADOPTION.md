@@ -9,6 +9,7 @@
 | `obra/superpowers` | Адаптировать доказательство завершения, отладку и независимый review | Не вводить второй controller и безусловный TDD для всех задач |
 | `anthropics/skills` | По Apache-2.0 отдельного `skill-creator` изучить дизайн paired evals и activation | **Поэлементная лицензия**: `docx/pdf/pptx/xlsx` содержат специальные запреты на копирование и производные |
 | `daymade/claude-code-skills/frontend-visual-qa` | Дополнить уже существующие screenshot-fidelity и QA практикой route+state+viewport+observable outcome | Не считать автоматически сохранённый PNG доказательством визуальной корректности |
+| `benjitaylor/agentation` | Добровольные локальные визуальные отметки, передаваемые в существующий UI Orchestra/screenshot-fidelity | **PolyForm Shield 1.0.0, не MIT**; нет автоматической установки, внешней отправки, копирования исходников или продакшн-виджета |
 | `vercel-labs/agent-browser` | При конкретной недостаче Playwright - изолированный read-only кандидат | Нет cookie export, нет сессий production, не включать в CI по умолчанию |
 | `coreyhaines31/marketingskills`, `wondelai/skills` | Отбирать CRO/SEO, JTBD и user research как тематические references | Не превращать Toolkit в marketing runtime/платный API |
 | `199-biotechnologies/claude-deep-research-skill` | Методики claim-level provenance, DOI и подтверждения источников | Не добавлять search-cli/Exa/платные провайдеры и автономных исследовательских агентов |
