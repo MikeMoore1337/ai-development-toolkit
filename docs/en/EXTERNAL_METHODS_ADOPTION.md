@@ -9,6 +9,7 @@ This policy complements `SOURCE_EVALUATION.md`, `SKILL_EVALS.md`, `SKILL_ROUTING
 | `obra/superpowers` | Evidence-before-completion, systematic debugging and scoped review methods | No parallel controller or universal TDD mandate |
 | `anthropics/skills` | Apache-2.0 `skill-creator` paired evaluation and activation ideas | Inspect licenses **per skill**: `docx/pdf/pptx/xlsx` have restrictive terms against outside copying and derivatives |
 | `daymade/claude-code-skills/frontend-visual-qa` | Observable route/state/viewport and real-browser outcome criteria for existing QA skills | Stored screenshots alone are not proof of correct UX |
+| `benjitaylor/agentation` | Optional local element annotations routed into the existing UI orchestra and screenshot-fidelity | **PolyForm Shield 1.0.0, not MIT**; no auto-install, remote submission, source redistribution or production widget |
 | `vercel-labs/agent-browser` | Optional isolated pilot only if Playwright cannot solve a specific task | No cookie exports, production sessions, default CI dependency |
 | `coreyhaines31/marketingskills`, `wondelai/skills` | Reference CRO/SEO, JTBD and customer research methods | No marketing agent runtime, paid API or duplicate roles |
 | `199-biotechnologies/claude-deep-research-skill` | Claim-level provenance, DOI/source checks and independent corroboration | No paid search providers, search-cli or research controller added |
