@@ -66,3 +66,53 @@
 ещё не проведена. При неизвестной платёжной гарантии
 `zero_incremental_cost_verified=False` автоматическая диспетчеризация
 запрещена — успешный вручную разрешённый пилот не снимает этот gate.
+
+
+## Двухэтапная оркестрация нативных инструментов Codex (25.10.2026)
+
+В фактической сессии Codex Desktop подтверждены следующие сигнатуры:
+
+```text
+multi_agent_v1__spawn_agent({model, message, fork_context, items?, reasoning_effort?})
+  -> {"agent_id": "...", "nickname": ...}
+multi_agent_v1__wait_agent({targets: ["agent-id"], timeout_ms: 10000..3600000})
+  -> {"status": {"agent-id": {"completed": "текст"}}, "timed_out": false}
+```
+
+Они отличаются от Python callback-контракта. Новый
+`scripts/codex_host_orchestration.py` поддерживает **проверяемую двухэтапную
+схему** без прямых callbacks через read-only MCP Toolkit:
+
+1. `toolkit_codex_prepare_delegation` принимает `request`, `consent`,
+   `target_model`, `state`, `client_snapshot`, `context`,
+   `confirmed_for_this_call`. Проверяет выбор, лимит, cost gate, ревизию,
+   делегирование и возвращает **только** `PREFLIGHT_ONLY_NOT_EXECUTED`
+   и точные аргументы `native_spawn_arguments`. Это **не** расходует квоту.
+2. Доверенный Codex-host **сам** повторно удостоверяет актуальность разрешения,
+   инвентаря и включённого способа оплаты и **атомарно резервирует** один
+   вызов в собственном защищённом хранилище до `spawn_agent`. Нативный
+   `spawn_agent` вызывается один раз; затем `wait_agent` с
+   `targets=[agent_id]`, ровно одним ID. Никаких скрытых retry/fallback.
+3. `toolkit_codex_review_delegation` принимает preview и **фактические**
+   ответы нативных инструментов. Проверяет UUID, единственный target,
+   `timed_out=false` и непустой `completed`. Вердикт
+   `HOST_COMPLETED_MODEL_UNVERIFIED` при успехе либо
+   `HOST_RESULT_NOT_CONFIRMED` при неуспехе; `observed_model=UNKNOWN`
+   независимо от текста дочернего агента.
+
+Важные границы: MCP Toolkit остаётся **READ_ONLY** и не может сам взять
+атомарный lock, потратить квоту или вызвать сессионный инструмент Codex.
+`host_claimed_one_shot_lease` и capability snapshot — утверждения вызывающего,
+не независимая аттестация. Повторный вызов `prepare` выдаст ту же проверку:
+исключить двойной запуск обязан host. SHA256 `plan_fingerprint` обнаруживает
+случайную подмену preview, **не** является подписью или защищённым токеном.
+При `zero_incremental_cost_verified=False` подготовка блокируется, даже если
+в прошлом один ручной вызов прошёл на Plus. Проверять без реальных агентов:
+
+```powershell
+py -3.14 -m unittest tests.test_codex_host_orchestration -v
+```
+
+До закрытия #357 требуется **живой** запуск именно по маршруту
+MCP prepare → host atomic claim → native spawn/wait → MCP review; тестовый
+отчёт не означает, что реальный host lease или модель backend подтверждены.
