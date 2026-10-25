@@ -16,7 +16,7 @@ This repo-marketplace route is not an automatic installer for ChatGPT web or mob
 
 ## Windows, Linux, macOS and mobile
 
-For **ZIP import** (where supported), installation takes place inside ChatGPT, not in the operating system. GitHub repo marketplaces are a separate desktop-only distribution path described above.
+On **Windows, Linux and macOS**, ZIP import (where supported) takes place inside ChatGPT, not in the operating system. GitHub repo marketplaces are a separate desktop-only distribution path described above.
 
 1. Obtain a reviewed `AI-Development-Toolkit-ChatGPT-Plugin-0.1.2.zip` from a verified release, or build it from a clone of this repository with `python3 integrations/build_packages.py` (`py -3` on Windows).
 2. In ChatGPT, open plugin creation/import **if available to your account** and import the ZIP. Publishing source code alone does not install a plugin. Follow the host's installation UI.
