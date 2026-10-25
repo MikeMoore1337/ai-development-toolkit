@@ -6,9 +6,11 @@
 
 [![CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml/badge.svg)](https://github.com/MikeMoore1337/ai-development-toolkit/actions/workflows/validate.yml) · [Последний релиз](https://github.com/MikeMoore1337/ai-development-toolkit/releases/latest) · [Каталог навыков](docs/ru/SKILLS_CATALOG.md)
 
-**[Начать без терминала](docs/ru/BEGINNER_START.md)** · **[Использовать в своём проекте](AGENT_START.ru.md)** · **[Локальная установка](#быстрый-старт)** · **[Документация](#документация-и-участие)**
+**[Начать без терминала](docs/ru/BEGINNER_START.md)** · **[Работаю с готовым проектом](docs/ru/EXISTING_PROJECT.md)** · **[Локальная установка](#быстрый-старт)** · **[Документация](#документация-и-участие)**
 
 </div>
+
+**Если проект уже существует:** начните с [короткой инструкции для человека](docs/ru/EXISTING_PROJECT.md). [Технические инструкции для ИИ-агента](AGENT_START.ru.md) — отдельный документ, их не требуется читать перед первым запросом.
 
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md).
 
@@ -19,7 +21,7 @@ AI Development Toolkit - **переносимая библиотека навы�
 | Что нужно сделать | Куда перейти | Что получите |
 | :--- | :--- | :--- |
 | **Обсудить идею без терминала** | [Путь новичка](docs/ru/BEGINNER_START.md) | Пять готовых запросов и реальные ограничения клиентов |
-| **Поработать с уже открытым проектом** | [Дать агенту ссылку на Toolkit](AGENT_START.ru.md) | Инструкции по задаче без обязательной установки Toolkit |
+| **Поработать с уже открытым проектом** | [Мой проект уже есть](docs/ru/EXISTING_PROJECT.md) | Инструкции по задаче без обязательной установки Toolkit |
 | **Управлять локальными навыками** | [Безопасная установка](docs/ru/INSTALLATION.md) | Выбор профиля, предпросмотр, подтверждение записи, проверка и откат |
 
 Если ИИ-агент **имеет доступ к вашему проекту**, можно написать:
@@ -81,7 +83,7 @@ Toolkit служит **источником инструкций, а не мес
 
 
 
-**Последний опубликованный релиз:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) (24 октября 2026 года), неизменяемый тег на коммите `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`; в опубликованном архиве `MANIFEST.json.version = 5.5.6`. [GitHub Actions](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) подтвердил SHA256 и техническую проверку происхождения исходников; отдельная проверка актуальности документации при публикации выявила устаревшие ссылки, которые исправляются здесь. Эти проверки не доказывают активацию навыков в реальных клиентах или независимую проверку прав. Установленные MCP и плагин ChatGPT автоматически не обновляются. Подробнее - в [CHANGELOG.md](CHANGELOG.md).
+**Последний опубликованный релиз:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6). Технические подробности, контрольные суммы, SHA и история проверок — в [CHANGELOG.md](CHANGELOG.md) и [порядке релизов](docs/ru/RELEASE_PROCESS.md). Опубликованный Toolkit не обновляет установленные MCP или плагин автоматически.
 
 Для новой установки рекомендуется **Skill Manager v2**: предпросмотр, учёт установленных им файлов, безопасное обновление и восстановление.
 
