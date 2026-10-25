@@ -151,6 +151,7 @@ jobs:
           set -euo pipefail
           staging="$(mktemp -d)"
           git archive --format=zip --output="$staging/source.zip" HEAD
+          python scripts/audit_source_archive.py --zip "$staging/source.zip" --repository "$GITHUB_REPOSITORY"
           mkdir "$staging/unpacked"
           python - "$staging/source.zip" "$staging/unpacked" <<'PY'
           import pathlib
@@ -263,6 +264,9 @@ jobs:
               }, indent=2) + '\n', encoding='utf-8')
           print('Verified', ', '.join(sorted(seen)))
           PYCODE
+          for archive in "$OUT_DIR"/*.zip; do
+            python scripts/audit_source_archive.py --zip "$archive" --repository "$GITHUB_REPOSITORY"
+          done
       - name: Preserve candidate ZIPs and SHA256 evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
