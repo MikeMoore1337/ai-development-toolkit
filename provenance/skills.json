@@ -11446,6 +11446,26 @@
       "last_reviewed": "2026-10-25",
       "distribution": "included",
       "notes": "Tests only, no external skill execution or network AI calls"
+    },
+    {
+      "id": "workflow-github-workflows-episodic-memory-windows-yml",
+      "path": ".github/workflows/episodic-memory-windows.yml",
+      "name": "episodic-memory-windows.yml",
+      "kind": "workflow",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independently confirmed chain of title unavailable",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-10-25",
+      "distribution": "included",
+      "notes": "Issue #338 optional native Windows GitHub Actions smoke of exact pinned original upstream source + security patch in disposable runner. No Codex CLI, model API, real chats or client activation. GitHub runner source compatibility only; no owner-device proof."
     }
   ],
   "owner_review_record": {
