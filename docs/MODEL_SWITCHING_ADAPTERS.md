@@ -99,3 +99,42 @@ Test with `python -m unittest tests.test_codex_host_orchestration -v`.
 An end-to-end host-owned launch through MCP preflight and review **has not
 yet been performed**. No backend `observed_model` receipt was available in
 the earlier direct native spawn pilot. Issue #357 remains open.
+
+
+## Durable host-owned one-shot lease (Issue #357)
+
+`scripts/codex_host_one_shot.py` adds an opt-in, stdlib-only local
+one-shot reservation, separate from **read-only** Toolkit MCP. It does not
+use Codex CLI, provider APIs, or call session-native model tools.
+
+After live `toolkit_codex_prepare_delegation`, the trusted host must
+authenticate the active subscription route, cost, current capabilities and
+per-call consent. **Never promote** `COST_UNKNOWN` or a caller-supplied
+flag into verified free billing.
+
+An authorized host calls `claim(root, plan, request, consent, state,
+client_snapshot, context, confirmed_for_this_call=True)` before a native
+spawn. It re-evaluates the policy, matches the complete plan, and atomically
+creates a durable `sha256(task_id).claim.json` using `O_EXCL`, `0600`
+and `fsync`. It does **not** delete a claim on failures or crash, even
+if no model actually launched, to avoid retrying a potentially paid call.
+Only `HOST_ONE_SHOT_RESERVED` permits the host to invoke **exactly one**
+`spawn_agent`, followed by one `wait_agent` on that ID. The host
+independently calls MCP `toolkit_codex_review_delegation` and can use
+`record_outcome` to store a single redacted immutable result (not a
+model/backend/billing attestation). The CLI accepts bounded JSON on stdin
+for `claim` and `record`, plus read-only `inspect`.
+
+Run `python -m unittest tests.test_codex_host_one_shot -v` for
+cross-thread/process races, duplicate prevention, invalid/withdrawn consent,
+stale inventory, partial write and malformed/native-result regressions.
+The ledger root must be an existing private absolute directory; reject
+symlinks/junctions, and verify Windows ACLs independently.
+
+**Boundary:** Atomic creation covers only one shared local filesystem
+directory. Using a different directory/device, forged untrusted inputs,
+bypassing the host gate, or an environment not honoring filesystem
+exclusivity is outside its guarantee. An unsigned plan fingerprint does
+not prove consent. No trust source for the active Codex session, independent
+cost receipts, or observed backend model is supplied by the lease. The
+live two-phase flow remains **NOT_VERIFIED** until owner-observed execution.

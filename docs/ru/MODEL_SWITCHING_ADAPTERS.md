@@ -116,3 +116,66 @@ py -3.14 -m unittest tests.test_codex_host_orchestration -v
 До закрытия #357 требуется **живой** запуск именно по маршруту
 MCP prepare → host atomic claim → native spawn/wait → MCP review; тестовый
 отчёт не означает, что реальный host lease или модель backend подтверждены.
+
+
+## Локальный one-shot lease для доверенного host (Issue #357)
+
+Toolkit не может сам вызывать сессионные инструменты Codex Desktop.
+`scripts/codex_host_one_shot.py` — отдельный **не-MCP** модуль стандартной
+библиотеки Python, который host может вызвать локально после
+`toolkit_codex_prepare_delegation` и **до** `multi_agent_v1__spawn_agent`.
+Он не вызывает модель, Codex CLI и API; не меняет режим `READ_ONLY` MCP.
+
+**Протокол безопасной попытки:**
+
+1. Доверенный host проверяет действующее разрешение владельца на конкретный
+   вызов, реальную модель из client inventory, свежий snapshot и независимый
+   источник отсутствия дополнительных расходов. Если стоимость
+   `COST_UNKNOWN` / `zero_incremental_cost_verified=false`, **STOP**:
+   нельзя передавать фиктивный `true`.
+2. Host вызывает `toolkit_codex_prepare_delegation` по действующей
+   подписочной сессии: результат — `PREFLIGHT_ONLY_NOT_EXECUTED`.
+3. Host создаёт **отдельный приватный локальный каталог** для ledger
+   (на POSIX права `0700`, на Windows контролировать ACL средствами ОС)
+   и передаёт в `codex_host_one_shot.claim(...)` текущие `request`,
+   `consent`, `state`, `client_snapshot`, `context`, флаг подтверждения и
+   **неизменённый** `plan`. Модуль повторяет проверки `prepare`, сравнивает
+   plan целиком и *до запуска модели* атомарно создаёт файл
+   `<sha256(task_id)>.claim.json` с `O_EXCL` и `fsync`. Только вердикт
+   `HOST_ONE_SHOT_RESERVED` разрешает доверенному host **одно** обращение
+   к нативному инструменту. Lease на task ID сохраняется даже при crash;
+   автоматическое удаление, освобождение и retry запрещены.
+4. После единственного `spawn_agent` host делает единственный
+   `wait_agent({targets: [id], timeout_ms: 10000})` без fallback,
+   передаёт полученные (не вымышленные) ответы
+   `toolkit_codex_review_delegation`, затем может вызвать
+   `codex_host_one_shot.record_outcome(...)`. Последняя запись
+   `*.outcome.json` также создаётся только один раз и **не хранит** ни
+   raw context, ни текст ответа субагента. Неуспех завершает задачу.
+5. `observed_model=UNKNOWN`, `cost_incurred=UNKNOWN` до отдельной
+   host-issued аттестации. `HOST_COMPLETED_MODEL_UNVERIFIED` означает
+   только валидацию предоставленного native ответа.
+
+Пример local-only тестов:
+
+```powershell
+py -3.14 -m unittest tests.test_codex_host_one_shot -v
+py -3.14 scripts/verify_checksums.py
+```
+
+CLI модуля принимает `claim` или `record` с JSON через stdin и
+`inspect --root <abs-private-dir> --task-id <id>`. У host должны быть
+полномочия на запись только **своего** каталога ledger. MCP Personal
+`0.1.11` и Project MCP продолжают быть только read-only.
+
+**Ограничение:** эксклюзивность гарантируется только в пределах одного
+постоянного каталога на локальной файловой системе с корректной
+семантикой `O_EXCL`; разные каталоги/устройства, обход самим host или
+подмена входных полномочий не защищены. Plan fingerprint — **не**
+криптографическая подпись и не доказательство согласия. Скрипт не может
+независимо проверить billing, выдачу токенов, runtime модель или
+выполнение `spawn_agent`; эти условия являются обязанностью
+**реального Codex host**.
+
+Без end-to-end в установленном клиенте с настоящими host tools
+функциональность полной автоматической маршрутизации **NOT_VERIFIED**.
