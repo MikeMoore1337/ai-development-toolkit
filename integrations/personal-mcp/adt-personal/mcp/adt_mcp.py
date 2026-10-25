@@ -676,7 +676,7 @@ def _host_orchestration_tool(tk: Toolkit, name: str, args: dict[str, Any]) -> di
     sums = tk._safe_file('SHA256SUMS.txt')
     match = next((line[:64] for line in sums.read_text(encoding='utf-8').splitlines()
                   if line[64:] == '  ' + relative and len(line) == 66 + len(relative)), None)
-    if match is None or hashlib.sha256(source.read_bytes().replace(b'\\r\\n', b'\\n')).hexdigest() != match:
+    if match is None or hashlib.sha256(source.read_bytes().replace(b'\r\n', b'\n')).hexdigest() != match:
         raise ToolkitError('CODEX_CONTRACT_SOURCE_INTEGRITY_NOT_VERIFIED')
     spec = importlib.util.spec_from_file_location('_adt_personal_codex_contract', source)
     if spec is None or spec.loader is None:
