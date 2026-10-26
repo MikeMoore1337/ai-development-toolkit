@@ -109,14 +109,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.12')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.13')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.12', diagnostic['adapter_version'])
+        self.assertEqual('0.1.13', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.12', version['running_mcp_adapter'])
+        self.assertEqual('0.1.13', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -387,6 +387,71 @@ class TestToolkitMCP(unittest.TestCase):
                  for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(before, after)
 
+    def test_model_review_checkpoint_reassesses_new_risk(self):
+        task = 'Подготовь уже существующую ветку к PR и прогони CI.'
+        # The initial task is PR housekeeping with no combined risk evidence.
+        early = self.tk.prepare_task(task, proactive_model_advice=True)
+        self.assertEqual(early['model_advisor']['status'], 'NO_REVIEW_SIGNAL')
+        findings = [
+            'Windows updater reparse and hardlink path bypass',
+            'OS-level advisory lock and interrupted rollback journal',
+        ]
+        before = {str(p.relative_to(self.path)): p.read_bytes()
+                  for p in self.path.rglob('*') if p.is_file()}
+        result = self.tk.model_review_checkpoint(task, findings, 'NEW_RISK', True)
+        self.assertEqual(result['status'], 'REVIEW_CANDIDATE')
+        self.assertTrue(result['new_risk_boundary'])
+        self.assertEqual(result['risk_context'], 'TASK_AND_CLIENT_FINDINGS')
+        self.assertEqual(result['findings_verification'],
+                         'CLIENT_REPORTED_NOT_INDEPENDENTLY_VERIFIED')
+        self.assertEqual(result['candidate_chat_notice'],
+                         'SECOND_OPINION_MAY_HELP_VERIFY_CLIENT_CAPABILITIES_FIRST')
+        self.assertEqual(result['host_inventory'], 'REQUIRES_NATIVE_CLIENT_INSPECTION')
+        self.assertEqual(result['model_inventory'], 'NOT_OBSERVED_BY_PERSONAL_MCP')
+        self.assertEqual(result['available_models'], [])
+        self.assertEqual(result['execution'], 'NOT_RUN')
+        self.assertEqual(result['extra_model_calls'], 0)
+        self.assertEqual(result['user_consent'], 'NOT_REQUESTED')
+        self.assertEqual(result['client_confirmation'],
+                         'REQUIRED_BEFORE_ANY_EXTRA_CALL')
+        self.assertNotIn('Windows updater', str(result))
+        self.assertEqual(self.tk.model_review_checkpoint(
+            task, [], 'PRE_PR', True)['status'], 'NO_REVIEW_SIGNAL')
+        self.assertEqual(self.tk.model_review_checkpoint(
+            'Проверь миграцию на блокировки и откат', [], 'PRE_CHANGE', True
+        )['status'], 'REVIEW_CANDIDATE')
+        self.assertEqual(self.tk.model_review_checkpoint(
+            'Fix a README typo.', [], 'PRE_PR', True
+        )['status'], 'NO_REVIEW_SIGNAL')
+        for bad in (None, False, 'true', 1):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ToolkitError):
+                    self.tk.model_review_checkpoint(task, findings, 'NEW_RISK', bad)
+        for bad in ('UNKNOWN', '', None, ['NEW_RISK']):
+            with self.subTest(stage=bad):
+                with self.assertRaises(ToolkitError):
+                    self.tk.model_review_checkpoint(task, findings, bad, True)
+        for bad in ('findings', [''], ['x' * 321], ['valid'] * 9,
+                    ['line\\ninjection'], [None]):
+            with self.subTest(findings=repr(bad)[:30]):
+                with self.assertRaises(ToolkitError):
+                    self.tk.model_review_checkpoint(task, bad, 'NEW_RISK', True)
+        rpc = process(self.tk, {
+            'jsonrpc': '2.0', 'id': 80, 'method': 'tools/call',
+            'params': {'name': 'toolkit_model_review_checkpoint',
+                       'arguments': {'task': task, 'observed_findings': findings,
+                                     'stage': 'NEW_RISK',
+                                     'proactive_model_advice': True}},
+        })
+        self.assertEqual(
+            rpc['result']['structuredContent']['status'], 'REVIEW_CANDIDATE')
+        self.assertEqual(
+            self.tk.model_review_checkpoint(task, findings, 'PRE_PR', True)['execution'],
+            'NOT_RUN')
+        after = {str(p.relative_to(self.path)): p.read_bytes()
+                 for p in self.path.rglob('*') if p.is_file()}
+        self.assertEqual(before, after)
+
     def test_prepare_task_validation_and_rpc(self):
         for kwargs in ({'existing_skills':'api-design'},
                        {'existing_roles':['ok',1]}, {'max_skills':False},
@@ -442,7 +507,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.12')
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.13')
         self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),12)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
