@@ -106,3 +106,7 @@ Issue #69 получает только словарь возможностей 
 ## Дополнение: DeepSeek Chat (26.10.2026)
 
 В реестр разговорных клиентов добавлен `deepseek-chat` наряду с ChatGPT и Claude.ai. Это **GUIDANCE_ONLY** при фактическом чтении URL или приложенных файлов, а не установка Skills, MCP или обращение к платному API. Официальная документация подтверждает чат и загрузки, но возможности конкретного сеанса пока UNKNOWN. Исторический ZIP + URL - OWNER_REPORTED_PASS; L4/L5/L6 остаются NOT_TESTED / NOT_TESTED / NOT_MEASURED. [Инструкция](../../integrations/deepseek-chat/README.ru.md).
+
+## Дополнение: интеграция DeepSeek Harness (26.10.2026)
+
+Отдельный файловый клиент `deepseek-harness` поддерживает офлайновую проверку каталогов `.agents/skills` и `.dsh/skills`. Необязательный [Cordis MCP Bundle](../../integrations/deepseek-harness/README.ru.md) подключает существующий read-only stdio-сервер Toolkit, исходный шаблон отключён. Реальное обнаружение и использование навыков в Harness, обращение к модели и сравнительная эффективность не проверены. Это отдельный путь, не текстовые инструкции для обычного DeepSeek Chat.

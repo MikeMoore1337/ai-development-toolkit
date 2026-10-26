@@ -98,6 +98,39 @@
       "client_discovery_status": "NOT_TESTED",
       "live_activation_status": "NOT_TESTED",
       "effectiveness_status": "NOT_TESTED"
+    },
+    {
+      "client_id": "deepseek-harness",
+      "client_name": "DeepSeek Harness (Cordis)",
+      "documentation_url": "https://github.com/deepseek-ai/deepseek-harness/blob/22ddee3792402c3e70ec5f86a63c3e3e895a2f60/docs/subsystems/skills.md",
+      "source_revision": "22ddee3792402c3e70ec5f86a63c3e3e895a2f60",
+      "supported_skill_layouts": [
+        ".agents/skills",
+        ".dsh/skills"
+      ],
+      "project_scope": "Git project root .agents/skills or .dsh/skills; .dsh overrides duplicate .agents names. No project trust or actual client activation inferred.",
+      "global_scope": "Harness home skills plus configured custom dirs, documented by pinned upstream source",
+      "installer_support": "PARTIAL",
+      "manager_support": "PARTIAL",
+      "migration_support": "UNSUPPORTED",
+      "filesystem_test_status": "PARTIAL",
+      "source_contract_status": "VERIFIED",
+      "notes": "Codex-layout Skill Manager can prepare shared .agents/skills; .dsh/skills checked read-only. Optional Cordis MCP bundle is generated separately and uses existing Toolkit stdio server. Native Harness discovery and model invocation NOT_TESTED.",
+      "required_metadata": [
+        "name",
+        "description"
+      ],
+      "optional_metadata": [
+        "license",
+        "compatibility",
+        "metadata",
+        "allowed-tools"
+      ],
+      "reviewed_on": "2026-10-26",
+      "static_validation_status": "VERIFIED",
+      "client_discovery_status": "NOT_TESTED",
+      "live_activation_status": "NOT_TESTED",
+      "effectiveness_status": "NOT_TESTED"
     }
   ]
 }

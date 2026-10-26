@@ -1,0 +1,15 @@
+# Intentionally disabled source template: generate machine-specific active bundle
+# with prepare_bundle.py --output ... --apply. Never install this unconfigured
+# source directly and claim that the MCP connection is live.
+- insert:
+    - id: adt-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      disabled: true
+      config:
+        serverName: adt
+        transport: stdio
+        command: python3
+        args:
+          - /UNCONFIGURED/ai-development-toolkit/scripts/toolkit_mcp.py
+          - serve
+        failOnStartupError: true

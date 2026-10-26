@@ -76,6 +76,10 @@ AI Development Toolkit предоставляет **две равноправн�
 
 **Границы доступа:** плагин навыков ChatGPT не получает автоматический доступ к локальному MCP на ноутбуке. Не публикуйте личные идентификаторы плагинов, токены или корпоративные файлы. Размещение исходников в GitHub само по себе не устанавливает интеграции пользователям.
 
-## DeepSeek Chat - reference-only route (2026-10-26)
+## DeepSeek Chat - работа по ссылке (26.10.2026)
 
-[DeepSeek Chat (веб/приложение)](../../integrations/deepseek-chat/README.ru.md): separate RU/EN instructions, historical owner-reported ZIP+URL result, no verified native Skill plugin, client-run tests or paid API. DeepSeek Harness is a different filesystem/MCP/plugin client and must not be confused with ordinary chat.
+[Инструкция для DeepSeek Chat](../../integrations/deepseek-chat/README.ru.md): работа с инструкциями через URL и разрешённые вложения без установки плагина. Исторический сценарий ZIP+URL подтверждён пользователем, но активация навыков клиентом и сравнение эффективности не проверены. Это не DeepSeek Harness.
+
+## DeepSeek Harness (26.10.2026)
+
+[Инструкция DeepSeek Harness](../../integrations/deepseek-harness/README.ru.md): нативные каталоги `.agents/skills` / `.dsh/skills` и необязательный Cordis Bundle поверх **существующего** stdio MCP. Отдельно от [обычного DeepSeek Chat](../../integrations/deepseek-chat/README.ru.md). Персональный пакет устанавливается только по явной команде `dsh plugin`; исходный шаблон отключён. Платные API и второй MCP не используются. Живые испытания Harness ещё не проводились.

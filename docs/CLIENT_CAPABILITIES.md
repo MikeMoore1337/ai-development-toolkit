@@ -106,3 +106,7 @@ The companion [optional integrations and authority contracts](TOOL_INTEGRATIONS.
 ## DeepSeek Chat addendum (2026-10-26)
 
 The conversation registry now includes `deepseek-chat` alongside ChatGPT and Claude.ai. This is **GUIDANCE_ONLY** from an actually readable Toolkit URL or supplied files. No native filesystem layout, installer, MCP, hosted Skill or paid API is inferred. Official app documentation supports chat and uploads; actual session capabilities remain UNKNOWN until observed. Historical ZIP + URL success stays OWNER_REPORTED_PASS; L4/L5/L6 stay NOT_TESTED / NOT_TESTED / NOT_MEASURED. [Guide](../integrations/deepseek-chat/README.md).
+
+## DeepSeek Harness integration (2026-10-26)
+
+The separate `deepseek-harness` filesystem client has `.agents/skills` and `.dsh/skills` offline layout checks. Its opt-in configuration-only [Cordis MCP bundle](../integrations/deepseek-harness/README.md) wraps the existing stdio read-only Toolkit server; the unconfigured source template is disabled. No live Harness discovery, invocation, model trial or measured effectiveness is claimed. Distinguish this from guidance-only DeepSeek Chat.
