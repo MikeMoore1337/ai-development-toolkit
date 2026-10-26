@@ -79,3 +79,7 @@ Actual selection can reorder skills; run `toolkit_prepare_task` with explicit `m
 ## DeepSeek Chat - reference-only route (2026-10-26)
 
 [DeepSeek Chat (web/app)](../integrations/deepseek-chat/README.md): separate RU/EN instructions, historical owner-reported ZIP+URL result, no verified native Skill plugin, client-run tests or paid API. DeepSeek Harness is a different filesystem/MCP/plugin client and must not be confused with ordinary chat.
+
+## DeepSeek Harness (2026-10-26)
+
+[Harness integration guide](../integrations/deepseek-harness/README.md): native `.agents/skills` / `.dsh/skills` contract and an optional configuration-only Cordis Bundle for the **existing** stdio MCP. This is distinct from [ordinary DeepSeek Chat](../integrations/deepseek-chat/README.md). A generated local package is installed explicitly with the official `dsh plugin` command; source templates are disabled to prevent false activation claims. No paid API, no second MCP server, no live Harness runtime test is implied.
