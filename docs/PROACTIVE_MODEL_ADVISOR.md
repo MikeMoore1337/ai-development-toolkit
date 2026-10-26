@@ -8,7 +8,7 @@ layer supplies a user-level Codex Desktop instruction entry point to
 ## Enable once (Windows, no Codex CLI)
 
 Use the script from a trusted, checked-out version of the repository
-after verifying CI and SHAs. Personal MCP 0.1.11 must already be connected.
+after verifying CI and SHAs. Personal MCP 0.1.12 must already be connected.
 
 ```powershell
 $source = Join-Path $env:LOCALAPPDATA "ADT-Personal\toolkit-source"
@@ -81,3 +81,30 @@ Tests:
 ```bash
 python -m unittest discover -s integrations/personal-mcp/adt-personal/tests -p test_model_advisor_onboarding.py -v
 ```
+
+## Updating the installed Personal MCP for #401
+
+The dedicated Toolkit source checkout and the persistent MCP launcher are
+separate artifacts. An updater refresh alone does **not** replace the launcher.
+After verifying a trusted source revision, run PowerShell:
+
+```powershell
+$source = "$env:LOCALAPPDATA\ADT-Personal\toolkit-source"
+$installMcp = Join-Path $source "integrations\personal-mcp\adt-personal\Install-ADT-Personal.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installMcp -McpOnly -WhatIf
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installMcp -McpOnly
+```
+
+`-McpOnly` updates the pre-existing local stdio modules without Codex CLI,
+re-registering the client, or overwriting global instructions. Refresh the
+previously opted-in Advisor managed block using its own installer with a
+WhatIf/backup, run `-Check`, and restart Codex Desktop. Confirm MCP version
+via `toolkit_info` in a fresh chat.
+
+An explicitly opted-in client passes `proactive_model_advice=true` to the
+existing `toolkit_prepare_task` tool. Its additional `model_advisor` field
+contains only a conservative local task-risk hint, never host model inventory,
+model approval, native execution, or evidence of actual client UI rendering.
+The Codex host must assess verified capabilities and decide whether to show a
+chat choice. This source change cannot guarantee a Codex Desktop proposal.
+Other Toolkit users remain opt-out by default.
