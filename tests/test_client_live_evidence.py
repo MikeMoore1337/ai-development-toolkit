@@ -117,7 +117,7 @@ class ClientLiveEvidenceTests(unittest.TestCase):
         chat_registry = json.loads((ROOT / "compatibility/conversational_clients.json").read_text())
         self.assertEqual(1, file_registry["schema_version"])
         self.assertEqual(1, chat_registry["schema_version"])
-        self.assertEqual({"codex", "claude-code", "hermes"},
+        self.assertEqual({"codex", "claude-code", "hermes", "deepseek-harness"},
                          {c["client_id"] for c in file_registry["clients"]})
         self.assertEqual({"chatgpt", "claude-ai", "deepseek-chat"},
                          {c["client_id"] for c in chat_registry["clients"]})
