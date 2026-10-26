@@ -27,9 +27,12 @@ Read-only static diagnosis (no Codex CLI or model execution):
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Check
 ```
 
-`SOURCE_PRESENT_CLIENT_UNVERIFIED` only confirms the managed block is in
-the eligible instruction source. `NOT_INSTALLED` means absent, while
-`MASKED_BY_GLOBAL_OVERRIDE` means a nonempty `AGENTS.override.md`
+`SOURCE_PRESENT_CLIENT_UNVERIFIED` only confirms that the **current** managed
+block is in the eligible instruction source. `BLOCK_STALE_UPDATE_REQUIRED`
+means an older block is present: rerun the trusted installer **without**
+`-Check` (backup and unrelated instructions are preserved), then check again.
+`NOT_INSTALLED` means absent, while `MASKED_BY_GLOBAL_OVERRIDE` means a
+nonempty `AGENTS.override.md`
 takes precedence. Enabling now fails closed on that override; it never
 silently rewrites the user's override. Disable remains possible.
 
@@ -47,7 +50,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Disable
 
 After an ordinary request, Codex uses its connected MCP
 `toolkit_prepare_task` without requiring a Toolkit-specific phrase or
-model ID in the prompt. It evaluates architecture, security, migrations,
+model ID in the prompt. Before high-impact changes it should make an
+explicit in-session choice: `PROPOSE_REVIEW`, `SINGLE_MODEL_SUFFICIENT`
+or `CAPABILITY_UNAVAILABLE`. This is a **client judgment**, not a verified
+MCP output or durable record. When `toolkit_route_task` returned an applicable
+profile, pass it to `toolkit_prepare_task` to avoid inconsistent rerouting.
+It evaluates architecture, security, migrations,
 cross-system changes and repeated failures for independent review. It
 should avoid interrupting routine fixes. When useful, it displays a short
 **chat-text** recommendation with three choices:

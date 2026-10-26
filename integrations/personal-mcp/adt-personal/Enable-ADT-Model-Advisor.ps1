@@ -66,21 +66,6 @@ if ($first -ge 0) {
     }
 }
 
-# A static check cannot prove which instructions Codex Desktop actually loaded.
-if ($Check) {
-    if ($overrideActive) {
-        Write-Host 'Model advisor check: MASKED_BY_GLOBAL_OVERRIDE'
-    } elseif ($first -lt 0) {
-        Write-Host 'Model advisor check: NOT_INSTALLED'
-    } else {
-        Write-Host 'Model advisor check: SOURCE_PRESENT_CLIENT_UNVERIFIED'
-    }
-    return
-}
-if (-not $Disable -and $overrideActive) {
-    throw 'AGENTS.override.md takes precedence over AGENTS.md. No changes; resolve the override before enabling.'
-}
-
 # This is a Codex chat instruction overlay, NOT a custom native dialog/widget.
 # The model/client must actually comply; activation requires a live ordinary-task test.
 $block = @'
@@ -91,11 +76,28 @@ asking the user to mention Toolkit, call the connected ai-development-toolkit
 MCP `toolkit_prepare_task` as directed by the existing ADT-PERSONAL block.
 Use its task profiles and source guidance plus the actual task to assess,
 once per task and at genuine new risk boundaries, whether independent model
-review may materially improve correctness. This assessment is ADVISORY,
-not proof of semantic/model inference. Do not call external models for assessment.
+review may materially improve correctness. If toolkit_route_task has already
+returned a compatible primary profile, pass it as the optional `profile` to
+toolkit_prepare_task so the second routing does not silently change priorities.
+The actual user task and discovered risks, NOT the chosen skill profile alone,
+govern the review decision. This assessment is ADVISORY, not proof of
+semantic/model inference. Do not call external models for assessment.
+
+Immediately after toolkit_prepare_task returns and BEFORE substantive edits,
+make an explicit bounded advisor decision for this task: PROPOSE_REVIEW if a
+second opinion could materially help, SINGLE_MODEL_SUFFICIENT if it could not,
+or CAPABILITY_UNAVAILABLE if a relevant client capability is unavailable.
+For security-sensitive changes involving concurrency, Git trust boundaries,
+state recovery or major migration risk, independently consider a pre-change
+review rather than waiting for the final summary. Do not quietly skip the
+decision merely because skill routing succeeded or the profile is qa-core.
+This is an in-session decision, NOT a guarantee of improved model quality.
+Avoid creating files, logs or external telemetry just to record this decision.
 
 For simple, routine or self-contained changes, do the work silently using
 the current primary model. Do NOT present the advisor choice on every turn.
+When choosing SINGLE_MODEL_SUFFICIENT, do not interrupt the user or publish
+an artificial advisory audit log.
 Consider proactively proposing an expert for architectural trade-offs, unclear
 data migrations or concurrency, high-impact security, repeated debugging
 failures, complex cross-system changes, or independent verification of an
@@ -144,6 +146,26 @@ Uninstalling this opt-in block restores ordinary Toolkit skill routing.
 '@
 $nl = if ($raw.Contains("`r`n")) { "`r`n" } else { "`n" }
 $block = $block.Replace("`r`n", "`n").Replace("`n", $nl)
+# Static source attestation, not proof that the Desktop client ingested it.
+# An old managed block must not be reported as a current installation.
+if ($Check) {
+    if ($overrideActive) {
+        Write-Host 'Model advisor check: MASKED_BY_GLOBAL_OVERRIDE'
+    } elseif ($first -lt 0) {
+        Write-Host 'Model advisor check: NOT_INSTALLED'
+    } else {
+        $installedBlock = $raw.Substring($first, $last + $end.Length - $first)
+        if ([string]::Equals($installedBlock, $block, [StringComparison]::Ordinal)) {
+            Write-Host 'Model advisor check: SOURCE_PRESENT_CLIENT_UNVERIFIED'
+        } else {
+            Write-Host 'Model advisor check: BLOCK_STALE_UPDATE_REQUIRED'
+        }
+    }
+    return
+}
+if (-not $Disable -and $overrideActive) {
+    throw 'AGENTS.override.md takes precedence over AGENTS.md. No changes; resolve the override before enabling.'
+}
 if ($Disable) {
     if ($first -lt 0) {
         Write-Host 'Model advisor already disabled; no changes.'
