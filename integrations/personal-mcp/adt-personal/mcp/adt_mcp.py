@@ -168,7 +168,7 @@ def _model_review_hint(task: str, observed_findings: list[str] | None = None) ->
         observed_findings = []
     if (not isinstance(observed_findings, list) or len(observed_findings) > 8
             or any(not isinstance(x, str) or not 1 <= len(x) <= 320
-                   or any(ord(c) < 32 and c not in '\\t' for c in x)
+                   or any(ord(c) < 32 for c in x)
                    for x in observed_findings)):
         raise ToolkitError('observed_findings must be up to 8 bounded plain-text observations')
     actionable, _ = _split_explicit_prohibitions(task)
