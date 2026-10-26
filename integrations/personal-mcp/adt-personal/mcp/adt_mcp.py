@@ -427,6 +427,8 @@ class Toolkit:
             raise ToolkitError('task must be text of length 1..6000')
         if stage not in ('NEW_RISK', 'PRE_CHANGE', 'PRE_PR'):
             raise ToolkitError('stage must be NEW_RISK, PRE_CHANGE or PRE_PR')
+        if not isinstance(observed_findings, list):
+            raise ToolkitError('observed_findings must be explicitly provided as a list')
         hint = _model_review_hint(task, observed_findings)
         return {
             **hint, 'stage': stage, 'source_revision': self.source_revision,
