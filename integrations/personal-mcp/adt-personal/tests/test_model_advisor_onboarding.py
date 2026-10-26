@@ -27,6 +27,7 @@ class AdvisorSourceContract(unittest.TestCase):
         self.assertIn("$env:CODEX_HOME", src)
         self.assertIn("MASKED_BY_GLOBAL_OVERRIDE", src)
         self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", src)
+        self.assertIn("BLOCK_STALE_UPDATE_REQUIRED", src)
         self.assertIn("Backup:", src)
         self.assertIn(BEGIN, src)
         self.assertIn(END, src)
@@ -39,6 +40,10 @@ class AdvisorSourceContract(unittest.TestCase):
             "toolkit_prepare_task", "once per task",
             "SINGLE_MODEL", "RECOMMEND_WITH_CONFIRMATION", "AUTO_OPT_IN",
             "No separate template prompt", "current Codex chat",
+            "BEFORE substantive edits", "PROPOSE_REVIEW",
+            "SINGLE_MODEL_SUFFICIENT", "CAPABILITY_UNAVAILABLE",
+            "toolkit_route_task has already", "optional `profile`",
+            "do not quietly skip", "Git trust boundaries",
         ):
             self.assertIn(token, src)
 
@@ -139,6 +144,22 @@ class WindowsAdvisorLifecycle(unittest.TestCase):
         self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", result.stdout)
         self.assertEqual(enabled, self.path.read_bytes())
         self.assertEqual(len(list(self.path.parent.glob("*.adt-model-advisor-backup-*"))), 1)
+
+    def test_check_detects_stale_block_without_mutation(self):
+        self.path.write_text(
+            "# other instructions\n" + BEGIN + "\nOld advisor text\n" + END + "\n",
+            encoding="utf-8",
+        )
+        before = self.path.read_bytes()
+        result = self.run_script("-Check")
+        self.assertIn("BLOCK_STALE_UPDATE_REQUIRED", result.stdout)
+        self.assertEqual(before, self.path.read_bytes())
+        self.assertEqual(list(self.path.parent.glob("*.adt-model-advisor-backup-*")), [])
+        self.run_script()
+        current = self.run_script("-Check")
+        self.assertIn("SOURCE_PRESENT_CLIENT_UNVERIFIED", current.stdout)
+        self.assertNotIn("Old advisor text", self.path.read_text(encoding="utf-8"))
+        self.assertIn("# other instructions", self.path.read_text(encoding="utf-8"))
 
     def test_nonempty_override_masks_block_and_refuses_enable(self):
         override = self.path.with_name("AGENTS.override.md")
