@@ -19,11 +19,13 @@ LAYOUTS = {
     "codex": (".agents/skills",),
     "claude-code": (".claude/skills",),
     "hermes": (".agents/skills", ".hermes/skills"),
+    "deepseek-harness": (".agents/skills", ".dsh/skills"),
 }
 DOC_HOSTS = {
     "codex": "https://learn.chatgpt.com/docs/build-skills",
     "claude-code": "https://code.claude.com/docs/en/skills",
     "hermes": "https://github.com/NousResearch/hermes-agent/blob/",
+    "deepseek-harness": "https://github.com/deepseek-ai/deepseek-harness/blob/",
 }
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 LINK = re.compile(r"(?<!!)\[[^\]\n]+\]\(([^)]+)\)")
@@ -75,9 +77,9 @@ def load_registry(path: Path = REGISTRY) -> dict:
         revision = row["source_revision"]
         if not isinstance(revision, str) or not revision:
             raise ContractError("Missing source revision")
-        if name == "hermes":
+        if name in {"hermes", "deepseek-harness"}:
             if not re.fullmatch(r"[a-f0-9]{40}", revision) or f"/blob/{revision}/" not in row["documentation_url"]:
-                raise ContractError("Hermes source must be pinned to an exact commit")
+                raise ContractError(f"{name} source must be pinned to an exact commit")
         elif revision != "official-docs-reviewed-2026-10-19":
             raise ContractError("Unreviewed official documentation version")
         for field in ("project_scope", "global_scope", "notes"):
@@ -98,8 +100,14 @@ def load_registry(path: Path = REGISTRY) -> dict:
         if name == "hermes" and any(row[field] != "UNSUPPORTED" for field in
                                      ("installer_support", "manager_support", "migration_support")):
             raise ContractError("No Hermes-specific installer/manager/adapter is implemented")
-        if name != "hermes" and any(row[field] != "VERIFIED" for field in
-                                     ("installer_support", "manager_support", "migration_support")):
+        if name == "deepseek-harness" and (
+                row["installer_support"] != "PARTIAL"
+                or row["manager_support"] != "PARTIAL"
+                or row["migration_support"] != "UNSUPPORTED"):
+            raise ContractError("No native DeepSeek Harness Skill Manager is verified")
+        if name in {"codex", "claude-code"} and any(
+                row[field] != "VERIFIED" for field in
+                ("installer_support", "manager_support", "migration_support")):
             raise ContractError("Existing Codex/Claude Manager v2 contract changed")
     if seen != set(LAYOUTS):
         raise ContractError("Client inventory does not match verified contracts")
