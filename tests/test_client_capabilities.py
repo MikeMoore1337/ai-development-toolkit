@@ -29,12 +29,15 @@ class ClientCapabilityTests(unittest.TestCase):
         path.write_text(json.dumps(data), encoding="utf-8")
         return path
 
-    def test_two_conversational_clients_and_no_fake_layout(self):
+    def test_three_conversational_clients_and_no_fake_layout(self):
         registry = cap.load_conversations()
-        self.assertEqual({"chatgpt", "claude-ai"}, {
+        self.assertEqual({"chatgpt", "claude-ai", "deepseek-chat"}, {
             x["client_id"] for x in registry["clients"]})
         for row in registry["clients"]:
             self.assertNotIn("supported_skill_layouts", row)
+            if row["client_id"] == "deepseek-chat":
+                self.assertEqual("UNKNOWN", row["native_skill_support"])
+                self.assertEqual("GUIDANCE_ONLY", row["operating_mode"])
             self.assertEqual("CONVERSATIONAL_REFERENCE_CLIENT", row["client_type"])
             self.assertEqual("OWNER_REPORTED_PASS",
                              row["scenarios"]["zip_plus_toolkit_url"])
@@ -64,6 +67,12 @@ class ClientCapabilityTests(unittest.TestCase):
                 L6="VERIFIED")),
             ("owner-reported", lambda d: d["clients"][0]["scenarios"].update(
                 zip_plus_toolkit_url="VERIFIED")),
+            ("deepseek-source", lambda d: d["clients"][2].update(
+                documentation_url="https://example.org/unofficial")),
+            ("deepseek-session", lambda d: d["clients"][2]["capabilities"].update(
+                skill_discovery="AVAILABLE")),
+            ("deepseek-L5", lambda d: d["clients"][2]["evidence"].update(
+                L5="VERIFIED")),
         )
         for name, mutation in corruptions:
             with self.subTest(name=name), self.assertRaisesRegex(
