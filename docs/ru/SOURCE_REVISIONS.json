@@ -71,7 +71,12 @@
     {
       "source": "docs/CLIENT_POLICY_ROUTES.md",
       "translation": "docs/ru/CLIENT_POLICY_ROUTES.md",
-      "source_sha256": "a7f122c7538d55c8a5701ddba82852cb3fbe96a69902561b0785a79ae94ab6f0"
+      "source_sha256": "652bbe585c235b62dbf137e8f07dd6a5c1ee45e40303b9e99177ba1e15f5e25c"
+    },
+    {
+      "source": "docs/CLIENT_ROUTE_SECURITY_MATRIX.md",
+      "translation": "docs/ru/CLIENT_ROUTE_SECURITY_MATRIX.md",
+      "source_sha256": "75b4d210da42805a0fb0a626b39418148ecf73b2e7c9926986d282df6029fa6e"
     },
     {
       "source": "docs/CURATED_SKILL_PACKS.md",
