@@ -584,6 +584,16 @@ def _record_failure(state_file: Path, state: dict[str, Any] | None,
         pass
 
 
+def _ensure_rollback_inputs_unchanged(source: Path, *, old: str, target: str) -> None:
+    try:
+        current = check_sha(git_text(source, "rev-parse", "HEAD"))
+        pinned = check_sha(git_text(source, "rev-parse", "refs/adt-personal/previous-good"))
+    except UpdateError as exc:
+        raise UpdateError("source_changed_before_rollback") from exc
+    if current != old or pinned != target:
+        raise UpdateError("source_changed_before_rollback")
+
+
 def rollback(source: Path, state_dir: Path, *, apply: bool = False,
              expected_origin: str = EXPECTED_ORIGIN) -> dict[str, Any]:
     """Explicit safe rollback of only the clean dedicated reference checkout."""
@@ -628,6 +638,9 @@ def rollback(source: Path, state_dir: Path, *, apply: bool = False,
                                  "last_attempt_utc": pending["started_utc"],
                                  "last_attempt_status": "ROLLING_BACK",
                                  "last_error": None})
+        # Revalidate after journaling and immediately before the destructive step.
+        check_origin(source, expected_origin)
+        _ensure_rollback_inputs_unchanged(source, old=old, target=target)
         run_git(source, "reset", "--hard", target)
         if (check_sha(git_text(source, "rev-parse", "HEAD")) != target or
                 run_git(source, "status", "--porcelain", "--untracked-files=all").stdout.strip()):
@@ -715,6 +728,11 @@ def update(source: Path, state_dir: Path, *, expected_origin: str = EXPECTED_ORI
                     # Only rollback our own exact clean commit, never discard concurrent edits.
                     if (git_text(source, "rev-parse", "HEAD") == candidate and
                             not run_git(source, "status", "--porcelain", "--untracked-files=all").stdout.strip()):
+                        try:
+                            _ensure_rollback_inputs_unchanged(source, old=candidate, target=old)
+                        except UpdateError as rollback_error:
+                            raise UpdateError(
+                                "post_update_validation_failed_manual_review_required") from rollback_error
                         run_git(source, "reset", "--hard", old)
                         state = {**state, "pending_update": None}
                         raise UpdateError("post_update_validation_failed_rolled_back") from exc

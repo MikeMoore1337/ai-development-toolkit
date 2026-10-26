@@ -409,6 +409,74 @@ class TestUpdater(unittest.TestCase):
         self.assertIsNone(final['previous_good_revision'])
         self.assertEqual('ROLLED_BACK_AFTER_INTERRUPTION', final['last_attempt_status'])
 
+    def test_rollback_rechecks_head_before_destructive_reset(self):
+        self._push('1.1.0')
+        upgraded = self._check(today='2026-10-21')
+        original_write_state = updater.write_state
+        injected = False
+
+        def advance_after_journal(path, state):
+            nonlocal injected
+            original_write_state(path, state)
+            if state.get('pending_rollback') is not None and not injected:
+                injected = True
+                self._push('1.2.0')
+                git('fetch', 'origin', 'main', cwd=self.source)
+                git('merge', '--ff-only', 'origin/main', cwd=self.source)
+
+        updater.write_state = advance_after_journal
+        try:
+            with self.assertRaisesRegex(updater.UpdateError, 'source_changed_before_rollback'):
+                updater.rollback(self.source, self.state, apply=True,
+                                 expected_origin=str(self.remote))
+        finally:
+            updater.write_state = original_write_state
+
+        self.assertEqual(git('rev-parse', 'origin/main', cwd=self.source),
+                         git('rev-parse', 'HEAD', cwd=self.source))
+        self.assertNotEqual(upgraded['active_revision'], git('rev-parse', 'HEAD', cwd=self.source))
+        self.assertIsNotNone(updater.read_state(self.state / 'state.json')['pending_rollback'])
+
+    def test_update_failure_rechecks_head_before_destructive_reset(self):
+        self._push('1.1.0')
+        original_check_origin = updater.check_origin
+        original_run_git = updater.run_git
+        check_count = 0
+        injected = False
+        failure_ready = False
+
+        def fail_after_merge(source, expected_origin, require_clean=True):
+            nonlocal check_count, failure_ready
+            check_count += 1
+            if check_count == 3:
+                failure_ready = True
+                raise updater.UpdateError('simulated_post_update_failure')
+            return original_check_origin(source, expected_origin, require_clean=require_clean)
+
+        def advance_during_rollback_check(source, *args, **kwargs):
+            nonlocal injected
+            if failure_ready and args[:2] == ('status', '--porcelain') and not injected:
+                injected = True
+                self._push('1.2.0')
+                git('fetch', 'origin', 'main', cwd=self.source)
+                git('merge', '--ff-only', 'origin/main', cwd=self.source)
+            return original_run_git(source, *args, **kwargs)
+
+        updater.check_origin = fail_after_merge
+        updater.run_git = advance_during_rollback_check
+        try:
+            with self.assertRaisesRegex(
+                    updater.UpdateError,
+                    'post_update_validation_failed_manual_review_required'):
+                self._check(today='2026-10-21')
+        finally:
+            updater.check_origin = original_check_origin
+            updater.run_git = original_run_git
+
+        self.assertTrue(injected)
+        self.assertEqual(git('rev-parse', 'origin/main', cwd=self.source),
+                         git('rev-parse', 'HEAD', cwd=self.source))
+
     def test_linked_source_path_is_rejected(self):
         alias = self.root / 'source-link'
         try:
@@ -451,6 +519,17 @@ class TestPowerShellInstaller(unittest.TestCase):
         self.assertIn('Assert-ADTNoReparseChain $stateDir', text)
         self.assertNotIn('Set-ExecutionPolicy', text)
         self.assertNotIn('mcp remove', text)
+
+
+class TestUnixInstaller(unittest.TestCase):
+    def test_updater_install_and_initial_check_are_recovery_safe(self):
+        text = (SCRIPT.parents[1] / 'Enable-ADT-AutoUpdate.sh').read_text(encoding='utf-8')
+        self.assertIn('temporary=$(mktemp "$root/updater/.update_toolkit.py.tmp.XXXXXX")', text)
+        self.assertIn('cp -p "$package/updater/update_toolkit.py" "$temporary"', text)
+        self.assertIn('mv -f "$temporary" "$updater"', text)
+        self.assertNotIn('cp "$package/updater/update_toolkit.py" "$updater"', text)
+        self.assertIn('if ! python3 "$updater" --source "$source" --state-dir "$state" --force; then', text)
+        self.assertIn('scheduler registration continues for the next run', text)
 
 if __name__ == '__main__':
     unittest.main()

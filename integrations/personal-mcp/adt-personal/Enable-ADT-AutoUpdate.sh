@@ -30,11 +30,18 @@ state="$root/updater/state"
 reject_linked_path "$updater"
 reject_linked_path "$state"
 if [ ! -f "$updater" ] || ! cmp -s "$package/updater/update_toolkit.py" "$updater"; then
+  temporary=$(mktemp "$root/updater/.update_toolkit.py.tmp.XXXXXX")
+  trap 'rm -f "$temporary"' 0 1 2 15
   [ ! -e "$updater" ] || cp -p "$updater" "$updater.adt-backup-$(date '+%Y%m%d-%H%M%S')"
-  cp "$package/updater/update_toolkit.py" "$updater"
+  cp -p "$package/updater/update_toolkit.py" "$temporary"
+  mv -f "$temporary" "$updater"
+  trap - 0 1 2 15
 fi
-# Run one visible check first. If the candidate is invalid, don't schedule it.
-python3 "$updater" --source "$source" --state-dir "$state" --force
+# Run one visible check first. A transient failure must not prevent scheduling
+# the next attempt; the updater remains fail-closed for each scheduled run.
+if ! python3 "$updater" --source "$source" --state-dir "$state" --force; then
+  echo 'WARNING: Initial update check failed; scheduler registration continues for the next run.' >&2
+fi
 if [ "$kernel" = Linux ]; then
   command -v systemctl >/dev/null 2>&1 || { echo 'ERROR: systemd user manager is unavailable. Follow manual cron instructions.' >&2; exit 2; }
   unit="$HOME/.config/systemd/user"
