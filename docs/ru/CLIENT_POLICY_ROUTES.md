@@ -1,6 +1,6 @@
 # Политики клиентов - предварительная проверка без запуска
 
-[English](../CLIENT_POLICY_ROUTES.md) | [Задача #395](https://github.com/MikeMoore1337/ai-development-toolkit/issues/395)
+[English](../CLIENT_POLICY_ROUTES.md) | [Задача #395](https://github.com/MikeMoore1337/ai-development-toolkit/issues/395) | [Матрица клиентов и расходов](CLIENT_ROUTE_SECURITY_MATRIX.md)
 
 Toolkit различает **доступные варианты клиентов**, **пожелания пользователя**, **факт установки программы**, **возможности текущего подключения** и **реальное разрешение на действия**. Галочка в настройках не подтверждает запуск клиента, обращение к модели или отсутствие расходов.
 
