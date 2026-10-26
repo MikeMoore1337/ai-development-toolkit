@@ -36,9 +36,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Check
 ```
 
-`SOURCE_PRESENT_CLIENT_UNVERIFIED` означает только наличие управляемого блока
-в активном источнике инструкций. `NOT_INSTALLED` означает его отсутствие, а
-`MASKED_BY_GLOBAL_OVERRIDE` - что непустой `AGENTS.override.md` перекрывает
+`SOURCE_PRESENT_CLIENT_UNVERIFIED` означает только наличие **актуального** управляемого блока
+в активном источнике инструкций. `BLOCK_STALE_UPDATE_REQUIRED` означает,
+что найден старый блок - повторно запусти установщик **без `-Check`** (он сохранит
+резервную копию и другие правила), затем повтори проверку. `NOT_INSTALLED`
+означает отсутствие блока, а `MASKED_BY_GLOBAL_OVERRIDE` - что непустой
+`AGENTS.override.md` перекрывает
 `AGENTS.md`. При таком перекрытии включение теперь безопасно завершается
 ошибкой и не изменяет файлы. Не удаляй пользовательский override автоматически.
 
@@ -60,7 +63,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Disable
 > Предложи исправление и выполни необходимую проверку.
 
 При выполнении Codex должен автоматически вызвать подключённый
-`toolkit_prepare_task` и оценить полезность отдельного review.
+`toolkit_prepare_task` и **до существенных изменений** оценить пользу отдельной
+проверки: `PROPOSE_REVIEW`, `SINGLE_MODEL_SUFFICIENT` или
+`CAPABILITY_UNAVAILABLE`. Это решение принимается **моделью в клиенте**, не
+предоставляется как факт MCP и не записывается в файлы. Если ранее был вызван
+`toolkit_route_task` с подходящим профилем, он должен передаваться в
+`toolkit_prepare_task`, чтобы избежать случайного расхождения маршрутов.
+Проверку доступа к моделям нельзя подменять фактом загрузки навыков.
 При подтверждённом существенном риске можно показать **в чате**:
 
 > Независимая проверка может снизить риск ошибки в блокировках и откате.
