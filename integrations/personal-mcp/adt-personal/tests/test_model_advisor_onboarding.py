@@ -43,7 +43,7 @@ class AdvisorSourceContract(unittest.TestCase):
             "BEFORE substantive edits", "PROPOSE_REVIEW",
             "SINGLE_MODEL_SUFFICIENT", "CAPABILITY_UNAVAILABLE",
             "toolkit_route_task has already", "optional `profile`",
-            "do not quietly skip", "Git trust boundaries",
+            "Do not quietly skip", "Git trust boundaries",
         ):
             self.assertIn(token, src)
 
