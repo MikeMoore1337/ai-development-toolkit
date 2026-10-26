@@ -45,7 +45,7 @@ class ClientContractTests(unittest.TestCase):
         ), encoding="utf-8")
         return folder
 
-    def test_registry_has_three_documented_clients(self):
+    def test_registry_has_four_documented_clients(self):
         data = compat.load_registry()
         self.assertEqual(set(compat.LAYOUTS), {x["client_id"] for x in data["clients"]})
         for x in data["clients"]:
@@ -88,6 +88,23 @@ class ClientContractTests(unittest.TestCase):
             compat.load_registry(self.registry(lambda d: d["clients"][2].update(source_revision="main")))
         with self.assertRaisesRegex(compat.ContractError, "No Hermes-specific"):
             compat.load_registry(self.registry(lambda d: d["clients"][2].update(manager_support="VERIFIED")))
+
+    def test_deepseek_harness_contract_is_scoped_to_known_layouts(self):
+        row = next(x for x in compat.load_registry()["clients"]
+                   if x["client_id"] == "deepseek-harness")
+        self.assertEqual([".agents/skills", ".dsh/skills"],
+                         row["supported_skill_layouts"])
+        self.assertEqual("PARTIAL", row["manager_support"])
+        self.assertEqual("NOT_TESTED", row["live_activation_status"])
+        with self.assertRaisesRegex(compat.ContractError, "exact commit"):
+            compat.load_registry(self.registry(
+                lambda d: d["clients"][3].update(source_revision="master")))
+        with self.assertRaisesRegex(compat.ContractError, "native DeepSeek Harness"):
+            compat.load_registry(self.registry(
+                lambda d: d["clients"][3].update(manager_support="VERIFIED")))
+        with self.assertRaisesRegex(compat.ContractError, "Unsupported layout"):
+            compat.check_project(self.project, "deepseek-harness", ["smoke"],
+                                 layout=".claude/skills")
 
     def test_missing_official_documentation_rejected(self):
         with self.assertRaisesRegex(compat.ContractError, "Untrusted documentation"):
