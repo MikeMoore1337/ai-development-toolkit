@@ -432,7 +432,7 @@ class TestToolkitMCP(unittest.TestCase):
                 with self.assertRaises(ToolkitError):
                     self.tk.model_review_checkpoint(task, findings, bad, True)
         for bad in ('findings', [''], ['x' * 321], ['valid'] * 9,
-                    ['line\\ninjection'], [None]):
+                    ['line' + chr(10) + 'injection'], [None]):
             with self.subTest(findings=repr(bad)[:30]):
                 with self.assertRaises(ToolkitError):
                     self.tk.model_review_checkpoint(task, bad, 'NEW_RISK', True)
