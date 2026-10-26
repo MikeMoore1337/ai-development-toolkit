@@ -71,8 +71,9 @@ class TestUpdater(unittest.TestCase):
         self._save_toolkit(version, **kwargs)
         git('push', 'origin', 'main', cwd=self.author)
 
-    def _check(self, **kwargs):
-        return updater.update(self.source, self.state, expected_origin=str(self.remote), **kwargs)
+    def _check(self, source=None, **kwargs):
+        return updater.update(source or self.source, self.state,
+                              expected_origin=str(self.remote), **kwargs)
 
     def test_up_to_date_then_skipped_same_day(self):
         first = self._check(today='2026-10-21')
@@ -415,7 +416,7 @@ class TestUpdater(unittest.TestCase):
         except (OSError, NotImplementedError):
             self.skipTest('Symlinks are unavailable on this host')
         with self.assertRaisesRegex(updater.UpdateError, 'linked_path_not_allowed'):
-            self._check(today='2026-10-21', force=True)
+            self._check(source=alias, today='2026-10-21', force=True)
 
     def test_candidate_symlink_is_rejected(self):
         blob = subprocess.run(
