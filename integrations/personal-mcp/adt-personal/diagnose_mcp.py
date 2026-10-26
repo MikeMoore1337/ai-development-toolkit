@@ -109,7 +109,7 @@ def main() -> int:
               and pilot.get('profile') == 'backend' and 'qa-core' in pilot.get('secondary_profiles', [])
               and composite.get('profile') == 'backend'
               and 'qa-python' in composite.get('secondary_profiles', [])
-              and len(tools) == 12 and prepared.get('primary_profile') == 'backend'
+              and len(tools) == 13 and prepared.get('primary_profile') == 'backend'
               and 'qa-python' in prepared.get('secondary_profiles', [])
               and len(prepared.get('loaded_skills', [])) > 0
               and local_coverage.get('coverage') == 'FOUND_LOCAL'

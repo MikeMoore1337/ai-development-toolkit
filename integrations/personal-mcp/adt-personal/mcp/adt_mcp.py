@@ -16,7 +16,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.12'
+VERSION = '0.1.13'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -157,26 +157,40 @@ def has_build_intent(text: str) -> bool:
             without_test_commands = re.sub(re.escape(term) + r'\w*', ' ', without_test_commands)
     return any(match_term(without_test_commands, term) for term in BUILD_TERMS)
 
-def _model_review_hint(task: str) -> dict[str, Any]:
+def _model_review_hint(task: str, observed_findings: list[str] | None = None) -> dict[str, Any]:
     """Bounded read-only risk hint for an opted-in Codex client.
 
     Reuses the existing task and route; this is NOT a model-selection engine.
     Model inventory, execution capability, user consent and cost are never
     established by task keywords or the Personal MCP server.
     """
+    if observed_findings is None:
+        observed_findings = []
+    if (not isinstance(observed_findings, list) or len(observed_findings) > 8
+            or any(not isinstance(x, str) or not 1 <= len(x) <= 320
+                   or any(ord(c) < 32 for c in x)
+                   for x in observed_findings)):
+        raise ToolkitError('observed_findings must be up to 8 bounded plain-text observations')
     actionable, _ = _split_explicit_prohibitions(task)
-    text = ' '.join(actionable.casefold().replace('ё', 'е').split())[:6000]
+    # Findings are data supplied by the host, NOT instructions to be executed.
+    # Return only fixed enum values; never reflect private or malicious input.
+    combined = actionable + ' ; ' + ' ; '.join(observed_findings)
+    text = ' '.join(combined.casefold().replace('ё', 'е').split())[:8000]
     def hit(terms: tuple[str, ...]) -> bool:
         return any(match_term(text, term) for term in terms)
 
     security = hit(('безопасност', 'уязвимост', 'security', 'vulnerability',
-                    'authorization', 'authz', 'threat model', 'цепочк поставок'))
+                    'authorization', 'authz', 'threat model', 'цепочк поставок',
+                    'git hooks', 'git hook', 'core.hookspath', 'origin spoofing',
+                    'symlink traversal', 'hardlink', 'reparse'))
     concurrency = hit(('конкурентн', 'гонк', 'блокировк', 'race condition',
-                       'concurrency', 'deadlock', 'toctou', 'locking'))
+                       'concurrency', 'deadlock', 'toctou', 'locking', 'os-lock',
+                       'os lock', 'advisory lock', 'file lock', 'stale lock'))
     integrity = hit(('откат', 'восстановлен', 'потеря данных', 'поврежден',
                      'атомарн', 'журнал', 'reparse', 'symlink', 'git origin',
                      'rollback', 'recovery', 'data loss', 'state corruption',
-                     'atomic', 'journal', 'fsync'))
+                     'atomic', 'journal', 'fsync', 'hardlink', 'fetch_head',
+                     'interrupted update', 'прерыван', 'pending journal'))
     migration = hit(('миграц', 'migration', 'schema change', 'breaking change'))
     architecture = hit(('архитектур', 'architecture', 'cross-system',
                         'нескольких сервис', 'multiple services'))
@@ -197,9 +211,15 @@ def _model_review_hint(task: str) -> dict[str, Any]:
               else 'MIGRATION_RECOVERY_REVIEW' if migration and (concurrency or integrity)
               else 'ARCHITECTURE_SECURITY_REVIEW' if signal
               else 'INSUFFICIENT_COMBINED_RISK_SIGNALS')
+    from_new_findings = bool(observed_findings) and signal and (
+        _model_review_hint(task)['status'] != 'REVIEW_CANDIDATE')
     return {
         'schema_version': 1,
         'status': 'REVIEW_CANDIDATE' if signal else 'NO_REVIEW_SIGNAL',
+        'new_risk_boundary': from_new_findings,
+        'risk_context': 'TASK_AND_CLIENT_FINDINGS' if observed_findings else 'TASK_ONLY',
+        'findings_verification': ('CLIENT_REPORTED_NOT_INDEPENDENTLY_VERIFIED'
+                                  if observed_findings else 'NOT_PROVIDED'),
         'reason_code': reason,
         'evidence': 'BOUNDED_TASK_LEXICAL_HEURISTIC_NOT_MODEL_INFERENCE',
         'model_inventory': 'NOT_OBSERVED_BY_PERSONAL_MCP',
@@ -397,6 +417,28 @@ class Toolkit:
         return {'name': name, 'content': content[offset:offset+limit], 'offset': offset,
                 'total_chars':len(content),'truncated':offset+limit < len(content),
                 'provenance':'LOCAL_SOURCE_GUIDANCE_ONLY'}
+
+    def model_review_checkpoint(self, task: str, observed_findings: list[str],
+                                stage: str, proactive_model_advice: bool) -> dict[str, Any]:
+        """Read-only risk checkpoint after actual client inspection, with opt-in."""
+        if type(proactive_model_advice) is not bool or not proactive_model_advice:
+            raise ToolkitError('MODEL_ADVISOR_OPT_IN_REQUIRED')
+        if not isinstance(task, str) or not 1 <= len(task) <= 6000:
+            raise ToolkitError('task must be text of length 1..6000')
+        if stage not in ('NEW_RISK', 'PRE_CHANGE', 'PRE_PR'):
+            raise ToolkitError('stage must be NEW_RISK, PRE_CHANGE or PRE_PR')
+        if not isinstance(observed_findings, list):
+            raise ToolkitError('observed_findings must be explicitly provided as a list')
+        hint = _model_review_hint(task, observed_findings)
+        return {
+            **hint, 'stage': stage, 'source_revision': self.source_revision,
+            'toolkit_version': self.manifest.get('version', 'NOT_VERIFIED'),
+            'candidate_chat_notice': (
+                'SECOND_OPINION_MAY_HELP_VERIFY_CLIENT_CAPABILITIES_FIRST'
+                if hint['status'] == 'REVIEW_CANDIDATE' else 'NO_CHAT_PROMPT_NEEDED'),
+            'host_inventory': 'REQUIRES_NATIVE_CLIENT_INSPECTION',
+            'client_confirmation': 'REQUIRED_BEFORE_ANY_EXTRA_CALL',
+        }
 
     def prepare_task(self, task: str, existing_skills: list[str] | None = None,
                      existing_roles: list[str] | None = None, profile: str = '',
@@ -798,6 +840,16 @@ TOOLS: list[dict[str, Any]] = [
          'allowed_repos':{'type':'array','maxItems':3,'items':{'type':'string'},
                           'description':'Explicit allowlist of https://github.com/owner/repo@<full 40-char SHA>'}},
          'required':['query'],'additionalProperties':False}},
+    {'name':'toolkit_model_review_checkpoint',
+     'description':'After discovering real risk in client-inspected code or diff, reassess optional second-opinion value without loading skills. Explicit opt-in required; no model discovery or execution.',
+     'inputSchema':{'type':'object','properties':{
+         'task':{'type':'string','minLength':1,'maxLength':6000},
+         'observed_findings':{'type':'array','maxItems':8,'items':{'type':'string','minLength':1,'maxLength':320}},
+         'stage':{'type':'string','enum':['NEW_RISK','PRE_CHANGE','PRE_PR']},
+         'proactive_model_advice':{'type':'boolean',
+                                  'description':'Must be true from an opted-in user/client.'}},
+         'required':['task','observed_findings','stage','proactive_model_advice'],
+         'additionalProperties':False}},
     {'name':'toolkit_prepare_task','description':'For a Codex task, compare client-reported existing skill/role names with relevant Toolkit guidance and return only needed skill and role contents. No project scans, copies, installation or agent spawning (read-only).',
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
@@ -841,6 +893,10 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if name == 'toolkit_discover_external_skill_candidates':
         return tk.discover_external_skill_candidates(
             args.get('query', ''), args.get('consent', False), args.get('allowed_repos'))
+    if name == 'toolkit_model_review_checkpoint':
+        return tk.model_review_checkpoint(args.get('task'), args.get('observed_findings'),
+                                          args.get('stage'),
+                                          args.get('proactive_model_advice', False))
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
                                args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3),

@@ -8,7 +8,7 @@ layer supplies a user-level Codex Desktop instruction entry point to
 ## Enable once (Windows, no Codex CLI)
 
 Use the script from a trusted, checked-out version of the repository
-after verifying CI and SHAs. Personal MCP 0.1.12 must already be connected.
+after verifying CI and SHAs. Personal MCP 0.1.13 must already be connected.
 
 ```powershell
 $source = Join-Path $env:LOCALAPPDATA "ADT-Personal\toolkit-source"
@@ -108,3 +108,24 @@ model approval, native execution, or evidence of actual client UI rendering.
 The Codex host must assess verified capabilities and decide whether to show a
 chat choice. This source change cannot guarantee a Codex Desktop proposal.
 Other Toolkit users remain opt-out by default.
+
+### Reassess after material newly discovered risk (MCP 0.1.13)
+
+An ordinary PR/CI request may contain no initial security or concurrency
+keywords. When actual inspected source/diff reveals a materially new risk, the
+opted-in Codex host can call the read-only `toolkit_model_review_checkpoint`
+once for that risk boundary, supplying `task`, at most 8 concise
+`observed_findings`, `stage=NEW_RISK` and `proactive_model_advice=true`.
+`PRE_CHANGE` and `PRE_PR` may also be used when a *new* major risk is
+discovered. This is not periodic polling, an instruction to repeat prompts,
+proof that findings are valid or authority to launch another model.
+`new_risk_boundary` is only a bounded lexical difference; caller findings
+are not echoed or persisted.
+
+Unknown native client model inventory must not silently suppress a meaningful
+security-risk advisory. Codex may make an honest, brief recommendation
+without naming any unverified models: continue with the current model, or
+verify native availability and request separate consent before any review.
+AUTO_OPT_IN stays unavailable until native client/cost/consent gates can be
+verified for the current task. Unknown inventory never authorizes an extra
+call or blocks routine task progress. Source tests cannot prove client behavior.
