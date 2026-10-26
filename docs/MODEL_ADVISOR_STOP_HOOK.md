@@ -34,6 +34,13 @@ hook installation, available model inventory or user permission.
 
 ## Manual installation example (Windows)
 
+**Known Windows Desktop blocker:** [openai/codex #47283](https://github.com/openai/codex/issues/47283)
+reports that the app may list a hook as enabled without successfully
+trusting or running it; its trust confirmation worked only in interactive
+Codex terminal. In environments where Codex CLI is prohibited, **do not
+enable this hook or bypass trust** until native Desktop review/trust is
+independently verified as fixed. Green source CI does not remove this gate.
+
 After owner review of exact committed source and green CI, the user may
 **separately** opt in to a global `hooks.Stop` entry under
 `%CODEX_HOME%\hooks.json` or `%USERPROFILE%\.codex\hooks.json`.
