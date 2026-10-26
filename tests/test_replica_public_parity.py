@@ -39,7 +39,7 @@ class ReplicaAuditTests(unittest.TestCase):
         self.sha = git(self.upstream, "rev-parse", "HEAD")
         self.blobs = {p: git(self.upstream, "rev-parse", f"HEAD:{p}") for p in MOD.UPSTREAM_BLOBS}
         self.matrix = self.root / "sample.csv"
-        self.write_matrix([{"feature":"workout log", "area":"workout", "priority":"must",
+        self.write_matrix([{"feature":"generic feature", "area":"feature", "priority":"must",
                             "original":"yes", "clone":"no", "notes":"", "evidence_url":"https://example.org/public",
                             "target_evidence":""}])
         self.p1 = patch.object(MOD, "UPSTREAM_SHA", self.sha)
@@ -82,18 +82,18 @@ class ReplicaAuditTests(unittest.TestCase):
             rc,_,e=self.cli(); self.assertEqual(rc,2); self.assertIn("Unpinned",e)
 
     def test_no_evidence_refused(self):
-        self.write_matrix([{"feature":"X","area":"workout","priority":"must","original":"yes",
+        self.write_matrix([{"feature":"X","area":"feature","priority":"must","original":"yes",
                             "clone":"no","notes":"","evidence_url":"","target_evidence":""}])
         rc,_,e=self.cli("--matrix",str(self.matrix))
         self.assertEqual(rc,2); self.assertIn("HTTPS evidence",e)
 
-    def test_unverified_yfc_claim_refused(self):
-        self.write_matrix([{"feature":"X","area":"workout","priority":"must","original":"yes",
+    def test_unverified_target_claim_refused(self):
+        self.write_matrix([{"feature":"X","area":"feature","priority":"must","original":"yes",
                             "clone":"yes","notes":"","evidence_url":"https://example.org/feature","target_evidence":""}])
         rc,_,_=self.cli("--matrix",str(self.matrix)); self.assertEqual(rc,2)
 
     def test_unknown_is_not_scored_as_absence(self):
-        self.write_matrix([{"feature":"X","area":"workout","priority":"must","original":"yes",
+        self.write_matrix([{"feature":"X","area":"feature","priority":"must","original":"yes",
                             "clone":"unknown","notes":"","evidence_url":"https://example.org/feature","target_evidence":""}])
         rc,_,e=self.cli("--matrix",str(self.matrix)); self.assertEqual(rc,2); self.assertIn("UNKNOWN",e)
 

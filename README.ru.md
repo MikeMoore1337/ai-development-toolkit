@@ -14,6 +14,8 @@
 
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md) · [DeepSeek Chat](integrations/deepseek-chat/README.ru.md) · [DeepSeek Harness](integrations/deepseek-harness/README.ru.md)
 
+**[Клиенты, стоимость и правила безопасности](docs/ru/CLIENT_ROUTE_SECURITY_MATRIX.md)** - подтверждённые возможности, личные настройки и разрешения на действия.
+
 ## Начните с задачи
 
 AI Development Toolkit - **переносимая библиотека навыков, специализированных ролей и QA-процессов** для разработки с ИИ. Это не отдельный ИИ-агент, не хостинг и не разрешение на доступ к вашему проекту.

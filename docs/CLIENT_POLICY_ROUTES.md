@@ -1,6 +1,6 @@
 # Client policy routes - offline and opt-in
 
-[Русская версия](ru/CLIENT_POLICY_ROUTES.md) | [Issue #395](https://github.com/MikeMoore1337/ai-development-toolkit/issues/395)
+[Русская версия](ru/CLIENT_POLICY_ROUTES.md) | [Issue #395](https://github.com/MikeMoore1337/ai-development-toolkit/issues/395) | [Per-client security and cost matrix](CLIENT_ROUTE_SECURITY_MATRIX.md)
 
 Toolkit separates **available product routes**, **user permission preferences**, **actual client installation**, **in-session capability evidence**, and **real execution authorization**. An opt-in cannot prove installation, skill invocation, absence of paid charges, or approval for a real action.
 

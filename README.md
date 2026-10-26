@@ -14,6 +14,8 @@
 
 **Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md) · [DeepSeek Chat](integrations/deepseek-chat/README.md) · [DeepSeek Harness](integrations/deepseek-harness/README.md)
 
+**[Client choices, cost and permission boundaries](docs/CLIENT_ROUTE_SECURITY_MATRIX.md)** - what is actually tested, what requires consent, and how to keep personal settings private.
+
 ## Start with the task
 
 AI Development Toolkit is a **portable library of reusable instructions, specialized roles and QA workflows** for AI-assisted development. It is not a standalone coding agent, hosting service or permission to access your project.
