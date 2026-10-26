@@ -16,7 +16,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.11'
+VERSION = '0.1.12'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -156,6 +156,61 @@ def has_build_intent(text: str) -> bool:
         else:
             without_test_commands = re.sub(re.escape(term) + r'\w*', ' ', without_test_commands)
     return any(match_term(without_test_commands, term) for term in BUILD_TERMS)
+
+def _model_review_hint(task: str) -> dict[str, Any]:
+    """Bounded read-only risk hint for an opted-in Codex client.
+
+    Reuses the existing task and route; this is NOT a model-selection engine.
+    Model inventory, execution capability, user consent and cost are never
+    established by task keywords or the Personal MCP server.
+    """
+    actionable, _ = _split_explicit_prohibitions(task)
+    text = ' '.join(actionable.casefold().replace('ё', 'е').split())[:6000]
+    def hit(terms: tuple[str, ...]) -> bool:
+        return any(match_term(text, term) for term in terms)
+
+    security = hit(('безопасност', 'уязвимост', 'security', 'vulnerability',
+                    'authorization', 'authz', 'threat model', 'цепочк поставок'))
+    concurrency = hit(('конкурентн', 'гонк', 'блокировк', 'race condition',
+                       'concurrency', 'deadlock', 'toctou', 'locking'))
+    integrity = hit(('откат', 'восстановлен', 'потеря данных', 'поврежден',
+                     'атомарн', 'журнал', 'reparse', 'symlink', 'git origin',
+                     'rollback', 'recovery', 'data loss', 'state corruption',
+                     'atomic', 'journal', 'fsync'))
+    migration = hit(('миграц', 'migration', 'schema change', 'breaking change'))
+    architecture = hit(('архитектур', 'architecture', 'cross-system',
+                        'нескольких сервис', 'multiple services'))
+    review = hit(('аудит', 'audit', 'review', 'ревью', 'проверь', 'verify',
+                  'провер', 'analyse', 'analyze', 'исправь', 'fix'))
+    routine_docs = hit(('опечатк', 'typo', 'readme', 'документац',
+                        'documentation', 'инструкци')) and not (
+                        concurrency or integrity or migration)
+
+    # Only combined concrete risks merit interrupting ordinary development.
+    # A mere mention of "security" or a routine README request is not enough.
+    signal = (
+        (security and (concurrency or integrity or migration))
+        or (migration and (concurrency or integrity))
+        or (architecture and security and review)
+    ) and not routine_docs
+    reason = ('MULTI_BOUNDARY_SECURITY_REVIEW' if security and (concurrency or integrity)
+              else 'MIGRATION_RECOVERY_REVIEW' if migration and (concurrency or integrity)
+              else 'ARCHITECTURE_SECURITY_REVIEW' if signal
+              else 'INSUFFICIENT_COMBINED_RISK_SIGNALS')
+    return {
+        'schema_version': 1,
+        'status': 'REVIEW_CANDIDATE' if signal else 'NO_REVIEW_SIGNAL',
+        'reason_code': reason,
+        'evidence': 'BOUNDED_TASK_LEXICAL_HEURISTIC_NOT_MODEL_INFERENCE',
+        'model_inventory': 'NOT_OBSERVED_BY_PERSONAL_MCP',
+        'available_models': [],
+        'user_consent': 'NOT_REQUESTED',
+        'advice_only': True,
+        'execution': 'NOT_RUN',
+        'extra_model_calls': 0,
+        'client_action': ('EVALUATE_LIVE_INVENTORY_THEN_OFFER_OPTIONAL_CHAT_CHOICE'
+                          if signal else 'CONTINUE_PRIMARY_MODEL_WITHOUT_ADVISOR_PROMPT'),
+    }
 
 
 class ToolkitError(Exception):
@@ -345,7 +400,8 @@ class Toolkit:
 
     def prepare_task(self, task: str, existing_skills: list[str] | None = None,
                      existing_roles: list[str] | None = None, profile: str = '',
-                     max_skills: int = 3) -> dict[str, Any]:
+                     max_skills: int = 3,
+                     proactive_model_advice: bool = False) -> dict[str, Any]:
         """Load narrow task guidance by comparing inventories supplied by Codex.
 
         This does NOT scan or write the corporate workspace. An omitted inventory is
@@ -363,6 +419,8 @@ class Toolkit:
         installed_roles, role_inventory_status = inventory(existing_roles, 'existing_roles')
         if not isinstance(max_skills, int) or isinstance(max_skills, bool) or not 1 <= max_skills <= 8:
             raise ToolkitError('max_skills must be an integer between 1 and 8')
+        if type(proactive_model_advice) is not bool:
+            raise ToolkitError('proactive_model_advice must be a boolean opt-in')
         routing = self.route(task, profile)
         selected = routing['skills']
         missing = [n for n in selected if n not in installed_skills]
@@ -413,6 +471,10 @@ class Toolkit:
             'client_usefulness': 'NOT_TESTED',
         }
         return {
+            # Enabled ONLY by a caller using an explicit opt-in. No new model
+            # tool invocation, provider discovery, persistent logging, or UI.
+            **({'model_advisor': _model_review_hint(task)}
+               if proactive_model_advice else {}),
             'primary_profile': routing['profile'],
             'secondary_profiles': routing['secondary_profiles'],
             'visual_phase': routing['visual_phase'],
@@ -741,7 +803,9 @@ TOOLS: list[dict[str, Any]] = [
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
          'existing_roles':{'type':'array','items':{'type':'string'},'maxItems':256},
          'profile':{'type':'string'},'max_skills':{'type':'integer','minimum':1,'maximum':8,
-             'description':'Default 3 priority skills, up to 8 on explicit request; remaining skills remain selectable'}},
+             'description':'Default 3 priority skills, up to 8 on explicit request; remaining skills remain selectable'},
+         'proactive_model_advice':{'type':'boolean',
+             'description':'Explicit user opt-in: return bounded task-risk advisory metadata only; no models or calls.'}},
          'required':['task'],'additionalProperties':False}},
     {'name':'toolkit_get_reference','description':'Read referenced Markdown/text/JSON/YAML files within one declared Toolkit skill (read-only).',
      'inputSchema':{'type':'object','properties':{'skill':{'type':'string'},'path':{'type':'string'},
@@ -779,7 +843,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
             args.get('query', ''), args.get('consent', False), args.get('allowed_repos'))
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
-                               args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3))
+                               args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3),
+                               args.get('proactive_model_advice', False))
     if name == 'toolkit_get_reference':
         return tk.reference(args.get('skill',''),args.get('path',''),args.get('offset',0),args.get('limit',16000))
     if name == 'toolkit_get_guide':
