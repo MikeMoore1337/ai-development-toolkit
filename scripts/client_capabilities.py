@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "compatibility" / "conversational_clients.json"
-CLIENT_IDS = frozenset({"chatgpt", "claude-ai"})
+CLIENT_IDS = frozenset({"chatgpt", "claude-ai", "deepseek-chat"})
 CLIENT_TYPE = "CONVERSATIONAL_REFERENCE_CLIENT"
 CAPABILITIES = frozenset({
     "toolkit_access", "file_read", "file_write", "terminal", "browser",
@@ -38,8 +38,11 @@ REQUIRED = frozenset({
     "limitations", "limit",
 })
 # Schema does not repeat filesystem layout or pretend to install hosted Skills.
-HOSTS = {"chatgpt": "https://help.openai.com/",
-         "claude-ai": "https://support.claude.com/"}
+HOSTS = {
+    "chatgpt": ("https://help.openai.com/", "https://help.openai.com/"),
+    "claude-ai": ("https://support.claude.com/", "https://support.claude.com/"),
+    "deepseek-chat": ("https://api-docs.deepseek.com/", "https://www.deepseek.com/"),
+}
 MAX_ENTRIES = 1000
 MAX_UNCOMPRESSED = 64 * 1024 * 1024
 MAX_RATIO = 80
@@ -64,7 +67,7 @@ def load_conversations(path: Path = REGISTRY) -> dict:
             data["companion_filesystem_registry"] != "compatibility/clients.json" or
             not re.fullmatch(r"20\d\d-\d\d-\d\d", str(data["reviewed_on"]))):
         raise CapabilityError("Invalid conversational registry reference or review date")
-    if not isinstance(data["clients"], list) or len(data["clients"]) != 2:
+    if not isinstance(data["clients"], list) or len(data["clients"]) != len(CLIENT_IDS):
         raise CapabilityError("Conversational clients are missing")
     found = set()
     for row in data["clients"]:
@@ -77,8 +80,8 @@ def load_conversations(path: Path = REGISTRY) -> dict:
         if (row["client_type"] != CLIENT_TYPE or row["operating_mode"] != "GUIDANCE_ONLY" or
                 row["client_version"] is not None):
             raise CapabilityError("Conversation client must not impersonate filesystem client")
-        if (not row["documentation_url"].startswith(HOSTS[client]) or
-                not row["secondary_source"].startswith(HOSTS[client]) or
+        if (not row["documentation_url"].startswith(HOSTS[client][0]) or
+                not row["secondary_source"].startswith(HOSTS[client][1]) or
                 row["source_contract_status"] != "VERIFIED"):
             raise CapabilityError("Missing verified official source contract")
         if (row["native_skill_support"] not in SUPPORT_STATES or
