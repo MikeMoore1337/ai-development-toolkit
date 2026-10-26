@@ -73,7 +73,10 @@ $block = @'
 Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
 engineering, QA, architecture, UX/UI, DevOps and security requests, without
 asking the user to mention Toolkit, call the connected ai-development-toolkit
-MCP `toolkit_prepare_task` as directed by the existing ADT-PERSONAL block.
+MCP `toolkit_prepare_task` with optional `proactive_model_advice=true`
+from Personal MCP 0.1.12, as directed by the existing ADT-PERSONAL block.
+This activates only a bounded read-only risk hint; it does NOT opt in to
+extra model calls for the current or any future task.
 Use its task profiles and source guidance plus the actual task to assess,
 once per task and at genuine new risk boundaries, whether independent model
 review may materially improve correctness. If toolkit_route_task has already
@@ -84,9 +87,20 @@ govern the review decision. This assessment is ADVISORY, not proof of
 semantic/model inference. Do not call external models for assessment.
 
 Immediately after toolkit_prepare_task returns and BEFORE substantive edits,
-make an explicit bounded advisor decision for this task: PROPOSE_REVIEW if a
-second opinion could materially help, SINGLE_MODEL_SUFFICIENT if it could not,
-or CAPABILITY_UNAVAILABLE if a relevant client capability is unavailable.
+inspect its `model_advisor` metadata when present. The MCP may return a
+`REVIEW_CANDIDATE` based only on bounded task-risk terms, not a model's
+independent reasoning or host capabilities. Use the actual task and
+`model_advisor.reason_code` to make a bounded advisor decision:
+PROPOSE_REVIEW if independent review could materially help;
+SINGLE_MODEL_SUFFICIENT if not; or CAPABILITY_UNAVAILABLE when the
+host cannot verify live model availability/delegation/cost.
+On `REVIEW_CANDIDATE` for a real security/concurrency/integrity risk,
+surface a concise opt-in chat choice BEFORE implementing high-risk edits
+unless live capability is verified unavailable. No request for models,
+consent or execution is implied by the MCP hint itself.
+If `model_advisor` is absent from the tool response, treat this as a
+stale Personal MCP adapter: do not claim the new advisory gate ran, and
+continue safely on the primary model. Do NOT invent a host model list.
 For security-sensitive changes involving concurrency, Git trust boundaries,
 state recovery or major migration risk, independently consider a pre-change
 review rather than waiting for the final summary. Do not quietly skip the
