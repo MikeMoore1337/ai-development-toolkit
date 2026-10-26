@@ -129,3 +129,7 @@ verify native availability and request separate consent before any review.
 AUTO_OPT_IN stays unavailable until native client/cost/consent gates can be
 verified for the current task. Unknown inventory never authorizes an extra
 call or blocks routine task progress. Source tests cannot prove client behavior.
+
+## Experimental Codex Desktop Stop hook
+
+Native #401 acceptance found the client may omit the new-risk MCP checkpoint after confirming real defects. An independent, **separately trusted and manually enabled** [Stop hook](MODEL_ADVISOR_STOP_HOOK.md) can ask the current model to show an optional review advisory at turn end. It is never installed by the Advisor setup, does not execute another model, and still requires native acceptance.
