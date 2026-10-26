@@ -96,3 +96,7 @@ python scripts/verify_client_compatibility.py --project /tmp/demo --client herme
 ## Дополнение: DeepSeek Harness (26.10.2026, Issue #413)
 
 DeepSeek Harness - отдельный **файловый клиент навыков**, не обычный DeepSeek Chat. Официальный исходник `22ddee3792402c3e70ec5f86a63c3e3e895a2f60` описывает `<git-корень>/.dsh/skills` (приоритет 100) и `<git-корень>/.agents/skills` (приоритет 200). Прежний Skill Manager умеет устанавливать в последний каталог с размещением Codex и после подтверждения; `.dsh/skills` он не управляет, только проверяет без записи. L4/L5/L6 - **NOT_TESTED / NOT_TESTED / NOT_MEASURED**. [Инструкция Harness](../../integrations/deepseek-harness/README.ru.md) описывает отдельный Cordis Bundle поверх существующего read-only MCP. Генератор не устанавливает пакет в Harness автоматически: установка требует явной команды пользователя.
+
+## DeepSeek Harness (26.10.2026)
+
+В реестре файловых клиентов добавлен `deepseek-harness` с проектными каталогами `.agents/skills` и `.dsh/skills`. Источник: [зафиксированная ревизия официальной документации Skills](https://github.com/deepseek-ai/deepseek-harness/blob/22ddee3792402c3e70ec5f86a63c3e3e895a2f60/docs/subsystems/skills.md). Отдельный необязательный [пакет Cordis MCP](../../integrations/deepseek-harness/README.ru.md) использует существующий MCP Toolkit только для чтения. Офлайн-проверки структуры не подтверждают обнаружение L4, активацию L5 и пользу L6 в реальном Harness. Skill Manager поддерживает `.agents/skills` через размещение Codex, но не управляет `.dsh/skills`.
