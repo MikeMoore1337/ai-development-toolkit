@@ -109,14 +109,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.11')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.12')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.11', diagnostic['adapter_version'])
+        self.assertEqual('0.1.12', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.11', version['running_mcp_adapter'])
+        self.assertEqual('0.1.12', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -327,6 +327,66 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual('NOT_VERIFIED', diagnostic['l5_client_invocation'])
         self.assertFalse(diagnostic['project_files_changed'])
 
+    def test_opt_in_model_advisor_risk_signal_and_guards(self):
+        # Opted-in MCP returns evidence, not model availability or consent.
+        task = ("Проведи аудит безопасности auto-updater: concurrency TOCTOU, "
+                "rollback, потеря данных, Git origin и symlink; исправь дефекты.")
+        before = {str(p.relative_to(self.path)): p.read_bytes()
+                  for p in self.path.rglob('*') if p.is_file()}
+        opted_out = self.tk.prepare_task(task)
+        self.assertNotIn('model_advisor', opted_out)
+        hint = self.tk.prepare_task(task, profile='qa-core',
+                                    proactive_model_advice=True)['model_advisor']
+        self.assertEqual(hint['status'], 'REVIEW_CANDIDATE')
+        self.assertEqual(hint['reason_code'], 'MULTI_BOUNDARY_SECURITY_REVIEW')
+        self.assertEqual(hint['model_inventory'], 'NOT_OBSERVED_BY_PERSONAL_MCP')
+        self.assertEqual(hint['available_models'], [])
+        self.assertEqual(hint['user_consent'], 'NOT_REQUESTED')
+        self.assertEqual(hint['extra_model_calls'], 0)
+        self.assertEqual(hint['execution'], 'NOT_RUN')
+        self.assertTrue(hint['advice_only'])
+
+        negatives = (
+            'Исправь опечатку в README.',
+            'Update documentation about security practices.',
+            'Не проводи аудит безопасности; исправь опечатку в README',
+            'Security unit test for a trivial helper',
+            'Создай тесты к одной функции.',
+        )
+        for request in negatives:
+            with self.subTest(request=request):
+                quiet = self.tk.prepare_task(
+                    request, proactive_model_advice=True)['model_advisor']
+                self.assertEqual(quiet['status'], 'NO_REVIEW_SIGNAL')
+                self.assertEqual(quiet['extra_model_calls'], 0)
+
+        english = self.tk.prepare_task(
+            'Security audit for concurrency, race condition, '
+            'state corruption and rollback in the updater.',
+            proactive_model_advice=True)['model_advisor']
+        self.assertEqual(english['status'], 'REVIEW_CANDIDATE')
+        migration = self.tk.prepare_task(
+            'Проверь миграцию PostgreSQL на блокировки и откат.',
+            proactive_model_advice=True)['model_advisor']
+        self.assertEqual(migration['status'], 'REVIEW_CANDIDATE')
+
+        for invalid in (None, 'true', 1, 0, []):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ToolkitError):
+                    self.tk.prepare_task(task, proactive_model_advice=invalid)
+
+        rpc = process(self.tk, {
+            'jsonrpc': '2.0', 'id': 79, 'method': 'tools/call',
+            'params': {'name': 'toolkit_prepare_task',
+                       'arguments': {'task': task, 'proactive_model_advice': True}},
+        })
+        self.assertEqual(
+            rpc['result']['structuredContent']['model_advisor']['status'],
+            'REVIEW_CANDIDATE')
+        after = {str(p.relative_to(self.path)): p.read_bytes()
+                 for p in self.path.rglob('*') if p.is_file()}
+        self.assertEqual(before, after)
+
     def test_prepare_task_validation_and_rpc(self):
         for kwargs in ({'existing_skills':'api-design'},
                        {'existing_roles':['ok',1]}, {'max_skills':False},
@@ -382,7 +442,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.11')
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.12')
         self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),12)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')

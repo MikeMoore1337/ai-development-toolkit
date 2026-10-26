@@ -41,6 +41,8 @@ class AdvisorSourceContract(unittest.TestCase):
             "SINGLE_MODEL", "RECOMMEND_WITH_CONFIRMATION", "AUTO_OPT_IN",
             "No separate template prompt", "current Codex chat",
             "BEFORE substantive edits", "PROPOSE_REVIEW",
+            "proactive_model_advice=true", "model_advisor",
+            "REVIEW_CANDIDATE", "Personal MCP 0.1.12",
             "SINGLE_MODEL_SUFFICIENT", "CAPABILITY_UNAVAILABLE",
             "toolkit_route_task has already", "optional `profile`",
             "Do not quietly skip", "Git trust boundaries",

@@ -1,5 +1,15 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.12 — opt-in proactive Model Advisor #401
+
+`toolkit_prepare_task` now accepts optional `proactive_model_advice` (default
+`false`) and returns bounded `model_advisor` risk metadata only for opted-in
+clients. It does not attest host model availability, obtain user consent, or
+invoke additional models. Install the updated persistent MCP source separately
+with `Install-ADT-Personal.ps1 -McpOnly` (no Codex CLI), refresh the existing
+user-enabled Advisor managed block and restart Codex Desktop. See
+[Proactive Model Advisor](../../docs/PROACTIVE_MODEL_ADVISOR.md).
+
 ## Personal MCP 0.1.11 — Codex #357 read-only orchestration
 
 Source version 0.1.11 adds `toolkit_codex_prepare_delegation` and

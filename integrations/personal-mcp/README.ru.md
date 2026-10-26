@@ -1,5 +1,17 @@
 # Локальный MCP для Codex (Windows, Linux и macOS)
 
+## Personal MCP 0.1.12 — дополнительный opt-in Model Advisor #401
+
+В существующий `toolkit_prepare_task` добавлен необязательный параметр
+`proactive_model_advice` (по умолчанию `false`). Только при явном opt-in
+возвращается ограниченный источник-риск `model_advisor`. Он не знает каталог
+моделей клиента, не меняет основную модель и не запускает субагентов.
+Подтверждение пользовательского выбора остаётся в Codex Desktop.
+Исполняемый MCP обновляется отдельно от Git-копии через
+`Install-ADT-Personal.ps1 -McpOnly` без Codex CLI. После обновления клиента
+требуется перезапуск и новая проверка загрузки инструкций. Подробности:
+[Proactive Model Advisor](../../docs/ru/PROACTIVE_MODEL_ADVISOR.md).
+
 ## Personal MCP 0.1.11 — оркестрация Codex #357 (только чтение)
 
 Исходная версия 0.1.11 добавляет инструменты `toolkit_codex_prepare_delegation` и
