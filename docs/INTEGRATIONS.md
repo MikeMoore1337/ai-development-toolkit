@@ -75,3 +75,7 @@ Actual selection can reorder skills; run `toolkit_prepare_task` with explicit `m
 **Other conversational clients:** The ChatGPT plugin ZIP is not a universal plugin format. For clients without a compatible plugin mechanism, use [AGENT_START.md](../AGENT_START.md) with the Toolkit URL and authorized project files. Do not claim a client installed, loaded or executed a skill without evidence.
 
 **Trust boundaries:** A ChatGPT skills-only plugin cannot connect to a private laptop's stdio MCP without a separate authorized integration. Do not publish account plugin identifiers, tokens, or employer source files. Repository publication does not install either integration for existing users.
+
+## DeepSeek Chat - reference-only route (2026-10-26)
+
+[DeepSeek Chat (web/app)](../integrations/deepseek-chat/README.md): separate RU/EN instructions, historical owner-reported ZIP+URL result, no verified native Skill plugin, client-run tests or paid API. DeepSeek Harness is a different filesystem/MCP/plugin client and must not be confused with ordinary chat.
