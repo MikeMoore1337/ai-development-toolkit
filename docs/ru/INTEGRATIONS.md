@@ -79,3 +79,7 @@ AI Development Toolkit предоставляет **две равноправн�
 ## DeepSeek Chat - reference-only route (2026-10-26)
 
 [DeepSeek Chat (веб/приложение)](../../integrations/deepseek-chat/README.ru.md): separate RU/EN instructions, historical owner-reported ZIP+URL result, no verified native Skill plugin, client-run tests or paid API. DeepSeek Harness is a different filesystem/MCP/plugin client and must not be confused with ordinary chat.
+
+## DeepSeek Harness (26.10.2026)
+
+[Инструкция DeepSeek Harness](../../integrations/deepseek-harness/README.ru.md): нативные каталоги `.agents/skills` / `.dsh/skills` и необязательный Cordis Bundle поверх **существующего** stdio MCP. Отдельно от [обычного DeepSeek Chat](../../integrations/deepseek-chat/README.ru.md). Персональный пакет устанавливается только по явной команде `dsh plugin`; исходный шаблон отключён. Платные API и второй MCP не используются. Живые испытания Harness ещё не проводились.
