@@ -2,7 +2,7 @@
   "schema_version": 1,
   "registry_kind": "CONVERSATIONAL_REFERENCE_CLIENT",
   "companion_filesystem_registry": "compatibility/clients.json",
-  "reviewed_on": "2026-10-21",
+  "reviewed_on": "2026-10-26",
   "clients": [
     {
       "client_id": "chatgpt",
@@ -93,6 +93,51 @@
       },
       "historical_evidence": "Owner-reported ZIP+Toolkit URL experiments 2026-10-20 (client versions/logs not attached); no automatic SKILL invocation evidence",
       "limitations": "Skills on Free and paid plans require code execution enabled and appropriate settings; feature availability and actions must be confirmed in-session."
+    },
+    {
+      "client_id": "deepseek-chat",
+      "client_type": "CONVERSATIONAL_REFERENCE_CLIENT",
+      "client_version": null,
+      "operating_mode": "GUIDANCE_ONLY",
+      "client_name": "DeepSeek Chat (web and mobile chat)",
+      "documentation_url": "https://api-docs.deepseek.com/news/news250115/",
+      "secondary_source": "https://www.deepseek.com/",
+      "native_skill_support": "UNKNOWN",
+      "native_skill_mechanism": "No officially verified Toolkit hosted-Skill/plugin installation in ordinary DeepSeek Chat; instructions via accessible URL or explicitly supplied attachments only.",
+      "limit": "Web/app chat supports text and advertised uploads, but ability to follow GitHub links, inspect ZIP, execute code, install skills or edit files must be confirmed in the actual session; DeepSeek API features do not grant those abilities.",
+      "source_contract_status": "VERIFIED",
+      "capabilities": {
+        "toolkit_access": "UNKNOWN",
+        "file_read": "UNKNOWN",
+        "file_write": "UNKNOWN",
+        "terminal": "UNKNOWN",
+        "browser": "UNKNOWN",
+        "github_access": "UNKNOWN",
+        "attachments": "UNKNOWN",
+        "zip_handling": "UNKNOWN",
+        "skill_installation": "UNKNOWN",
+        "skill_discovery": "UNKNOWN",
+        "tool_invocation": "UNKNOWN",
+        "separate_agents": "UNKNOWN",
+        "external_actions": "UNKNOWN"
+      },
+      "approval_requirements": "Explicit user consent for uploads, writes and external actions; no paid DeepSeek API or automated account access.",
+      "evidence": {
+        "L1": "NOT_APPLICABLE",
+        "L2": "NOT_APPLICABLE",
+        "L3": "VERIFIED",
+        "L4": "NOT_TESTED",
+        "L5": "NOT_TESTED",
+        "L6": "NOT_MEASURED"
+      },
+      "scenarios": {
+        "toolkit_url": "NOT_TESTED",
+        "zip_plus_toolkit_url": "OWNER_REPORTED_PASS",
+        "chat_only": "NOT_TESTED",
+        "hosted_skill_upload": "NOT_TESTED"
+      },
+      "historical_evidence": "Owner-reported ZIP+Toolkit URL task completion on 2026-10-20, without DeepSeek session logs, feature/version inventory, native Skill discovery/activation or independent effectiveness evidence.",
+      "limitations": "Guidance-only ordinary web/app chat; no verified Toolkit extension format. Provide only non-sensitive files, never claim native Skill activation, file execution or automatic downloads."
     }
   ]
 }

@@ -12,7 +12,7 @@
 
 **Если проект уже существует:** начните с [короткой инструкции для человека](docs/ru/EXISTING_PROJECT.md). [Технические инструкции для ИИ-агента](AGENT_START.ru.md) — отдельный документ, их не требуется читать перед первым запросом.
 
-**Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md).
+**Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md). · [DeepSeek Chat](integrations/deepseek-chat/README.ru.md)
 
 ## Начните с задачи
 

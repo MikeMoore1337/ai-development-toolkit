@@ -12,7 +12,7 @@
 
 **Already have a project?** Start with the [human-first guide](docs/EXISTING_PROJECT.md). The [coding agent contract](AGENT_START.md) is separate and is not required reading for a first request.
 
-**Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md).
+**Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md). · [DeepSeek Chat](integrations/deepseek-chat/README.md)
 
 ## Start with the task
 

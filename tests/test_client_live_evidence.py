@@ -119,7 +119,7 @@ class ClientLiveEvidenceTests(unittest.TestCase):
         self.assertEqual(1, chat_registry["schema_version"])
         self.assertEqual({"codex", "claude-code", "hermes"},
                          {c["client_id"] for c in file_registry["clients"]})
-        self.assertEqual({"chatgpt", "claude-ai"},
+        self.assertEqual({"chatgpt", "claude-ai", "deepseek-chat"},
                          {c["client_id"] for c in chat_registry["clients"]})
 
 

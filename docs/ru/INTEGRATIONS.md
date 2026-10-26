@@ -75,3 +75,7 @@ AI Development Toolkit предоставляет **две равноправн�
 **Другие чат-клиенты:** ZIP ChatGPT не является универсальным форматом для Claude, DeepSeek и Qwen. При отсутствии совместимого плагина используйте [AGENT_START.ru.md](../../AGENT_START.ru.md), ссылку на Toolkit и разрешённые файлы проекта. Не заявляйте об установке и применении навыка без фактического подтверждения.
 
 **Границы доступа:** плагин навыков ChatGPT не получает автоматический доступ к локальному MCP на ноутбуке. Не публикуйте личные идентификаторы плагинов, токены или корпоративные файлы. Размещение исходников в GitHub само по себе не устанавливает интеграции пользователям.
+
+## DeepSeek Chat - reference-only route (2026-10-26)
+
+[DeepSeek Chat (веб/приложение)](../../integrations/deepseek-chat/README.ru.md): separate RU/EN instructions, historical owner-reported ZIP+URL result, no verified native Skill plugin, client-run tests or paid API. DeepSeek Harness is a different filesystem/MCP/plugin client and must not be confused with ordinary chat.
