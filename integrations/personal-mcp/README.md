@@ -1,5 +1,18 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.13 — newly discovered risk reassessment for opt-in Model Advisor #401
+
+The `toolkit_model_review_checkpoint` read-only tool lets an opted-in
+client reassess actual newly discovered risks after inspecting source/diff.
+Arguments: original task, up to 8 bounded findings, `stage`, and explicit
+`proactive_model_advice=true`. The return is only a lexical risk hint;
+no host model inventory, native call, execution or persistent logging.
+When native model availability is UNKNOWN, Codex should communicate this
+honestly rather than inventing model options or silently suppressing important
+risk advice. Others remain opt-out. The installed MCP adapter is updated
+separately using `-McpOnly`.
+See [#401 guidance](../../docs/PROACTIVE_MODEL_ADVISOR.md).
+
 ## Personal MCP 0.1.12 — opt-in proactive Model Advisor #401
 
 `toolkit_prepare_task` now accepts optional `proactive_model_advice` (default
