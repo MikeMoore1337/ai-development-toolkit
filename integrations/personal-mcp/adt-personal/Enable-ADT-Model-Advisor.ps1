@@ -74,7 +74,7 @@ Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
 engineering, QA, architecture, UX/UI, DevOps and security requests, without
 asking the user to mention Toolkit, call the connected ai-development-toolkit
 MCP `toolkit_prepare_task` with optional `proactive_model_advice=true`
-from Personal MCP 0.1.12, as directed by the existing ADT-PERSONAL block.
+from Personal MCP 0.1.13, as directed by the existing ADT-PERSONAL block.
 This activates only a bounded read-only risk hint; it does NOT opt in to
 extra model calls for the current or any future task.
 Use its task profiles and source guidance plus the actual task to assess,
@@ -101,6 +101,19 @@ consent or execution is implied by the MCP hint itself.
 If `model_advisor` is absent from the tool response, treat this as a
 stale Personal MCP adapter: do not claim the new advisory gate ran, and
 continue safely on the primary model. Do NOT invent a host model list.
+On the discovery of MATERIAL NEW RISK from actual source/diff inspection
+(e.g. OS-lock, git hook bypass, Windows junction, rollback journal),
+reassess once at that risk boundary via read-only MCP
+`toolkit_model_review_checkpoint` with the original plain-language task,
+a short list of concrete findings, stage=NEW_RISK, and
+proactive_model_advice=true. This is optional guidance for opted-in users,
+not a permission to delegate. Call it at most once per material new
+risk boundary and avoid duplicate prompts. If the risk was already assessed
+or the user rejected review, only reconsider after a materially NEW scope.
+Use PRE_CHANGE or PRE_PR only where a newly observed critical risk
+justifies reconsideration. Never poll or call this checkpoint in a loop.
+This checkpoint reads only supplied task/finding text, does not inspect
+files independently, attest a model inventory, or execute a model.
 For security-sensitive changes involving concurrency, Git trust boundaries,
 state recovery or major migration risk, independently consider a pre-change
 review rather than waiting for the final summary. Do not quietly skip the
@@ -135,9 +148,20 @@ Codex Desktop modal/overlay exists.
 
 Only suggest named models when the active Codex client's CURRENT native
 model inventory provides them. Never invent entitlement, model availability,
-quota, billing provenance or backend model identity. If inventory or
-native delegation is unavailable, continue with the primary model and
-briefly say no verified model choice exists; do not loop.
+quota, billing provenance or backend model identity. If native inventory
+is UNKNOWN but a new material risk is REVIEW_CANDIDATE, do NOT silently
+discard the advisory. Show at most one concise honest suggestion that a
+second opinion might help, with risk reason, and explicitly say model
+availability is NOT VERIFIED. Offer SINGLE_MODEL (continue now), or
+RECOMMEND_WITH_CONFIRMATION (first verify native expert availability,
+then request separate consent); AUTO_OPT_IN is DISABLED until a verified
+native inventory, host execution capability, zero-extra-cost permission
+and scoped consent exist. Do not suggest actual model names or pretend
+there is a usable choice before host verification. Never block safe task
+progress solely due to missing inventory, or run unknown models.
+If the host explicitly confirms delegation is UNAVAILABLE, only note
+that independent review cannot currently run; stay on the primary model.
+Do not loop or ask the user repeatedly about unavailable capabilities.
 
 No reply means NO permission. Honor a user's refusal for the current task;
 do not ask again unless its material scope changes. An explicit approval
