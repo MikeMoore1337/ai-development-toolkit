@@ -102,3 +102,7 @@ Issue #69 receives the *capability vocabulary* for optional integrations, creden
 ## Tool-level permissions (Issue #69)
 
 The companion [optional integrations and authority contracts](TOOL_INTEGRATIONS.md) add a synthetic per-operation permission/egress/cost/evidence model without changing the existing client registries or L1-L6 levels. A client capability does not grant tool authorization or prove an executed action.
+
+## DeepSeek Chat addendum (2026-10-26)
+
+The conversation registry now includes `deepseek-chat` alongside ChatGPT and Claude.ai. This is **GUIDANCE_ONLY** from an actually readable Toolkit URL or supplied files. No native filesystem layout, installer, MCP, hosted Skill or paid API is inferred. Official app documentation supports chat and uploads; actual session capabilities remain UNKNOWN until observed. Historical ZIP + URL success stays OWNER_REPORTED_PASS; L4/L5/L6 stay NOT_TESTED / NOT_TESTED / NOT_MEASURED. [Guide](../integrations/deepseek-chat/README.md).
