@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 import unittest
 
 SCRIPT = Path(__file__).resolve().parents[1] / 'updater' / 'update_toolkit.py'
@@ -114,21 +115,85 @@ class TestUpdater(unittest.TestCase):
             updater.update(self.source, self.state)
         self.assertEqual(git('rev-parse', 'HEAD', cwd=self.source), self.old_head)
 
-    def test_lock_blocks_concurrent_check(self):
-        self.state.mkdir()
-        (self.state/'update.lock').write_text('locked', encoding='utf-8')
-        with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
+    def test_origin_url_rewrite_is_blocked(self):
+        git('config', 'url.https://mirror.invalid/toolkit.git.insteadOf',
+            str(self.remote), cwd=self.source)
+        with self.assertRaisesRegex(updater.UpdateError, 'unexpected_git_url_rewrite'):
             self._check(today='2026-10-21')
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+
+    def test_lock_blocks_concurrent_check(self):
+        with updater.exclusive_lock(self.state):
+            with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
+                self._check(today='2026-10-21')
+        self.assertTrue((self.state/'update.lock').exists())
+
+    def test_lock_blocks_separate_process_and_releases_after_termination(self):
+        ready = self.state / 'holder-ready'
+        child = (
+            "import importlib.util, pathlib, sys, time\n"
+            "spec = importlib.util.spec_from_file_location('adt_child', sys.argv[1])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "with module.exclusive_lock(pathlib.Path(sys.argv[2])):\n"
+            "    pathlib.Path(sys.argv[3]).write_text('ready', encoding='utf-8')\n"
+            "    time.sleep(30)\n"
+        )
+        holder = subprocess.Popen(
+            [os.sys.executable, '-c', child, str(SCRIPT), str(self.state), str(ready)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        try:
+            deadline = time.monotonic() + 5
+            while not ready.exists() and holder.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.05)
+            if not ready.exists():
+                detail = holder.stderr.read() if holder.poll() is not None else 'lock holder did not become ready'
+                self.fail(detail)
+            with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
+                self._check(today='2026-10-21')
+        finally:
+            holder.terminate()
+            try:
+                holder.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                holder.kill()
+                holder.wait(timeout=5)
+            holder.stdout.close()
+            holder.stderr.close()
+        self.assertEqual('UP_TO_DATE', self._check(today='2026-10-21')['status'])
         self.assertTrue((self.state/'update.lock').exists())
 
     def test_stale_lock_recovers_after_interrupted_run(self):
-        import time
         self.state.mkdir()
         lock = self.state/'update.lock'
         lock.write_text('abandoned', encoding='utf-8')
-        os.utime(lock, (time.time() - 3600, time.time() - 3600))
         self.assertEqual(self._check(today='2026-10-21')['status'], 'UP_TO_DATE')
-        self.assertFalse(lock.exists())
+        self.assertTrue(lock.exists())
+
+    def test_corrupt_state_fails_closed_without_overwrite(self):
+        self.state.mkdir()
+        state_file = self.state / 'state.json'
+        state_file.write_bytes(b'{broken')
+        before = state_file.read_bytes()
+        with self.assertRaisesRegex(updater.UpdateError, 'state_invalid'):
+            self._check(today='2026-10-21')
+        self.assertEqual(before, state_file.read_bytes())
+
+    def test_state_checkout_mismatch_fails_closed(self):
+        updater.write_state(self.state / 'state.json', {'active_revision': '0' * 40})
+        with self.assertRaisesRegex(updater.UpdateError, 'state_checkout_mismatch'):
+            self._check(today='2026-10-21')
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+
+    def test_state_writer_does_not_reuse_predictable_temp_file(self):
+        self.state.mkdir()
+        collision = self.state / 'state.json.tmp'
+        collision.write_bytes(b'keep this file')
+        updater.write_state(self.state / 'state.json', {'active_revision': self.old_head})
+        self.assertEqual(b'keep this file', collision.read_bytes())
+        self.assertEqual(self.old_head,
+                         updater.read_state(self.state / 'state.json')['active_revision'])
 
     def test_missing_role_blocks_update(self):
         (self.author/'.agents/roles/orchestrator.md').unlink()
@@ -138,6 +203,29 @@ class TestUpdater(unittest.TestCase):
         with self.assertRaisesRegex(updater.UpdateError, 'candidate_missing_role'):
             self._check(today='2026-10-21')
         self.assertEqual(git('rev-parse', 'HEAD', cwd=self.source), self.old_head)
+
+    def test_malformed_extension_pack_blocks_update(self):
+        self._save_toolkit('1.1.0')
+        manifest = json.loads((self.author/'MANIFEST.json').read_text(encoding='utf-8'))
+        manifest['extension_packs'] = {
+            'broken': {'skill_root': '.agents/skills', 'skills': None, 'roles': []}
+        }
+        (self.author/'MANIFEST.json').write_text(json.dumps(manifest), encoding='utf-8')
+        git('add', '-A', cwd=self.author)
+        git('commit', '-m', 'malformed extension pack', cwd=self.author)
+        git('push', 'origin', 'main', cwd=self.author)
+        with self.assertRaisesRegex(updater.UpdateError, 'candidate_pack_invalid'):
+            self._check(today='2026-10-21')
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+        manifest['extension_packs'] = {}
+        manifest['profiles'] = {'general': [[]]}
+        (self.author/'MANIFEST.json').write_text(json.dumps(manifest), encoding='utf-8')
+        git('add', '-A', cwd=self.author)
+        git('commit', '-m', 'malformed profile', cwd=self.author)
+        git('push', 'origin', 'main', cwd=self.author)
+        with self.assertRaisesRegex(updater.UpdateError, 'candidate_profile_has_unknown_skill'):
+            self._check(today='2026-10-21', force=True)
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
 
     def test_offline_version_preflight_and_last_known(self):
         untouched = (self.source / 'MANIFEST.json').read_bytes()
@@ -222,13 +310,11 @@ class TestUpdater(unittest.TestCase):
     def test_rollback_respects_active_update_lock(self):
         self._push('1.1.0')
         self._check(today='2026-10-21')
-        self.state.mkdir(exist_ok=True)
-        lock = self.state / 'update.lock'
-        lock.write_text('reserved', encoding='utf-8')
-        with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
-            updater.rollback(self.source, self.state, apply=True,
-                             expected_origin=str(self.remote))
-        self.assertTrue(lock.exists())
+        with updater.exclusive_lock(self.state):
+            with self.assertRaisesRegex(updater.UpdateError, 'another_update_is_in_progress'):
+                updater.rollback(self.source, self.state, apply=True,
+                                 expected_origin=str(self.remote))
+        self.assertTrue((self.state / 'update.lock').exists())
 
     def test_status_has_no_network_side_effect(self):
         result = subprocess.run([os.sys.executable, str(SCRIPT), '--state-dir', str(self.state), '--status'],
@@ -246,6 +332,103 @@ class TestUpdater(unittest.TestCase):
         git('push', 'origin', 'main', cwd=self.author)
         self.assertEqual(self._check(today='2026-10-21')['status'], 'UPDATED')
 
+    def test_git_post_merge_hook_is_not_executed(self):
+        hook = self.source / '.git' / 'hooks' / 'post-merge'
+        marker = self.root / 'hook-ran.txt'
+        hook.write_text("#!/bin/sh\nprintf ran > '" + marker.as_posix() + "'\n", encoding='utf-8')
+        try:
+            os.chmod(hook, 0o700)
+        except OSError:
+            pass
+        self._push('1.1.0')
+        self.assertEqual('UPDATED', self._check(today='2026-10-21')['status'])
+        self.assertFalse(marker.exists())
+
+    def test_fetch_does_not_use_shared_fetch_head(self):
+        fetch_head = self.source / '.git' / 'FETCH_HEAD'
+        before = b'preserve this unrelated fetch metadata\n'
+        fetch_head.write_bytes(before)
+        self._push('1.1.0')
+        self.assertEqual('UPDATED', self._check(today='2026-10-21')['status'])
+        self.assertEqual(before, fetch_head.read_bytes())
+
+    def test_interrupted_after_checkout_recovers_from_durable_journal(self):
+        self._push('1.1.0')
+        original_write_state = updater.write_state
+
+        def interrupt_before_final_state(path, state):
+            if state.get('last_attempt_status') == 'UPDATED':
+                raise updater.UpdateError('simulated_interruption')
+            return original_write_state(path, state)
+
+        updater.write_state = interrupt_before_final_state
+        try:
+            with self.assertRaisesRegex(updater.UpdateError, 'simulated_interruption'):
+                self._check(today='2026-10-21')
+        finally:
+            updater.write_state = original_write_state
+
+        pending = updater.read_state(self.state / 'state.json')
+        self.assertIsNotNone(pending['pending_update'])
+        recovered = self._check(today='2026-10-22')
+        self.assertEqual('RECOVERED_AFTER_INTERRUPTION', recovered['status'])
+        final = updater.read_state(self.state / 'state.json')
+        self.assertIsNone(final['pending_update'])
+        self.assertEqual(recovered['active_revision'], final['active_revision'])
+        self.assertEqual(self.old_head, final['previous_good_revision'])
+        self.assertNotEqual(0, subprocess.run(
+            ['git', '-C', str(self.source), 'show-ref', '--verify', '--quiet',
+             updater.CANDIDATE_REF], check=False).returncode)
+
+    def test_interrupted_rollback_recovers_from_durable_journal(self):
+        self._push('1.1.0')
+        self._check(today='2026-10-21')
+        original_write_state = updater.write_state
+
+        def interrupt_after_reset(path, state):
+            if state.get('last_attempt_status') == 'ROLLED_BACK':
+                raise updater.UpdateError('simulated_rollback_interruption')
+            return original_write_state(path, state)
+
+        updater.write_state = interrupt_after_reset
+        try:
+            with self.assertRaisesRegex(updater.UpdateError, 'simulated_rollback_interruption'):
+                updater.rollback(self.source, self.state, apply=True,
+                                 expected_origin=str(self.remote))
+        finally:
+            updater.write_state = original_write_state
+
+        pending = updater.read_state(self.state / 'state.json')
+        self.assertIsNotNone(pending['pending_rollback'])
+        self.assertEqual(self.old_head, git('rev-parse', 'HEAD', cwd=self.source))
+        recovered = self._check(today='2026-10-22')
+        self.assertEqual('ROLLED_BACK_AFTER_INTERRUPTION', recovered['status'])
+        final = updater.read_state(self.state / 'state.json')
+        self.assertIsNone(final['pending_rollback'])
+        self.assertIsNone(final['previous_good_revision'])
+        self.assertEqual('ROLLED_BACK_AFTER_INTERRUPTION', final['last_attempt_status'])
+
+    def test_linked_source_path_is_rejected(self):
+        alias = self.root / 'source-link'
+        try:
+            alias.symlink_to(self.source, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest('Symlinks are unavailable on this host')
+        with self.assertRaisesRegex(updater.UpdateError, 'linked_path_not_allowed'):
+            self._check(today='2026-10-21', force=True)
+
+    def test_candidate_symlink_is_rejected(self):
+        blob = subprocess.run(
+            ['git', 'hash-object', '-w', '--stdin'], cwd=self.author,
+            input=b'outside.txt', capture_output=True, check=True,
+        ).stdout.decode().strip()
+        # Create a mode-120000 tree entry without requiring OS symlink privileges.
+        git('update-index', '--add', '--cacheinfo', f'120000,{blob},linked.txt', cwd=self.author)
+        git('commit', '-m', 'add linked candidate file', cwd=self.author)
+        git('push', 'origin', 'main', cwd=self.author)
+        with self.assertRaisesRegex(updater.UpdateError, 'candidate_contains_link_or_special_file'):
+            self._check(today='2026-10-21')
+
 
 class TestPowerShellInstaller(unittest.TestCase):
     def test_scheduled_task_is_scoped_to_current_user(self):
@@ -256,6 +439,15 @@ class TestPowerShellInstaller(unittest.TestCase):
         self.assertIn('Register-ScheduledTask', text)
         self.assertIn('Unregister-ScheduledTask', text)
         self.assertIn('Get-FileHash', text)
+        self.assertIn('Install-ADTUpdaterAtomically', text)
+        self.assertIn('[IO.File]::Replace', text)
+        self.assertIn('[IO.File]::Move', text)
+        self.assertIn('Get-FileHash -LiteralPath $temporary', text)
+        self.assertNotIn('Copy-Item -LiteralPath $bundledUpdater -Destination $installed -Force', text)
+        self.assertIn('Assert-ADTNoReparseChain', text)
+        self.assertIn('Assert-ADTNoReparseChain $bundledUpdater', text)
+        self.assertIn('Assert-ADTNoReparseChain $targetDir', text)
+        self.assertIn('Assert-ADTNoReparseChain $stateDir', text)
         self.assertNotIn('Set-ExecutionPolicy', text)
         self.assertNotIn('mcp remove', text)
 

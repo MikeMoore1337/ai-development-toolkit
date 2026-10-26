@@ -10,6 +10,43 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $taskName = 'ADT-Personal-Toolkit-Update'
 
+function Assert-ADTNoReparseChain([string]$Path) {
+    $current = [IO.Path]::GetFullPath($Path)
+    while ($current) {
+        $item = Get-Item -LiteralPath $current -Force -ErrorAction SilentlyContinue
+        if ($null -ne $item -and ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            throw "Refusing linked updater path: $current"
+        }
+        $parent = [IO.Directory]::GetParent($current)
+        if ([string]::IsNullOrEmpty($parent) -or $parent -eq $current) { break }
+        $current = $parent
+    }
+}
+
+function Install-ADTUpdaterAtomically([string]$Source, [string]$Destination) {
+    $targetDir = Split-Path -Parent $Destination
+    $temporary = Join-Path $targetDir ('.update_toolkit.py.tmp-' + [Guid]::NewGuid().ToString('N'))
+    try {
+        [IO.File]::Copy($Source, $temporary, $false)
+        Assert-ADTNoReparseChain $temporary
+        if ((Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash -ne
+            (Get-FileHash -LiteralPath $Source -Algorithm SHA256).Hash) {
+            throw 'Updater copy failed integrity check.'
+        }
+        if (Test-Path -LiteralPath $Destination -PathType Leaf) {
+            $backup = "$Destination.adt-backup-$(Get-Date -Format yyyyMMdd-HHmmss)-$([Guid]::NewGuid().ToString('N'))"
+            [IO.File]::Replace($temporary, $Destination, $backup, $true)
+            Write-Host "Updater backup: $backup"
+        } else {
+            [IO.File]::Move($temporary, $Destination)
+        }
+    } finally {
+        if (Test-Path -LiteralPath $temporary -PathType Leaf) {
+            Remove-Item -LiteralPath $temporary -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 if ($Disable) {
     $existing = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
     if ($null -eq $existing) {
@@ -29,13 +66,21 @@ $bundledUpdater = Join-Path $packageRoot 'updater\update_toolkit.py'
 if (-not (Test-Path -LiteralPath $bundledUpdater -PathType Leaf)) {
     throw "Updater file not found: $bundledUpdater"
 }
+Assert-ADTNoReparseChain $packageRoot
+Assert-ADTNoReparseChain $bundledUpdater
 $pyCommand = Get-Command py -ErrorAction SilentlyContinue
 if (-not $pyCommand) { throw 'Python launcher py.exe is required for scheduling. No task registered.' }
 $localRoot = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME 'AppData\Local' }
 $base = Join-Path $localRoot 'ADT-Personal'
 $source = Join-Path $base 'toolkit-source'
 $installed = Join-Path $base 'updater\update_toolkit.py'
+$targetDir = Split-Path -Parent $installed
 $stateDir = Join-Path $base 'updater\state'
+Assert-ADTNoReparseChain $base
+Assert-ADTNoReparseChain $source
+Assert-ADTNoReparseChain $targetDir
+Assert-ADTNoReparseChain $installed
+Assert-ADTNoReparseChain $stateDir
 if (-not (Test-Path -LiteralPath (Join-Path $source 'MANIFEST.json') -PathType Leaf)) {
     throw "Dedicated Toolkit checkout not found: $source. Install MCP first."
 }
@@ -52,18 +97,20 @@ $principal = New-ScheduledTaskPrincipal -UserId $identity -LogonType Interactive
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 5) -MultipleInstances IgnoreNew
 
 if ($PSCmdlet.ShouldProcess($taskName, 'Install auto updater and register current-user task')) {
-    $targetDir = Split-Path -Parent $installed
+    Assert-ADTNoReparseChain $packageRoot
+    Assert-ADTNoReparseChain $bundledUpdater
+    Assert-ADTNoReparseChain $base
+    Assert-ADTNoReparseChain $source
+    Assert-ADTNoReparseChain $targetDir
+    Assert-ADTNoReparseChain $installed
+    Assert-ADTNoReparseChain $stateDir
     if (-not (Test-Path -LiteralPath $targetDir)) {
         New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
     }
+    Assert-ADTNoReparseChain $targetDir
     if (-not (Test-Path -LiteralPath $installed -PathType Leaf) -or
         (Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $bundledUpdater -Algorithm SHA256).Hash) {
-        if (Test-Path -LiteralPath $installed -PathType Leaf) {
-            $backup = "$installed.adt-backup-$(Get-Date -Format yyyyMMdd-HHmmss)"
-            Copy-Item -LiteralPath $installed -Destination $backup -ErrorAction Stop
-            Write-Host "Updater backup: $backup"
-        }
-        Copy-Item -LiteralPath $bundledUpdater -Destination $installed -Force -ErrorAction Stop
+        Install-ADTUpdaterAtomically $bundledUpdater $installed
     }
     try {
         Register-ScheduledTask -TaskName $taskName -Action $action -Trigger @($daily, $atLogon) `

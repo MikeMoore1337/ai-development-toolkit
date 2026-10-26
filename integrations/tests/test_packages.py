@@ -68,6 +68,10 @@ class SourcePackageTests(unittest.TestCase):
             self.assertNotRegex(content, r'(?m)^\s*sudo\s')
         self.assertIn('systemctl --user', (server / 'Enable-ADT-AutoUpdate.sh').read_text())
         self.assertIn('launchctl bootstrap', (server / 'Enable-ADT-AutoUpdate.sh').read_text())
+        shell = (server / 'Enable-ADT-AutoUpdate.sh').read_text()
+        self.assertIn('reject_linked_path', shell)
+        self.assertIn('while [ -n "$path" ]; do', shell)
+        self.assertIn('reject_linked_path "$root/updater"', shell)
 
     def test_platform_guides_and_equal_visibility(self):
         for name in ('personal-mcp/README.md', 'personal-mcp/README.ru.md'):

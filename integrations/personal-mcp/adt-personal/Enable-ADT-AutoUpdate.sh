@@ -7,22 +7,40 @@ kernel=$(uname -s)
 case "$kernel" in Linux|Darwin) ;; *) echo 'ERROR: Windows uses Enable-ADT-AutoUpdate.ps1' >&2; exit 2;; esac
 command -v python3 >/dev/null 2>&1 || { echo 'ERROR: Python 3.10+ is required' >&2; exit 2; }
 python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 10) else 2)' || { echo 'ERROR: Python 3.10+ is required' >&2; exit 2; }
+reject_linked_path() {
+  path=$1
+  while [ -n "$path" ]; do
+    [ ! -L "$path" ] || { echo "ERROR: Linked updater path is unsafe: $path" >&2; exit 2; }
+    parent=$(dirname -- "$path")
+    [ "$parent" != "$path" ] || break
+    path=$parent
+  done
+}
 package=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 root="${XDG_DATA_HOME:-$HOME/.local/share}/adt-personal"
 source="$root/toolkit-source"
+reject_linked_path "$package"
+reject_linked_path "$root"
+reject_linked_path "$source"
 [ -f "$source/MANIFEST.json" ] || { echo 'ERROR: First install MCP with its dedicated Toolkit checkout.' >&2; exit 2; }
+reject_linked_path "$root/updater"
 mkdir -p "$root/updater/state"
 updater="$root/updater/update_toolkit.py"
+state="$root/updater/state"
+reject_linked_path "$updater"
+reject_linked_path "$state"
 if [ ! -f "$updater" ] || ! cmp -s "$package/updater/update_toolkit.py" "$updater"; then
   [ ! -e "$updater" ] || cp -p "$updater" "$updater.adt-backup-$(date '+%Y%m%d-%H%M%S')"
   cp "$package/updater/update_toolkit.py" "$updater"
 fi
-state="$root/updater/state"
 # Run one visible check first. If the candidate is invalid, don't schedule it.
 python3 "$updater" --source "$source" --state-dir "$state" --force
 if [ "$kernel" = Linux ]; then
   command -v systemctl >/dev/null 2>&1 || { echo 'ERROR: systemd user manager is unavailable. Follow manual cron instructions.' >&2; exit 2; }
   unit="$HOME/.config/systemd/user"
+  reject_linked_path "$unit"
+  reject_linked_path "$unit/adt-personal-toolkit-update.service"
+  reject_linked_path "$unit/adt-personal-toolkit-update.timer"
   mkdir -p "$unit"
   python3 - "$unit" "$updater" "$source" "$state" <<'PY'
 from pathlib import Path
@@ -49,6 +67,7 @@ PY
 else
   # launchd cannot safely interpolate shell escaping; use plistlib argument arrays.
   agent="$HOME/Library/LaunchAgents/com.ai-development-toolkit.personal-updater.plist"
+  reject_linked_path "$agent"
   mkdir -p "$(dirname "$agent")"
   python3 - "$agent" "$updater" "$source" "$state" <<'PY'
 from pathlib import Path
