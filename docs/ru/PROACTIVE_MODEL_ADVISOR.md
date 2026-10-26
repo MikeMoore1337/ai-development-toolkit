@@ -12,7 +12,7 @@
 
 ## Один раз включить (Windows, без Codex CLI)
 
-Требования: уже подключённый `ai-development-toolkit` Personal MCP `0.1.11`,
+Требования: уже подключённый `ai-development-toolkit` Personal MCP `0.1.12`,
 обновлённая проверенная копия Toolkit, доступ к собственному `~/.codex/AGENTS.md`.
 Используй скрипт **из доверенного checkout с зелёным CI**.
 В PowerShell:
@@ -108,3 +108,32 @@ py -3.14 -m unittest discover -s integrations/personal-mcp/adt-personal/tests -p
 обычный запрос; получить предложение для сложного случая без шаблона и
 отсутствие предложения для простого, затем проверить отказ/разрешение.
 Без этого статус `SOURCE_READY_CLIENT_NOT_VERIFIED`.
+
+## Обновление MCP после выпуска #401
+
+Источник Toolkit и установленный MCP - **две разные копии**. Обновление
+выделенного Git-каталога само по себе не обновляет исполняемый MCP-сервер.
+После получения проверенной ревизии запусти из PowerShell:
+
+```powershell
+$source = "$env:LOCALAPPDATA\ADT-Personal\toolkit-source"
+$installMcp = Join-Path $source "integrations\personal-mcp\adt-personal\Install-ADT-Personal.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installMcp -McpOnly -WhatIf
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installMcp -McpOnly
+```
+
+`-McpOnly` обновляет существующие локальные MCP-модули, без Codex CLI,
+повторной регистрации и перезаписи настроек клиента. После этого повторно
+обнови ранее разрешённый блок Advisor через `Enable-ADT-Model-Advisor.ps1`
+(с `-WhatIf` и резервной копией), проверь `-Check` и перезапусти Codex Desktop.
+В новом чате проверь фактическую версию сервера через `toolkit_info`.
+
+При явном opt-in глобальная инструкция передаёт
+`proactive_model_advice=true` в существующий `toolkit_prepare_task`.
+В ответе MCP появляется `model_advisor`: ограниченный лексический признак
+сочетания рисков, например безопасности, конкурентных обновлений и восстановления.
+Это **не** самостоятельное решение модели, не перечень доступных моделей и не
+разрешение их запускать. Клиент должен сам проверить свои live-возможности
+и при обоснованной полезности показать выбор в чате; гарантировать
+появление карточки через MCP нельзя.
+В обычном режиме Toolkit поле не запрашивает и не добавляет.
