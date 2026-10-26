@@ -67,11 +67,11 @@ class ClientCapabilityTests(unittest.TestCase):
                 L6="VERIFIED")),
             ("owner-reported", lambda d: d["clients"][0]["scenarios"].update(
                 zip_plus_toolkit_url="VERIFIED")),
-            ("deepseek-source", lambda d: d["clients"][2].update(
+            ("official", lambda d: d["clients"][2].update(
                 documentation_url="https://example.org/unofficial")),
-            ("deepseek-session", lambda d: d["clients"][2]["capabilities"].update(
+            ("session", lambda d: d["clients"][2]["capabilities"].update(
                 skill_discovery="AVAILABLE")),
-            ("deepseek-L5", lambda d: d["clients"][2]["evidence"].update(
+            ("L4-L6", lambda d: d["clients"][2]["evidence"].update(
                 L5="VERIFIED")),
         )
         for name, mutation in corruptions:
