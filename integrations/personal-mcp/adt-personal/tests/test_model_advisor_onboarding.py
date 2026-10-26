@@ -44,7 +44,7 @@ class AdvisorSourceContract(unittest.TestCase):
             "proactive_model_advice=true", "model_advisor",
             "REVIEW_CANDIDATE", "Personal MCP 0.1.13",
             "toolkit_model_review_checkpoint", "stage=NEW_RISK",
-            "model availability is NOT VERIFIED",
+            "availability is NOT VERIFIED",
             "SINGLE_MODEL_SUFFICIENT", "CAPABILITY_UNAVAILABLE",
             "toolkit_route_task has already", "optional `profile`",
             "Do not quietly skip", "Git trust boundaries",
