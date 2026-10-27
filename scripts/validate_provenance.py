@@ -221,7 +221,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
             continue
         for path, files in parts.items():
             if (not isinstance(path, str)
-                    or not path.startswith("optional-original-skills/")
+                    or not path.startswith(("optional-original-skills/", "third_party/"))
                     or path in approved or path in external_approved
                     or not isinstance(files, dict) or not files
                     or any(not isinstance(name, str)
