@@ -20,7 +20,7 @@
 | [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | P2 | Фреймворк для агентов с долговечным состоянием | Архитектурный вариант только при необходимости устойчивых workflow |
 | [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | P2 | Фреймворк оркестрации агентов и процессов | Альтернатива LangGraph, но не готовый навык программирования |
 | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | P1 | Граф знаний о кодовой базе | Потенциальная необязательная CLI для больших репозиториев; рёбра графа требуют доказательств |
-| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Оригинальные навыки минималистичной разработки и проверки | Шесть исходных SKILL.md v5.3.2 доступны **только вручную** в `optional-original-skills/`; без хуков и автоматической установки. [Инструкция](PONYTAIL_UPSTREAM.md) |
+| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Оригинальные навыки минималистичной разработки и проверки | Шесть исходных SKILL.md v5.3.2 хранятся как исходный снимок **только для ручного подключения** в `third_party/ponytail-v5.3.2/skills/`; без хуков и автоматической установки. [Инструкция](PONYTAIL_UPSTREAM.md) |
 | [iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir) | P3 | Набор иконок | Выбирать одну согласованную библиотеку, не четыре одновременно |
 | [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Семейство иконок и сайт | Для React использовать соответствующий пакет; стили могут отличаться |
 | [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Большая библиотека иконок | Использовать только при соответствии существующей дизайн-системе |
