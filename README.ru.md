@@ -12,6 +12,8 @@
 
 **Если проект уже существует:** начните с [короткой инструкции для человека](docs/ru/EXISTING_PROJECT.md). [Технические инструкции для ИИ-агента](AGENT_START.ru.md) — отдельный документ, их не требуется читать перед первым запросом.
 
+**Необязательный оригинальный [Graphify для анализа кода](docs/ru/GRAPHIFY.md)** - только локально, без внешних API и зависимостей приложения.
+
 **Интеграции Toolkit:** [плагин ChatGPT](integrations/chatgpt-plugin/README.ru.md) · [MCP для Codex](integrations/personal-mcp/README.ru.md) · [инструкции Windows, Linux и macOS](docs/ru/INTEGRATIONS.md) · [DeepSeek Chat](integrations/deepseek-chat/README.ru.md) · [DeepSeek Harness](integrations/deepseek-harness/README.ru.md)
 
 **[Клиенты, стоимость и правила безопасности](docs/ru/CLIENT_ROUTE_SECURITY_MATRIX.md)** - подтверждённые возможности, личные настройки и разрешения на действия.

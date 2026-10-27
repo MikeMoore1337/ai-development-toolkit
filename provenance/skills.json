@@ -1666,6 +1666,26 @@
       "notes": "Issue #265: original offline bounded diagram pilot; Diagram Design only an idea reference, no upstream code; visual comparison NOT_TESTED."
     },
     {
+      "id": "graphify-423-guide-en",
+      "path": "docs/GRAPHIFY.md",
+      "name": "GRAPHIFY.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; original documentation for optional unmodified external Graphify CLI, upstream code not bundled; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/GRAPHIFY.md",
+      "last_reviewed": "2026-10-27",
+      "distribution": "included",
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
+    },
+    {
       "id": "documentation-docs-en-adaptation-md",
       "path": "docs/en/ADAPTATION.md",
       "name": "ADAPTATION.md",
@@ -3604,6 +3624,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": "Original Russian onboarding localization and offline documentation checks (#78); no third-party sources redistributed."
+    },
+    {
+      "id": "graphify-423-guide-ru",
+      "path": "docs/ru/GRAPHIFY.md",
+      "name": "GRAPHIFY.md",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; original documentation for optional unmodified external Graphify CLI, upstream code not bundled; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/ru/GRAPHIFY.md",
+      "last_reviewed": "2026-10-27",
+      "distribution": "included",
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
     },
     {
       "id": "doc-docs-ru-install-linux-md",
