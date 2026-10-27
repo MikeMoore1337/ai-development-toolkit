@@ -29,7 +29,7 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual([], inspect())
 
     def test_only_pinned_optional_originals(self):
-        directory = ROOT / "optional-original-skills"
+        directory = ROOT / "third_party" / "ponytail-v5.3.2" / "skills"
         self.assertEqual(
             sorted(PONYTAIL_BLOBS),
             sorted(p.name for p in directory.iterdir() if p.is_dir()),
@@ -40,13 +40,13 @@ class DistributionTests(unittest.TestCase):
                 self.assertEqual(expected_sha, git_blob_sha(path))
         self.assertEqual(
             PONYTAIL_LICENSE_BLOB,
-            git_blob_sha(directory / "PONYTAIL_LICENSE"),
+            git_blob_sha(ROOT / "third_party" / "ponytail-v5.3.2" / "LICENSE"),
         )
 
     def test_public_manifest(self):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         self.assertTrue(manifest["make_feature_source_bundled"])
-        self.assertEqual(len(PONYTAIL_BLOBS), manifest["original_skills_bundled_as_opt_in"])
+        self.assertEqual(0, manifest["original_skills_bundled_as_opt_in"])
         self.assertEqual(
             "16352ac229eb08a9598dcae48fe9f2b342567d86",
             manifest["source_revision_pins"]["DietrichGebert/ponytail"],
