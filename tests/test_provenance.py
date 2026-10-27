@@ -474,6 +474,62 @@ class ProvenanceTests(unittest.TestCase):
             self.skipTest("Symlinks are not permitted on this runner")
         self.check("SYMLINK", mode="release")
 
+
+    def _approve_additional_pinned_skill(self):
+        import hashlib
+        skill = "optional-original-skills/ponytail"
+        filename = skill + "/SKILL.md"
+        self._put(filename, "---\\nname: ponytail\\ndescription: Fixture\\nlicense: MIT\\n---\\n")
+        manifest = json.loads((self.root / "MANIFEST.json").read_text())
+        manifest["original_skills_bundled_as_opt_in"] = 1
+        self._put("MANIFEST.json", json.dumps(manifest))
+        self.data["components"].append(component(
+            skill, "skill", name="ponytail", origin="redistributed",
+            source_url="https://github.com/example/pinned-skill",
+            source_revision="a" * 40, owner_approval_id="EXTERNAL-42",
+            distribution_basis="Fixture MIT scope approved by owner",
+        ))
+        digest = hashlib.sha256(canonical_bytes((self.root / filename).read_bytes())).hexdigest()
+        self.data["additional_owner_reviews"] = [{
+            "id": "EXTERNAL-42", "source": "owner_reported",
+            "review_outcomes": "permitted", "scope_issue": "#42",
+            "source_revision": "a" * 40, "license": "MIT",
+            "approved_components": {skill: {filename: digest}},
+            "approved_metadata": {skill: {
+                "origin": "redistributed", "license": "MIT",
+                "status": "documented", "distribution": "included", "kind": "skill",
+            }},
+        }]
+        self.write()
+        return filename
+
+    def test_additional_pinned_owner_review_enables_only_exact_snapshot(self):
+        path = self._approve_additional_pinned_skill()
+        self.assertTrue(validate(self.root, "release")["ok"])
+        self._put(path, (self.root / path).read_text() + "tamper\\n")
+        self.check("OWNER_FINGERPRINT", mode="release")
+
+    def test_additional_owner_review_does_not_bypass_license_or_source_pin(self):
+        self._approve_additional_pinned_skill()
+        item = self.data["components"][-1]
+        item["source_revision"] = "b" * 40
+        self.check("EXTERNAL_REVIEW", mode="release")
+        item["source_revision"] = "a" * 40
+        item["license"] = "Apache-2.0"
+        self.check("OWNER_CLASSIFICATION", mode="release")
+
+    def test_additional_review_scope_cannot_expand_to_unreviewed_dirs(self):
+        self._approve_additional_pinned_skill()
+        grant = self.data["additional_owner_reviews"][0]
+        grant["approved_components"][".agents/skills/original"] = {
+            ".agents/skills/original/SKILL.md": "a" * 64
+        }
+        grant["approved_metadata"][".agents/skills/original"] = {
+            "origin": "redistributed", "license": "MIT",
+            "status": "documented", "distribution": "included", "kind": "skill",
+        }
+        self.check("EXTERNAL_REVIEW", mode="release")
+
     def test_current_tree_release_snapshot_is_eligible(self):
         result = validate(ROOT, "release")
         self.assertTrue(result["ok"], result["issues"][:15])
@@ -482,7 +538,7 @@ class ProvenanceTests(unittest.TestCase):
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
-        self.assertEqual(82, result["skills"])
+        self.assertEqual(88, result["skills"])
         self.assertGreater(result["total"], 100)
 
 
