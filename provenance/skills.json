@@ -13388,153 +13388,6 @@
       "notes": "Opt-in, source-only Codex Desktop Stop hook fallback with offline tests; installation and native trust are NOT_VERIFIED. Desktop trust blocker openai/codex#47283. No Codex CLI or model execution."
     },
     {
-      "id": "ponytail-422-ponytail",
-      "path": "optional-original-skills/ponytail",
-      "name": "ponytail",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-ponytail-review",
-      "path": "optional-original-skills/ponytail-review",
-      "name": "ponytail-review",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail-review/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-ponytail-audit",
-      "path": "optional-original-skills/ponytail-audit",
-      "name": "ponytail-audit",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail-audit/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-ponytail-debt",
-      "path": "optional-original-skills/ponytail-debt",
-      "name": "ponytail-debt",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail-debt/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-ponytail-gain",
-      "path": "optional-original-skills/ponytail-gain",
-      "name": "ponytail-gain",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail-gain/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-ponytail-help",
-      "path": "optional-original-skills/ponytail-help",
-      "name": "ponytail-help",
-      "kind": "skill",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/skills/ponytail-help/SKILL.md",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "MIT license text present in pinned upstream release; exact Git blob SHA verified; distribution explicitly owner-requested in Issue #422",
-      "attribution_required": true,
-      "attribution_path": "optional-original-skills/PONYTAIL_LICENSE",
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "Exact original optional skill; no hooks or active host installation.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
-      "id": "ponytail-422-license",
-      "path": "optional-original-skills/PONYTAIL_LICENSE",
-      "name": "Ponytail MIT License",
-      "kind": "asset",
-      "author": "DietrichGebert (as named in upstream MIT license)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/DietrichGebert/ponytail/blob/16352ac229eb08a9598dcae48fe9f2b342567d86/LICENSE",
-      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
-      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
-      "license": "MIT",
-      "distribution_basis": "Original MIT notice copied unchanged from pinned upstream at explicit owner request, Issue #422",
-      "attribution_required": false,
-      "attribution_path": null,
-      "status": "documented",
-      "evidence": "docs/PONYTAIL_UPSTREAM.md",
-      "last_reviewed": "2026-10-27",
-      "distribution": "included",
-      "notes": "License for six optional original Ponytail skills.",
-      "owner_approval_id": "PONYTAIL-422-2026-10-27"
-    },
-    {
       "id": "ponytail-422-documentation-ru",
       "path": "docs/PONYTAIL_UPSTREAM.md",
       "name": "Ponytail opt-in runbook (ru)",
@@ -13573,6 +13426,27 @@
       "last_reviewed": "2026-10-27",
       "distribution": "included",
       "notes": "Source-only integration instructions; no live client activation verified."
+    },
+    {
+      "id": "ponytail-422-reference-snapshot",
+      "path": "third_party/ponytail-v5.3.2",
+      "name": "Ponytail v5.3.2 upstream original skills (reference-only)",
+      "kind": "asset",
+      "author": "DietrichGebert (as named in upstream MIT license)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/DietrichGebert/ponytail/tree/16352ac229eb08a9598dcae48fe9f2b342567d86",
+      "source_reference": "docs/PONYTAIL_UPSTREAM.md",
+      "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
+      "license": "MIT",
+      "distribution_basis": "Upstream MIT source snapshot explicitly owner-authorized for Issue #422; all seven original files SHA256-pinned in additional_owner_reviews",
+      "attribution_required": true,
+      "attribution_path": "third_party/ponytail-v5.3.2/LICENSE",
+      "status": "documented",
+      "evidence": "docs/PONYTAIL_UPSTREAM.md",
+      "last_reviewed": "2026-10-27",
+      "distribution": "included",
+      "notes": "Exact nonportable upstream files. Separate from portable Toolkit skill inventory; no lifecycle hooks, host activation or model execution.",
+      "owner_approval_id": "PONYTAIL-422-2026-10-27"
     }
   ],
   "owner_review_record": {
@@ -14164,77 +14038,23 @@
       "source_revision": "16352ac229eb08a9598dcae48fe9f2b342567d86",
       "license": "MIT",
       "approved_components": {
-        "optional-original-skills/PONYTAIL_LICENSE": {
-          "optional-original-skills/PONYTAIL_LICENSE": "fb1bc6909ac3ef82d5c22106e32ef682b0cff66788fa915fb9b53b15c9d2f3ab"
-        },
-        "optional-original-skills/ponytail": {
-          "optional-original-skills/ponytail/SKILL.md": "9badd22a32e19cb884e46dfa8d3aae82bb81dfa5484105b8b4f0262df823a509"
-        },
-        "optional-original-skills/ponytail-review": {
-          "optional-original-skills/ponytail-review/SKILL.md": "33fe4ebe22a460924e5d4a261e223df22e409cc94ab76182bee9fb91a3ef022e"
-        },
-        "optional-original-skills/ponytail-audit": {
-          "optional-original-skills/ponytail-audit/SKILL.md": "2b3223a02c386d1263e1b08343cb8eb3a53e444cdafb1d79e26c8ec2a8fcad28"
-        },
-        "optional-original-skills/ponytail-debt": {
-          "optional-original-skills/ponytail-debt/SKILL.md": "b5ec2762f6ba8c4af9ea7173aa6c9f91b88655a25e43f9de0264f6ce8722b25f"
-        },
-        "optional-original-skills/ponytail-gain": {
-          "optional-original-skills/ponytail-gain/SKILL.md": "231034a896d6762e4b5c8468287083422c56b499119976ec9f76821f7d083090"
-        },
-        "optional-original-skills/ponytail-help": {
-          "optional-original-skills/ponytail-help/SKILL.md": "86ab0ce0af70cbeeeef499d5c884873b393f87f86401dcc45553662ce2c1eff9"
+        "third_party/ponytail-v5.3.2": {
+          "third_party/ponytail-v5.3.2/LICENSE": "fb1bc6909ac3ef82d5c22106e32ef682b0cff66788fa915fb9b53b15c9d2f3ab",
+          "third_party/ponytail-v5.3.2/skills/ponytail/SKILL.md": "9badd22a32e19cb884e46dfa8d3aae82bb81dfa5484105b8b4f0262df823a509",
+          "third_party/ponytail-v5.3.2/skills/ponytail-review/SKILL.md": "33fe4ebe22a460924e5d4a261e223df22e409cc94ab76182bee9fb91a3ef022e",
+          "third_party/ponytail-v5.3.2/skills/ponytail-audit/SKILL.md": "2b3223a02c386d1263e1b08343cb8eb3a53e444cdafb1d79e26c8ec2a8fcad28",
+          "third_party/ponytail-v5.3.2/skills/ponytail-debt/SKILL.md": "b5ec2762f6ba8c4af9ea7173aa6c9f91b88655a25e43f9de0264f6ce8722b25f",
+          "third_party/ponytail-v5.3.2/skills/ponytail-gain/SKILL.md": "231034a896d6762e4b5c8468287083422c56b499119976ec9f76821f7d083090",
+          "third_party/ponytail-v5.3.2/skills/ponytail-help/SKILL.md": "86ab0ce0af70cbeeeef499d5c884873b393f87f86401dcc45553662ce2c1eff9"
         }
       },
       "approved_metadata": {
-        "optional-original-skills/PONYTAIL_LICENSE": {
+        "third_party/ponytail-v5.3.2": {
           "origin": "redistributed",
           "license": "MIT",
           "status": "documented",
           "distribution": "included",
           "kind": "asset"
-        },
-        "optional-original-skills/ponytail": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
-        "optional-original-skills/ponytail-review": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
-        "optional-original-skills/ponytail-audit": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
-        "optional-original-skills/ponytail-debt": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
-        "optional-original-skills/ponytail-gain": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
-        "optional-original-skills/ponytail-help": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
         }
       }
     }
