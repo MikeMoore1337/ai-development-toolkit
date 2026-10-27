@@ -4,14 +4,14 @@
 
 ## Поставка и проверяемое происхождение
 
-Это **точные, неизменённые** шесть `skills/*/SKILL.md` из `DietrichGebert/ponytail`, тег `v5.3.2`, коммит `16352ac229eb08a9598dcae48fe9f2b342567d86` (тот же SHA уже закреплён в `MANIFEST.json`). Исходные файлы лежат в `optional-original-skills/{ponytail,ponytail-review,ponytail-audit,ponytail-debt,ponytail-gain,ponytail-help}/SKILL.md`; авторская MIT-лицензия без изменений - `optional-original-skills/PONYTAIL_LICENSE`. Тест `tests/test_public_distribution.py` проверяет Git blob SHA каждого файла. Ничего не переписывалось под Toolkit.
+Это **точные, неизменённые** шесть `skills/*/SKILL.md` из `DietrichGebert/ponytail`, тег `v5.3.2`, коммит `16352ac229eb08a9598dcae48fe9f2b342567d86` (тот же SHA уже закреплён в `MANIFEST.json`). Исходные файлы лежат в `third_party/ponytail-v5.3.2/skills/{ponytail,ponytail-review,ponytail-audit,ponytail-debt,ponytail-gain,ponytail-help}/SKILL.md`; авторская MIT-лицензия без изменений - `third_party/ponytail-v5.3.2/LICENSE`. Тест `tests/test_public_distribution.py` проверяет Git blob SHA каждого файла. Ничего не переписывалось под Toolkit.
 
-Эта копия **не включена** в основные профили Toolkit и не устанавливает официальный плагин с hooks. Это поддерживаемый upstream **skill-only fallback**, а не доказанная установка Ponytail на компьютере или активация в клиенте.
+Upstream `SKILL.md` использует непереносимое поле `argument-hint`: строгий валидатор Agent Skills Toolkit не принимает его без изменений. Поэтому каталог `third_party/` - версионированный **исходный снимок**, а не набор объявленных переносимых навыков Toolkit. Используйте копии в совместимом клиенте; не объявляйте успех L1/L4 без реальной проверки.\n\nЭта копия **не включена** в основные профили Toolkit и не устанавливает официальный плагин с hooks. Это поддерживаемый upstream **skill-only fallback**, а не доказанная установка Ponytail на компьютере или активация в клиенте.
 
 ## Подключение без Codex CLI на Windows
 
 1. Убедиться, что в `%USERPROFILE%\.agents\skills\` нет одноимённых навыков. При конфликте сначала выяснить источник и не перезаписывать каталог.
-2. Через Проводник Windows скопировать **шесть каталогов** из `optional-original-skills/` в `%USERPROFILE%\.agents\skills\` (кроме других каталогов; файл LICENSE остаётся в репозитории). Изменять оригинальные `SKILL.md` не нужно.
+2. Через Проводник Windows скопировать **шесть каталогов** из `third_party/ponytail-v5.3.2/skills/` в `%USERPROFILE%\.agents\skills\` (кроме других каталогов; файл LICENSE остаётся в репозитории). Изменять оригинальные `SKILL.md` не нужно.
 3. Перезапустить **Codex Desktop** и проверить, видит ли он навыки `ponytail`, `ponytail-review` и `ponytail-audit`. По необходимости вызвать конкретный навык вручную. До наблюдения в клиенте статус **HOST_NOT_VERIFIED**.
 4. Для отката удалить **только эти шесть установленных каталогов**, если они были скопированы именно на шаге 2. Не удалять одноимённые навыки, установленные ранее из другого источника.
 
