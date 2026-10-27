@@ -9,6 +9,8 @@
 
 Both support focused skill selection without copying files into a project. Neither grants undocumented access, automatically modifies projects, or uses a paid API. The ChatGPT plugin and Codex MCP are **independent** and neither is a prerequisite for the other.
 
+**Optional external developer tool:** [original Harness²](harness2/README.md) is installed separately on request. It is not another MCP or a replacement for the plugin/skill catalog, never auto-activates and does not run models during installation.
+
 **Two local MCP variants exist:** the existing [project-scoped Toolkit MCP](../docs/MCP_INSTALL.md) configures one Codex/Claude Code project, while the personal package above configures a **user-level Codex MCP** and may add a clearly marked block to global `AGENTS.md`. Both use the registration name `ai-development-toolkit` but expose **different tool sets**. Choose one scope per client; do not assume registrations can be combined or have verified precedence. The personal updater updates only its dedicated skill-source checkout, not the MCP executable, project files or ChatGPT plugin.
 
 
