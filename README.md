@@ -12,6 +12,8 @@
 
 **Already have a project?** Start with the [human-first guide](docs/EXISTING_PROJECT.md). The [coding agent contract](AGENT_START.md) is separate and is not required reading for a first request.
 
+**Optional original [Graphify for local code navigation](docs/GRAPHIFY.md)** - opt-in, offline code-only, no runtime dependency.
+
 **Toolkit integrations:** [ChatGPT plugin](integrations/chatgpt-plugin/README.md) · [Codex MCP](integrations/personal-mcp/README.md) · [Windows, Linux and macOS setup](docs/INTEGRATIONS.md) · [DeepSeek Chat](integrations/deepseek-chat/README.md) · [DeepSeek Harness](integrations/deepseek-harness/README.md)
 
 **[Client choices, cost and permission boundaries](docs/CLIENT_ROUTE_SECURITY_MATRIX.md)** - what is actually tested, what requires consent, and how to keep personal settings private.
