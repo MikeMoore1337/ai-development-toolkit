@@ -4,14 +4,14 @@
 
 ## Provenance and delivery
 
-The six files in `optional-original-skills/{ponytail,ponytail-review,ponytail-audit,ponytail-debt,ponytail-gain,ponytail-help}/SKILL.md` are byte-for-byte **unchanged** files from `DietrichGebert/ponytail`, tag `v5.3.2`, commit `16352ac229eb08a9598dcae48fe9f2b342567d86` (already pinned in `MANIFEST.json`). The unchanged upstream MIT license is `optional-original-skills/PONYTAIL_LICENSE`. `tests/test_public_distribution.py` verifies the original Git blob SHA of all six skill files.
+The six files in `third_party/ponytail-v5.3.2/skills/{ponytail,ponytail-review,ponytail-audit,ponytail-debt,ponytail-gain,ponytail-help}/SKILL.md` are byte-for-byte **unchanged** files from `DietrichGebert/ponytail`, tag `v5.3.2`, commit `16352ac229eb08a9598dcae48fe9f2b342567d86` (already pinned in `MANIFEST.json`). The unchanged upstream MIT license is `third_party/ponytail-v5.3.2/LICENSE`. `tests/test_public_distribution.py` verifies the original Git blob SHA of all six skill files.
 
-This copy is **not auto-installed**, is not part of any default Toolkit profile, and does not bundle or execute the official plugin lifecycle hooks. It is an official upstream **skill-only fallback**, not proof of client installation or activation.
+Upstream `SKILL.md` uses the non-portable `argument-hint` key, rejected by Toolkit's strict portable Agent Skills validator. Accordingly, `third_party/` is an exact reference snapshot, **not a declared portable skill collection**. Verify compatibility in the chosen host instead of claiming portable L1 or live L4.\n\nThis copy is **not auto-installed**, is not part of any default Toolkit profile, and does not bundle or execute the official plugin lifecycle hooks. It is an official upstream **skill-only fallback**, not proof of client installation or activation.
 
 ## Windows owner route (no Codex CLI)
 
 1. Inspect `%USERPROFILE%\.agents\skills\` for existing same-name skills. Never overwrite another source or a pre-existing install.
-2. In Windows Explorer copy only the **six Ponytail skill directories** from `optional-original-skills/` into `%USERPROFILE%\.agents\skills\`. Keep the upstream SKILL.md files unchanged.
+2. In Windows Explorer copy only the **six Ponytail skill directories** from `third_party/ponytail-v5.3.2/skills/` into `%USERPROFILE%\.agents\skills\`. Keep the upstream SKILL.md files unchanged.
 3. Restart Codex Desktop; manually check whether `ponytail`, `ponytail-review` and `ponytail-audit` are visible/invokable. Until observed, report **HOST_NOT_VERIFIED**.
 4. To roll back remove only the six directories copied by step 2, not other installations.
 
