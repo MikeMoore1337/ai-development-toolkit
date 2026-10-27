@@ -19,7 +19,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 | [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | P2 | Durable, stateful agent framework | Architecture choice only when the task needs durable workflows |
 | [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | P2 | Agents and flow orchestration framework | LangGraph alternative; not a reusable coding skill |
 | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | P1 | Codebase knowledge graphs | Potential optional CLI for large repositories; graph edges need supporting evidence |
-| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Original minimal-coding and quality-review skills | Six unchanged v5.3.2 SKILL.md files are **opt-in only** under `optional-original-skills/`, without hooks or automatic installation. [Runbook](PONYTAIL_UPSTREAM.md) |
+| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Original minimal-coding and quality-review skills | Six unchanged v5.3.2 SKILL.md files are a reference-only, **manual opt-in** snapshot under `third_party/ponytail-v5.3.2/skills/`, without hooks or automatic installation. [Runbook](PONYTAIL_UPSTREAM.md) |
 | [iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir) | P3 | Icon family | Choose one consistent family per project, not four at once |
 | [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Icon family and website | For React use its corresponding package; visual styles can differ |
 | [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Large icon library | Choose only when it fits the existing design system |
