@@ -29,3 +29,6 @@ make-feature-0.3.0*
 .artifacts/
 dist/
 build/
+
+# Disposable upstream Graphify code index (opt-in)
+graphify-out/
