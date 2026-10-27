@@ -38,6 +38,10 @@ See [evidence, worktrees and session diagnosis](SUPERPOWERS_EVIDENCE.md). Existi
 
 The [portable shadcn/ui and Magic UI selection gate](UI_COMPONENT_SELECTION.md) supports the existing frontend and design skills. Prefer the consumer's current primitives before any external package. Verify component-specific source/license revision, Tailwind/Radix/Motion dependency cost, actual keyboard/reduced-motion checks and the owner's exact visual approval. `PROPOSAL_ONLY` does not imply `OWNER_ACCEPTED`. `scripts/validate_ui_component_adoption.py` is an optional offline structural check, not a package installer or proof of deployment.
 
+## Original ECC as an external Codex plugin (#424)
+
+Unlike selectively adopting ideas, [ECC for Codex](ECC_NATIVE_CODEX.md) is considered only as the **original opt-in upstream plugin**, without vendoring skills, hooks or MCP definitions into Toolkit. The upstream bundle includes an executable SessionStart hook and a Chrome DevTools MCP launched with `npx`; registration, hook trust and MCP execution privileges require independent review. The bilingual guide identifies inspected sources and exact revision; live Windows Codex Desktop installation remains `NOT_VERIFIED`.
+
 ## Applying methods across project types
 
 - **User-facing application:** improve visual QA, accessibility, animation and performance while respecting its established design system and approval workflow.
