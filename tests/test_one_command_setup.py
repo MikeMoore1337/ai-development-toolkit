@@ -12,7 +12,7 @@ class OneCommandDistributionTests(unittest.TestCase):
     def test_marketplace_points_to_existing_portable_plugin(self):
         catalog = json.loads((ROOT / ".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
         self.assertEqual("ai-development-toolkit-local", catalog["name"])
-        self.assertEqual(1, len(catalog["plugins"]))
+        self.assertEqual(2, len(catalog["plugins"]))
         entry = catalog["plugins"][0]
         self.assertEqual("local", entry["source"]["source"])
         relative = entry["source"]["path"]
@@ -25,6 +25,26 @@ class OneCommandDistributionTests(unittest.TestCase):
         self.assertEqual(plugin["name"], entry["name"])
         self.assertGreater(len(list((root / "skills").glob("*/SKILL.md"))), 0)
         self.assertFalse((root / "mcp.json").exists())
+
+        # ECC stays original, pinned, optional and cannot execute on catalog read.
+        ecc = catalog["plugins"][1]
+        self.assertEqual("ecc", ecc["name"])
+        self.assertEqual(
+            {
+                "source": "url",
+                "url": "https://github.com/affaan-m/ECC.git",
+                "sha": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+            },
+            ecc["source"],
+        )
+        self.assertEqual(
+            {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+            ecc["policy"],
+        )
+        self.assertEqual("Productivity", ecc["category"])
+        self.assertNotIn("hooks", ecc)
+        self.assertNotIn("mcpServers", ecc)
+        self.assertNotIn("postinstall", ecc)
 
     def test_ru_en_one_paste_commands_have_same_safe_source(self):
         commands = []

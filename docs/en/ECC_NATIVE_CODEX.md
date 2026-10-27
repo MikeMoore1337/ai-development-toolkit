@@ -21,6 +21,10 @@
 | Configuration | Plugin is enabled for active `CODEX_HOME` | One original installation across projects, no repository copies, no AGENTS.md/Model Advisor/personal MCP replacement |
 | Memory and related integrations | Upstream descriptions are not proof of activation | Do not enable shared memory, background jobs or new providers without separate approval |
 
+## Toolkit-managed discoverability (#424)
+
+Toolkit's `.agents/plugins/marketplace.json` now includes **only an opt-in marketplace entry** for the original ECC (`source: url`, `https://github.com/affaan-m/ECC.git`, `sha: 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b`, `installation: AVAILABLE`, `authentication: ON_INSTALL`). This retains the existing Toolkit plugin and **does not install ECC**, run `npx`, enable hooks or start MCP. In a supported graphical Codex trusted project, ECC should appear under `AI Development Toolkit (local)` after a marketplace refresh/restart; the user must install `ecc` separately and review permissions. Listing is not execution; Windows Desktop display and install remain `NOT_VERIFIED`. Source format: [official documentation](https://developers.openai.com/plugins/build/plugins#marketplace-metadata).
+
 ## Graphical Codex installation (no Codex CLI)
 
 1. In **Codex inside the ChatGPT desktop app**, where supported, open **Plugins** and choose **Add plugin marketplace**, with source `affaan-m/ECC`. If supported, pin the reviewed Git commit above. If the UI cannot pin a ref, **do not claim a pinned install** and inspect the actual source before proceeding.
