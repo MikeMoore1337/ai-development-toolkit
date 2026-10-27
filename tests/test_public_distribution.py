@@ -1,20 +1,61 @@
-import json,sys,unittest
+import hashlib
+import json
+import sys
+import unittest
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'scripts'))
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 from validate_pack import inspect
+
+PONYTAIL_BLOBS = {
+    "ponytail": "d64edd32265ba21cbf5270158f04e97d96925f27",
+    "ponytail-review": "a50e3ac6ded6fccc9edae34ce37877bbce11e3fa",
+    "ponytail-audit": "ff9a95480700600fe2664d2d0906a4d750b2da0b",
+    "ponytail-debt": "3124f520a65d2a4fa75a2f5db6225c38ebdb8620",
+    "ponytail-gain": "1edff0e461fad6b671733ea6796aea9e417e266b",
+    "ponytail-help": "34fccb3ff542b3b8d4d131e6120a1812c9c4617a",
+}
+PONYTAIL_LICENSE_BLOB = "715d483338cea4365f0d91a27799cf61226d6bcf"
+
+
+def git_blob_sha(path):
+    content = path.read_bytes()
+    return hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content).hexdigest()
+
 
 class DistributionTests(unittest.TestCase):
     def test_pack_validation(self):
-        self.assertEqual([],inspect())
-    def test_no_original_copies(self):
-        self.assertEqual([],list((ROOT/'optional-original-skills').glob('*/SKILL.md')))
-    def test_public_manifest(self):
-        m=json.loads((ROOT/'MANIFEST.json').read_text(encoding='utf-8'))
-        self.assertTrue(m['make_feature_source_bundled'])
-        self.assertEqual(0,m['original_skills_bundled_as_opt_in'])
-    def test_private_archive_absent(self):
-        self.assertFalse(list(ROOT.rglob('make-feature-0.3.0*.gz')))
-        self.assertFalse((ROOT/'make-feature').exists())
+        self.assertEqual([], inspect())
 
-if __name__=='__main__':unittest.main()
+    def test_only_pinned_optional_originals(self):
+        directory = ROOT / "optional-original-skills"
+        self.assertEqual(
+            sorted(PONYTAIL_BLOBS),
+            sorted(p.name for p in directory.iterdir() if p.is_dir()),
+        )
+        for name, expected_sha in PONYTAIL_BLOBS.items():
+            with self.subTest(skill=name):
+                path = directory / name / "SKILL.md"
+                self.assertEqual(expected_sha, git_blob_sha(path))
+        self.assertEqual(
+            PONYTAIL_LICENSE_BLOB,
+            git_blob_sha(directory / "PONYTAIL_LICENSE"),
+        )
+
+    def test_public_manifest(self):
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertTrue(manifest["make_feature_source_bundled"])
+        self.assertEqual(len(PONYTAIL_BLOBS), manifest["original_skills_bundled_as_opt_in"])
+        self.assertEqual(
+            "16352ac229eb08a9598dcae48fe9f2b342567d86",
+            manifest["source_revision_pins"]["DietrichGebert/ponytail"],
+        )
+
+    def test_private_archive_absent(self):
+        self.assertFalse(list(ROOT.rglob("make-feature-0.3.0*.gz")))
+        self.assertFalse((ROOT / "make-feature").exists())
+
+
+if __name__ == "__main__":
+    unittest.main()
