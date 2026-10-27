@@ -20,7 +20,8 @@ PONYTAIL_LICENSE_BLOB = "715d483338cea4365f0d91a27799cf61226d6bcf"
 
 
 def git_blob_sha(path):
-    content = path.read_bytes()
+    # Canonicalize Git-managed text: Windows may check out the upstream MIT LICENSE with CRLF.
+    content = path.read_bytes().replace(b"\r\n", b"\n")
     return hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content).hexdigest()
 
 
