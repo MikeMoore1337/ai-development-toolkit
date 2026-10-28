@@ -94,7 +94,7 @@ These are upstream commands, **not actions automatically executed by Toolkit**. 
 
 After installation, inspect local Codex-shaped skill folders without executing third-party scripts:
 
-```bash
+```text
 python scripts/validate_ux_ui_orchestra.py --inspect-originals /path/to/project
 ```
 
