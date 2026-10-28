@@ -42,6 +42,10 @@ def install(target, names, apply, layout='codex', skills_dir=None):
     """Install named skills; no writes on dry-run and never overwrite existing files."""
     manifest = json.loads((ROOT / 'MANIFEST.json').read_text(encoding='utf-8'))
     sources = skill_sources(manifest)
+    native_sources = set(manifest.get('extension_packs', {}).get('native-ecc-ports', {}).get('skills', []))
+    notice = ROOT / 'third_party' / 'ecc-v2.2.3' / 'LICENSE'
+    if native_sources.intersection(names) and not notice.is_file():
+        raise FileNotFoundError(f'Missing original source license notice: {notice}')
     if not names:
         raise ValueError('Provide at least one skill')
     if len(set(names)) != len(names):
@@ -78,6 +82,9 @@ def install(target, names, apply, layout='codex', skills_dir=None):
             with tempfile.TemporaryDirectory(prefix='.toolkit-staging-', dir=destroot) as temp:
                 staged = Path(temp) / name
                 shutil.copytree(sources[name], staged, symlinks=False)
+                if name in native_sources:
+                    # Preserve MIT copyright/permission notice in each standalone install.
+                    shutil.copy2(notice, staged / 'LICENSE')
                 target_skill = destroot / name
                 if target_skill.exists() or target_skill.is_symlink():
                     raise FileExistsError(f'Race detected: {target_skill}')

@@ -34,8 +34,16 @@ def skill_directories(root: Path = ROOT, scope: str = "all") -> list[Path]:
         expected_legacy = manifest.get("original_skills_bundled_as_opt_in", 0)
         if len(legacy) != expected_legacy:
             raise ValueError(f"Optional original inventory mismatch: expected {expected_legacy}, found {len(legacy)}")
-        if legacy:
-            collections.append((legacy_root, legacy, "optional-original"))
+        # The same optional-original root can be the declared source of a native
+        # extension pack. Validate it once, rather than treating a shared source
+        # path as a second skill (while still rejecting distinct-pack duplicates).
+        registered = [pack for pack in manifest.get("extension_packs", {}).values()
+                      if (root / pack["skill_root"]).resolve() == legacy_root.resolve()]
+        if registered:
+            if len(registered) != 1 or sorted(registered[0]["skills"]) != legacy:
+                raise ValueError("Optional originals differ from the native pack registry")
+        elif legacy:
+            collections.append((legacy_root, legacy, "optional-original")
     directories = []
     used_names = set()
     for base, names, label in collections:

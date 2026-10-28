@@ -69,6 +69,11 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
             installed = target / ".agents" / "skills" / "contract-first" / "SKILL.md"
             self.assertEqual(git_blob(installed.read_bytes().replace(b"\r\n", b"\n")), SOURCE_BLOBS["contract-first"])
             self.assertEqual("OWNER RULES\n", baseline.read_text("utf-8"))
+            self.assertEqual(
+                (ROOT / "third_party" / "ecc-v2.2.3" / "LICENSE").read_bytes(),
+                (installed.parent / "LICENSE").read_bytes(),
+                "Selective skill installation must retain the original MIT notice",
+            )
             self.assertEqual(["contract-first"], [p.name for p in installed.parent.parent.iterdir()])
             with self.assertRaises(FileExistsError):
                 install(target, ["contract-first"], True)
