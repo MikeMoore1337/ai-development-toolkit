@@ -14,6 +14,100 @@ GATES = {"AWAITING_VISUAL_APPROVAL", "VISUAL_PACKAGE_MISSING", "AUDIT_COMPLETE",
          "OWNER_ACCEPTED", "IMPLEMENTED_NOT_RELEASED"}
 
 
+
+# Optional exact-original mode. These are client invocation *claims*, not proof
+# that a browser, a model, or any external binary actually ran.
+ORIGINALS = ("impeccable", "design-taste-frontend", "ui-ux-pro-max")
+
+
+def inspect_originals(project: Path) -> list[dict]:
+    """Non-executing local file inventory. No downloads, hooks or skill activation."""
+    import hashlib
+
+    result = []
+    base = project / ".agents" / "skills"
+    for name in ORIGINALS:
+        root = base / name
+        chain = (project, project / ".agents", base, root)
+        if any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction())
+               for p in chain):
+            result.append({"name": name, "status": "UNSAFE_LINK"})
+            continue
+        if not root.is_dir() or not (root / "SKILL.md").is_file():
+            result.append({"name": name, "status": "MISSING"})
+            continue
+        paths = sorted(root.rglob("*"))
+        if any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction())
+               for p in paths):
+            result.append({"name": name, "status": "UNSAFE_LINK"})
+            continue
+        try:
+            text = (root / "SKILL.md").read_text(encoding="utf-8")
+            frontmatter = text.split("---", 2)
+            declared = None
+            if len(frontmatter) == 3 and not frontmatter[0].strip():
+                for line in frontmatter[1].splitlines():
+                    if line.startswith("name:"):
+                        declared = line.partition(":")[2].strip().strip("'\\\"")
+            if declared != name or not (root / "scripts").is_dir():
+                result.append({"name": name, "status": "INCOMPLETE"})
+                continue
+            digest = hashlib.sha256()
+            for file in paths:
+                if file.is_file():
+                    digest.update(file.relative_to(root).as_posix().encode() + b"\0")
+                    digest.update(hashlib.sha256(file.read_bytes()).digest())
+            result.append({"name": name, "status": "FILES_PRESENT_UNATTESTED",
+                           "local_tree_sha256": digest.hexdigest()})
+        except (OSError, UnicodeError):
+            result.append({"name": name, "status": "UNREADABLE"})
+    return result
+
+
+def validate_originals(report: dict) -> list[str]:
+    config = report.get("original_design_skills")
+    if config is None:
+        return []
+    if not isinstance(config, dict) or config.get("mode") not in ("STANDARD", "ALL_THREE"):
+        return ["invalid original design skills mode"]
+    if config["mode"] == "STANDARD":
+        return [] if not config.get("invocations") else ["standard mode has unexpected invocations"]
+    rows = config.get("invocations")
+    if not isinstance(rows, list) or len(rows) != 3:
+        return ["all-three originals require exactly three receipts"]
+    errors, seen = [], set()
+    for row in rows:
+        if not isinstance(row, dict):
+            errors.append("invalid original skill receipt")
+            continue
+        name = row.get("name")
+        if name not in ORIGINALS or name in seen:
+            errors.append("unknown or duplicate original skill")
+            continue
+        seen.add(name)
+        status = row.get("status")
+        if status not in ("INVOKED", "NOT_VERIFIED", "UNAVAILABLE"):
+            errors.append(f"{name}: invalid invocation status")
+        if status == "INVOKED":
+            revision = row.get("source_revision")
+            evidence = row.get("invocation_evidence")
+            if (row.get("loaded") is not True or not isinstance(revision, str)
+                    or len(revision) != 40
+                    or any(c not in "0123456789abcdef" for c in revision.lower())
+                    or not isinstance(evidence, str) or not evidence.strip()):
+                errors.append(f"{name}: invocation lacks source or trace")
+        elif row.get("invocation_evidence"):
+            errors.append(f"{name}: unverified invocation claims evidence")
+    if seen != set(ORIGINALS):
+        errors.append("all-three originals incomplete")
+    if report.get("gate") in ("AWAITING_VISUAL_APPROVAL", "OWNER_ACCEPTED",
+                              "IMPLEMENTED_NOT_RELEASED"):
+        if errors or any(not isinstance(x, dict) or x.get("status") != "INVOKED"
+                         for x in rows):
+            errors.append("all-three approval requires three actual invocations")
+    return errors
+
+
 def validate(report: object) -> list[str]:
     """Fail closed on contradictory claims; does not independently verify screenshots."""
     if not isinstance(report, dict):
@@ -283,13 +377,22 @@ def validate(report: object) -> list[str]:
             errors.append("new design cannot claim completed UI audit")
         if report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") != "RENDERED":
             errors.append("new design cannot request visual approval without rendered visuals")
+    errors.extend(validate_originals(report))
     return errors
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("report", type=Path)
+    parser.add_argument("report", type=Path, nargs="?")
+    parser.add_argument("--inspect-originals", type=Path)
     args = parser.parse_args()
+    if args.inspect_originals is not None:
+        print(json.dumps({"skills": inspect_originals(args.inspect_originals),
+                          "upstream_identity": "NOT_ATTESTED",
+                          "client_invocation": "NOT_VERIFIED"}, indent=2))
+        return 0
+    if args.report is None:
+        parser.error("report is required unless --inspect-originals is used")
     try:
         payload = json.loads(args.report.read_text(encoding="utf-8"))
         errors = validate(payload)
