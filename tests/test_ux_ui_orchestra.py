@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import tempfile
 from pathlib import Path
 import unittest
 
@@ -19,6 +20,48 @@ class DesignOrchestraTests(unittest.TestCase):
 
     def assert_bad(self, fragment, item):
         self.assertTrue(any(fragment in err for err in checker.validate(item)), checker.validate(item))
+
+    def test_original_three_skill_invocation_gates(self):
+        good = self.with_rendered_comparison(self.load_three_directions())
+        good["gate"] = "AWAITING_VISUAL_APPROVAL"
+        good["proposal"].update(visual_status="RENDERED",
+                                artifact_refs=["desktop.png", "mobile.png"])
+        good["original_design_skills"] = {"mode": "ALL_THREE", "invocations": []}
+        self.assert_bad("exactly three receipts", good)
+        good["original_design_skills"]["invocations"] = [
+            {"name": name, "status": "NOT_VERIFIED", "loaded": False}
+            for name in checker.ORIGINALS
+        ]
+        self.assert_bad("all-three approval requires", good)
+        for item in good["original_design_skills"]["invocations"]:
+            item.update(status="INVOKED", loaded=True,
+                        source_revision="a" * 40,
+                        invocation_evidence="observed client trace")
+        self.assertEqual([], checker.validate(good))
+        good["original_design_skills"]["invocations"][0]["invocation_evidence"] = ""
+        self.assert_bad("invocation lacks", good)
+        good["original_design_skills"]["invocations"][0]["invocation_evidence"] = "observed"
+        good["original_design_skills"]["invocations"][2]["name"] = "impeccable"
+        self.assert_bad("unknown or duplicate", good)
+
+    def test_original_presence_is_not_activation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp)
+            self.assertTrue(all(row["status"] == "MISSING"
+                                for row in checker.inspect_originals(target)))
+            for name in checker.ORIGINALS:
+                root = target / ".agents" / "skills" / name
+                (root / "scripts").mkdir(parents=True)
+                (root / "SKILL.md").write_text(
+                    f"---\\nname: {name}\\ndescription: test\\n---\\n",
+                    encoding="utf-8")
+            found = checker.inspect_originals(target)
+            self.assertTrue(all(row["status"] == "FILES_PRESENT_UNATTESTED"
+                                for row in found))
+            self.assertEqual(64, len(found[0]["local_tree_sha256"]))
+            (target / ".agents" / "skills" / "ui-ux-pro-max" / "SKILL.md").write_text(
+                "---\\nname: wrong\\n---\\n", encoding="utf-8")
+            self.assertEqual("INCOMPLETE", checker.inspect_originals(target)[2]["status"])
 
     def test_valid_read_only_default(self):
         self.assertEqual([], checker.validate(self.good))
