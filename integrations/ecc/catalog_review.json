@@ -14,8 +14,8 @@
       "path": "skills/change-impact",
       "status": "ALREADY_PRESENT",
       "analogue": "extensions/qa/skills/change-impact-analysis/SKILL.md",
-      "reason": "Compared pinned ECC source with Toolkit change-impact-analysis, qa_change_impact.py and code-review: direct/downstream consumers, API/data/schema, tests, documentation, release and unknown call graph were already covered. Toolkit skill now explicitly reconciles pre-change scope against actual diff and records MATCHED/CHANGED/NOT_VERIFIED, avoiding a duplicate controller. Path-heuristic analysis is never claimed as full dependency graph.",
-      "benefit": "Existing native impact skill gains an explicit high-risk before/after diff-alignment contract; separate ECC skill would duplicate core behavior.",
+      "reason": "Compared pinned ECC source with Toolkit change-impact-analysis, qa_change_impact.py and code-review: direct/downstream consumers, API/data/schema, tests, documentation, release and unknown call graph were already covered. Toolkit feature-delivery now explicitly reconciles pre-change scope against actual diff and records MATCHED/CHANGED/NOT_VERIFIED, avoiding a duplicate controller. Path-heuristic analysis is never claimed as full dependency graph.",
+      "benefit": "Existing feature-delivery controller gains the high-risk before/after diff-alignment step while the license-constrained QA impact skill stays byte-unchanged; a separate ECC skill would duplicate core behavior.",
       "test_case": "Synthetic cross-module API+schema migration: inventory callers/contracts/rollout before implementation, compare actual diff after, flag uncovered consumer and unexecuted rollback NOT_VERIFIED. Verify no forced report folder, host command or secondary controller."
     },
     {

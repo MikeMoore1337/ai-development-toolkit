@@ -10,7 +10,7 @@ Upstream already ships catalog.js and install-plan.js --skills. Our CI tests the
 
 Two original skills have now completed functional comparison against existing native Toolkit mechanisms (reviewed batch #435, 28 October 2026):
 
-- **`skills/change-impact` - ALREADY_PRESENT after native uplift**: `extensions/qa/skills/change-impact-analysis/SKILL.md` plus `scripts/qa_change_impact.py` already cover code, caller, contract, data and regression risk surfaces. The existing native skill now includes explicit *planned impact vs actual diff* reconciliation, scope drift and `NOT_VERIFIED` handling. No second impact controller or force-created document tree.
+- **`skills/change-impact` - ALREADY_PRESENT after native uplift**: `extensions/qa/skills/change-impact-analysis/SKILL.md` plus `scripts/qa_change_impact.py` already cover code, caller, contract, data and regression risk surfaces. The existing `feature-delivery` controller now includes explicit *planned impact vs actual diff* reconciliation, without modifying the SHA-bound protected QA source, scope drift and `NOT_VERIFIED` handling. No second impact controller or force-created document tree.
 - **`skills/tdd-workflow` - ALREADY_PRESENT after native uplift**: `.agents/skills/feature-delivery/SKILL.md` now supports an opt-in RED / minimal GREEN / refactor evidence cycle within the existing feature controller. We deliberately reject upstream's universal 80% coverage mandate, all-layer testing, automatic checkpoint commits and package-manager detector as global requirements.
 - **`skills/continuous-learning` v1 - HOLD_UNSUPPORTED**: ECC marks it deprecated. Its v2 successor remains separately under #436.
 

@@ -35,6 +35,12 @@ Before saying a requirement is done, link each acceptance criterion to **fresh**
 
 For work needing isolation, first detect whether the host already owns a worktree or sandbox. Use the host-native workflow when available; do not create an extra worktree behind its back. Repository-controlled leases, protected branches, permission gates, and the project's existing finish/cleanup procedure prevail. See `docs/en/SUPERPOWERS_EVIDENCE.md` for the read-only decision tree.
 
+## Pre-change vs actual-diff alignment
+
+For cross-module, API/schema, authentication, migration, deployment or other high-risk tasks, reuse the **existing** `change-impact-analysis` and read-only `scripts/qa_change_impact.py` to inventory affected call paths, consumers, persisted state, contracts, targeted tests, documentation, deployment order and irreversible effects. Inspect real source evidence; a changed filename alone does not establish a dependency graph.
+
+After implementing, compare **the actual diff** with the previously reviewed impact scope. Label each surface `MATCHED`, `CHANGED` or `NOT_VERIFIED`; flag newly affected consumers, unapproved scope drift, unexecuted rollback and missing regressions. Escalate unresolved high-risk changes through existing owner/release gates and report the discrepancy in the existing Issue/PR, not an invented new controller or documentation tree. No unapproved commands or project writes.
+
 ## Optional test-first cycle within this controller
 
 When the user or project requests TDD, use the existing `feature-delivery` and test runner, not a competing workflow:

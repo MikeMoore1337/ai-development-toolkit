@@ -81,8 +81,8 @@ class CatalogueTests(unittest.TestCase):
         expected = {
             "skills/change-impact": (
                 "extensions/qa/skills/change-impact-analysis/SKILL.md",
-                ("Pre-change vs actual-diff alignment", "NOT_VERIFIED",
-                 "MATCHED", "CHANGED", "actual diff"),
+                ("change -> affected surface", "failure mode",
+                 "remaining uncertainty"),
             ),
             "skills/tdd-workflow": (
                 ".agents/skills/feature-delivery/SKILL.md",
@@ -102,6 +102,13 @@ class CatalogueTests(unittest.TestCase):
                     self.assertIn(term, source_text)
                 self.assertTrue(decision["reason"])
                 self.assertTrue(decision["test_case"])
+        feature = (ROOT / ".agents/skills/feature-delivery/SKILL.md").read_text(
+            encoding="utf-8")
+        for marker in ("Pre-change vs actual-diff alignment", "actual diff",
+                       "MATCHED", "CHANGED", "NOT_VERIFIED"):
+            self.assertIn(marker, feature)
+        self.assertIn("license-constrained QA impact skill stays byte-unchanged",
+                      decisions["skills/change-impact"]["benefit"])
         self.assertEqual("HOLD_UNSUPPORTED",
                          decisions["skills/continuous-learning"]["status"])
         # No auto-install or activation claim; original 601-component inventory
