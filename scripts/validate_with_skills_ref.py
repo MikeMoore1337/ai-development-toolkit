@@ -43,7 +43,7 @@ def skill_directories(root: Path = ROOT, scope: str = "all") -> list[Path]:
             if len(registered) != 1 or sorted(registered[0]["skills"]) != legacy:
                 raise ValueError("Optional originals differ from the native pack registry")
         elif legacy:
-            collections.append((legacy_root, legacy, "optional-original")
+            collections.append((legacy_root, legacy, "optional-original"))
     directories = []
     used_names = set()
     for base, names, label in collections:
