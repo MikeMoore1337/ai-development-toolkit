@@ -21,9 +21,9 @@
     "researcher",
     "reviewer"
   ],
-  "original_skills_bundled_as_opt_in": 0,
+  "original_skills_bundled_as_opt_in": 4,
   "original_skills_in_inventory": 52,
-  "original_skills_not_bundled": "Portable optional-original-skills inventory remains empty. Four unmodified ECC 2.2.3 originals are deliberately opt-in through the ecc extension pack, licensed separately under extensions/ecc/LICENSE. Exact Ponytail v5.3.2 reference remains under third_party/ponytail-v5.3.2 due to portability concerns. Other third-party originals remain excluded.",
+  "original_skills_not_bundled": "Four unmodified ECC v2.2.3 source skills are available only as optional-original-skills and as focused opt-in ECC profiles, with pinned owner review and original MIT notice under third_party/ecc-v2.2.3/LICENSE. Exact Ponytail v5.3.2 reference remains under third_party/ponytail-v5.3.2 due to portability concerns. Other third-party originals remain excluded.",
   "automatic_external_binary_installation": false,
   "license_note": "Owner reports ID1337 permits distribution of the exact currently bundled Make Feature 0.3.0, QA adaptation and branding sources, SHA256-pinned in provenance. This is not independent rightsholder, employer-IP or creator verification. Existing third-party or work-derived licenses are not inferred.",
   "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
@@ -372,9 +372,9 @@
   ],
   "extension_packs": {
     "ecc": {
-      "skill_root": "extensions/ecc/skills",
+      "skill_root": "optional-original-skills",
       "skills": ["windows-desktop-e2e", "contract-first", "api-connector-builder", "code-tour"],
-      "license": "MIT (unmodified affaan-m/ECC pinned source; see extensions/ecc/LICENSE)",
+      "license": "MIT (original ECC v2.2.3, reviewed exact-file scope; see third_party/ecc-v2.2.3/LICENSE)",
       "auto_install": false
     },
     "qa": {
