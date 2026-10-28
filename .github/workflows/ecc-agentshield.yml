@@ -1,14 +1,7 @@
 name: ECC AgentShield (opt-in)
 
 on:
-  # PR smoke only when this optional integration changes.
-  pull_request:
-    branches: [main]
-    paths:
-      - '.github/workflows/ecc-agentshield.yml'
-      - 'fixtures/ecc-agentshield/**'
-      - 'docs/en/ECC_AGENTSHIELD.md'
-      - 'docs/ru/ECC_AGENTSHIELD.md'
+  # Maintenance/source comparison ONLY. Do not fetch or execute ECC in normal Toolkit CI.
   workflow_dispatch:
     inputs:
       scope:
