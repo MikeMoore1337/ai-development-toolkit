@@ -13987,6 +13987,150 @@
       "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Issue #435; exact pinned git tree review and registered official selective plan; no installed skills, no model/paid API, no client activation."
+    },
+    {
+      "id": "ecc-v223-optin-contract-first",
+      "path": "optional-original-skills/contract-first",
+      "name": "contract-first",
+      "kind": "skill",
+      "author": "Affaan Mustafa (ECC upstream)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/contract-first/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
+      "attribution_required": true,
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
+    },
+    {
+      "id": "ecc-v223-optin-api-connector-builder",
+      "path": "optional-original-skills/api-connector-builder",
+      "name": "api-connector-builder",
+      "kind": "skill",
+      "author": "Affaan Mustafa (ECC upstream)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/api-connector-builder/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
+      "attribution_required": true,
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
+    },
+    {
+      "id": "ecc-v223-optin-code-tour",
+      "path": "optional-original-skills/code-tour",
+      "name": "code-tour",
+      "kind": "skill",
+      "author": "Affaan Mustafa (ECC upstream)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/code-tour/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
+      "attribution_required": true,
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
+    },
+    {
+      "id": "ecc-v223-original-license",
+      "path": "third_party/ecc-v2.2.3/LICENSE",
+      "name": "ECC upstream MIT license",
+      "kind": "metadata",
+      "author": "Affaan Mustafa",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/LICENSE",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Original root MIT permission and attribution notice preserved unchanged; legal provenance not independently certified.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "third_party/ecc-v2.2.3/LICENSE",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Upstream license for four exact-file opt-in skills.",
+      "owner_approval_id": "ECC435_20261028"
+    },
+    {
+      "id": "toolkit-native-ecc-tests-test-native-ecc-skills-py",
+      "path": "tests/test_native_ecc_skills.py",
+      "name": "Bundled source and single-skill installer tests",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored native source-integration documentation/tests; no new externally executed ECC runtime or external installation, exact original source licensed and attributed separately.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Native Toolkit built-in skill source and CI acceptance; no external ECC plugin/CLI or paid provider."
+    },
+    {
+      "id": "toolkit-native-ecc-docs-ru-md",
+      "path": "docs/ru/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "name": "Native Toolkit ECC-source capabilities RU",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored native source-integration documentation/tests; no new externally executed ECC runtime or external installation, exact original source licensed and attributed separately.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Native Toolkit built-in skill source and CI acceptance; no external ECC plugin/CLI or paid provider."
+    },
+    {
+      "id": "toolkit-native-ecc-docs-en-md",
+      "path": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "name": "Native Toolkit ECC-source capabilities EN",
+      "kind": "documentation",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored native source-integration documentation/tests; no new externally executed ECC runtime or external installation, exact original source licensed and attributed separately.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Native Toolkit built-in skill source and CI acceptance; no external ECC plugin/CLI or paid provider."
     }
   ],
   "owner_review_record": {
@@ -14595,6 +14739,63 @@
           "status": "documented",
           "distribution": "included",
           "kind": "asset"
+        }
+      }
+    },
+    {
+      "id": "ECC435_20261028",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_issue": "#435",
+      "reported_at": "2026-10-28",
+      "scope_description": "Owner approved selecting beneficial nonduplicate ECC components for Toolkit. Approval conservatively constrained to four original exact skills and root MIT license, with explicit opt-in and no runtime activation.",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "approved_components": {
+        "optional-original-skills/contract-first": {
+          "optional-original-skills/contract-first/SKILL.md": "3eaacf16a9bbd92888659e9c1e15b0fa4eb96a41c257dd9e08f2e63b824f0cea",
+          "optional-original-skills/contract-first/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        },
+        "optional-original-skills/api-connector-builder": {
+          "optional-original-skills/api-connector-builder/SKILL.md": "00a0d01e234f213d343f0040bbebd56e042978768ce5bb7117776a75bd9547e8",
+          "optional-original-skills/api-connector-builder/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        },
+        "optional-original-skills/code-tour": {
+          "optional-original-skills/code-tour/SKILL.md": "416c7eb9229554a1ef113bbb873ff0b260a2ad9ae6e6075a75c375955d3fcf6f",
+          "optional-original-skills/code-tour/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        },
+        "third_party/ecc-v2.2.3/LICENSE": {
+          "third_party/ecc-v2.2.3/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        }
+      },
+      "approved_metadata": {
+        "optional-original-skills/contract-first": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/api-connector-builder": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/code-tour": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "third_party/ecc-v2.2.3/LICENSE": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "metadata"
         }
       }
     }

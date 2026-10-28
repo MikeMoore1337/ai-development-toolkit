@@ -223,6 +223,16 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 [Project & Delivery Management](PROJECT_DELIVERY_MANAGEMENT.md): optional planning skill, not a task tracker or feature controller.
 
+## Native source ports shipped with Toolkit
+
+These three original MIT skills are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
+
+| Skill | Distinct additional capability |
+| :--- | :--- |
+| [`contract-first`](../optional-original-skills/contract-first/SKILL.md) | Consumer/provider agreement on one machine-checkable interface |
+| [`api-connector-builder`](../optional-original-skills/api-connector-builder/SKILL.md) | Repo-native connector implementation and registration |
+| [`code-tour`](../optional-original-skills/code-tour/SKILL.md) | CodeTour files with verified source/line anchors |
+
 ## Profiles
 
 See [Curated Skill Packs](CURATED_SKILL_PACKS.md) for task navigation, optional skills and safe transitions.
@@ -231,6 +241,9 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `native-contract-first` | `contract-first` |
+| `native-api-connectors` | `api-connector-builder` |
+| `native-code-tours` | `code-tour` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |

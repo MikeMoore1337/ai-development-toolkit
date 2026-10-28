@@ -538,7 +538,10 @@ class ProvenanceTests(unittest.TestCase):
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
-        self.assertEqual(82, result["skills"])
+        self.assertEqual(85, result["skills"])
+        self.assertEqual({"contract-first", "api-connector-builder", "code-tour"},
+                         set(json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+                             ["extension_packs"]["native-ecc-ports"]["skills"]))
         self.assertGreater(result["total"], 100)
 
 

@@ -1248,6 +1248,42 @@
         "Improve SQL query performance.",
         "Investigate a failed backend test."
       ]
+    },
+    {
+      "id": "native-contract-first-bilingual",
+      "target": "contract-first",
+      "positive": [
+        "Coordinate the frontend and backend teams using a contract-first OpenAPI schema, generated client types and provider verification.",
+        "Согласуй frontend и backend по единому контракту OpenAPI и проверь совместимость интерфейса при параллельной разработке."
+      ],
+      "negative": [
+        "Refine the product marketing copy for a launch.",
+        "Исправь анимацию кнопки на мобильной странице."
+      ]
+    },
+    {
+      "id": "native-api-connector-builder-bilingual",
+      "target": "api-connector-builder",
+      "positive": [
+        "Build a new API connector for a provider using the existing integration interfaces and conventions in this repository.",
+        "Добавь новый коннектор внешнего API провайдера по существующему шаблону интеграций проекта."
+      ],
+      "negative": [
+        "Plan a database migration rollback.",
+        "Проверь читабельность текста на кнопках."
+      ]
+    },
+    {
+      "id": "native-code-tour-bilingual",
+      "target": "code-tour",
+      "positive": [
+        "Create a CodeTour .tour walkthrough with anchored file paths and line numbers for onboarding a new developer.",
+        "Сделай CodeTour .tour с шагами и ссылками на строки кода для знакомства с архитектурой репозитория."
+      ],
+      "negative": [
+        "Implement a database indexing optimization.",
+        "Проверь безопасность OAuth токена в приложении."
+      ]
     }
   ]
 }

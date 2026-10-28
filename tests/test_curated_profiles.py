@@ -62,7 +62,9 @@ NEW = {
 
 class CuratedProfileTests(unittest.TestCase):
     def test_legacy_profiles_unchanged(self):
-        old = {k: v for k, v in MANIFEST["profiles"].items() if k not in NEW}
+        # Native opt-in profiles are new; never rewrite the historical baseline.
+        old = {k: v for k, v in MANIFEST["profiles"].items()
+               if k not in NEW and not k.startswith("native-")}
         fingerprint = hashlib.sha256(
             json.dumps(old, sort_keys=True, ensure_ascii=False,
                        separators=(",", ":")).encode("utf-8")
@@ -71,7 +73,9 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(45, len(MANIFEST["profiles"]))
+        self.assertEqual(48, len(MANIFEST["profiles"]))
+        self.assertEqual({"native-contract-first", "native-api-connectors", "native-code-tours"},
+                         {x for x in MANIFEST["profiles"] if x.startswith("native-")})
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))
         for name, expected in NEW.items():
