@@ -79,3 +79,23 @@ Users may simply ask **"Make me a beautiful fitness club website"** or **"Improv
 In the read-only design modes, assign up to three complementary specialist reviews (Impeccable concept or critique, accessibility/responsive UX, and motion only when material), reconcile one concept and provide a post-approval component/test plan. Produce **actual mobile and desktop visual references** where authorized rendering tools exist. Without them return `TEXT_SPEC` / `VISUAL_PACKAGE_MISSING` rather than fictional screenshots. Even "build a website" does not permit frontend writes before visual approval. If custom/named subagents are unavailable, use generic spawned agents honestly or sequential perspectives, never claim fake parallelism. Reports stay in chat or an expressly requested target location, **never inside Toolkit**. User visual approval and release gates cannot be bypassed.
 
 [New-design workflow](../.agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md) · [Orchestra workflow](../.agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md) · [Specialist routing](../.agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md) · [Optional read-only report checker](../scripts/validate_ux_ui_orchestra.py). This is portable client guidance, not proof that live client multi-agent execution has been tested.
+
+## Original design skills - explicit ALL_THREE mode (#449)
+
+The existing `ui-orchestra` can use three **original, unmodified upstream skills** together when the user opts in to `original_design_skills.mode=ALL_THREE`. This differs from the existing reference-only workflow. Toolkit does **not** bundle or silently install them. Do not infer invocation from a GitHub reference, local files, or a structurally passing report.
+
+Original upstream installation options for a user-approved Codex project, **run by the operator only after reviewing the source, licenses, downloaded binaries and hooks**:
+
+- [Impeccable](https://github.com/pbakaus/impeccable) - Apache-2.0 (preserve LICENSE/NOTICE): `npx impeccable install --providers=codex --scope=project`. Its launcher may download the engine on first use; native hooks can require a separate trust decision.
+- [Taste Skill](https://github.com/leonxlnx/taste-skill) - MIT: `npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend`. Needs Node 22+ and Chrome, Edge or Chromium, and can use the network for image research.
+- [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) - MIT: `npm install -g ui-ux-pro-max-cli` then `uipro init --ai codex`. Needs Python 3.x for local design search.
+
+These are upstream commands, **not actions automatically executed by Toolkit**. They do not invoke Codex CLI or Claude CLI, but still require installation/network review. Reproducible package identity requires an independently verified version pin and source file digests; latest npm/npx alone does not prove an immutable upstream source.
+
+After installation, inspect local Codex-shaped skill folders without executing third-party scripts:
+
+```bash
+python scripts/validate_ux_ui_orchestra.py --inspect-originals /path/to/project
+```
+
+Expected directories: `.agents/skills/impeccable`, `.agents/skills/design-taste-frontend`, `.agents/skills/ui-ux-pro-max`. `FILES_PRESENT_UNATTESTED` includes a local tree checksum but proves neither upstream provenance nor actual discovery and invocation by Codex Desktop. On an ALL_THREE design request, the coordinator requires three actual, evidence-backed invocations. If one is unavailable, it cannot claim the whole design package is ready for approval. Existing three-sketch exploration, desktop/mobile views and owner approval are unchanged.
