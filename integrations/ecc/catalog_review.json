@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "note": "Human-reviewed functional examples only. New ALREADY_PRESENT decisions require actual native implementation evidence, not matching names. The remaining inventory retains HOLD_REVIEW or HOLD_CONFLICT; this file is never installation authorization.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Four original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
-      "status": "ADOPT_AS_IS_CANDIDATE",
-      "analogue": "NOT_VERIFIED",
-      "reason": "Upstream offers dedicated native Windows pywinauto/UIA guidance; public Toolkit has UI/browser QA guidance but no confirmed identical native Windows desktop test workflow. Managed native Codex install must be tested separately.",
-      "benefit": "Native WPF/WinForms/Qt UIA E2E without web-UI automation confusion.",
-      "test_case": "Original ECC --skills windows-desktop-e2e --target codex plan + dry-run in disposable HOME; no live model."
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/windows-desktop-e2e/SKILL.md",
+      "reason": "Delivered as Toolkit-native opt-in skill in PR #453 (main SHA 32c3ebddf0c632b67f359d5fe96b9eee79075907): compact entry + byte-exact licensed ECC v2.2.3 original reference, standalone Skill Manager installation, strict owner permissions. Source CI and installation PASS, real interactive Windows GUI/Codex Desktop activation still NOT_VERIFIED (#450).",
+      "benefit": "Native Windows pywinauto/UIA E2E method is present without ECC runtime; remains opt-in with real app E2E pending.",
+      "test_case": "Verify pinned original reference Git blob, MIT notice and selective native Toolkit managed installation; check permission gates and true Windows interactive UIA separately under #450."
     },
     {
       "path": "skills/change-impact",
@@ -57,6 +57,30 @@
       "reason": "Original ECC covers Playwright E2E reliability and fixtures, and Toolkit already prescribes stable selectors, E2E setup, traces/screenshots, critical user journeys and test evidence. Toolkit source is framework-agnostic, not a literal Playwright POM tutorial; specialized examples may still need separate review.",
       "benefit": "Existing Toolkit QA coverage; no wholesale skill duplication.",
       "test_case": "Synthetic flaky web E2E with selector, permission flow and trace; original ECC example remains reference-only."
+    },
+    {
+      "path": "skills/contract-first",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/contract-first/SKILL.md",
+      "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-contract-first. Complements existing API design and contract testing; no external ECC module/runtime.",
+      "benefit": "Single authoritative consumer/provider interface agreement for cross-team and cross-service changes without a second contract controller.",
+      "test_case": "Verify exact source blob, MIT license, opt-in managed installation without AGENTS.md overwrite and contract-first routing tests. Client activation NOT_VERIFIED."
+    },
+    {
+      "path": "skills/api-connector-builder",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/api-connector-builder/SKILL.md",
+      "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-api-connectors. New repository-convention-aware provider connector instructions; no external ECC module/runtime.",
+      "benefit": "Implementing and registering new API providers using the destination repository's interfaces while retaining Toolkit security and test gates.",
+      "test_case": "Verify exact source blob, MIT license, selective installation, safe no-overwrite behavior, positive/negative connector-builder routing. Actual client activation NOT_VERIFIED."
+    },
+    {
+      "path": "skills/code-tour",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/code-tour/SKILL.md",
+      "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-code-tours. Adds CodeTour anchored source walk-throughs distinct from existing repository knowledge mapping.",
+      "benefit": "Developer onboarding with verified file/line CodeTour anchors without importing ECC runtime.",
+      "test_case": "Verify exact source blob, MIT license, selective installation and CodeTour positive/negative lexical routing; actual rendered client tour NOT_VERIFIED."
     }
   ]
 }
