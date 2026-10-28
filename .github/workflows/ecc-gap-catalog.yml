@@ -1,0 +1,121 @@
+name: Original ECC complete gap catalogue (opt-in)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ecc-gap-catalog.yml'
+      - 'scripts/ecc_gap_catalog.py'
+      - 'integrations/ecc/catalog_review.json'
+      - 'docs/en/ECC_GAP_CATALOG.md'
+      - 'docs/ru/ECC_GAP_CATALOG.md'
+      - 'tests/test_ecc_gap_catalog.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecc-gap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  exact-source-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Toolkit sources without credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Checkout exact unmodified ECC release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: affaan-m/ECC
+          ref: 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b
+          path: .ecc-audit-upstream
+          persist-credentials: false
+
+      - name: Set up Node.js for official ECC selective plan
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Validate full inventory generator and negative gates
+        run: python -m unittest tests.test_ecc_gap_catalog -v
+
+      - name: Generate every tracked skill agent command and rule component
+        run: |
+          python -B scripts/ecc_gap_catalog.py \
+            --ecc-root .ecc-audit-upstream \
+            --toolkit-root . \
+            --source-revision 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b \
+            --output-dir "${{ runner.temp }}/ecc-gap"
+
+      - name: Audit matrix coverage and no unreviewed automatic adoption
+        env:
+          REPORT: ${{ runner.temp }}/ecc-gap/ecc-gap-full.json
+        run: |
+          python - <<'PY'
+          import json, os
+          from collections import Counter
+          from pathlib import Path
+          d = json.loads(Path(os.environ["REPORT"]).read_text(encoding="utf-8"))
+          rows = d["rows"]
+          assert len(rows) == len(set(x["upstream_path"] for x in rows))
+          assert {x["kind"] for x in rows} == {"skill","agent","command","rule"}
+          assert all(x["source_files"] > 0 and x["sha256_component"] for x in rows)
+          assert all(x["owner_gate"] == "EXPLICIT_OPT_IN_REQUIRED" for x in rows)
+          assert all(x["live_client"] == "NOT_VERIFIED" for x in rows)
+          assert all(x["status"] not in {"AUTO_INSTALL", "RUNTIME_VERIFIED"} for x in rows)
+          assert any(x["status"] == "HOLD_UNSUPPORTED" for x in rows)
+          assert any(x["status"] == "ADOPT_AS_IS_CANDIDATE" for x in rows)
+          print("EXHAUSTIVE_ECC_COMPONENT_COVERAGE=PASS")
+          print("COMPONENT_KINDS=", dict(Counter(x["kind"] for x in rows)))
+          print("VERDICTS=", dict(Counter(x["status"] for x in rows)))
+          PY
+
+      - name: Test original ECC granular selection without mutation
+        env:
+          ECC_DRY_RUN: '1'
+          NO_COLOR: '1'
+        run: |
+          python - <<'PY'
+          import json, os, subprocess, tempfile
+          from pathlib import Path
+          upstream = Path(".ecc-audit-upstream").resolve()
+          with tempfile.TemporaryDirectory(prefix="ecc-select-") as temp:
+              env = {k:v for k,v in os.environ.items() if k in ("PATH","LANG","SYSTEMROOT")}
+              env.update(HOME=temp, USERPROFILE=temp, CODEX_HOME=str(Path(temp)/"codex"),
+                         ECC_DRY_RUN="1", NO_COLOR="1")
+              def invoke(script, *args):
+                  p = subprocess.run(["node", str(upstream/"scripts"/script), *args],
+                      cwd=temp, env=env, capture_output=True, text=True,
+                      timeout=45, check=False)
+                  assert p.returncode == 0, (
+                      f"ORIGINAL_ECC_SELECTIVE_PLAN_FAILED: {p.stderr[:550]}")
+                  return json.loads(p.stdout)
+              plan = invoke("install-plan.js", "--skills", "windows-desktop-e2e",
+                            "--target", "codex", "--json")
+              assert "skill:windows-desktop-e2e" in plan["includedComponentIds"]
+              assert plan["selectedModuleIds"], "empty original plan"
+              print("ECC_ORIGINAL_SELECTIVE_PLAN=PASS")
+              print("SELECTED_MODULES=", plan["selectedModuleIds"])
+              if len(plan["selectedModuleIds"]) > 1:
+                  print("ECC_SINGLE_SKILL_INSTALL=HOLD_SHARED_MODULES")
+              else:
+                  print("ECC_SINGLE_SKILL_INSTALL=REQUIRES_MANUAL_OPERATION_REVIEW")
+              # A plan is not a permission to run the official mutating installer.
+              assert not (Path(temp)/"codex").exists(), "dry-run created user config"
+              print("ECC_NO_HOST_MUTATION=PASS")
+          PY
+
+      - name: Publish per-component exact-source decision matrix
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecc-full-gap-matrix
+          path: ${{ runner.temp }}/ecc-gap/
+          if-no-files-found: warn
+          retention-days: 30

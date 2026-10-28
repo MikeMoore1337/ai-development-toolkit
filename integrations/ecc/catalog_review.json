@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "note": "Human-reviewed functional examples only. All other original components stay HOLD_REVIEW or HOLD_CONFLICT until an evidence-based review. This file never authorizes installation.",
+  "decisions": [
+    {
+      "path": "skills/windows-desktop-e2e",
+      "status": "ADOPT_AS_IS_CANDIDATE",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Upstream offers dedicated native Windows pywinauto/UIA guidance; public Toolkit has UI/browser QA guidance but no confirmed identical native Windows desktop test workflow. Managed native Codex install must be tested separately.",
+      "benefit": "Native WPF/WinForms/Qt UIA E2E without web-UI automation confusion.",
+      "test_case": "Original ECC --skills windows-desktop-e2e --target codex plan + dry-run in disposable HOME; no live model."
+    },
+    {
+      "path": "skills/change-impact",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/qa_change_impact.py",
+      "reason": "Toolkit includes read-only qa_change_impact.py for changed-path regression selection; ECC covers wider API/ADR/schema blast radius. Not safe to claim same capability or a proven gap solely by title.",
+      "benefit": "Potentially broader contract and rollback impact analysis.",
+      "test_case": "Compare synthetic API+schema migration against Toolkit existing qa_change_impact; verify no duplicate report/controller."
+    },
+    {
+      "path": "skills/continuous-learning",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Original skill explicitly marked DEPRECATED v1 and introduces Claude Stop-hook behavior. Do not install. Separate #436 must review v2 opt-in.",
+      "benefit": "None for new installations; superseded upstream.",
+      "test_case": "Ensure v1 is not included in approved adoption list."
+    },
+    {
+      "path": "skills/tdd-workflow",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/qa/skills/test-strategy/SKILL.md",
+      "reason": "Toolkit already includes QA/test-first approaches; ECC TDD workflow may overlap existing tests/skills. Validate semantic differences before any install.",
+      "benefit": "Possible plan-to-RED/GREEN evidence traceability.",
+      "test_case": "Compare plan->RED->GREEN synthetic flow with existing Toolkit workflow; avoid simultaneous feature controllers."
+    },
+    {
+      "path": "skills/api-design",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/backend/skills/api-design/SKILL.md",
+      "reason": "Both source skills directly prescribe endpoint design, request/response/error semantics, pagination, versioning and compatibility. Toolkit includes consumer-version and rollout constraints in its existing canonical skill. No extra copy justified.",
+      "benefit": "No incremental core workflow; retain Toolkit api-design.",
+      "test_case": "Compare API-version/error/pagination examples in both original skill sources; existing canonical Skill Manager handles the work."
+    },
+    {
+      "path": "skills/database-migrations",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/backend/skills/database-migrations/SKILL.md",
+      "reason": "Both sources explicitly cover expand-contract schema changes, resumable batch backfills, rollback and compatibility checks. Toolkit already requires lock budgets, restartability and recovery, so copying the ECC guidance would duplicate functionality.",
+      "benefit": "No unique migration controller; retain existing Toolkit migrations gate.",
+      "test_case": "Use synthetic expand-backfill-contract scenarios including legacy readers and roll-forward recovery."
+    },
+    {
+      "path": "skills/e2e-testing",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/qa/skills/e2e-testing/SKILL.md",
+      "reason": "Original ECC covers Playwright E2E reliability and fixtures, and Toolkit already prescribes stable selectors, E2E setup, traces/screenshots, critical user journeys and test evidence. Toolkit source is framework-agnostic, not a literal Playwright POM tutorial; specialized examples may still need separate review.",
+      "benefit": "Existing Toolkit QA coverage; no wholesale skill duplication.",
+      "test_case": "Synthetic flaky web E2E with selector, permission flow and trace; original ECC example remains reference-only."
+    }
+  ]
+}
