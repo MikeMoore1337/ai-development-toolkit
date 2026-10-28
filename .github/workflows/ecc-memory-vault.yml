@@ -1,0 +1,120 @@
+name: ECC Memory Vault upstream smoke (opt-in)
+
+on:
+  pull_request:
+    branches: [main, feature/ecc-agentshield-432]
+    paths:
+      - '.github/workflows/ecc-memory-vault.yml'
+      - 'docs/en/ECC_MEMORY_VAULT.md'
+      - 'docs/ru/ECC_MEMORY_VAULT.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecc-memory-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  original-memory-cli:
+    name: Original ECC memory CLI (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout Toolkit without stored credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Checkout exact original ECC source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: affaan-m/ECC
+          ref: 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b
+          path: .ecc-upstream
+          persist-credentials: false
+
+      - name: Set up Node.js for original upstream CLI
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Execute original ECC Memory Vault on synthetic temporary data
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          upstream = (Path.cwd() / ".ecc-upstream" / "scripts" / "memory.js").resolve()
+          assert upstream.is_file(), "pinned original ECC memory CLI missing"
+          with tempfile.TemporaryDirectory(prefix="ecc-memory-smoke-") as scratch:
+              base = Path(scratch)
+              root = base / "original-project"
+              user = base / "disallowed-user"
+              env = {k: v for k, v in os.environ.items() if k in {
+                  "PATH", "HOME", "USERPROFILE", "SYSTEMROOT", "WINDIR",
+                  "COMSPEC", "TEMP", "TMP", "TMPDIR", "LANG", "LC_ALL",
+              }}
+              env.update(ECC_MEMORY_PROJECT_ROOT=str(root),
+                         ECC_MEMORY_USER_ROOT=str(user), ECC_MEMORY_HARNESS="codex")
+              def call(*args, input_text=None, expected=0, settings=env):
+                  proc = subprocess.run(
+                      ["node", str(upstream), *args], input=input_text,
+                      capture_output=True, text=True, encoding="utf-8",
+                      timeout=20, cwd=str(base), env=settings, check=False)
+                  assert proc.returncode == expected, (
+                      f"original ECC {args[0]} unexpected code {proc.returncode}")
+                  return json.loads(proc.stdout) if proc.returncode == 0 else None
+
+              init = call("init", "--scope", "project", "--json")
+              assert init["schemaVersion"] == "ecc.memory.init.v1"
+              handoff = call("handoff", "--from", "codex", "--target", "hermes",
+                             "--scope", "project", "--title", "Synthetic parser handoff",
+                             "--stdin", "--json",
+                             input_text="Verify the synthetic parser specification before implementation.")
+              memory = handoff["memory"]
+              assert handoff["schemaVersion"] == "ecc.memory.write.v1"
+              assert memory["trust"] == "unreviewed"
+              identifier = memory["id"]
+
+              visible = call("search", "synthetic parser", "--target-harness", "hermes", "--json")
+              assert visible["schemaVersion"] == "ecc.memory.search.v1"
+              assert any(x["memory"]["id"] == identifier for x in visible["results"])
+              hidden = call("search", "synthetic parser", "--target-harness", "claude", "--json")
+              assert not any(x["memory"]["id"] == identifier for x in hidden["results"])
+
+              read = call("read", identifier, "--scope", "project", "--json")
+              assert read["memory"]["body"].startswith("Verify the synthetic parser")
+              assert read["memory"]["trust"] == "unreviewed"
+              count_before = len(list(root.rglob("*.md")))
+              dry_run = {**env, "ECC_DRY_RUN": "1"}
+              call("save", "--title", "Dry-run must refuse persistence",
+                   "--scope", "project", "--stdin",
+                   input_text="No write is permitted.", expected=1, settings=dry_run)
+              assert len(list(root.rglob("*.md"))) == count_before, "dry-run mutated files"
+              call("save", "--title", "Forbidden secret", "--stdin",
+                   input_text="".join(("-----BEGIN ", "PRIVATE ", "KEY-----")), expected=1)
+              assert len(list(root.rglob("*.md"))) == count_before, "secret was persisted"
+              doctor = call("doctor", "--scope", "project", "--json")
+              assert doctor["ok"] is True
+
+              other = {**env, "ECC_MEMORY_PROJECT_ROOT": str(base / "unrelated-project")}
+              isolated = call("search", "synthetic parser", "--target-harness", "hermes",
+                              "--scope", "project", "--json", settings=other)
+              assert isolated["results"] == [], "project memory leaked"
+              assert not user.exists(), "user-scope data was written"
+              print("ORIGINAL_ECC_MEMORY_CLI=PASS")
+              print("PROJECT_ISOLATION=PASS")
+              print("UNREVIEWED_HANDOFF=PASS")
+              print("SECRET_REJECTION=PASS")
+              print("DRY_RUN=PASS")
+          PY
