@@ -19,6 +19,24 @@ class LayeredPreferencesTests(unittest.TestCase):
     def layer(self, **changes):
         return {"schema_version": 1, **changes}
 
+    def test_design_originals_is_user_selected_not_execution_approval(self):
+        result = prefs.resolve(self.layer(
+            skills={"design_originals": "ALL_THREE"}))
+        self.assertEqual("ALL_THREE", result["effective"]["skills"]["design_originals"])
+        self.assertFalse(result["execution_authorized"])
+        self.assertFalse(result["effective"]["execution"]["allow_paid_api"])
+        self.assertEqual("user", result["sources"]["skills.design_originals"])
+        self.assertEqual("STANDARD", prefs.resolve()["effective"]["skills"]["design_originals"])
+        with self.assertRaisesRegex(prefs.PreferencesError, "Invalid original"):
+            prefs.resolve(self.layer(skills={"design_originals": "ON"}))
+        with self.assertRaisesRegex(prefs.PreferencesError, "Required original"):
+            prefs.resolve(self.layer(skills={
+                "design_originals": "ALL_THREE",
+                "excluded": ["ui-ux-pro-max"]}))
+        with self.assertRaisesRegex(prefs.PreferencesError, "Required original"):
+            prefs.resolve(self.layer(skills={"design_originals": "ALL_THREE"}),
+                          self.layer(skills={"excluded": ["impeccable"]}))
+
     def test_missing_settings_are_readonly_and_deny_real_execution(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

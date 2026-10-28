@@ -28,7 +28,7 @@ SECTION_FIELDS = {
         "real_agent_pilots", "allow_paid_api", "allow_cli_agents",
         "additional_spend_allowed", "allow_network",
     }),
-    "skills": frozenset({"selection", "excluded"}),
+    "skills": frozenset({"selection", "excluded", "design_originals"}),
     "approvals": frozenset({"file_writes", "git_merge", "deployment"}),
 }
 DEFAULTS = {
@@ -42,7 +42,7 @@ DEFAULTS = {
         "additional_spend_allowed": False,
         "allow_network": False,
     },
-    "skills": {"selection": "auto", "excluded": []},
+    "skills": {"selection": "auto", "excluded": [], "design_originals": "STANDARD"},
     "approvals": {"file_writes": "ask", "git_merge": "ask", "deployment": "ask"},
 }
 
@@ -113,6 +113,9 @@ def validate(document: object, scope: str) -> dict:
                 if key == "selection":
                     if value not in ("auto", "manual") or type(value) is not str:
                         raise PreferencesError("Invalid skill selection")
+                elif key == "design_originals":
+                    if type(value) is not str or value not in ("STANDARD", "ALL_THREE"):
+                        raise PreferencesError("Invalid original design skills mode")
                 else:
                     names = _strings(value, None, "skills.excluded")
                     if any(not all(c.islower() or c.isdigit() or c == "-" for c in n)
@@ -181,6 +184,10 @@ def resolve(
         raise PreferencesError("Preferred client is forbidden by effective client policy")
     if policy["execution"]["allow_paid_api"] and not policy["execution"]["additional_spend_allowed"]:
         raise PreferencesError("Paid API cannot be enabled while additional spending is denied")
+    if policy["skills"]["design_originals"] == "ALL_THREE":
+        originals = {"impeccable", "design-taste-frontend", "ui-ux-pro-max"}
+        if originals.intersection(policy["skills"]["excluded"]):
+            raise PreferencesError("Required original design skill is excluded")
     return {
         "schema_version": SCHEMA_VERSION,
         "classification": "READ_ONLY_PREFERENCES_PREVIEW",
