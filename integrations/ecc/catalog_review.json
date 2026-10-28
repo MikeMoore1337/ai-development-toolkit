@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Four original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Four original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
