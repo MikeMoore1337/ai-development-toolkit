@@ -73,6 +73,12 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
+    def test_multiline_original_description_is_not_lost(self):
+        frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
+        result = audit.frontmatter(frontmatter)
+        self.assertEqual("Cross module dependency audit with schema compatibility.",
+                         result["description"])
+
     def test_wrong_source_pin_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "differs"):
             audit.build(self.ecc, self.toolkit, "a" * 40)
