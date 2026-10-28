@@ -102,7 +102,7 @@ jobs:
                    input_text="No write is permitted.", expected=1, settings=dry_run)
               assert len(list(root.rglob("*.md"))) == count_before, "dry-run mutated files"
               call("save", "--title", "Forbidden secret", "--stdin",
-                   input_text="-----BEGIN PRIVATE KEY-----", expected=1)
+                   input_text="".join(("-----BEGIN ", "PRIVATE ", "KEY-----")), expected=1)
               assert len(list(root.rglob("*.md"))) == count_before, "secret was persisted"
               doctor = call("doctor", "--scope", "project", "--json")
               assert doctor["ok"] is True
