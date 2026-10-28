@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "source_repo": "affaan-m/ECC",
+  "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+  "license_path": "third_party/ecc-v2.2.3/LICENSE",
+  "original_source_count": 18,
+  "source_files": [
+    {
+      "origin": "scripts/lib/eval-harness/canonical.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/canonical.js",
+      "git_blob": "bfba94b6d134c296aa84efee0245d7e0ae6fe433",
+      "sha256": "a1dfa91850f4eeeb272c27ce9d20673403d8af25f218b192e649f592936c6067",
+      "bytes": 1325
+    },
+    {
+      "origin": "scripts/lib/eval-harness/capsule.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/capsule.js",
+      "git_blob": "7e0079aa064ff7a0b66c779316cf6ffd76514df0",
+      "sha256": "fd0bbbde8f383226fbcb093210e0f16594acd9f6ea0ae209e47a37cc39834b0c",
+      "bytes": 15976
+    },
+    {
+      "origin": "scripts/lib/eval-harness/effect-fence.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/effect-fence.js",
+      "git_blob": "236ada9ab6802351126572e294d8d99887c0cc39",
+      "sha256": "cb8ae0385cbb11c2b8964189be9114a24b23747239f044d72cbe81198ba49ac6",
+      "bytes": 214
+    },
+    {
+      "origin": "scripts/lib/eval-harness/envelope.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/envelope.js",
+      "git_blob": "7d24d5353ffc3dff695d6974c7353c4d2370eb8a",
+      "sha256": "ea97d62ef02d199ed3deb79cfac97d59379d7c2e4da82c5c870fbf043609ebb9",
+      "bytes": 9341
+    },
+    {
+      "origin": "scripts/lib/eval-harness/gate-child.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/gate-child.js",
+      "git_blob": "236ada9ab6802351126572e294d8d99887c0cc39",
+      "sha256": "cb8ae0385cbb11c2b8964189be9114a24b23747239f044d72cbe81198ba49ac6",
+      "bytes": 214
+    },
+    {
+      "origin": "scripts/lib/eval-harness/gate.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/gate.js",
+      "git_blob": "6ec49938782929b54d3fb070d3e79a1e9817868e",
+      "sha256": "76d6613aa7aacb9863c61859d20e554826c6f08e71c10221f0b6fea4d04e3c4f",
+      "bytes": 11342
+    },
+    {
+      "origin": "scripts/lib/eval-harness/index.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/index.js",
+      "git_blob": "2ffccfbb1af5a652f2d5dbda9c933de77c2f855c",
+      "sha256": "27d70a9b417930092089ba1fd0cafc5fb1e2eb2abcd648e95ffc04dfc6648b0d",
+      "bytes": 832
+    },
+    {
+      "origin": "scripts/lib/eval-harness/receipt.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/receipt.js",
+      "git_blob": "9ea5659dc6d685ba46c84d5eb4c1a9c97f34beba",
+      "sha256": "eacacccf8a6d06f38e83c8cee1bb3a6c608e9125115a989fd7f8a7f7e371d5e7",
+      "bytes": 7918
+    },
+    {
+      "origin": "scripts/lib/eval-harness/replay.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/replay.js",
+      "git_blob": "509c5ae97570eb896a6612ba091eabb2dcc16b21",
+      "sha256": "7b691b90f64d96c4121d5b4aa6650f892fd581af8afddb4e169c8dc63de47aa9",
+      "bytes": 5331
+    },
+    {
+      "origin": "scripts/lib/eval-harness/retrospective.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness/retrospective.js",
+      "git_blob": "b4ae2158ddb269ed20e8672aee14c67ed960c03d",
+      "sha256": "2008817d2f3d48e6d02932aaf86a56411cfff2ce4ec875c093855de389caa9f4",
+      "bytes": 4205
+    },
+    {
+      "origin": "schemas/capsule-envelope.schema.json",
+      "path": "third_party/ecc-v2.2.3/eval-harness/schemas/capsule-envelope.schema.json",
+      "git_blob": "7ea306242010e20bde74dc8e996db24df90915c4",
+      "sha256": "82afdc65884ce8a633a5844fd10dd59e000b5b86c2cb06d06524bcb82c23f4a9",
+      "bytes": 3499
+    },
+    {
+      "origin": "tests/lib/eval-harness/canonical.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/canonical.test.js",
+      "git_blob": "c932fd157122fcc6c5725a09171cf7d69426f3d5",
+      "sha256": "c7cf25810c85476c5429fe16816ae7463b5c0780a55e3942ac29ef8ff0bd483c",
+      "bytes": 4768
+    },
+    {
+      "origin": "tests/lib/eval-harness/envelope.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/envelope.test.js",
+      "git_blob": "b33312e93b78f2c2eccd59960f0206763bd294f7",
+      "sha256": "336d84a702e2148422509fea8082584fc6099a0a3bb977dd96792713c337a769",
+      "bytes": 8848
+    },
+    {
+      "origin": "tests/lib/eval-harness/receipt.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/receipt.test.js",
+      "git_blob": "7ca344100a04db64f4696d8b18ddb33083044854",
+      "sha256": "9ff5c05ee82c1de942e88341c636101200b056c1c61f2c45507586c7087544c4",
+      "bytes": 19294
+    },
+    {
+      "origin": "tests/lib/eval-harness/replay.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/replay.test.js",
+      "git_blob": "9095ae79a119b6239b563434ce2cae5c326d1417",
+      "sha256": "1109aca359d5925a6195afc2de134572fb153c84dd8ddaeb481fdbb0793bedad",
+      "bytes": 8016
+    },
+    {
+      "origin": "tests/lib/eval-harness/gate.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/gate.test.js",
+      "git_blob": "7fa9344e94caf5098f76a277954cdc1af97925d6",
+      "sha256": "e1041574e6440256336232b7dbb71c6df1d7ce33731791e296e703ccf9f43d04",
+      "bytes": 4545
+    },
+    {
+      "origin": "tests/lib/eval-harness/retrospective.test.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/retrospective.test.js",
+      "git_blob": "aec4d8f10c08a9b5a46653a218d6620573a717a1",
+      "sha256": "a730718d09057711ffacc05718a6300cc61941aaa1a49dd46d28817982ac2d64",
+      "bytes": 8685
+    },
+    {
+      "origin": "tests/lib/eval-harness/helpers.js",
+      "path": "third_party/ecc-v2.2.3/eval-harness/tests/lib/eval-harness/helpers.js",
+      "git_blob": "fc201ed74255ade5c7b6d04be5fd5412c098eb1b",
+      "sha256": "6ade032e1b6941a74b69c951cf8c80edaf951452fd84b252cc02e42b6adb252d",
+      "bytes": 1820
+    }
+  ]
+}
