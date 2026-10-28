@@ -61,7 +61,7 @@ class CatalogueTests(unittest.TestCase):
 
     def test_every_file_group_is_accounted_for_and_no_autoinstall(self):
         rows = audit.build(self.ecc, self.toolkit, self.rev)
-        self.assertEqual(5, len(rows))
+        self.assertEqual(6, len(rows))
         self.assertEqual({"skill", "agent", "command", "rule"},
                          {row["kind"] for row in rows})
         self.assertEqual(2, len([r for r in rows if r["kind"] == "rule"]))
