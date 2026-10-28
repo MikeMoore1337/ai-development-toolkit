@@ -13989,27 +13989,6 @@
       "notes": "Issue #435; exact pinned git tree review and registered official selective plan; no installed skills, no model/paid API, no client activation."
     },
     {
-      "id": "ecc-v223-optin-windows-desktop-e2e",
-      "path": "optional-original-skills/windows-desktop-e2e",
-      "name": "windows-desktop-e2e",
-      "kind": "skill",
-      "author": "Affaan Mustafa (ECC upstream)",
-      "origin": "redistributed",
-      "source_url": "https://github.com/affaan-m/ECC",
-      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/windows-desktop-e2e/SKILL.md",
-      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
-      "license": "MIT",
-      "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
-      "attribution_required": true,
-      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
-      "status": "documented",
-      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
-      "last_reviewed": "2026-10-28",
-      "distribution": "included",
-      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
-      "owner_approval_id": "ECC435_20261028"
-    },
-    {
       "id": "ecc-v223-optin-contract-first",
       "path": "optional-original-skills/contract-first",
       "name": "contract-first",
@@ -14773,9 +14752,6 @@
       "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
       "license": "MIT",
       "approved_components": {
-        "optional-original-skills/windows-desktop-e2e": {
-          "optional-original-skills/windows-desktop-e2e/SKILL.md": "cbc93a1e2514ecdcee30da744aa13eb6c0ebe4948ca3dfff52b287df4f9f0814"
-        },
         "optional-original-skills/contract-first": {
           "optional-original-skills/contract-first/SKILL.md": "3eaacf16a9bbd92888659e9c1e15b0fa4eb96a41c257dd9e08f2e63b824f0cea"
         },
@@ -14790,13 +14766,6 @@
         }
       },
       "approved_metadata": {
-        "optional-original-skills/windows-desktop-e2e": {
-          "origin": "redistributed",
-          "license": "MIT",
-          "status": "documented",
-          "distribution": "included",
-          "kind": "skill"
-        },
         "optional-original-skills/contract-first": {
           "origin": "redistributed",
           "license": "MIT",
