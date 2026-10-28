@@ -223,6 +223,16 @@
 
 [Управление планом разработки](PROJECT_DELIVERY_MANAGEMENT.md): опциональный Management-навык, не контроллер и не отдельный трекер задач.
 
+## Встроенные навыки из MIT-исходников ECC
+
+Три оригинальных навыка **входят в Toolkit** и выбираются штатным Skill Manager без ECC-плагина, ECC CLI или отдельного пакета. [Проверенные исходники и инструкция](TOOLKIT_NATIVE_CAPABILITIES.md).
+
+| Навык | Недостающая возможность |
+| :--- | :--- |
+| [`contract-first`](../../optional-original-skills/contract-first/SKILL.md) | Общий проверяемый контракт для потребителя и поставщика API |
+| [`api-connector-builder`](../../optional-original-skills/api-connector-builder/SKILL.md) | Подключение провайдера по принятым шаблонам репозитория |
+| [`code-tour`](../../optional-original-skills/code-tour/SKILL.md) | Обзор файлов с проверенными ссылками на строки |
+
 ## Профили
 
 См. [тематические наборы навыков](CURATED_SKILL_PACKS.md) для выбора по задаче, дополнительных навыков и безопасного переключения.
@@ -231,6 +241,9 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `native-contract-first` | `contract-first` |
+| `native-api-connectors` | `api-connector-builder` |
+| `native-code-tours` | `code-tour` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
