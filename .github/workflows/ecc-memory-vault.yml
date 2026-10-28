@@ -96,6 +96,11 @@ jobs:
               assert read["memory"]["body"].startswith("Verify the synthetic parser")
               assert read["memory"]["trust"] == "unreviewed"
               count_before = len(list(root.rglob("*.md")))
+              dry_run = {**env, "ECC_DRY_RUN": "1"}
+              call("save", "--title", "Dry-run must refuse persistence",
+                   "--scope", "project", "--stdin",
+                   input_text="No write is permitted.", expected=1, settings=dry_run)
+              assert len(list(root.rglob("*.md"))) == count_before, "dry-run mutated files"
               call("save", "--title", "Forbidden secret", "--stdin",
                    input_text="-----BEGIN PRIVATE KEY-----", expected=1)
               assert len(list(root.rglob("*.md"))) == count_before, "secret was persisted"
@@ -111,4 +116,5 @@ jobs:
               print("PROJECT_ISOLATION=PASS")
               print("UNREVIEWED_HANDOFF=PASS")
               print("SECRET_REJECTION=PASS")
+              print("DRY_RUN=PASS")
           PY
