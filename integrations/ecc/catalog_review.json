@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "note": "Human-reviewed functional examples only. All other original components stay HOLD_REVIEW or HOLD_CONFLICT until an evidence-based review. This file never authorizes installation.",
+  "decisions": [
+    {
+      "path": "skills/windows-desktop-e2e",
+      "status": "ADOPT_AS_IS_CANDIDATE",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Upstream offers dedicated native Windows pywinauto/UIA guidance; public Toolkit has UI/browser QA guidance but no confirmed identical native Windows desktop test workflow. Managed native Codex install must be tested separately.",
+      "benefit": "Native WPF/WinForms/Qt UIA E2E without web-UI automation confusion.",
+      "test_case": "Original ECC --skills windows-desktop-e2e --target codex plan + dry-run in disposable HOME; no live model."
+    },
+    {
+      "path": "skills/change-impact",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/qa_change_impact.py",
+      "reason": "Toolkit includes read-only qa_change_impact.py for changed-path regression selection; ECC covers wider API/ADR/schema blast radius. Not safe to claim same capability or a proven gap solely by title.",
+      "benefit": "Potentially broader contract and rollback impact analysis.",
+      "test_case": "Compare synthetic API+schema migration against Toolkit existing qa_change_impact; verify no duplicate report/controller."
+    },
+    {
+      "path": "skills/continuous-learning",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Original skill explicitly marked DEPRECATED v1 and introduces Claude Stop-hook behavior. Do not install. Separate #436 must review v2 opt-in.",
+      "benefit": "None for new installations; superseded upstream.",
+      "test_case": "Ensure v1 is not included in approved adoption list."
+    },
+    {
+      "path": "skills/tdd-workflow",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/qa/skills/test-strategy/SKILL.md",
+      "reason": "Toolkit already includes QA/test-first approaches; ECC TDD workflow may overlap existing tests/skills. Validate semantic differences before any install.",
+      "benefit": "Possible plan-to-RED/GREEN evidence traceability.",
+      "test_case": "Compare plan->RED->GREEN synthetic flow with existing Toolkit workflow; avoid simultaneous feature controllers."
+    }
+  ]
+}
