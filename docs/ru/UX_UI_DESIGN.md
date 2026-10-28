@@ -81,3 +81,23 @@ python scripts/validate_ux_ui_spec.py extensions/design/skills/ux-design-process
 **UI, CSS, токены, тесты и настройки целевого проекта не меняются до конкретного визуального одобрения владельца.** Вывод - в чате по умолчанию; дополнительные PNG/HTML создаются только если инструменты и разрешённая папка действительно доступны. Истинный статус `TEXT_SPEC` не приравнивается к реальному скриншоту. Чужие отчёты, снимки и код в Toolkit не сохраняются. Ни платных API, ни обязательного нового сервиса, ни автозапуска внешних навыков нет.
 
 [Создание дизайна с нуля](../../.agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md) · [Этапы и ограничения](../../.agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md) · [Выбор экспертов](../../.agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md) · [Структурная проверка результатов](../../scripts/validate_ux_ui_orchestra.py).
+
+## Три оригинальных дизайн-навыка без изменений - добровольный режим ALL_THREE (#449)
+
+Существующий `ui-orchestra` может совместно применять **три оригинальных сторонних навыка** при выборе `original_design_skills.mode=ALL_THREE`. Это отличается от прежнего использования методик по ссылкам. Toolkit не включает сторонние копии и ничего не устанавливает автоматически. Ссылки, файлы и успешная структурная проверка не доказывают реальный вызов.
+
+Официальные варианты установки в проект Codex, **только после самостоятельной проверки исходников, лицензий, возможных загрузок и hooks**:
+
+- [Impeccable](https://github.com/pbakaus/impeccable) - Apache-2.0 (сохранить LICENSE/NOTICE): `npx impeccable install --providers=codex --scope=project`. При первом использовании возможна загрузка движка, hooks требуют отдельного доверия.
+- [Taste Skill](https://github.com/leonxlnx/taste-skill) - MIT: `npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend`. Требуются Node 22+ и Chrome/Edge/Chromium; поиск изображений может обращаться к сети.
+- [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) - MIT: `npm install -g ui-ux-pro-max-cli`, затем `uipro init --ai codex`. Для локального поиска нужен Python 3.x.
+
+Это **примеры команд для оператора, а не команды, которые Toolkit запускает сам**. Codex CLI и Claude CLI для установки не требуются. Отдельная проверка точной версии и контрольных сумм нужна для подтверждения неизменности оригиналов; команды npm/npx, выбирающие последние версии, такой гарантии не дают.
+
+После установки можно безопасно проверить наличие файлов в целевом проекте:
+
+```bash
+python scripts/validate_ux_ui_orchestra.py --inspect-originals /path/to/project
+```
+
+Проверяются `.agents/skills/impeccable`, `.agents/skills/design-taste-frontend`, `.agents/skills/ui-ux-pro-max`. `FILES_PRESENT_UNATTESTED` подтверждает только структуру и локальный хеш. Это не проверка происхождения, активации в Codex Desktop или выполнения скилла. Для режима `ALL_THREE` нужны наблюдаемые записи о вызовах всех трёх. Без них нельзя утверждать, что итоговый дизайн готов к визуальному согласованию. Правила трёх эскизов, мобильного/настольного макета и решения владельца остаются прежними.
