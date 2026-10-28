@@ -38,9 +38,9 @@ See [evidence, worktrees and session diagnosis](SUPERPOWERS_EVIDENCE.md). Existi
 
 The [portable shadcn/ui and Magic UI selection gate](UI_COMPONENT_SELECTION.md) supports the existing frontend and design skills. Prefer the consumer's current primitives before any external package. Verify component-specific source/license revision, Tailwind/Radix/Motion dependency cost, actual keyboard/reduced-motion checks and the owner's exact visual approval. `PROPOSAL_ONLY` does not imply `OWNER_ACCEPTED`. `scripts/validate_ui_component_adoption.py` is an optional offline structural check, not a package installer or proof of deployment.
 
-## Original ECC as an external Codex plugin (#424)
+## ECC as a source for standalone Toolkit (#431, #446)
 
-Unlike selectively adopting ideas, [ECC for Codex](ECC_NATIVE_CODEX.md) is considered only as the **original opt-in upstream plugin**, without vendoring skills, hooks or MCP definitions into Toolkit. The upstream bundle includes an executable SessionStart hook and a Chrome DevTools MCP launched with `npx`; registration, hook trust and MCP execution privileges require independent review. The bilingual guide identifies inspected sources and exact revision; live Windows Codex Desktop installation remains `NOT_VERIFIED`.
+**External ECC installation is superseded.** Toolkit is a standalone product: adopt only verified missing capabilities by properly attributed licensed source port or integrate native equivalents into existing Toolkit modules. Do not require `ecc-universal`, ECC plugin/MCP/CLI, separate hook bootstrap or sidecar. Already merged upstream source CI smokes are comparative evidence, **not built-in Toolkit functionality**. [Current architecture](ECC_NATIVE_CODEX.md); obsolete [external plugin issue #424](https://github.com/MikeMoore1337/ai-development-toolkit/issues/424) is closed `NOT_PLANNED`. The [601-component gap catalogue #435](https://github.com/MikeMoore1337/ai-development-toolkit/issues/435) remains selection evidence, not permission to copy all source.
 
 ## Applying methods across project types
 
