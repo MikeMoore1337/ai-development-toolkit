@@ -13990,7 +13990,7 @@
     },
     {
       "id": "ecc-v223-optin-windows-desktop-e2e",
-      "path": "extensions/ecc/skills/windows-desktop-e2e",
+      "path": "optional-original-skills/windows-desktop-e2e",
       "name": "windows-desktop-e2e",
       "kind": "skill",
       "author": "Affaan Mustafa (ECC upstream)",
@@ -14001,16 +14001,17 @@
       "license": "MIT",
       "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
       "attribution_required": true,
-      "attribution_path": "extensions/ecc/LICENSE",
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
       "status": "documented",
       "evidence": "extensions/ecc/README.md",
       "last_reviewed": "2026-10-28",
       "distribution": "included",
-      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation."
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
     },
     {
       "id": "ecc-v223-optin-contract-first",
-      "path": "extensions/ecc/skills/contract-first",
+      "path": "optional-original-skills/contract-first",
       "name": "contract-first",
       "kind": "skill",
       "author": "Affaan Mustafa (ECC upstream)",
@@ -14021,16 +14022,17 @@
       "license": "MIT",
       "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
       "attribution_required": true,
-      "attribution_path": "extensions/ecc/LICENSE",
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
       "status": "documented",
       "evidence": "extensions/ecc/README.md",
       "last_reviewed": "2026-10-28",
       "distribution": "included",
-      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation."
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
     },
     {
       "id": "ecc-v223-optin-api-connector-builder",
-      "path": "extensions/ecc/skills/api-connector-builder",
+      "path": "optional-original-skills/api-connector-builder",
       "name": "api-connector-builder",
       "kind": "skill",
       "author": "Affaan Mustafa (ECC upstream)",
@@ -14041,16 +14043,17 @@
       "license": "MIT",
       "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
       "attribution_required": true,
-      "attribution_path": "extensions/ecc/LICENSE",
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
       "status": "documented",
       "evidence": "extensions/ecc/README.md",
       "last_reviewed": "2026-10-28",
       "distribution": "included",
-      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation."
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
     },
     {
       "id": "ecc-v223-optin-code-tour",
-      "path": "extensions/ecc/skills/code-tour",
+      "path": "optional-original-skills/code-tour",
       "name": "code-tour",
       "kind": "skill",
       "author": "Affaan Mustafa (ECC upstream)",
@@ -14061,16 +14064,17 @@
       "license": "MIT",
       "distribution_basis": "Exact unmodified original ECC file from pinned source; root LICENSE MIT notice retained. Independent legal ownership/rights attestation not performed.",
       "attribution_required": true,
-      "attribution_path": "extensions/ecc/LICENSE",
+      "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
       "status": "documented",
       "evidence": "extensions/ecc/README.md",
       "last_reviewed": "2026-10-28",
       "distribution": "included",
-      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation."
+      "notes": "Issue #435; no default installation; Toolkit per-skill installer only; no CLI, hooks, API calls or auto host activation.",
+      "owner_approval_id": "ECC435_20261028"
     },
     {
       "id": "ecc-v223-original-license",
-      "path": "extensions/ecc/LICENSE",
+      "path": "third_party/ecc-v2.2.3/LICENSE",
       "name": "ECC upstream MIT license",
       "kind": "metadata",
       "author": "Affaan Mustafa",
@@ -14083,10 +14087,11 @@
       "attribution_required": false,
       "attribution_path": null,
       "status": "documented",
-      "evidence": "extensions/ecc/LICENSE",
+      "evidence": "third_party/ecc-v2.2.3/LICENSE",
       "last_reviewed": "2026-10-28",
       "distribution": "included",
-      "notes": "Upstream license for four exact-file opt-in skills."
+      "notes": "Upstream license for four exact-file opt-in skills.",
+      "owner_approval_id": "ECC435_20261028"
     },
     {
       "id": "ecc-v223-pack-readme",
@@ -14735,6 +14740,70 @@
           "status": "documented",
           "distribution": "included",
           "kind": "asset"
+        }
+      }
+    },
+    {
+      "id": "ECC435_20261028",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_issue": "#435",
+      "reported_at": "2026-10-28",
+      "scope_description": "Owner approved selecting beneficial nonduplicate ECC components for Toolkit. Approval conservatively constrained to four original exact skills and root MIT license, with explicit opt-in and no runtime activation.",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "approved_components": {
+        "optional-original-skills/windows-desktop-e2e": {
+          "optional-original-skills/windows-desktop-e2e/SKILL.md": "cbc93a1e2514ecdcee30da744aa13eb6c0ebe4948ca3dfff52b287df4f9f0814"
+        },
+        "optional-original-skills/contract-first": {
+          "optional-original-skills/contract-first/SKILL.md": "3eaacf16a9bbd92888659e9c1e15b0fa4eb96a41c257dd9e08f2e63b824f0cea"
+        },
+        "optional-original-skills/api-connector-builder": {
+          "optional-original-skills/api-connector-builder/SKILL.md": "00a0d01e234f213d343f0040bbebd56e042978768ce5bb7117776a75bd9547e8"
+        },
+        "optional-original-skills/code-tour": {
+          "optional-original-skills/code-tour/SKILL.md": "416c7eb9229554a1ef113bbb873ff0b260a2ad9ae6e6075a75c375955d3fcf6f"
+        },
+        "third_party/ecc-v2.2.3/LICENSE": {
+          "third_party/ecc-v2.2.3/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        }
+      },
+      "approved_metadata": {
+        "optional-original-skills/windows-desktop-e2e": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/contract-first": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/api-connector-builder": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/code-tour": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "third_party/ecc-v2.2.3/LICENSE": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "metadata"
         }
       }
     }
