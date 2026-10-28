@@ -47,6 +47,7 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
     def test_native_profile_is_not_automatically_installed(self):
         cfg = self.manifest["extension_packs"]["native-ecc-ports"]
         self.assertFalse(cfg["auto_install"])
+        self.assertTrue(cfg["standalone"], "Ported skills must not require external ECC")
         self.assertEqual(set(SOURCE_BLOBS), set(cfg["skills"]))
         self.assertEqual("optional-original-skills", cfg["skill_root"])
         paths = skill_sources(self.manifest)
