@@ -1,12 +1,7 @@
 name: Original ECC observability inspection (opt-in)
 
 on:
-  pull_request:
-    branches: [main, feature/ecc-memory-433]
-    paths:
-      - '.github/workflows/ecc-observability.yml'
-      - 'docs/en/ECC_OBSERVABILITY.md'
-      - 'docs/ru/ECC_OBSERVABILITY.md'
+  # Maintenance/source comparison ONLY. Do not fetch or execute ECC in normal Toolkit CI.
   workflow_dispatch:
 
 permissions:
