@@ -75,6 +75,36 @@ jobs:
           print("ORIGINAL_AGENTSHIELD_SARIF=PASS")
           PY
 
+      - name: Advisory scan of the real public Toolkit checkout (PR only)
+        if: ${{ github.event_name == 'pull_request' }}
+        id: repository_scan
+        uses: affaan-m/agentshield@b0891303bdcd6037376a94263d45cfd2ff3dfb98
+        with:
+          path: '.'
+          format: sarif
+          sarif-output: ${{ runner.temp }}/ecc-agentshield-repository.sarif
+          evidence-pack: ${{ runner.temp }}/ecc-agentshield-repository-evidence
+          verify-evidence-pack: 'true'
+          min-severity: info
+          fail-on-findings: 'false'
+          supply-chain: 'true'
+          supply-chain-online: 'false'
+
+      - name: Verify real-repo SARIF and evidence receipt
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          SARIF: ${{ runner.temp }}/ecc-agentshield-repository.sarif
+          RECEIPT: ${{ steps.repository_scan.outputs.evidence-pack-status }}
+        run: |
+          test "$RECEIPT" = 'passed'
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads(Path(os.environ["SARIF"]).read_text(encoding="utf-8"))
+          assert report.get("version") == "2.1.0" and report.get("runs"), "invalid real-repo SARIF"
+          print("ORIGINAL_AGENTSHIELD_REAL_REPO_SARIF=PASS")
+          PY
+
       - name: Keep redacted evidence for manual review
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -83,5 +113,7 @@ jobs:
           path: |
             ${{ runner.temp }}/ecc-agentshield.sarif
             ${{ runner.temp }}/ecc-agentshield-evidence/
+            ${{ runner.temp }}/ecc-agentshield-repository.sarif
+            ${{ runner.temp }}/ecc-agentshield-repository-evidence/
           retention-days: 7
           if-no-files-found: warn
