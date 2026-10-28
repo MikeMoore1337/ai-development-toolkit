@@ -610,5 +610,17 @@
     "activation": "best_effort_per_task_read_only",
     "fallback": "BUNDLED_ROUTER",
     "install_upgrade_automatic": false
+  },
+  "design_originals_policy": {
+    "default_mode": "STANDARD",
+    "opt_in_mode": "ALL_THREE",
+    "originals_bundled": false,
+    "expected_original_skill_names": [
+      "impeccable",
+      "design-taste-frontend",
+      "ui-ux-pro-max"
+    ],
+    "native_codex_discovery": "NOT_VERIFIED",
+    "installation": "EXTERNAL_EXPLICIT_PERMISSION"
   }
 }
