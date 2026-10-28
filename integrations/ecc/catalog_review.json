@@ -33,6 +33,30 @@
       "reason": "Toolkit already includes QA/test-first approaches; ECC TDD workflow may overlap existing tests/skills. Validate semantic differences before any install.",
       "benefit": "Possible plan-to-RED/GREEN evidence traceability.",
       "test_case": "Compare plan->RED->GREEN synthetic flow with existing Toolkit workflow; avoid simultaneous feature controllers."
+    },
+    {
+      "path": "skills/api-design",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/backend/skills/api-design/SKILL.md",
+      "reason": "Both source skills directly prescribe endpoint design, request/response/error semantics, pagination, versioning and compatibility. Toolkit includes consumer-version and rollout constraints in its existing canonical skill. No extra copy justified.",
+      "benefit": "No incremental core workflow; retain Toolkit api-design.",
+      "test_case": "Compare API-version/error/pagination examples in both original skill sources; existing canonical Skill Manager handles the work."
+    },
+    {
+      "path": "skills/database-migrations",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/backend/skills/database-migrations/SKILL.md",
+      "reason": "Both sources explicitly cover expand-contract schema changes, resumable batch backfills, rollback and compatibility checks. Toolkit already requires lock budgets, restartability and recovery, so copying the ECC guidance would duplicate functionality.",
+      "benefit": "No unique migration controller; retain existing Toolkit migrations gate.",
+      "test_case": "Use synthetic expand-backfill-contract scenarios including legacy readers and roll-forward recovery."
+    },
+    {
+      "path": "skills/e2e-testing",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/qa/skills/e2e-testing/SKILL.md",
+      "reason": "Original ECC covers Playwright E2E reliability and fixtures, and Toolkit already prescribes stable selectors, E2E setup, traces/screenshots, critical user journeys and test evidence. Toolkit source is framework-agnostic, not a literal Playwright POM tutorial; specialized examples may still need separate review.",
+      "benefit": "Existing Toolkit QA coverage; no wholesale skill duplication.",
+      "test_case": "Synthetic flaky web E2E with selector, permission flow and trace; original ECC example remains reference-only."
     }
   ]
 }
