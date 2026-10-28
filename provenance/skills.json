@@ -14229,7 +14229,7 @@
       "attribution_path": "third_party/ecc-v2.2.3/LICENSE",
       "status": "documented",
       "evidence": "third_party/ecc-v2.2.3/eval-harness/SOURCE_SNAPSHOT.json",
-      "last_reviewed": "2026-10-29",
+      "last_reviewed": "2026-10-28",
       "distribution": "included",
       "owner_approval_id": "ECC437_20261029",
       "notes": "Native Toolkit-bundled optional offline evidence library; Node.js required for runtime; candidate execution remains disabled; no client activation attested."
@@ -14250,7 +14250,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "scripts/native_eval_capsules.js",
-      "last_reviewed": "2026-10-29",
+      "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Issue #437; synthetic/runtime evidence only, no independent rights or Codex Desktop activation attestation."
     },
@@ -14270,7 +14270,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "tests/test_native_ecc_eval_capsules.py",
-      "last_reviewed": "2026-10-29",
+      "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Issue #437; synthetic/runtime evidence only, no independent rights or Codex Desktop activation attestation."
     },
@@ -14290,7 +14290,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/en/NATIVE_EVAL_CAPSULES.md",
-      "last_reviewed": "2026-10-29",
+      "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Issue #437; synthetic/runtime evidence only, no independent rights or Codex Desktop activation attestation."
     },
@@ -14310,7 +14310,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/ru/NATIVE_EVAL_CAPSULES.md",
-      "last_reviewed": "2026-10-29",
+      "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Issue #437; synthetic/runtime evidence only, no independent rights or Codex Desktop activation attestation."
     }
@@ -15012,7 +15012,7 @@
       "source": "owner_reported",
       "review_outcomes": "permitted",
       "scope_issue": "#437",
-      "reported_at": "2026-10-29",
+      "reported_at": "2026-10-28",
       "scope_description": "Owner's previously approved ECC native incorporation for Toolkit; exact pinned original MIT eval-harness modules and associated original tests only, plus generated source index. No ECC installation, external runtime, agent candidate execution, paid APIs, background hooks or automatic activation. Legal chain of title beyond MIT notice not independently attested.",
       "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
       "license": "MIT",
