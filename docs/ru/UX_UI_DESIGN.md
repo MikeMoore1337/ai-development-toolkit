@@ -96,7 +96,7 @@ python scripts/validate_ux_ui_spec.py extensions/design/skills/ux-design-process
 
 После установки можно безопасно проверить наличие файлов в целевом проекте:
 
-```bash
+```text
 python scripts/validate_ux_ui_orchestra.py --inspect-originals /path/to/project
 ```
 
