@@ -13,3 +13,5 @@ change-impact пересекается с Toolkit scripts/qa_change_impact.py; t
 Успех синтетического CI не подтверждает работающий Codex Desktop или Hermes. Без платных API, Codex CLI/Claude CLI, автоматической установки, hook-активации, доступа к сессиям и production. Для клиентов других пользователей возможны добровольные штатные маршруты с отдельным согласием. Откат: удалить workflow и отчётный генератор в PR.
 
 Запуск из доверенного checkout Toolkit: python scripts/ecc_gap_catalog.py --ecc-root /isolated/ECC --toolkit-root . --source-revision 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b --output-dir /tmp/ecc-gap
+
+Дополнительная пофайловая проверка оригинальных api-design, database-migrations, e2e-testing и существующих Skill Toolkit подтверждает покрытие их основной функции. Они помечены ALREADY_PRESENT, с реальными путями аналогов в матрице. Для windows-desktop-e2e оригинальный план --skills раскрывает четыре модуля: platform-configs, skill-unified-memory, workflow-quality и shared-script-utils. Поэтому фактическая установка одного навыка находится на HOLD_SHARED_MODULES, независимо от статуса кандидата на функциональное рассмотрение.
