@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Human-reviewed functional examples only. All other original components stay HOLD_REVIEW or HOLD_CONFLICT until an evidence-based review. This file never authorizes installation.",
+  "note": "Human-reviewed functional examples only. New ALREADY_PRESENT decisions require actual native implementation evidence, not matching names. The remaining inventory retains HOLD_REVIEW or HOLD_CONFLICT; this file is never installation authorization.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -12,11 +12,11 @@
     },
     {
       "path": "skills/change-impact",
-      "status": "HOLD_REVIEW",
-      "analogue": "scripts/qa_change_impact.py",
-      "reason": "Toolkit includes read-only qa_change_impact.py for changed-path regression selection; ECC covers wider API/ADR/schema blast radius. Not safe to claim same capability or a proven gap solely by title.",
-      "benefit": "Potentially broader contract and rollback impact analysis.",
-      "test_case": "Compare synthetic API+schema migration against Toolkit existing qa_change_impact; verify no duplicate report/controller."
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/qa/skills/change-impact-analysis/SKILL.md",
+      "reason": "Compared pinned ECC source with Toolkit change-impact-analysis, qa_change_impact.py and code-review: direct/downstream consumers, API/data/schema, tests, documentation, release and unknown call graph were already covered. Toolkit skill now explicitly reconciles pre-change scope against actual diff and records MATCHED/CHANGED/NOT_VERIFIED, avoiding a duplicate controller. Path-heuristic analysis is never claimed as full dependency graph.",
+      "benefit": "Existing native impact skill gains an explicit high-risk before/after diff-alignment contract; separate ECC skill would duplicate core behavior.",
+      "test_case": "Synthetic cross-module API+schema migration: inventory callers/contracts/rollout before implementation, compare actual diff after, flag uncovered consumer and unexecuted rollback NOT_VERIFIED. Verify no forced report folder, host command or secondary controller."
     },
     {
       "path": "skills/continuous-learning",
@@ -28,11 +28,11 @@
     },
     {
       "path": "skills/tdd-workflow",
-      "status": "HOLD_REVIEW",
-      "analogue": "extensions/qa/skills/test-strategy/SKILL.md",
-      "reason": "Toolkit already includes QA/test-first approaches; ECC TDD workflow may overlap existing tests/skills. Validate semantic differences before any install.",
-      "benefit": "Possible plan-to-RED/GREEN evidence traceability.",
-      "test_case": "Compare plan->RED->GREEN synthetic flow with existing Toolkit workflow; avoid simultaneous feature controllers."
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/feature-delivery/SKILL.md",
+      "reason": "Original ECC TDD workflow adds a useful explicit RED/GREEN evidence cycle but mandates universal 80% coverage, all test layers, automatic staged Git checkpoints and upstream package manager detection; those are not justified across all Toolkit user projects. The existing feature-delivery controller now supports optional test-first RED/GREEN/refactor with real evidence and risk-based coverage, preserving project/owner policies, without copying a 21-KB second controller.",
+      "benefit": "Opt-in TDD test-first evidence within Toolkit's canonical feature delivery, without automatic CLI/commits or arbitrary global coverage threshold.",
+      "test_case": "Synthetic authorized bug fix: before-code test fails on intended behavior, same test passes after minimal change; missing runner and malformed plan produce NOT_VERIFIED, not fabricated RED/GREEN; no automatic git commit, 80% mandate or remote package-manager installer."
     },
     {
       "path": "skills/api-design",

@@ -73,6 +73,41 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
+    def test_reviewed_ecc_overlap_reuses_native_controller_with_evidence(self):
+        """Approved overlaps must have a real Toolkit file and explicit missing-oracle gates."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        decisions = {entry["path"]: entry for entry in review["decisions"]}
+        expected = {
+            "skills/change-impact": (
+                "extensions/qa/skills/change-impact-analysis/SKILL.md",
+                ("Pre-change vs actual-diff alignment", "NOT_VERIFIED",
+                 "MATCHED", "CHANGED", "actual diff"),
+            ),
+            "skills/tdd-workflow": (
+                ".agents/skills/feature-delivery/SKILL.md",
+                ("Optional test-first cycle", "observe RED", "observe GREEN",
+                 "NOT_VERIFIED", "Do not mandate a universal 80%"),
+            ),
+        }
+        for source, (analogue, evidence_terms) in expected.items():
+            with self.subTest(source=source):
+                decision = decisions[source]
+                self.assertEqual("ALREADY_PRESENT", decision["status"])
+                self.assertEqual(analogue, decision["analogue"])
+                native = ROOT / analogue
+                self.assertTrue(native.is_file(), analogue)
+                source_text = native.read_text(encoding="utf-8")
+                for term in evidence_terms:
+                    self.assertIn(term, source_text)
+                self.assertTrue(decision["reason"])
+                self.assertTrue(decision["test_case"])
+        self.assertEqual("HOLD_UNSUPPORTED",
+                         decisions["skills/continuous-learning"]["status"])
+        # No auto-install or activation claim; original 601-component inventory
+        # remains pending review for entries not explicitly recorded above.
+        self.assertIn("never installation authorization", review["note"])
+
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
         result = audit.frontmatter(frontmatter)
