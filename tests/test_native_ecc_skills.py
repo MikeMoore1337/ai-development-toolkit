@@ -14,7 +14,6 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from install import install, skill_sources  # noqa: E402
 
 SOURCE_BLOBS = {
-    "windows-desktop-e2e": "f965b043cee51ed1c464088c08b91cf05710d65f",
     "contract-first": "a828bd60db452daa6b4edaf4e6cc02d192b99071",
     "api-connector-builder": "52029f27565b1743b36582de0db7648261b463a5",
     "code-tour": "d66b7e008287833ac592550f9b0941feaea52443",
@@ -54,7 +53,6 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
         for name in SOURCE_BLOBS:
             self.assertEqual(ROOT / cfg["skill_root"] / name, paths[name])
             self.assertEqual([name], self.manifest["profiles"]["native-" + {
-                "windows-desktop-e2e": "windows-desktop",
                 "contract-first": "contract-first",
                 "api-connector-builder": "api-connectors",
                 "code-tour": "code-tours",
@@ -75,7 +73,6 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 install(target, ["contract-first"], True)
             self.assertEqual("OWNER RULES\n", baseline.read_text("utf-8"))
-            self.assertFalse((target / ".agents" / "skills" / "windows-desktop-e2e").exists())
             self.assertFalse((target / ".agents" / "skills" / "code-tour").exists())
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
