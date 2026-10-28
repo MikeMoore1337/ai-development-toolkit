@@ -44,6 +44,10 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Install locked upstream runtime dependencies without lifecycle scripts
+        shell: bash
+        run: npm ci --prefix .ecc-upstream --omit=dev --ignore-scripts --no-audit --no-fund
+
       - name: Inspect original ECC read-only outputs with isolated host environment
         shell: bash
         run: |
