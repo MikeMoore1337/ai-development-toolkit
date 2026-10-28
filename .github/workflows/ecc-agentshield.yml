@@ -1,0 +1,87 @@
+name: ECC AgentShield (opt-in)
+
+on:
+  # PR smoke only when this optional integration changes.
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ecc-agentshield.yml'
+      - 'fixtures/ecc-agentshield/**'
+      - 'docs/en/ECC_AGENTSHIELD.md'
+      - 'docs/ru/ECC_AGENTSHIELD.md'
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Original AgentShield scan target"
+        required: true
+        type: choice
+        default: repository
+        options: [repository, synthetic]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecc-agentshield-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  original-agent-shield:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run original AgentShield (static, no model, no auto-fix)
+        id: scan
+        uses: affaan-m/agentshield@b0891303bdcd6037376a94263d45cfd2ff3dfb98 # source 1.6.0, reviewed for #432
+        with:
+          path: ${{ github.event_name == 'workflow_dispatch' && inputs.scope == 'repository' && '.' || 'fixtures/ecc-agentshield/vulnerable/.claude' }}
+          format: sarif
+          sarif-output: ${{ runner.temp }}/ecc-agentshield.sarif
+          evidence-pack: ${{ runner.temp }}/ecc-agentshield-evidence
+          verify-evidence-pack: 'true'
+          min-severity: info
+          fail-on-findings: 'false'
+          supply-chain: 'true'
+          supply-chain-online: 'false'
+
+      - name: Check real synthetic findings and evidence receipt
+        if: ${{ github.event_name == 'pull_request' || inputs.scope == 'synthetic' }}
+        env:
+          FINDINGS: ${{ steps.scan.outputs.total-findings }}
+          RECEIPT: ${{ steps.scan.outputs.evidence-pack-status }}
+        run: |
+          case "$FINDINGS" in
+            ''|*[!0-9]*) echo 'Missing/non-numeric original scan result'; exit 1 ;;
+          esac
+          test "$FINDINGS" -gt 0
+          test "$RECEIPT" = 'passed'
+
+      - name: Validate original SARIF
+        env:
+          SARIF: ${{ runner.temp }}/ecc-agentshield.sarif
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ["SARIF"])
+          obj = json.loads(path.read_text(encoding="utf-8"))
+          assert obj.get("version") == "2.1.0", "not SARIF 2.1.0"
+          assert isinstance(obj.get("runs"), list) and obj["runs"], "no SARIF runs"
+          print("ORIGINAL_AGENTSHIELD_SARIF=PASS")
+          PY
+
+      - name: Keep redacted evidence for manual review
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ecc-agentshield-evidence
+          path: |
+            ${{ runner.temp }}/ecc-agentshield.sarif
+            ${{ runner.temp }}/ecc-agentshield-evidence/
+          retention-days: 7
+          if-no-files-found: warn
