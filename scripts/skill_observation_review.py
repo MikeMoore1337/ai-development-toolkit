@@ -76,8 +76,8 @@ def review_packet(packet: object) -> dict:
 # project-scoped preview does NOT read sessions, attest links, learn from the
 # user, generate an executable skill, or authorize promotion.
 LEARNING_KEYS = frozenset(OBS_KEYS | {"signal", "observed_on"})
-PROJECT_RE = re.compile(r"[A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100}\\Z", re.ASCII)
-DATE_RE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\\Z", re.ASCII)
+PROJECT_RE = re.compile(r"[A-Za-z0-9-]{1,39}/[A-Za-z0-9_.-]{1,100}\Z", re.ASCII)
+DATE_RE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z", re.ASCII)
 SIGNALS = frozenset({"support", "contradict"})
 MAX_AGE_DAYS = 730
 
