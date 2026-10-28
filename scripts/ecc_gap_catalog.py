@@ -50,10 +50,21 @@ def frontmatter(text: str) -> dict[str, str]:
     end = text.find("\n---\n", 4)
     if end < 0:
         return result
-    for line in text[4:end].splitlines():
-        match = re.match(r"^(name|description|license|trigger):\s*(.+)$", line)
-        if match:
-            result[match[1]] = match[2].strip(" \t'\"")
+    lines = text[4:end].splitlines()
+    for index, line in enumerate(lines):
+        match = re.match(r"^(name|description|license|trigger):\\s*(.*)$", line)
+        if not match:
+            continue
+        key, value = match.groups()
+        if value in {">-", ">", "|", "|-"}:
+            following = []
+            for continuation in lines[index + 1:]:
+                if not continuation.startswith((" ", "\\t")):
+                    break
+                if continuation.strip():
+                    following.append(continuation.strip())
+            value = " ".join(following)
+        result[key] = value.strip(" \\t'\\\"")
     return result
 
 
@@ -177,6 +188,8 @@ def build(ecc: Path, toolkit: Path, sha: str) -> list[dict]:
             analogue = "NOT_VERIFIED"
         fingerprint = hashlib.sha256()
         for filename in sorted(files):
+            if (ecc / filename).is_symlink():
+                raise ValueError("upstream tracked symlink requires independent review: " + filename)
             fingerprint.update(filename.encode("utf-8") + b"\0")
             fingerprint.update((ecc / filename).read_bytes())
         rows.append({
