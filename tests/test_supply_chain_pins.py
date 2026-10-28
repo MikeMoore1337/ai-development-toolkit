@@ -23,6 +23,9 @@ PINNED = {
     "actions/upload-artifact": {
         "ea165f8d65b6e75b540449e92b4886f43607fa02",
     },
+    "affaan-m/agentshield": {
+        "b0891303bdcd6037376a94263d45cfd2ff3dfb98",
+    },
     "astral-sh/setup-uv": {
         "c771a70e6277c0a99b617c7a806ffedaca235ff9",
     },
@@ -46,6 +49,7 @@ class SupplyChainPinTests(unittest.TestCase):
             "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
             "publish-integration-sources.yml", "release-archive.yml",
             "validate.yml", "replica-public-parity.yml", "harness2-upstream.yml",
+            "ecc-agentshield.yml",
         }
         self.assertEqual(expected, {path.name for path in paths})
         observed = {}
