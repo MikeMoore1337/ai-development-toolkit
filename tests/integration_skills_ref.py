@@ -75,7 +75,8 @@ class RealSkillsRefIntegrationTests(unittest.TestCase):
         self.assertEqual(f"Valid skill: {folder}", result.stdout.strip())
 
     def test_entire_manifest_with_real_official_cli(self):
-        self.assertEqual(82, len(runner.skill_directories(ROOT, "all")))
+        self.assertEqual(85, len(runner.skill_directories(ROOT, "all")))
+        self.assertEqual(3, sum("optional-original-skills" in str(p) for p in runner.skill_directories(ROOT, "all")))
         self.assertEqual(0, runner.run("all", ROOT))
 
 
