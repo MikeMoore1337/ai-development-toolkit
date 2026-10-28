@@ -52,19 +52,19 @@ def frontmatter(text: str) -> dict[str, str]:
         return result
     lines = text[4:end].splitlines()
     for index, line in enumerate(lines):
-        match = re.match(r"^(name|description|license|trigger):\\s*(.*)$", line)
+        match = re.match(r"^(name|description|license|trigger):\s*(.*)$", line)
         if not match:
             continue
         key, value = match.groups()
         if value in {">-", ">", "|", "|-"}:
             following = []
             for continuation in lines[index + 1:]:
-                if not continuation.startswith((" ", "\\t")):
+                if not continuation.startswith((" ", "\t")):
                     break
                 if continuation.strip():
                     following.append(continuation.strip())
             value = " ".join(following)
-        result[key] = value.strip(" \\t'\\\"")
+        result[key] = value.strip().strip(chr(34) + chr(39))
     return result
 
 
