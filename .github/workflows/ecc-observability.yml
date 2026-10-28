@@ -1,0 +1,104 @@
+name: Original ECC observability inspection (opt-in)
+
+on:
+  pull_request:
+    branches: [main, feature/ecc-memory-433]
+    paths:
+      - '.github/workflows/ecc-observability.yml'
+      - 'docs/en/ECC_OBSERVABILITY.md'
+      - 'docs/ru/ECC_OBSERVABILITY.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecc-observability-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  original-ecc-observability:
+    name: ECC audit and session adapters (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout Toolkit without credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Checkout original ECC at immutable SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: affaan-m/ECC
+          ref: 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b
+          path: .ecc-upstream
+          persist-credentials: false
+
+      - name: Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Inspect original ECC read-only outputs with isolated host environment
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          root = Path.cwd()
+          upstream = root / ".ecc-upstream"
+          assert upstream.is_dir()
+          with tempfile.TemporaryDirectory(prefix="ecc-observe-") as tmp:
+              env = {k: v for k, v in os.environ.items() if k in {
+                  "PATH", "HOME", "USERPROFILE", "SYSTEMROOT", "WINDIR",
+                  "COMSPEC", "TEMP", "TMP", "TMPDIR", "LANG", "LC_ALL",
+              }}
+              env["HOME"] = tmp
+              env["USERPROFILE"] = tmp
+              def read(script, *args):
+                  run = subprocess.run(
+                      ["node", str(upstream / "scripts" / script), *args],
+                      cwd=root, capture_output=True, text=True, encoding="utf-8",
+                      env=env, timeout=25, check=False)
+                  assert run.returncode == 0, f"original ECC {script} failed (exit {run.returncode})"
+                  return json.loads(run.stdout)
+
+              before = subprocess.run(["git", "status", "--porcelain", "-uno"],
+                                      cwd=root, capture_output=True, text=True, check=True).stdout
+              audit = read("harness-audit.js", "--root", str(root), "--format", "json")
+              assert audit["deterministic"] is True
+              assert audit["scope"] == "repo"
+              assert audit["checks"] and isinstance(audit["categories"], dict)
+              assert isinstance(audit["overall_score"], int)
+              print("ORIGINAL_ECC_HARNESS_AUDIT=PASS")
+              print("ECC_AUDIT_CHECKS=", len(audit["checks"]))
+
+              adapters = read("session-inspect.js", "--list-adapters")
+              ids = {v["id"] for v in adapters["adapters"]}
+              assert {"claude-history", "codex-worktree"} <= ids, "missing original adapters"
+              print("ORIGINAL_ECC_SESSION_ADAPTERS=PASS")
+              print("ECC_ADAPTERS=", ",".join(sorted(ids)))
+
+              readiness = read("observability-readiness.js", "--format", "json",
+                               "--root", str(upstream))
+              assert readiness["schema_version"] == "ecc.observability-readiness.v1"
+              assert readiness["deterministic"] is True
+              assert isinstance(readiness["ready"], bool)
+              assert isinstance(readiness["checks"], list) and readiness["checks"]
+              print("ORIGINAL_ECC_READINESS_REPORT=PASS")
+              # This is the ECC source readiness score, never Toolkit's runtime status.
+
+              after = subprocess.run(["git", "status", "--porcelain", "-uno"],
+                                     cwd=root, capture_output=True, text=True, check=True).stdout
+              assert before == after, "original ECC inspection mutated tracked Toolkit source"
+              print("TOOLKIT_TRACKED_SOURCE_UNCHANGED=PASS")
+          PY
