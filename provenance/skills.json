@@ -14152,6 +14152,26 @@
       "distribution": "included",
       "notes": "Issue #450; Windows native GUI UIA only, explicitly opt-in; source-only checks do not verify GUI execution or client activation.",
       "owner_approval_id": "ECC450_20261028"
+    },
+    {
+      "id": "toolkit-native-ecc-windows-uia-tests",
+      "path": "tests/test_windows_desktop_e2e.py",
+      "name": "Windows UIA E2E offline integration tests",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored offline/source-only test suite; no Windows GUI, external ECC runtime, model, paid API or real app is executed.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Issue #450; checks source identity, permission boundaries, native Toolkit managed installation, reference and MIT notice."
     }
   ],
   "owner_review_record": {
