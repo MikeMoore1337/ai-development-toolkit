@@ -31,7 +31,7 @@ class ECCOptionalSkillsTests(unittest.TestCase):
         cls.manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
 
     def test_exact_original_bytes_and_no_extra_bundle(self):
-        base = ROOT / "extensions" / "ecc" / "skills"
+        base = ROOT / "optional-original-skills"
         self.assertEqual(set(SOURCE_BLOBS), {p.name for p in base.iterdir() if p.is_dir()})
         for name, expected_blob in SOURCE_BLOBS.items():
             with self.subTest(name=name):
@@ -40,7 +40,7 @@ class ECCOptionalSkillsTests(unittest.TestCase):
                 content = (directory / "SKILL.md").read_bytes()
                 self.assertEqual(expected_blob, git_blob(content), "Upstream ECC file modified")
                 self.assertTrue(content.startswith(f"---\nname: {name}\n".encode()))
-        license_text = (ROOT / "extensions" / "ecc" / "LICENSE").read_text("utf-8")
+        license_text = (ROOT / "third_party" / "ecc-v2.2.3" / "LICENSE").read_text("utf-8")
         self.assertIn("Affaan Mustafa", license_text)
         self.assertIn("MIT License", license_text)
 
@@ -48,7 +48,7 @@ class ECCOptionalSkillsTests(unittest.TestCase):
         cfg = self.manifest["extension_packs"]["ecc"]
         self.assertFalse(cfg["auto_install"])
         self.assertEqual(set(SOURCE_BLOBS), set(cfg["skills"]))
-        self.assertEqual("extensions/ecc/skills", cfg["skill_root"])
+        self.assertEqual("optional-original-skills", cfg["skill_root"])
         paths = skill_sources(self.manifest)
         for name in SOURCE_BLOBS:
             self.assertEqual(ROOT / cfg["skill_root"] / name, paths[name])
