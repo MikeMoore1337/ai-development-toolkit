@@ -15,6 +15,19 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "ecc",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/affaan-m/ECC.git",
+        "sha": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }
