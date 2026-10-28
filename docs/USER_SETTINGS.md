@@ -28,3 +28,7 @@ An explicit user opt-in for CLI routes or paid API merely makes those routes **e
 ## Compatibility
 
 Uses only Python 3.12+ standard library and supports Windows, Linux and macOS. An ordinary ChatGPT plugin cannot automatically see a workstation's local JSON; preferences must be provided through a supported, authorized client interface. Existing `profiles/project-profile.example.json` remains a separate template for **verified project facts**, not global preferences. Client-routing integration is tracked in [#395](https://github.com/MikeMoore1337/ai-development-toolkit/issues/395).
+
+## Original design skills (optional)
+
+`skills.design_originals` is `STANDARD` by default. A user who has separately approved, installed and trusted the unchanged upstream Impeccable, Taste Skill and UI UX Pro Max may set `"skills": {"design_originals": "ALL_THREE"}` in the **user-local** preferences file, or choose it in an authorized project/task configuration. The existing Design Orchestra then treats all three originals as required for design work. This is a routing preference, not a grant to download binaries, run hooks, use Codex CLI or spend money. The resolver rejects contradictory settings that exclude a required original. Verify local files using `python scripts/validate_ux_ui_orchestra.py --inspect-originals TARGET`; native client activation remains `NOT_VERIFIED` until actually observed. Do not commit private user preferences.
