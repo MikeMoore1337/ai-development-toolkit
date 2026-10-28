@@ -14753,13 +14753,16 @@
       "license": "MIT",
       "approved_components": {
         "optional-original-skills/contract-first": {
-          "optional-original-skills/contract-first/SKILL.md": "3eaacf16a9bbd92888659e9c1e15b0fa4eb96a41c257dd9e08f2e63b824f0cea"
+          "optional-original-skills/contract-first/SKILL.md": "3eaacf16a9bbd92888659e9c1e15b0fa4eb96a41c257dd9e08f2e63b824f0cea",
+          "optional-original-skills/contract-first/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
         },
         "optional-original-skills/api-connector-builder": {
-          "optional-original-skills/api-connector-builder/SKILL.md": "00a0d01e234f213d343f0040bbebd56e042978768ce5bb7117776a75bd9547e8"
+          "optional-original-skills/api-connector-builder/SKILL.md": "00a0d01e234f213d343f0040bbebd56e042978768ce5bb7117776a75bd9547e8",
+          "optional-original-skills/api-connector-builder/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
         },
         "optional-original-skills/code-tour": {
-          "optional-original-skills/code-tour/SKILL.md": "416c7eb9229554a1ef113bbb873ff0b260a2ad9ae6e6075a75c375955d3fcf6f"
+          "optional-original-skills/code-tour/SKILL.md": "416c7eb9229554a1ef113bbb873ff0b260a2ad9ae6e6075a75c375955d3fcf6f",
+          "optional-original-skills/code-tour/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
         },
         "third_party/ecc-v2.2.3/LICENSE": {
           "third_party/ecc-v2.2.3/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"

@@ -35,7 +35,9 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
         for name, expected_blob in SOURCE_BLOBS.items():
             with self.subTest(name=name):
                 directory = base / name
-                self.assertEqual(["SKILL.md"], sorted(p.name for p in directory.iterdir()))
+                self.assertEqual(["LICENSE", "SKILL.md"], sorted(p.name for p in directory.iterdir()))
+                self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                                 (directory / "LICENSE").read_bytes())
                 content = (directory / "SKILL.md").read_bytes()
                 self.assertEqual(expected_blob, git_blob(content.replace(b"\r\n", b"\n")), "Upstream ECC file modified")
                 self.assertTrue(content.startswith(f"---\nname: {name}\n".encode()))
@@ -79,6 +81,21 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                 install(target, ["contract-first"], True)
             self.assertEqual("OWNER RULES\n", baseline.read_text("utf-8"))
             self.assertFalse((target / ".agents" / "skills" / "code-tour").exists())
+
+    def test_skill_manager_preserves_native_license(self):
+        with tempfile.TemporaryDirectory(prefix="ecc-managed-optin-") as temp:
+            command = [sys.executable, str(ROOT / "scripts/skill_manager.py"), "install",
+                       "--target", temp, "--profile", "native-contract-first"]
+            preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, preview.returncode, preview.stderr)
+            self.assertFalse((Path(temp) / ".agents").exists())
+            apply = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, apply.returncode, apply.stderr)
+            installed = Path(temp) / ".agents/skills/contract-first"
+            self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                             (installed / "LICENSE").read_bytes())
+            self.assertEqual(SOURCE_BLOBS["contract-first"],
+                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\\r\\n", b"\\n")))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:
