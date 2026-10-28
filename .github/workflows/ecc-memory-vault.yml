@@ -1,12 +1,7 @@
 name: ECC Memory Vault upstream smoke (opt-in)
 
 on:
-  pull_request:
-    branches: [main, feature/ecc-agentshield-432]
-    paths:
-      - '.github/workflows/ecc-memory-vault.yml'
-      - 'docs/en/ECC_MEMORY_VAULT.md'
-      - 'docs/ru/ECC_MEMORY_VAULT.md'
+  # Maintenance/source comparison ONLY. Do not fetch or execute ECC in normal Toolkit CI.
   workflow_dispatch:
 
 permissions:
