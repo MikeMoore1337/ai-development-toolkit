@@ -1284,6 +1284,18 @@
         "Implement a database indexing optimization.",
         "Проверь безопасность OAuth токена в приложении."
       ]
+    },
+    {
+      "id": "native-windows-desktop-e2e-bilingual",
+      "target": "windows-desktop-e2e",
+      "positive": [
+        "Write native Windows WPF UIA desktop end-to-end tests using pywinauto AutomationId and an isolated interactive user session.",
+        "Создай E2E-тесты Windows UI Automation для нативного WinForms-приложения, с pywinauto и проверкой AutomationId."
+      ],
+      "negative": [
+        "Use Playwright to test the embedded HTML view inside an Electron web application.",
+        "Проверь совместимость JSON-контракта API между двумя микросервисами."
+      ]
     }
   ]
 }

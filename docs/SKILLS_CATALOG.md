@@ -225,13 +225,14 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 ## Native source ports shipped with Toolkit
 
-These three original MIT skills are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
+Three byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Skill | Distinct additional capability |
 | :--- | :--- |
 | [`contract-first`](../optional-original-skills/contract-first/SKILL.md) | Consumer/provider agreement on one machine-checkable interface |
 | [`api-connector-builder`](../optional-original-skills/api-connector-builder/SKILL.md) | Repo-native connector implementation and registration |
 | [`code-tour`](../optional-original-skills/code-tour/SKILL.md) | CodeTour files with verified source/line anchors |
+| [`windows-desktop-e2e`](../optional-original-skills/windows-desktop-e2e/SKILL.md) | Native Windows UIA test design, with an unchanged full licensed reference and explicit execution approval |
 
 ## Profiles
 
@@ -244,6 +245,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `native-contract-first` | `contract-first` |
 | `native-api-connectors` | `api-connector-builder` |
 | `native-code-tours` | `code-tour` |
+| `native-windows-desktop-e2e` | `windows-desktop-e2e` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |

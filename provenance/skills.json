@@ -14131,6 +14131,27 @@
       "last_reviewed": "2026-10-28",
       "distribution": "included",
       "notes": "Native Toolkit built-in skill source and CI acceptance; no external ECC plugin/CLI or paid provider."
+    },
+    {
+      "id": "ecc-v223-native-windows-desktop-e2e",
+      "path": "optional-original-skills/windows-desktop-e2e",
+      "name": "windows-desktop-e2e",
+      "kind": "skill",
+      "author": "Affaan Mustafa (upstream reference); Toolkit maintainers (compact adaptation)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/windows-desktop-e2e/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Compact Toolkit-native adaptation plus byte-identical pinned ECC reference and locally bundled MIT notice. No ECC runtime; independent legal attestation not performed.",
+      "attribution_required": true,
+      "attribution_path": "optional-original-skills/windows-desktop-e2e/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-28",
+      "distribution": "included",
+      "notes": "Issue #450; Windows native GUI UIA only, explicitly opt-in; source-only checks do not verify GUI execution or client activation.",
+      "owner_approval_id": "ECC450_20261028"
     }
   ],
   "owner_review_record": {
@@ -14796,6 +14817,32 @@
           "status": "documented",
           "distribution": "included",
           "kind": "metadata"
+        }
+      }
+    },
+    {
+      "id": "ECC450_20261028",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_issue": "#450",
+      "reported_at": "2026-10-28",
+      "scope_description": "Owner requested Toolkit-native, no-ECC Windows UIA skill; approve a compact safe adaptation, byte-exact upstream reference and copied MIT notice, with explicit permission gates and no automatic GUI execution.",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "approved_components": {
+        "optional-original-skills/windows-desktop-e2e": {
+          "optional-original-skills/windows-desktop-e2e/SKILL.md": "daa24a041e127cd7d16d5536c2d73cb2b01e9a6ba8ecea79843ebc502191f93c",
+          "optional-original-skills/windows-desktop-e2e/references/ORIGINAL_SKILL.md": "cbc93a1e2514ecdcee30da744aa13eb6c0ebe4948ca3dfff52b287df4f9f0814",
+          "optional-original-skills/windows-desktop-e2e/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        }
+      },
+      "approved_metadata": {
+        "optional-original-skills/windows-desktop-e2e": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
         }
       }
     }

@@ -21,7 +21,7 @@
     "researcher",
     "reviewer"
   ],
-  "original_skills_bundled_as_opt_in": 3,
+  "original_skills_bundled_as_opt_in": 4,
   "original_skills_in_inventory": 52,
   "original_skills_not_bundled": "Three pinned, exact original ECC v2.2.3 source skills are bundled for selective installation through Toolkit's own Skill Manager/installer with no ECC runtime dependency; the original MIT notice is retained under third_party/ecc-v2.2.3/LICENSE. Ponytail v5.3.2 remains reference-only under third_party/ponytail-v5.3.2. Other external originals remain excluded.",
   "automatic_external_binary_installation": false,
@@ -347,6 +347,9 @@
     "seo-audit": [
       "seo-audit",
       "research-verification"
+    ],
+    "native-windows-desktop-e2e": [
+      "windows-desktop-e2e"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -380,7 +383,8 @@
       "skills": [
         "contract-first",
         "api-connector-builder",
-        "code-tour"
+        "code-tour",
+        "windows-desktop-e2e"
       ],
       "license": "MIT (unmodified source from affaan-m/ECC, pinned v2.2.3; see third_party/ecc-v2.2.3/LICENSE)",
       "auto_install": false,

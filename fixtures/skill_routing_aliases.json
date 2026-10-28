@@ -279,6 +279,10 @@
     "code-tour": [
       "создай codetour тур по файлам строкам исходного кода",
       "пошаговый тур по кодовой базе с привязкой к строкам"
+    ],
+    "windows-desktop-e2e": [
+      "тестирование нативного окна windows wpf winforms через uia pywinauto",
+      "windows native desktop ui automation pywinauto wpf winforms"
     ]
   }
 }

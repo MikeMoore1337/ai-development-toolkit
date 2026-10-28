@@ -31,7 +31,8 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
 
     def test_exact_original_bytes_and_no_extra_bundle(self):
         base = ROOT / "optional-original-skills"
-        self.assertEqual(set(SOURCE_BLOBS), {p.name for p in base.iterdir() if p.is_dir()})
+        self.assertEqual(set(SOURCE_BLOBS) | {"windows-desktop-e2e"},
+                         {p.name for p in base.iterdir() if p.is_dir()})
         for name, expected_blob in SOURCE_BLOBS.items():
             with self.subTest(name=name):
                 directory = base / name
@@ -49,7 +50,7 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
         cfg = self.manifest["extension_packs"]["native-ecc-ports"]
         self.assertFalse(cfg["auto_install"])
         self.assertTrue(cfg["standalone"], "Ported skills must not require external ECC")
-        self.assertEqual(set(SOURCE_BLOBS), set(cfg["skills"]))
+        self.assertEqual(set(SOURCE_BLOBS) | {"windows-desktop-e2e"}, set(cfg["skills"]))
         self.assertEqual("optional-original-skills", cfg["skill_root"])
         paths = skill_sources(self.manifest)
         for name in SOURCE_BLOBS:
