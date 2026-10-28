@@ -1,15 +1,7 @@
 name: Original ECC complete gap catalogue (opt-in)
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - '.github/workflows/ecc-gap-catalog.yml'
-      - 'scripts/ecc_gap_catalog.py'
-      - 'integrations/ecc/catalog_review.json'
-      - 'docs/en/ECC_GAP_CATALOG.md'
-      - 'docs/ru/ECC_GAP_CATALOG.md'
-      - 'tests/test_ecc_gap_catalog.py'
+  # Maintenance/source comparison ONLY. Do not fetch or execute ECC in normal Toolkit CI.
   workflow_dispatch:
 
 permissions:
