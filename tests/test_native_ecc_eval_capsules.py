@@ -44,7 +44,7 @@ class NativeEvalCapsuleTests(unittest.TestCase):
             self.assertFalse(target.is_symlink())
             contents = target.read_bytes()
             git_digest = hashlib.sha1(
-                b"blob " + str(len(contents)).encode("ascii") + b"\\0" + contents
+                b"blob " + str(len(contents)).encode("ascii") + b"\0" + contents
             ).hexdigest()
             self.assertEqual(entry["git_blob"], git_digest, relative)
             self.assertEqual(entry["sha256"], hashlib.sha256(contents).hexdigest())
