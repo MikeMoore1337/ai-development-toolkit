@@ -49,3 +49,38 @@ Removal deletes only the exact marked installation directory after checkout/SHA/
 `status` validates marker, original Git origin, pinned revision, CLI executable and installed Python package. This is a **local installation check**, not a real model benchmark or proof of Codex Desktop activation. For running live benchmarks, follow the [official setup](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md), [benchmarks](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/BENCHMARKS.md) and [experiment safety guidance](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/EXPERIMENTS.md) without bypassing any user policy. Upstream setup downloads its dependencies and some datasets with separate licences. Treat the pinned Git commit as source identity, not a cryptographic publisher signature.
 
 This integration is an **external optional developer tool**, not a new Toolkit skill, evaluation engine or registered Personal MCP tool.
+
+## Complete opt-in native CLI (no model execution)
+
+The installed original CLI is available through a thin Toolkit entry point, which **does not reimplement** any upstream runner, task evaluator or judge. Commands execute in the pinned source directory, not in the Toolkit or an application checkout:
+
+```bash
+bash integrations/harness2/cli.sh status
+bash integrations/harness2/cli.sh setup-preview lab
+# Only after checking upstream dependencies, licences and available disk/network:
+# bash integrations/harness2/cli.sh setup lab --confirm-network-downloads
+bash integrations/harness2/cli.sh check lab
+bash integrations/harness2/cli.sh run-preview lab
+bash integrations/harness2/cli.sh artifacts
+# After a separately authorized genuine judged upstream run exists:
+# bash integrations/harness2/cli.sh report lab
+```
+
+`setup-preview` and `run-preview` invoke the official `--dry-run` flags.
+The explicit `setup` action downloads and executes upstream benchmark dependencies;
+it does **not** invoke a model but can have supply-chain, licence, disk and network
+implications. `check` is upstream's own readiness check; **failure is expected**
+until the benchmark tools, data and authorized model credentials are installed.
+`report` will also correctly fail if there are no original `judged.json` rows.
+`artifacts` lists only original judged file names, not raw logs.
+
+**The bridge never permits `harness2` model runs or `harness2-judge`.** Those
+native upstream entry points remain installed for **other users** who explicitly
+authorize model spending and configure a separate, properly isolated machine.
+The owner's zero-spend and no-Codex/Claude-CLI constraints still prohibit them.
+Codex Desktop cannot be substituted for the upstream Codex CLI substrate.
+
+The independent no-model CI smoke workflow checks a real upstream editable
+installation in an ephemeral Linux runner with no model credentials, official
+CLI help, official setup preview and fail-closed checks. It is **not** proof of
+a configured benchmark, a model result or a Windows WSL2 installation.

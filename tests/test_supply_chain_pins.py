@@ -45,7 +45,7 @@ class SupplyChainPinTests(unittest.TestCase):
             "cisco-mcp-smoke.yml", "episodic-memory-windows.yml",
             "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
             "publish-integration-sources.yml", "release-archive.yml",
-            "validate.yml", "replica-public-parity.yml",
+            "validate.yml", "replica-public-parity.yml", "harness2-upstream.yml",
         }
         self.assertEqual(expected, {path.name for path in paths})
         observed = {}

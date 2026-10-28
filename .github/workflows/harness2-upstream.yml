@@ -1,0 +1,63 @@
+name: Original Harness2 upstream installation smoke (no models)
+
+on:
+  pull_request:
+    paths:
+      - 'integrations/harness2/**'
+      - 'tests/test_harness2_upstream.py'
+      - '.github/workflows/harness2-upstream.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-upstream:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Install only original pinned upstream (without credentials or benchmarks)
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash integrations/harness2/install.sh install
+          bash integrations/harness2/install.sh status
+          bash integrations/harness2/cli.sh status
+      - name: Prove official native commands and fail-closed preview (no model calls)
+        shell: bash
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ''
+          GOOGLE_CLOUD_PROJECT: ''
+          GOOGLE_CLOUD_LOCATION: ''
+        run: |
+          set -euo pipefail
+          bin="$HOME/.local/share/ai-development-toolkit/harness2-1cfe254e8d25b15f37048c3730134686abe60335/.venv/bin"
+          "$bin/harness2" --help > /dev/null
+          "$bin/harness2-judge" --help > /dev/null
+          "$bin/harness2-check" --help > /dev/null
+          "$bin/harness2-report" --help > /dev/null
+          bash integrations/harness2/cli.sh setup-preview lab > "$RUNNER_TEMP/harness2-plan.txt"
+          bash integrations/harness2/cli.sh artifacts
+          if bash integrations/harness2/cli.sh check lab; then
+            echo "Unexpected benchmark readiness without setup/credentials" >&2
+            exit 1
+          fi
+          if bash integrations/harness2/cli.sh setup lab; then
+            echo "Unauthorized setup accepted" >&2
+            exit 1
+          fi
+          if bash integrations/harness2/cli.sh run lab; then
+            echo "Unauthorized model execution accepted" >&2
+            exit 1
+          fi
+          bash integrations/harness2/install.sh remove --confirm
+          if bash integrations/harness2/install.sh status; then
+            echo "Removal failed" >&2
+            exit 1
+          fi
