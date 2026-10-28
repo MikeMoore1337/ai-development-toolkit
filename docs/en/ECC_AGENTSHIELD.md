@@ -4,7 +4,7 @@ This optional GitHub workflow runs the **original** [AgentShield](https://github
 
 ## When it runs
 
-- **On PRs changing this integration:** scans only the deliberately vulnerable **synthetic** fixture at `fixtures/ecc-agentshield/vulnerable/.claude`. Asserts that the original scanner discovers at least one issue and that its redacted evidence pack verifies. This is a real scanner invocation in GitHub Actions, not a mocked unit test.
+- **On PRs changing this integration:** scans only the deliberately vulnerable **synthetic** fixture at `fixtures/ecc-agentshield/vulnerable/.claude`. Asserts that the original scanner discovers at least one issue and that its redacted evidence pack verifies. The same PR also makes a **separate advisory scan of the actual public Toolkit checkout** (SARIF and evidence pack); findings are evidence for human review, not an automatic release gate. These are real original-scanner invocations, not mocked unit tests.
 - **Manually:** Actions → **ECC AgentShield (opt-in)** → Run workflow → `repository` to scan the checked-out Toolkit source or `synthetic` to recheck the fixture. Repository scans are *advisory*: `fail-on-findings=false` while false positives and policy baselines are reviewed. Missing/malformed SARIF and action failures still fail the job.
 - Only `contents: read` is granted; checkout does not persist credentials. The action writes SARIF and an evidence pack under the runner temporary directory and uploads redacted artifacts retained for seven days. It does **not** upload SARIF to Code Scanning, modify repository sources, accept private credentials or activate runtime hooks.
 
@@ -20,5 +20,5 @@ A passing synthetic PR run demonstrates only that this original action runs and 
 
 - `SOURCE_REVIEWED`: official action manifest has `node24` entrypoint and bundled `dist/action.js`; source pin confirmed. This does not mean it ran.
 - `ORIGINAL_SCANNER_SMOKE`: requires a successful **actual workflow job** with numeric nonzero findings for the fixture, SARIF 2.1.0, and verified evidence pack.
-- `REAL_REPOSITORY_SCAN`: separate manual workflow dispatch with explicit scope and reviewed findings.
+- `REAL_REPOSITORY_SCAN`: PR advisory run or separate manual dispatch on the public repo; findings require human triage.
 - `WINDOWS_DESKTOP`: not part of this GitHub integration; never infer live Codex hook/skill activation from Actions.
