@@ -13,3 +13,5 @@ change-impact overlaps Toolkit scripts/qa_change_impact.py; tdd-workflow overlap
 No Codex or Claude CLI, paid API, automatic client installation, resident hooks, session ingestion or production change is authorized. Official targets for other users remain optional with separate consent. Passing a source-only CI is not verified Windows Codex Desktop or Hermes runtime activation. Rollback: remove the optional CI and report generator in a reviewed PR.
 
 To reproduce using trusted local checkouts: python scripts/ecc_gap_catalog.py --ecc-root /isolated/ECC --toolkit-root . --source-revision 25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b --output-dir /tmp/ecc-gap
+
+Manual comparison of original ECC api-design, database-migrations and e2e-testing with the actual Toolkit skills confirms their core functions are ALREADY_PRESENT, with exact analogue paths in the matrix. The upstream --skills windows-desktop-e2e plan expands to FOUR modules (platform-configs, skill-unified-memory, workflow-quality, shared-script-utils); applying this as a single skill therefore remains HOLD_SHARED_MODULES regardless of its initial functional candidacy.
