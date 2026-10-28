@@ -42,7 +42,7 @@ class NativeEvalCapsuleTests(unittest.TestCase):
             target = ROOT / entry["path"]
             self.assertTrue(target.is_file())
             self.assertFalse(target.is_symlink())
-            contents = target.read_bytes()
+            contents = target.read_bytes().replace(b"\r\n", b"\n")
             git_digest = hashlib.sha1(
                 b"blob " + str(len(contents)).encode("ascii") + b"\0" + contents
             ).hexdigest()
