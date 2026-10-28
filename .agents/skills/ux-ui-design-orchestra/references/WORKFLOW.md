@@ -56,3 +56,7 @@ Any of: missing user authorization for target read, no project design source, pr
 ### Minimal example prompt
 
 "В моём открытом проекте используй UX/UI Design Orchestra: проверь мобильный экран X, привлеки Impeccable, доступность и motion по необходимости, подготовь один дизайн-проект с визуальными материалами и планом. Код приложения до моего 'Принимаю' не изменяй."
+
+## User-selected all-three exact-original variant (#449)
+
+For an ordinary new visual design or significant redesign, select the existing Orchestra automatically as before. If the project/user preference explicitly chooses `original_design_skills.mode=ALL_THREE`, check that Impeccable, Taste Skill and UI UX Pro Max are actually available, distribute a single approved project/design brief and run each original. This does **not** mean spawning three separate models: a sequential run is acceptable when the host has no native subagents. Capture truthful invocation receipts through the existing validator's optional ledger. If one invocation is not evidenced, block `AWAITING_VISUAL_APPROVAL`; preserve the already implemented three real composition sketches, desktop/mobile previews, accessibility, owner approval and implementation gates. Default `STANDARD` remains lower-overhead, and no automatic external installation is allowed.

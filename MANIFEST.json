@@ -45,9 +45,15 @@
     "ux-ui-design-orchestra"
   ],
   "profiles": {
-    "native-contract-first": ["contract-first"],
-    "native-api-connectors": ["api-connector-builder"],
-    "native-code-tours": ["code-tour"],
+    "native-contract-first": [
+      "contract-first"
+    ],
+    "native-api-connectors": [
+      "api-connector-builder"
+    ],
+    "native-code-tours": [
+      "code-tour"
+    ],
     "accessibility-qa": [
       "accessibility-testing",
       "test-analysis-design",
@@ -371,7 +377,11 @@
   "extension_packs": {
     "native-ecc-ports": {
       "skill_root": "optional-original-skills",
-      "skills": ["contract-first", "api-connector-builder", "code-tour"],
+      "skills": [
+        "contract-first",
+        "api-connector-builder",
+        "code-tour"
+      ],
       "license": "MIT (unmodified source from affaan-m/ECC, pinned v2.2.3; see third_party/ecc-v2.2.3/LICENSE)",
       "auto_install": false,
       "standalone": true
@@ -620,5 +630,18 @@
     "activation": "best_effort_per_task_read_only",
     "fallback": "BUNDLED_ROUTER",
     "install_upgrade_automatic": false
+  },
+  "design_originals_policy": {
+    "default_mode": "STANDARD",
+    "opt_in_mode": "ALL_THREE",
+    "originals_bundled": false,
+    "expected_original_skill_names": [
+      "impeccable",
+      "design-taste-frontend",
+      "ui-ux-pro-max"
+    ],
+    "native_codex_discovery": "NOT_VERIFIED",
+    "installation": "EXTERNAL_EXPLICIT_PERMISSION",
+    "preference_field": "skills.design_originals"
   }
 }
