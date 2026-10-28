@@ -92,6 +92,14 @@ jobs:
               print("ORIGINAL_ECC_SESSION_ADAPTERS=PASS")
               print("ECC_ADAPTERS=", ",".join(sorted(ids)))
 
+              rejected = subprocess.run(
+                  ["node", str(upstream / "scripts" / "session-inspect.js"),
+                   "synthetic-nonexistent", "--adapter", "unsupported-adapter"],
+                  cwd=root, capture_output=True, text=True, encoding="utf-8",
+                  env=env, timeout=25, check=False)
+              assert rejected.returncode != 0, "unsupported adapter was silently accepted"
+              print("ORIGINAL_ECC_UNSUPPORTED_ADAPTER=REJECTED")
+
               readiness = read("observability-readiness.js", "--format", "json",
                                "--root", str(upstream))
               assert readiness["schema_version"] == "ecc.observability-readiness.v1"
