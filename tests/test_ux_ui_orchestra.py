@@ -53,14 +53,14 @@ class DesignOrchestraTests(unittest.TestCase):
                 root = target / ".agents" / "skills" / name
                 (root / "scripts").mkdir(parents=True)
                 (root / "SKILL.md").write_text(
-                    f"---\\nname: {name}\\ndescription: test\\n---\\n",
+                    f"---\nname: {name}\ndescription: test\n---\n",
                     encoding="utf-8")
             found = checker.inspect_originals(target)
             self.assertTrue(all(row["status"] == "FILES_PRESENT_UNATTESTED"
                                 for row in found))
             self.assertEqual(64, len(found[0]["local_tree_sha256"]))
             (target / ".agents" / "skills" / "ui-ux-pro-max" / "SKILL.md").write_text(
-                "---\\nname: wrong\\n---\\n", encoding="utf-8")
+                "---\nname: wrong\n---\n", encoding="utf-8")
             self.assertEqual("INCOMPLETE", checker.inspect_originals(target)[2]["status"])
 
     def test_valid_read_only_default(self):
