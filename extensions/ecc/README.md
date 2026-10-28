@@ -1,6 +1,6 @@
 # ECC Original Skills - selective, opt-in only
 
-This extension contains **four unmodified original Agent Skills** from [affaan-m/ECC](https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills), pinned at commit `25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (version 2.2.3). Copyright remains with Affaan Mustafa; see [the original MIT notice](LICENSE). The exact original Git blob for each SKILL.md is checked by an offline regression, and any upstream update requires explicit re-review.
+This opt-in integration references **four unmodified original Agent Skills** stored under `optional-original-skills/` from [affaan-m/ECC](https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills), pinned at commit `25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (version 2.2.3). Copyright remains with Affaan Mustafa; see [the original MIT notice](../../third_party/ecc-v2.2.3/LICENSE). The exact original Git blob for each SKILL.md is checked by an offline regression, and any upstream update requires explicit re-review.
 
 | Skill | Actual additional function | Use only for |
 | --- | --- | --- |
@@ -24,6 +24,6 @@ Other profiles: `ecc-contract-first`, `ecc-api-connectors`, `ecc-code-tours`; `e
 
 This is a deliberate *narrow original-source inclusion*: the upstream `install-plan.js --skills windows-desktop-e2e` expands into multiple shared modules, including Memory Vault and platform config. By using Toolkit's **pre-existing** per-skill installer for four MIT-licensed original skill files, none of the extra upstream code/config/hook modules is installed. No new installer or duplicated execution engine has been introduced.
 
-**Rollback:** remove only each explicitly installed `.agents/skills/<name>/` after identifying ownership and local changes, or revert the four source skills plus manifest/provenance in Toolkit. Never delete another project's existing skills automatically.
+**Rollback:** remove only each explicitly installed `.agents/skills/<name>/` after identifying ownership and local changes, or revert the reviewed optional-original-skills and manifest/provenance in Toolkit. Never delete another project's existing skills automatically.
 
 **Scope and evidence:** source integrity and selective installer tests can pass in CI; actual behavior changes, quality improvement, Windows Desktop or Hermes runtime activation and zero-cost provider behavior remain NOT_VERIFIED until real client E2E. No API subscription, Codex CLI, Claude CLI, paid model, resident hook, release or background service is enabled.
