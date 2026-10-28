@@ -19,7 +19,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 | [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) | P2 | Durable, stateful agent framework | Architecture choice only when the task needs durable workflows |
 | [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) | P2 | Agents and flow orchestration framework | LangGraph alternative; not a reusable coding skill |
 | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | P1 | Codebase knowledge graphs | Potential optional CLI for large repositories; graph edges need supporting evidence |
-| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Simple, maintainable code changes | Use minimal-safe-change principles; do not import every-session overrides or hooks |
+| [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) | P1 | Original minimal-coding and quality-review skills | Six unchanged v5.3.2 SKILL.md files are a reference-only, **manual opt-in** snapshot under `third_party/ponytail-v5.3.2/skills/`, without hooks or automatic installation. [Runbook](PONYTAIL_UPSTREAM.md) |
 | [iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir) | P3 | Icon family | Choose one consistent family per project, not four at once |
 | [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Icon family and website | For React use its corresponding package; visual styles can differ |
 | [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Large icon library | Choose only when it fits the existing design system |
@@ -45,7 +45,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 
 ## Licensing and provenance
 
-- Eleven new `SKILL.md` files were original adaptations of principles; external code, hooks, models, binaries and source skill text were not copied.
+- The historic eleven `SKILL.md` files were original adaptations of principles. Separately, #422 explicitly bundles **six unchanged upstream Ponytail v5.3.2 SKILL.md files** with its MIT license and Git-blob checks, but no hooks, binaries or automatic installation.
 - `optional-original-skills` was retained unchanged from v2. Licenses of those source snapshots were not re-verified; **do not publicly redistribute without a rights audit**.
 - External projects were reviewed through their README files, not a complete code audit, and were not installed. A GitHub license label does not replace checking terms before importing material.
 - The `WorldFlowAI/everything-claude-code` README includes instructions referring to `affaan-m/...`; do not assume that fork is the canonical upstream without checking ownership/history.

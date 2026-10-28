@@ -77,6 +77,8 @@ def skill_dirs(root: Path, manifest: dict) -> set[str]:
     roots = [manifest["skill_root"]] + [
         config["skill_root"] for config in manifest.get("extension_packs", {}).values()
     ]
+    if manifest.get("original_skills_bundled_as_opt_in", 0):
+        roots.append("optional-original-skills")
     for location in roots:
         base = safe_path(root, location)
         if base is None or not base.is_dir():
@@ -186,6 +188,56 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         if not isinstance(classifications, dict) or set(classifications) != set(approved):
             fail("OWNER_CLASSIFICATION", "approved_metadata must match approved component paths")
             classifications = {}
+    # Extra owner-authorized external snapshots are separate from the frozen
+    # historical owner_review_record. Each new approved path is exact-file pinned.
+    additional = data.get("additional_owner_reviews", [])
+    external_approved: dict[str, dict] = {}
+    if not isinstance(additional, list):
+        fail("EXTERNAL_REVIEW", "additional_owner_reviews must be an array")
+        additional = []
+    for index, review in enumerate(additional):
+        if not isinstance(review, dict):
+            fail("EXTERNAL_REVIEW", f"review[{index}]: invalid object")
+            continue
+        meta = review.get("approved_metadata")
+        parts = review.get("approved_components")
+        valid = (
+            isinstance(review.get("id"), str)
+            and re.fullmatch(r"[a-zA-Z0-9_-]+", review["id"])
+            and review.get("source") == "owner_reported"
+            and review.get("review_outcomes") == "permitted"
+            and isinstance(review.get("scope_issue"), str)
+            and re.fullmatch(r"#[0-9]+", review["scope_issue"])
+            and isinstance(review.get("source_revision"), str)
+            and SHA.fullmatch(review["source_revision"])
+            and review.get("license") not in {"NOASSERTION", "NONE"}
+            and isinstance(review.get("license"), str)
+            and SPDX.fullmatch(review["license"])
+            and isinstance(parts, dict) and bool(parts)
+            and isinstance(meta, dict) and set(parts) == set(meta)
+        )
+        if not valid:
+            fail("EXTERNAL_REVIEW", f"review[{index}]: invalid scope, rights or provenance")
+            continue
+        for path, files in parts.items():
+            if (not isinstance(path, str)
+                    or not path.startswith(("optional-original-skills/", "third_party/"))
+                    or path in approved or path in external_approved
+                    or not isinstance(files, dict) or not files
+                    or any(not isinstance(name, str)
+                           or (name != path and not name.startswith(path + "/"))
+                           or not isinstance(digest, str)
+                           or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+                           for name, digest in files.items())
+                    or not isinstance(meta[path], dict)):
+                fail("EXTERNAL_REVIEW", f"review[{index}]: invalid or overlapping path: {path}")
+                continue
+            external_approved[path] = {
+                "id": review["id"], "license": review["license"],
+                "source_revision": review["source_revision"],
+                "snapshots": files, "metadata": meta[path],
+            }
+
     records = data["components"]
     covered: set[str] = set()
     skill_records: set[str] = set()
@@ -291,22 +343,30 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         # Freeze the exact reviewed file bytes to prevent the approval from
         # silently applying to later substitutions or new files.
         # An existing approval cannot be bypassed by changing origin/status.
-        locked = (raw_path in approved or "owner_approval_id" in item
-                  or requires_owner_review(raw_path))
+        external = external_approved.get(raw_path)
+        locked = (raw_path in approved or external is not None
+                  or "owner_approval_id" in item or requires_owner_review(raw_path))
         needs_approval = (locked or (item["distribution"] == "included"
                           and isinstance(item["origin"], str) and item["origin"] in {"adapted", "redistributed", "unknown"}))
         if needs_approval:
-            if not isinstance(approvals, dict) or item.get("owner_approval_id") != approvals.get("id"):
+            legacy = raw_path in approved
+            expected_owner_id = (approvals.get("id") if isinstance(approvals, dict)
+                                 else None) if legacy else external["id"] if external else None
+            if not expected_owner_id or item.get("owner_approval_id") != expected_owner_id:
                 fail("OWNER_APPROVAL", f"{label}: explicit matching owner review required")
-            if raw_path in approved:
-                frozen = classifications.get(raw_path)
+            if legacy or external:
+                frozen = classifications.get(raw_path) if legacy else external["metadata"]
                 fields = ("origin", "license", "status", "distribution", "kind")
                 if (not isinstance(frozen, dict) or
                         any(item.get(field) != frozen.get(field) for field in fields)):
                     fail("OWNER_CLASSIFICATION", f"{label}: reviewed metadata changed")
+                if external and (item.get("license") != external["license"]
+                                 or item.get("source_revision") != external["source_revision"]
+                                 or item.get("origin") != "redistributed"):
+                    fail("EXTERNAL_REVIEW", f"{label}: source/license/origin differs from approval")
             elif locked:
                 fail("OWNER_SCOPE", f"{label}: approval reference has no matching reviewed path")
-            snapshots = approved.get(raw_path)
+            snapshots = approved.get(raw_path) if legacy else external["snapshots"] if external else None
             if not isinstance(snapshots, dict) or not snapshots:
                 fail("OWNER_SCOPE", f"{label}: owner approval must pin every distributed file")
             else:
@@ -359,7 +419,7 @@ def validate(root: Path = ROOT, mode: str = "inventory") -> dict:
         if mode == "release" and (item["distribution"] != "included"
                                   or (isinstance(item["status"], str) and item["status"] in {"restricted", "unknown", "requires_owner_review"})):
             fail("RELEASE_BLOCKED", f"{label}: {item['status']}/{item['distribution']}")
-    for path in sorted(approved):
+    for path in sorted(set(approved) | set(external_approved)):
         if path not in declared_paths:
             fail("OWNER_SCOPE", f"approval references unknown component: {path}")
     # A release archive must be link-free even if the link is nested inside
