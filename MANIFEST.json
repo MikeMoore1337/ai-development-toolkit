@@ -621,6 +621,7 @@
       "ui-ux-pro-max"
     ],
     "native_codex_discovery": "NOT_VERIFIED",
-    "installation": "EXTERNAL_EXPLICIT_PERMISSION"
+    "installation": "EXTERNAL_EXPLICIT_PERMISSION",
+    "preference_field": "skills.design_originals"
   }
 }
