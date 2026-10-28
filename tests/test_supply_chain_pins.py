@@ -49,7 +49,7 @@ class SupplyChainPinTests(unittest.TestCase):
             "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
             "publish-integration-sources.yml", "release-archive.yml",
             "validate.yml", "replica-public-parity.yml", "harness2-upstream.yml",
-            "ecc-agentshield.yml", "ecc-memory-vault.yml",
+            "ecc-agentshield.yml", "ecc-memory-vault.yml", "ecc-observability.yml",
         }
         self.assertEqual(expected, {path.name for path in paths})
         observed = {}
