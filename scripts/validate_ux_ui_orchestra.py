@@ -55,7 +55,7 @@ def inspect_originals(project: Path) -> list[dict]:
             digest = hashlib.sha256()
             for file in paths:
                 if file.is_file():
-                    digest.update(file.relative_to(root).as_posix().encode() + b"\\0")
+                    digest.update(file.relative_to(root).as_posix().encode() + b"\0")
                     digest.update(hashlib.sha256(file.read_bytes()).digest())
             result.append({"name": name, "status": "FILES_PRESENT_UNATTESTED",
                            "local_tree_sha256": digest.hexdigest()})
