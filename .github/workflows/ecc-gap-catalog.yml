@@ -102,6 +102,10 @@ jobs:
               assert plan["selectedModuleIds"], "empty original plan"
               print("ECC_ORIGINAL_SELECTIVE_PLAN=PASS")
               print("SELECTED_MODULES=", plan["selectedModuleIds"])
+              if len(plan["selectedModuleIds"]) > 1:
+                  print("ECC_SINGLE_SKILL_INSTALL=HOLD_SHARED_MODULES")
+              else:
+                  print("ECC_SINGLE_SKILL_INSTALL=REQUIRES_MANUAL_OPERATION_REVIEW")
               # A plan is not a permission to run the official mutating installer.
               assert not (Path(temp)/"codex").exists(), "dry-run created user config"
               print("ECC_NO_HOST_MUTATION=PASS")
