@@ -69,6 +69,55 @@ def measure(root: Path, manifest: dict, profile: str | None = None) -> dict:
 
 
 
+def preview_metadata_budget(root: Path, manifest: dict, profile: str,
+                            budget_bytes: int) -> dict:
+    """Read-only source-frontmatter byte budget; NEVER host context tokens."""
+    if type(budget_bytes) is not int or not 1 <= budget_bytes <= 1_000_000:
+        raise ValueError("metadata budget must be an integer from 1 to 1000000 bytes")
+    profiles = manifest.get("profiles")
+    if not isinstance(profiles, dict) or profile not in profiles:
+        raise ValueError("Unknown profile for budget preview")
+    declared = profiles[profile]
+    if not isinstance(declared, list) or len(set(declared)) != len(declared):
+        raise ValueError("Invalid profile skill list")
+    sources = skill_paths(root, manifest)
+    details = []
+    total = 0
+    for name in declared:
+        if name not in sources:
+            raise ValueError("Unknown skill in profile: " + name)
+        folder = sources[name]
+        file = folder / "SKILL.md"
+        if folder.is_symlink() or folder.is_junction() or file.is_symlink():
+            raise ValueError("Linked skill source is not measurable")
+        if not file.is_file() or file.stat().st_size > 256 * 1024:
+            raise ValueError("Missing or oversized skill source")
+        body = file.read_bytes()
+        lines = body.splitlines(keepends=True)
+        if not lines or lines[0].strip() != b"---":
+            raise ValueError("Missing YAML metadata boundary")
+        closes = [i for i, line in enumerate(lines[1:], 1) if line.strip() == b"---"]
+        if not closes:
+            raise ValueError("Unclosed YAML metadata boundary")
+        size = sum(len(line) for line in lines[:closes[0] + 1])
+        details.append({"skill": name, "metadata_bytes": size})
+        total += size
+    return {
+        "profile": profile,
+        "budget_bytes": budget_bytes,
+        "eager_metadata_bytes": total,
+        "within_budget": total <= budget_bytes,
+        "over_budget_bytes": max(0, total - budget_bytes),
+        "skill_metadata": details,
+        "source_metric": "UTF-8 bytes of YAML skill frontmatter only",
+        "tokens": "NOT_MEASURED",
+        "host_context": "NOT_OBSERVED",
+        "activation": "NOT_VERIFIED",
+        "applied": False,
+        "automatic_pruning": False,
+    }
+
+
 def audit_exact_sources(root: Path, manifest: dict) -> dict:
     """Detect exact source equality and near-identical profile memberships.
 
@@ -247,6 +296,7 @@ def audit_directives(root: Path, manifest: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--profile", help="One manifest profile; default all")
+    parser.add_argument("--metadata-budget-bytes", type=int, help="Read-only metadata frontmatter budget (requires --profile); not model tokens")
     parser.add_argument("--audit-duplicates", action="store_true",
                         help="Include exact-source and high-overlap diagnostics")
     parser.add_argument("--audit-directives", action="store_true",
@@ -255,6 +305,12 @@ def main() -> int:
     try:
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         report = measure(ROOT, manifest, args.profile)
+        if args.metadata_budget_bytes is not None:
+            if args.profile is None:
+                raise ValueError("--metadata-budget-bytes requires --profile")
+            report["metadata_budget_preview"] = preview_metadata_budget(
+                ROOT, manifest, args.profile, args.metadata_budget_bytes
+            )
         if args.audit_duplicates:
             report["source_overlap_audit"] = audit_exact_sources(ROOT, manifest)
         if args.audit_directives:
