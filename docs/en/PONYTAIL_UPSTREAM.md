@@ -19,6 +19,12 @@ This copy is **not auto-installed**, is not part of any default Toolkit profile,
 
 For the **full** plugin (not the skill-only fallback), follow upstream [INSTALL.md](https://github.com/DietrichGebert/ponytail/blob/v5.3.2/INSTALL.md), which documents Codex marketplace commands and lifecycle hooks. This change did **not** execute Codex CLI, Claude CLI, plugin installation, hooks, paid APIs or live model calls. Skill-only copying does not provide automatic session injection or guaranteed mode persistence.
 
+### Preferred: original native Codex Desktop plugin
+
+Toolkit now offers the original Ponytail v5.3.2 pinned at commit `16352ac229eb08a9598dcae48fe9f2b342567d86` as `AVAILABLE` in its **existing local Codex plugin marketplace** at `.agents/plugins/marketplace.json`. This points to the unchanged original upstream repository; no fork or rewritten skills.
+
+In **Codex Desktop**, open Plugins, select **AI Development Toolkit (local)**, choose **ponytail** and use the native install flow. Review consent for lifecycle hooks. Do not install the skill-only copy below at the same time (duplicate discovery). This requires confirmation in the actual desktop client and is `HOST_NOT_VERIFIED`; it was **not installed remotely**. No Codex CLI or paid model API is needed. If the local marketplace is not visible in that client, use the safe skill-only fallback below.
+
 ## Toolkit-assisted Codex Desktop setup (no Codex CLI)
 
 From an up-to-date Toolkit checkout, run in Windows PowerShell:
