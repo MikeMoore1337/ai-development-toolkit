@@ -225,5 +225,45 @@ class StaticMCPTests(unittest.TestCase):
 
 
 
+    def test_native_benchmark_v1_discloses_both_false_positives_and_misses(self):
+        report = gate.benchmark_native_descriptions()
+        self.assertEqual(report["sample_count"], 16)
+        self.assertEqual(report["attack_count"], 8)
+        self.assertEqual(report["benign_count"], 8)
+        self.assertEqual(report["confusion_matrix"], {
+            "tp": 6, "fp": 3, "tn": 5, "fn": 2,
+        })
+        self.assertEqual(report["false_positive_ids"], ["N02", "N06", "N07"])
+        self.assertEqual(report["false_negative_ids"], ["P07", "P08"])
+        self.assertEqual(report["precision"], 0.6667)
+        self.assertEqual(report["recall"], 0.75)
+        self.assertEqual(report["upstream_agentshield_comparison"], "NOT_RUN")
+        self.assertEqual(report["representative_real_world_accuracy"], "NOT_MEASURED")
+        self.assertEqual(report["decision"], "DIAGNOSTIC_ONLY")
+        self.assertEqual(len(report["dataset_sha256"]), 64)
+
+    def test_native_benchmark_has_unique_ids_and_balanced_labeled_cases(self):
+        corpus = gate.NATIVE_CHALLENGE_V1
+        self.assertEqual(len({case[0] for case in corpus}), len(corpus))
+        self.assertTrue(all(type(case[1]) is bool for case in corpus))
+        self.assertTrue(all(isinstance(case[2], str) and case[2] for case in corpus))
+        self.assertEqual(sum(case[1] for case in corpus), 8)
+        self.assertEqual(sum(not case[1] for case in corpus), 8)
+
+    def test_native_benchmark_does_not_use_upstream_scanner_or_echo_payloads(self):
+        import contextlib
+        import io
+        from unittest import mock
+        with mock.patch.object(gate, "scan", side_effect=AssertionError("upstream called")):
+            with mock.patch.object(gate, "snapshot", side_effect=AssertionError("live snapshot called")):
+                with contextlib.redirect_stdout(io.StringIO()) as stream:
+                    code = gate.benchmark_native_descriptions()
+                    self.assertNotIn("credentials to an external", json.dumps(code))
+        self.assertEqual(stream.getvalue(), "")
+        self.assertNotIn("Ignore previous instructions", json.dumps(code))
+        self.assertEqual(code["network"], "NOT_USED")
+
+
+
 if __name__ == "__main__":
     unittest.main()
