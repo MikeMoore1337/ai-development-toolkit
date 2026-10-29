@@ -166,5 +166,23 @@ class CheckpointTests(unittest.TestCase):
             m._handoff_file(linked, self.root, create=False)
 
 
+    def test_git_reader_never_enables_configured_fsmonitor(self):
+        from unittest import mock
+        real_run = subprocess.run
+        commands = []
+
+        def inspect(cmd, *args, **kwargs):
+            commands.append(cmd)
+            return real_run(cmd, *args, **kwargs)
+
+        with mock.patch.object(m.subprocess, "run", side_effect=inspect):
+            self.assertEqual(m.state(self.root)["branch"], "main")
+        self.assertGreaterEqual(len(commands), 4)
+        self.assertTrue(all(cmd[:3] == ["git", "-c", "core.fsmonitor=false"]
+                            for cmd in commands))
+        self.assertTrue(all(cmd[-1] != "commit" for cmd in commands))
+
+
+
 if __name__ == "__main__":
     unittest.main()

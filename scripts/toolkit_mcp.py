@@ -11,6 +11,7 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -133,6 +134,13 @@ def _tool_defs() -> list[dict]:
                                         "skills": {"type": "array", "items": string("Skill name"), "minItems": 1, "maxItems": 10},
                                         "layout": {"type": "string", "enum": ["codex", "claude"]}},
                          "required": ["project", "skills", "layout"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_observe_project",
+         "description": "Opt-in read-only local Git/worktree diagnostics. No transcript, agent or client runtime claims.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Existing absolute Git repository root"),
+             "client": {"type": "string", "enum": ["codex", "claude-code", "hermes"]}},
+             "required": ["project", "client"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_status", "description": "Read Skill Manager ownership status in an existing project, without writes.",
          "inputSchema": {"type": "object",
@@ -257,6 +265,53 @@ def _adaptive_advice(request: object, consent: object | None = None) -> dict:
     return advisor.authorize(request, consent) if consent is not None else advisor.advise(request)
 
 
+def _observe_project(repo: Path, client: object) -> dict:
+    """Strict local Git metadata only, never inspect session transcript/AI host."""
+    if not isinstance(client, str) or client not in ("codex", "claude-code", "hermes"):
+        raise ValueError("Unsupported observer client")
+    path = ROOT / "scripts" / "session_handoff_checkpoint.py"
+    spec = importlib.util.spec_from_file_location("_adt_native_observe_git", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Git observer source unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        actual_root = Path(module._git(repo, "rev-parse", "--show-toplevel")).resolve()
+        if actual_root != repo.resolve():
+            raise ValueError("Observer requires explicit repository root")
+        state = module.state(repo)
+        worktrees = module._git(repo, "worktree", "list", "--porcelain")
+        count = sum(line.startswith("worktree ") for line in worktrees.splitlines())
+        if not 1 <= count <= 128:
+            raise ValueError("Unrecognized worktree count")
+    except (OSError, ValueError, subprocess.CalledProcessError,
+            subprocess.TimeoutExpired):
+        raise ValueError("Local Git metadata unavailable or unsafe") from None
+    return {
+        "schema_version": 1,
+        "source": "TOOLKIT_LOCAL_GIT_METADATA",
+        "project": {
+            "repo_id": state["repo_id"],
+            "branch": state["branch"],
+            "commit": state["commit"],
+            "tracked_status_sha256": state["status_sha256"],
+            "tracked_dirty": state["dirty"],
+            "worktree_count": count,
+        },
+        "client": client,
+        "session_adapter": "NOT_CONNECTED",
+        "session_active": "NOT_OBSERVED",
+        "L4_discovery": "NOT_VERIFIED",
+        "L5_invocation": "NOT_VERIFIED",
+        "L6_effectiveness": "NOT_MEASURED",
+        "runtime_enforcement": "NOT_VERIFIED",
+        "execution": "NOT_RUN",
+        "network": "NOT_USED",
+        "authorization": "NOT_GRANTED",
+        "status": "LOCAL_SOURCE_ONLY",
+    }
+
+
 def invoke(tool: str, args: dict) -> dict:
     if not isinstance(args, dict):
         raise ValueError("Tool arguments must be an object")
@@ -282,6 +337,10 @@ def invoke(tool: str, args: dict) -> dict:
                                     confirmed_for_this_call=args["confirmed_for_this_call"])
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
+    if tool == "toolkit_observe_project":
+        if set(args) != {"project", "client"}:
+            raise ValueError("Observer requires only project and client")
+        return _observe_project(_project(args["project"]), args["client"])
     if tool == "toolkit_catalog":
         return catalog()
     if tool == "toolkit_assess_skill_coverage":
