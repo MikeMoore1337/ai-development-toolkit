@@ -49,11 +49,19 @@ case "$action" in
     ;;
   artifacts)
     [[ $# == 0 ]] || fail 'artifacts takes no parameters'
-    [[ ! -L "$SRC/runs" ]] || fail 'linked upstream results directory'
-    printf 'HARNESS2_RUNS_ROOT=%s\n' "$SRC/runs"
-    [[ -d "$SRC/runs" ]] || { printf 'HARNESS2_ARTIFACTS=NOT_PRESENT\n'; exit 0; }
-    # Only names of original upstream reports, no raw logs, notes, or traces.
-    find -P "$SRC/runs" -type f -name 'judged.json' -print | sort
+    # Use the upstream's actual configured runs root, including HARNESS2_RUNS_DIR.
+    # Never read model logs, credentials or raw outputs; enumerate report filenames.
+    runs_root="$("$BIN/python" -c 'from harness2 import config; print(config.RUNS)')"
+    [[ "$runs_root" == "$HOME/"* ]] || fail 'upstream runs root must be inside user home'
+    [[ "$runs_root" != "$HOME" && "$runs_root" != "$SRC" ]] || fail 'unsafe runs root'
+    if [[ -n "${HARNESS2_RUNS_DIR:-}" && -L "$HARNESS2_RUNS_DIR" ]]; then
+      fail 'linked custom runs root'
+    fi
+    [[ ! -L "$runs_root" ]] || fail 'linked upstream runs root'
+    printf 'HARNESS2_RUNS_ROOT=%s\n' "$runs_root"
+    [[ -d "$runs_root" ]] || { printf 'HARNESS2_ARTIFACTS=NOT_PRESENT\n'; exit 0; }
+    # Only report filenames. Do not traverse symlinks to private files.
+    find -P "$runs_root" -type f -name 'judged.json' -print | sort
     ;;
   setup)
     [[ $# == 2 && "$2" == --confirm-network-downloads ]] || fail 'setup requires BENCH --confirm-network-downloads'
