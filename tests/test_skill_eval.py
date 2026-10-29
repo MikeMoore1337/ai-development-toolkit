@@ -3,11 +3,14 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("skill_eval", ROOT / "scripts" / "skill_eval.py")
@@ -95,6 +98,94 @@ class SkillEvalsTests(unittest.TestCase):
         )
         self.assertEqual(0, proc.returncode, proc.stderr)
         self.assertEqual(2, json.loads(proc.stdout)["pairs"])
+
+    def _make_native_receipts(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("Node runtime missing; native receipt E2E NOT_VERIFIED")
+        script = """
+const fs = require('node:fs');
+const path = require('node:path');
+const h = require(process.argv[1]);
+const root = process.argv[2];
+const file = process.argv[3];
+const key = process.argv[4];
+const dir = path.join(root, 'capsules', key);
+const receiptPath = path.join(root, 'receipts', key + '.json');
+const clock = () => new Date('2026-10-28T00:00:00.000Z');
+const c = h.capsule.Capsule.create(dir, {
+  run_id:'run-' + key, capsule_id:'cap-' + key,
+  harness_version:'toolkit/1', task_family:'paired', clock
+});
+c.append('attempt', 'recorded', {task_id:key, status:'submitted'});
+const receipt = h.receipt.buildReceipt(dir, {artifact_path:file, clock});
+h.receipt.writeReceipt(receipt, receiptPath);
+"""
+        lib = ROOT / "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness"
+        for rec in self.data["runs"]:
+            key = f"{rec['task_id']}-{rec['variant']}"
+            file = str(self.root / rec["evidence"][0])
+            proc = subprocess.run(
+                [node, "-e", script, str(lib), str(self.root), file, key],
+                cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
+                timeout=15, check=False,
+            )
+            self.assertEqual(0, proc.returncode, proc.stderr[-700:])
+            rec["native_receipt"] = {
+                "receipt": f"receipts/{key}.json",
+                "capsule_dir": f"capsules/{key}",
+                "artifact": rec["evidence"][0],
+            }
+
+    def test_native_receipts_require_explicit_opt_in(self):
+        self.data["runs"][0]["native_receipt"] = {
+            "receipt": "some.json", "capsule_dir": "some", "artifact": "a.txt",
+        }
+        with self.assertRaisesRegex(module.EvalInputError, "--verify-native-receipts"):
+            module.evaluate(self.data, self.root)
+
+    def test_native_receipts_integrate_with_real_offline_verifier(self):
+        self._make_native_receipts()
+        with mock.patch.dict(os.environ, {"NODE_OPTIONS": "--require /definitely-not-installed"}):
+            out = module.evaluate(self.data, self.root, verify_native_receipts=True)
+        self.assertEqual(4, out["native_receipts_verified"])
+        self.assertEqual("OFFLINE_VERIFIED_NOT_OUTCOME", out["native_evidence_integrity"])
+        self.assertTrue(out["independent_review_required"])
+        self.assertEqual("exploratory", out["classification"])
+        self.assertIn("self-reported", out["note"])
+        file = self.root / self.data["runs"][0]["evidence"][0]
+        file.write_text("changed evidence after receipt", encoding="utf-8")
+        with self.assertRaisesRegex(module.EvalInputError, "integrity check failed"):
+            module.evaluate(self.data, self.root, verify_native_receipts=True)
+
+    def test_native_receipt_cli_requires_complete_binding(self):
+        self._make_native_receipts()
+        source = self.root / "runs.json"
+        source.write_text(json.dumps(self.data), encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/skill_eval.py"),
+             str(source), "--verify-native-receipts"],
+            capture_output=True, text=True, encoding="utf-8", timeout=90,
+            check=False,
+        )
+        self.assertEqual(0, proc.returncode, proc.stderr[-1000:])
+        self.assertEqual(4, json.loads(proc.stdout)["native_receipts_verified"])
+        self.data["runs"][0]["native_receipt"].pop("artifact")
+        with self.assertRaisesRegex(module.EvalInputError, "binding required"):
+            module.evaluate(self.data, self.root, verify_native_receipts=True)
+
+    def test_native_receipt_escape_and_missing_runtime_fail_closed(self):
+        self._make_native_receipts()
+        for value in ("../../outside.json", "C:/outside.json", "capsules\\\\bad.json"):
+            rec = self.data["runs"][0]["native_receipt"]
+            original = rec["receipt"]
+            rec["receipt"] = value
+            with self.assertRaisesRegex(module.EvalInputError, "unsafe native receipt path"):
+                module.evaluate(self.data, self.root, verify_native_receipts=True)
+            rec["receipt"] = original
+        with mock.patch.object(module.shutil, "which", return_value=None):
+            with self.assertRaisesRegex(module.EvalInputError, "Node.js required"):
+                module.evaluate(self.data, self.root, verify_native_receipts=True)
 
     def test_missing_pin_is_rejected(self):
         del self.data["repository_sha"]
