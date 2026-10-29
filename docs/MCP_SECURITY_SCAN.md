@@ -75,3 +75,16 @@ This flag uses the existing static declaration `snapshot()` and a small Toolkit-
 `PASS` means **no match among these limited heuristic patterns**, not that a tool or implementation is secure. `REVIEW_REQUIRED` covers collector domains; `BLOCKED` covers injection-like findings or invalid data. Existing Cisco `--scope` behavior without `--native` is unchanged, remains optional and provides independent YARA/schema checks. No real model/tool poisoning adversarial trial, client-side enforcement, production activation or measured AgentShield parity is claimed.
 
 Comparison source: [AgentShield pinned `b0891303bdcd6037376a94263d45cfd2ff3dfb98`](https://github.com/affaan-m/agentshield/tree/b0891303bdcd6037376a94263d45cfd2ff3dfb98) (MIT). Toolkit code is original and does not copy AgentShield modules. Rollback is a normal revision revert; no client configuration changes.
+
+### Reproducible synthetic benchmark (#432)
+
+Run the **diagnostic-only** 16-case bilingual labeled challenge set:
+
+\`\`\`sh
+python scripts/cisco_mcp_gate.py --benchmark-native
+python -m unittest tests.test_cisco_mcp_gate -v
+\`\`\`
+
+The JSON contains a stable SHA-256 of the 8 attack-like and 8 benign synthetic descriptions, confusion matrix (\`tp\`, \`fp\`, \`tn\`, \`fn\`), precision and recall, and case IDs for false positives and missed attacks. \`REVIEW_REQUIRED\` counts as an alert, not a confirmed exploit. No case contents, secret-like strings or session data are emitted; no Cisco, AgentShield, model, network or MCP server is run. The command returns zero for a **completed diagnostic** even if the scanner misses attacks; it is *not* a security-release gate.
+
+Initial native rule baseline deliberately exposes both missed instruction variants and false alarms on explanatory or negated language; do **not** claim 100% precision, production-world accuracy, or superiority over AgentShield. \`upstream_agentshield_comparison=NOT_RUN\` means no head-to-head comparison was executed. This synthetic score is suitable for detecting regressions under future rule changes, not an estimate of unseen real-world attacks. Separate pinned upstream comparison, representative independent holdouts and real client enforcement remain open under #432.
