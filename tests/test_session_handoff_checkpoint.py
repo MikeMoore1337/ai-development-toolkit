@@ -21,6 +21,7 @@ class CheckpointTests(unittest.TestCase):
         def git(*args):
             subprocess.run(["git", "-C", str(self.root), *args], check=True, capture_output=True)
         git("init", "-b", "main")
+        git("remote", "add", "origin", "https://github.com/MikeMoore1337/ai-development-toolkit.git")
         git("-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "--allow-empty", "-m", "baseline")
 
     def test_round_trip(self):
@@ -66,6 +67,18 @@ class CheckpointTests(unittest.TestCase):
         self.assertNotIn(str(self.root), str(packet))
         self.assertEqual(set(packet), m.HANDOFF_FIELDS)
         self.assertNotIn("summary", packet)
+
+    def test_native_handoff_origin_mismatch_and_missing_origin(self):
+        packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        subprocess.run(["git", "-C", str(self.root), "remote", "set-url", "origin",
+                        "https://github.com/Other/repo.git"], check=True, capture_output=True)
+        self.assertEqual(m.verify_handoff(self.root, packet, "hermes")["reason"], "PROJECT_MISMATCH")
+        with self.assertRaises(ValueError):
+            m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        subprocess.run(["git", "-C", str(self.root), "remote", "remove", "origin"],
+                       check=True, capture_output=True)
+        with self.assertRaises(ValueError):
+            m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
 
     def test_native_handoff_wrong_recipient(self):
         packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "CHECK_CI")
