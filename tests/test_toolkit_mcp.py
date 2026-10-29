@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -529,6 +530,45 @@ class ToolkitMcpTests(unittest.TestCase):
         })
         self.assertEqual(tool["inputSchema"]["properties"]["references"]["maxItems"], 8)
         self.assertIn("CHECK_CI", tool["inputSchema"]["properties"]["next_action"]["enum"])
+
+
+    def test_portable_handoff_mcp_declared_read_only(self):
+        entry = next(t for t in self._tools() if t["name"] == "toolkit_verify_portable_handoff")
+        self.assertTrue(entry["annotations"]["readOnlyHint"])
+        self.assertFalse(entry["inputSchema"]["additionalProperties"])
+        self.assertEqual(set(entry["inputSchema"]["required"]), {"project", "file", "to_client"})
+
+    def test_portable_handoff_mcp_requires_review_in_cloned_project(self):
+        folder, issue, packet_path = self._handoff_fixture()
+        clone = self.project.parent / "portable-git"
+        shutil.copytree(self.project, clone)
+        strict = self._invoke("toolkit_verify_handoff", project=str(clone),
+                              file=str(packet_path), to_client="hermes")
+        self.assertEqual(strict["result"]["structuredContent"]["reason"], "repo_id")
+        reply = self._invoke("toolkit_verify_portable_handoff", project=str(clone),
+                             file=str(packet_path), to_client="hermes")
+        self.assertFalse(reply["result"].get("isError", False), reply)
+        data = reply["result"]["structuredContent"]
+        self.assertEqual(data["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(data["git_check"], "MATCHED_PORTABLE")
+        self.assertEqual(data["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(data["sender_identity"], "NOT_VERIFIED")
+        self.assertEqual(data["references"], ["https://github.com/example/team-repo/pull/12"])
+        self.assertNotIn(str(clone), json.dumps(data))
+        self.assertFalse((clone / ".adt").exists())
+        self.assertTrue(packet_path.is_file())
+
+    def test_portable_handoff_mcp_rejects_tamper_and_extra_args(self):
+        folder, issue, packet_path = self._handoff_fixture()
+        invalid = self._invoke("toolkit_verify_portable_handoff", project=str(self.project),
+                               file=str(packet_path), to_client="hermes", accept_all=True)
+        self.assertTrue(invalid["result"]["isError"])
+        data = json.loads(packet_path.read_text(encoding="utf-8"))
+        packet_path.write_text(json.dumps({**data, "owner_approval": "GRANTED"}), encoding="utf-8")
+        outcome = self._invoke("toolkit_verify_portable_handoff", project=str(self.project),
+                               file=str(packet_path), to_client="hermes")
+        self.assertEqual(outcome["result"]["structuredContent"]["decision"], "BLOCKED")
+        self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(outcome))
 
 
 if __name__ == "__main__":
