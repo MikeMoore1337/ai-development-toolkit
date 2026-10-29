@@ -240,5 +240,74 @@ class ToolkitMcpTests(unittest.TestCase):
                 self.assertIn("--client claude", text)
                 self.assertIn("Python 3.12", text)
 
+
+    def _init_observer_git(self):
+        subprocess.run(["git", "-C", str(self.project), "init", "-q", "-b", "main"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "--allow-empty", "-m", "initial"],
+                       check=True, capture_output=True)
+
+    def test_observer_mcp_reports_real_git_only_not_live_client(self):
+        self._init_observer_git()
+        response = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="codex")
+        self.assertFalse(response["result"].get("isError", False), response)
+        data = response["result"]["structuredContent"]
+        self.assertEqual(data["status"], "LOCAL_SOURCE_ONLY")
+        self.assertEqual(data["source"], "TOOLKIT_LOCAL_GIT_METADATA")
+        self.assertEqual(data["project"]["branch"], "main")
+        self.assertEqual(data["project"]["worktree_count"], 1)
+        self.assertFalse(data["project"]["tracked_dirty"])
+        self.assertEqual(len(data["project"]["repo_id"]), 64)
+        self.assertEqual(len(data["project"]["tracked_status_sha256"]), 64)
+        self.assertEqual(len(data["project"]["commit"]), 40)
+        self.assertEqual(data["session_active"], "NOT_OBSERVED")
+        self.assertEqual(data["L4_discovery"], "NOT_VERIFIED")
+        self.assertEqual(data["L5_invocation"], "NOT_VERIFIED")
+        self.assertEqual(data["L6_effectiveness"], "NOT_MEASURED")
+        self.assertEqual(data["authorization"], "NOT_GRANTED")
+        self.assertEqual(data["execution"], "NOT_RUN")
+        self.assertNotIn(str(self.project), json.dumps(data))
+        self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(data))
+        self.assertFalse((self.project / ".adt").exists())
+        tool = next(x for x in self._tools() if x["name"] == "toolkit_observe_project")
+        self.assertTrue(tool["annotations"]["readOnlyHint"])
+
+    def test_observer_git_dirty_state_and_worktree_count_observed(self):
+        self._init_observer_git()
+        original = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="hermes")["result"]["structuredContent"]
+        subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
+                       check=True, capture_output=True)
+        second = self._invoke("toolkit_observe_project",
+                              project=str(self.project), client="hermes")["result"]["structuredContent"]
+        self.assertTrue(second["project"]["tracked_dirty"])
+        self.assertNotEqual(original["project"]["tracked_status_sha256"],
+                            second["project"]["tracked_status_sha256"])
+        self.assertEqual(original["project"]["commit"], second["project"]["commit"])
+        self.assertEqual(second["session_adapter"], "NOT_CONNECTED")
+        self.assertNotIn("AGENTS.md", json.dumps(second))
+
+    def test_observer_rejects_unsupported_client_nested_and_non_git_roots(self):
+        plain = self._invoke("toolkit_observe_project",
+                             project=str(self.project), client="codex")
+        self.assertTrue(plain["result"]["isError"])
+        self._init_observer_git()
+        nested = self.project / "nested"
+        nested.mkdir()
+        for params in (
+            {"project": str(self.project), "client": "unknown"},
+            {"project": str(nested), "client": "codex"},
+            {"project": str(self.project), "client": "codex", "include_transcript": True},
+        ):
+            with self.subTest(params=params):
+                result = self._invoke("toolkit_observe_project", **params)
+                self.assertTrue(result["result"]["isError"])
+        self.assertFalse((nested / ".adt").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
