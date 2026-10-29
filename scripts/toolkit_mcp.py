@@ -142,6 +142,21 @@ def _tool_defs() -> list[dict]:
              "client": {"type": "string", "enum": ["codex", "claude-code", "hermes"]}},
              "required": ["project", "client"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_prepare_handoff",
+         "description": "Generate an unreviewed project-bound handoff packet in memory only. Does not save, approve, transfer or execute it.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "issue_url": string("Public Issue URL of the same GitHub repository"),
+             "from_client": string("Sender client slug, e.g. codex"),
+             "to_client": string("Recipient client slug, e.g. hermes"),
+             "references": {"type": "array",
+                            "items": string("Same-repo public Issue/PR URL"),
+                            "maxItems": 8},
+             "next_action": {"type": "string", "enum": [
+                 "REVIEW_ISSUE", "REVIEW_PR", "RUN_TESTS", "CHECK_CI", "WAIT_FOR_OWNER", "NONE"]}},
+             "required": ["project", "issue_url", "from_client", "to_client", "references",
+                          "next_action"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_search_handoffs",
          "description": "Search manually created project handoffs by exact GitHub Issue and recipient in an explicit external directory. No memory sync, no client authorization.",
          "inputSchema": {"type": "object", "properties": {
@@ -382,6 +397,22 @@ def invoke(tool: str, args: dict) -> dict:
                                     confirmed_for_this_call=args["confirmed_for_this_call"])
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
+    if tool == "toolkit_prepare_handoff":
+        if set(args) != {"project", "issue_url", "from_client", "to_client",
+                         "references", "next_action"}:
+            raise ValueError("Prepare requires exact handoff fields")
+        project = _project(args["project"])
+        module = _handoff_module()
+        _handoff_project_root(project, module)
+        packet = module.make_handoff(project, args["issue_url"], args["from_client"],
+                                     args["to_client"], args["references"], args["next_action"])
+        return {"schema_version": 1, "packet": packet,
+                "status": "UNREVIEWED_PREVIEW_ONLY",
+                "packet_storage": "NOT_PERSISTED",
+                "authorization": "NOT_GRANTED",
+                "network": "NOT_USED",
+                "client_activation": "NOT_VERIFIED",
+                "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
     if tool == "toolkit_search_handoffs":
         if set(args) != {"project", "directory", "issue_url", "to_client"}:
             raise ValueError("Search requires explicit project, directory, issue and recipient")
