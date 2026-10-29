@@ -66,3 +66,29 @@ A third **read-only** Project MCP tool, `toolkit_prepare_handoff`, returns a com
 The result embeds `packet` with `trust=UNREVIEWED`, `owner_approval=NOT_GRANTED`, SHA-256 integrity (not a signature), and `packet_storage=NOT_PERSISTED`. **The MCP does not write the packet to a file**, transfer it to Hermes or authorize the proposed action. The operator can choose to save it outside the repository and run existing `toolkit_verify_handoff` / `toolkit_search_handoffs` later; the existing native CLI `capture-handoff` is the supported create-only disk operation.
 
 A synthetic real-Git test constructs the same packet via MCP, explicitly writes it in an isolated external temporary folder, then verifies/searches via the MCP tools. It verifies only source-level protocol interoperability, **not** real Codex Desktop or Hermes handoff, persistent reviewed memory or client permissions. There is no ECC runtime, paid API, additional daemon or automatic state transition.
+
+## Explicit cross-device Git comparison (#433)
+
+Toolkit Project MCP additionally offers **read-only** `toolkit_verify_portable_handoff` with exact `project`, external `file`, and `to_client`. The matching native CLI mode is:
+
+```sh
+python scripts/session_handoff_checkpoint.py verify-portable-handoff --repo /path/to/recipient/repository --file /path/to/manual/handoff.json --to-client hermes
+```
+
+This optional mode is for an **operator-copied v2 JSON packet**, not automatic file transfer or synchronization. Unlike strict `verify-handoff`, it tolerates a different machine's absolute project path. It still requires a matching GitHub `origin`, packet integrity, recipient, branch, commit and tracked Git status. Any mismatch other than the local path identity returns `BLOCKED` or `STALE` with **no references**. The response on a match is always `REVIEW_REQUIRED` (CLI exit code 2), `sender_identity=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, and a fixed `REVIEW_ISSUE` next step; the packet's suggested action is never authorized. SHA-256 remains a non-authenticating checksum. A changed origin or a malicious packet cannot be treated as an authenticated sender, even when the hash matches. Read the authoritative GitHub Issue/PR before deciding what to do.
+
+**Not delivered by this mode:** human-reviewed persistent memory, semantic retrieval (#338), authenticated sender/device identity, transport, Codex Desktop ↔ Hermes real-client activation, or a public Toolkit release. Roll back by reverting the revision or not invoking the new MCP tool/CLI mode. No new state, service, paid inference, ECC dependency or client settings are created.
+
+## Project-reviewed reference records - explicit opt-in (#433)
+
+The existing manual, create-only JSON writer is reused by `scripts/reviewed_memory.py`: **no extra database, ECC runtime, MCP server or #338 semantic index** is created. An operator can inspect an actual public GitHub Issue/PR comment, then explicitly record a small project-scoped reference. The record contains only an exact same-repository Issue URL, a specific GitHub comment/review permalink, one `DECISION`/`PRACTICE`/`LIMITATION` category, a one-line 8-240 character summary, up to 8 public same-project references and a non-authenticating SHA-256 checksum. The summary is untrusted **data**, not executable instructions. Secret-like strings, paths, emails, arbitrary URLs, multiline text and cross-project references are rejected. The writer refuses overwriting and checkout-path writes.
+
+```sh
+python scripts/reviewed_memory.py prepare --repo /path/to/repo --issue https://github.com/ORG/REPO/issues/123 --review-url https://github.com/ORG/REPO/issues/123#issuecomment-456 --kind DECISION --summary "Manual review chose the existing integration path."
+python scripts/reviewed_memory.py record --repo /path/to/repo --issue https://github.com/ORG/REPO/issues/123 --review-url https://github.com/ORG/REPO/issues/123#issuecomment-456 --kind DECISION --summary "Manual review chose the existing integration path." --file /external/manual-memory/decision-123.json --operator-reviewed
+python scripts/reviewed_memory.py search --repo /path/to/repo --directory /external/manual-memory --issue https://github.com/ORG/REPO/issues/123
+```
+
+`prepare` **never saves**. The opt-in `record` command is a separate local operator action; no Project MCP write capability is added. Three Project MCP **read-only** tools `toolkit_prepare_reviewed_memory`, `toolkit_read_reviewed_memory`, and `toolkit_search_reviewed_memory` expose previews, one explicit external file, and exact-Issue lookup in one selected directory (max 16 entries). A record can be copied between machines manually because its project key is the same-repository GitHub origin, not a private absolute filesystem path. Deleting the selected JSON file removes the record; no background process or user-scope scan is involved.
+
+**Limits:** `--operator-reviewed` represents a *local operator claim*, **not authenticated human review**. The stored review permalink is **not fetched or verified** and may be forged; SHA-256 protects against accidental corruption, not malicious authors. All retrieval returns `REVIEW_REQUIRED`, `trust=UNTRUSTED_REFERENCE`, `review_attestation=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, with no action execution. The memory index is lexical/exact-Issue, not #338 episodic semantic memory or a canonical policy source. Cross-device transport, authenticated reviewers, client opt-in installation, real Codex Desktop ↔ Hermes E2E and a versioned Toolkit release remain **NOT_VERIFIED**.
