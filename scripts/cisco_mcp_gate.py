@@ -188,7 +188,28 @@ NATIVE_PATTERNS = (
     ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", re.compile(
         r"\b(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\b",
         re.I)),
+    ("POLICY_OVERRIDE", "HIGH", re.compile(
+        r"\b(?:discard|bypass|disable|override)\s+(?:all\s+)?"
+        r"(?:prior\s+|previous\s+)?(?:safety\s+)?(?:policies|rules|restrictions)\b|"
+        r"\b(?:отмени|обойди|отключи)\s+(?:все\s+)?"
+        r"(?:правила|политики|ограничения)\s+безопасности\b", re.I)),
 )
+
+# Only an entire recognized *defensive* explanation may suppress a match.
+# Arbitrary leading 'example:' or a trailing disclaimer MUST NOT de-risk
+# a preceding attack. This is not trusted-policy interpretation.
+NATIVE_DEFENSIVE = (
+    re.compile(r"\s*ignore previous instructions is an example of "
+               r"(?:a\s+)?malicious phrase\.?(?:\s*)\Z", re.I),
+    re.compile(r"\s*do not send (?:a\s+)?password or token\.?(?:\s*)\Z", re.I),
+    re.compile(r"\s*avoid (?:using\s+)?(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)"
+               r" in (?:actual\s+)?production code\.?(?:\s*)\Z", re.I),
+)
+
+
+def _native_defensive_only(description: str) -> bool:
+    """Narrow whole-description exemptions; never accept generic negation."""
+    return any(pattern.fullmatch(description) for pattern in NATIVE_DEFENSIVE)
 
 
 def _native_desc_fields(value: object, depth: int = 0) -> list[str]:
@@ -251,7 +272,8 @@ def scan_native_descriptions(scope: str = "personal", *, data: dict | None = Non
             if not texts:
                 raise ValueError("No inspected description")
             for label, severity, pattern in NATIVE_PATTERNS:
-                if any(pattern.search(message) for message in texts):
+                if any(pattern.search(message) and not _native_defensive_only(message)
+                       for message in texts):
                     findings.append({"tool": name, "rule": label, "severity": severity})
         status = ("BLOCKED" if any(f["severity"] == "HIGH" for f in findings) else
                   "REVIEW_REQUIRED" if findings else "PASS")
