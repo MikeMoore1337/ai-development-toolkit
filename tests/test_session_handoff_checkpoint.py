@@ -1,6 +1,7 @@
 """#374 local-only session checkpoint security regression tests."""
 import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -270,8 +271,11 @@ class CheckpointTests(unittest.TestCase):
 
     def _portable_copy(self):
         copy = self.root.parent / (self.root.name + "-portable")
-        shutil.copytree(self.root, copy)
-        self.addCleanup(shutil.rmtree, copy)
+        shutil.copytree(self.root, copy, copy_function=shutil.copyfile)
+        def unlock_git_objects(func, path, _exc):
+            os.chmod(path, 0o700)
+            func(path)
+        self.addCleanup(shutil.rmtree, copy, onerror=unlock_git_objects)
         return copy
 
     def test_portable_handoff_matches_same_origin_and_git_state_without_authentication(self):

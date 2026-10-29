@@ -541,7 +541,7 @@ class ToolkitMcpTests(unittest.TestCase):
     def test_portable_handoff_mcp_requires_review_in_cloned_project(self):
         folder, issue, packet_path = self._handoff_fixture()
         clone = self.project.parent / "portable-git"
-        shutil.copytree(self.project, clone)
+        shutil.copytree(self.project, clone, copy_function=shutil.copyfile)
         strict = self._invoke("toolkit_verify_handoff", project=str(clone),
                               file=str(packet_path), to_client="hermes")
         self.assertEqual(strict["result"]["structuredContent"]["reason"], "repo_id")
