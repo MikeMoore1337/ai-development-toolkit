@@ -11,6 +11,7 @@ import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -283,8 +284,8 @@ def _observe_project(repo: Path, client: object) -> dict:
         count = sum(line.startswith("worktree ") for line in worktrees.splitlines())
         if not 1 <= count <= 128:
             raise ValueError("Unrecognized worktree count")
-    except (OSError, ValueError, __import__("subprocess").CalledProcessError,
-            __import__("subprocess").TimeoutExpired) as exc:
+    except (OSError, ValueError, subprocess.CalledProcessError,
+            subprocess.TimeoutExpired):
         raise ValueError("Local Git metadata unavailable or unsafe") from None
     return {
         "schema_version": 1,
