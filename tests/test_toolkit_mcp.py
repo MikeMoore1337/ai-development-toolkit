@@ -309,5 +309,137 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertFalse((nested / ".adt").exists())
 
 
+    # #433 MCP discovery uses the already-shipped manual Git handoff contract.
+    # Only synthetic public references and a temporary external packet folder.
+    def _handoff_fixture(self):
+        self._init_observer_git()
+        subprocess.run(["git", "-C", str(self.project), "remote", "add",
+                        "origin", "https://github.com/example/team-repo.git"],
+                       check=True, capture_output=True)
+        folder = self.project.parent / "manual-packets"
+        folder.mkdir()
+        issue = "https://github.com/example/team-repo/issues/11"
+        mod = mcp._handoff_module()
+        packet = mod.make_handoff(
+            self.project, issue, "codex", "hermes",
+            ["https://github.com/example/team-repo/pull/12"], "CHECK_CI",
+        )
+        packet_path = folder / "one.json"
+        mod._capture_handoff_file(packet_path, packet)
+        return folder, issue, packet_path
+
+    def test_native_handoff_tools_declared_read_only_and_explicit(self):
+        names = {t["name"]: t for t in self._tools()}
+        for name, required in (
+            ("toolkit_search_handoffs", {"project", "directory", "issue_url", "to_client"}),
+            ("toolkit_verify_handoff", {"project", "file", "to_client"}),
+        ):
+            with self.subTest(name=name):
+                tool = names[name]
+                self.assertTrue(tool["annotations"]["readOnlyHint"])
+                self.assertEqual(set(tool["inputSchema"]["required"]), required)
+                self.assertFalse(tool["inputSchema"]["additionalProperties"])
+
+    def test_native_handoff_mcp_search_and_verify_no_approval_claim(self):
+        folder, issue, path = self._handoff_fixture()
+        reply = self._invoke("toolkit_search_handoffs", project=str(self.project),
+                             directory=str(folder), issue_url=issue, to_client="hermes")
+        self.assertFalse(reply["result"].get("isError", False), reply)
+        result = reply["result"]["structuredContent"]
+        self.assertEqual(result["decision"], "PASS")
+        self.assertEqual(result["verified_count"], 1)
+        self.assertEqual(result["matches"][0]["next_action"], "CHECK_CI")
+        self.assertEqual(result["matches"][0]["references"],
+                         ["https://github.com/example/team-repo/pull/12"])
+        self.assertEqual(result["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(result["mcp_surface"], "TOOLKIT_PROJECT_MCP_READ_ONLY")
+        self.assertEqual(result["client_activation"], "NOT_VERIFIED")
+        self.assertEqual(result["execution"], "NOT_RUN")
+        verified = self._invoke("toolkit_verify_handoff", project=str(self.project),
+                                file=str(path), to_client="hermes")
+        self.assertEqual(verified["result"]["structuredContent"]["decision"], "PASS")
+        self.assertEqual(verified["result"]["structuredContent"]["trust"], "UNREVIEWED")
+        self.assertEqual(verified["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
+        self.assertNotIn(str(folder), json.dumps(result))
+        self.assertNotIn(str(self.project), json.dumps(result))
+        self.assertFalse((self.project / ".adt").exists())
+
+    def test_native_handoff_mcp_wrong_recipient_and_stale_state(self):
+        folder, issue, path = self._handoff_fixture()
+        wrong = self._invoke("toolkit_verify_handoff", project=str(self.project),
+                             file=str(path), to_client="codex")
+        self.assertEqual(wrong["result"]["structuredContent"]["decision"], "BLOCKED")
+        self.assertEqual(wrong["result"]["structuredContent"]["reason"], "WRONG_RECIPIENT")
+        subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
+                       check=True, capture_output=True)
+        stale = self._invoke("toolkit_search_handoffs", project=str(self.project),
+                             directory=str(folder), issue_url=issue, to_client="hermes")
+        data = stale["result"]["structuredContent"]
+        self.assertEqual(data["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(data["matches"][0]["git_check"], "STALE")
+        self.assertEqual(data["matches"][0]["references"], [])
+        self.assertEqual(data["matches"][0]["next_action"], "NONE")
+
+    def test_native_handoff_mcp_malformed_extra_fields_tamper_fail_closed(self):
+        folder, issue, path = self._handoff_fixture()
+        for changes in ({"next_action": "REVIEW_PR"}, {"owner_approval": "GRANTED"}):
+            original = json.loads(path.read_text(encoding="utf-8"))
+            path.write_text(json.dumps({**original, **changes}), encoding="utf-8")
+            reply = self._invoke("toolkit_search_handoffs", project=str(self.project),
+                                 directory=str(folder), issue_url=issue, to_client="hermes")
+            self.assertTrue(reply["result"]["isError"])
+            self.assertNotIn(str(path), json.dumps(reply))
+            path.write_text(json.dumps(original), encoding="utf-8")
+        original = json.loads(path.read_text(encoding="utf-8"))
+        path.write_text(json.dumps({**original, "unexpected": "OWNER_PRIVATE_FIXTURE"}), encoding="utf-8")
+        failure = self._invoke("toolkit_verify_handoff", project=str(self.project),
+                               file=str(path), to_client="hermes")
+        self.assertEqual(failure["result"]["structuredContent"]["decision"], "BLOCKED")
+        self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(failure))
+
+    def test_native_handoff_mcp_deny_nested_root_cross_project_and_extra_args(self):
+        folder, issue, path = self._handoff_fixture()
+        nested = self.project / "nested"
+        nested.mkdir()
+        cases = (
+            ("toolkit_search_handoffs", {"project": str(nested), "directory": str(folder),
+                                         "issue_url": issue, "to_client": "hermes"}),
+            ("toolkit_search_handoffs", {"project": str(self.project),
+                                         "directory": str(self.project),
+                                         "issue_url": issue, "to_client": "hermes"}),
+            ("toolkit_search_handoffs", {"project": str(self.project),
+                                         "directory": str(folder),
+                                         "issue_url": "https://github.com/other/project/issues/4",
+                                         "to_client": "hermes"}),
+            ("toolkit_verify_handoff", {"project": str(self.project),
+                                        "file": str(path), "to_client": "hermes",
+                                        "include_transcript": True}),
+            ("toolkit_verify_handoff", {"project": str(self.project),
+                                        "file": "relative/one.json", "to_client": "hermes"}),
+        )
+        for name, params in cases:
+            with self.subTest(tool=name, params=params):
+                self.assertTrue(self._invoke(name, **params)["result"]["isError"])
+
+    def test_native_handoff_mcp_symlink_and_unexpected_file_fail_closed(self):
+        folder, issue, path = self._handoff_fixture()
+        private = folder / "notes.txt"
+        private.write_text("OWNER_PRIVATE_FIXTURE", encoding="utf-8")
+        failed = self._invoke("toolkit_search_handoffs", project=str(self.project),
+                              directory=str(folder), issue_url=issue, to_client="hermes")
+        self.assertTrue(failed["result"]["isError"])
+        self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(failed))
+        private.unlink()
+        linked = folder / "linked.json"
+        try:
+            linked.symlink_to(path)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink unsupported on this CI platform")
+        blocked = self._invoke("toolkit_verify_handoff", project=str(self.project),
+                               file=str(linked), to_client="hermes")
+        self.assertTrue(blocked["result"]["isError"])
+        self.assertNotIn(str(path), json.dumps(blocked))
+
+
 if __name__ == "__main__":
     unittest.main()

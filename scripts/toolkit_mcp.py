@@ -142,6 +142,25 @@ def _tool_defs() -> list[dict]:
              "client": {"type": "string", "enum": ["codex", "claude-code", "hermes"]}},
              "required": ["project", "client"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_search_handoffs",
+         "description": "Search manually created project handoffs by exact GitHub Issue and recipient in an explicit external directory. No memory sync, no client authorization.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Absolute local Git repository root"),
+             "directory": string("Explicit absolute directory of manual handoff packets outside the project"),
+             "issue_url": string("Exact same-repository public GitHub Issue URL"),
+             "to_client": string("Expected handoff recipient slug")},
+             "required": ["project", "directory", "issue_url", "to_client"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_handoff",
+         "description": "Verify one manual handoff packet against recipient and local Git metadata. Never execute instructions or grant trust.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Absolute local Git repository root"),
+             "file": string("Explicit absolute handoff JSON file outside the project"),
+             "to_client": string("Expected handoff recipient slug")},
+             "required": ["project", "file", "to_client"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_status", "description": "Read Skill Manager ownership status in an existing project, without writes.",
          "inputSchema": {"type": "object",
                          "properties": {"project": string("Existing absolute project directory"),
@@ -265,16 +284,42 @@ def _adaptive_advice(request: object, consent: object | None = None) -> dict:
     return advisor.authorize(request, consent) if consent is not None else advisor.advise(request)
 
 
+
+def _handoff_module():
+    """Reuse existing native #374/#433 checker, not an ECC vault or second MCP."""
+    path = ROOT / "scripts" / "session_handoff_checkpoint.py"
+    spec = importlib.util.spec_from_file_location("_adt_native_handoff", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Handoff verification source unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _handoff_project_root(project: Path, module: object) -> None:
+    """No nested checkout/parent alias; validate before accepting external file paths."""
+    try:
+        root = Path(module._git(project, "rev-parse", "--show-toplevel")).resolve()
+        if root != project.resolve():
+            raise ValueError("Explicit Git project root required")
+    except (OSError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        raise ValueError("Handoff project must be an exact Git root") from None
+
+
+def _handoff_input_path(value: object, description: str) -> Path:
+    if not isinstance(value, str) or not 1 <= len(value) <= 2048:
+        raise ValueError("Invalid " + description)
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError("Handoff input must be absolute")
+    return path
+
+
 def _observe_project(repo: Path, client: object) -> dict:
     """Strict local Git metadata only, never inspect session transcript/AI host."""
     if not isinstance(client, str) or client not in ("codex", "claude-code", "hermes"):
         raise ValueError("Unsupported observer client")
-    path = ROOT / "scripts" / "session_handoff_checkpoint.py"
-    spec = importlib.util.spec_from_file_location("_adt_native_observe_git", path)
-    if spec is None or spec.loader is None:
-        raise ValueError("Git observer source unavailable")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = _handoff_module()
     try:
         actual_root = Path(module._git(repo, "rev-parse", "--show-toplevel")).resolve()
         if actual_root != repo.resolve():
@@ -337,6 +382,29 @@ def invoke(tool: str, args: dict) -> dict:
                                     confirmed_for_this_call=args["confirmed_for_this_call"])
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
+    if tool == "toolkit_search_handoffs":
+        if set(args) != {"project", "directory", "issue_url", "to_client"}:
+            raise ValueError("Search requires explicit project, directory, issue and recipient")
+        project = _project(args["project"])
+        module = _handoff_module()
+        _handoff_project_root(project, module)
+        directory = _handoff_input_path(args["directory"], "handoff directory")
+        result = module.search_handoffs(project, directory, args["issue_url"], args["to_client"])
+        return {**result, "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
+    if tool == "toolkit_verify_handoff":
+        if set(args) != {"project", "file", "to_client"}:
+            raise ValueError("Verification requires explicit project, file and recipient")
+        project = _project(args["project"])
+        module = _handoff_module()
+        _handoff_project_root(project, module)
+        packet_file = _handoff_input_path(args["file"], "handoff packet")
+        if not module.HANDOFF_NAME.fullmatch(packet_file.name):
+            raise ValueError("Unexpected handoff packet filename")
+        module._handoff_file(packet_file, project, create=False)
+        packet = json.loads(packet_file.read_text(encoding="utf-8"))
+        outcome = module.verify_handoff(project, packet, args["to_client"])
+        return {**outcome, "trust": "UNREVIEWED", "owner_approval": "NOT_GRANTED",
+                "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
     if tool == "toolkit_observe_project":
         if set(args) != {"project", "client"}:
             raise ValueError("Observer requires only project and client")
