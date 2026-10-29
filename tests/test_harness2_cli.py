@@ -21,6 +21,15 @@ class OriginalCliBridgeTests(unittest.TestCase):
         self.assertNotIn('exec "$BIN/harness2-judge"', data)
         self.assertNotIn('exec "$BIN/harness2" "$@"', data)
 
+    def test_artifact_discovery_uses_original_upstream_runs_dir_not_fork(self):
+        source = TOOL.read_text(encoding="utf-8")
+        self.assertIn("from harness2 import config; print(config.RUNS)", source)
+        self.assertIn("HARNESS2_RUNS_DIR", source)
+        self.assertIn("runs_root", source)
+        self.assertNotIn('find -P "$SRC/runs"', source)
+        self.assertIn("upstream runs root must be inside user home", source)
+        self.assertIn('find -P "$runs_root"', source)
+
     @unittest.skipUnless(os.name == "posix" and shutil.which("bash"), "POSIX Bash required")
     def test_syntax_help_no_install_and_refusal(self):
         result = subprocess.run(["bash", "-n", str(TOOL)], capture_output=True, text=True, timeout=10)
