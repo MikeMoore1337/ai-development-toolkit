@@ -30,21 +30,43 @@ need a real smoke test before claiming compatibility.
 From the desired repository root, with an explicit and reviewed scan scope:
 
 ```sh
-graphify extract . --code-only
-graphify query "what calls the authentication handler?"
-graphify explain "AuthenticationService"
-graphify path "EntryPoint" "TargetService"
+graphify extract . --code-only --no-cluster
+graphify explain "adt.py"
+graphify path "adt.py" "skill_manager.py"
+graphify query "what code depends on scripts/adt.py?"
 ```
 
-The `--code-only` option indexes source code using local tree-sitter AST
-without requiring a model, API key or semantic extraction. It does not
-promise that every dependency is resolved correctly. Before scanning, check
-the upstream ignore behavior and your repository's `.gitignore`, and ensure
-that secrets, `.env*`, generated directories, private notes and adjacent
-repositories are not in scope. **Never** pass `--no-gitignore` for an ordinary
-project scan. `graphify-out/` is derived disposable output: ignore it in
-Git, inspect it for sensitive data, and delete it after use as appropriate.
-Check current code and tests before acting on `EXTRACTED`/`INFERRED` edges.
+The `--code-only` option indexes source using the local tree-sitter AST
+without requiring a model, API key or semantic extraction. `--no-cluster`
+keeps raw extracted edges; Graphify is never a substitute for source/tests.
+
+**The Toolkit checkout has a native root [`.graphifyignore`](../.graphifyignore)**
+with 69 reviewed patterns from [#423](https://github.com/MikeMoore1337/ai-development-toolkit/issues/423)
+for `third_party`/vendor, dependencies, caches/build, `.env*`, credentials,
+private paths and four local review JSON files. The original Graphify 0.9.97
+reads it automatically alongside `.gitignore` on **the first scan of a
+fresh checkout**, without any wrapper or extra `--exclude` flags.
+
+The original CLI also **persists explicit `--exclude` flags for later
+runs of that same graph** in its generated build config; this is not a
+replacement for an ignore file on a fresh checkout. After changing the
+corpus rules, run `graphify extract . --code-only --no-cluster --force`
+when a complete AST refresh is required.
+
+The approved ignore set deliberately excludes
+`scripts/native_eval_capsules.js` because it imports vendor code. This
+module will **not** appear in the graph: inspect its source and tests
+directly for change-impact analysis. Some graph nodes can have an empty
+`source_file`; zero banned path matches do not constitute a complete
+secrets audit.
+
+Run only in the intended repository root, never your home directory or a
+parent of several repositories. Do not use `--no-gitignore` for ordinary
+scans. `graphify-out/` is disposable output excluded from Git; review it
+for sensitive data and never publish the graph. Toolkit's ignore rules
+apply to **Toolkit only**, not automatically to downstream user projects.
+The example `query` may be broad or truncated by its token budget.
+Check actual code and tests before acting on `EXTRACTED`/`INFERRED` edges.
 
 ## Optional project-scoped Codex skill
 
@@ -55,11 +77,17 @@ would change, use the **upstream**, not a locally reimplemented skill:
 graphify install --platform codex --project
 ```
 
-Upstream may write `.agents/skills/graphify/` and supporting references.
-Inspect `git diff`, existing `AGENTS.md`, skills, hooks and the repo's
-approval/security rules before committing or enabling anything. Codex uses
-`$graphify` rather than `/graphify`; **Codex Desktop operation is not
-attested** merely by adding these instructions. Do not require Codex CLI.
+If the original Graphify skill is already available in the current Codex
+Desktop session through a user-scoped installation, **reuse it**. Do not
+install a second copy. The optional project-scoped command above copies
+the original skill under `.codex/skills/graphify/` with packaged references.
+Check `git diff`, existing `AGENTS.md`, hooks and owner approval **before**
+project changes; never overwrite a user-owned skill.
+
+Do not run the distinct `graphify codex install` path here: it may
+modify `AGENTS.md` and Codex hooks. Codex uses `$graphify` rather than
+`/graphify`. Do not require Codex CLI. Installation instructions alone
+do not prove successful skill discovery or execution.
 Toolkit's existing `graphify-adapter` remains the portable, conditional QA
 adapter: it does not install or automatically invoke Graphify.
 
@@ -83,7 +111,11 @@ Remove generated `graphify-out/` and any project-scoped skill installation
 **only after inspecting the diff**; preserve unrelated local files. No
 runtime, CI or production deployment is needed for this optional tool.
 
-**Evidence status (2026-10-27):** upstream source and CLI syntax were
-inspected; no real Toolkit graph build or Codex Desktop activation was
-observed in the session that authored this document. Do not mark live
-installation or token savings as verified without reproducible evidence.
+**Evidence status (2026-10-29):** [#423](https://github.com/MikeMoore1337/ai-development-toolkit/issues/423)
+records an actual Windows/Codex Desktop original-skill and CLI acceptance,
+a code-only AST graph and bounded path/category checks. The native
+`.graphifyignore` hardening was tracked separately in
+[#474](https://github.com/MikeMoore1337/ai-development-toolkit/issues/474).
+These observations apply to the tested checkout and scope only; they do
+not prove universal client compatibility, full secret absence or token
+savings. No background installation or paid providers are enabled.
