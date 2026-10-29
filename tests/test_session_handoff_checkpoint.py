@@ -166,6 +166,105 @@ class CheckpointTests(unittest.TestCase):
             m._handoff_file(linked, self.root, create=False)
 
 
+    def _handoff_search_dir(self):
+        other = tempfile.TemporaryDirectory()
+        self.addCleanup(other.cleanup)
+        return Path(other.name)
+
+    def test_native_handoff_search_exact_issue_without_session_data(self):
+        import json
+        folder = self._handoff_search_dir()
+        p = m.make_handoff(self.root, ISSUE, "codex", "hermes",
+                           ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/460"],
+                           "REVIEW_PR")
+        m._capture_handoff_file(folder / "handoff-one.json", p)
+        result = m.search_handoffs(self.root, folder, ISSUE, "hermes")
+        self.assertEqual(result["decision"], "PASS")
+        self.assertEqual(result["verified_count"], 1)
+        self.assertEqual(result["inspected_count"], 1)
+        self.assertEqual(result["matches"][0]["sha256"], p["sha256"])
+        self.assertEqual(result["matches"][0]["next_action"], "REVIEW_PR")
+        self.assertEqual(result["matches"][0]["trust"], "UNREVIEWED")
+        self.assertEqual(result["semantic_search"], "NOT_AVAILABLE")
+        self.assertEqual(result["network"], "NOT_USED")
+        self.assertNotIn(str(folder), json.dumps(result))
+        self.assertNotIn(str(self.root), json.dumps(result))
+
+    def test_native_handoff_search_stale_does_not_supply_references(self):
+        folder = self._handoff_search_dir()
+        p = m.make_handoff(self.root, ISSUE, "codex", "hermes",
+                           ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/460"],
+                           "REVIEW_PR")
+        m._capture_handoff_file(folder / "handoff.json", p)
+        subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Test",
+                        "-c", "user.email=test@example.com", "commit",
+                        "--allow-empty", "-m", "later"], check=True, capture_output=True)
+        data = m.search_handoffs(self.root, folder, ISSUE, "hermes")
+        self.assertEqual(data["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(data["verified_count"], 0)
+        self.assertEqual(data["matches"][0]["git_check"], "STALE")
+        self.assertEqual(data["matches"][0]["references"], [])
+        self.assertEqual(data["matches"][0]["next_action"], "NONE")
+
+    def test_native_handoff_search_wrong_recipient_and_empty(self):
+        folder = self._handoff_search_dir()
+        self.assertEqual(m.search_handoffs(self.root, folder, ISSUE, "hermes")["decision"],
+                         "REVIEW_REQUIRED")
+        p = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        m._capture_handoff_file(folder / "only.json", p)
+        result = m.search_handoffs(self.root, folder, ISSUE, "claude")
+        self.assertEqual(result["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(result["matches"], [])
+
+    def test_native_handoff_search_denies_mixed_project_and_tampering(self):
+        folder = self._handoff_search_dir()
+        p = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        m._capture_handoff_file(folder / "one.json", p)
+        p["issue_url"] = "https://github.com/Other/Other/issues/7"
+        p["sha256"] = m._handoff_digest(p)
+        (folder / "one.json").write_text(__import__("json").dumps(p))
+        with self.assertRaises(ValueError):
+            m.search_handoffs(self.root, folder, ISSUE, "hermes")
+        p["issue_url"] = ISSUE
+        p["sha256"] = "0" * 64
+        (folder / "one.json").write_text(__import__("json").dumps(p))
+        with self.assertRaises(ValueError):
+            m.search_handoffs(self.root, folder, ISSUE, "hermes")
+
+    def test_native_handoff_search_rejects_unexpected_and_linked_files(self):
+        folder = self._handoff_search_dir()
+        (folder / "notes.txt").write_text("private session text")
+        with self.assertRaises(ValueError):
+            m.search_handoffs(self.root, folder, ISSUE, "hermes")
+        (folder / "notes.txt").unlink()
+        private = folder.parent / (folder.name + "-private.json")
+        private.write_text("secret")
+        self.addCleanup(lambda: private.unlink(missing_ok=True))
+        try:
+            (folder / "linked.json").symlink_to(private)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink unavailable")
+        with self.assertRaises(ValueError):
+            m.search_handoffs(self.root, folder, ISSUE, "hermes")
+
+    def test_native_handoff_search_cli_respects_explicit_scope(self):
+        import json
+        import sys
+        folder = self._handoff_search_dir()
+        p = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "CHECK_CI")
+        m._capture_handoff_file(folder / "one.json", p)
+        cmd = [sys.executable, str(MODULE_PATH), "search-handoffs",
+               "--repo", str(self.root), "--directory", str(folder),
+               "--issue", ISSUE, "--to-client", "hermes"]
+        out = subprocess.run(cmd, capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertEqual(json.loads(out.stdout)["verified_count"], 1)
+        bad = subprocess.run(cmd[:-1] + ["claude"], capture_output=True, text=True)
+        self.assertEqual(bad.returncode, 2)
+        self.assertEqual(json.loads(bad.stdout)["decision"], "REVIEW_REQUIRED")
+
+
+
     def test_git_reader_never_enables_configured_fsmonitor(self):
         from unittest import mock
         real_run = subprocess.run
@@ -181,7 +280,6 @@ class CheckpointTests(unittest.TestCase):
         self.assertTrue(all(cmd[:3] == ["git", "-c", "core.fsmonitor=false"]
                             for cmd in commands))
         self.assertTrue(all(cmd[-1] != "commit" for cmd in commands))
-
 
 
 if __name__ == "__main__":
