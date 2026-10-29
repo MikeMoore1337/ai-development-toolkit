@@ -169,10 +169,102 @@ def scan(scope: str = "personal", *,
                          proc.returncode)
 
 
+
+# Native, deliberately narrow MCP poisoning detection (#432). Unlike the
+# optional Cisco subprocess, this checks first-party declarations offline.
+# This is not a replacement for a complete YARA/schema or runtime audit.
+NATIVE_PATTERNS = (
+    ("PROMPT_OVERRIDE", "HIGH", __import__("re").compile(
+        r"\bignore\s+(?:all\s+|previous\s+|prior\s+)?instructions?\b|"
+        r"\bигнорируй\s+(?:все\s+)?(?:предыдущие\s+)?инструкции\b", __import__("re").I)),
+    ("ROLE_FORGERY", "HIGH", __import__("re").compile(
+        r"(?:^|[\n\r])\s*(?:system|assistant)\s*:|"
+        r"\byou\s+are\s+now\s+the\s+system\b", __import__("re").I)),
+    ("SECRET_EXFILTRATION_INSTRUCTION", "HIGH", __import__("re").compile(
+        r"\b(?:send|upload|exfiltrate|steal|отправь|передай|загрузи)\b.{0,80}"
+        r"\b(?:tokens?|secrets?|credentials?|passwords?|ключи?|пароли?|токены?)\b",
+        __import__("re").I)),
+    ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", __import__("re").compile(
+        r"\b(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\b",
+        __import__("re").I)),
+)
+
+
+def _native_desc_fields(value: object, depth: int = 0) -> list[str]:
+    """Bounded JSON-schema description walk; no evaluation of descriptions."""
+    if depth > 12:
+        raise ValueError("Overdeep schema")
+    if isinstance(value, dict):
+        if len(value) > 256:
+            raise ValueError("Oversized schema object")
+        found = []
+        for key, item in value.items():
+            if key == "description":
+                if not isinstance(item, str) or len(item.encode("utf-8")) > 16_384:
+                    raise ValueError("Invalid description")
+                found.append(item)
+            elif isinstance(item, (dict, list)):
+                found.extend(_native_desc_fields(item, depth + 1))
+        return found
+    if isinstance(value, list):
+        if len(value) > 128:
+            raise ValueError("Oversized schema array")
+        found = []
+        for item in value:
+            found.extend(_native_desc_fields(item, depth + 1))
+        return found
+    raise ValueError("Unexpected schema")
+
+
+def scan_native_descriptions(scope: str = "personal", *, data: dict | None = None) -> dict:
+    """Pure source/fixture heuristic; never starts Cisco, an MCP server or a model."""
+    base = {"scope": scope, "scanner": "Toolkit Native MCP Description Gate",
+            "external_scanner": "NOT_USED", "live_mcp": "NOT_RUN",
+            "paid_api": "NOT_USED", "runtime_enforcement": "NOT_VERIFIED"}
+    try:
+        payload = snapshot(scope) if data is None else data
+        raw = json.dumps(payload, ensure_ascii=False, allow_nan=False)
+        if len(raw.encode("utf-8")) > MAX_SNAPSHOT or not isinstance(payload, dict):
+            raise ValueError("Invalid snapshot")
+        tools = payload.get("tools")
+        if not isinstance(tools, list) or not 1 <= len(tools) <= 100:
+            raise ValueError("Incomplete tools")
+        names = set()
+        findings: list[dict] = []
+        for item in tools:
+            if not isinstance(item, dict):
+                raise ValueError("Invalid tool")
+            name = item.get("name")
+            if (not isinstance(name, str) or not name.startswith("toolkit_")
+                    or len(name) > 100 or
+                    not all(c.isascii() and (c.isalnum() or c == "_") for c in name)
+                    or name in names):
+                raise ValueError("Invalid or duplicate tool name")
+            names.add(name)
+            if not isinstance(item.get("inputSchema"), dict):
+                raise ValueError("Missing tool schema")
+            texts = _native_desc_fields(item)
+            if not texts:
+                raise ValueError("No inspected description")
+            for label, severity, pattern in NATIVE_PATTERNS:
+                if any(pattern.search(message) for message in texts):
+                    findings.append({"tool": name, "rule": label, "severity": severity})
+        status = ("BLOCKED" if any(f["severity"] == "HIGH" for f in findings) else
+                  "REVIEW_REQUIRED" if findings else "PASS")
+        return {**base, "status": status, "reason": "HEURISTIC_STATIC_ONLY",
+                "tool_count": len(names), "findings": findings,
+                "claim": "NO_MATCH_IS_NOT_PROOF_OF_SAFETY"}
+    except (ValueError, TypeError, RecursionError, ImportError, OSError, KeyError):
+        return {**base, "status": "BLOCKED", "reason": "INVALID_OR_INCOMPLETE_SNAPSHOT",
+                "findings": [], "claim": "NOT_EVALUATED"}
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scope", choices=("personal", "project"), default="personal")
-    result = scan(parser.parse_args().scope)
+    parser.add_argument("--native", action="store_true",
+                        help="Pure native heuristic scan; no Cisco runtime or network")
+    args = parser.parse_args()
+    result = scan_native_descriptions(args.scope) if args.native else scan(args.scope)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "PASS" else 2
 
