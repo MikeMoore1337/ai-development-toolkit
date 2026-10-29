@@ -12,7 +12,7 @@ class OneCommandDistributionTests(unittest.TestCase):
     def test_marketplace_points_to_existing_portable_plugin(self):
         catalog = json.loads((ROOT / ".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
         self.assertEqual("ai-development-toolkit-local", catalog["name"])
-        self.assertEqual(2, len(catalog["plugins"]))
+        self.assertEqual(3, len(catalog["plugins"]))
         entry = catalog["plugins"][0]
         self.assertEqual("local", entry["source"]["source"])
         relative = entry["source"]["path"]
@@ -45,6 +45,24 @@ class OneCommandDistributionTests(unittest.TestCase):
         self.assertNotIn("hooks", ecc)
         self.assertNotIn("mcpServers", ecc)
         self.assertNotIn("postinstall", ecc)
+
+        # The full original Codex plugin is available to install, never auto-enabled.
+        ponytail = catalog["plugins"][2]
+        self.assertEqual("ponytail", ponytail["name"])
+        self.assertEqual(
+            {
+                "source": "url",
+                "url": "https://github.com/DietrichGebert/ponytail.git",
+                "sha": "16352ac229eb08a9598dcae48fe9f2b342567d86",
+            },
+            ponytail["source"],
+        )
+        self.assertEqual(
+            {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+            ponytail["policy"],
+        )
+        self.assertNotIn("hooks", ponytail)
+        self.assertNotIn("postinstall", ponytail)
 
     def test_ru_en_one_paste_commands_have_same_safe_source(self):
         commands = []
