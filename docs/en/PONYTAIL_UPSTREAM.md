@@ -19,6 +19,20 @@ This copy is **not auto-installed**, is not part of any default Toolkit profile,
 
 For the **full** plugin (not the skill-only fallback), follow upstream [INSTALL.md](https://github.com/DietrichGebert/ponytail/blob/v5.3.2/INSTALL.md), which documents Codex marketplace commands and lifecycle hooks. This change did **not** execute Codex CLI, Claude CLI, plugin installation, hooks, paid APIs or live model calls. Skill-only copying does not provide automatic session injection or guaranteed mode persistence.
 
+## Toolkit-assisted Codex Desktop setup (no Codex CLI)
+
+From an up-to-date Toolkit checkout, run in Windows PowerShell:
+
+- Inspect: `py -3.14 -B scripts/ponytail_codex_skills.py --status`
+- Install: `py -3.14 -B scripts/ponytail_codex_skills.py --install`
+- Roll back: `py -3.14 -B scripts/ponytail_codex_skills.py --uninstall`
+
+The script uses **only the six unchanged SKILL.md** files in `third_party/ponytail-v5.3.2/skills`, verifies their exact Git blob SHAs and installs into `%USERPROFILE%\.agents\skills` for all projects, including Hermes. No Codex CLI, Claude CLI, hooks, model calls, network access or extra Gateway. Legacy `%USERPROFILE%\.codex\skills` duplicates, links, foreign files and bad hashes fail closed. Uninstall only removes files stamped by this installer.
+
+Restart/open Codex Desktop and check `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help` appear. Codex **may** select a matching skill implicitly, but invocation is not guaranteed. This is **skill-only**: no native lifecycle hooks or persistent Full/Lite mode. Until checked on the actual Windows client: `HOST_NOT_VERIFIED`.
+
+The isolated Hermes Agent previously tested on VPS does not activate Ponytail in Codex Desktop or Hermes BRC. Resident BRC services remain unchanged.
+
 ## Authority and isolation
 
 - User/project instructions, `AGENTS.md`, security, tests, permissions and delivery gates override any optional external skill.
