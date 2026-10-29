@@ -66,6 +66,26 @@ CHECKPOINT_FIELDS = frozenset((
 ))
 
 
+# Match explicit GitHub remote identity; no network or Git credentials are read.
+GITHUB_REMOTE = re.compile(
+    r"(?:https://github\.com/|git@github\.com:|ssh://git@github\.com/)"
+    r"([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?:\.git)?\Z"
+)
+
+
+def _project_matches_origin(repo: Path, issue_url: str) -> bool:
+    try:
+        url = _git(repo, "remote", "get-url", "origin")
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
+        return False
+    origin = GITHUB_REMOTE.fullmatch(url)
+    issue = ISSUE.fullmatch(issue_url)
+    if not origin or not issue:
+        return False
+    expected = "https://github.com/" + origin.group(1) + "/" + origin.group(2) + "/issues/"
+    return issue_url.casefold().startswith(expected.casefold())
+
+
 def _handoff_digest(packet: dict) -> str:
     """Non-authenticating integrity digest, NOT an authorization signature."""
     unsigned = {key: value for key, value in packet.items() if key != "sha256"}
@@ -97,6 +117,8 @@ def make_handoff(repo: Path, issue_url: str, from_client: str, to_client: str,
                  references: list[str], next_action: str) -> dict:
     """Create a bounded handoff; never accept arbitrary model-written prose."""
     _handoff_fields(issue_url, from_client, to_client, references, next_action)
+    if not _project_matches_origin(repo, issue_url):
+        raise ValueError("issue does not match GitHub origin")
     packet = {
         "schema": 2,
         "source": "TOOLKIT_MANUAL_HANDOFF",
@@ -139,6 +161,8 @@ def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
         return {"decision": "BLOCKED", "reason": "TAMPERED_HANDOFF"}
     if to_client != packet["to_client"]:
         return {"decision": "BLOCKED", "reason": "WRONG_RECIPIENT"}
+    if not _project_matches_origin(repo, packet["issue_url"]):
+        return {"decision": "BLOCKED", "reason": "PROJECT_MISMATCH"}
     return verify_packet(repo, checkpoint)
 
 
