@@ -14,7 +14,7 @@ MAX_INPUT = 32_768
 
 
 def _git(repo: Path, *args: str) -> str:
-    run = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, check=True,
+    run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo), *args], capture_output=True, check=True,
                          timeout=10, env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"})
     return run.stdout.decode("utf-8", errors="replace").strip()
 
