@@ -46,6 +46,62 @@ class Harness2WindowsAcceptanceContract(unittest.TestCase):
         self.assertIn("UV=MISSING_FOR_SETUP", script)
         self.assertIn("NPM=MISSING_FOR_SETUP", script)
 
+    def test_default_distribution_is_auto_detected_without_docker(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("[string]$Distribution = 'auto'", script)
+        self.assertIn("wsl.exe --list --quiet", script)
+        self.assertIn("HARNESS2_UBUNTU_DISTRO_MISSING", script)
+        self.assertIn("HARNESS2_DOCKER_INTERNAL_DISTRO_REFUSED", script)
+        self.assertIn("HARNESS2_WSL_DISTRO_NOT_FOUND", script)
+        self.assertIn("HARNESS2_WSL_DISTRIBUTION=", script)
+
+    @unittest.skipUnless(os.name == "nt" and shutil.which("powershell.exe"), "Windows PowerShell required")
+    def test_windows_wsl_auto_discovery_and_missing_distro_with_stub(self):
+        # A function shadowing wsl.exe exercises Windows PowerShell 5.1 command
+        # discovery and NUL-separated output without launching a real distro.
+        environment = {**os.environ, "HARNESS2_ACCEPTANCE_PS1": str(SCRIPT)}
+        mock = r"""
+function global:wsl.exe {
+    if ($args.Count -ge 1 -and $args[0] -eq '--list') {
+        Write-Output 'docker-desktop'
+        if ($env:HARNESS2_TEST_DISTRO) {
+            Write-Output ($env:HARNESS2_TEST_DISTRO.ToCharArray() -join [char]0)
+        }
+        $global:LASTEXITCODE = 0
+        return
+    }
+    if ($args[0] -eq '--distribution' -and $args[2] -eq '--exec') {
+        Write-Output ('MOCK_DISTRO=' + $args[1])
+        $global:LASTEXITCODE = 0
+        return
+    }
+    throw 'UNEXPECTED_WSL_CALL'
+}
+try {
+    & $env:HARNESS2_ACCEPTANCE_PS1 -Action Preflight
+    exit 0
+} catch {
+    [Console]::Error.WriteLine($_.Exception.Message)
+    exit 10
+}
+"""
+        command = ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", mock]
+        valid = subprocess.run(
+            command, text=True, capture_output=True, check=False, timeout=20,
+            env={**environment, "HARNESS2_TEST_DISTRO": "Ubuntu-24.04"},
+        )
+        self.assertEqual(valid.returncode, 0, valid.stderr)
+        self.assertIn("HARNESS2_WSL_DISTRIBUTION=Ubuntu-24.04", valid.stdout)
+        self.assertIn("MOCK_DISTRO=Ubuntu-24.04", valid.stdout)
+
+        missing = subprocess.run(
+            command, text=True, capture_output=True, check=False, timeout=20,
+            env={**environment, "HARNESS2_TEST_DISTRO": ""},
+        )
+        self.assertNotEqual(missing.returncode, 0)
+        self.assertIn("HARNESS2_UBUNTU_DISTRO_MISSING", missing.stderr)
+        self.assertNotIn("MOCK_DISTRO=", missing.stdout)
+
     @unittest.skipUnless(os.name == "nt" and shutil.which("powershell.exe"), "Windows PowerShell required")
     def test_native_powershell_parser_and_setup_rejection(self):
         # Parse the complete script rather than rely on a Linux-only string fixture.

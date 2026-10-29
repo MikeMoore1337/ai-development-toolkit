@@ -4,7 +4,8 @@
 
 ## Требования
 
-- Windows 11, WSL2 с Ubuntu (либо другое имя дистрибутива через параметр -Distribution Ubuntu-24.04).
+- Windows 11, WSL2 с Ubuntu. По умолчанию скрипт автоматически выбирает установленный `Ubuntu-24.04`, `Ubuntu` или `Ubuntu-22.04` (другие версии `Ubuntu-XX.YY` также распознаются). Для явного выбора используйте `-Distribution Ubuntu-24.04`. Внутренний `docker-desktop` не используется.
+- Если Ubuntu не установлена, выполните в PowerShell `wsl --list --verbose`, затем `wsl --list --online` и `wsl --install -d Ubuntu-24.04`. Это отдельная команда установки Linux, **сам сценарий Harness² её не выполняет**. При первой загрузке Ubuntu создайте непривилегированного Linux-пользователя; может потребоваться перезагрузка Windows.
 - В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, npm и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
 - Checkout Toolkit, доступный с Windows и из WSL2 через wslpath.
 
