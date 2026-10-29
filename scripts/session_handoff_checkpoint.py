@@ -198,12 +198,86 @@ def _capture_handoff_file(path: Path, packet: dict) -> None:
         out.write(data)
 
 
+
+# #433 native read-only retrieval: no new vault, database or transcript index.
+# This is deliberately link/exact-Issue search, NOT semantic session memory.
+HANDOFF_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}\.json\Z")
+MAX_HANDOFF_SEARCH = 16
+
+
+def search_handoffs(repo: Path, directory: Path, issue_url: str, to_client: str) -> dict:
+    """Search a specifically selected directory of manual handoff packets only."""
+    if not isinstance(issue_url, str) or not ISSUE.fullmatch(issue_url):
+        raise ValueError("search requires exact public GitHub Issue URL")
+    if not isinstance(to_client, str) or not CLIENT.fullmatch(to_client):
+        raise ValueError("invalid recipient")
+    if not _project_matches_origin(repo, issue_url):
+        raise ValueError("Issue does not match local GitHub origin")
+    if not directory.is_absolute() or not directory.is_dir():
+        raise ValueError("handoff directory must be existing absolute directory")
+    for parent in (directory, *directory.parents):
+        if parent.is_symlink() or (hasattr(parent, "is_junction") and parent.is_junction()):
+            raise ValueError("linked directory")
+    root = Path(_git(repo, "rev-parse", "--show-toplevel")).resolve()
+    if directory.resolve().is_relative_to(root):
+        raise ValueError("handoff directory cannot be inside project checkout")
+    entries = sorted(directory.iterdir(), key=lambda p: p.name)
+    if len(entries) > MAX_HANDOFF_SEARCH:
+        raise ValueError("too many handoff candidates")
+    seen_hashes: set[str] = set()
+    matches: list[dict] = []
+    for item in entries:
+        if not HANDOFF_NAME.fullmatch(item.name):
+            raise ValueError("unexpected handoff filename")
+        _handoff_file(item, repo, create=False)
+        packet = json.loads(item.read_text(encoding="utf-8"))
+        if not isinstance(packet, dict) or set(packet) != HANDOFF_FIELDS:
+            raise ValueError("invalid handoff")
+        if not isinstance(packet.get("issue_url"), str) or not _project_matches_origin(repo, packet["issue_url"]):
+            raise ValueError("mixed project handoffs denied")
+        if packet.get("issue_url") != issue_url or packet.get("to_client") != to_client:
+            continue
+        verified = verify_handoff(repo, packet, to_client)
+        if verified["decision"] == "BLOCKED":
+            raise ValueError("untrusted matching handoff")
+        digest = packet["sha256"]
+        if digest in seen_hashes:
+            raise ValueError("duplicate handoff")
+        seen_hashes.add(digest)
+        matches.append({
+            "sha256": digest,
+            "issue_url": issue_url,
+            "references": packet["references"] if verified["decision"] == "PASS" else [],
+            "next_action": packet["next_action"] if verified["decision"] == "PASS" else "NONE",
+            "git_check": verified["decision"],
+            "trust": "UNREVIEWED",
+            "owner_approval": "NOT_GRANTED",
+        })
+    count = sum(m["git_check"] == "PASS" for m in matches)
+    return {
+        "schema_version": 1,
+        "source": "TOOLKIT_MANUAL_HANDOFF_SEARCH",
+        "decision": "PASS" if count else "REVIEW_REQUIRED",
+        "matches": matches,
+        "verified_count": count,
+        "inspected_count": len(entries),
+        "search_type": "EXACT_ISSUE_AND_RECIPIENT_ONLY",
+        "semantic_search": "NOT_AVAILABLE",
+        "client_activation": "NOT_VERIFIED",
+        "execution": "NOT_RUN",
+        "network": "NOT_USED",
+        "owner_approval": "NOT_GRANTED",
+    }
+
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("mode", choices=("capture", "verify", "capture-handoff", "verify-handoff"))
+    p.add_argument("mode", choices=("capture", "verify", "capture-handoff", "verify-handoff", "search-handoffs"))
     p.add_argument("--repo", type=Path, default=Path.cwd())
     p.add_argument("--issue")
     p.add_argument("--file", type=Path)
+    p.add_argument("--directory", type=Path)
     p.add_argument("--from-client")
     p.add_argument("--to-client")
     p.add_argument("--ref", action="append", default=[])
@@ -233,6 +307,12 @@ def main() -> int:
             print(json.dumps({"decision": "PASS", "mode": "CAPTURED_HANDOFF",
                               "trust": "UNREVIEWED", "owner_approval": "NOT_GRANTED"}))
             return 0
+        if args.mode == "search-handoffs":
+            if not args.directory or not args.issue or not args.to_client:
+                raise ValueError("search-handoffs requires --directory --issue --to-client")
+            result = search_handoffs(args.repo, args.directory, args.issue, args.to_client)
+            print(json.dumps(result, sort_keys=True, ensure_ascii=False))
+            return 0 if result["decision"] == "PASS" else 2
         if args.mode == "verify-handoff":
             if not args.file or not args.to_client:
                 raise ValueError("verify-handoff requires --file and --to-client")

@@ -35,3 +35,15 @@ The writer uses create-only, fails if the file already exists, and sets mode 060
 - Search, persistence in Toolkit-owned memory, explicit reviewed decision summaries, secure cross-device authentication, optional MCP read surfaces, live Codex Desktop ↔ Hermes use and published Toolkit release are **NOT_IMPLEMENTED / NOT_VERIFIED**. Keep #433 OPEN until independently accepted.
 
 Pinned comparison source: [ECC 2.2.3 at `25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b`](https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b), MIT. This specific packet implementation uses Toolkit's existing Python code, not copied ECC source. No Codex CLI, Claude CLI, paid APIs, hidden client activation or additional spending.
+
+## Exact-issue native handoff search (#433)
+
+An additional **manual, read-only** capability finds previously created handoff packets in an **explicit** directory (outside the checkout). It does not create a database, ingest chat transcripts, index user data globally, or run an external ECC component. It searches only the exact GitHub Issue URL and named recipient, not natural language:
+
+```sh
+python scripts/session_handoff_checkpoint.py search-handoffs --repo /path/to/repo --directory /path/to/external/packets --issue https://github.com/OWNER/REPO/issues/123 --to-client hermes
+```
+
+Only up to 16 strictly named small JSON packet files are accepted in that folder. Linked directories/files, unexpected extensions, mixed GitHub projects, forged digests, unexpected schema, duplicates and paths inside the repository are refused. A matching `PASS` requires the existing complete v2 digest check, same-project origin, recipient and unchanged local Git state. Stale handoffs can be listed with `git_check=STALE`, but their references and next action are **withheld**. No matching valid record produces `REVIEW_REQUIRED` rather than a false search success. The result includes at most the known public GitHub Issue/PR URLs, safe digest, fixed action enum and statuses - never absolute paths or handoff file names.
+
+**Scope:** exact-link lookup for an explicitly captured packet, not semantic memory, authenticated sender identity, human-approved reusable practice or cross-device sync. The older #338 Episodic Memory remains separate. No Codex Desktop runtime or true client handoff E2E has been verified. This source-level slice does not close #433.
