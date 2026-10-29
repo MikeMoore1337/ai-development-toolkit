@@ -87,3 +87,27 @@ Issue #141 completed a **narrower zero-cost exploratory orchestration pilot**, n
 ## Practical profile usefulness protocol (Issue #298)
 
 [Profile usefulness: five comparable synthetic tasks](PROFILE_BENEFIT_EVAL.md) covers `general`, `backend`, `fullstack`, `qa-python`, and `ui-orchestra`. The zero-cost command `python scripts/profile_benefit_preflight.py` verifies manifest membership, explicit acceptance oracles and actual **source-file byte counts** for every profile; all real baseline/candidate task results and time remain `NOT_MEASURED`. Its optional `--score` mode consumes **previously recorded** 20-run, counterbalanced paired evidence through this existing scorer. It does not run clients, authenticate a self-attested independent reviewer or override Issue #11 ZERO-SPEND. These fixtures must not be advertised as L6 evidence without independent, truly free real-task execution.
+
+## Optional native capsule receipt integrity (#437)
+
+When the locally recorded paired runs include pinned native capsule evidence, choose **explicit** offline receipt validation before scoring:
+
+```bash
+python scripts/skill_eval.py /path/to/recorded-runs.json --verify-native-receipts
+```
+
+Every baseline/candidate run must then include exactly one `native_receipt` map, for example:
+
+```json
+"native_receipt": {
+  "receipt": "receipts/api-baseline-1.json",
+  "capsule_dir": "capsules/api-baseline-1",
+  "artifact": "evidence/api-error-case-baseline-1.txt"
+}
+```
+
+All three locations are **relative to the paired-results JSON**, contained in the same evidence root, and must be regular local files/directories without symlink traversal; the artifact must also occur in the run's `evidence` array. The capsule must already have `capsule.json`, `journal.ndjson` and `projection.json`. This opt-in flag uses the bundled Toolkit `scripts/native_eval_capsules.js receipt verify` (Node.js required), with no shell or model/agent execution and no writes. The CLI sanitizes Node injection environment variables and fails closed on invalid, missing, linked, stale or tampered receipts; a max of 64 individual run receipts limits resource use.
+
+A successful result contains `native_receipts_verified` and `native_evidence_integrity: OFFLINE_VERIFIED_NOT_OUTCOME`. **This authenticates the integrity of the supplied capsule, receipt and artifact within this local verifier - NOT the source's identity, human grading, actual task success, global anti-tamper witnessing, or an approved deploy/release.** Records bearing a `native_receipt` field are rejected without the explicit flag, rather than silently omitting integrity validation. This does not change the original no-receipts evaluation output or permission model.
+
+See [Native Eval Capsules](en/NATIVE_EVAL_CAPSULES.md) for pinned ECC MIT source, provenance and limitations.
