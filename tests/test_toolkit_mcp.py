@@ -441,5 +441,95 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertNotIn(str(path), json.dumps(blocked))
 
 
+    def test_native_prepare_handoff_returns_valid_packet_without_persisting(self):
+        folder, issue, path = self._handoff_fixture()
+        path.unlink()
+        payload = {
+            "project": str(self.project),
+            "issue_url": issue,
+            "from_client": "codex",
+            "to_client": "hermes",
+            "references": ["https://github.com/example/team-repo/pull/12"],
+            "next_action": "CHECK_CI",
+        }
+        response = self._invoke("toolkit_prepare_handoff", **payload)
+        self.assertFalse(response["result"].get("isError", False), response)
+        result = response["result"]["structuredContent"]
+        self.assertEqual(result["status"], "UNREVIEWED_PREVIEW_ONLY")
+        self.assertEqual(result["packet_storage"], "NOT_PERSISTED")
+        self.assertEqual(result["authorization"], "NOT_GRANTED")
+        self.assertEqual(result["network"], "NOT_USED")
+        packet = result["packet"]
+        self.assertEqual(packet["trust"], "UNREVIEWED")
+        self.assertEqual(packet["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(packet["next_action"], "CHECK_CI")
+        self.assertEqual(len(packet["sha256"]), 64)
+        self.assertEqual(mcp._handoff_module().verify_handoff(self.project, packet, "hermes")["decision"],
+                         "PASS")
+        self.assertFalse(path.exists())
+        self.assertEqual(list(folder.iterdir()), [])
+        self.assertFalse((self.project / ".adt").exists())
+        self.assertNotIn(str(self.project), json.dumps(result))
+        self.assertNotIn(str(folder), json.dumps(result))
+
+    def test_native_prepare_handoff_to_verification_after_explicit_manual_save(self):
+        folder, issue, path = self._handoff_fixture()
+        path.unlink()
+        response = self._invoke(
+            "toolkit_prepare_handoff", project=str(self.project), issue_url=issue,
+            from_client="codex", to_client="hermes", references=[],
+            next_action="REVIEW_ISSUE",
+        )
+        packet = response["result"]["structuredContent"]["packet"]
+        mcp._handoff_module()._capture_handoff_file(path, packet)
+        verified = self._invoke("toolkit_verify_handoff", project=str(self.project),
+                                file=str(path), to_client="hermes")
+        self.assertEqual(verified["result"]["structuredContent"]["decision"], "PASS")
+        matches = self._invoke("toolkit_search_handoffs", project=str(self.project),
+                               directory=str(folder), issue_url=issue, to_client="hermes")
+        self.assertEqual(matches["result"]["structuredContent"]["verified_count"], 1)
+        self.assertEqual(matches["result"]["structuredContent"]["matches"][0]["next_action"],
+                         "REVIEW_ISSUE")
+
+    def test_native_prepare_handoff_invalid_inputs_denied_without_write(self):
+        folder, issue, path = self._handoff_fixture()
+        path.unlink()
+        base = {
+            "project": str(self.project), "issue_url": issue, "from_client": "codex",
+            "to_client": "hermes", "references": [], "next_action": "RUN_TESTS",
+        }
+        nested = self.project / "nested"
+        nested.mkdir()
+        changes = (
+            {"project": str(nested)},
+            {"from_client": "hermes"},
+            {"to_client": "other client"},
+            {"next_action": "RUN_BASH"},
+            {"references": ["https://github.com/foreign/repo/issues/5"]},
+            {"references": ["https://github.com/example/team-repo/pull/12"] * 9},
+            {"references": "https://github.com/example/team-repo/issues/1"},
+            {"issue_url": "https://github.com/foreign/repo/issues/5"},
+            {"include_transcript": True},
+        )
+        for change in changes:
+            with self.subTest(change=change):
+                reply = self._invoke("toolkit_prepare_handoff", **{**base, **change})
+                self.assertTrue(reply["result"]["isError"])
+                self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(reply))
+        self.assertFalse(path.exists())
+        self.assertEqual(list(folder.iterdir()), [])
+        self.assertEqual((self.project / "AGENTS.md").read_text(), "OWNER_PRIVATE_FIXTURE")
+
+    def test_native_prepare_handoff_schema_is_read_only(self):
+        tool = next(x for x in self._tools() if x["name"] == "toolkit_prepare_handoff")
+        self.assertTrue(tool["annotations"]["readOnlyHint"])
+        self.assertFalse(tool["inputSchema"]["additionalProperties"])
+        self.assertEqual(set(tool["inputSchema"]["required"]), {
+            "project", "issue_url", "from_client", "to_client", "references", "next_action",
+        })
+        self.assertEqual(tool["inputSchema"]["properties"]["references"]["maxItems"], 8)
+        self.assertIn("CHECK_CI", tool["inputSchema"]["properties"]["next_action"]["enum"])
+
+
 if __name__ == "__main__":
     unittest.main()
