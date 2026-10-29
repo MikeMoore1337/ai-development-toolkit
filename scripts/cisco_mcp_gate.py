@@ -10,6 +10,7 @@ import argparse
 import importlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -174,19 +175,19 @@ def scan(scope: str = "personal", *,
 # optional Cisco subprocess, this checks first-party declarations offline.
 # This is not a replacement for a complete YARA/schema or runtime audit.
 NATIVE_PATTERNS = (
-    ("PROMPT_OVERRIDE", "HIGH", __import__("re").compile(
+    ("PROMPT_OVERRIDE", "HIGH", re.compile(
         r"\bignore\s+(?:all\s+|previous\s+|prior\s+)?instructions?\b|"
-        r"\bигнорируй\s+(?:все\s+)?(?:предыдущие\s+)?инструкции\b", __import__("re").I)),
-    ("ROLE_FORGERY", "HIGH", __import__("re").compile(
+        r"\bигнорируй\s+(?:все\s+)?(?:предыдущие\s+)?инструкции\b", re.I)),
+    ("ROLE_FORGERY", "HIGH", re.compile(
         r"(?:^|[\n\r])\s*(?:system|assistant)\s*:|"
-        r"\byou\s+are\s+now\s+the\s+system\b", __import__("re").I)),
-    ("SECRET_EXFILTRATION_INSTRUCTION", "HIGH", __import__("re").compile(
+        r"\byou\s+are\s+now\s+the\s+system\b", re.I)),
+    ("SECRET_EXFILTRATION_INSTRUCTION", "HIGH", re.compile(
         r"\b(?:send|upload|exfiltrate|steal|отправь|передай|загрузи)\b.{0,80}"
         r"\b(?:tokens?|secrets?|credentials?|passwords?|ключи?|пароли?|токены?)\b",
-        __import__("re").I)),
-    ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", __import__("re").compile(
+        re.I)),
+    ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", re.compile(
         r"\b(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\b",
-        __import__("re").I)),
+        re.I)),
 )
 
 
