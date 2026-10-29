@@ -84,3 +84,6 @@ The independent no-model CI smoke workflow checks a real upstream editable
 installation in an ephemeral Linux runner with no model credentials, official
 CLI help, official setup preview and fail-closed checks. It is **not** proof of
 a configured benchmark, a model result or a Windows WSL2 installation.
+
+
+**Artifact-root compatibility:** `artifacts` uses upstream's actual `HARNESS2_RUNS_DIR` (default `source/runs`) rather than a fixed location. Its read-only listing stays inside the current user's home and lists only `judged.json` filenames, never file contents. Out-of-home paths are rejected.

@@ -44,6 +44,21 @@ jobs:
           "$bin/harness2-report" --help > /dev/null
           bash integrations/harness2/cli.sh setup-preview lab > "$RUNNER_TEMP/harness2-plan.txt"
           bash integrations/harness2/cli.sh artifacts
+          # Genuine upstream config.RUNS must honor an external user-home path.
+          mkdir -p "$HOME/harness2-artifacts-check"
+          HARNESS2_RUNS_DIR="$HOME/harness2-artifacts-check" \
+            bash integrations/harness2/cli.sh artifacts > "$RUNNER_TEMP/artifacts-path.txt"
+          grep -F "HARNESS2_RUNS_ROOT=$HOME/harness2-artifacts-check" \
+            "$RUNNER_TEMP/artifacts-path.txt"
+          # An existing empty directory must not be misreported as missing.
+          if grep -F "judged.json" "$RUNNER_TEMP/artifacts-path.txt"; then
+            echo "Synthetic or unexpected graded results appeared in no-model smoke" >&2
+            exit 1
+          fi
+          if HARNESS2_RUNS_DIR=/tmp bash integrations/harness2/cli.sh artifacts; then
+            echo "Out-of-home result traversal unexpectedly allowed" >&2
+            exit 1
+          fi
           if bash integrations/harness2/cli.sh check lab; then
             echo "Unexpected benchmark readiness without setup/credentials" >&2
             exit 1
