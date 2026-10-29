@@ -1666,6 +1666,26 @@
       "notes": "Issue #265: original offline bounded diagram pilot; Diagram Design only an idea reference, no upstream code; visual comparison NOT_TESTED."
     },
     {
+      "id": "graphify-474-ignore-native",
+      "path": ".graphifyignore",
+      "name": ".graphifyignore",
+      "kind": "metadata",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; original native Graphify ignore configuration authored for Toolkit, no upstream source code bundled; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/GRAPHIFY.md",
+      "last_reviewed": "2026-10-29",
+      "distribution": "included",
+      "notes": "Issue #474; original Graphify v0.9.97 reads this file; repository-local excludes for safe fresh code-only graph without a new wrapper."
+    },
+    {
       "id": "graphify-423-guide-en",
       "path": "docs/GRAPHIFY.md",
       "name": "GRAPHIFY.md",
@@ -1681,9 +1701,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/GRAPHIFY.md",
-      "last_reviewed": "2026-10-27",
+      "last_reviewed": "2026-10-29",
       "distribution": "included",
-      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not bundle upstream code. Owner Windows/Codex Desktop and bounded native-scope acceptance recorded in #423; new optional .graphifyignore documented in #474."
     },
     {
       "id": "documentation-docs-en-adaptation-md",
@@ -3641,9 +3661,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/ru/GRAPHIFY.md",
-      "last_reviewed": "2026-10-27",
+      "last_reviewed": "2026-10-29",
       "distribution": "included",
-      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not bundle upstream code. Owner Windows/Codex Desktop and bounded native-scope acceptance recorded in #423; new optional .graphifyignore documented in #474."
     },
     {
       "id": "doc-docs-ru-install-linux-md",
