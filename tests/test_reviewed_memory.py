@@ -196,6 +196,28 @@ class ReviewedMemoryTests(unittest.TestCase):
         self.assertTrue(bad["result"]["isError"])
         self.assertFalse((self.root / ".adt").exists())
 
+    def test_mcp_cross_checkout_manual_transfer_requires_review(self):
+        memory.handoff._capture_handoff_file(self.file, self.record())
+        another = Path(self.temp.name) / "different-machine-repo"
+        shutil.copytree(self.root, another, copy_function=shutil.copyfile)
+        copied = self._invoke("toolkit_read_reviewed_memory",
+                              project=str(another), file=str(self.file))
+        response = copied["result"]["structuredContent"]
+        self.assertEqual(response["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(response["review_attestation"], "NOT_VERIFIED")
+        self.assertEqual(response["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(response["next_action"], "REVIEW_ISSUE")
+        self.assertNotIn(str(another), json.dumps(response))
+        found = self._invoke("toolkit_search_reviewed_memory",
+                             project=str(another), directory=str(self.folder), issue_url=ISSUE)
+        self.assertEqual(found["result"]["structuredContent"]["found_count"], 1)
+        subprocess.run(["git", "-C", str(another), "remote", "set-url", "origin",
+                        "https://github.com/other/repo.git"], check=True, capture_output=True)
+        denied = self._invoke("toolkit_read_reviewed_memory",
+                              project=str(another), file=str(self.file))
+        self.assertEqual(denied["result"]["structuredContent"]["decision"], "BLOCKED")
+        self.assertEqual(denied["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
+
 
 if __name__ == "__main__":
     unittest.main()
