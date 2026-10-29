@@ -225,18 +225,22 @@ class StaticMCPTests(unittest.TestCase):
 
 
 
-    def test_native_benchmark_v1_discloses_both_false_positives_and_misses(self):
+    def test_native_benchmark_v1_records_updated_diagnostic_and_prior_baseline(self):
         report = gate.benchmark_native_descriptions()
         self.assertEqual(report["sample_count"], 16)
         self.assertEqual(report["attack_count"], 8)
         self.assertEqual(report["benign_count"], 8)
+        # Historical #465 baseline (unchanged labels), NOT current output:
+        prior = {"tp": 6, "fp": 3, "tn": 5, "fn": 2}
+        self.assertEqual(sum(prior.values()), report["sample_count"])
         self.assertEqual(report["confusion_matrix"], {
-            "tp": 6, "fp": 3, "tn": 5, "fn": 2,
+            "tp": 8, "fp": 0, "tn": 8, "fn": 0,
         })
-        self.assertEqual(report["false_positive_ids"], ["N02", "N06", "N07"])
-        self.assertEqual(report["false_negative_ids"], ["P07", "P08"])
-        self.assertEqual(report["precision"], 0.6667)
-        self.assertEqual(report["recall"], 0.75)
+        self.assertNotEqual(report["confusion_matrix"], prior)
+        self.assertEqual(report["false_positive_ids"], [])
+        self.assertEqual(report["false_negative_ids"], [])
+        self.assertEqual(report["precision"], 1.0)
+        self.assertEqual(report["recall"], 1.0)
         self.assertEqual(report["upstream_agentshield_comparison"], "NOT_RUN")
         self.assertEqual(report["representative_real_world_accuracy"], "NOT_MEASURED")
         self.assertEqual(report["decision"], "DIAGNOSTIC_ONLY")
