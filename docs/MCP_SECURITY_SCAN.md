@@ -60,3 +60,18 @@ mandatory. Use [Security Gate](EXTERNAL_SKILL_GATE.md) separately for skills.
 ```bash
 python -m unittest tests.test_cisco_mcp_gate -v
 ```
+
+## Native offline heuristic (ECC uplift #432)
+
+For **basic first-party description injection checks without installing Cisco or ECC**, run:
+
+```sh
+python scripts/cisco_mcp_gate.py --scope personal --native
+python scripts/cisco_mcp_gate.py --scope project --native
+```
+
+This flag uses the existing static declaration `snapshot()` and a small Toolkit-native rule set. It checks the descriptions of declared tools and nested input schemas for RU/EN instruction override, fake system roles, credential exfiltration instructions and collection domains. Duplicate names, malformed schemas, missing descriptions and oversized data fail closed. Results name only the tool, rule and severity - never echo the untrusted phrase or secret. The operation is offline, read-only, and runs no Cisco scanner, MCP methods, hooks, CLI agents or model APIs.
+
+`PASS` means **no match among these limited heuristic patterns**, not that a tool or implementation is secure. `REVIEW_REQUIRED` covers collector domains; `BLOCKED` covers injection-like findings or invalid data. Existing Cisco `--scope` behavior without `--native` is unchanged, remains optional and provides independent YARA/schema checks. No real model/tool poisoning adversarial trial, client-side enforcement, production activation or measured AgentShield parity is claimed.
+
+Comparison source: [AgentShield pinned `b0891303bdcd6037376a94263d45cfd2ff3dfb98`](https://github.com/affaan-m/agentshield/tree/b0891303bdcd6037376a94263d45cfd2ff3dfb98) (MIT). Toolkit code is original and does not copy AgentShield modules. Rollback is a normal revision revert; no client configuration changes.
