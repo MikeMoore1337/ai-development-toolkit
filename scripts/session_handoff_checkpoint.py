@@ -168,10 +168,15 @@ def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
 
 def _handoff_file(path: Path, repo: Path, *, create: bool) -> None:
     """Refuse linked parents and worktree writes; operator chooses an external file."""
-    if not path.is_absolute() or path.parent.resolve() != path.parent.absolute():
-        raise ValueError("handoff file must have a non-linked absolute parent")
+    if not path.is_absolute():
+        raise ValueError("handoff file must have an absolute path")
+    # Windows 8.3 aliases and case canonicalization are not symlinks. Check
+    # each parent explicitly instead of comparing resolve() and absolute().
+    for parent in (path.parent, *path.parent.parents):
+        if parent.is_symlink() or (hasattr(parent, "is_junction") and parent.is_junction()):
+            raise ValueError("handoff parent is a link or junction")
     root = Path(_git(repo, "rev-parse", "--show-toplevel")).resolve()
-    if path.absolute().is_relative_to(root):
+    if path.resolve().is_relative_to(root):
         raise ValueError("handoff file must be outside the project checkout")
     if create:
         if not path.parent.is_dir() or path.exists() or path.is_symlink():
