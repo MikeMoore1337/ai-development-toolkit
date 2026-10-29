@@ -1,31 +1,37 @@
-# Original ECC Memory Vault (optional, Issue #433)
+# Toolkit Native Memory / Handoff (#433)
 
-The Toolkit **does not bundle or rewrite** [ECC Memory Vault](https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/docs/design/ecc-memory-vault.md). Canonical source `affaan-m/ECC@25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (package 2.2.3; MIT root) provides original `scripts/memory.js` CLI and opt-in `scripts/memory-mcp.mjs` / `ecc-memory-mcp`. The project directory in the source checkout, not Toolkit, owns these utilities.
+Toolkit now provides **manual, project-bound cross-client handoff references** in its existing Git checkpoint utility, without ECC, `ecc-universal`, `ecc-memory-mcp`, a separate daemon or a model API. This is a **first native tranche**, not a full Memory Vault search/write service.
 
-## Purpose and overlap
+## What is implemented
 
-- **ECC Memory Vault:** explicit, portable, human-readable `ecc.memory.v1` handoff documents for project/team; search/read/doctor/create-only writes. Every created item is `unreviewed` context, never policy.
-- **Toolkit #338 Episodic Memory:** existing optional historical session semantic search. **Not replaced** by ECC's lexical memory.
-- **Toolkit #374 Git checkpoint:** verifies repo/branch/HEAD; not rewritten or substituted by a memory document.
-- **Canonical state:** GitHub Issues/PRs, tracked project docs and owner approvals. Memories are hints, not authoritative commands.
+The existing [#374 Git checkpoint](../../scripts/session_handoff_checkpoint.py) now supports `capture-handoff` and `verify-handoff`. A version-2 JSON packet contains: a GitHub Issue, up to eight **same-project** Issue/PR links, sender/recipient client identifiers, a fixed next-action category and the original local Git checkpoint. It never contains free-form instructions, transcripts, private keys, conversation text or arbitrary memory. No chat/client history is accessed.
 
-The new [original-source smoke workflow](../../.github/workflows/ecc-memory-vault.yml) checks out the exact ECC commit in an ephemeral CI workspace and runs **original** `node scripts/memory.js` on synthetic temporary roots. Tests: init, Codex→Hermes handoff, targeted search/read, private-key-like text rejection, project isolation and no user-scope writes. No model or paid API, no copied library or new database. The source CLI uses built-in Node modules; the separate MCP server requires Ajv and an independently reviewed package installation.
+The packet is **unreviewed, not policy, not owner consent**. The SHA-256 detects accidental modification of the file, **not malicious forgery**: any actor can recompute it. A successful check establishes only local repo-path identity, branch, commit and tracked status correspondence, not the truth of cited claims. Cross-machine relocation yields a stale `repo_id` rather than a false PASS; review the authoritative GitHub Issue/PR before continuing.
 
-## Optional installation in a supported client
+## Explicit opt-in usage
 
-Do not install globally from a chat, start a resident process, read actual user sessions or enable cross-project writes by default. An operator can first review a pinned ECC source or verified `ecc-universal` package and its dependencies, then choose the **original** local CLI. The official opt-in MCP registration from `mcp-configs/mcp-servers.json` is:
+Create a file in an existing directory **outside the project checkout**. The destination path must be absolute and not pass through a symlink:
 
-```json
-{
-  "ecc-memory-vault": {
-    "command": "ecc-memory-mcp",
-    "env": {"ECC_MEMORY_HARNESS": "codex"}
-  }
-}
+```sh
+python scripts/session_handoff_checkpoint.py capture-handoff --repo /path/to/project \
+  --issue https://github.com/OWNER/REPO/issues/123 \
+  --from-client codex --to-client hermes \
+  --ref https://github.com/OWNER/REPO/pull/124 \
+  --next-action REVIEW_PR --file /path/to/external/handoff.json
+
+python scripts/session_handoff_checkpoint.py verify-handoff --repo /path/to/project \
+  --to-client hermes --file /path/to/external/handoff.json
+python -m unittest discover -s tests -p test_session_handoff_checkpoint.py -v
 ```
 
-Register it only through the host's approved client interface, with a distinct lowercase `ECC_MEMORY_HARNESS` for each host. Use explicit isolated `ECC_MEMORY_PROJECT_ROOT` / `ECC_MEMORY_USER_ROOT` where applicable; never set `ECC_MEMORY_ALLOW_USER_SCOPE=1` by default. The MCP exposes a **write** tool, so opt-in requires separate write/visibility permissions. Do not point it at Second Brain private vault or personal Codex transcripts.
+The writer uses create-only, fails if the file already exists, and sets mode 0600 on POSIX. The recipient explicitly verifies the packet before manually opening its links. Actions are `REVIEW_ISSUE`, `REVIEW_PR`, `RUN_TESTS`, `CHECK_CI`, `WAIT_FOR_OWNER` or `NONE`. A wrong recipient, cross-project link, stale Git state, tampered data, symlink or malformed packet fails closed. Do not commit these local handoffs; delete the specific file to roll back. No global AGENTS, MCP configuration, hooks or user-scope files are changed.
 
-ECC's public platform matrix reports native Windows memory-write defects; successful Linux/Windows CI on a synthetic filesystem is **not** proof of the user's Windows Codex Desktop or Hermes Agent activation. No auto-enabling, no agent hooks, no shared background server, no silent updates. Uninstall by disabling the client MCP registration and removing only the specifically opted-in ECC installation; preserve unrelated memories and client settings.
+## Overlap and remaining work
 
-**Status:** source inspection and any successful CI smoke are separate from verified local installation, cross-harness live handoff, cost and security sign-off. Keep #433 OPEN until all accepted runtime checks pass.
+- [#338 Episodic Memory](../../integrations/episodic-memory/README.md) is historical-session search, not replaced here.
+- #374 remains a standalone Git metadata checkpoint; existing v1 capture/verify work unchanged.
+- GitHub Issues/PRs and explicitly approved project docs remain authoritative; a packet is a pointer, never an instruction.
+- The historical [original ECC source-smoke workflow](../../.github/workflows/ecc-memory-vault.yml) proves only an ephemeral upstream test. **Installing or launching ECC is not a Toolkit requirement.**
+- Search, persistence in Toolkit-owned memory, explicit reviewed decision summaries, secure cross-device authentication, optional MCP read surfaces, live Codex Desktop ↔ Hermes use and published Toolkit release are **NOT_IMPLEMENTED / NOT_VERIFIED**. Keep #433 OPEN until independently accepted.
+
+Pinned comparison source: [ECC 2.2.3 at `25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b`](https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b), MIT. This specific packet implementation uses Toolkit's existing Python code, not copied ECC source. No Codex CLI, Claude CLI, paid APIs, hidden client activation or additional spending.
