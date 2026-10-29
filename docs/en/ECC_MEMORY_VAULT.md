@@ -47,3 +47,14 @@ python scripts/session_handoff_checkpoint.py search-handoffs --repo /path/to/rep
 Only up to 16 strictly named small JSON packet files are accepted in that folder. Linked directories/files, unexpected extensions, mixed GitHub projects, forged digests, unexpected schema, duplicates and paths inside the repository are refused. A matching `PASS` requires the existing complete v2 digest check, same-project origin, recipient and unchanged local Git state. Stale handoffs can be listed with `git_check=STALE`, but their references and next action are **withheld**. No matching valid record produces `REVIEW_REQUIRED` rather than a false search success. The result includes at most the known public GitHub Issue/PR URLs, safe digest, fixed action enum and statuses - never absolute paths or handoff file names.
 
 **Scope:** exact-link lookup for an explicitly captured packet, not semantic memory, authenticated sender identity, human-approved reusable practice or cross-device sync. The older #338 Episodic Memory remains separate. No Codex Desktop runtime or true client handoff E2E has been verified. This source-level slice does not close #433.
+
+## Toolkit Project MCP read-only handoff surface (#433)
+
+The existing opt-in Toolkit Project MCP now exposes two **native read-only** tools; you do not need to install ECC Memory Vault or another MCP service:
+
+- `toolkit_search_handoffs`: arguments `project` (exact absolute Git root), `directory` (existing absolute external folder), `issue_url` (same-repo GitHub Issue), `to_client` (recipient slug). Delegates to the already released `search_handoffs` parser, including its 16-packet bound, integrity and stale-state rules.
+- `toolkit_verify_handoff`: arguments `project`, `file` (one absolute named `.json` packet outside checkout), `to_client`. Delegates to the existing `verify_handoff` verifier. Does not produce a new packet or modify the repository.
+
+These tools only work **after the user explicitly installs Toolkit Project MCP** in an approved client and explicitly invokes them. The server does not automatically enumerate a home folder, listen in the background, sync other machines, ingest conversation text or make requests to GitHub. In responses, `trust=UNREVIEWED` and `owner_approval=NOT_GRANTED` remain fixed; a SHA-256 match does not attest the sender or authorize execution. A stale handoff supplies no reference links or next action. Invalid project roots, foreign Issue URLs, extra arguments, linked files and malformed packet data fail closed. There are no new API fees or CLI agents.
+
+**Source-level tests do not prove Codex Desktop discovery or real Codex→Hermes→Codex handoff.** The historical #338 episodic memory and versioned release are separate. No semantic search, reviewed-memory persistence or authenticated cross-device transfer is claimed. Rollback: disable the Toolkit Project MCP tool or revert this repository revision.
