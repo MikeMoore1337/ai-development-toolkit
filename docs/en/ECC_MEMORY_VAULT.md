@@ -24,7 +24,7 @@ python scripts/session_handoff_checkpoint.py verify-handoff --repo /path/to/proj
 python -m unittest discover -s tests -p test_session_handoff_checkpoint.py -v
 ```
 
-The writer uses create-only, fails if the file already exists, and sets mode 0600 on POSIX. The recipient explicitly verifies the packet before manually opening its links. Actions are `REVIEW_ISSUE`, `REVIEW_PR`, `RUN_TESTS`, `CHECK_CI`, `WAIT_FOR_OWNER` or `NONE`. A wrong recipient, cross-project link, stale Git state, tampered data, symlink or malformed packet fails closed. Do not commit these local handoffs; delete the specific file to roll back. No global AGENTS, MCP configuration, hooks or user-scope files are changed.
+The writer uses create-only, fails if the file already exists, and sets mode 0600 on POSIX. The recipient explicitly verifies the packet before manually opening its links. Actions are `REVIEW_ISSUE`, `REVIEW_PR`, `RUN_TESTS`, `CHECK_CI`, `WAIT_FOR_OWNER` or `NONE`. A wrong recipient, cross-project link, unrecognized/missing GitHub `origin`, stale Git state, tampered data, symlink or malformed packet fails closed. The checkout must have a GitHub HTTPS or SSH `origin` matching the Issue's owner/repository (checked locally, no network). Do not commit these local handoffs; delete the specific file to roll back. No global AGENTS, MCP configuration, hooks or user-scope files are changed.
 
 ## Overlap and remaining work
 
