@@ -212,7 +212,10 @@ def _native_desc_fields(value: object, depth: int = 0) -> list[str]:
             raise ValueError("Oversized schema array")
         found = []
         for item in value:
-            found.extend(_native_desc_fields(item, depth + 1))
+            if isinstance(item, (dict, list)):
+                found.extend(_native_desc_fields(item, depth + 1))
+            elif not isinstance(item, (str, int, float, bool, type(None))):
+                raise ValueError("Unsupported schema array item")
         return found
     raise ValueError("Unexpected schema")
 
