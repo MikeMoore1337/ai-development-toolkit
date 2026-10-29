@@ -298,13 +298,239 @@ def review(candidate_dir: Path, manifest_file: Path,
     }
 
 
+
+# #432: optional, bounded host-configuration rule surface alongside the existing
+# candidate-skill gate. It reads only explicit paths, never runs hooks/MCP/tools.
+HOST_FILES = (
+    ".codex/config.toml", ".codex/hooks.json",
+    ".claude/settings.json", ".claude/settings.local.json", ".mcp.json",
+)
+HOST_MAX_BYTES = 131_072
+HOST_TOTAL_BYTES = 524_288
+HOOK_COMMAND_KEYS = frozenset(("command",))
+HOST_SEVERITY = {"HIGH": "error", "MEDIUM": "warning"}
+HOST_NET = re.compile(r"\b(?:curl|wget|Invoke-WebRequest|iwr)\b[^\n]{0,250}https?://", re.I)
+HOST_PIPE = re.compile(r"\|\s*(?:sh|bash|pwsh|powershell)\b", re.I)
+HOST_INTERPOLATION = re.compile(r"\$\{(?:file|command|content|input|args?)\}", re.I)
+HOST_DESTRUCTIVE = re.compile(r"\brm\s+-rf\b|\bRemove-Item\b[^\n]{0,120}-Recurse\b", re.I)
+HOST_SENSITIVE = re.compile(r"(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PRIVATE[_-]?KEY|CREDENTIAL)", re.I)
+HOST_ENV_REFERENCE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?\Z")
+
+
+def _host_finding(items: list[dict], rule: str, path: str, severity: str = "HIGH") -> None:
+    # Never include untrusted contents, filenames chosen by a model, or secret values.
+    item = {"rule": rule, "path": path, "severity": severity}
+    if item not in items:
+        items.append(item)
+
+
+def _unique_json_pairs(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("ambiguous duplicate JSON key")
+        result[key] = value
+    return result
+
+
+def _reject_json_constant(_: str) -> None:
+    raise ValueError("non-finite JSON value")
+
+
+def _host_hook_commands(data: object, *, depth: int = 0) -> list[str]:
+    if depth > 16:
+        raise ValueError("overdeep hook")
+    if isinstance(data, dict):
+        found = []
+        for key, val in data.items():
+            if key in HOOK_COMMAND_KEYS:
+                if not isinstance(val, str):
+                    raise ValueError("hook command is not text")
+                found.append(val)
+            elif isinstance(val, (dict, list)):
+                found.extend(_host_hook_commands(val, depth=depth + 1))
+        return found
+    if isinstance(data, list):
+        if len(data) > 128:
+            raise ValueError("too many hook entries")
+        found = []
+        for item in data:
+            found.extend(_host_hook_commands(item, depth=depth + 1))
+        return found
+    raise ValueError("invalid hook structure")
+
+
+def _host_check_hooks(config: dict, path: str, items: list[dict]) -> None:
+    if "hooks" not in config:
+        return
+    for command in _host_hook_commands(config["hooks"]):
+        for pattern, rule in (
+            (HOST_NET, "HOOK_NETWORK_EGRESS"),
+            (HOST_PIPE, "HOOK_SHELL_PIPE"),
+            (HOST_INTERPOLATION, "HOOK_UNTRUSTED_INTERPOLATION"),
+            (HOST_DESTRUCTIVE, "HOOK_DESTRUCTIVE_COMMAND"),
+        ):
+            if pattern.search(command):
+                _host_finding(items, rule, path)
+
+
+def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -> None:
+    servers = config.get("mcp_servers" if toml else "mcpServers")
+    if servers is None:
+        return
+    if not isinstance(servers, dict):
+        raise ValueError("malformed MCP server map")
+    if len(servers) > 64:
+        raise ValueError("too many MCP servers")
+    for server in servers.values():
+        if not isinstance(server, dict):
+            raise ValueError("invalid MCP server")
+        environment = server.get("env", {})
+        if not isinstance(environment, dict):
+            raise ValueError("invalid MCP environment")
+        for key, value in environment.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                raise ValueError("invalid MCP environment entry")
+            if HOST_SENSITIVE.search(key) and value and not HOST_ENV_REFERENCE.fullmatch(value):
+                _host_finding(items, "MCP_INLINE_CREDENTIAL", path)
+        args = server.get("args", [])
+        if not isinstance(args, list) or len(args) > 128 or any(not isinstance(v, str) for v in args):
+            raise ValueError("invalid MCP argument list")
+        if len(args) >= 2 and any(
+            args[i] in ("--allow-root", "--filesystem-root", "--directory")
+            and args[i + 1] in ("/", "C:\\", "C:/")
+            for i in range(len(args) - 1)
+        ):
+            _host_finding(items, "MCP_BROAD_FILESYSTEM_ROOT", path)
+        command = server.get("command", "")
+        if not isinstance(command, str):
+            raise ValueError("invalid MCP command")
+        # A review signal: executable-install-on-use may pull mutable code.
+        if re.search(r"(^|[/\\])(?:npx|bunx)(?:\.cmd|\.exe)?$", command, re.I) and (
+            "-y" in args or "--yes" in args
+        ):
+            _host_finding(items, "MCP_DYNAMIC_PACKAGE_EXECUTION", path, "MEDIUM")
+
+
+def review_host_config(root: Path) -> dict:
+    """Bounded local host-config static audit, no network/process/write effects."""
+    findings: list[dict] = []
+    files: list[dict] = []
+    if not root.is_dir() or root.is_symlink():
+        _host_finding(findings, "INVALID_HOST_ROOT", "<root>")
+    else:
+        total = 0
+        for relative in HOST_FILES:
+            target = root / relative
+            if not target.exists() and not target.is_symlink():
+                continue
+            # Reject junctions/links at every inspected level, never follow them.
+            parts = [target, target.parent]
+            if (any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction()) for p in parts)
+                    or not target.is_file()):
+                _host_finding(findings, "HOST_PATH_NOT_REGULAR", relative)
+                continue
+            try:
+                size = target.stat().st_size
+                total += size
+                if size > HOST_MAX_BYTES or total > HOST_TOTAL_BYTES:
+                    _host_finding(findings, "HOST_CONFIG_TOO_LARGE", relative)
+                    continue
+                body = target.read_bytes()
+                if len(body) > HOST_MAX_BYTES or b"\x00" in body:
+                    raise ValueError("invalid config bytes")
+                files.append({
+                    "path": relative, "sha256": hashlib.sha256(body).hexdigest(),
+                    "size_bytes": len(body),
+                })
+                if relative.endswith(".toml"):
+                    try:
+                        import tomllib
+                    except ImportError as exc:
+                        raise ValueError("TOML support unavailable") from exc
+                    config = tomllib.loads(body.decode("utf-8"))
+                else:
+                    config = json.loads(
+                        body.decode("utf-8"), object_pairs_hook=_unique_json_pairs,
+                        parse_constant=_reject_json_constant,
+                    )
+                if not isinstance(config, dict):
+                    raise ValueError("invalid root config")
+                if relative == ".codex/config.toml":
+                    if config.get("sandbox_mode") == "danger-full-access":
+                        _host_finding(findings, "CODEX_UNRESTRICTED_SANDBOX", relative)
+                    if config.get("approval_policy") == "never":
+                        _host_finding(findings, "CODEX_APPROVAL_DISABLED", relative)
+                    _host_check_mcp(config, relative, findings, toml=True)
+                elif relative == ".mcp.json":
+                    _host_check_mcp(config, relative, findings, toml=False)
+                else:
+                    _host_check_hooks(config, relative, findings)
+                    if relative.startswith(".claude/"):
+                        permissions = config.get("permissions", {})
+                        if not isinstance(permissions, dict):
+                            raise ValueError("invalid permission object")
+                        if "Bash(*)" in permissions.get("allow", []):
+                            _host_finding(findings, "HOST_UNRESTRICTED_SHELL", relative)
+                        if "Write(*)" in permissions.get("allow", []):
+                            _host_finding(findings, "HOST_UNRESTRICTED_WRITE", relative)
+            except (OSError, ValueError, UnicodeError, TypeError, RecursionError):
+                _host_finding(findings, "HOST_CONFIG_UNPARSEABLE", relative)
+    if not files and not findings:
+        _host_finding(findings, "NO_SUPPORTED_HOST_CONFIG", "<root>", "MEDIUM")
+    decision = ("BLOCKED" if any(x["severity"] == "HIGH" for x in findings) else
+                "REVIEW_REQUIRED" if findings else "PASS")
+    return {
+        "schema_version": 1, "decision": decision, "findings": findings,
+        "evidence": {"source": "TOOLKIT_OFFLINE_HOST_CONFIG",
+                     "files": files, "contents_included": False,
+                     "runtime_enforcement": "NOT_VERIFIED", "client_activation": "NOT_VERIFIED"},
+        "execution": "NOT_RUN", "network": "NOT_USED",
+        "authorization": "NOT_GRANTED",
+    }
+
+
+def host_report_sarif(report: dict) -> dict:
+    """SARIF 2.1.0 redacted projection of native host-config findings."""
+    rules = sorted({x["rule"] for x in report["findings"]})
+    return {
+        "version": "2.1.0", "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+        "runs": [{
+            "tool": {"driver": {"name": "Toolkit Native Host Config Gate",
+                                "rules": [{"id": key, "shortDescription": {"text": key}}
+                                          for key in rules]}},
+            "results": [{
+                "ruleId": x["rule"], "level": HOST_SEVERITY[x["severity"]],
+                "message": {"text": x["rule"] + " - manual review required"},
+                "locations": [{
+                    "physicalLocation": {
+                        "artifactLocation": {"uri": x["path"].replace("<root>", "host-config")},
+                    }
+                }],
+            } for x in report["findings"]],
+        }],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--candidate-dir", required=True, type=Path)
-    parser.add_argument("--manifest", required=True, type=Path)
+    parser.add_argument("--candidate-dir", type=Path)
+    parser.add_argument("--manifest", type=Path)
     parser.add_argument("--review-context", type=Path,
                         help="Optional operator dossier JSON outside candidate (not provenance)")
+    parser.add_argument("--host-config-root", type=Path,
+                        help="Opt-in static host config audit, no candidate skill scan")
+    parser.add_argument("--format", choices=("json", "sarif"), default="json")
     args = parser.parse_args(argv)
+    if args.host_config_root is not None:
+        if args.candidate_dir is not None or args.manifest is not None or args.review_context is not None:
+            parser.error("Host config audit is exclusive of candidate review")
+        report = review_host_config(args.host_config_root)
+        payload = host_report_sarif(report) if args.format == "sarif" else report
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return {"PASS": 0, "REVIEW_REQUIRED": 1, "BLOCKED": 2}[report["decision"]]
+    if args.candidate_dir is None or args.manifest is None or args.format != "json":
+        parser.error("Candidate scan requires --candidate-dir --manifest and JSON output")
     result = review(args.candidate_dir, args.manifest, args.review_context)
     print(json.dumps(result, indent=2, sort_keys=True))
     return {"ALLOW_FOR_REVIEW": 0, "NEEDS_MANUAL_REVIEW": 1, "REJECT": 2}[result["decision"]]
