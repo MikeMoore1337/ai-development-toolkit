@@ -70,7 +70,9 @@ class Harness2WindowsAcceptanceContract(unittest.TestCase):
         self.assertIn("integrations/harness2/*.sh text eol=lf",
                       ATTRIBUTES.read_text(encoding="utf-8"))
 
-    @unittest.skipUnless(shutil.which("bash"), "Bash required for shell syntax test")
+    # Git Bash from Windows Python cannot reliably parse a native drive path.
+    # Ubuntu/macOS validate Bash syntax; Windows separately tests PowerShell/WSL argv.
+    @unittest.skipUnless(os.name == "posix" and shutil.which("bash"), "POSIX Bash required for shell syntax test")
     def test_bash_preflight_syntax(self):
         result = subprocess.run(["bash", "-n", str(PREFLIGHT)],
                                 text=True, capture_output=True, check=False, timeout=10)
