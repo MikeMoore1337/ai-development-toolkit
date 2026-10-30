@@ -66,3 +66,15 @@ A third **read-only** Project MCP tool, `toolkit_prepare_handoff`, returns a com
 The result embeds `packet` with `trust=UNREVIEWED`, `owner_approval=NOT_GRANTED`, SHA-256 integrity (not a signature), and `packet_storage=NOT_PERSISTED`. **The MCP does not write the packet to a file**, transfer it to Hermes or authorize the proposed action. The operator can choose to save it outside the repository and run existing `toolkit_verify_handoff` / `toolkit_search_handoffs` later; the existing native CLI `capture-handoff` is the supported create-only disk operation.
 
 A synthetic real-Git test constructs the same packet via MCP, explicitly writes it in an isolated external temporary folder, then verifies/searches via the MCP tools. It verifies only source-level protocol interoperability, **not** real Codex Desktop or Hermes handoff, persistent reviewed memory or client permissions. There is no ECC runtime, paid API, additional daemon or automatic state transition.
+
+## Explicit cross-device Git comparison (#433)
+
+Toolkit Project MCP additionally offers **read-only** `toolkit_verify_portable_handoff` with exact `project`, external `file`, and `to_client`. The matching native CLI mode is:
+
+```sh
+python scripts/session_handoff_checkpoint.py verify-portable-handoff --repo /path/to/recipient/repository --file /path/to/manual/handoff.json --to-client hermes
+```
+
+This optional mode is for an **operator-copied v2 JSON packet**, not automatic file transfer or synchronization. Unlike strict `verify-handoff`, it tolerates a different machine's absolute project path. It still requires a matching GitHub `origin`, packet integrity, recipient, branch, commit and tracked Git status. Any mismatch other than the local path identity returns `BLOCKED` or `STALE` with **no references**. The response on a match is always `REVIEW_REQUIRED` (CLI exit code 2), `sender_identity=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, and a fixed `REVIEW_ISSUE` next step; the packet's suggested action is never authorized. SHA-256 remains a non-authenticating checksum. A changed origin or a malicious packet cannot be treated as an authenticated sender, even when the hash matches. Read the authoritative GitHub Issue/PR before deciding what to do.
+
+**Not delivered by this mode:** human-reviewed persistent memory, semantic retrieval (#338), authenticated sender/device identity, transport, Codex Desktop ↔ Hermes real-client activation, or a public Toolkit release. Roll back by reverting the revision or not invoking the new MCP tool/CLI mode. No new state, service, paid inference, ECC dependency or client settings are created.

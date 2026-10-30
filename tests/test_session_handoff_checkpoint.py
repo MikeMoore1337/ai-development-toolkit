@@ -1,6 +1,10 @@
 """#374 local-only session checkpoint security regression tests."""
 import importlib.util
+import json
+import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -264,6 +268,74 @@ class CheckpointTests(unittest.TestCase):
         self.assertEqual(json.loads(bad.stdout)["decision"], "REVIEW_REQUIRED")
 
 
+
+    def _portable_copy(self):
+        copy = self.root.parent / (self.root.name + "-portable")
+        shutil.copytree(self.root, copy, copy_function=shutil.copyfile)
+        def unlock_git_objects(func, path, _exc):
+            os.chmod(path, 0o700)
+            func(path)
+        self.addCleanup(shutil.rmtree, copy, onerror=unlock_git_objects)
+        return copy
+
+    def test_portable_handoff_matches_same_origin_and_git_state_without_authentication(self):
+        references = ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/472"]
+        packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", references, "RUN_TESTS")
+        copied = self._portable_copy()
+        self.assertEqual(m.verify_handoff(copied, packet, "hermes"),
+                         {"decision": "STALE", "reason": "repo_id"})
+        result = m.verify_handoff_portable(copied, packet, "hermes")
+        self.assertEqual(result["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(result["git_check"], "MATCHED_PORTABLE")
+        self.assertEqual(result["references"], references)
+        self.assertEqual(result["next_action"], "REVIEW_ISSUE")
+        self.assertEqual(result["sender_identity"], "NOT_VERIFIED")
+        self.assertEqual(result["owner_approval"], "NOT_GRANTED")
+        self.assertNotIn(str(copied), str(result))
+        self.assertEqual(m.verify_handoff_portable(self.root, packet, "hermes")["decision"],
+                         "REVIEW_REQUIRED")
+
+    def test_portable_handoff_cli_returns_review_required_not_success(self):
+        packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        copied = self._portable_copy()
+        output = copied.parent / (copied.name + "-packet.json")
+        self.addCleanup(lambda: output.unlink(missing_ok=True))
+        m._capture_handoff_file(output, packet)
+        cmd = [sys.executable, str(MODULE_PATH), "verify-portable-handoff",
+               "--repo", str(copied), "--file", str(output), "--to-client", "hermes"]
+        process = subprocess.run(cmd, capture_output=True, text=True)
+        self.assertEqual(process.returncode, 2, process.stderr)
+        reported = json.loads(process.stdout)
+        self.assertEqual(reported["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(reported["sender_identity"], "NOT_VERIFIED")
+
+    def test_portable_handoff_rejects_tamper_recipient_and_project(self):
+        packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
+        copied = self._portable_copy()
+        self.assertEqual(m.verify_handoff_portable(copied, packet, "codex")["reason"],
+                         "WRONG_RECIPIENT")
+        bad = {**packet, "next_action": "CHECK_CI"}
+        self.assertEqual(m.verify_handoff_portable(copied, bad, "hermes")["reason"],
+                         "TAMPERED_HANDOFF")
+        subprocess.run(["git", "-C", str(copied), "remote", "set-url", "origin",
+                        "https://github.com/other/project.git"], check=True, capture_output=True)
+        self.assertEqual(m.verify_handoff_portable(copied, packet, "hermes")["reason"],
+                         "PROJECT_MISMATCH")
+
+    def test_portable_handoff_stale_commit_and_status_withhold_references(self):
+        packet = m.make_handoff(self.root, ISSUE, "codex", "hermes",
+                                ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/472"], "RUN_TESTS")
+        copied = self._portable_copy()
+        (copied / "tracked.txt").write_text("one", encoding="utf-8")
+        subprocess.run(["git", "-C", str(copied), "add", "tracked.txt"],
+                       check=True, capture_output=True)
+        changed = m.verify_handoff_portable(copied, packet, "hermes")
+        self.assertEqual(changed, {"decision": "STALE", "reason": "status_sha256"})
+        subprocess.run(["git", "-C", str(copied), "-c", "user.name=Test",
+                        "-c", "user.email=test@example.com", "commit", "-m", "changed"],
+                       check=True, capture_output=True)
+        newer = m.verify_handoff_portable(copied, packet, "hermes")
+        self.assertEqual(newer, {"decision": "STALE", "reason": "commit"})
 
     def test_git_reader_never_enables_configured_fsmonitor(self):
         from unittest import mock
