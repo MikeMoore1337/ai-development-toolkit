@@ -3,3 +3,5 @@
 *.py text eol=lf
 *.yml text eol=lf
 *.json text eol=lf
+# Bash scripts invoked from Windows WSL2 must retain LF on checkout.
+integrations/harness2/*.sh text eol=lf
