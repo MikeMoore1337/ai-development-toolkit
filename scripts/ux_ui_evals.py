@@ -148,44 +148,37 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
     purposes = {x["purpose"]: x for x in actual}
     if len(purposes) != len(actual):
         raise EvidenceError("Duplicate visual evidence purposes")
+    # This is an optional evidence packet, not a creativity constraint.
+    # A new design may have zero alternatives or any user/tool-chosen number.
     directions = payload["directions"]
     chosen = payload["chosen_direction"]
     rejected = payload["rejected_directions"]
-    comparable = False
-    if scenario["needs_three"]:
-        if (not isinstance(directions, list) or len(directions) != 3
-                or any(not isinstance(item, dict) or set(item) !=
-                       {"id", "layout_signature", "information_architecture"}
-                       for item in directions)):
-            raise EvidenceError("New designs require exactly three composition hypotheses")
-        identities = [x["id"] for x in directions]
-        signatures = [x["layout_signature"] for x in directions]
-        architectures = [x["information_architecture"] for x in directions]
-        if (len(set(identities)) != 3 or chosen not in identities
-                or not isinstance(rejected, list)
-                or set(rejected) != (set(identities) - {chosen})
-                or len(rejected) != 2):
-            raise EvidenceError("Winner/rejection identities inconsistent")
-        if (any(not isinstance(s, str) or len(s.strip()) < 5 for s in signatures + architectures)
-                or len(set(signatures)) != 3 or len(set(architectures)) != 3):
-            raise EvidenceError("Palette-only or incomplete layout hypotheses")
-        wire = [purposes.get("wireframe:" + identity) for identity in identities]
-        if all(wire):
-            comparable = (
-                len({x["sha256"] for x in wire}) == 3
-                and len({x["viewport"] for x in wire}) == 1
-                and all(x["kind"] in {"PNG_CAPTURE", "SVG_SOURCE"} for x in wire)
-            )
-        risks = payload["template_risks"]
-        if (not isinstance(risks, list) or len(risks) != 3
-                or any(not isinstance(x, str) or len(x.strip()) < 8 for x in risks)
-                or len({x.casefold().strip() for x in risks}) != 3):
-            raise EvidenceError("Three distinct product-specific generic-template risks required")
-    else:
-        if directions not in ([], None) or chosen is not None or rejected not in ([], None):
-            raise EvidenceError("Small fix/accessibility check must not fabricate three designs")
-        if not isinstance(payload["template_risks"], list):
-            raise EvidenceError("Invalid risk ledger")
+    if not isinstance(directions, list) or any(
+            not isinstance(x, dict) or not isinstance(x.get("id"), str)
+            or not x["id"].strip() for x in directions):
+        raise EvidenceError("Directions must be a list of identified concepts")
+    identities = [x["id"] for x in directions]
+    if len(identities) != len(set(identities)):
+        raise EvidenceError("Duplicate direction IDs")
+    if directions:
+        if not isinstance(chosen, str) or chosen not in identities:
+            raise EvidenceError("Selected direction missing or unknown")
+    elif chosen is not None:
+        raise EvidenceError("No directions provided but chosen direction claimed")
+    if not isinstance(rejected, list) or any(
+            not isinstance(x, str) or x not in identities or x == chosen for x in rejected):
+        raise EvidenceError("Invalid rejected direction IDs")
+    if len(rejected) != len(set(rejected)):
+        raise EvidenceError("Duplicate rejected direction IDs")
+    if not isinstance(payload["template_risks"], list) or any(
+            not isinstance(x, str) or not x.strip() for x in payload["template_risks"]):
+        raise EvidenceError("Optional design observations must be nonempty strings")
+    wire = [purposes.get("wireframe:" + identity) for identity in identities]
+    comparable = bool(wire) and all(wire) and (
+        len({x["sha256"] for x in wire}) == len(wire)
+        and len({x["viewport"] for x in wire}) == 1
+        and all(x["kind"] in {"PNG_CAPTURE", "SVG_SOURCE"} for x in wire)
+    )
     reviews = payload["manual_reviews"]
     if (not isinstance(reviews, list)
             or any(not isinstance(x, dict) or set(x) != {"id", "status", "rationale"} for x in reviews)):
@@ -205,10 +198,12 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
         and all(purposes[purpose]["kind"] == "PNG_CAPTURE"
                 for purpose in ("winner:desktop", "winner:mobile"))
     )
-    if scenario["needs_three"]:
-        preview_complete = comparable and desktop_mobile
-    else:
-        preview_complete = desktop_mobile
+    # The offered preview(s), not a preset concept count, determine whether
+    # a human has anything visual to review. Desktop/mobile remains diagnostic.
+    preview_complete = any(
+        row["kind"] == "PNG_CAPTURE" and row["purpose"].startswith("winner:")
+        for row in actual
+    )
     if any(item["status"] == "REVISE" for item in reviews):
         gate = "NEEDS_DESIGN_REVISION"
     elif not preview_complete:
@@ -221,6 +216,7 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
         "gate": gate,
         "comparable_three_artifacts": comparable,
         "desktop_mobile_present": desktop_mobile,
+        "winner_visual_present": preview_complete,
         "asset_digests": actual,
         "manual_review_pending": sum(x["status"] == "NOT_REVIEWED" for x in reviews),
         "manual_review_declared": sum(x["status"] != "NOT_REVIEWED" for x in reviews),
@@ -230,8 +226,8 @@ def audit(payload: object, asset_root: Path, definitions: dict[str, dict]) -> di
         "owner_approval": payload["owner_approval"],
         "implementation_status": "NOT_STARTED",
         "limitations": (
-            "Files/hashes and declared layout structure checked only. Not proof of three "
-            "visually distinct compositions, manual inspection, WCAG, approval or live UI."
+            "Files and hashes checked only. No style pattern is banned; this is not "
+            "proof of aesthetic merit, manual inspection, WCAG, approval or live UI."
         ),
     }
 
