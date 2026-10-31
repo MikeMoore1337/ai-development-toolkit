@@ -113,8 +113,9 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
             raise ValueError("Unknown skill in profile: " + name)
         folder = sources[name]
         file = folder / "SKILL.md"
-        if not file.is_file() or file.stat().st_size > 256 * 1024:
-            raise ValueError("Missing or oversized skill source")
+        # Validate path provenance before inspecting the source file's
+        # existence, size or content. An untrusted manifest must not cause
+        # even a metadata lookup outside the approved repository tree.
         if not file.resolve().is_relative_to(trusted_root):
             raise ValueError("Skill source escapes Toolkit root")
         # Reject links and junctions anywhere below the trusted root, not
@@ -124,6 +125,8 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                 break
             if part.is_symlink() or part.is_junction():
                 raise ValueError("Linked skill source is not measurable")
+        if not file.is_file() or file.stat().st_size > 256 * 1024:
+            raise ValueError("Missing or oversized skill source")
         body = file.read_bytes()
         try:
             body.decode("utf-8")
