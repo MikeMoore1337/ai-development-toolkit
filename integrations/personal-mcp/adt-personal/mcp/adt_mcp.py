@@ -1021,7 +1021,7 @@ TOOLS: list[dict[str, Any]] = [
              'description':'Client-confirmed complete instruction SHA256 by name; send relevant names only.'},
          'excluded_skills':{'type':'array','maxItems':256,'items':{'type':'string'}},
          'active_controller':{'type':'string','enum':['','feature-delivery','make-feature','adaptive-delivery']},
-         'visual_approved':{'type':'boolean','description':'Client assertion only; does not verify owner approval.'},
+         'visual_approved':{'type':'boolean','description':'Client-provided boolean; this tool does not validate it.'},
          'max_skills':{'type':'integer','minimum':1,'maximum':8},
          'max_chars':{'type':'integer','minimum':1,'maximum':32000},
          'candidate_offset':{'type':'integer','minimum':0,
