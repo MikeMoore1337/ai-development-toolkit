@@ -54,7 +54,7 @@ fdd4a73edf2a5386258f5ba34ec42158ccce5d30bec4f6cb602e4086fb725e8a  .agents/skills
 afa1725dbe2996ceb62d65ad4ea1dfcc7133e67bd184ac510a893afc2f150d5f  .agents/skills/skill-portability/SKILL.md
 7e1163b3b3eda39dea8037dc29dd6d1b9434604690962e5769768b61291a71a1  .agents/skills/skill-portability/references/MIGRATION.md
 5ca9619744110e54d3a267a798344b1c2acdaa5a0731af47072b7241326b8777  .agents/skills/task-scoping/SKILL.md
-28dc5ee7c96df8fbcbad09e8b76f1b3b3b0582912e8da31a5c4f55d94762076d  .agents/skills/ux-ui-design-orchestra/SKILL.md
+b2b6f4603631cdeb3a7a0dfafe3ba3d26a5190f3a974a9efec458577f1d97bd0  .agents/skills/ux-ui-design-orchestra/SKILL.md
 60b5dd3d693b3056a71bb69dbc7ce38a2608d5b60719406fdccae0868b39d740  .agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md
 dde19a9fe7d02e5f044cd00b362a5766763f78bd1355dbe11f33313eda1cd2dc  .agents/skills/ux-ui-design-orchestra/references/HANDOFF.md
 bb56ec5289e5440bf028b58be1c0088fd9649d54f0b2ae4f48f3fbedc492eac4  .agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md
