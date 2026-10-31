@@ -193,7 +193,6 @@ class BrowserCaptureTests(unittest.TestCase):
             def screenshot(self, *, path, **_settings):
                 viewport = self.context.settings["viewport"]
                 Path(path).write_bytes(png(viewport["width"], viewport["height"]))
-        original = FakeContext.new_page
         with patch.object(FakeContext, "new_page", lambda ctx: SameImagePage(ctx)):
             report, _fake, folder = self._run_fake()
         self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
