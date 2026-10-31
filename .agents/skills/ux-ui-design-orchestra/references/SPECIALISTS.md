@@ -1,29 +1,24 @@
-# Specialist routing and source hygiene
+# Specialist routing - tool-native methods
 
-Each row is a **capability**, not a new model, service or authorization.
+Each row names a capability, **not an automatic installation, agent or execution grant**.
 
-| Need | Preferred existing source | Evidence/output | Use when |
-| --- | --- | --- | --- |
-| Primary design direction, non-template product UI | `pbakaus/impeccable` `shape`, `distill` for new UI; `critique`, `polish` for existing UI | Design rationale or UI issue, hierarchy and product constraint | any substantial design or UI audit |
-| Keyboard, semantics, touch targets, focus, forms | `ibelick/ui-skills` or project accessibility/UI QA | reproduction, affected viewport/state, WCAG criteria where relevant | objective UI/accessibility issue |
-| Gesture and purposeful motion | `emilkowalski/skills` (`review-animations`, `animate`), project's motion skill | trigger/cancel timing, reduced-motion and performance risk | material interaction motion |
-| New directions or comparative visual style | `Leonxlnx/taste-skill`, `nextlevelbuilder/ui-ux-pro-max-skill` | 2 genuinely distinct, evidence-grounded directions | explicit exploration only |
-| UI code/browser validation | project's Playwright/browser + `screenshot-fidelity`, `design-system-consistency`, `qa-strategy` | actual screenshot/test route/state/viewport and limitations | whenever possible |
+| Need | Preferred source when actually available | Output |
+| --- | --- | --- |
+| Visual hierarchy, shape and polish | Original `pbakaus/impeccable` instructions, unmodified | Product-specific art direction and critique |
+| Distinct visual exploration | Original `Leonxlnx/taste-skill` methods, unmodified | Concepts or compositional choices as intended by that skill |
+| Design-system research | Original `nextlevelbuilder/ui-ux-pro-max-skill` methods, unmodified | System/stack recommendations from its own workflow |
+| Accessibility, focus, forms, responsive UX | `ibelick/ui-skills` or local accessibility/QA tools | Reproducible usability findings |
+| Purposeful motion | `emilkowalski/skills` or existing project motion guidance | Behavior, interaction and reduced-motion considerations |
+| Browser/rendered comparison | Project Playwright/browser, `screenshot-fidelity` | Evidence of actual viewports, states, visuals and limitations |
 
-When a concrete component proposal cites shadcn-ui/ui or magicuidesign/magicui, apply the generic selection gate in `docs/en/UI_COMPONENT_SELECTION.md` (RU: `docs/ru/UI_COMPONENT_SELECTION.md`) **before** recommending installation or changing styles. Existing project components, required license/source pins, actual keyboard/reduced-motion checks, visual approval and measured dependency cost take precedence; `PROPOSAL_ONLY` never becomes `OWNER_ACCEPTED` by inference.
+## Tool-native creative freedom
 
-No global installation, automatic fetching, shell command or external API follows from these links. A URL = `REFERENCE_ONLY`; a local source actually read = `LOADED`. Check version/provenance where present. Respect each approved product's palette, typography and design system, even when these are common design patterns. Never "fix AI slop" with unauthorized reskinning.
+Do not censor output with Toolkit-specific bans on SaaS patterns, glass, gradients, photography, cards, hero sections, palettes, fonts or other UI/UX elements. **The original skill's actual source and the user's brief define the process**, not a rewritten Toolkit checklist. No intrinsic quota of three concepts or a mandatory cross-domain swap test. A familiar design pattern can be appropriate. Ground a critique in the actual product and visual artifact rather than applying a blanket ban.
 
-Do not convert anti-SaaS examples into a SaaS design recipe: specialists critique generic patterns only where they are observed or are plausible risks for the brief. A real SaaS application is not excluded from useful dashboard or comparison patterns; unrelated brands must never receive them by default.
+For the user-selected `original_design_skills.mode=ALL_THREE`, each exact original must be installed, trusted, loaded and actually invoked before claiming that mode succeeded. These claims have different provenance: a URL is `REFERENCE_ONLY`, a file actually read is `LOADED`, an actual observed client call is `INVOKED`. Missing an original must be reported honestly; do not substitute a fake reimplementation. This requirement is tracked separately in #449.
 
-In `create-design`, product structure/content comes before visual polish. Accessibility and responsive reviewers test the proposed states as hypotheses, not as observed defects. Specialists must not present invented users, analytics, reviews or usability findings as real research.
+When previous visuals exist, preserve the user's preferred/approved reference in the task context. Prefer refining the best candidate and compare variants side by side on their actual output; do not reset visual direction solely because a later implementation scores better on technical tests.
 
-Three structural design hypotheses and three low-fidelity rendered concept frames are **not three specialist workstreams**. An assistant may use a single permitted graphics/browser tool to draw a 3-panel composition sheet; the tool output must genuinely exist, be viewed, and be linked to the specific hypotheses before selection. Generate them in one read-only task, then use an Impeccable-informed perspective to compare their layout logic, interaction, product specificity and swap-test results. Do not pretend three concepts imply three spawned agents or three rendered applications. Three small drawings suffice; a text-only matrix does not. Reject directions distinguishable only by fonts, colors or copy.
+Specialists may work sequentially or through actual bounded read-only subagents. Never invent subagent identifiers. Concurrent workers must not edit the same UI. Project design rules, rights/privacy/security and explicit owner approval remain authoritative. Do not install unverified binary packages, hooks, paid services or unrelated components solely because a skill mentions them.
 
-For new and substantial UI work, the art-direction/Impeccable-informed critique is required even when only one agent executes sequentially. Prefer actual read sources; a GitHub URL without a read is `REFERENCE_ONLY`, and no external subagent should be claimed without invocation evidence. Report whether generic SaaS cards, decorative gradients, ungrounded social proof or a stock hero could be removed or replaced with a business-specific composition. Treat color schemes as constraints, not evidence of design originality.
-
-Do not make all workers inspect the same unpartitioned checklist. For a small UI fix one combined audit is cheaper and more truthful; the orchestrator may choose one worker.
-
-## Opt-in exact-original policy (#449)
-
-When the user selects `ALL_THREE`, the three original packages Impeccable, Taste Skill (`design-taste-frontend`) and UI UX Pro Max (`ui-ux-pro-max`) all become required participants in the **same existing** design workflow. Check project, ancestor and user skill directories. Install missing originals and necessary tools through the host after source/license/pin/file review, within granted permissions, preferring user scope and preserving existing files. Then load original instructions, observe actual invocation, keep one common brief/brand and record each tool execution trace. A method-inspired rewrite is not the original tool. If setup or execution is blocked, label the missing original `NOT_VERIFIED` or `UNAVAILABLE`, report the concrete blocker and stop the all-three approval claim. Honor explicit no-install requests; hooks, paid services and project assets retain their own approval gates. Existing default selective routing remains unchanged for `STANDARD`.
+If suggesting shadcn or Magic UI components, use existing `docs/en/UI_COMPONENT_SELECTION.md` / `docs/ru/UI_COMPONENT_SELECTION.md` for actual source, licensing, dependency/compatibility and approval checks. Component admission is not a stylistic judgment.
