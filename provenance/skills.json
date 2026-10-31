@@ -19,7 +19,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-11-01",
+      "last_reviewed": "2026-10-31",
       "distribution": "included",
       "notes": "Issue #492 native-first original tool behavior contract; first-party documentation only. No external tool code copied or executed."
     },
@@ -39,7 +39,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/PUBLICATION_POLICY.md",
-      "last_reviewed": "2026-11-01",
+      "last_reviewed": "2026-10-31",
       "distribution": "included",
       "notes": "Issue #492 native-first original tool behavior contract; first-party documentation only. No external tool code copied or executed."
     },
