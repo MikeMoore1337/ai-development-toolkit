@@ -121,8 +121,8 @@ class OfficialRunnerTests(unittest.TestCase):
 
     def test_real_manifest_contains_all_declared_packs(self):
         paths = runner.skill_directories(ROOT)
-        self.assertEqual(86, len(paths))
-        self.assertEqual(4, sum("optional-original-skills/" in p.as_posix() for p in paths))
+        self.assertEqual(87, len(paths))
+        self.assertEqual(5, sum("optional-original-skills/" in p.as_posix() for p in paths))
         self.assertEqual(len(paths), len(set(paths)), "The original source root must be counted once")
         self.assertEqual(24, sum(".agents/skills/" in p.as_posix() for p in paths))
         self.assertEqual(1, sum("extensions/data/" in p.as_posix() for p in paths))
