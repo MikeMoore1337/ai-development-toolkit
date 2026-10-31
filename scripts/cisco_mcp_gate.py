@@ -185,6 +185,16 @@ NATIVE_PATTERNS = (
         r"\b(?:send|upload|exfiltrate|steal|отправь|передай|загрузи)\b.{0,80}"
         r"\b(?:tokens?|secrets?|credentials?|passwords?|ключи?|пароли?|токены?)\b",
         re.I)),
+    # Pinned AgentShield source comparison: explicit prompt/context disclosure
+    # and imperative sensitive-file harvesting absent from native baseline.
+    ("CONTEXT_EXFILTRATION_INSTRUCTION", "HIGH", re.compile(
+        r"\b(?:output|print|display|return|reveal|show)\b.{0,80}"
+        r"\b(?:system\s+prompt|previous\s+conversation|conversation\s+history)\b",
+        re.I)),
+    ("SENSITIVE_FILE_HARVEST_INSTRUCTION", "HIGH", re.compile(
+        r"\b(?:always|must|first|before)\b.{0,100}"
+        r"\b(?:fetch|read|include|get|upload|send)\b.{0,60}"
+        r"(?:\.env\b|\.ssh\b|id_rsa\b|api[-_]?keys?\b)", re.I)),
     ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", re.compile(
         r"\b(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\b",
         re.I)),
