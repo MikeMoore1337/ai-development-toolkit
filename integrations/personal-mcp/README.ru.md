@@ -58,7 +58,7 @@
 
 ## Требования
 
-Codex CLI, Python 3.10+, Git, доступ к публичному GitHub или предварительно разрешённая локальная копия Toolkit, разрешение корпоративной политики. Для Windows доступен проверенный PowerShell-установщик; для Linux и macOS подготовлен отдельный shell-установщик (изолированная проверка в Linux выполнена, проверка в реальном Codex/macOS - отдельно).
+Для **автоматической пользовательской регистрации** нужны Codex CLI, Python 3.10+, Git, доступ к публичному GitHub или предварительно разрешённая локальная копия Toolkit и разрешение корпоративной политики. Работать можно в **Codex Desktop или CLI**; проверяйте тот интерфейс, которым пользуетесь. Для Desktop без CLI доступны [Project MCP и нативные навыки](../../docs/ru/INSTALLATION.md#codex-desktop). `-McpOnly` обновляет только файлы пакета и не создаёт новую регистрацию. Для Windows доступен проверенный PowerShell-установщик; для Linux и macOS подготовлен отдельный shell-установщик (изолированная проверка в Linux выполнена, проверка в реальном Codex/macOS - отдельно).
 
 Скопируйте `integrations/personal-mcp/adt-personal` **вне рабочего проекта**, затем выполните соответствующие команды.
 
@@ -66,9 +66,11 @@ Codex CLI, Python 3.10+, Git, доступ к публичному GitHub или
 
 ```powershell
 $package = 'C:\path\to\ai-development-toolkit\integrations\personal-mcp\adt-personal'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$package\Install-ADT-Personal.ps1" -Codex
+powershell.exe -NoProfile -File "$package\Install-ADT-Personal.ps1" -Codex
 py -3 "$package\diagnose_mcp.py"
 ```
+
+Команда соблюдает execution policy хоста. При блокировке используйте разрешённый организацией подписанный пакет/способ запуска, не ослабляйте политику. Расписание обновления исходников включается отдельно.
 
 ### Linux (терминал)
 

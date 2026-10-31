@@ -1,5 +1,7 @@
 # AI client compatibility: offline contracts
 
+**Installation by interface (audited 2026-10-31):** [Codex Desktop/CLI, Claude Code Desktop/CLI and other compatible clients](INSTALLATION.md). Additional clients there have documentation-supported routes, **not** new runtime certification or changes to this historical L1-L3 registry.
+
 
 ## Subsequent scoped client evidence (Issue #297, 2026-10-24)
 

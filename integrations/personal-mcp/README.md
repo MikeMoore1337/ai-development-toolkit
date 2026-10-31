@@ -44,16 +44,18 @@ cost must remain blocked, and native host model calls are separate actions.
 
 This is a local read-only stdio MCP for Codex, independent of the [ChatGPT plugin](../chatgpt-plugin/README.md), not a hosted ChatGPT integration. It uses a **separate** Toolkit reference checkout and does not write to your work project.
 
-Prerequisites: Codex CLI, Python 3.10+, Git and organization-approved GitHub access. Copy the installer files outside of your work repository. Your Codex client is responsible for reading project-level skill/role names; the MCP only uses the inventory provided.
+Prerequisites for **automatic user-level registration**: Codex CLI, Python 3.10+, Git and organization-approved GitHub access. The connected client can be **Codex Desktop or CLI**; verify it in the surface you actually use. Desktop without the CLI can instead use [Project MCP or native skills](../../docs/INSTALLATION.md#codex-desktop). `-McpOnly` only updates package files and does not create a new registration. Copy the installer files outside of your work repository. Your Codex client is responsible for reading project-level skill/role names; the MCP only uses the inventory provided.
 
 ## Windows (PowerShell)
 
 ```powershell
 $package = 'C:\path\to\ai-development-toolkit\integrations\personal-mcp\adt-personal'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$package\Install-ADT-Personal.ps1" -Codex
+powershell.exe -NoProfile -File "$package\Install-ADT-Personal.ps1" -Codex
 py -3 "$package\diagnose_mcp.py"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$package\Enable-ADT-AutoUpdate.ps1"
 ```
+
+The command respects the host execution policy. If it is blocked, use an organization-approved signed/package route; do not weaken policy. Source-update scheduling is an independent opt-in.
 
 ## Linux (systemd user timer)
 
