@@ -14730,7 +14730,7 @@
       "attribution_path": "optional-original-skills/module-regression/LICENSE",
       "status": "documented",
       "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
-      "last_reviewed": "2026-11-01",
+      "last_reviewed": "2026-10-31",
       "distribution": "included",
       "notes": "Issue #435; manually selected opt-in native skill, no ECC runtime, auto-install, agent CLI, hooks or user host execution.",
       "owner_approval_id": "ECC435_20261101"
@@ -15475,7 +15475,7 @@
       "source": "owner_reported",
       "review_outcomes": "permitted",
       "scope_issue": "#435",
-      "reported_at": "2026-11-01",
+      "reported_at": "2026-10-31",
       "scope_description": "Owner approved selective native ECC ports in #435; original module-regression instructions, template and MIT notice are frozen by exact file SHA256. No automatic host commands, client activation, external ECC runtime or paid API; copyright ownership beyond upstream MIT not independently attested.",
       "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
       "license": "MIT",
