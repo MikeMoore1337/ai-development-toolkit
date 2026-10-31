@@ -50,7 +50,7 @@ Exit codes: `0 PASS` means *only the configured subset* is free of these static 
 | --- | --- |
 | `.codex/config.toml` | `danger-full-access`, approval `never`, declared MCP server env/roots |
 | `.codex/hooks.json` | Command strings nested under hooks: network egress, pipe to shell, untrusted interpolation, destructive command |
-| `.claude/settings.json` and `settings.local.json` | Hooks as above, explicit `Bash(*)`/`Write(*)` allow permissions |
+| `.claude/settings.json` and `settings.local.json` | Hooks as above, explicit `Bash(*)`/`Write(*)`/`Edit(*)` and shell-interpreter allow permissions |
 | `.mcp.json` | Inline credential-looking env values, broad filesystem roots, npx/bunx auto-install signal |
 
 Malformed JSON/TOML, duplicate JSON keys, invalid structures, oversized data, linked paths and unreadable files produce high-severity findings. A missing allowlisted file is *out of scope*, not clean evidence for that subsystem; no supported file produces `REVIEW_REQUIRED`.
@@ -62,3 +62,36 @@ Malformed JSON/TOML, duplicate JSON keys, invalid structures, oversized data, li
 This complements (not replaces) `external_skill_gate.py`'s existing third-party Skill checks, Cisco MCP declaration scans (#359) and SkillSpector (#200). Original research comparison: [AgentShield source `b0891303bdcd6037376a94263d45cfd2ff3dfb98`](https://github.com/affaan-m/agentshield/tree/b0891303bdcd6037376a94263d45cfd2ff3dfb98), license MIT. The implementation is Toolkit-authored Python; no original TypeScript, package dependency, binary, or model inference is copied. Upstream source review is not live AgentShield execution.
 
 Remove/rollback only this opt-in code revision via normal Git history; no files or permissions are changed by the audit. The original Skill candidate scan mode and its output remain supported. Native Windows Codex Desktop security enforcement, upstream parity and complete Host AgentShield-grade coverage remain **NOT_VERIFIED**. Issue #432 stays open pending remaining security controls and accepted real-client evidence.
+
+## Additional native checks and coverage matrix (#432, synthetic diagnostic)
+
+The existing opt-in host scan also recognizes PowerShell
+`Invoke-RestMethod`/`irm` commands with explicit HTTP(S) destinations,
+and advisory signals for known collector URLs or sensitive filesystem
+paths in MCP server argv. The latter two use **MEDIUM / REVIEW_REQUIRED**:
+legitimate troubleshooting configurations may use them. No command,
+path, network endpoint or hook is executed or contacted. Only predefined
+relative source paths and SHA-256 checksums appear in JSON/SARIF; the
+scanner never echoes the argument or its value.
+
+| Surface | Native/optional source coverage | Remaining limitation |
+| --- | --- | --- |
+| Agent instructions | `audit_agent_instructions.py` structural references/duplicates; external Skill text heuristics | Role/semantic override not comprehensively detected |
+| MCP descriptions | `cisco_mcp_gate.py --native` tool and nested JSON-schema heuristic; optional pinned Cisco YARA/schema | Obfuscation, remote server behavior, prompts/resources not inspected |
+| Hooks | Explicit Codex/Claude hook-command strings under approved root | No hook execution, dynamic command flow or host interception |
+| Permissions | Explicit sandbox/approval and blanket shell/write/edit/interpreter settings | Other client versions, effective permissions and runtime enforcement unknown |
+| Secrets | Inline MCP environment credential signals, redacted reports | No full secret discovery, user stores or runtime exfiltration check |
+| External skills | Existing candidate Skill inventory, checksums and text gate; optional SkillSpector | No proof third-party source is safe or authenticated |
+| Integrity | Bounded allowlisted files, malformed JSON/TOML, duplicate JSON keys, unsafe links, junction roots and SHA-256 | Races after scan, unsupported paths and junction platforms require separate assurance |
+
+`host_report_sarif` emits SARIF 2.1.0 rule IDs and severity with
+relative paths only. A JSON evidence receipt records inspected-file
+SHA-256 and size; it does **not** certify producer provenance or prevent
+a post-scan change. The 38-case offline diagnostic and aggregate baseline
+are documented in [MCP security scan](../MCP_SECURITY_SCAN.md).
+Upstream reference: [AgentShield MIT source at pinned revision](https://github.com/affaan-m/agentshield/tree/b0891303bdcd6037376a94263d45cfd2ff3dfb98).
+No original source or runtime is required or installed. Roll back by
+reverting only the Toolkit change in Git; opt-in scanning never mutates
+host settings. A source comparison is not validated rule parity:
+`UPSTREAM_COMPARISON=NOT_RUN`, `CLIENT_RUNTIME=NOT_VERIFIED`,
+`REPRESENTATIVE_ACCURACY=NOT_MEASURED`; Issue #432 must remain open.
