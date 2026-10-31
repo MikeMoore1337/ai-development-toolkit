@@ -28,3 +28,5 @@ python scripts/profile_metrics.py --profile general --metadata-budget-bytes 8000
 ```
 
 An over-budget result is advisory only: required skills, profile order and membership remain unchanged. Disable the optional feature by omitting `--metadata-budget-bytes`. Existing routing and controller-conflict policies remain authoritative; semantic equivalence and live model token cost are not measured by this feature. Selecting a more compact profile requires an independent user decision. Unsupported clients are neither activated nor verified by the offline preview.
+
+An additional integration regression executes the preview for **every profile in the current MANIFEST.json**, verifies unchanged full skill membership and order, and confirms no automatic application. Synthetic negative checks cover linked skill directories, Windows junctions (when available on the test runner), and refusal to inspect files outside the Toolkit root.
