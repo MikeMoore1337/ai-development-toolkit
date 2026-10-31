@@ -50,7 +50,7 @@ Exit codes: `0 PASS` means *only the configured subset* is free of these static 
 | --- | --- |
 | `.codex/config.toml` | `danger-full-access`, approval `never`, declared MCP server env/roots |
 | `.codex/hooks.json` | Command strings nested under hooks: network egress, pipe to shell, untrusted interpolation, destructive command |
-| `.claude/settings.json` and `settings.local.json` | Hooks as above, explicit `Bash(*)`/`Write(*)` allow permissions |
+| `.claude/settings.json` and `settings.local.json` | Hooks as above, explicit `Bash(*)`/`Write(*)`/`Edit(*)` and shell-interpreter allow permissions |
 | `.mcp.json` | Inline credential-looking env values, broad filesystem roots, npx/bunx auto-install signal |
 
 Malformed JSON/TOML, duplicate JSON keys, invalid structures, oversized data, linked paths and unreadable files produce high-severity findings. A missing allowlisted file is *out of scope*, not clean evidence for that subsystem; no supported file produces `REVIEW_REQUIRED`.
@@ -79,10 +79,10 @@ scanner never echoes the argument or its value.
 | Agent instructions | `audit_agent_instructions.py` structural references/duplicates; external Skill text heuristics | Role/semantic override not comprehensively detected |
 | MCP descriptions | `cisco_mcp_gate.py --native` tool and nested JSON-schema heuristic; optional pinned Cisco YARA/schema | Obfuscation, remote server behavior, prompts/resources not inspected |
 | Hooks | Explicit Codex/Claude hook-command strings under approved root | No hook execution, dynamic command flow or host interception |
-| Permissions | Explicit sandbox/approval and blanket shell/write settings | Other client versions, effective permissions and runtime enforcement unknown |
+| Permissions | Explicit sandbox/approval and blanket shell/write/edit/interpreter settings | Other client versions, effective permissions and runtime enforcement unknown |
 | Secrets | Inline MCP environment credential signals, redacted reports | No full secret discovery, user stores or runtime exfiltration check |
 | External skills | Existing candidate Skill inventory, checksums and text gate; optional SkillSpector | No proof third-party source is safe or authenticated |
-| Integrity | Bounded allowlisted files, malformed JSON/TOML, duplicate JSON keys, unsafe links and SHA-256 | Races after scan, unsupported paths and junction platforms require separate assurance |
+| Integrity | Bounded allowlisted files, malformed JSON/TOML, duplicate JSON keys, unsafe links, junction roots and SHA-256 | Races after scan, unsupported paths and junction platforms require separate assurance |
 
 `host_report_sarif` emits SARIF 2.1.0 rule IDs and severity with
 relative paths only. A JSON evidence receipt records inspected-file
