@@ -23,7 +23,7 @@ The counted byte span includes the opening and closing YAML delimiter lines (inc
 Reproduce the synthetic/offline checks and the existing profile preview:
 
 ```sh
-python -m unittest tests.test_profile_budget_preview -v
+python -m unittest discover -s tests -p test_profile_budget_preview.py -v
 python scripts/profile_metrics.py --profile general --metadata-budget-bytes 8000
 ```
 
