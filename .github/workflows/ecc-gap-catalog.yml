@@ -62,7 +62,7 @@ jobs:
           assert all(x["live_client"] == "NOT_VERIFIED" for x in rows)
           assert all(x["status"] not in {"AUTO_INSTALL", "RUNTIME_VERIFIED"} for x in rows)
           assert any(x["status"] == "HOLD_UNSUPPORTED" for x in rows)
-          assert any(x["status"] == "ADOPT_AS_IS_CANDIDATE" for x in rows)
+          assert any(x["status"] == "ALREADY_PRESENT" for x in rows)
           print("EXHAUSTIVE_ECC_COMPONENT_COVERAGE=PASS")
           print("COMPONENT_KINDS=", dict(Counter(x["kind"] for x in rows)))
           print("VERDICTS=", dict(Counter(x["status"] for x in rows)))

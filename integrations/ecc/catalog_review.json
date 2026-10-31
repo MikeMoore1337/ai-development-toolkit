@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Four original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -81,6 +81,46 @@
       "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-code-tours. Adds CodeTour anchored source walk-throughs distinct from existing repository knowledge mapping.",
       "benefit": "Developer onboarding with verified file/line CodeTour anchors without importing ECC runtime.",
       "test_case": "Verify exact source blob, MIT license, selective installation and CodeTour positive/negative lexical routing; actual rendered client tour NOT_VERIFIED."
+    },
+    {
+      "path": "skills/module-regression",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/module-regression/SKILL.md",
+      "reason": "Original pinned ECC 2.2.3 MIT SKILL.md and original REGRESSION.example.md are bundled unchanged as native opt-in profile native-module-regression. Unlike existing change-impact-analysis and feature-delivery, this records executable downstream module acceptance commands and verified dependency edges. Repository commands remain untrusted and require explicit trusted host authorization. Offline installation is not actual client activation (NOT_VERIFIED).",
+      "benefit": "Adds evidence-based module regression ledger with real exit codes and unknown-edge blockers, not a new agent, external runtime, or global script.",
+      "test_case": "For three linked A->B->C modules, changed A requires recorded approved commands/exits for affected consumers. Missing commands/unverified edges must block green; single-module projects must not create ledger. Test exact original blobs, license, selective installation and no clobber; host client NOT_VERIFIED."
+    },
+    {
+      "path": "skills/verification-loop",
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/feature-delivery/SKILL.md",
+      "reason": "Pinned six-phase build, type, lint, test, security grep and diff verification already supported with stronger observed-evidence gates in Toolkit feature-delivery, qa-strategy and release-safety. Original blanket 80% coverage, simplistic grep and Claude hooks are neither safe nor universal.",
+      "benefit": "Reuse risk-based quality gates without a duplicate verification controller or mandatory 80% threshold.",
+      "test_case": "Synthetic PR must check project-defined build/types/lint/security/tests/diff with real exit codes; absent runners remain NOT_VERIFIED, no unapproved auto hooks."
+    },
+    {
+      "path": "skills/production-audit",
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/release-safety/SKILL.md",
+      "reason": "Pinned source checklist for auth, data, webhooks, operations, UX and rollback is already covered by Toolkit release-safety, security-boundaries and qa-strategy. Subjective 0-100 scoring must not create a new release authority.",
+      "benefit": "Retain evidence-based deploy, rollback and permission gates rather than numerical claim.",
+      "test_case": "Green CI with untested rollback/non-idempotent webhook must remain release-blocked; report exact observed evidence without invented score."
+    },
+    {
+      "path": "skills/repo-scan",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
+      "reason": "Pinned ECC skill only installs a second external GitHub scanner (haibindev/repo-scan) via shell into global Claude directories. The actual external scanner implementation, source rights and runtime remain unreviewed, so it is not a native Toolkit capability.",
+      "benefit": "Potential cross-stack scanning benefit remains unverified and cannot justify auto-installing external code.",
+      "test_case": "No clone, shell installer, $HOME/.claude write, or claimed scanned data until separate external-source license/security/runtime review."
+    },
+    {
+      "path": "agents/build-error-resolver.md",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/feature-delivery/SKILL.md",
+      "reason": "Pinned agent is tied to Claude Sonnet and proactive Bash/Write/Edit. It suggests destructive node_modules/package-lock deletion and network npm install; duplicate agent conflicts with existing feature-delivery, minimal-safe-change and failure-triage control.",
+      "benefit": "Minimal type/build fixes remain within current trusted controller without dangerous cleanup defaults.",
+      "test_case": "Reproduce a TypeScript error, select bounded authorized code diff and rerun; no automatic rm -rf, lockfile deletion, npm install or paid model."
     }
   ]
 }

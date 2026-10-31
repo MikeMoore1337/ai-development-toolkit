@@ -1296,6 +1296,18 @@
         "Use Playwright to test the embedded HTML view inside an Electron web application.",
         "Проверь совместимость JSON-контракта API между двумя микросервисами."
       ]
+    },
+    {
+      "id": "native-module-regression-bilingual",
+      "target": "module-regression",
+      "positive": [
+        "For this multi-module repository use module regression to validate downstream acceptance commands and record exit codes for every dependent module.",
+        "Проведи module regression для взаимозависимых модулей: проверь downstream-команды приёмки и зафиксируй коды завершения тестов."
+      ],
+      "negative": [
+        "Update a single marketing headline without touching dependent modules.",
+        "Исправь цвет кнопки на отдельной статической странице без взаимосвязанных модулей."
+      ]
     }
   ]
 }
