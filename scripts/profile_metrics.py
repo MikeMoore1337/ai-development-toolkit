@@ -95,7 +95,14 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
     if validator_spec is None or validator_spec.loader is None:
         raise ValueError("Toolkit skill validator unavailable")
     validator = module_from_spec(validator_spec)
-    validator_spec.loader.exec_module(validator)
+    # Loading a module normally creates __pycache__ even for a read-only
+    # preview. Preserve the host's setting while preventing this write.
+    previous_bytecode_setting = sys.dont_write_bytecode
+    try:
+        sys.dont_write_bytecode = True
+        validator_spec.loader.exec_module(validator)
+    finally:
+        sys.dont_write_bytecode = previous_bytecode_setting
 
     sources = skill_paths(root, manifest)
     trusted_root = root.resolve()
