@@ -10,8 +10,8 @@ MODES = {"create-design", "audit-proposal", "audit-only", "implement-approved"}
 WORKERS = {"ACTUAL_SUBAGENT", "GENERIC_SUBAGENT", "SEQUENTIAL"}
 SOURCES = {"LOADED", "REFERENCE_ONLY", "UNAVAILABLE"}
 EVIDENCE = {"RENDERED", "SOURCE_ONLY", "NOT_OBSERVED"}
-GATES = {"AWAITING_VISUAL_APPROVAL", "VISUAL_PACKAGE_MISSING", "AUDIT_COMPLETE",
-         "OWNER_ACCEPTED", "IMPLEMENTED_NOT_RELEASED"}
+GATES = {"AWAITING_VISUAL_APPROVAL", "VISUAL_PACKAGE_MISSING", "NEEDS_DESIGN_REVISION",
+         "AUDIT_COMPLETE", "OWNER_ACCEPTED", "IMPLEMENTED_NOT_RELEASED"}
 
 
 
@@ -62,6 +62,167 @@ def inspect_originals(project: Path) -> list[dict]:
         except (OSError, UnicodeError):
             result.append({"name": name, "status": "UNREADABLE"})
     return result
+
+
+
+VISUAL_DECISIONS = {"PRESERVED", "CHANGED", "UNCERTAIN"}
+VISUAL_RECOMMENDATIONS = {"KEEP_BASELINE", "REFINE_BASELINE", "PROPOSE_CANDIDATE", "UNDECIDED"}
+
+
+def validate_visual_lineage(report: dict) -> list[str]:
+    """Validate claims of retaining a preferred/approved predecessor.
+
+    This never ranks aesthetics, compares pixels or certifies that links resolve.
+    The baseline belongs to the consumer project/chat, never the Toolkit repo.
+    """
+    record = report.get("visual_lineage")
+    ready = report.get("gate") == "AWAITING_VISUAL_APPROVAL"
+    if record is None:
+        return (["prior preferred visual baseline needs lineage before visual approval"]
+                if ready and report.get("prior_visual_baseline") is True else [])
+    if not isinstance(record, dict):
+        return ["visual lineage must be an object"]
+    errors: list[str] = []
+    baseline = record.get("baseline")
+    candidate = record.get("candidate")
+    for label, value in (("baseline", baseline), ("candidate", candidate)):
+        if not isinstance(value, dict):
+            errors.append(f"visual lineage missing {label}")
+            continue
+        if not isinstance(value.get("version"), str) or not value["version"].strip():
+            errors.append(f"visual lineage {label} version missing")
+        refs = value.get("artifact_refs")
+        if (not isinstance(refs, list) or not refs
+                or any(not isinstance(x, str) or not x.strip() for x in refs)):
+            errors.append(f"visual lineage {label} artifact references missing")
+    if isinstance(baseline, dict):
+        if baseline.get("status") not in {"USER_PREFERRED", "OWNER_ACCEPTED", "PREVIOUS_CANDIDATE"}:
+            errors.append("visual lineage baseline status invalid")
+        strengths = baseline.get("strengths")
+        if not isinstance(strengths, list) or not strengths or any(
+                not isinstance(x, str) or not x.strip() for x in strengths):
+            errors.append("visual lineage baseline strengths missing")
+    if (isinstance(baseline, dict) and isinstance(candidate, dict)
+            and baseline.get("version") == candidate.get("version")):
+        errors.append("visual lineage baseline and candidate versions must differ")
+    review = record.get("visual_review")
+    if not isinstance(review, dict) or review.get("status") not in {"REVIEWED", "NOT_REVIEWED"}:
+        errors.append("visual lineage review status invalid")
+    else:
+        comparisons = review.get("comparisons")
+        if not isinstance(comparisons, list):
+            errors.append("visual lineage comparisons must be a list")
+        elif review["status"] == "REVIEWED" and not comparisons:
+            errors.append("visual lineage reviewed claim lacks observations")
+        else:
+            seen = set()
+            for i, item in enumerate(comparisons):
+                if not isinstance(item, dict):
+                    errors.append(f"visual lineage comparison {i} invalid")
+                    continue
+                aspect = item.get("aspect")
+                if not isinstance(aspect, str) or not aspect.strip() or aspect in seen:
+                    errors.append(f"visual lineage comparison {i} aspect invalid or duplicate")
+                else:
+                    seen.add(aspect)
+                if item.get("assessment") not in VISUAL_DECISIONS:
+                    errors.append(f"visual lineage comparison {i} decision invalid")
+                if (not isinstance(item.get("observation"), str)
+                        or not item["observation"].strip()):
+                    errors.append(f"visual lineage comparison {i} observation missing")
+            if review["status"] == "NOT_REVIEWED" and comparisons:
+                errors.append("unreviewed visual lineage cannot claim observations")
+    technical = record.get("technical_review")
+    if not isinstance(technical, dict) or technical.get("status") not in {
+            "PASS", "FAIL", "NOT_VERIFIED"}:
+        errors.append("visual lineage technical status invalid")
+    elif (technical["status"] == "PASS"
+          and not isinstance(technical.get("evidence"), str)):
+        errors.append("technical PASS needs a separate evidence reference")
+    if record.get("recommendation") not in VISUAL_RECOMMENDATIONS:
+        errors.append("visual lineage recommendation invalid")
+    if record.get("owner_decision") not in {
+            "PENDING", "KEEP_BASELINE", "APPROVE_CANDIDATE", "REQUEST_CHANGES"}:
+        errors.append("visual lineage owner decision invalid")
+    if report.get("mode") != "implement-approved" and record.get("owner_decision") == "APPROVE_CANDIDATE":
+        errors.append("design preparation cannot claim owner approved candidate")
+    if (ready and record.get("recommendation") == "PROPOSE_CANDIDATE"
+            and isinstance(review, dict) and review.get("status") != "REVIEWED"):
+        errors.append("candidate replacement needs observed visual comparison")
+    return errors
+
+
+def validate_exploration(exploration: object) -> list[str]:
+    """Optional exploration: no imposed style, composition or number of concepts."""
+    if not isinstance(exploration, dict):
+        return ["design exploration must be an object"]
+    errors: list[str] = []
+    directions = exploration.get("directions")
+    if not isinstance(directions, list) or not directions:
+        return ["design exploration directions must be a nonempty list"]
+    ids = set()
+    for idx, direction in enumerate(directions):
+        if not isinstance(direction, dict):
+            errors.append(f"direction {idx}: invalid")
+            continue
+        for field in ("id", "title"):
+            value = direction.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"direction {idx}: missing {field}")
+        ident = direction.get("id")
+        if isinstance(ident, str) and ident.strip():
+            if ident in ids:
+                errors.append("design exploration duplicate direction id")
+            ids.add(ident)
+    selected = exploration.get("selected_id")
+    if not isinstance(selected, str) or selected not in ids:
+        errors.append("design exploration selected direction missing")
+    rejections = exploration.get("rejections", [])
+    if not isinstance(rejections, list):
+        errors.append("design exploration rejections must be a list")
+    else:
+        rejected = []
+        for i, item in enumerate(rejections):
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str) or (
+                    not isinstance(item.get("reason"), str) or not item["reason"].strip()):
+                errors.append(f"design exploration rejection {i}: incomplete")
+            else:
+                rejected.append(item["id"])
+        if len(rejected) != len(set(rejected)) or set(rejected) - (ids - {selected}):
+            errors.append("design exploration rejected IDs invalid")
+    swap = exploration.get("cross_domain_swap_test")
+    if swap is not None and (
+            not isinstance(swap, dict)
+            or type(swap.get("would_require_structural_redesign")) is not bool):
+        errors.append("design exploration optional swap-test declaration invalid")
+    comparison = exploration.get("visual_comparison")
+    if comparison is not None:
+        if not isinstance(comparison, dict) or comparison.get("status") not in ("RENDERED", "MISSING"):
+            errors.append("design exploration visual comparison status invalid")
+        else:
+            frames = comparison.get("frames", [])
+            if not isinstance(frames, list):
+                errors.append("design exploration visual frames must be a list")
+            elif comparison["status"] == "MISSING" and frames:
+                errors.append("missing visual comparison cannot claim frames")
+            elif comparison["status"] == "RENDERED":
+                if len(frames) != len(directions):
+                    errors.append("rendered comparison frames must match presented directions")
+                frame_ids = []
+                evidence_ids = []
+                for i, frame in enumerate(frames):
+                    if not isinstance(frame, dict) or not isinstance(frame.get("direction_id"), str):
+                        errors.append(f"visual frame {i}: invalid")
+                        continue
+                    frame_ids.append(frame["direction_id"])
+                    if not isinstance(frame.get("evidence_id"), str) or not frame["evidence_id"].strip():
+                        errors.append(f"visual frame {i}: missing evidence reference")
+                    else:
+                        evidence_ids.append(frame["evidence_id"])
+                if (set(frame_ids) != ids or len(set(frame_ids)) != len(frame_ids)
+                        or len(set(evidence_ids)) != len(evidence_ids)):
+                    errors.append("visual comparison frame directions/evidence inconsistent")
+    return errors
 
 
 def validate_originals(report: dict) -> list[str]:
@@ -220,163 +381,43 @@ def validate(report: object) -> list[str]:
             errors.append("cannot implement before visual approval")
     if mode == "audit-proposal" and report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") == "NOT_PREPARED":
         errors.append("approval requested without design proposal")
-    if mode == "create-design" or (mode == "audit-proposal" and report.get("design_exploration_required") is True):
-        exploration = report.get("design_exploration")
-        if not isinstance(exploration, dict):
-            errors.append("new/substantial design requires three-direction exploration")
-        else:
-            directions = exploration.get("directions")
-            ids = set()
-            compositions = set()
-            architectures = set()
-            if not isinstance(directions, list) or len(directions) != 3:
-                errors.append("design exploration requires exactly three directions")
-                directions = []
-            for idx, direction in enumerate(directions):
-                if not isinstance(direction, dict):
-                    errors.append(f"direction {idx}: invalid")
-                    continue
-                for field in ("id", "title", "product_story", "information_architecture",
-                              "composition", "typography_and_imagery", "primary_interaction", "tradeoff"):
-                    value = direction.get(field)
-                    if not isinstance(value, str) or not value.strip():
-                        errors.append(f"direction {idx}: missing {field}")
-                identity = direction.get("id")
-                if isinstance(identity, str) and identity.strip():
-                    if identity in ids:
-                        errors.append("design exploration duplicate direction id")
-                    ids.add(identity)
-                for field, seen in (("composition", compositions), ("information_architecture", architectures)):
-                    value = direction.get(field)
-                    if isinstance(value, str) and value.strip():
-                        normalized = " ".join(value.casefold().split())
-                        if normalized in seen:
-                            errors.append(f"design exploration repeated {field} (palette swap only)")
-                        seen.add(normalized)
-            selected = exploration.get("selected_id")
-            if not isinstance(selected, str) or selected not in ids:
-                errors.append("design exploration selected direction missing")
-            rationale = exploration.get("selection_rationale")
-            if not isinstance(rationale, str) or not rationale.strip():
-                errors.append("design exploration missing selection rationale")
-            rejections = exploration.get("rejections")
-            rejected = set()
-            if not isinstance(rejections, list) or len(rejections) != 2:
-                errors.append("design exploration requires two rejected directions")
-            else:
-                for i, rejection in enumerate(rejections):
-                    if not isinstance(rejection, dict):
-                        errors.append(f"design exploration rejection {i}: invalid")
-                        continue
-                    rid, reason = rejection.get("id"), rejection.get("reason")
-                    if not isinstance(rid, str) or not isinstance(reason, str) or not reason.strip():
-                        errors.append(f"design exploration rejection {i}: incomplete")
-                    else:
-                        rejected.add(rid)
-                if not isinstance(selected, str) or selected in rejected or rejected != (ids - {selected}):
-                    errors.append("design exploration rejected IDs must match unselected directions")
-            swap = exploration.get("cross_domain_swap_test")
-            if not isinstance(swap, dict):
-                errors.append("design exploration requires cross-domain swap test")
-                swap_passes = False
-            else:
-                swap_passes = swap.get("would_require_structural_redesign") is True
-                if not isinstance(swap.get("test_domain"), str) or not swap["test_domain"].strip():
-                    errors.append("design exploration missing swap target")
-                if not isinstance(swap.get("explanation"), str) or not swap["explanation"].strip():
-                    errors.append("design exploration missing swap explanation")
-                if type(swap.get("would_require_structural_redesign")) is not bool:
-                    errors.append("design exploration swap result invalid")
-            comp_status = exploration.get("status")
-            if comp_status not in ("COMPARED", "NEEDS_REVISION"):
-                errors.append("design exploration comparison status invalid")
-            if report["gate"] == "AWAITING_VISUAL_APPROVAL" and (len(directions) != 3 or comp_status != "COMPARED" or not swap_passes):
-                errors.append("cannot request visual approval without distinct compared directions and passing swap test")
+    # Visual creativity belongs to the task, user and upstream skills. These
+    # declarations only check consistency of *claimed* exploration and evidence.
+    exploration = report.get("design_exploration")
+    if report.get("design_exploration_required") is True and exploration is None:
+        errors.append("explicitly requested design exploration is missing")
+    if exploration is not None:
+        errors.extend(validate_exploration(exploration))
+        if isinstance(exploration, dict):
             comparison = exploration.get("visual_comparison")
-            if not isinstance(comparison, dict) or comparison.get("status") not in ("RENDERED", "MISSING"):
-                errors.append("design exploration requires honest visual comparison status")
-                comparison = {}
-            frames = comparison.get("frames")
-            if not isinstance(frames, list):
-                errors.append("design exploration visual frames must be a list")
-                frames = []
-            if comparison.get("status") == "MISSING" and frames:
-                errors.append("missing visual comparison cannot claim frame artifacts")
-            if comparison.get("status") == "RENDERED":
-                if len(frames) != 3:
-                    errors.append("visual comparison requires exactly three rendered frames")
-                frame_ids = set()
-                frame_refs = set()
-                layout_signatures = set()
-                viewports = set()
-                rendered_evidence = {
-                    row["id"]: row for row in ledger if isinstance(row, dict)
-                    and isinstance(row.get("id"), str) and row.get("status") == "RENDERED"
-                }
-                for idx, frame in enumerate(frames):
-                    if not isinstance(frame, dict):
-                        errors.append(f"visual frame {idx}: invalid")
-                        continue
-                    direction_id = frame.get("direction_id")
-                    if not isinstance(direction_id, str) or direction_id not in ids or direction_id in frame_ids:
-                        errors.append(f"visual frame {idx}: unknown or duplicate direction")
-                    else:
-                        frame_ids.add(direction_id)
-                    evidence_id = frame.get("evidence_id")
-                    evidence_row = rendered_evidence.get(evidence_id) if isinstance(evidence_id, str) else None
-                    if evidence_row is None:
-                        errors.append(f"visual frame {idx}: missing rendered evidence")
-                    else:
-                        source_ref = evidence_row.get("artifact_ref")
-                        if source_ref in frame_refs:
-                            errors.append("visual comparison reuses same unsegmented artifact")
-                        frame_refs.add(source_ref)
-                        viewports.add(evidence_row.get("viewport"))
-                    signature = frame.get("layout_signature")
-                    if (not isinstance(signature, list) or not 3 <= len(signature) <= 12
-                            or any(not isinstance(item, str) or not item.strip() for item in signature)):
-                        errors.append(f"visual frame {idx}: invalid ordered layout signature")
-                    else:
-                        normalized = tuple(" ".join(item.casefold().split()) for item in signature)
-                        if normalized in layout_signatures:
-                            errors.append("visual comparison repeats same composition signature")
-                        layout_signatures.add(normalized)
-                if frame_ids != ids:
-                    errors.append("visual comparison frame directions do not match three candidates")
-                if len(viewports) > 1:
-                    errors.append("visual comparison frames must use matching viewport scale")
-            if report["gate"] == "AWAITING_VISUAL_APPROVAL":
-                if comparison.get("status") != "RENDERED" or len(frames) != 3:
-                    errors.append("cannot request visual approval before three rendered visual sketches")
-                if isinstance(proposal, dict):
-                    finals = proposal.get("artifact_refs")
-                    if (proposal.get("visual_status") != "RENDERED" or not isinstance(finals, list)
-                            or len(set(x for x in finals if isinstance(x, str) and x.strip())) < 2):
-                        errors.append("cannot request visual approval without winner desktop and mobile previews")
-    if mode == "create-design":
-        quality = report.get("design_quality")
+            if isinstance(comparison, dict) and comparison.get("status") == "RENDERED":
+                rendered_ids = {row.get("id") for row in ledger if isinstance(row, dict)
+                                and row.get("status") == "RENDERED"}
+                for frame in comparison.get("frames", []) if isinstance(comparison.get("frames"), list) else []:
+                    if isinstance(frame, dict) and frame.get("evidence_id") not in rendered_ids:
+                        errors.append("visual frame missing rendered evidence")
+    quality = report.get("design_quality")
+    if quality is not None:
         if not isinstance(quality, dict):
-            errors.append("create-design requires design_quality declaration")
+            errors.append("design_quality must be a declaration object")
         else:
-            for key in ("product_specific_direction", "selected_over_alternative"):
-                value = quality.get(key)
-                if not isinstance(value, str) or not value.strip():
-                    errors.append(f"design quality missing {key}")
-            risks = quality.get("generic_template_risks")
-            if (not isinstance(risks, list) or len(risks) < 3
-                    or any(not isinstance(x, str) or not x.strip() for x in risks)
-                    or len({x.strip().casefold() for x in risks if isinstance(x, str)}) != len(risks)):
-                errors.append("design quality requires three distinct generic template risks")
-            if quality.get("impeccable_source_status") not in SOURCES:
-                errors.append("design quality missing honest Impeccable source status")
-            if quality.get("quality_status") not in ("READY_FOR_VISUAL_REVIEW", "NEEDS_DESIGN_REVISION"):
-                errors.append("design quality invalid status")
-            if report["gate"] == "AWAITING_VISUAL_APPROVAL" and quality.get("quality_status") != "READY_FOR_VISUAL_REVIEW":
-                errors.append("cannot request visual approval before design quality revision")
-        if report["gate"] == "AUDIT_COMPLETE":
-            errors.append("new design cannot claim completed UI audit")
-        if report["gate"] == "AWAITING_VISUAL_APPROVAL" and isinstance(proposal, dict) and proposal.get("visual_status") != "RENDERED":
-            errors.append("new design cannot request visual approval without rendered visuals")
+            risks = quality.get("generic_template_risks", [])
+            if (not isinstance(risks, list) or any(
+                    not isinstance(x, str) or not x.strip() for x in risks)):
+                errors.append("optional template observations must be nonempty strings")
+            source_status = quality.get("impeccable_source_status")
+            if source_status is not None and source_status not in SOURCES:
+                errors.append("design quality Impeccable source status invalid")
+    if mode == "create-design" and report["gate"] == "AUDIT_COMPLETE":
+        errors.append("new design cannot claim completed UI audit")
+    if mode == "create-design" or report.get("design_exploration_required") is True:
+        if report["gate"] == "AWAITING_VISUAL_APPROVAL":
+            finals = proposal.get("artifact_refs") if isinstance(proposal, dict) else None
+            if (not isinstance(proposal, dict) or proposal.get("visual_status") != "RENDERED"
+                    or not isinstance(finals, list) or not finals
+                    or any(not isinstance(x, str) or not x.strip() for x in finals)):
+                errors.append("visual review requires actual referenced design previews")
+    errors.extend(validate_visual_lineage(report))
     errors.extend(validate_originals(report))
     return errors
 
