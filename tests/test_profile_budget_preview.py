@@ -84,8 +84,8 @@ class BudgetPreviewTests(unittest.TestCase):
         ).replace("\\r", "\r").replace("\\n", "\n")
         source.write_bytes(original.encode("utf-8"))
         result = mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
-        counted = original.encode("utf-8").split(b"---\\r\\n\\r\\n")[0]
-        self.assertEqual(len(counted) + len(b"---\\r\\n"), result["skill_metadata"][0]["metadata_bytes"])
+        counted = original.encode("utf-8").split(b"---" + bytes((13, 10, 13, 10)))[0]
+        self.assertEqual(len(counted) + len(b"---") + 2, result["skill_metadata"][0]["metadata_bytes"])
         self.assertEqual("NOT_MEASURED", result["tokens"])
 
     def test_invalid_yaml_and_duplicate_keys_are_rejected(self):
@@ -103,8 +103,8 @@ class BudgetPreviewTests(unittest.TestCase):
 
     def test_invalid_utf8_and_unreadable_metadata_are_rejected(self):
         source = self.root / ".agents" / "skills" / "alpha" / "SKILL.md"
-        source.write_bytes(b"---\\nname: alpha\\ndescription: \\xff\\n---\\n".replace(b"\\n", b"\n"))
-        with self.assertRaisesRegex(ValueError, "Invalid skill frontmatter"):
+        source.write_bytes("---\nname: alpha\ndescription: ".encode() + bytes([255]) + "\n---\n".encode())
+        with self.assertRaisesRegex(ValueError, "Non-UTF8 skill metadata"):
             mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
         source.write_text("---\\nname: alpha\\ndescription: Ok\\n---\\n".replace("\\n", "\n"), encoding="utf-8")
         with mock.patch.object(Path, "read_bytes", side_effect=PermissionError("blocked")):
@@ -134,7 +134,7 @@ class BudgetPreviewTests(unittest.TestCase):
     def test_unsafe_manifest_root_outside_checkout_is_rejected(self):
         outside = self.root.parent / ("budget-external-" + self.root.name)
         outside.mkdir()
-        self.addCleanup(lambda: outside.rmdir() if outside.exists() else None)
+        self.addCleanup(lambda: shutil.rmtree(outside, ignore_errors=True))
         (outside / "alpha").mkdir()
         (outside / "alpha" / "SKILL.md").write_text(
             "---\\nname: alpha\\ndescription: External\\n---\\n".replace("\\n", "\n"),
