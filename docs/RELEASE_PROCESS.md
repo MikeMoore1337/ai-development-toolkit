@@ -11,21 +11,22 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
-`5.5.7` (candidate, NOT PUBLISHED) is prepared under the owner request to release the task-required setup change. The last published version remains v5.5.6 until immutable tag, archive and publication checks complete. MCP 0.1.14 and ChatGPT plugin source 0.1.4 have independent package versions.
+**Latest published release:** [v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7) (2026-10-31), immutable tag commit `a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6`, archived `MANIFEST.json.version = 5.5.7`. The release record links exact-source CI and archive checks. MCP 0.1.14 and plugin source 0.1.4 are independent packages; publication alone does not update installed clients or establish runtime activation.
 
 
 
-**Latest published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) (2026-10-24), annotated tag on exact commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`; the archive contains `MANIFEST.json.version = 5.5.6`. Both tag-push and release-published [archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) passed SHA256 and technical provenance gates (549 components, 82 skills). The release-published documentation check initially failed for stale references; this follow-up corrects those references without changing the immutable tagged archive. Local owner worktree pre-tag checks were blocked by four untracked review JSON files; **do not claim local pre-tag PASS**. Independent rights clearance for this exact release is **NOT_ATTESTED** in [Issue #313](https://github.com/MikeMoore1337/ai-development-toolkit/issues/313). CI provenance validation is not legal clearance. Installed MCP/ChatGPT clients were not automatically updated.
+
+**Previous published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) (2026-10-24), annotated tag on exact commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`; the archive contains `MANIFEST.json.version = 5.5.6`. Both tag-push and release-published [archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) passed SHA256 and technical provenance gates (549 components, 82 skills). The release-published documentation check initially failed for stale references; this follow-up corrects those references without changing the immutable tagged archive. Local owner worktree pre-tag checks were blocked by four untracked review JSON files; **do not claim local pre-tag PASS**. Independent rights clearance for this exact release is **NOT_ATTESTED** in [Issue #313](https://github.com/MikeMoore1337/ai-development-toolkit/issues/313). CI provenance validation is not legal clearance. Installed MCP/ChatGPT clients were not automatically updated.
 
 - `v5.5.4` was published on 2026-10-23 from immutable tag commit `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` ([GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4)); `MANIFEST.json.version = 5.5.4` in the tag. Later `main` commits do not become part of this release automatically.
 
-- The last published tag is **`v5.5.6`**, containing `MANIFEST.json.version = 5.5.6` at commit SHA `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`. Commits after this immutable tag are not automatically published.
+- The last published tag is **`v5.5.7`**, containing `MANIFEST.json.version = 5.5.7` at commit SHA `a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6`. Later main commits are not automatically published.
 - `CHANGELOG.md` has an `Unreleased` section for changes merged after the published tag. The latest tagged release section is marked `released`, not `prepared`. Historic entries remain unchanged.
 - Published release identity is the immutable Git tag and GitHub Release **at its exact SHA**. `main` is a development branch, potentially ahead of that tag. Do not install `main` and describe it as the published archive.
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Last published tag: [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) at commit SHA `490cec222c4c2551a7bbe6f20bb0e9a316af13e1` (2026-10-24), matching archived manifest version `5.5.6`. [Compare v5.5.6...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.6...main) for later unreleased changes.
+Last published tag: [v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7) at commit SHA `a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6` (2026-10-31), matching archived manifest version `5.5.7`. [Compare v5.5.7...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.7...main) for later changes.
 
 
 ### Two-phase publication and documentation acceptance (#323)
