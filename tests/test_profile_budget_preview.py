@@ -146,8 +146,18 @@ class BudgetPreviewTests(unittest.TestCase):
             "override": {"skill_root": str(outside), "skills": ["alpha"]}
         }
         self.manifest["core_skills"] = ["beta"]
-        with self.assertRaisesRegex(ValueError, "escapes Toolkit root"):
-            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+        # Prove that invalid paths are refused before calling is_file()
+        # on a location outside the requested repository.
+        original_is_file = Path.is_file
+
+        def guard_external_stat(path):
+            if path.is_relative_to(outside):
+                raise AssertionError("Outside-root file inspected")
+            return original_is_file(path)
+
+        with mock.patch.object(Path, "is_file", guard_external_stat):
+            with self.assertRaisesRegex(ValueError, "escapes Toolkit root"):
+                mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
 
     def test_repeat_and_content_integrity(self):
         files = list(self.root.rglob("SKILL.md"))
@@ -196,6 +206,59 @@ class BudgetPreviewTests(unittest.TestCase):
                 self.assertEqual(2, mod.main())
             self.assertIn("unsafe source", err.getvalue())
 
+
+
+    def test_manifest_profiles_remain_compatible_without_selection_changes(self):
+        # Integration: cover the complete declared catalog, not just
+        # two synthetic skills or one hand-picked profile.
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertTrue(manifest["profiles"])
+        for name, declared in sorted(manifest["profiles"].items()):
+            with self.subTest(profile=name):
+                output = mod.preview_metadata_budget(ROOT, manifest, name, 1_000_000)
+                self.assertEqual(declared, [
+                    row["skill"] for row in output["skill_metadata"]
+                ])
+                self.assertTrue(output["within_budget"])
+                self.assertFalse(output["applied"])
+                self.assertFalse(output["automatic_pruning"])
+                self.assertEqual("NOT_MEASURED", output["tokens"])
+                self.assertEqual(
+                    sum(row["metadata_bytes"] for row in output["skill_metadata"]),
+                    output["eager_metadata_bytes"]
+                )
+
+    def test_linked_skill_folder_is_rejected(self):
+        skill = self.root / ".agents" / "skills" / "alpha"
+        original = (skill / "SKILL.md").read_bytes()
+        shutil.rmtree(skill)
+        target = self.root / "linked-skill-target"
+        target.mkdir()
+        (target / "SKILL.md").write_bytes(original)
+        try:
+            skill.symlink_to(target, target_is_directory=True)
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest(f"Directory symlinks unavailable: {exc}")
+        with self.assertRaisesRegex(ValueError, "Linked skill source"):
+            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows junction only")
+    def test_windows_junction_skill_folder_is_rejected(self):
+        skill = self.root / ".agents" / "skills" / "alpha"
+        original = (skill / "SKILL.md").read_bytes()
+        shutil.rmtree(skill)
+        target = self.root / "junction-target"
+        target.mkdir()
+        (target / "SKILL.md").write_bytes(original)
+        completed = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(skill), str(target)],
+            capture_output=True, text=True, check=False,
+        )
+        if completed.returncode:
+            self.skipTest(f"Junction creation unavailable: {completed.stderr}")
+        self.assertTrue(skill.is_junction())
+        with self.assertRaisesRegex(ValueError, "Linked skill source"):
+            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
 
 
 if __name__ == "__main__":
