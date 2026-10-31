@@ -337,13 +337,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
-        report = measure(ROOT, manifest, args.profile)
+        preview = None
         if args.metadata_budget_bytes is not None:
             if args.profile is None:
                 raise ValueError("--metadata-budget-bytes requires --profile")
-            report["metadata_budget_preview"] = preview_metadata_budget(
+            # Fail closed before measure() traverses the selected profile's
+            # source files. Preview validates metadata and path confinement.
+            preview = preview_metadata_budget(
                 ROOT, manifest, args.profile, args.metadata_budget_bytes
             )
+        report = measure(ROOT, manifest, args.profile)
+        if preview is not None:
+            report["metadata_budget_preview"] = preview
         if args.audit_duplicates:
             report["source_overlap_audit"] = audit_exact_sources(ROOT, manifest)
         if args.audit_directives:
