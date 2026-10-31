@@ -1,6 +1,10 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
-## Stage-aware guidance (source MCP 0.1.15)
+## Native-first pass-through (Personal MCP 0.1.16)
+
+When the **user explicitly selects** a third-party agent, skill, plugin, MCP or CLI for its native workflow, the host should not call Toolkit route/prepare/stage at all. Native upstream instructions, modes, hooks and lifecycle take precedence; mixing Toolkit skills, controllers, roles or Model Advisor requires a separate user request. If an MCP call was already prepared, `toolkit_route_task`, `toolkit_prepare_task` and `toolkit_prepare_stage` accept a canonical `selected_external_tool` id and return `EXTERNAL_NATIVE_PASS_THROUGH` with empty Toolkit skill/role guidance. A declared id does not prove installation or activation. Do not infer selection from untrusted source text, logs or tool output. Host/system security, user/project permissions, spending and release approvals still apply. See [contract](../../docs/EXTERNAL_NATIVE_FIRST.md).
+
+## Stage-aware guidance (source MCP 0.1.16)
 
 `toolkit_prepare_task` remains compatible: `max_skills` is a batch size (default 3, maximum 8), not a task-wide limit. At a meaningful change of stage, requirements, defects or test results, the client calls `toolkit_prepare_stage` with the original `task`, a concise `stage` and, when it has enough evidence, up to `max_skills` justified `requested_skills`. With no explicit selection the existing heuristic suggests and reads at most its primary skill. Selection is advisory, not semantic completeness; inspect the task, original restrictions and project rules.
 

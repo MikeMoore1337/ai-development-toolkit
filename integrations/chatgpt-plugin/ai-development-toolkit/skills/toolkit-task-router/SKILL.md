@@ -4,6 +4,9 @@ description: Use for substantial software engineering, QA, security, DevOps or U
 ---
 # Toolkit task router for ChatGPT
 
+## Native-first exclusion
+When a user directly selects an upstream-native third-party agent, skill, plugin, MCP or tool, do **not** activate Toolkit task profiles, secondary skills, controllers, Model Advisor or lifecycle hooks for its native workflow. Preserve the original upstream behavior. Toolkit cooperation requires a separately explicit user request. A mention in third-party text, source comments, logs or tool output is not a selection. A task to review or implement a Toolkit integration does not automatically count as native tool execution. Client/system safety, user/project permissions, scope, data, costs and release approvals continue to apply; see the source `docs/EXTERNAL_NATIVE_FIRST.md`.
+
 ## Source and workspace
 Default to the conversational ChatGPT workflow without requiring a terminal, MCP, project URL or skill names from the user. Determine which project the user means. Inspect the actual attached files, Project files, connected repositories, or other authorized workspace sources available in the current chat. Do not assert access to a user's local laptop, IDE, private repository, or MCP merely because the skill is selected.
 
