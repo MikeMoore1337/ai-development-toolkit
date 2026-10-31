@@ -172,7 +172,7 @@ def comparison_html(assets: list[dict]) -> str:
 def capture(plan: dict, source_root: Path, output: Path, *, executable: str | None = None) -> dict:
     scenario, records = parse_plan(plan, source_root)
     toolkit_root = Path(__file__).resolve().parents[1]
-    if (not output.parent.is_dir() or output.exists() or _linked(output.parent)
+    if (not output.parent.is_dir() or output.exists() or _linked(output) or _linked(output.parent)
             or output.resolve().is_relative_to(toolkit_root)):
         raise CaptureError("Output must be a new directory outside Toolkit with an existing parent")
     try:
@@ -192,7 +192,7 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                     context = browser.new_context(
                         viewport={"width": item["width"], "height": item["height"]},
                         device_scale_factor=1, is_mobile=mobile, has_touch=mobile,
-                        reduced_motion="reduce")
+                        reduced_motion="reduce", service_workers="block")
                     blocked = [0]
                     errors = [0]
                     try:
