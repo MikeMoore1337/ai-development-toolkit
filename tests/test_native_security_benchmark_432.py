@@ -31,6 +31,15 @@ class NativeSecurityBenchmark432Tests(unittest.TestCase):
     def test_diagnostic_is_complete_without_unsupported_accuracy_claims(self):
         result = bench.benchmark()
         self.assertEqual(result["sample_count"], 38)
+        # Emit only aggregate metrics/IDs to CI, never raw fixture payloads.
+        print("NATIVE_SECURITY_HOLDOUT_432=" + json.dumps({
+            "dataset_sha256": result["dataset_sha256"],
+            "confusion_matrix": result["confusion_matrix"],
+            "precision": result["precision"], "recall": result["recall"],
+            "f1": result["f1"],
+            "false_positive_ids": result["false_positive_ids"],
+            "false_negative_ids": result["false_negative_ids"],
+        }, sort_keys=True), flush=True)
         self.assertEqual(result["status"], "DIAGNOSTIC_ONLY")
         self.assertEqual(result["positive_count"], 19)
         self.assertEqual(result["negative_count"], 19)
