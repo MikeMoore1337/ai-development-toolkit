@@ -12,19 +12,21 @@ codex plugin marketplace add MikeMoore1337/ai-development-toolkit
 
 **This registers the source; it does not install the plugin.** Restart the supported ChatGPT desktop Work/Codex client, select **AI Development Toolkit (local)** in Plugins Directory, and install **AI Development Toolkit**. Test it in a new chat. A local checkout can also be opened directly, or added with `codex plugin marketplace add ./path/to/ai-development-toolkit`. See the [step-by-step setup](../../docs/ONE_COMMAND_SETUP.md).
 
-This repo-marketplace route is not an automatic installer for ChatGPT web or mobile. The source plugin version `0.1.4` is separate from privately installed plugin releases. No public submission or moderation is needed.
+This repo-marketplace route is not an automatic installer for ChatGPT web or mobile. The source plugin version `0.1.5` is separate from privately installed plugin releases. No public submission or moderation is needed.
 
 ## Windows, Linux, macOS and mobile
 
 On **Windows, Linux and macOS**, ZIP import (where supported) takes place inside ChatGPT, not in the operating system. GitHub repo marketplaces are a separate desktop-only distribution path described above.
 
-1. Obtain a reviewed `AI-Development-Toolkit-ChatGPT-Plugin-0.1.4.zip` from a verified release, or build it from a clone of this repository with `python3 integrations/build_packages.py` (`py -3` on Windows).
+1. Build `AI-Development-Toolkit-ChatGPT-Plugin-0.1.5.zip` from a reviewed clone with `python3 integrations/build_packages.py` (`py -3` on Windows), or obtain that exact package from a verified release if it has been published.
 2. In ChatGPT, open plugin creation/import **if available to your account** and import the ZIP. Publishing source code alone does not install a plugin. Follow the host's installation UI.
 3. Select or mention the plugin in a task. Example: “Using Toolkit, review the Python API files I attached, recommend tests and do not modify source.” Verify the source files were actually available.
 
 **Projects:** supply uploaded files, a supported connected GitHub repository, or other authorized workspace context. The plugin cannot see local IDE files, corporate repos, a local Codex MCP, or the host terminal unless those capabilities are separately provided. Respect employer policy before connecting work data.
 
 **Freshness:** when live tools are available, read relevant GitHub files at one verified revision and follow `MANIFEST.json` rules; otherwise use bundled instructions with an explicit fallback status. This does not auto-upgrade the installed plugin package. A selected role is guidance, not an automatically spawned subagent.
+
+With a compatible schema 2 source, load only skills needed for the current stage in bounded batches; later stages can request more without a task-wide count. The client initiates each request and keeps track of instructions still in context. A published schema 1 source retains its legacy per-task source limit until that source is updated. These are instruction contracts, not proof of automatic client behavior.
 
 ## Other chatbots
 

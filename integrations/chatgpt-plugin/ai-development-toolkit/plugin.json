@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-development-toolkit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Chat-first Toolkit routing for engineering, QA, design, SEO and explicit prompt refinement without paid APIs.",
   "repository": "https://github.com/MikeMoore1337/ai-development-toolkit",
   "author": {
@@ -19,8 +19,6 @@
         "defaultPrompt": [
           "Help me plan QA for a Python API using the Toolkit.",
           "Review the UX of an attached screen with Toolkit methodology.",
-          "Use Toolkit guidance to review the repository I connected.",
-          "Сделай хороший промпт для Codex из моих заметок.",
           "Проверь SEO сайта по предоставленному HTML."
         ]
       }

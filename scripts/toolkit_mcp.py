@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import tomllib
+from functools import lru_cache
 from pathlib import Path
 
 from install import _ensure_no_symlink_chain, skill_sources
@@ -67,6 +68,25 @@ def _roles() -> dict[str, Path]:
                     raise ValueError("Duplicate declared role")
                 found[path.stem] = path
     return found
+
+
+@lru_cache(maxsize=1)
+def _stage_adapter():
+    """Share the Personal MCP stage contract instead of another router."""
+    folder = ROOT / "integrations" / "personal-mcp" / "adt-personal" / "mcp"
+    path = folder / "adt_mcp.py"
+    _ensure_no_symlink_chain(path)
+    _ensure_no_symlink_chain(folder / "adt_discovery.py")
+    spec = importlib.util.spec_from_file_location("_adt_stage_adapter", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Stage adapter unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, str(folder))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(folder))
+    return module
 
 
 def _tool_defs() -> list[dict]:
@@ -131,6 +151,8 @@ def _tool_defs() -> list[dict]:
          "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
                          "required": ["task"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        *[tool for tool in _stage_adapter().TOOLS if tool['name'] in
+          ('toolkit_prepare_stage', 'toolkit_get_skill', 'toolkit_get_reference')],
         {"name": "toolkit_preview_install",
          "description": "Preview Skill Manager changes for an already existing project. Does NOT install or modify files.",
          "inputSchema": {"type": "object",
@@ -379,6 +401,19 @@ def _observe_project(repo: Path, client: object) -> dict:
 def invoke(tool: str, args: dict) -> dict:
     if not isinstance(args, dict):
         raise ValueError("Tool arguments must be an object")
+    if tool in ("toolkit_prepare_stage", "toolkit_get_skill", "toolkit_get_reference"):
+        if tool == "toolkit_get_reference" and (not isinstance(args.get("path"), str)
+                                                  or not args["path"].startswith("references/")):
+            raise ValueError("Only skill references/ are readable")
+        adapter = _stage_adapter()
+        try:
+            toolkit = adapter.Toolkit(ROOT)
+            declared = _sources()
+            toolkit.skills = {name: path for name, path in toolkit.skills.items()
+                              if name in declared and toolkit.source / path == declared[name] / "SKILL.md"}
+            return adapter.dispatch(toolkit, tool, args)
+        except adapter.ToolkitError as exc:
+            raise ValueError(str(exc)) from exc
     if tool == "toolkit_advise_execution":
         return _adaptive_advice(args.get("request"))
     if tool == "toolkit_check_execution_consent":

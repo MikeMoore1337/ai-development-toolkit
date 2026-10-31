@@ -98,7 +98,7 @@ class OneCommandDistributionTests(unittest.TestCase):
             text = (ROOT / relative).read_text(encoding="utf-8")
             self.assertIn("codex plugin marketplace add MikeMoore1337/ai-development-toolkit", text)
             self.assertIn("AI Development Toolkit (local)", text)
-            self.assertIn("0.1.4", text)
+            self.assertIn("0.1.5", text)
 
     def test_installers_are_reused_not_duplicated(self):
         package = ROOT / "integrations/personal-mcp/adt-personal"

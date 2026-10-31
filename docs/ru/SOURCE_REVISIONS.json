@@ -61,7 +61,7 @@
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
       "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
-      "source_sha256": "57d83f634fbf9e8de200609f349174fecfb7f4513418caff1dd5dfe7d642d9c9"
+      "source_sha256": "9f2154cd249edbb03686b28d91738ff6c18a96309a636c61610c2f92a6ef8330"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -162,7 +162,7 @@
     {
       "source": "docs/INTEGRATIONS.md",
       "translation": "docs/ru/INTEGRATIONS.md",
-      "source_sha256": "8e9d70601932f8bae60a7bc20c6e211ffa60fdaa935ac7e2fc9fb1fbe2b29944"
+      "source_sha256": "62983978f51339ef533576b65860cceffbae132fc4820c33cfd12b7518eadf59"
     },
     {
       "source": "docs/LANGUAGE_POLICY.md",
