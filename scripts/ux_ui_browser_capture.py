@@ -210,7 +210,33 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                         context.route_web_socket("**/*", lambda socket: socket.close())
                         page = context.new_page()
                         page.on("pageerror", lambda _error: errors.__setitem__(0, errors[0] + 1))
-                        page.goto(item["url"], wait_until="domcontentloaded", timeout=20000)
+                        local_inline_fallback = False
+                        try:
+                            page.goto(item["url"], wait_until="domcontentloaded", timeout=20000)
+                        except PlaywrightError as exc:
+                            # Some managed browsers disallow file: navigation but
+                            # permit rendering content through document.write.
+                            # Only the validated local HTML path may use this
+                            # fallback: remote/loopback URLs must never bypass it.
+                            if (item["origin"] != "LOCAL_HTML"
+                                    or "ERR_BLOCKED_BY_ADMINISTRATOR" not in str(exc)):
+                                raise
+                            local_path = Path(url2pathname(urlsplit(item["url"]).path))
+                            if not _in_root(local_path, source_root) or not local_path.is_file():
+                                raise CaptureError("Local HTML became unsafe before fallback") from exc
+                            if local_path.stat().st_size > 2 * 1024 * 1024:
+                                raise CaptureError("Local HTML exceeds 2 MiB fallback limit") from exc
+                            try:
+                                html = local_path.read_text(encoding="utf-8")
+                            except UnicodeDecodeError as decode_exc:
+                                raise CaptureError("Local HTML must be UTF-8") from decode_exc
+                            # Failed file: navigation may destroy this page's
+                            # execution context; switch to a fresh about:blank.
+                            page.close()
+                            page = context.new_page()
+                            page.on("pageerror", lambda _error: errors.__setitem__(0, errors[0] + 1))
+                            page.set_content(html, wait_until="domcontentloaded", timeout=20000)
+                            local_inline_fallback = True
                         metrics = page.evaluate(PAGE_METRICS)
                         name = f"{index + 1:02d}-{item['purpose'].replace(':', '-')}.png"
                         png = stage / name
@@ -220,6 +246,7 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                                           "viewport": item["viewport"]})
                         diagnostics.append({"purpose": item["purpose"], "source_type": (
                             "LOCAL_HTML" if item["origin"] == "LOCAL_HTML" else "LOCAL_DEV_SERVER"),
+                            "inline_html_fallback": local_inline_fallback,
                             "sha256": hashlib.sha256(png.read_bytes()).hexdigest(),
                             "layout": metrics, "blocked_requests": blocked[0], "page_errors": errors[0]})
                     finally:
@@ -230,10 +257,15 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
         wire_digests = [x["sha256"] for x in diagnostics
                         if x["purpose"].startswith("wireframe:")]
         distinct_wires = len(wire_digests) == len(set(wire_digests))
-        has_defect = (not distinct_wires) or any((x["layout"]["horizontal_overflow_px"] > 1
-                          or x["page_errors"] > 0 or x["blocked_requests"] > 0
-                          or x["layout"]["body_text_characters"] == 0)
-                         for x in diagnostics)
+        has_defect = (not distinct_wires) or any((
+            x["layout"]["horizontal_overflow_px"] > 1
+            or x["layout"]["viewport_width"] != next(
+                item["width"] for item in records if item["purpose"] == x["purpose"])
+            or bool(x["layout"]["small_targets_under_24px"])
+            or x["page_errors"] > 0
+            or x["blocked_requests"] > 0
+            or x["layout"]["body_text_characters"] == 0
+        ) for x in diagnostics)
         report = {
             "schema_version": 1, "scenario_id": scenario,
             "renderer": "PLAYWRIGHT_CHROMIUM", "browser_version": browser_version,
