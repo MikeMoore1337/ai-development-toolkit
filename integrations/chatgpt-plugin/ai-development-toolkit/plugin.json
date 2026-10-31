@@ -19,8 +19,6 @@
         "defaultPrompt": [
           "Help me plan QA for a Python API using the Toolkit.",
           "Review the UX of an attached screen with Toolkit methodology.",
-          "Use Toolkit guidance to review the repository I connected.",
-          "Сделай хороший промпт для Codex из моих заметок.",
           "Проверь SEO сайта по предоставленному HTML."
         ]
       }

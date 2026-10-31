@@ -1,5 +1,7 @@
 # Toolkit routing quick reference
 
+Other request examples: “Use Toolkit guidance to review the repository I connected.” and “Сделай хороший промпт для Codex из моих заметок.”
+
 | Intent | Route | Notes |
 | --- | --- | --- |
 | New website, landing page, major redesign, UX/UI critique | `ui-orchestra` / `ux-ui-design-orchestra` | Design first, compare real visual alternatives, obtain owner approval before implementing unapproved visuals |

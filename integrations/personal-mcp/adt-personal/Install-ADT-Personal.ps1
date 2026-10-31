@@ -151,6 +151,9 @@ if ($Codex -or $ClaudeCode -or $McpOnly) {
         if (-not (Test-Path -LiteralPath $targetDir)) {
             New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
         }
+        if ((Get-Item -LiteralPath $targetDir -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw "Refusing linked MCP directory: $targetDir"
+        }
         $stage = Join-Path $targetDir ('.adt-stage-' + [guid]::NewGuid().ToString('N'))
         New-Item -ItemType Directory -Path $stage -ErrorAction Stop | Out-Null
         $stageServer = Join-Path $stage 'adt_mcp.py'
@@ -196,7 +199,21 @@ if ($Codex -or $ClaudeCode -or $McpOnly) {
             throw
         }
         finally {
-            Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue
+            if (Test-Path -LiteralPath $stage) {
+                try {
+                    $resolvedStage = (Resolve-Path -LiteralPath $stage -ErrorAction Stop).Path
+                    $resolvedTarget = (Resolve-Path -LiteralPath $targetDir -ErrorAction Stop).Path
+                    $stageItem = Get-Item -LiteralPath $stage -Force -ErrorAction Stop
+                    if (($stageItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -or
+                        [IO.Path]::GetDirectoryName($resolvedStage) -ine $resolvedTarget) {
+                        Write-Warning 'Skipped unsafe MCP staging cleanup.'
+                    } else {
+                        Remove-Item -LiteralPath $resolvedStage -Recurse -Force -ErrorAction SilentlyContinue
+                    }
+                } catch {
+                    Write-Warning 'Could not verify MCP staging cleanup; files were preserved.'
+                }
+            }
         }
     }
 }

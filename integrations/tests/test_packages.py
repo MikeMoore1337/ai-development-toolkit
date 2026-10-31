@@ -20,6 +20,10 @@ class SourcePackageTests(unittest.TestCase):
         self.assertEqual(data['name'], folder.name)
         self.assertEqual(data['version'], '0.1.5')
         self.assertLessEqual(len(data['extensions']['com.openai']['interface']['shortDescription']), 30)
+        prompts = data['extensions']['com.openai']['interface']['defaultPrompt']
+        self.assertIsInstance(prompts, list)
+        self.assertTrue(1 <= len(prompts) <= 3)
+        self.assertTrue(all(isinstance(prompt, str) and prompt.strip() for prompt in prompts))
         self.assertNotIn('mcpServers', data)
         self.assertNotIn('apps', data.get('extensions', {}).get('com.openai', {}))
         for skill in ('toolkit-prompt-refinement', 'toolkit-seo-audit', 'toolkit-evidence-curator', 'toolkit-task-observer-opt-in'):
