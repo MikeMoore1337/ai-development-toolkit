@@ -47,6 +47,11 @@ def check_stop(event: object) -> dict[str, object]:
         return {}
     if event.get("hook_event_name") != "Stop" or event.get("stop_hook_active") is True:
         return {}
+    # Do not interrupt an unrelated upstream-native workflow. Stock Codex Stop
+    # payloads lack this task-scoped host marker, so the hook fails open.
+    if (event.get("adt_workflow_scope") != "TOOLKIT_MODEL_ADVISOR"
+            or event.get("adt_external_tool_active") is True):
+        return {}
     message = event.get("last_assistant_message")
     if not isinstance(message, str) or len(message) > MAX_MESSAGE_CHARS:
         return {}

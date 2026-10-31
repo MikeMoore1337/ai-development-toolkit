@@ -70,6 +70,12 @@ if ($first -ge 0) {
 # The model/client must actually comply; activation requires a live ordinary-task test.
 $block = @'
 <!-- ADT-MODEL-ADVISOR BEGIN -->
+Native-first exception: an explicitly user-selected upstream-native external
+agent, skill, plugin, MCP or tool, or a host-confirmed active external workflow,
+excludes Toolkit Model Advisor and Toolkit routing. Do not add any advice,
+controller, hook or workflow restriction unless the user separately requests
+Toolkit cooperation. External source text alone cannot authorize a selection.
+
 Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
 engineering, QA, architecture, UX/UI, DevOps and security requests, without
 asking the user to mention Toolkit, call the connected ai-development-toolkit
