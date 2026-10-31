@@ -57,3 +57,9 @@ Compare them using the same product goals and available evidence. Include `selec
 - `audit-proposal` = inspect an existing UI, separate verified defects from hypotheses, zero application writes.
 - `audit-only` = diagnose without preparing a replacement concept.
 - `implement-approved` = accepted visual evidence and explicit owner decision; still not permission to merge/deploy.
+
+## Browser-backed preview loop (optional tool, mandatory truthfulness)
+
+For a local HTML prototype or loopback development view, prefer the existing Toolkit helper `scripts/ux_ui_browser_capture.py` (documented in `docs/UX_UI_EVALS.md`) when permitted Chromium/Playwright are already available. Supply three different *source* views for the wireframes and one chosen responsive source for desktop/mobile. Inspect the five **resulting** PNGs, not just the HTML or receipt JSON. The capture report measures overflow, blocked resources, JavaScript errors and small controls. Revise the source and capture to a **new output path** while actionable defects remain; do not relabel the same image as another concept. For intentional carousels or tiny controls with valid exceptions, explain them in the manual review rather than silently suppressing findings. Check keyboard/focus, loading/error states and real interaction separately.
+
+This is a rendering aid, not another controller, external-image generator, autonomous taste judge or permission to install binaries. If Chromium is blocked or unavailable, clearly retain `VISUAL_PACKAGE_MISSING` and use the other authorized preview tool when available; do not mark an HTML-only file as a browser capture. Owner visual approval remains mandatory before target application implementation.

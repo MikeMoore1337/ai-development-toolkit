@@ -10468,6 +10468,26 @@
       "notes": "Offline personal/project/task preference preview only; no client actions, model execution or payment."
     },
     {
+      "id": "design-486-scripts-ux-ui-browser-capture-py",
+      "path": "scripts/ux_ui_browser_capture.py",
+      "name": "ux_ui_browser_capture.py",
+      "kind": "script",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/UX_UI_EVALS.md",
+      "last_reviewed": "2026-10-31",
+      "distribution": "included",
+      "notes": "Original opt-in local Chromium capture and DOM evidence helper; no live Chromium execution or aesthetic approval claimed in CI (#486)."
+    },
+    {
       "id": "design-192-scripts-ux-ui-evals-py",
       "path": "scripts/ux_ui_evals.py",
       "name": "ux_ui_evals.py",
@@ -13286,6 +13306,26 @@
       "last_reviewed": "2026-10-19",
       "distribution": "included",
       "notes": ""
+    },
+    {
+      "id": "design-486-tests-test-ux-ui-browser-capture-py",
+      "path": "tests/test_ux_ui_browser_capture.py",
+      "name": "test_ux_ui_browser_capture.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/UX_UI_EVALS.md",
+      "last_reviewed": "2026-10-31",
+      "distribution": "included",
+      "notes": "Offline synthetic browser doubles test preview planning, path boundaries, responsive receipts and distinct screenshot evidence (#486)."
     },
     {
       "id": "design-56-tests",
