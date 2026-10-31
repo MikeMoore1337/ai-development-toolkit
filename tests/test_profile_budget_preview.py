@@ -1,7 +1,9 @@
 """Read-only byte-budget preview; synthetic files do not represent model tokens."""
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import shutil
@@ -173,6 +175,25 @@ class BudgetPreviewTests(unittest.TestCase):
         self.assertTrue(result["within_budget"])
         self.assertFalse(result["applied"])
         self.assertEqual("NOT_OBSERVED", result["host_context"])
+
+    def test_cli_previews_before_reading_any_source_inventory(self):
+        # A rejected preview must not run the broader source-file inventory.
+        fake_argv = ["profile_metrics.py", "--profile", "focused",
+                     "--metadata-budget-bytes", "1000"]
+        (self.root / "MANIFEST.json").write_text(
+            json.dumps(self.manifest), encoding="utf-8"
+        )
+        with (mock.patch.object(mod, "ROOT", self.root),
+              mock.patch.object(sys, "argv", fake_argv),
+              mock.patch.object(mod, "preview_metadata_budget",
+                                side_effect=ValueError("unsafe source")),
+              mock.patch.object(mod, "measure",
+                                side_effect=AssertionError("traversed"))):
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(2, mod.main())
+            self.assertIn("unsafe source", err.getvalue())
+
 
 
 if __name__ == "__main__":
