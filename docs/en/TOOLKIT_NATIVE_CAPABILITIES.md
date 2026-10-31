@@ -27,7 +27,7 @@ The original skill text contains examples; it is **not execution permission** to
 
 **Windows UIA (#450):** the original 889-line source is unchanged under `optional-original-skills/windows-desktop-e2e/references/ORIGINAL_SKILL.md`; the short native `SKILL.md` links to it and requires explicit owner consent before any Windows UIA execution. Structural tests on Windows do not prove actual GUI testing, which remains NOT_VERIFIED until a separately approved live run.
 
-**Security boundary:** upstream ECC's `install-plan.js --skills windows-desktop-e2e` resolves to four modules and potentially unrelated config. Toolkit already has a focused installer that copies only the authorized built-in skill; there is no new installer or ECC module/control-plane dependency. Remove only explicitly installed files for rollback and never delete unrelated user-owned skills. The remaining 597 source components are evaluated case-by-case under [#435](https://github.com/MikeMoore1337/ai-development-toolkit/issues/435); no blanket import or duplicate controller.
+**Security boundary:** upstream ECC's `install-plan.js --skills windows-desktop-e2e` resolves to four modules and potentially unrelated config. Toolkit already has a focused installer that copies only the authorized built-in skill; there is no new installer or ECC module/control-plane dependency. Remove only explicitly installed files for rollback and never delete unrelated user-owned skills. The remaining 596 source components are evaluated case-by-case under [#435](https://github.com/MikeMoore1337/ai-development-toolkit/issues/435); no blanket import or duplicate controller.
 
 ---
 
