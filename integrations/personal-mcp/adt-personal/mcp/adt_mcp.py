@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
@@ -16,7 +17,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.13'
+VERSION = '0.1.15'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -130,7 +131,7 @@ def match_term(text: str, term: str) -> bool:
 def _split_explicit_prohibitions(task: str) -> tuple[str, list[str]]:
     """Bounded prefix-only exclusions, not semantic language understanding."""
     negative_start = re.compile(
-        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|надо|хочу|делай|проводи|создавай)|"
+        r"^(?:не\s+(?:нужен|нужна|нужно|нужны|надо|хочу|делай|проводи|создавай|используй|использовать|применяй|применять)|"
         r"do\s+not|don't|skip|no\s+need\s+to)\b", re.I)
     actionable, excluded = [], []
     for chunk in re.split(r"\s*;\s*", task):
@@ -287,8 +288,9 @@ class Toolkit:
             if part in ('', '.', '..') or part.startswith('\\') or ':' in part:
                 raise ToolkitError('Invalid relative path')
             cur = cur / part
-            if cur.is_symlink():
-                raise ToolkitError('Symlink files/paths are not allowed')
+            if (cur.is_symlink() or (os.name == 'nt' and cur.exists() and
+                                     cur.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)):
+                raise ToolkitError('Linked or reparse-point files/paths are not allowed')
         try:
             real = p.resolve(strict=True)
         except (OSError, RuntimeError) as exc:
@@ -388,6 +390,7 @@ class Toolkit:
         data = path.read_text(encoding='utf-8')
         return {'name': name, 'path': names[name], 'content': data[offset:offset+limit],
                 'offset': offset, 'total_chars': len(data), 'truncated': offset+limit < len(data),
+                'sha256': hashlib.sha256(data.encode('utf-8')).hexdigest(),
                 'provenance': 'LOCAL_SOURCE_GUIDANCE_ONLY'}
 
     def reference(self, skill: str, relative_path: str, offset: int = 0, limit: int = 16000) -> dict[str, Any]:
@@ -526,6 +529,15 @@ class Toolkit:
             'selected_skills': selected,
             'already_available_skills': present,
             'missing_skills': missing if skill_inventory_status != 'NOT_PROVIDED' else [],
+            'required_setup': {
+                'status': ('DISCOVERY_REQUIRED' if skill_inventory_status == 'NOT_PROVIDED'
+                           else 'INSTALL_MISSING' if missing else 'VERIFY_TOOLS'),
+                'skills': ordered[:max_skills] if skill_inventory_status != 'NOT_PROVIDED' else [],
+                'executor': 'HOST_CLIENT',
+                'scope': 'USER',
+                'manager_action': 'ensure',
+                'policy': self.manifest.get('required_setup_policy', {}),
+            },
             'skills_to_consult': ordered,
             'loaded_skills': loaded_skills,
             'context_load_metrics': context_load_metrics,
@@ -544,11 +556,151 @@ class Toolkit:
                 'Read target AGENTS.md and follow project-specific rules and approvals. Existing project skills and roles take precedence.',
                 'Use returned instructions as task guidance in the current conversation, not as automatically installed native Codex skills or spawned subagents.',
                 'Additional skills remain available in remaining_skills_to_consult: read them via toolkit_get_skill when the task actually requires them.',
+                'Reassess meaningful stage changes with toolkit_prepare_stage; pass justified names and digests of complete instructions still in context, plus applicable exclusions and active controller.',
                 'Inspect original references with toolkit_get_reference only when task requires them.',
-                'Never write Toolkit skills, roles, reports or caches into a corporate project by default.',
-                'If a native file-based installation is requested, preview Skill Manager changes and obtain explicit approval before --apply.',
+                'Never write Toolkit skills, roles, reports or caches into a corporate project by default; prefer the client user scope for required setup.',
+                'Install missing task-required skills and tools through the host after verifying actual absence, source, license, pinned revision and files; prefer user scope and preserve existing skills.',
+                'For bundled skills use Skill Manager ensure preview, then --apply within existing authorization; do not ask again for already authorized setup. Install deferred skills only when needed.',
+                'For required external originals use the reviewed native installer or verified skill files with licenses and provenance; never substitute reference-only methods for a required original.',
+                'Honor explicit no-install/reference-only requests and host/project restrictions. If required setup is unavailable, report a concrete BLOCKED reason; MCP itself does not install anything.',
+                'Verify installed files, client discovery and actual invocation separately. Keep project reports and caches outside Toolkit; project-scoped installation follows project approval rules.',
                 'Do not claim success of tool execution or tests that were not performed.',
                 'Default FULFILL_REQUEST: perform the task in the available client; use EXPORT_PROMPT only if the user explicitly asks to write or improve a prompt.',
+            ],
+        }
+
+    def prepare_stage(self, task: str, stage: str, requested_skills: list[str] | None = None,
+                      consulted_skills: dict[str, str] | None = None,
+                      excluded_skills: list[str] | None = None, active_controller: str = '',
+                      visual_approved: bool = False, max_skills: int = 3,
+                      max_chars: int = 16000, candidate_offset: int = 0) -> dict[str, Any]:
+        """Route a client-described stage and return one bounded, read-only batch."""
+        if not isinstance(stage, str) or not stage.strip() or len(stage) > 4000:
+            raise ToolkitError('stage must be nonempty text up to 4000 characters')
+        if not isinstance(task, str) or not task.strip() or len(task) > 6000:
+            raise ToolkitError('task must be nonempty text up to 6000 characters')
+        if type(max_skills) is not int or not 1 <= max_skills <= 8:
+            raise ToolkitError('max_skills must be an integer between 1 and 8')
+        if type(max_chars) is not int or not 1 <= max_chars <= 32000:
+            raise ToolkitError('max_chars must be an integer between 1 and 32000')
+        if type(candidate_offset) is not int or not 0 <= candidate_offset <= sys.maxsize:
+            raise ToolkitError('candidate_offset must be a nonnegative integer')
+        if type(visual_approved) is not bool:
+            raise ToolkitError('visual_approved must be a boolean')
+        if not isinstance(active_controller, str) or active_controller not in CONFLICT_GROUP | {''}:
+            raise ToolkitError('Unknown active controller')
+        if requested_skills is not None and (not isinstance(requested_skills, list)
+                or len(requested_skills) > max_skills
+                or any(not isinstance(n, str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,127}', n)
+                       for n in requested_skills)):
+            raise ToolkitError('requested_skills must contain at most max_skills valid names')
+        excluded_skills = [] if excluded_skills is None else excluded_skills
+        if (not isinstance(excluded_skills, list) or len(excluded_skills) > 256
+                or any(not isinstance(n, str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,127}', n)
+                       for n in excluded_skills)):
+            raise ToolkitError('excluded_skills must be an array of up to 256 valid names')
+        consulted_skills = {} if consulted_skills is None else consulted_skills
+        if (not isinstance(consulted_skills, dict) or len(consulted_skills) > 256
+                or any(not isinstance(n, str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,127}', n)
+                       or not isinstance(d, str) or not re.fullmatch(r'[a-f0-9]{64}', d)
+                       for n, d in consulted_skills.items())):
+            raise ToolkitError('consulted_skills must map up to 256 valid names to SHA256 digests')
+
+        base = self.route(task)
+        _, original_exclusions = _split_explicit_prohibitions(task)
+        stage_route = self.route('; '.join([stage] + original_exclusions))
+        exclusions = original_exclusions + _split_explicit_prohibitions(stage)[1]
+        words = [' '.join(re.findall(r'[a-zа-яё0-9]+', text.casefold().replace('ё', 'е')))
+                 for text in exclusions]
+        selected = list(dict.fromkeys(requested_skills if requested_skills is not None else
+                                      stage_route['routing_decision']['primary_skills']))
+        blocked, conflicts, errors, loaded, skipped, deferred = [], [], [], [], [], []
+        controller = active_controller
+        visual_gate = ('CLIENT_REPORTED_APPROVAL_NOT_VERIFIED' if visual_approved else 'APPROVAL_REQUIRED') \
+            if base['visual_phase'] == 'create-design' else 'NOT_REQUIRED_BY_ROUTER'
+        def prohibited(name: str) -> bool:
+            phrase = name.replace('-', ' ')
+            return (name in excluded_skills or
+                    any(re.search(r'(?<!\w)' + re.escape(phrase) + r'(?!\w)', w) for w in words) or
+                    base['routing_decision']['status'] == 'NO_POSITIVE_INTENT' or
+                    stage_route['routing_decision']['status'] == 'NO_POSITIVE_INTENT')
+        budget = max_chars
+        for name in selected:
+            if prohibited(name):
+                blocked.append(name)
+                continue
+            if visual_gate == 'APPROVAL_REQUIRED' and name not in base['skills']:
+                deferred.append(name)
+                continue
+            if name not in self.skills:
+                errors.append({'name': name, 'error_type': 'UNKNOWN_SKILL'})
+                continue
+            if name in CONFLICT_GROUP and controller and name != controller:
+                conflicts.append(name)
+                continue
+            if name in CONFLICT_GROUP:
+                controller = name
+            try:
+                item = self.read('skill', name, limit=max(1, budget))
+            except (ToolkitError, OSError, UnicodeError) as exc:
+                errors.append({'name': name, 'error_type': type(exc).__name__})
+                continue
+            if consulted_skills.get(name) == item['sha256']:
+                skipped.append(name)
+            elif budget:
+                loaded.append(item)
+                budget -= len(item['content'])
+            else:
+                deferred.append(name)
+        next_step = ('RESOLVE_BLOCKERS' if errors or conflicts or
+                     (visual_gate == 'APPROVAL_REQUIRED' and deferred) else
+                     'COMPLETE_TRUNCATED_GUIDANCE' if any(row['truncated'] for row in loaded) else
+                     'APPLY_GUIDANCE' if loaded else 'STOP_OR_REASSESS')
+        candidates = []
+        seen_candidates = set()
+        candidate_controller = active_controller
+        for profile in dict.fromkeys(stage_route['matched_profiles'] + base['matched_profiles']):
+            for name in self.profiles[profile]:
+                if (name not in self.skills or name in seen_candidates or prohibited(name) or
+                        (visual_gate == 'APPROVAL_REQUIRED' and name not in base['skills'])):
+                    continue
+                if name in CONFLICT_GROUP:
+                    if candidate_controller and candidate_controller != name:
+                        continue
+                    candidate_controller = name
+                candidates.append(name)
+                seen_candidates.add(name)
+        candidate_end = min(candidate_offset + 8, len(candidates))
+        return {
+            'stage_profile': stage_route['routing_decision']['primary_profile'],
+            'candidate_skills': candidates[candidate_offset:candidate_end],
+            'candidate_total': len(candidates),
+            'next_candidate_offset': candidate_end if candidate_end < len(candidates) else None,
+            'candidate_evidence': 'HEURISTIC_PROFILE_MATCHES_NOT_EXHAUSTIVE',
+            'suggested_skills': [n for n in stage_route['priority_skills']
+                                 if not prohibited(n)
+                                 and (visual_gate != 'APPROVAL_REQUIRED' or n in base['skills'])
+                                 and (not active_controller or n not in CONFLICT_GROUP or n == active_controller)][:8],
+            'selection_basis': 'CLIENT_SELECTED' if requested_skills is not None else 'HEURISTIC_PRIMARY',
+            'loaded_skills': loaded, 'already_consulted': skipped,
+            'excluded_skills': blocked, 'conflicts': conflicts,
+            'deferred_skills': deferred, 'load_errors': errors,
+            'visual_gate': visual_gate, 'next_step': next_step, 'source_revision': self.source_revision,
+            'context_load_metrics': {
+                'skill_source_bytes': sum(len(row['content'].encode('utf-8')) for row in loaded),
+                'returned_characters': max_chars - budget,
+                'repeat_load_count': sum(consulted_skills.get(row['name']) == row['sha256'] for row in loaded),
+                'repeat_detection_scope': 'CLIENT_REPORTED_DIGESTS_ONLY',
+                'model_tokens': 'NOT_MEASURED', 'reference_files_preloaded': 0,
+            },
+            'consulted_evidence': 'CLIENT_REPORTED_CONTEXT_NOT_VERIFIED',
+            'installation_status': 'NOT_VERIFIED', 'client_activation': 'NOT_OBSERVED',
+            'execution': 'NOT_RUN', 'project_files_changed': False,
+            'instructions': [
+                'Client decides applicability and enforces user and project rules; lexical routing does not resolve every prohibition or conflict.',
+                'Record a digest only after the complete instruction is available in the current context; read truncated text with toolkit_get_skill.',
+                'Reassess on a meaningful stage change; send only the selected batch and relevant previously consulted digests.',
+                'Reading guidance does not install or activate a native skill or start an agent.',
             ],
         }
 
@@ -739,6 +891,7 @@ class Toolkit:
         }
         return {
             'profile': chosen, 'secondary_profiles': profiles[1:], 'profiles': profiles,
+            'matched_profiles': list(matches),
             'routing_decision': routing_decision,
             'deferred_profiles': deferred, 'visual_phase': visual_phase,
             'matched': matched, 'matches_by_profile': {k: v for k, v in matches.items() if k in profiles},
@@ -859,6 +1012,21 @@ TOOLS: list[dict[str, Any]] = [
          'proactive_model_advice':{'type':'boolean',
              'description':'Explicit user opt-in: return bounded task-risk advisory metadata only; no models or calls.'}},
          'required':['task'],'additionalProperties':False}},
+    {'name':'toolkit_prepare_stage','description':'Reassess one task stage and return a bounded batch of client-selected or heuristic-primary skill guidance. Client retains state; guidance only, with no installation.',
+     'inputSchema':{'type':'object','properties':{
+         'task':{'type':'string','minLength':1,'maxLength':6000},
+         'stage':{'type':'string','minLength':1,'maxLength':4000},
+         'requested_skills':{'type':'array','maxItems':8,'items':{'type':'string'}},
+         'consulted_skills':{'type':'object','maxProperties':256,'additionalProperties':{'type':'string'},
+             'description':'Client-confirmed complete instruction SHA256 by name; send relevant names only.'},
+         'excluded_skills':{'type':'array','maxItems':256,'items':{'type':'string'}},
+         'active_controller':{'type':'string','enum':['','feature-delivery','make-feature','adaptive-delivery']},
+         'visual_approved':{'type':'boolean','description':'Client-provided boolean; this tool does not validate it.'},
+         'max_skills':{'type':'integer','minimum':1,'maximum':8},
+         'max_chars':{'type':'integer','minimum':1,'maximum':32000},
+         'candidate_offset':{'type':'integer','minimum':0,
+             'description':'Offset in the deterministic candidate metadata list; request another page only if needed.'}},
+         'required':['task','stage'],'additionalProperties':False}},
     {'name':'toolkit_get_reference','description':'Read referenced Markdown/text/JSON/YAML files within one declared Toolkit skill (read-only).',
      'inputSchema':{'type':'object','properties':{'skill':{'type':'string'},'path':{'type':'string'},
                  'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},
@@ -901,6 +1069,16 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
                                args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3),
                                args.get('proactive_model_advice', False))
+    if name == 'toolkit_prepare_stage':
+        allowed = next(tool['inputSchema']['properties'] for tool in TOOLS
+                       if tool['name'] == 'toolkit_prepare_stage')
+        if set(args) - set(allowed):
+            raise ToolkitError('Unexpected toolkit_prepare_stage argument')
+        return tk.prepare_stage(args.get('task', ''), args.get('stage', ''),
+                                args.get('requested_skills'), args.get('consulted_skills'),
+                                args.get('excluded_skills'), args.get('active_controller', ''),
+                                args.get('visual_approved', False), args.get('max_skills', 3),
+                                args.get('max_chars', 16000), args.get('candidate_offset', 0))
     if name == 'toolkit_get_reference':
         return tk.reference(args.get('skill',''),args.get('path',''),args.get('offset',0),args.get('limit',16000))
     if name == 'toolkit_get_guide':

@@ -31,6 +31,8 @@ MANDATORY_INSTRUCTIONS = (
     "Existing project skills and roles take precedence.",
     "Inspect original references with toolkit_get_reference only when task requires them.",
     "Never write Toolkit skills",
+    "Install missing task-required skills and tools through the host",
+    "Honor explicit no-install/reference-only requests",
     "Do not claim success of tool execution or tests that were not performed.",
 )
 STATUS = "RETURNED_SOURCE_TEXT_UTF8_BYTES_NOT_MODEL_TOKENS"

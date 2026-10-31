@@ -151,7 +151,7 @@ class DocumentationConsistencyTests(unittest.TestCase):
                     body,
                 )]
                 self.assertGreaterEqual(len(blocks), 7)
-                operations = ("adt.py init", "skill_manager.py install",
+                operations = ("adt.py init", "skill_manager.py install", "skill_manager.py ensure",
                               "skill_manager.py migrate", "skill_manager.py update",
                               "skill_manager.py uninstall", "skill_manager.py recover",
                               "skill_manager.py rollback")

@@ -109,14 +109,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.13')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.15')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.13', diagnostic['adapter_version'])
+        self.assertEqual('0.1.15', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.13', version['running_mcp_adapter'])
+        self.assertEqual('0.1.15', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -327,6 +327,180 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual('NOT_VERIFIED', diagnostic['l5_client_invocation'])
         self.assertFalse(diagnostic['project_files_changed'])
 
+    def test_stage_loads_only_selected_and_reuses_confirmed_text(self):
+        task = 'Создать REST API и покрыть его тестами; do not use playwright-testing'
+        first = self.tk.prepare_stage(task, 'Реализуй backend API',
+                                      requested_skills=['api-design', 'implementation'])
+        self.assertEqual([s['name'] for s in first['loaded_skills']],
+                         ['api-design', 'implementation'])
+        self.assertEqual(first['context_load_metrics']['skill_source_bytes'],
+                         sum(len(s['content'].encode('utf-8')) for s in first['loaded_skills']))
+        self.assertEqual(first['context_load_metrics']['model_tokens'], 'NOT_MEASURED')
+        seen = {s['name']: s['sha256'] for s in first['loaded_skills']}
+        repeat = self.tk.prepare_stage(task, 'Реализуй backend API',
+                                       requested_skills=['api-design', 'implementation'],
+                                       consulted_skills=seen)
+        self.assertEqual(repeat['loaded_skills'], [])
+        self.assertEqual(repeat['context_load_metrics']['skill_source_bytes'], 0)
+        self.assertEqual(repeat['context_load_metrics']['repeat_load_count'], 0)
+        self.assertEqual(repeat['context_load_metrics']['repeat_detection_scope'], 'CLIENT_REPORTED_DIGESTS_ONLY')
+        testing = self.tk.prepare_stage(task, 'Покрой код тестами pytest',
+                                        requested_skills=['pytest-test-design', 'playwright-testing'],
+                                        consulted_skills=seen)
+        self.assertEqual([s['name'] for s in testing['loaded_skills']], ['pytest-test-design'])
+        self.assertIn('playwright-testing', testing['excluded_skills'])
+        self.assertEqual(testing['installation_status'], 'NOT_VERIFIED')
+        self.assertEqual(testing['client_activation'], 'NOT_OBSERVED')
+        russian = self.tk.prepare_stage('Разработай API; не используй api-design', 'Реализуй API',
+                                        requested_skills=['api-design'])
+        self.assertEqual(russian['loaded_skills'], [])
+        self.assertNotIn('api-design', russian['suggested_skills'])
+
+    def test_stage_inferred_single_skill_and_missing_diagnostic(self):
+        one = self.tk.prepare_stage('Проверь SEO сайта', 'Проверь SEO сайта')
+        self.assertEqual([s['name'] for s in one['loaded_skills']], ['seo-audit'])
+        missing = self.tk.prepare_stage('Test backend API', 'Test backend API',
+                                        requested_skills=['missing-skill'])
+        self.assertEqual(missing['loaded_skills'], [])
+        self.assertEqual(missing['load_errors'][0]['error_type'], 'UNKNOWN_SKILL')
+
+    def test_stage_can_use_more_than_eight_skills_across_phases(self):
+        task = 'Build a web app with an API and tests'
+        phases = [
+            ('Analyze the API requirements', ['task-scoping', 'api-design']),
+            ('Implement the backend API', ['implementation', 'end-to-end-feature-design']),
+            ('Build frontend components', ['component-architecture']),
+            ('Test the API with pytest', ['api-testing', 'pytest-test-design', 'test-analysis-design']),
+            ('Review browser tests', ['playwright-testing', 'qa-strategy']),
+        ]
+        seen = {}
+        for stage, selected in phases:
+            result = self.tk.prepare_stage(task, stage, requested_skills=selected,
+                                           consulted_skills=seen, max_skills=3)
+            self.assertFalse(result['load_errors'])
+            seen.update({s['name']: s['sha256'] for s in result['loaded_skills']})
+        self.assertEqual(len(seen), 10)
+        repeated = self.tk.prepare_stage(task, phases[1][0],
+                                         requested_skills=phases[1][1], consulted_skills=seen)
+        self.assertEqual(repeated['loaded_skills'], [])
+
+    def test_stage_conflicts_prohibitions_and_visual_gate(self):
+        self.tk.skills['make-feature'] = self.tk.skills['feature-delivery']
+        conflict = self.tk.prepare_stage('Implement a feature', 'Implement a feature',
+                                          requested_skills=['make-feature', 'qa-strategy'],
+                                          active_controller='feature-delivery')
+        self.assertEqual([s['name'] for s in conflict['loaded_skills']], ['qa-strategy'])
+        self.assertIn('make-feature', conflict['conflicts'])
+        forbidden = self.tk.prepare_stage('Implement an API', 'Implement API',
+                                           requested_skills=['api-design'], excluded_skills=['api-design'])
+        self.assertEqual(forbidden['loaded_skills'], [])
+        self.assertNotIn('api-design', forbidden['suggested_skills'])
+        visual = self.tk.prepare_stage('Создай сайт и backend API', 'Реализуй backend API',
+                                       requested_skills=['api-design'])
+        self.assertEqual(visual['loaded_skills'], [])
+        self.assertEqual(visual['visual_gate'], 'APPROVAL_REQUIRED')
+        approved = self.tk.prepare_stage('Создай сайт и backend API', 'Реализуй backend API',
+                                         requested_skills=['api-design'], visual_approved=True)
+        self.assertEqual(approved['visual_gate'], 'CLIENT_REPORTED_APPROVAL_NOT_VERIFIED')
+        self.assertEqual([s['name'] for s in approved['loaded_skills']], ['api-design'])
+
+    def test_stage_fingerprint_invalidates_changed_instructions(self):
+        args = dict(task='Implement an API', stage='Implement an API',
+                    requested_skills=['api-design'])
+        first = self.tk.prepare_stage(**args)
+        previous = {'api-design': first['loaded_skills'][0]['sha256']}
+        path = self.path / self.tk.skills['api-design']
+        path.write_text('# Changed skill\n', encoding='utf-8')
+        second = self.tk.prepare_stage(**args, consulted_skills=previous)
+        self.assertEqual([s['name'] for s in second['loaded_skills']], ['api-design'])
+        self.assertNotEqual(second['loaded_skills'][0]['sha256'], previous['api-design'])
+
+    def test_stage_large_catalog_uses_bounded_client_batches(self):
+        for i in range(304):
+            self.tk.skills[f'large-{i}'] = self.tk.skills['qa-strategy']
+        seen = {}
+        for start in range(0, 304, 8):
+            names = [f'large-{i}' for i in range(start, start + 8)]
+            result = self.tk.prepare_stage('Review a complex task', 'Review evidence',
+                                           requested_skills=names,
+                                           consulted_skills={n: seen[n] for n in names if n in seen},
+                                           max_skills=8)
+            self.assertEqual(len(result['loaded_skills']), 8)
+            seen.update({s['name']: s['sha256'] for s in result['loaded_skills']})
+        self.assertEqual(len(seen), 304)
+        last = names[-1]
+        resumed = self.tk.prepare_stage('Review a complex task', 'Review evidence',
+                                         requested_skills=[last], consulted_skills={last: seen[last]})
+        self.assertEqual(resumed['loaded_skills'], [])
+        with self.assertRaises(ToolkitError):
+            self.tk.prepare_stage('Review', 'Review', requested_skills=list(seen)[:9], max_skills=8)
+
+    def test_stage_paginates_matched_profile_candidates_without_loading_them(self):
+        names = [f'candidate-{i}' for i in range(304)]
+        self.tk.skills.update({n:self.tk.skills['qa-strategy'] for n in names})
+        self.tk.profiles['backend'].extend(names)
+        args = {'task':'Implement REST API', 'stage':'Implement backend API', 'requested_skills':[]}
+        first = self.tk.prepare_stage(**args)
+        self.assertEqual(first['loaded_skills'], [])
+        self.assertLessEqual(len(first['candidate_skills']), 8)
+        self.assertGreater(first['candidate_total'], 8)
+        self.assertEqual(first['candidate_evidence'], 'HEURISTIC_PROFILE_MATCHES_NOT_EXHAUSTIVE')
+        seen = set(first['candidate_skills'])
+        offset = first['next_candidate_offset']
+        while offset is not None:
+            page = self.tk.prepare_stage(**args, candidate_offset=offset)
+            self.assertEqual(page['loaded_skills'], [])
+            self.assertLessEqual(len(page['candidate_skills']), 8)
+            self.assertFalse(seen.intersection(page['candidate_skills']))
+            seen.update(page['candidate_skills'])
+            offset = page['next_candidate_offset']
+        self.assertTrue(set(names) <= seen)
+        self.assertEqual(len(seen), first['candidate_total'])
+
+    def test_stage_rpc_budget_truncation_resume_and_validation(self):
+        tools = process(self.tk, {'jsonrpc':'2.0', 'id':10, 'method':'tools/list'})
+        self.assertIn('toolkit_prepare_stage', [t['name'] for t in tools['result']['tools']])
+        request = {'jsonrpc':'2.0', 'id':11, 'method':'tools/call',
+                   'params': {'name':'toolkit_prepare_stage', 'arguments': {
+                       'task':'Implement an API', 'stage':'Implement API',
+                       'requested_skills':['api-design', 'implementation'], 'max_chars':4}}}
+        result = process(self.tk, request)['result']['structuredContent']
+        self.assertEqual(result['context_load_metrics']['returned_characters'], 4)
+        self.assertTrue(result['loaded_skills'][0]['truncated'])
+        self.assertEqual(result['next_step'], 'COMPLETE_TRUNCATED_GUIDANCE')
+        self.assertEqual(result['deferred_skills'], ['implementation'])
+        first = result['loaded_skills'][0]
+        rest = self.tk.read('skill', first['name'], offset=4)
+        self.assertEqual(first['sha256'], rest['sha256'])
+        resumed = self.tk.prepare_stage('Implement an API', 'Implement API',
+                                         requested_skills=['api-design', 'implementation'],
+                                         consulted_skills={'api-design': first['sha256']})
+        self.assertEqual([s['name'] for s in resumed['loaded_skills']], ['implementation'])
+        repeated = self.tk.prepare_stage('Implement an API', 'Implement API',
+                                          requested_skills=['api-design'],
+                                          consulted_skills={'api-design': first['sha256']})
+        self.assertEqual(repeated['next_step'], 'STOP_OR_REASSESS')
+        for bad in ({'max_chars': False}, {'active_controller': []},
+                    {'consulted_skills': {'api-design':'bad'}}, {'visual_approved': 'yes'}):
+            with self.subTest(bad=bad), self.assertRaises(ToolkitError):
+                self.tk.prepare_stage('Implement an API', 'Implement API', **bad)
+        request['params']['arguments']['excluded_skill'] = 'api-design'
+        self.assertTrue(process(self.tk, request)['result']['isError'])
+
+    @unittest.skipUnless(sys.platform == 'win32', 'Windows junction regression')
+    def test_stage_rejects_junction_even_when_target_is_inside_source(self):
+        target = self.path / '.agents' / 'skills' / 'qa-strategy'
+        link = self.path / '.agents' / 'skills' / 'junction-fixture'
+        created = subprocess.run(['cmd', '/c', 'mklink', '/J', str(link), str(target)],
+                                 capture_output=True, check=False)
+        if created.returncode:
+            self.skipTest('Windows junction creation unavailable')
+        self.tk.skills['junction-fixture'] = '.agents/skills/junction-fixture/SKILL.md'
+        result = self.tk.prepare_stage('Test the API', 'Test the API',
+                                       requested_skills=['junction-fixture'])
+        self.assertEqual(result['loaded_skills'], [])
+        self.assertEqual(result['load_errors'][0]['error_type'], 'ToolkitError')
+
     def test_opt_in_model_advisor_risk_signal_and_guards(self):
         # Opted-in MCP returns evidence, not model availability or consent.
         task = ("Проведи аудит безопасности auto-updater: concurrency TOCTOU, "
@@ -507,8 +681,8 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.13')
-        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),13)
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.15')
+        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),14)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
         self.assertIsNone(process(self.tk,{'jsonrpc':'2.0','method':'notifications/initialized'}))
@@ -525,8 +699,8 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr + completed.stdout)
         summary = json.loads(completed.stdout)
         self.assertEqual(summary['status'], 'PASS')
-        self.assertEqual(summary['request_count'], 49)
-        self.assertEqual(summary['response_count'], 49)
+        self.assertEqual(summary['request_count'], 50)
+        self.assertEqual(summary['response_count'], 50)
         self.assertEqual(summary['skill_coverage_local'], 'FOUND_LOCAL')
         self.assertEqual(summary['skill_coverage_missing'], 'MISSING')
         self.assertEqual(summary['skill_installation'], 'NOT_AUTHORIZED')
@@ -588,6 +762,25 @@ class TestToolkitMCP(unittest.TestCase):
         lines=[json.loads(x) for x in p.stdout.splitlines()]
         self.assertEqual([x['id'] for x in lines],[1,2,3])
         self.assertIn('qa-strategy',lines[2]['result']['content'][0]['text'])
+
+    def test_required_setup_is_host_executed_bounded_and_inventory_aware(self):
+        unknown = self.tk.prepare_task('Создать REST API', profile='backend')
+        self.assertEqual('DISCOVERY_REQUIRED', unknown['required_setup']['status'])
+        self.assertEqual([], unknown['required_setup']['skills'])
+        known = self.tk.prepare_task('Создать REST API', profile='backend',
+                                     existing_skills=['task-scoping'], max_skills=1)
+        setup = known['required_setup']
+        self.assertEqual('INSTALL_MISSING', setup['status'])
+        self.assertEqual(['api-design'], setup['skills'])
+        self.assertEqual('HOST_CLIENT', setup['executor'])
+        self.assertEqual('USER', setup['scope'])
+        self.assertEqual('ensure', setup['manager_action'])
+        self.assertFalse(known['installation_performed'])
+        available = self.tk.prepare_task('Создать REST API', profile='backend',
+                                         existing_skills=known['selected_skills'])
+        self.assertEqual('VERIFY_TOOLS', available['required_setup']['status'])
+        self.assertEqual([], available['required_setup']['skills'])
+
 
 if __name__=='__main__':
     unittest.main()

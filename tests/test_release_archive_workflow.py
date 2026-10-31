@@ -37,6 +37,7 @@ class ReleaseArchiveWorkflowTests(unittest.TestCase):
         job = config["jobs"]["published-documentation"]
         self.assertIn("release", job["if"])
         self.assertIn("published", job["if"])
+        self.assertIn("startsWith(github.event.release.tag_name, 'v')", job["if"])
         self.assertEqual("main", job["steps"][0]["with"]["ref"])
         script = job["steps"][1]["run"]
         self.assertIn("PUBLICATION_DOCS_STALE", script)

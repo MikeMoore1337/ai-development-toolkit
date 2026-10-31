@@ -10,10 +10,21 @@ Toolkit includes a real **stdio MCP server** (`scripts/toolkit_mcp.py`) built wi
 
 ## Before you start
 
-1. Install Codex or Claude Code separately. MCP is not an AI client.
+1. Install Codex or Claude Code separately. Choose [Desktop, CLI, IDE or cloud instructions](INSTALLATION.md) first. MCP is not an AI client.
 2. Open a terminal **in the cloned Toolkit root**. Python 3.12+ is required; `py -3.12` and `python3.12` below are examples. Replace **all** commands with your actual 3.12+ interpreter (for example `py -3.14` or `python3.14`).
 3. Replace example project paths with **existing directories**. The installer does not create projects.
 4. Choose `--client codex` or `--client claude`. Review the plan **without `--apply`** before authorizing a write.
+
+## Desktop and CLI use the same project installer
+
+- **Codex Desktop:** select the local project, use `--client codex` below, restart Desktop and verify its actual MCP tools. A separately installed Codex CLI is **not required** by this project installer.
+- **Codex CLI:** use the same `--client codex` commands, start `codex` from the target project and inspect `/mcp`.
+- **Claude Code Desktop:** select the local project in the **Code tab**, use `--client claude`, start a new session and review the project MCP approval.
+- **Claude Code CLI:** use the same `--client claude` commands, start `claude` from the target project and inspect `/mcp`.
+
+The installer writes `.codex/config.toml` or `.mcp.json` in that project; it does not invoke either client CLI. In IDE/WSL/SSH/container sessions the interpreter and absolute Toolkit paths must exist in the actual execution host. The command templates below do not set up a cloud host or ordinary Claude/ChatGPT chat.
+
+**Project MCP verification:** request `toolkit_catalog`, then `toolkit_read_skill` for `qa-strategy`, inside the chosen client. `toolkit_info` and `toolkit_prepare_task` belong to the separate [Personal MCP](ONE_COMMAND_SETUP.md); they are not Project MCP tools. Do not install both scopes under the same registration name without resolving the conflict.
 
 ## Windows PowerShell
 

@@ -4,7 +4,9 @@
 
 ## Before starting
 
-Install Git, Python 3.10+ and the Codex client first. The command below installs **Personal MCP for Codex** to the user profile, not a native skill and not the ChatGPT plugin. It needs access to the official public GitHub repository. No sudo, paid API, copied skills in a work project, or elevated execution-policy bypass. Run from a normal terminal on your own device. Corporate policy applies.
+Install Git, Python 3.10+ and **Codex CLI** first; check `codex --version`. These one-paste installers use the CLI to register **Personal MCP for Codex** in the user profile, even if you will work in Desktop. They install neither native skills nor the ChatGPT plugin. They need access to the official public GitHub repository. No sudo, paid API, copied skills in a work project, or elevated execution-policy bypass. Run from a normal terminal on your own device. Corporate policy applies.
+
+**Codex Desktop without CLI:** use [Project MCP](MCP_INSTALL.md) with Python 3.12+ or [native managed skills](INSTALLATION.md#codex-desktop). Those routes do not require `codex`. A Windows installer warning that CLI registration was skipped is **not** a successful MCP connection. `-McpOnly` updates package files only; it does not register a new server. Other AI clients have [separate installation instructions](INSTALLATION.md).
 
 The one-paste command obtains Toolkit source once, checks the repository origin and clean worktree, then calls the existing platform installer. It does **not** silently update an existing checkout; [upgrades have a separate review process](UPDATING.md). Cloning `main` is **not** an immutable, SHA-pinned release or a cryptographic signature. For higher-assurance environments use [reviewed SHA-pinned integration source archives](INTEGRATION_SOURCE_RELEASES.md) instead.
 
@@ -26,7 +28,7 @@ The Linux/macOS installer currently registers **Codex**, not Claude Code. For a 
 
 ## Check the installation
 
-Restart Codex, inspect `codex mcp get ai-development-toolkit`, then actually ask Codex to call `toolkit_info` and `toolkit_prepare_task`. A successful file write, installer self-check or CI smoke test does **not** prove model invocation. On Windows you may also run `py -3 "$env:LOCALAPPDATA\ADT-Personal\toolkit-source\integrations\personal-mcp\adt-personal\diagnose_mcp.py"`.
+**Desktop:** fully restart the app, open the intended local project, inspect its MCP server/tool list, then request real `toolkit_info` and `toolkit_prepare_task` calls there. **CLI:** inspect `codex mcp get ai-development-toolkit`, start a new `codex` session in the project and check `/mcp`, then make the same calls. If you use both surfaces, verify both. A successful file write, installer self-check or CI smoke test does **not** prove model invocation. On Windows you may also run `py -3 "$env:LOCALAPPDATA\ADT-Personal\toolkit-source\integrations\personal-mcp\adt-personal\diagnose_mcp.py"`.
 
 The command is safe to repeat with an **unchanged clean** dedicated checkout. It neither updates the local Git source nor installs skills into projects. If the destination is owned by unrelated content or has modifications, stop and inspect rather than deleting or overwriting it. Source auto-update is [a separate opt-in](UPDATING.md); installed MCP launcher upgrades are separate too.
 

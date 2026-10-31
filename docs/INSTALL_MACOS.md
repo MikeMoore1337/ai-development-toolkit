@@ -8,6 +8,8 @@ If you only need guidance in ChatGPT, Claude or an IDE agent, installation is op
 
 ## Prerequisites
 
+First [choose your client and interface](INSTALLATION.md). The commands below prepare native skill files: `--layout codex` works for Codex Desktop/CLI and documented clients sharing `.agents/skills`; `--layout claude` works for Claude Code Desktop/CLI. They do not install an AI application, MCP or a hosted chat plugin. Cline/Kiro use the separate custom-folder route in that guide.
+
 Requires Git, Python 3.12+, GitHub read access and an **existing** project directory. Install/configure the AI client separately.
 
 Apple Silicon and Intel use identical Toolkit commands. `python` and Apple-provided `python3` may not meet the 3.12+ requirement. Use an approved python.org installer or existing Homebrew. Install Git separately via an approved channel or Apple Command Line Tools when needed.

@@ -95,8 +95,7 @@ class TestMcpOnlyUpgrade(unittest.TestCase):
             # source package or staged self-check. No injected paid tooling.
             shim.write_text(
                 "@echo off\n"
-                'echo %* | findstr /I /L /C:"%ADT_MCP_TEST_LOCAL%\\ADT-Personal\\mcp\\adt_mcp.py" >nul\n'
-                "if not errorlevel 1 exit /b 87\n"
+                'if /I "%~2"=="%ADT_MCP_TEST_LOCAL%\\ADT-Personal\\mcp\\adt_mcp.py" exit /b 87\n'
                 f'"{original_py}" %*\n',
                 encoding="ascii",
             )
@@ -136,6 +135,37 @@ class TestMcpOnlyUpgrade(unittest.TestCase):
             self.assertNotEqual(run.returncode, 0)
             self.assertIn("requires an existing MCP launcher", run.stderr + run.stdout)
             self.assertFalse((Path(temp) / "ADT-Personal" / "mcp").exists())
+
+    def test_cleanup_preserves_stage_if_resolved_path_leaves_target(self):
+        with tempfile.TemporaryDirectory(prefix="adt-mcp-only-cleanup-") as temp:
+            root = Path(temp)
+            installed = root / "ADT-Personal" / "mcp"
+            installed.mkdir(parents=True)
+            (installed / "adt_mcp.py").write_text("# old MCP\n", encoding="utf-8")
+            outside = root / "outside" / "sentinel"
+            outside.mkdir(parents=True)
+            (outside / "keep.txt").write_text("KEEP", encoding="utf-8")
+            env = {**os.environ, "ADT_MCP_TEST_LOCAL": str(root),
+                   "ADT_MCP_BAD_RESOLVED_STAGE": str(outside)}
+            installer = str(PACKAGE / "Install-ADT-Personal.ps1").replace("'", "''")
+            toolkit = str(ROOT).replace("'", "''")
+            command = (
+                "$ErrorActionPreference='Stop'; "
+                "Import-Module Microsoft.PowerShell.Utility -ErrorAction Stop; "
+                "$env:LOCALAPPDATA=$env:ADT_MCP_TEST_LOCAL; "
+                "function Resolve-Path { [CmdletBinding()] param([string]$LiteralPath) "
+                "if ($LiteralPath -like '*.adt-stage-*') { "
+                "return [pscustomobject]@{Path=$env:ADT_MCP_BAD_RESOLVED_STAGE} }; "
+                "Microsoft.PowerShell.Management\\Resolve-Path -LiteralPath $LiteralPath }; "
+                f"& '{installer}' -McpOnly -ToolkitPath '{toolkit}'"
+            )
+            run = subprocess.run(
+                ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],
+                env=env, capture_output=True, text=True, timeout=45)
+            self.assertEqual(run.returncode, 0, run.stderr + run.stdout)
+            self.assertIn("Skipped unsafe MCP staging cleanup", run.stdout + run.stderr)
+            self.assertEqual((outside / "keep.txt").read_text(encoding="utf-8"), "KEEP")
+            self.assertTrue(list(installed.glob(".adt-stage-*")))
 
 
 if __name__ == "__main__":

@@ -82,9 +82,9 @@ In the read-only design modes, assign up to three complementary specialist revie
 
 ## Original design skills - explicit ALL_THREE mode (#449)
 
-The existing `ui-orchestra` can use three **original, unmodified upstream skills** together when the user opts in to `original_design_skills.mode=ALL_THREE`. This differs from the existing reference-only workflow. Toolkit does **not** bundle or silently install them. Do not infer invocation from a GitHub reference, local files, or a structurally passing report.
+The existing `ui-orchestra` can use three **original, unmodified upstream skills** together when the user opts in to `original_design_skills.mode=ALL_THREE`. Toolkit does not bundle these external originals. The host checks active project/ancestor/user skill directories, installs missing required originals and tools after source/license/pin/file review within granted permissions, then verifies setup and invokes them. Prefer user scope and preserve existing files. Honor explicit no-install requests; if required setup is blocked, report the concrete reason rather than substituting reference methods. Do not infer invocation from a GitHub reference, local files, or a structurally passing report. See [task setup](INSTALLATION.md#automatic-setup-for-the-current-task).
 
-Original upstream installation options for a user-approved Codex project, **run by the operator only after reviewing the source, licenses, downloaded binaries and hooks**:
+Original upstream installation examples, **requiring source, license, version/file and hooks review before host execution** (choose the actual client's user scope where supported):
 
 - [Impeccable](https://github.com/pbakaus/impeccable) - Apache-2.0 (preserve LICENSE/NOTICE): `npx impeccable install --providers=codex --scope=project`. Its launcher may download the engine on first use; native hooks can require a separate trust decision.
 - [Taste Skill](https://github.com/leonxlnx/taste-skill) - MIT: `npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend`. Needs Node 22+ and Chrome, Edge or Chromium, and can use the network for image research.

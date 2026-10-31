@@ -12,6 +12,8 @@ AI Development Toolkit offers **two equally important integrations** built on sh
 
 ## Choose one of four paths first
 
+Choose the actual [AI client and interface](INSTALLATION.md) before following OS commands: Desktop, CLI, IDE, cloud and ordinary chat have different installation and verification steps.
+
 Choose by **where the task is performed**. The ChatGPT and Codex integrations are equally important; the other two paths serve different setup needs.
 
 | Need | Route | Required environment | How to verify |
@@ -38,7 +40,7 @@ If you only want to describe your task without installing anything, use [the beg
 
 | Capability | ChatGPT plugin | Codex local MCP |
 | --- | --- | --- |
-| Where it runs | In ChatGPT when the account supports custom plugins | On a computer with Codex CLI and Python |
+| Where it runs | In ChatGPT when the account supports custom plugins | Codex Desktop/CLI on the same host; Python; CLI required by automatic Personal MCP registration |
 | Windows | ChatGPT plugin interface | PowerShell install; Windows Task Scheduler updater |
 | Linux | ChatGPT plugin interface | Shell install; systemd user timer updater |
 | macOS | ChatGPT plugin interface | Shell install; launchd user agent updater |
@@ -52,7 +54,7 @@ If you only want to describe your task without installing anything, use [the beg
 
 ## Bounded on-demand guidance and source-byte measurements (#276)
 
-`toolkit_prepare_task` now returns at most **three** priority `SKILL.md` instructions by default (formerly five); callers needing a larger initial load may explicitly set `max_skills=4..8`. The unchanged `selected_skills` and `remaining_skills_to_consult` identify all eligible skills: request deferred instructions through `toolkit_get_skill` and optional references individually through `toolkit_get_reference`. File-based native skill installations and the ChatGPT plugin's own context handling are **not modified**.
+`toolkit_prepare_task` returns at most **three** priority `SKILL.md` instructions by default; `max_skills=4..8` changes one batch, not the total for a task. `selected_skills` and `remaining_skills_to_consult` remain compatible. Reassess later work with `toolkit_prepare_stage`, passing only justified choices and digests of complete instructions still in context. Both Personal and Project MCP offer the stage and targeted read tools. References remain on demand; the client makes each call. The ChatGPT plugin follows the same selective process using whichever read tools its host actually offers. [Stage contract and limitations](../integrations/personal-mcp/README.md#stage-aware-guidance-source-mcp-0115).
 
 `context_load_metrics` measures only UTF-8 instruction bytes **actually returned** by Personal MCP: skill bytes, role bytes, total bytes, count deferred and zero automatically loaded reference files. No additional source is read to produce the metric. The metric excludes JSON-RPC envelope/duplicate text-vs-structured serialization, and is **not** a network payload byte count. `model_tokens=NOT_MEASURED` and `client_usefulness=NOT_TESTED`; smaller source output is **not** proof of fewer billed model tokens or unchanged live-model effectiveness.
 

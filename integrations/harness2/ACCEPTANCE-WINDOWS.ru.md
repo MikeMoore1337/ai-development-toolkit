@@ -1,12 +1,16 @@
 # Harness²: приёмка оригинального upstream на Windows/WSL2
 
-Этот сценарий относится к Toolkit #421 и использует **исключительно** существующие install.sh и cli.sh. Он не устанавливает Harness² в Python 3.14 Windows, не меняет Codex Desktop, YFC, Hermes или Second Brain. Все команды выполняются в Ubuntu WSL2. Никакие модели, judge, Codex CLI и Claude CLI не запускаются.
+Этот сценарий относится к Toolkit #421 и вызывает только собственный проверочный `preflight.sh`, существующие `install.sh` и `cli.sh`. Он не устанавливает Harness² в Python 3.14 Windows, не меняет Codex Desktop, YFC, Hermes или Second Brain. Все команды выполняются в Ubuntu WSL2. Никакие модели, judge, Codex CLI и Claude CLI не запускаются. Проверка `preflight.sh` передаётся в WSL как путь к файлу, а не как многострочная строка для `bash -c` - это устраняет искажение кавычек/переводов строк в Windows PowerShell 5.1.
 
 ## Требования
 
-- Windows 11, WSL2 с Ubuntu (либо другое имя дистрибутива через параметр -Distribution Ubuntu-24.04).
+- Windows 11, WSL2 с Ubuntu. По умолчанию скрипт автоматически выбирает установленный `Ubuntu-24.04`, `Ubuntu` или `Ubuntu-22.04` (другие версии `Ubuntu-XX.YY` также распознаются). Для явного выбора используйте `-Distribution Ubuntu-24.04`. Внутренний `docker-desktop` не используется.
+- Если Ubuntu не установлена, выполните в PowerShell `wsl --list --verbose`, затем `wsl --list --online` и `wsl --install -d Ubuntu-24.04`. Это отдельная команда установки Linux, **сам сценарий Harness² её не выполняет**. При первой загрузке Ubuntu создайте непривилегированного Linux-пользователя; может потребоваться перезагрузка Windows.
 - В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, npm и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
 - Checkout Toolkit, доступный с Windows и из WSL2 через wslpath.
+
+
+**Предупреждение WSL о localhost-прокси в NAT** само по себе не является ошибкой Bash или отказом preflight. Если после установки пакет не скачивается из GitHub/PyPI, сначала отдельно проверьте сеть и прокси внутри Ubuntu. Сценарий не меняет системный прокси и не отключает проверки безопасности.
 
 В PowerShell из каталога Toolkit:
 

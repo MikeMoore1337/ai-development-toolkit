@@ -353,6 +353,8 @@ def operate(action: str, target: Path, *, names: list[str] | None = None,
         raise ManagerError("Target must be an existing directory")
     _ensure_no_symlink_chain(target)
     _ensure_no_symlink_chain(target / ".adt")
+    if names and len(names) != len(set(names)):
+        raise ManagerError("Duplicate skill names are forbidden")
     if action == "migrate":
         if from_layout not in ("codex", "claude") or from_layout == layout:
             raise ManagerError("migrate requires a different --from-layout")
@@ -422,7 +424,7 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                             candidate is not None and candidate != old["digest"]}
         return {"action": "status", "layout": state["layout"], "skills": report,
                 "skills_dir": str(root), "lockfile": str(state_path(target, layout))}
-    if action not in ("install", "migrate", "update", "uninstall", "rollback"):
+    if action not in ("install", "ensure", "migrate", "update", "uninstall", "rollback"):
         raise ManagerError(f"Unsupported operation {action}")
     verify_owned(target, state)
     if action == "migrate":
@@ -441,8 +443,9 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                     "refusing a non-identical migration")
     new = deepcopy(state)
     changes: list[str] = []
+    preserved: list[str] = []
     staged: dict[str, Path | None] = {}
-    if action in ("install", "migrate"):
+    if action in ("install", "ensure", "migrate"):
         if not names:
             raise ManagerError("Install requires --profile or --skills")
         for name in names:
@@ -451,6 +454,10 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
             dest = root / name
             if (name in state["skills"] or dest.exists() or
                     dest.is_symlink() or dest.is_junction()):
+                if action == "ensure":
+                    tree_digest(dest)
+                    preserved.append(name)
+                    continue
                 raise ManagerError(f"Existing skill cannot be adopted or overwritten: {name}")
             source = safe_source(name, sources, source_root)
             new["skills"][name] = {"digest": tree_digest(source), "source_version": version}
@@ -506,6 +513,8 @@ def _operate(action: str, target: Path, names: list[str], layout: str,
                                staged[name]) for name in changes
         },
     }
+    if action == "ensure":
+        summary["preserved"] = sorted(preserved)
     if apply and changes:
         _apply(target, state, new, changes, staged)
         summary["applied"] = True
@@ -597,7 +606,7 @@ def external_preview(target: Path, candidate_dir: Path, manifest_file: Path,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["catalog", "install", "migrate", "status",
+    parser.add_argument("action", choices=["catalog", "install", "ensure", "migrate", "status",
                                            "update", "uninstall", "rollback", "recover", "external-preview"])
     parser.add_argument("--target", type=Path)
     parser.add_argument("--layout", choices=["codex", "claude"], default="codex")

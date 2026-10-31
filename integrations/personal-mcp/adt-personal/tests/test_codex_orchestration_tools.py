@@ -1,4 +1,4 @@
-"""Personal MCP 0.1.13 routes only read-only Codex #357 contracts.
+"""Personal MCP 0.1.14 routes only read-only Codex #357 contracts.
 
 All native tool data here are synthetic. No Codex agents, APIs, local project
 writes, or spend. The dedicated Toolkit checkout must match SHA256SUMS.
@@ -51,14 +51,14 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         return result
 
     def test_version_and_tools_registered_read_only(self):
-        self.assertEqual(VERSION, "0.1.13")
+        self.assertEqual(VERSION, "0.1.15")
         tools = {tool["name"]: tool for tool in TOOLS}
         for name in ("toolkit_codex_prepare_delegation",
                      "toolkit_codex_review_delegation"):
             self.assertIn(name, tools)
             self.assertTrue(tools[name]["annotations"]["readOnlyHint"])
             self.assertFalse(tools[name]["annotations"]["destructiveHint"])
-        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.13")
+        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.15")
 
     def test_prepare_denied_without_zero_cost_verified(self):
         args = self.args()
