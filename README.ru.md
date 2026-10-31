@@ -57,9 +57,9 @@ Toolkit служит **источником инструкций, а не мес
 <details>
 <summary>Состав каталога (количества проверяются в CI)</summary>
 
-[![Skills](https://img.shields.io/badge/skills-86-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Skills](https://img.shields.io/badge/skills-87-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 [![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
-[![Profiles](https://img.shields.io/badge/profiles-49-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-50-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 
 | Раздел | Количество |
 | :--- | ---: |
