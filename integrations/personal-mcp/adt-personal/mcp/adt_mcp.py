@@ -1012,7 +1012,7 @@ TOOLS: list[dict[str, Any]] = [
          'proactive_model_advice':{'type':'boolean',
              'description':'Explicit user opt-in: return bounded task-risk advisory metadata only; no models or calls.'}},
          'required':['task'],'additionalProperties':False}},
-    {'name':'toolkit_prepare_stage','description':'Reassess one task stage and return a bounded batch of client-selected or heuristic-primary skill guidance. Client retains state; no installation or agent execution.',
+    {'name':'toolkit_prepare_stage','description':'Reassess one task stage and return a bounded batch of client-selected or heuristic-primary skill guidance. Client retains state; guidance only, with no installation.',
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string','minLength':1,'maxLength':6000},
          'stage':{'type':'string','minLength':1,'maxLength':4000},
