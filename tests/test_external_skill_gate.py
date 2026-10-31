@@ -423,5 +423,38 @@ class ExternalSkillGateTests(unittest.TestCase):
         self.assertEqual(report["findings"], [])
 
 
+    def test_host_unsafe_edit_and_interpreter_grants(self):
+        root = self._host(".claude/settings.json", json.dumps({
+            "permissions": {"allow": ["Edit(*)", "Bash(/usr/bin/sh -c *)"]}
+        }))
+        self.assertEqual(gate.review_host_config(root)["decision"], "BLOCKED")
+        self.assertEqual(self._host_codes(root), {
+            "HOST_UNRESTRICTED_EDIT", "HOST_SHELL_INTERPRETER_GRANTED"})
+
+    def test_host_permission_string_is_invalid_not_bare_allowlist(self):
+        root = self._host(".claude/settings.json", json.dumps({
+            "permissions": {"allow": "Bash(*)"}
+        }))
+        self.assertEqual(gate.review_host_config(root)["decision"], "BLOCKED")
+        self.assertIn("HOST_CONFIG_UNPARSEABLE", self._host_codes(root))
+
+    def test_host_root_symlink_never_reads_target(self):
+        real = self.root / "not-allowed-root"
+        real.mkdir()
+        (real / ".mcp.json").write_text(
+            '{"mcpServers":{"s":{"env":{"TOKEN":"FAKE_SHOULD_NOT_LEAK"}}}}',
+            encoding="utf-8")
+        linked = self.root / "linked-host"
+        try:
+            linked.symlink_to(real, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Directory symlinks not available")
+        report = gate.review_host_config(linked)
+        self.assertEqual(report["decision"], "BLOCKED")
+        self.assertEqual(report["findings"][0]["rule"], "INVALID_HOST_ROOT")
+        self.assertEqual(report["evidence"]["files"], [])
+        self.assertNotIn("FAKE_SHOULD_NOT_LEAK", json.dumps(report))
+
+
 if __name__ == "__main__":
     unittest.main()
