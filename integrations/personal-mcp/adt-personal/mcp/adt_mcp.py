@@ -16,7 +16,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.13'
+VERSION = '0.1.14'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -526,6 +526,15 @@ class Toolkit:
             'selected_skills': selected,
             'already_available_skills': present,
             'missing_skills': missing if skill_inventory_status != 'NOT_PROVIDED' else [],
+            'required_setup': {
+                'status': ('DISCOVERY_REQUIRED' if skill_inventory_status == 'NOT_PROVIDED'
+                           else 'INSTALL_MISSING' if missing else 'VERIFY_TOOLS'),
+                'skills': ordered[:max_skills] if skill_inventory_status != 'NOT_PROVIDED' else [],
+                'executor': 'HOST_CLIENT',
+                'scope': 'USER',
+                'manager_action': 'ensure',
+                'policy': self.manifest.get('required_setup_policy', {}),
+            },
             'skills_to_consult': ordered,
             'loaded_skills': loaded_skills,
             'context_load_metrics': context_load_metrics,
@@ -545,8 +554,12 @@ class Toolkit:
                 'Use returned instructions as task guidance in the current conversation, not as automatically installed native Codex skills or spawned subagents.',
                 'Additional skills remain available in remaining_skills_to_consult: read them via toolkit_get_skill when the task actually requires them.',
                 'Inspect original references with toolkit_get_reference only when task requires them.',
-                'Never write Toolkit skills, roles, reports or caches into a corporate project by default.',
-                'If a native file-based installation is requested, preview Skill Manager changes and obtain explicit approval before --apply.',
+                'Never write Toolkit skills, roles, reports or caches into a corporate project by default; prefer the client user scope for required setup.',
+                'Install missing task-required skills and tools through the host after verifying actual absence, source, license, pinned revision and files; prefer user scope and preserve existing skills.',
+                'For bundled skills use Skill Manager ensure preview, then --apply within existing authorization; do not ask again for already authorized setup. Install deferred skills only when needed.',
+                'For required external originals use the reviewed native installer or verified skill files with licenses and provenance; never substitute reference-only methods for a required original.',
+                'Honor explicit no-install/reference-only requests and host/project restrictions. If required setup is unavailable, report a concrete BLOCKED reason; MCP itself does not install anything.',
+                'Verify installed files, client discovery and actual invocation separately. Keep project reports and caches outside Toolkit; project-scoped installation follows project approval rules.',
                 'Do not claim success of tool execution or tests that were not performed.',
                 'Default FULFILL_REQUEST: perform the task in the available client; use EXPORT_PROMPT only if the user explicitly asks to write or improve a prompt.',
             ],

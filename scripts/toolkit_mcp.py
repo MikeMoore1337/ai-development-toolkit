@@ -31,14 +31,18 @@ INSTRUCTIONS = (
     "only relevant skills; a plan does not install them. Never claim that an "
     "AI client activated a skill unless independently observed. Never use this "
     "server to edit a user project, run commands, or publish. "
-    "For local changes request human review of the Skill Manager preview."
+    "The host must install missing task-required skills and tools after source review, "
+    "within existing permissions, preferring user scope and preserving existing files. "
+    "Preview bundled skills with Skill Manager ensure, then apply through the host; "
+    "honor reference-only requests and report concrete setup blockers."
 )
 
 
 def catalog() -> dict:
     manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
     return {"version": str(manifest["version"]), "profiles": sorted(manifest["profiles"]),
-            "skills": sorted(skill_sources(manifest))}
+            "skills": sorted(skill_sources(manifest)),
+            "required_setup_policy": manifest.get("required_setup_policy", {})}
 
 
 def _sources() -> dict:
@@ -480,6 +484,7 @@ def invoke(tool: str, args: dict) -> dict:
                         if any(word in name for word in role_words if len(word) >= 4)]
         return {"profile": candidates[0] if candidates else ("general" if "general" in profiles else None),
                 "skills": matches[:5], "roles": role_matches[:5],
+                "required_setup_policy": catalog()["required_setup_policy"],
                 "skill_coverage": _assess_skill_coverage(query, matches=matches),
                 "status": "ADVISORY_ONLY", "requires_review": True}
     if tool == "toolkit_read_skill":
@@ -510,7 +515,7 @@ def invoke(tool: str, args: dict) -> dict:
         if not isinstance(names, list) or not 1 <= len(names) <= 10:
             raise ValueError("skills must be a list of 1-10 names")
         names = [_name(n) for n in names]
-        return {"status": "PREVIEW_ONLY", "result": operate("install", project, names=names,
+        return {"status": "PREVIEW_ONLY", "result": operate("ensure", project, names=names,
                                                             layout=layout, apply=False)}
     raise ValueError("Unknown Toolkit tool")
 

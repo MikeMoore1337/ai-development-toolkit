@@ -2,6 +2,32 @@
 
 [Русский](ru/INSTALLATION.md) · [Windows](INSTALL_WINDOWS.md) · [Linux](INSTALL_LINUX.md) · [macOS](INSTALL_MACOS.md)
 
+## Automatic setup for the current task
+
+When the user asks to work with Toolkit, the host agent checks actual project/ancestor/user skill directories and required tools, then installs only missing requirements for the current task within granted permissions. Prefer user scope; preserve existing files. Explicit reference-only/no-install requests and project, network, sandbox and payment restrictions take precedence. Verify source, license, pinned revision and files before installing external originals or dependencies through a reviewed native installer. A required original cannot be silently replaced by reference methods.
+
+For bundled skills, the existing manager supports a repeatable `ensure` operation (Python 3.12+):
+
+```bash
+python scripts/skill_manager.py ensure --target "~" --layout codex --skills qa-strategy
+```
+
+After reviewing the preview, apply within granted permissions:
+
+```bash
+python scripts/skill_manager.py ensure --target "~" --layout codex --skills qa-strategy --apply
+```
+
+Then inspect managed status:
+
+```bash
+python scripts/skill_manager.py status --target "~" --layout codex
+```
+
+Select the skills actually needed, inspect the preview and execute through the host without repeating already granted approval. Use `--layout claude` for Claude Code. `ensure` installs absent bundled skills, preserves readable existing skills without adopting or updating them, and retains existing link, drift, lock and recovery guards. Unknown, incomplete or unsafe entries fail closed; no packages are downloaded by the manager. User-scope state/history lives under `~/.adt/`. Project scope requires its applicable approval.
+
+MCP remains read-only: Personal MCP returns `required_setup`, Project MCP returns the manifest policy and a missing-only preview; the host performs installation. An unknown inventory requires discovery first. Verify installed files, client discovery and a relevant invocation separately. If setup is blocked, name the concrete missing capability/permission and continue independent permitted work. Reading instructions alone is not installation. Installing a skill does not establish its effectiveness.
+
 ## Choose the AI client and interface
 
 Installation audit: **2026-10-31**. Choose the actual application and execution environment, not just the model name. Toolkit does not install or authenticate AI clients. Install the selected client separately using its official instructions, then choose **one** Toolkit route: native skill files, read-only MCP, a compatible plugin, or reference material in chat. A CLI command below is an installation step; it does not make a desktop application a CLI-only client.

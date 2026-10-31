@@ -1,5 +1,9 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.14 — task-required setup
+
+`toolkit_prepare_task` now returns a bounded `required_setup` plan. The host installs missing task-required skills/tools after source review, within granted permissions, preferring user scope and preserving existing files. MCP remains read-only; inventory, installed files, discovery and invocation stay separate. Explicit no-install requests prevail.
+
 ## Personal MCP 0.1.13 — newly discovered risk reassessment for opt-in Model Advisor #401
 
 The `toolkit_model_review_checkpoint` read-only tool lets an opted-in

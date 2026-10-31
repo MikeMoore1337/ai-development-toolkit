@@ -11,6 +11,8 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
+`5.5.7` (candidate, NOT PUBLISHED) is prepared under the owner request to release the task-required setup change. The last published version remains v5.5.6 until immutable tag, archive and publication checks complete. MCP 0.1.14 and ChatGPT plugin source 0.1.4 have independent package versions.
+
 
 
 **Latest published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) (2026-10-24), annotated tag on exact commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`; the archive contains `MANIFEST.json.version = 5.5.6`. Both tag-push and release-published [archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/40109117878) passed SHA256 and technical provenance gates (549 components, 82 skills). The release-published documentation check initially failed for stale references; this follow-up corrects those references without changing the immutable tagged archive. Local owner worktree pre-tag checks were blocked by four untracked review JSON files; **do not claim local pre-tag PASS**. Independent rights clearance for this exact release is **NOT_ATTESTED** in [Issue #313](https://github.com/MikeMoore1337/ai-development-toolkit/issues/313). CI provenance validation is not legal clearance. Installed MCP/ChatGPT clients were not automatically updated.

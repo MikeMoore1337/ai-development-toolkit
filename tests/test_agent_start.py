@@ -127,7 +127,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertIn(name, MANIFEST["profiles"])
         for guide in (EN, RU):
             text = guide.read_text(encoding="utf-8")
-            for token in ("--task feature", "--apply", "--layout claude",
+            for token in ("scripts/skill_manager.py ensure", "--apply", "--layout claude",
                           "feature-delivery", "make-feature", "qa-all",
                           "NOT_TESTED", "NOT_RUN", "BLOCKED"):
                 self.assertIn(token, text)
@@ -243,7 +243,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
         for path, header, footer, wording in (
             (RU, "## Основной сценарий: проект открыт в IDE",
              "## Дополнительный сценарий: ссылки на репозитории", "Toolkit"),
-            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+            (EN, "## Primary path: open IDE project + Toolkit URL, without manual installation",
              "## Optional path: remote repository links", "Toolkit"),
         ):
             text = path.read_text(encoding="utf-8")
@@ -281,12 +281,25 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertEqual(json.loads(result.stdout)["result"], "BLOCKED")
             self.assertFalse(missing.exists())
 
+    def test_task_required_setup_is_default_with_reference_only_opt_out(self):
+        for path in (EN, RU):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.name):
+                self.assertIn("scripts/skill_manager.py ensure", text)
+                self.assertIn("USER_HOME", text)
+                self.assertIn("reference-only", text)
+                self.assertIn("BLOCKED", text)
+                self.assertIn("--apply", text)
+        policy = MANIFEST["required_setup_policy"]
+        self.assertEqual("INSTALL_MISSING_FOR_CURRENT_TASK", policy["mode"])
+        self.assertTrue(policy["reference_only_opt_out"])
+
 
     def test_primary_prompt_uses_toolkit_url_without_installation(self):
         for source, first, later in (
             (RU, "## Основной сценарий: проект открыт в IDE",
              "## Дополнительный сценарий: ссылки на репозитории"),
-            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+            (EN, "## Primary path: open IDE project + Toolkit URL, without manual installation",
              "## Optional path: remote repository links"),
         ):
             text = source.read_text(encoding="utf-8")
