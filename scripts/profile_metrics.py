@@ -85,24 +85,27 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                    for name in declared)
             or len(set(declared)) != len(declared)):
         raise ValueError("Invalid profile skill list")
-    # Resolve the existing validator from this script's directory. This
-    # also works when profile_metrics is loaded by importlib from a test or
-    # another host that did not add scripts/ to sys.path.
+    # Load the existing validator from this script's directory. A narrowly
+    # read-only loader prevents __pycache__ writes without altering Python's
+    # process-wide sys.dont_write_bytecode (other threads remain unaffected).
+    from importlib.machinery import SourceFileLoader
     from importlib.util import module_from_spec, spec_from_file_location
 
+    class ReadOnlyValidatorLoader(SourceFileLoader):
+        def set_data(self, path, data, *, _mode=0o666):
+            return None
+
     validator_path = Path(__file__).resolve().with_name("validate_pack.py")
-    validator_spec = spec_from_file_location("_toolkit_validate_pack", validator_path)
+    validator_loader = ReadOnlyValidatorLoader(
+        "_toolkit_validate_pack", str(validator_path)
+    )
+    validator_spec = spec_from_file_location(
+        "_toolkit_validate_pack", validator_path, loader=validator_loader
+    )
     if validator_spec is None or validator_spec.loader is None:
         raise ValueError("Toolkit skill validator unavailable")
     validator = module_from_spec(validator_spec)
-    # Loading a module normally creates __pycache__ even for a read-only
-    # preview. Preserve the host's setting while preventing this write.
-    previous_bytecode_setting = sys.dont_write_bytecode
-    try:
-        sys.dont_write_bytecode = True
-        validator_spec.loader.exec_module(validator)
-    finally:
-        sys.dont_write_bytecode = previous_bytecode_setting
+    validator_spec.loader.exec_module(validator)
 
     sources = skill_paths(root, manifest)
     trusted_root = root.resolve()
