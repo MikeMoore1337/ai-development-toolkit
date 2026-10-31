@@ -35,6 +35,9 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.7)
 
+- #492: Native-first boundary for explicitly selected original third-party tools. Personal MCP defensive passthrough, global installer/ChatGPT router exclusions, scoped optional Model Advisor Stop hook, and RU/EN documentation. No changes to the parallel UX/UI Orchestra or external upstream sources; live client execution remains separately verifiable.
+
+
 ## 5.5.7 (released, 2026-10-31)
 
 - Install missing task-required skills and tools through the host after source/license/pin/file review, preferring user scope and respecting no-install requests.

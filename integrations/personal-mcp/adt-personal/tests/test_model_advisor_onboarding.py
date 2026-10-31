@@ -33,6 +33,12 @@ class AdvisorSourceContract(unittest.TestCase):
         self.assertIn(END, src)
         self.assertNotIn("Enable-ADT-Model-Advisor.ps1", installer)
 
+    def test_native_external_controller_is_excluded_from_advisor(self):
+        src = SCRIPT.read_text(encoding='utf-8')
+        self.assertIn("NATIVE UPSTREAM EXCLUSION", src)
+        self.assertIn("ADT-MODEL-ADVISOR-ACTIVE", src)
+        self.assertIn("Do not emit it for external controllers", src)
+
     def test_normal_prompt_triggers_advice(self):
         src = SCRIPT.read_text(encoding="utf-8")
         for token in (
