@@ -144,6 +144,26 @@ class CatalogueTests(unittest.TestCase):
         # remains pending review for entries not explicitly recorded above.
         self.assertIn("never installation authorization", review["note"])
 
+    def test_all_reviewed_candidates_can_become_native_without_phantom_adoption(self):
+        """Full catalogue may have zero unmerged candidates after native integration."""
+        root = self.toolkit / ".agents/skills/unique"
+        root.mkdir(parents=True)
+        (root / "SKILL.md").write_text("---\nname: unique\ndescription: Fixture\n---\n", encoding="utf-8")
+        decisions = self.toolkit / "integrations/ecc/catalog_review.json"
+        decisions.write_text(json.dumps({"schema_version": 1, "decisions": [{
+            "path": "skills/unique", "status": "ALREADY_PRESENT",
+            "analogue": ".agents/skills/unique/SKILL.md",
+            "reason": "Synthetic original source already merged into Toolkit"
+        }]}), encoding="utf-8")
+        rows = audit.build(self.ecc, self.toolkit, self.rev)
+        self.assertTrue(any(row["status"] == "ALREADY_PRESENT" for row in rows))
+        self.assertFalse(any(row["status"] == "ADOPT_AS_IS_CANDIDATE" for row in rows))
+        workflow = (ROOT / ".github/workflows/ecc-gap-catalog.yml").read_text(
+            encoding="utf-8")
+        self.assertIn('assert any(x["status"] == "ALREADY_PRESENT" for x in rows)', workflow)
+        self.assertNotIn(
+            'assert any(x["status"] == "ADOPT_AS_IS_CANDIDATE" for x in rows)', workflow)
+
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
         result = audit.frontmatter(frontmatter)
