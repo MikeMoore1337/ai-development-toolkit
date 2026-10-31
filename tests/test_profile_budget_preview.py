@@ -4,8 +4,12 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("profile_metrics", ROOT / "scripts/profile_metrics.py")
@@ -69,6 +73,106 @@ class BudgetPreviewTests(unittest.TestCase):
         source.write_text("# Header without YAML\n", encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "Missing YAML"):
             mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+
+    def test_utf8_bytes_and_indented_delimiter(self):
+        source = self.root / ".agents" / "skills" / "alpha" / "SKILL.md"
+        original = (
+            "---\\r\\nname: alpha\\r\\ndescription: |\\r\\n"
+            "  Пример 🧪\\r\\n  ---\\r\\n  продолжение\\r\\n"
+            "---\\r\\n\\r\\n# Body not counted\\r\\n"
+        ).replace("\\r", "\r").replace("\\n", "\n")
+        source.write_bytes(original.encode("utf-8"))
+        result = mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+        counted = original.encode("utf-8").split(b"---\\r\\n\\r\\n")[0]
+        self.assertEqual(len(counted) + len(b"---\\r\\n"), result["skill_metadata"][0]["metadata_bytes"])
+        self.assertEqual("NOT_MEASURED", result["tokens"])
+
+    def test_invalid_yaml_and_duplicate_keys_are_rejected(self):
+        source = self.root / ".agents" / "skills" / "alpha" / "SKILL.md"
+        for contents in (
+            "---\\nname: alpha\\ndescription: [unclosed\\n---\\n",
+            "---\\nname: alpha\\nname: alpha\\ndescription: duplicate\\n---\\n",
+            "---\\nname: wrong\\ndescription: mismatch\\n---\\n",
+            "---\\ndescription: no name\\n---\\n",
+        ):
+            with self.subTest(contents=contents):
+                source.write_text(contents.replace("\\n", "\n"), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "Invalid skill frontmatter"):
+                    mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    def test_invalid_utf8_and_unreadable_metadata_are_rejected(self):
+        source = self.root / ".agents" / "skills" / "alpha" / "SKILL.md"
+        source.write_bytes(b"---\\nname: alpha\\ndescription: \\xff\\n---\\n".replace(b"\\n", b"\n"))
+        with self.assertRaisesRegex(ValueError, "Invalid skill frontmatter"):
+            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+        source.write_text("---\\nname: alpha\\ndescription: Ok\\n---\\n".replace("\\n", "\n"), encoding="utf-8")
+        with mock.patch.object(Path, "read_bytes", side_effect=PermissionError("blocked")):
+            with self.assertRaises(PermissionError):
+                mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    def test_empty_nonstring_and_traversal_members_are_rejected(self):
+        for members in ([], ["alpha", 17], ["alpha", "../outside"], ["alpha", "/etc"]):
+            with self.subTest(members=members):
+                self.manifest["profiles"]["focused"] = members
+                with self.assertRaisesRegex(ValueError, "Invalid profile skill list"):
+                    mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    def test_symlink_to_skill_and_linked_parent_rejected(self):
+        source = self.root / ".agents" / "skills" / "alpha" / "SKILL.md"
+        original = source.read_bytes()
+        source.unlink()
+        target = source.parent / "target.md"
+        target.write_bytes(original)
+        try:
+            source.symlink_to(target)
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest(f"File symlinks unavailable in this environment: {exc}")
+        with self.assertRaisesRegex(ValueError, "Linked skill source"):
+            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    def test_unsafe_manifest_root_outside_checkout_is_rejected(self):
+        outside = self.root.parent / ("budget-external-" + self.root.name)
+        outside.mkdir()
+        self.addCleanup(lambda: outside.rmdir() if outside.exists() else None)
+        (outside / "alpha").mkdir()
+        (outside / "alpha" / "SKILL.md").write_text(
+            "---\\nname: alpha\\ndescription: External\\n---\\n".replace("\\n", "\n"),
+            encoding="utf-8",
+        )
+        self.manifest["extension_packs"] = {
+            "override": {"skill_root": str(outside), "skills": ["alpha"]}
+        }
+        self.manifest["core_skills"] = ["beta"]
+        with self.assertRaisesRegex(ValueError, "escapes Toolkit root"):
+            mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+
+    def test_repeat_and_content_integrity(self):
+        files = list(self.root.rglob("SKILL.md"))
+        before = {str(f): f.read_bytes() for f in files}
+        first = mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+        second = mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
+        self.assertEqual(first, second)
+        self.assertEqual(before, {str(f): f.read_bytes() for f in files})
+
+    def test_synthetic_cli_end_to_end_no_client(self):
+        scripts = self.root / "scripts"
+        scripts.mkdir()
+        for name in ("profile_metrics.py", "validate_pack.py"):
+            shutil.copyfile(ROOT / "scripts" / name, scripts / name)
+        (self.root / "MANIFEST.json").write_text(
+            json.dumps(self.manifest), encoding="utf-8"
+        )
+        completed = subprocess.run(
+            [sys.executable, str(scripts / "profile_metrics.py"),
+             "--profile", "focused", "--metadata-budget-bytes", "1000"],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = json.loads(completed.stdout)["metadata_budget_preview"]
+        self.assertTrue(result["within_budget"])
+        self.assertFalse(result["applied"])
+        self.assertEqual("NOT_OBSERVED", result["host_context"])
 
 
 if __name__ == "__main__":
