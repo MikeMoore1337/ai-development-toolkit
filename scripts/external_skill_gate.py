@@ -318,7 +318,7 @@ HOST_ENV_REFERENCE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?\Z")
 # Review explicit MCP argv references to known collectors or sensitive roots.
 # These are *signals*, not execution blocks or proof of exfiltration.
 HOST_COLLECTION_ARG = re.compile(
-    r"https?://[^\s/]*(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com|"
+    r"https?://(?:[A-Za-z0-9-]+\.)*(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com|"
     r"requestcatcher\.com|pipedream\.net|interactsh\.com)(?:[/:?#]|$)", re.I)
 HOST_SENSITIVE_ARG = re.compile(
     r"(?:^|[/\\])\.(?:ssh|aws|gnupg|kube)(?:[/\\]|$)|"
