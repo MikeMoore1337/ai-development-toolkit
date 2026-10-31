@@ -33,3 +33,31 @@ A visual result may report `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION`, or
 On an owner-authorized working copy, use the project's own visual contract and capture desktop/mobile screens with actual viewports and representative interaction states (loading, error, completed, keyboard focus, scrolling, reduced-motion where applicable). Compare three **visibly** different sketches side by side on a consistent scale for major work, with one winning direction and two documented reasons for rejection. Audit product specificity using a cross-domain swap test without banning brand colors or reusable components. Have a human examine the files, log actual observations versus hypotheses, then request approval of a specific visual version **before** implementation. The offline precheck is only an evidence-format quality filter.
 
 All examples and unit tests are synthetic. No real project's UI was changed, no browser or external paid API was invoked and there is no measured visual usability improvement yet.
+
+## Optional local Chromium screenshot capture (#486)
+
+The existing evidence precheck does **not render HTML**. For an approved local prototype, an additional **opt-in** helper creates actual browser PNGs and layout diagnostics using a previously installed Playwright Chromium (no automated package/browser download, paid API or external upload):
+
+```json
+{
+  "schema_version": 1,
+  "scenario_id": "new-site",
+  "captures": [
+    {"purpose": "wireframe:editorial", "source": "editorial.html", "viewport": "400x600"},
+    {"purpose": "wireframe:catalog", "source": "catalog.html", "viewport": "400x600"},
+    {"purpose": "wireframe:guide", "source": "guide.html", "viewport": "400x600"},
+    {"purpose": "winner:desktop", "source": "winner.html", "viewport": "1440x900"},
+    {"purpose": "winner:mobile", "source": "winner.html", "viewport": "390x844"}
+  ]
+}
+```
+
+Save this as `capture-plan.json` **outside Toolkit**. Place the four HTML views in the permitted prototype folder, or use explicit `http://127.0.0.1:PORT/path` sources from an already-running local development server. Run from the Toolkit checkout:
+
+```bash
+python scripts/ux_ui_browser_capture.py --plan /approved/capture-plan.json --source-root /approved/prototype --output /approved/visual-evidence-v1
+```
+
+The output directory must be new, existing parent, **outside Toolkit**. If a local system Chromium is already installed, `--chromium-executable /path/to/chromium` selects it; this command never installs a browser. Only local files and explicit loopback HTTP origins are accepted; remote HTTP(S) and WebSockets are blocked. A prototype depending on remote fonts, images or APIs may render incompletely; blocked requests appear in diagnostics and must be resolved before review. Never capture or share confidential sessions without authorization.
+
+The generated `capture_report.json` contains `visual_assets` in the shape accepted by the existing `review.json` evidence packet, plus PNG SHA-256, viewports, DOM overflow, small interactive targets, script errors and blocked requests. Copy its `visual_assets` into that packet before running `ux_ui_evals.py`; source labels, design authority, three distinct content hierarchies, manual review and approval gate still come from the existing workflow. `NEEDS_LAYOUT_REVIEW` requires inspection and recapture to a versioned folder, while `AWAITING_HUMAN_VISUAL_REVIEW` **is not acceptance or aesthetic verification**. This tool cannot assess originality, visual polish, WCAG compliance or actual interactions, and CI unit tests use synthetic browser doubles, not live client proof. If Playwright/Chromium or local navigation is unavailable, report `PLAYWRIGHT_UNAVAILABLE` / `BROWSER_RENDER_FAILED`, retain `VISUAL_PACKAGE_MISSING`, and do not fabricate a screenshot.
