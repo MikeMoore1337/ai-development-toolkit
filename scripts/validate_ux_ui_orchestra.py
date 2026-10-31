@@ -393,7 +393,8 @@ def validate(report: object) -> list[str]:
         if isinstance(exploration, dict):
             comparison = exploration.get("visual_comparison")
             if isinstance(comparison, dict) and comparison.get("status") == "RENDERED":
-                rendered_rows = {row.get("id"): row for row in ledger if isinstance(row, dict)
+                rendered_rows = {row["id"]: row for row in ledger if isinstance(row, dict)
+                                 and isinstance(row.get("id"), str)
                                  and row.get("status") == "RENDERED"}
                 paths, viewports = set(), set()
                 for frame in comparison.get("frames", []) if isinstance(comparison.get("frames"), list) else []:
