@@ -96,7 +96,7 @@ def validate_visual_lineage(report: dict) -> list[str]:
                 or any(not isinstance(x, str) or not x.strip() for x in refs)):
             errors.append(f"visual lineage {label} artifact references missing")
     if isinstance(baseline, dict):
-        if baseline.get("status") not in {"USER_PREFERRED", "OWNER_ACCEPTED", "PREVIOUS_CANDIDATE"}:
+        if (not isinstance(baseline.get("status"), str) or baseline["status"] not in {"USER_PREFERRED", "OWNER_ACCEPTED", "PREVIOUS_CANDIDATE"}):
             errors.append("visual lineage baseline status invalid")
         strengths = baseline.get("strengths")
         if not isinstance(strengths, list) or not strengths or any(
@@ -106,7 +106,8 @@ def validate_visual_lineage(report: dict) -> list[str]:
             and baseline.get("version") == candidate.get("version")):
         errors.append("visual lineage baseline and candidate versions must differ")
     review = record.get("visual_review")
-    if not isinstance(review, dict) or review.get("status") not in {"REVIEWED", "NOT_REVIEWED"}:
+    if (not isinstance(review, dict) or not isinstance(review.get("status"), str)
+            or review["status"] not in {"REVIEWED", "NOT_REVIEWED"}):
         errors.append("visual lineage review status invalid")
     else:
         comparisons = review.get("comparisons")
@@ -125,7 +126,7 @@ def validate_visual_lineage(report: dict) -> list[str]:
                     errors.append(f"visual lineage comparison {i} aspect invalid or duplicate")
                 else:
                     seen.add(aspect)
-                if item.get("assessment") not in VISUAL_DECISIONS:
+                if not isinstance(item.get("assessment"), str) or item["assessment"] not in VISUAL_DECISIONS:
                     errors.append(f"visual lineage comparison {i} decision invalid")
                 if (not isinstance(item.get("observation"), str)
                         or not item["observation"].strip()):
@@ -133,17 +134,18 @@ def validate_visual_lineage(report: dict) -> list[str]:
             if review["status"] == "NOT_REVIEWED" and comparisons:
                 errors.append("unreviewed visual lineage cannot claim observations")
     technical = record.get("technical_review")
-    if not isinstance(technical, dict) or technical.get("status") not in {
-            "PASS", "FAIL", "NOT_VERIFIED"}:
+    if (not isinstance(technical, dict) or not isinstance(technical.get("status"), str)
+            or technical["status"] not in {"PASS", "FAIL", "NOT_VERIFIED"}):
         errors.append("visual lineage technical status invalid")
     elif (technical["status"] == "PASS"
           and (not isinstance(technical.get("evidence"), str)
                or not technical["evidence"].strip())):
         errors.append("technical PASS needs a separate evidence reference")
-    if record.get("recommendation") not in VISUAL_RECOMMENDATIONS:
+    if (not isinstance(record.get("recommendation"), str)
+            or record["recommendation"] not in VISUAL_RECOMMENDATIONS):
         errors.append("visual lineage recommendation invalid")
-    if record.get("owner_decision") not in {
-            "PENDING", "KEEP_BASELINE", "APPROVE_CANDIDATE", "REQUEST_CHANGES"}:
+    if (not isinstance(record.get("owner_decision"), str)
+            or record["owner_decision"] not in {"PENDING", "KEEP_BASELINE", "APPROVE_CANDIDATE", "REQUEST_CHANGES"}):
         errors.append("visual lineage owner decision invalid")
     if report.get("mode") != "implement-approved" and record.get("owner_decision") == "APPROVE_CANDIDATE":
         errors.append("design preparation cannot claim owner approved candidate")
@@ -400,15 +402,23 @@ def validate(report: object) -> list[str]:
                 for frame in comparison.get("frames", []) if isinstance(comparison.get("frames"), list) else []:
                     if not isinstance(frame, dict):
                         continue
-                    source = rendered_rows.get(frame.get("evidence_id"))
+                    evidence_id = frame.get("evidence_id")
+                    source = rendered_rows.get(evidence_id) if isinstance(evidence_id, str) else None
                     if not source:
                         errors.append("visual frame missing rendered evidence")
                         continue
                     visual_ref = source.get("artifact_ref")
-                    if visual_ref in paths:
+                    if not isinstance(visual_ref, str) or not visual_ref.strip():
+                        errors.append("visual comparison invalid artifact reference")
+                    elif visual_ref in paths:
                         errors.append("visual comparison reuses same unsegmented artifact")
-                    paths.add(visual_ref)
-                    viewports.add(source.get("viewport"))
+                    else:
+                        paths.add(visual_ref)
+                    viewport = source.get("viewport")
+                    if isinstance(viewport, str):
+                        viewports.add(viewport)
+                    else:
+                        errors.append("visual comparison invalid viewport")
                 if len(viewports) > 1:
                     errors.append("visual comparison frames must use matching viewport scale")
     quality = report.get("design_quality")
@@ -421,7 +431,7 @@ def validate(report: object) -> list[str]:
                     not isinstance(x, str) or not x.strip() for x in risks)):
                 errors.append("optional template observations must be nonempty strings")
             source_status = quality.get("impeccable_source_status")
-            if source_status is not None and source_status not in SOURCES:
+            if source_status is not None and (not isinstance(source_status, str) or source_status not in SOURCES):
                 errors.append("design quality Impeccable source status invalid")
     if mode == "create-design" and report["gate"] == "AUDIT_COMPLETE":
         errors.append("new design cannot claim completed UI audit")
