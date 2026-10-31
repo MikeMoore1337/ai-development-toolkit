@@ -41,7 +41,7 @@ The Orchestra **coordinates** skills; it does not dictate art direction, forbid 
 
 Use [handoff](references/HANDOFF.md). Optional structured audits can be checked **without modifying anything** using `python scripts/validate_ux_ui_orchestra.py <report.json>` from a Toolkit development checkout; it validates a **declaration**, not real agent provenance or visual quality. Do not require a JSON file from a beginner. The signed-off artifact is the coherent design package, not the validators' PASS.
 
-The optional structural checker confirms only declarations and reference consistency; it **cannot** inspect pixels, independently establish visual originality or prove the files really exist. An agent must actually view the three sketches before comparing them.
+The optional structural checker confirms only declarations and reference consistency; it **cannot** inspect pixels, independently establish visual originality or prove the files really exist. If an agent claims to have compared visual alternatives, it must actually view the relevant generated artifacts; no fixed number of sketches is required.
 
 Skill availability is three states: `LOADED` (source actually read), `REFERENCE_ONLY` (URL/method consulted), `UNAVAILABLE`. Worker execution is `ACTUAL_SUBAGENT`, `GENERIC_SUBAGENT`, or `SEQUENTIAL`, with identifiers only when verifiable. Browser proof is `RENDERED`, `SOURCE_ONLY`, or `NOT_OBSERVED`. If client capabilities, branch, external skill or evidence are missing, never invent them.
 
