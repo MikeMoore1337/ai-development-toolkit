@@ -210,6 +210,34 @@ def _tool_defs() -> list[dict]:
              "to_client": string("Expected recipient slug")},
              "required": ["project", "file", "to_client"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_prepare_reviewed_memory",
+         "description": "Preview an untrusted project-reviewed reference in memory; no confirmation, disk write or claimed human authentication.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "issue_url": string("Public Issue URL in this GitHub repository"),
+             "review_url": string("Exact same-repo GitHub comment or PR-review permalink"),
+             "kind": {"type": "string", "enum": ["DECISION", "PRACTICE", "LIMITATION"]},
+             "summary": {"type": "string", "minLength": 8, "maxLength": 240},
+             "references": {"type": "array", "items": string("Public same-repo Issue/PR"),
+                            "maxItems": 8}},
+             "required": ["project", "issue_url", "review_url", "kind", "summary", "references"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_read_reviewed_memory",
+         "description": "Read one explicit untrusted project memory reference outside the checkout. Requires external review; no execution.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Explicit absolute external memory JSON file")},
+             "required": ["project", "file"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_search_reviewed_memory",
+         "description": "Exact-Issue search within an explicit project memory directory; never silently loads session history or claims human identity.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "directory": string("Existing explicit absolute external memory directory"),
+             "issue_url": string("Exact public GitHub Issue URL in this repository")},
+             "required": ["project", "directory", "issue_url"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_status", "description": "Read Skill Manager ownership status in an existing project, without writes.",
          "inputSchema": {"type": "object",
                          "properties": {"project": string("Existing absolute project directory"),
@@ -340,6 +368,17 @@ def _handoff_module():
     spec = importlib.util.spec_from_file_location("_adt_native_handoff", path)
     if spec is None or spec.loader is None:
         raise ValueError("Handoff verification source unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _reviewed_memory_module():
+    """Load project-reviewed references from the existing local file mechanism."""
+    path = ROOT / "scripts" / "reviewed_memory.py"
+    spec = importlib.util.spec_from_file_location("_adt_native_reviewed_memory", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Reviewed memory source unavailable")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -485,6 +524,34 @@ def invoke(tool: str, args: dict) -> dict:
         outcome = verifier(project, packet, args["to_client"])
         return {**outcome, "trust": "UNREVIEWED", "owner_approval": "NOT_GRANTED",
                 "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
+    if tool == "toolkit_prepare_reviewed_memory":
+        if set(args) != {"project", "issue_url", "review_url", "kind", "summary", "references"}:
+            raise ValueError("Memory preview requires exact explicit fields")
+        project = _project(args["project"])
+        _handoff_project_root(project, _handoff_module())
+        memory = _reviewed_memory_module()
+        record = memory.prepare_record(project, args["issue_url"], args["review_url"],
+                                       args["kind"], args["summary"], args["references"])
+        return {"schema_version": 1, "record": record,
+                "decision": "REVIEW_REQUIRED", "storage": "NOT_PERSISTED",
+                "review_attestation": "NOT_VERIFIED", "owner_approval": "NOT_GRANTED",
+                "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
+    if tool in ("toolkit_search_reviewed_memory", "toolkit_read_reviewed_memory"):
+        expected = ({"project", "directory", "issue_url"}
+                    if tool == "toolkit_search_reviewed_memory" else {"project", "file"})
+        if set(args) != expected:
+            raise ValueError("Reviewed memory requires exact explicit scope")
+        project = _project(args["project"])
+        _handoff_project_root(project, _handoff_module())
+        memory = _reviewed_memory_module()
+        if tool == "toolkit_search_reviewed_memory":
+            directory = _handoff_input_path(args["directory"], "memory directory")
+            result = memory.search_records(project, directory, args["issue_url"])
+        else:
+            file = _handoff_input_path(args["file"], "memory file")
+            result = memory.read_record(project, file)
+        return {**result, "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY",
+                "client_activation": "NOT_VERIFIED", "owner_approval": "NOT_GRANTED"}
     if tool == "toolkit_observe_project":
         if set(args) != {"project", "client"}:
             raise ValueError("Observer requires only project and client")
