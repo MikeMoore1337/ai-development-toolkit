@@ -309,12 +309,21 @@ HOST_MAX_BYTES = 131_072
 HOST_TOTAL_BYTES = 524_288
 HOOK_COMMAND_KEYS = frozenset(("command",))
 HOST_SEVERITY = {"HIGH": "error", "MEDIUM": "warning"}
-HOST_NET = re.compile(r"\b(?:curl|wget|Invoke-WebRequest|iwr)\b[^\n]{0,250}https?://", re.I)
+HOST_NET = re.compile(r"\b(?:curl|wget|Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\b[^\n]{0,250}https?://", re.I)
 HOST_PIPE = re.compile(r"\|\s*(?:sh|bash|pwsh|powershell)\b", re.I)
 HOST_INTERPOLATION = re.compile(r"\$\{(?:file|command|content|input|args?)\}", re.I)
 HOST_DESTRUCTIVE = re.compile(r"\brm\s+-rf\b|\bRemove-Item\b[^\n]{0,120}-Recurse\b", re.I)
 HOST_SENSITIVE = re.compile(r"(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PRIVATE[_-]?KEY|CREDENTIAL)", re.I)
 HOST_ENV_REFERENCE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?\Z")
+# Review explicit MCP argv references to known collectors or sensitive roots.
+# These are *signals*, not execution blocks or proof of exfiltration.
+HOST_COLLECTION_ARG = re.compile(
+    r"https?://[^\s/]*(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com|"
+    r"requestcatcher\.com|pipedream\.net|interactsh\.com)(?:[/:?#]|$)", re.I)
+HOST_SENSITIVE_ARG = re.compile(
+    r"(?:^|[/\\])\.(?:ssh|aws|gnupg|kube)(?:[/\\]|$)|"
+    r"^/(?:etc|var/log)(?:/|$)|"
+    r"^C:[/\\]Users[/\\][^/\\]+[/\\]\.(?:ssh|aws|kube)(?:[/\\]|$)", re.I)
 
 
 def _host_finding(items: list[dict], rule: str, path: str, severity: str = "HIGH") -> None:
@@ -396,6 +405,10 @@ def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -
         args = server.get("args", [])
         if not isinstance(args, list) or len(args) > 128 or any(not isinstance(v, str) for v in args):
             raise ValueError("invalid MCP argument list")
+        if any(HOST_COLLECTION_ARG.search(arg) for arg in args):
+            _host_finding(items, "MCP_COLLECTION_ENDPOINT", path, "MEDIUM")
+        if any(HOST_SENSITIVE_ARG.search(arg) for arg in args):
+            _host_finding(items, "MCP_SENSITIVE_FILESYSTEM_PATH", path, "MEDIUM")
         if len(args) >= 2 and any(
             args[i] in ("--allow-root", "--filesystem-root", "--directory")
             and args[i + 1] in ("/", "C:\\", "C:/")
