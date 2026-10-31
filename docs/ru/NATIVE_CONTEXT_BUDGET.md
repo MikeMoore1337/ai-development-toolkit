@@ -23,7 +23,7 @@ python scripts/profile_metrics.py --profile general --metadata-budget-bytes 8000
 Проверка на изолированных синтетических данных:
 
 ```sh
-python -m unittest tests.test_profile_budget_preview -v
+python -m unittest discover -s tests -p test_profile_budget_preview.py -v
 python scripts/profile_metrics.py --profile general --metadata-budget-bytes 8000
 ```
 
