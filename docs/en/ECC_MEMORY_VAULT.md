@@ -1,6 +1,6 @@
 # Toolkit Native Memory / Handoff (#433)
 
-Toolkit now provides **manual, project-bound cross-client handoff references** in its existing Git checkpoint utility, without ECC, `ecc-universal`, `ecc-memory-mcp`, a separate daemon or a model API. This is a **first native tranche**, not a full Memory Vault search/write service.
+Toolkit provides **manual, project-bound cross-client handoff packets, exact-Issue search and explicit reviewed-reference records** through the existing Git checkpoint/file writer and Project MCP. ECC, `ecc-universal`, `ecc-memory-mcp`, a separate daemon and paid model APIs are not needed. This is not #338 semantic memory or automatic cross-client transport.
 
 ## What is implemented
 
@@ -32,7 +32,7 @@ The writer uses create-only, fails if the file already exists, and sets mode 060
 - #374 remains a standalone Git metadata checkpoint; existing v1 capture/verify work unchanged.
 - GitHub Issues/PRs and explicitly approved project docs remain authoritative; a packet is a pointer, never an instruction.
 - The historical [original ECC source-smoke workflow](../../.github/workflows/ecc-memory-vault.yml) proves only an ephemeral upstream test. **Installing or launching ECC is not a Toolkit requirement.**
-- Search, persistence in Toolkit-owned memory, explicit reviewed decision summaries, secure cross-device authentication, optional MCP read surfaces, live Codex Desktop ↔ Hermes use and published Toolkit release are **NOT_IMPLEMENTED / NOT_VERIFIED**. Keep #433 OPEN until independently accepted.
+- **Implemented in source (see below):** exact-Issue handoff search, create-only reviewed-reference files, and read-only Project MCP tools. **Still unavailable or unverified:** authenticated reviewer identity and owner approval, #338 semantic retrieval, authenticated device transfer, real Codex Desktop ↔ Hermes client E2E, and an explicitly authorized versioned release. Keep #433 OPEN.
 
 Pinned comparison source: [ECC 2.2.3 at `25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b`](https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b), MIT. This specific packet implementation uses Toolkit's existing Python code, not copied ECC source. No Codex CLI, Claude CLI, paid APIs, hidden client activation or additional spending.
 
@@ -57,7 +57,7 @@ The existing opt-in Toolkit Project MCP now exposes two **native read-only** too
 
 These tools only work **after the user explicitly installs Toolkit Project MCP** in an approved client and explicitly invokes them. The server does not automatically enumerate a home folder, listen in the background, sync other machines, ingest conversation text or make requests to GitHub. In responses, `trust=UNREVIEWED` and `owner_approval=NOT_GRANTED` remain fixed; a SHA-256 match does not attest the sender or authorize execution. A stale handoff supplies no reference links or next action. Invalid project roots, foreign Issue URLs, extra arguments, linked files and malformed packet data fail closed. There are no new API fees or CLI agents.
 
-**Source-level tests do not prove Codex Desktop discovery or real Codex→Hermes→Codex handoff.** The historical #338 episodic memory and versioned release are separate. No semantic search, reviewed-memory persistence or authenticated cross-device transfer is claimed. Rollback: disable the Toolkit Project MCP tool or revert this repository revision.
+**Source-level tests do not prove Codex Desktop discovery or real Codex→Hermes→Codex handoff.** Explicit reviewed-reference file persistence is implemented below, but `--operator-reviewed` remains an unauthenticated assertion, not verified approval. #338 semantic memory, authenticated cross-device transport and a separately authorized release remain outside this source-level delivery. Rollback: disable the Toolkit Project MCP tools or revert the corresponding revision.
 
 ## Project MCP in-memory packet preparation (#433)
 
@@ -65,7 +65,7 @@ A third **read-only** Project MCP tool, `toolkit_prepare_handoff`, returns a com
 
 The result embeds `packet` with `trust=UNREVIEWED`, `owner_approval=NOT_GRANTED`, SHA-256 integrity (not a signature), and `packet_storage=NOT_PERSISTED`. **The MCP does not write the packet to a file**, transfer it to Hermes or authorize the proposed action. The operator can choose to save it outside the repository and run existing `toolkit_verify_handoff` / `toolkit_search_handoffs` later; the existing native CLI `capture-handoff` is the supported create-only disk operation.
 
-A synthetic real-Git test constructs the same packet via MCP, explicitly writes it in an isolated external temporary folder, then verifies/searches via the MCP tools. It verifies only source-level protocol interoperability, **not** real Codex Desktop or Hermes handoff, persistent reviewed memory or client permissions. There is no ECC runtime, paid API, additional daemon or automatic state transition.
+A synthetic real-Git test constructs the same packet via MCP, explicitly writes it in an isolated external temporary folder, then verifies/searches via the MCP tools. It verifies only source-level protocol interoperability, **not** real Codex Desktop or Hermes handoff, reviewer authority or live client permissions. There is no ECC runtime, paid API, additional daemon or automatic state transition.
 
 ## Explicit cross-device Git comparison (#433)
 
@@ -77,7 +77,7 @@ python scripts/session_handoff_checkpoint.py verify-portable-handoff --repo /pat
 
 This optional mode is for an **operator-copied v2 JSON packet**, not automatic file transfer or synchronization. Unlike strict `verify-handoff`, it tolerates a different machine's absolute project path. It still requires a matching GitHub `origin`, packet integrity, recipient, branch, commit and tracked Git status. Any mismatch other than the local path identity returns `BLOCKED` or `STALE` with **no references**. The response on a match is always `REVIEW_REQUIRED` (CLI exit code 2), `sender_identity=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, and a fixed `REVIEW_ISSUE` next step; the packet's suggested action is never authorized. SHA-256 remains a non-authenticating checksum. A changed origin or a malicious packet cannot be treated as an authenticated sender, even when the hash matches. Read the authoritative GitHub Issue/PR before deciding what to do.
 
-**Not delivered by this mode:** human-reviewed persistent memory, semantic retrieval (#338), authenticated sender/device identity, transport, Codex Desktop ↔ Hermes real-client activation, or a public Toolkit release. Roll back by reverting the revision or not invoking the new MCP tool/CLI mode. No new state, service, paid inference, ECC dependency or client settings are created.
+**Not delivered by this portable verifier alone:** authenticated human-reviewed memory, semantic retrieval (#338), authenticated sender/device identity, transport, Codex Desktop ↔ Hermes real-client activation, or a public Toolkit release. The separate reviewed-reference records below are opt-in operator claims, not proof of human identity or owner consent. Roll back by reverting the revision or not invoking the new MCP tool/CLI mode. No new service, paid inference, ECC dependency or client settings are created.
 
 ## Project-reviewed reference records - explicit opt-in (#433)
 
