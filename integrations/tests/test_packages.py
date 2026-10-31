@@ -10,7 +10,7 @@ BASE = Path(__file__).resolve().parents[1]
 class SourcePackageTests(unittest.TestCase):
     def test_mcp_version_and_tools(self):
         server = (BASE / 'personal-mcp/adt-personal/mcp/adt_mcp.py').read_text(encoding='utf-8')
-        self.assertIn("VERSION = '0.1.13'", server)
+        self.assertIn("VERSION = '0.1.14'", server)
         for tool in ('toolkit_info', 'toolkit_get_skill', 'toolkit_get_role', 'toolkit_prepare_task', 'toolkit_model_review_checkpoint', 'toolkit_assess_skill_coverage', 'toolkit_discover_external_skill_candidates', 'toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
             self.assertIn(tool, server)
 
@@ -18,7 +18,7 @@ class SourcePackageTests(unittest.TestCase):
         folder = BASE / 'chatgpt-plugin/ai-development-toolkit'
         data = json.loads((folder / 'plugin.json').read_text(encoding='utf-8'))
         self.assertEqual(data['name'], folder.name)
-        self.assertEqual(data['version'], '0.1.3')
+        self.assertEqual(data['version'], '0.1.4')
         self.assertLessEqual(len(data['extensions']['com.openai']['interface']['shortDescription']), 30)
         self.assertNotIn('mcpServers', data)
         self.assertNotIn('apps', data.get('extensions', {}).get('com.openai', {}))

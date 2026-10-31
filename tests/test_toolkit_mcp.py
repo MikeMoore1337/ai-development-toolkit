@@ -530,6 +530,26 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(tool["inputSchema"]["properties"]["references"]["maxItems"], 8)
         self.assertIn("CHECK_CI", tool["inputSchema"]["properties"]["next_action"]["enum"])
 
+    def test_required_setup_policy_and_preview_preserve_existing_skills(self):
+        policy = mcp.catalog()["required_setup_policy"]
+        self.assertEqual("INSTALL_MISSING_FOR_CURRENT_TASK", policy["mode"])
+        self.assertEqual("HOST_CLIENT", policy["executor"])
+        self.assertEqual("ensure", policy["bundled_manager_action"])
+        skill = "qa-strategy"
+        existing = self.project / ".agents/skills" / skill
+        existing.mkdir(parents=True)
+        (existing / "SKILL.md").write_bytes(b"# Private skill\r\n")
+        preview = self._invoke("toolkit_preview_install", project=str(self.project),
+                               layout="codex", skills=[skill])["result"]["structuredContent"]
+        self.assertEqual("PREVIEW_ONLY", preview["status"])
+        self.assertEqual([], preview["result"]["changes"])
+        self.assertEqual([skill], preview["result"]["preserved"])
+        self.assertFalse((self.project / ".adt").exists())
+        self.assertEqual(b"# Private skill\r\n", (existing / "SKILL.md").read_bytes())
+        route = self._invoke("toolkit_route_task", task="Fix backend code")["result"]["structuredContent"]
+        self.assertEqual(policy, route["required_setup_policy"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

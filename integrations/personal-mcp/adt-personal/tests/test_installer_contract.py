@@ -39,4 +39,14 @@ class TestInstallerContract(unittest.TestCase):
         self.assertIn("$ErrorActionPreference = 'Continue'", content)
         self.assertIn('if (Test-ClaudeMcpExists $claude.Source)', content)
 
+    def test_required_setup_instructions_reach_both_platform_installers(self):
+        for script in (SCRIPT, SCRIPT.with_suffix('.sh')):
+            with self.subTest(script=script.name):
+                content = script.read_text(encoding='utf-8')
+                self.assertIn('installing missing task-required skills and tools', content)
+                self.assertIn('Skill Manager `ensure` preview', content)
+                self.assertIn('explicit reference-only/no-install requests', content)
+                self.assertIn('never overwrite or adopt unmanaged files', content)
+                self.assertIn('Verify files, client discovery and invocation separately', content)
+
 if __name__ == '__main__': unittest.main()

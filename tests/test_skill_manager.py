@@ -80,6 +80,54 @@ class SkillManagerTests(unittest.TestCase):
         self.assertEqual("# User-owned\n",
                          (self.installed / "SKILL.md").read_text())
 
+    def test_ensure_installs_missing_and_is_idempotent_for_both_layouts(self):
+        for layout in ("codex", "claude"):
+            with self.subTest(layout=layout):
+                preview = self.call("ensure", names=["test-skill"], layout=layout)
+                self.assertEqual(["test-skill"], preview["changes"])
+                self.assertFalse(preview["applied"])
+                self.assertTrue(self.call("ensure", names=["test-skill"],
+                                          layout=layout, apply=True)["applied"])
+                repeated = self.call("ensure", names=["test-skill"],
+                                     layout=layout, apply=True)
+                self.assertEqual([], repeated["changes"])
+                self.assertEqual(["test-skill"], repeated["preserved"])
+                self.assertFalse(repeated["applied"])
+
+    def test_ensure_preserves_unmanaged_skill_and_installs_only_missing(self):
+        self.installed.mkdir(parents=True)
+        original = b"# User-owned\r\n"
+        (self.installed / "SKILL.md").write_bytes(original)
+        other = self.source / ".agents/skills/other-skill"
+        other.mkdir()
+        (other / "SKILL.md").write_text("# Other\n", encoding="utf-8")
+        manifest_file = self.source / "MANIFEST.json"
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+        manifest["core_skills"].append("other-skill")
+        manifest_file.write_text(json.dumps(manifest), encoding="utf-8")
+        names = ["test-skill", "other-skill"]
+        preview = self.call("ensure", names=names)
+        self.assertEqual(["other-skill"], preview["changes"])
+        self.assertEqual(["test-skill"], preview["preserved"])
+        self.assertFalse((self.repo / ".adt").exists())
+        self.call("ensure", names=names, apply=True)
+        self.assertEqual(original, (self.installed / "SKILL.md").read_bytes())
+        self.assertEqual({"other-skill"}, set(self.call("status")["skills"]))
+        self.call("rollback", apply=True)
+        self.assertFalse((self.installed.parent / "other-skill").exists())
+        self.assertEqual(original, (self.installed / "SKILL.md").read_bytes())
+
+    def test_ensure_refuses_incomplete_existing_skill_and_unknown_source(self):
+        self.installed.mkdir(parents=True)
+        (self.installed / "private.txt").write_bytes(b"user content")
+        with self.assertRaisesRegex(manager.ManagerError, "SKILL.md"):
+            self.call("ensure", names=["test-skill"], apply=True)
+        with self.assertRaisesRegex(manager.ManagerError, "Unknown skill"):
+            self.call("ensure", names=["../../outside"], apply=True)
+        self.assertEqual(b"user content", (self.installed / "private.txt").read_bytes())
+        with self.assertRaisesRegex(manager.ManagerError, "Duplicate skill"):
+            self.call("ensure", names=["test-skill", "test-skill"], apply=True)
+
     def test_update_dry_run_and_rollback_restores_exact_bytes(self):
         self.call("install", names=["test-skill"], apply=True)
         source = self.source / ".agents" / "skills" / "test-skill" / "SKILL.md"
@@ -112,7 +160,7 @@ class SkillManagerTests(unittest.TestCase):
         self.call("install", names=["test-skill"], apply=True)
         (self.installed / "SKILL.md").write_text("User edits\n", encoding="utf-8")
         self.assertEqual("modified", self.call("status")["skills"]["test-skill"]["status"])
-        for action in ("update", "uninstall", "rollback"):
+        for action in ("update", "uninstall", "rollback", "ensure"):
             with self.subTest(action=action):
                 with self.assertRaisesRegex(manager.ManagerError, "Local modifications"):
                     self.call(action, names=["test-skill"], apply=True)

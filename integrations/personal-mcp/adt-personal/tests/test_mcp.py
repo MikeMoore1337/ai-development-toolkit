@@ -109,14 +109,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.13')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.14')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.13', diagnostic['adapter_version'])
+        self.assertEqual('0.1.14', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.13', version['running_mcp_adapter'])
+        self.assertEqual('0.1.14', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -507,7 +507,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.13')
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.14')
         self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),13)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
@@ -588,6 +588,25 @@ class TestToolkitMCP(unittest.TestCase):
         lines=[json.loads(x) for x in p.stdout.splitlines()]
         self.assertEqual([x['id'] for x in lines],[1,2,3])
         self.assertIn('qa-strategy',lines[2]['result']['content'][0]['text'])
+
+    def test_required_setup_is_host_executed_bounded_and_inventory_aware(self):
+        unknown = self.tk.prepare_task('Создать REST API', profile='backend')
+        self.assertEqual('DISCOVERY_REQUIRED', unknown['required_setup']['status'])
+        self.assertEqual([], unknown['required_setup']['skills'])
+        known = self.tk.prepare_task('Создать REST API', profile='backend',
+                                     existing_skills=['task-scoping'], max_skills=1)
+        setup = known['required_setup']
+        self.assertEqual('INSTALL_MISSING', setup['status'])
+        self.assertEqual(['api-design'], setup['skills'])
+        self.assertEqual('HOST_CLIENT', setup['executor'])
+        self.assertEqual('USER', setup['scope'])
+        self.assertEqual('ensure', setup['manager_action'])
+        self.assertFalse(known['installation_performed'])
+        available = self.tk.prepare_task('Создать REST API', profile='backend',
+                                         existing_skills=known['selected_skills'])
+        self.assertEqual('VERIFY_TOOLS', available['required_setup']['status'])
+        self.assertEqual([], available['required_setup']['skills'])
+
 
 if __name__=='__main__':
     unittest.main()

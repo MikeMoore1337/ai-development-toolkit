@@ -29,7 +29,14 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.6)
+## Unreleased (main after v5.5.7)
+
+## 5.5.7 (candidate, 2026-10-31)
+
+- Install missing task-required skills and tools through the host after source/license/pin/file review, preferring user scope and respecting no-install requests.
+- Add idempotent Skill Manager `ensure`: install only missing bundled skills, preserve existing files without adoption, and retain drift/lock/recovery guards.
+- Personal MCP 0.1.14 returns bounded setup requirements; public ChatGPT plugin source 0.1.4 and ALL_THREE guidance follow the same setup contract.
+- No database migration, production environment variables, external binary bootstrap or client auto-upgrade is introduced. Source checks do not attest native client invocation.
 
 ## 5.5.6 (released, 2026-10-24)
 

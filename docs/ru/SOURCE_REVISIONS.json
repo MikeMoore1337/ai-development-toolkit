@@ -151,7 +151,7 @@
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "6125cd7602c072ba64e3044884757a38343d058bc0fef236b845d08a68aa1017"
+      "source_sha256": "0f401676933b3a9f17dcad6100fb25ce186eae412111b0331cec9e0e4138e1fd"
     },
     {
       "source": "docs/INTEGRATION_MATRIX.md",
@@ -303,7 +303,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "6fe1b7f9860e7f808d47e3e7308b05836a71c19aec86541892e69b95d79024e0"
+      "source_sha256": "5f6b2b711fafc3ed3dabfa12abda04fee5bddea09ca72fa7ba7f248577fdead5"
     },
     {
       "source": "docs/RELIABILITY_TESTING.md",
@@ -390,7 +390,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "bc6074b23757003e92cc3f9c1d50f2cd91e5484feee42af5733d06be10c99d48"
+      "source_sha256": "b00c7f2f559a02ad3961f209725cc5a4168f40a1d89c87a1d1e6c85676b62d04"
     },
     {
       "source": "docs/UX_UI_EVALS.md",
