@@ -390,12 +390,12 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "b00c7f2f559a02ad3961f209725cc5a4168f40a1d89c87a1d1e6c85676b62d04"
+      "source_sha256": "242ea855a05cfec623872cd332c256ebfec990f4219e5374d20a9c1d4f5257d3"
     },
     {
       "source": "docs/UX_UI_EVALS.md",
       "translation": "docs/ru/UX_UI_EVALS.md",
-      "source_sha256": "eedc702f00cd563de6a70401a48f65b0c40efbd4fd6565ae831a1a38568067b6"
+      "source_sha256": "8b2e5bc6e61b6404cc73ac35c3eacb3634d778def61213f8f30610fc0be51b19"
     },
     {
       "source": "docs/VERIFIED_EXAMPLES.md",

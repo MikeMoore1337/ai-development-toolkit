@@ -3,14 +3,13 @@
   "cases": [
     {
       "id": "new-site",
-      "request_en": "Create a product-specific mango storefront; show three distinct spatial sketches before choosing a direction.",
-      "request_ru": "Спроектируй магазин манго с тремя разными композициями и визуальной приёмкой до реализации.",
+      "request_en": "Create a mango storefront and compare three visual concepts because the brief explicitly requests this pilot.",
+      "request_ru": "Создай магазин манго и сравни три концепции, поскольку именно так сформулирован этот тестовый запрос.",
       "needs_three": true,
       "criteria": [
         "product-fit",
         "task-hierarchy",
-        "compositional-originality",
-        "cross-domain-swap",
+        "visual-appeal",
         "mobile-desktop",
         "states",
         "accessibility",
@@ -21,14 +20,13 @@
     },
     {
       "id": "substantial-redesign",
-      "request_en": "Redesign an existing training dashboard while preserving owner-approved brand and visual gates.",
-      "request_ru": "Существенно переработай экран тренировок, не меняя приложение до согласования трёх разных эскизов.",
+      "request_en": "Redesign a training dashboard and compare three alternatives explicitly requested by the owner; preserve the approved baseline.",
+      "request_ru": "Переработай экран тренировок: по запросу владельца сравни три варианта, сохрани прежнюю принятую версию.",
       "needs_three": true,
       "criteria": [
         "product-fit",
         "task-hierarchy",
-        "compositional-originality",
-        "cross-domain-swap",
+        "visual-appeal",
         "mobile-desktop",
         "states",
         "accessibility",
