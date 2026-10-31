@@ -36,8 +36,8 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
     def test_live_protocol_is_bounded_read_only_and_versioned(self):
         import re
         live = MANIFEST["chatgpt_personal_live"]
-        self.assertEqual(live["schema_version"], 1)
-        self.assertEqual(live["protocol_generation"], 1)
+        self.assertEqual(live["schema_version"], 2)
+        self.assertEqual(live["protocol_generation"], 2)
         self.assertEqual(live["canonical_repository"], "MikeMoore1337/ai-development-toolkit")
         self.assertEqual(live["tracked_branch"], "main")
         self.assertEqual(live["commit_resolution"], "exact_sha_required")
@@ -46,7 +46,8 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
         self.assertEqual(live["fallback"], "BUNDLED_ROUTER")
         self.assertEqual(live["activation"], "best_effort_per_task_read_only")
         self.assertIs(live["install_upgrade_automatic"], False)
-        self.assertTrue(1 <= live["max_retrieved_sources_per_task"] <= 8)
+        self.assertTrue(1 <= live["max_retrieved_sources_per_batch"] <= 8)
+        self.assertNotIn("max_retrieved_sources_per_task", live)
 
     def test_exact_head_ci_matrix_required(self):
         live = MANIFEST["chatgpt_personal_live"]
@@ -73,23 +74,34 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
         ):
             self.assertFalse(passes(changed))
 
-    def test_source_file_allowlist_does_not_escape_toolkit(self):
+    def assert_safe_source_sets(self, source_sets):
         from pathlib import PurePosixPath
-        live = MANIFEST["chatgpt_personal_live"]
-        self.assertEqual(live["integrity_manifest"], "SHA256SUMS.txt")
-        self.assertTrue((ROOT / live["integrity_manifest"]).is_file())
-        self.assertIn("ui-orchestra", live["source_sets"])
-        self.assertIn("AGENT_START.ru.md", live["source_sets"]["entry"])
-        for values in live["source_sets"].values():
+        for values in source_sets.values():
             self.assertIsInstance(values, list)
             self.assertGreater(len(values), 0)
-            self.assertLessEqual(len(values), live["max_retrieved_sources_per_task"])
+            self.assertEqual(len(values), len(set(values)))
             for filename in values:
                 path = PurePosixPath(filename)
                 self.assertFalse(path.is_absolute())
                 self.assertNotIn("..", path.parts)
                 self.assertTrue((ROOT / filename).is_file(), filename)
                 self.assertTrue((ROOT / filename).resolve().is_relative_to(ROOT.resolve()))
+
+    def test_source_file_allowlist_does_not_escape_toolkit(self):
+        live = MANIFEST["chatgpt_personal_live"]
+        self.assertEqual(live["integrity_manifest"], "SHA256SUMS.txt")
+        self.assertTrue((ROOT / live["integrity_manifest"]).is_file())
+        self.assertIn("ui-orchestra", live["source_sets"])
+        self.assertIn("AGENT_START.ru.md", live["source_sets"]["entry"])
+        self.assert_safe_source_sets(live["source_sets"])
+
+    def test_safe_source_set_can_span_multiple_batches(self):
+        live = MANIFEST["chatgpt_personal_live"]
+        paths = list(dict.fromkeys(path for group in live["source_sets"].values() for path in group))
+        self.assertGreater(len(paths), live["max_retrieved_sources_per_batch"])
+        self.assert_safe_source_sets({"composite": paths})
+        with self.assertRaises(AssertionError):
+            self.assert_safe_source_sets({"unsafe": ["../README.md"]})
 
     def test_bilingual_docs_reject_silent_upgrade_claims(self):
         guides = (EN, RU, ROOT / "docs/CLIENT_COMPATIBILITY.md",
@@ -127,7 +139,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertIn(name, MANIFEST["profiles"])
         for guide in (EN, RU):
             text = guide.read_text(encoding="utf-8")
-            for token in ("--task feature", "--apply", "--layout claude",
+            for token in ("scripts/skill_manager.py ensure", "--apply", "--layout claude",
                           "feature-delivery", "make-feature", "qa-all",
                           "NOT_TESTED", "NOT_RUN", "BLOCKED"):
                 self.assertIn(token, text)
@@ -243,7 +255,7 @@ class UniversalAgentEntryTests(unittest.TestCase):
         for path, header, footer, wording in (
             (RU, "## Основной сценарий: проект открыт в IDE",
              "## Дополнительный сценарий: ссылки на репозитории", "Toolkit"),
-            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+            (EN, "## Primary path: open IDE project + Toolkit URL, without manual installation",
              "## Optional path: remote repository links", "Toolkit"),
         ):
             text = path.read_text(encoding="utf-8")
@@ -281,12 +293,25 @@ class UniversalAgentEntryTests(unittest.TestCase):
             self.assertEqual(json.loads(result.stdout)["result"], "BLOCKED")
             self.assertFalse(missing.exists())
 
+    def test_task_required_setup_is_default_with_reference_only_opt_out(self):
+        for path in (EN, RU):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.name):
+                self.assertIn("scripts/skill_manager.py ensure", text)
+                self.assertIn("USER_HOME", text)
+                self.assertIn("reference-only", text)
+                self.assertIn("BLOCKED", text)
+                self.assertIn("--apply", text)
+        policy = MANIFEST["required_setup_policy"]
+        self.assertEqual("INSTALL_MISSING_FOR_CURRENT_TASK", policy["mode"])
+        self.assertTrue(policy["reference_only_opt_out"])
+
 
     def test_primary_prompt_uses_toolkit_url_without_installation(self):
         for source, first, later in (
             (RU, "## Основной сценарий: проект открыт в IDE",
              "## Дополнительный сценарий: ссылки на репозитории"),
-            (EN, "## Primary path: open IDE project + Toolkit URL, without installation",
+            (EN, "## Primary path: open IDE project + Toolkit URL, without manual installation",
              "## Optional path: remote repository links"),
         ):
             text = source.read_text(encoding="utf-8")

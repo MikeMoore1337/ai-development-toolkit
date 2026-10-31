@@ -76,18 +76,21 @@ class ProfileContextAuditTests(unittest.TestCase):
     def test_safety_instruction_removal_fails_closed(self):
         unmodified = audit.adt_mcp.Toolkit.prepare_task
 
-        def tampered(self, *args, **kwargs):
-            response = unmodified(self, *args, **kwargs)
-            if kwargs.get("profile") == "backend" and kwargs.get("max_skills") == 3:
-                response["instructions"] = [
-                    s for s in response["instructions"]
-                    if "Never write Toolkit skills" not in s
-                ]
-            return response
+        for marker in ("Never write Toolkit skills",
+                       "Install missing task-required skills and tools through the host",
+                       "Honor explicit no-install/reference-only requests"):
+            with self.subTest(marker=marker):
+                def tampered(self, *args, **kwargs):
+                    response = unmodified(self, *args, **kwargs)
+                    if kwargs.get("profile") == "backend" and kwargs.get("max_skills") == 3:
+                        response["instructions"] = [
+                            s for s in response["instructions"] if marker not in s
+                        ]
+                    return response
 
-        with patch.object(audit.adt_mcp.Toolkit, "prepare_task", tampered):
-            with self.assertRaisesRegex(audit.AuditError, "Mandatory instructions"):
-                audit.inspect(ROOT)
+                with patch.object(audit.adt_mcp.Toolkit, "prepare_task", tampered):
+                    with self.assertRaisesRegex(audit.AuditError, "Mandatory instructions"):
+                        audit.inspect(ROOT)
 
     def test_loaded_skill_mutation_fails_closed(self):
         unmodified = audit.adt_mcp.Toolkit.prepare_task

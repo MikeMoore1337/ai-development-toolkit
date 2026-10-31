@@ -26,7 +26,7 @@
     {
       "source": "docs/BEGINNER_CLIENT_DETAILS.md",
       "translation": "docs/ru/BEGINNER_CLIENT_DETAILS.md",
-      "source_sha256": "b450a10a49bcb5606592777fc923d3d56e8bf591312a156337406d050edc7930"
+      "source_sha256": "8cd26382b0d70f786141e4039fe3367c191ea949f5303ab0dded55b6fb5794a6"
     },
     {
       "source": "docs/BEGINNER_START.md",
@@ -61,7 +61,7 @@
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
       "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
-      "source_sha256": "ead4afd353190119154db1b4340a24b8f5bcafd7ffddf77ff84ecc793f8a315e"
+      "source_sha256": "9f2154cd249edbb03686b28d91738ff6c18a96309a636c61610c2f92a6ef8330"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -136,22 +136,22 @@
     {
       "source": "docs/INSTALL_LINUX.md",
       "translation": "docs/ru/INSTALL_LINUX.md",
-      "source_sha256": "347b19bd01ed57817030c1be753fabf2f2f413fe7c2fe62ef9095e6e71a8e650"
+      "source_sha256": "e2e8dbfdedc2ba0983a040c5981955c95208b784e30810d7b9988a98f4fb35ac"
     },
     {
       "source": "docs/INSTALL_MACOS.md",
       "translation": "docs/ru/INSTALL_MACOS.md",
-      "source_sha256": "9b375ace811d8c8fa1c16c20dbfd363dbef70db812d24fc2bfc71fd9ff8e17e3"
+      "source_sha256": "e699c67d97481b3cd43e561818a4007bc1b784ac6ac90a92708fcdaa35d4a9ac"
     },
     {
       "source": "docs/INSTALL_WINDOWS.md",
       "translation": "docs/ru/INSTALL_WINDOWS.md",
-      "source_sha256": "3acf1e6563706c6b602f35f6612fd94ce0325ae099e6b4d33d6b42130041d676"
+      "source_sha256": "bea5995c58e691311f072e76910668944842c935c9ffbc117b69f488b20c47c3"
     },
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "e231a2d4d00926435cef5032de926bbd6d35cf04633bfb022ab09470f63e6a2f"
+      "source_sha256": "0f401676933b3a9f17dcad6100fb25ce186eae412111b0331cec9e0e4138e1fd"
     },
     {
       "source": "docs/INTEGRATION_MATRIX.md",
@@ -162,7 +162,7 @@
     {
       "source": "docs/INTEGRATIONS.md",
       "translation": "docs/ru/INTEGRATIONS.md",
-      "source_sha256": "38df19b9548ee7a98292c430d37f9df60cb18109c8f71ad538f3676114993f5f"
+      "source_sha256": "62983978f51339ef533576b65860cceffbae132fc4820c33cfd12b7518eadf59"
     },
     {
       "source": "docs/LANGUAGE_POLICY.md",
@@ -182,7 +182,7 @@
     {
       "source": "docs/MCP_INSTALL.md",
       "translation": "docs/ru/MCP_INSTALL.md",
-      "source_sha256": "55fe7bf593ea638bd2af6ae77ef8f869925a680a28d4c401af15b113f2d9f266"
+      "source_sha256": "5a12f5430dcd523e8e307401206fd584005b3bf52ccae2e4dfbe5eefae504b67"
     },
     {
       "source": "docs/MCP_SECURITY_SCAN.md",
@@ -303,7 +303,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "6fe1b7f9860e7f808d47e3e7308b05836a71c19aec86541892e69b95d79024e0"
+      "source_sha256": "a55e9550ddaf72a17a3bcef639340f9f60cbf865017cf26cdaa8d2a5ded40439"
     },
     {
       "source": "docs/RELIABILITY_TESTING.md",
@@ -390,7 +390,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "bc6074b23757003e92cc3f9c1d50f2cd91e5484feee42af5733d06be10c99d48"
+      "source_sha256": "b00c7f2f559a02ad3961f209725cc5a4168f40a1d89c87a1d1e6c85676b62d04"
     },
     {
       "source": "docs/UX_UI_EVALS.md",

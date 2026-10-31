@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import tomllib
+from functools import lru_cache
 from pathlib import Path
 
 from install import _ensure_no_symlink_chain, skill_sources
@@ -31,14 +32,18 @@ INSTRUCTIONS = (
     "only relevant skills; a plan does not install them. Never claim that an "
     "AI client activated a skill unless independently observed. Never use this "
     "server to edit a user project, run commands, or publish. "
-    "For local changes request human review of the Skill Manager preview."
+    "The host must install missing task-required skills and tools after source review, "
+    "within existing permissions, preferring user scope and preserving existing files. "
+    "Preview bundled skills with Skill Manager ensure, then apply through the host; "
+    "honor reference-only requests and report concrete setup blockers."
 )
 
 
 def catalog() -> dict:
     manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
     return {"version": str(manifest["version"]), "profiles": sorted(manifest["profiles"]),
-            "skills": sorted(skill_sources(manifest))}
+            "skills": sorted(skill_sources(manifest)),
+            "required_setup_policy": manifest.get("required_setup_policy", {})}
 
 
 def _sources() -> dict:
@@ -63,6 +68,25 @@ def _roles() -> dict[str, Path]:
                     raise ValueError("Duplicate declared role")
                 found[path.stem] = path
     return found
+
+
+@lru_cache(maxsize=1)
+def _stage_adapter():
+    """Share the Personal MCP stage contract instead of another router."""
+    folder = ROOT / "integrations" / "personal-mcp" / "adt-personal" / "mcp"
+    path = folder / "adt_mcp.py"
+    _ensure_no_symlink_chain(path)
+    _ensure_no_symlink_chain(folder / "adt_discovery.py")
+    spec = importlib.util.spec_from_file_location("_adt_stage_adapter", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("Stage adapter unavailable")
+    module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, str(folder))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(folder))
+    return module
 
 
 def _tool_defs() -> list[dict]:
@@ -127,6 +151,8 @@ def _tool_defs() -> list[dict]:
          "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
                          "required": ["task"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        *[tool for tool in _stage_adapter().TOOLS if tool['name'] in
+          ('toolkit_prepare_stage', 'toolkit_get_skill', 'toolkit_get_reference')],
         {"name": "toolkit_preview_install",
          "description": "Preview Skill Manager changes for an already existing project. Does NOT install or modify files.",
          "inputSchema": {"type": "object",
@@ -422,6 +448,19 @@ def _observe_project(repo: Path, client: object) -> dict:
 def invoke(tool: str, args: dict) -> dict:
     if not isinstance(args, dict):
         raise ValueError("Tool arguments must be an object")
+    if tool in ("toolkit_prepare_stage", "toolkit_get_skill", "toolkit_get_reference"):
+        if tool == "toolkit_get_reference" and (not isinstance(args.get("path"), str)
+                                                  or not args["path"].startswith("references/")):
+            raise ValueError("Only skill references/ are readable")
+        adapter = _stage_adapter()
+        try:
+            toolkit = adapter.Toolkit(ROOT)
+            declared = _sources()
+            toolkit.skills = {name: path for name, path in toolkit.skills.items()
+                              if name in declared and toolkit.source / path == declared[name] / "SKILL.md"}
+            return adapter.dispatch(toolkit, tool, args)
+        except adapter.ToolkitError as exc:
+            raise ValueError(str(exc)) from exc
     if tool == "toolkit_advise_execution":
         return _adaptive_advice(args.get("request"))
     if tool == "toolkit_check_execution_consent":
@@ -557,6 +596,7 @@ def invoke(tool: str, args: dict) -> dict:
                         if any(word in name for word in role_words if len(word) >= 4)]
         return {"profile": candidates[0] if candidates else ("general" if "general" in profiles else None),
                 "skills": matches[:5], "roles": role_matches[:5],
+                "required_setup_policy": catalog()["required_setup_policy"],
                 "skill_coverage": _assess_skill_coverage(query, matches=matches),
                 "status": "ADVISORY_ONLY", "requires_review": True}
     if tool == "toolkit_read_skill":
@@ -587,7 +627,7 @@ def invoke(tool: str, args: dict) -> dict:
         if not isinstance(names, list) or not 1 <= len(names) <= 10:
             raise ValueError("skills must be a list of 1-10 names")
         names = [_name(n) for n in names]
-        return {"status": "PREVIEW_ONLY", "result": operate("install", project, names=names,
+        return {"status": "PREVIEW_ONLY", "result": operate("ensure", project, names=names,
                                                             layout=layout, apply=False)}
     raise ValueError("Unknown Toolkit tool")
 

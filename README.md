@@ -77,6 +77,8 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 ## Platform installation
 
+**[Choose the AI client and interface](docs/INSTALLATION.md)** first: Codex Desktop/CLI/IDE/Cloud, Claude Code Desktop/CLI, ChatGPT/Claude chat, and other documented compatible coding clients. Then use the matching OS commands below.
+
 [Windows](docs/INSTALL_WINDOWS.md) · [Linux](docs/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/INSTALL_MACOS.md) · [Safe updates](docs/UPDATING.md)
 
 All three platforms use the same Skill Manager; commands and Python launchers differ. macOS is tested on hosted CI runners, not a personal Mac or a live AI client.
@@ -87,7 +89,8 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 
 
-**Latest published release:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6). For technical checksums, commit SHAs and verification history see [CHANGELOG.md](CHANGELOG.md) and [release process](docs/RELEASE_PROCESS.md). Publishing Toolkit does not automatically update installed MCP or ChatGPT plugins.
+
+**Latest published release:** [v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7). For technical checksums, commit SHAs and verification history see [CHANGELOG.md](CHANGELOG.md) and [release process](docs/RELEASE_PROCESS.md). Publishing Toolkit does not automatically update installed MCP or ChatGPT plugins.
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 

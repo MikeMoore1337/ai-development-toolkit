@@ -77,6 +77,8 @@ Toolkit служит **источником инструкций, а не мес
 
 ## Установка по операционным системам
 
+Сначала **[выберите ИИ-клиент и интерфейс](docs/ru/INSTALLATION.md)**: Codex Desktop/CLI/IDE/Cloud, Claude Code Desktop/CLI, чаты ChatGPT/Claude и другие документированно совместимые coding-клиенты. Затем используйте команды для своей ОС ниже.
+
 [Windows](docs/ru/INSTALL_WINDOWS.md) · [Linux](docs/ru/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/ru/INSTALL_MACOS.md) · [Безопасные обновления](docs/ru/UPDATING.md)
 
 Менеджер навыков общий, различаются вызов Python и команды оболочки. macOS проверяется на виртуальных runner CI, не на личном Mac и не с настоящим ИИ-клиентом.
@@ -87,7 +89,8 @@ Toolkit служит **источником инструкций, а не мес
 
 
 
-**Последний опубликованный релиз:** [v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6). Технические подробности, контрольные суммы, SHA и история проверок — в [CHANGELOG.md](CHANGELOG.md) и [порядке релизов](docs/ru/RELEASE_PROCESS.md). Опубликованный Toolkit не обновляет установленные MCP или плагин автоматически.
+
+**Последний опубликованный релиз:** [v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7). Технические подробности, контрольные суммы, SHA и история проверок — в [CHANGELOG.md](CHANGELOG.md) и [порядке релизов](docs/ru/RELEASE_PROCESS.md). Опубликованный Toolkit не обновляет установленные MCP или плагин автоматически.
 
 Для новой установки рекомендуется **Skill Manager v2**: предпросмотр, учёт установленных им файлов, безопасное обновление и восстановление.
 

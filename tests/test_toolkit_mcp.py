@@ -10,6 +10,7 @@ import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -27,9 +28,9 @@ class ToolkitMcpTests(unittest.TestCase):
     def _tools(self):
         return mcp.handle({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})["result"]["tools"]
 
-    def _invoke(self, name, **arguments):
+    def _invoke(self, tool_name, **arguments):
         return mcp.handle({"jsonrpc": "2.0", "id": 3, "method": "tools/call",
-                           "params": {"name": name, "arguments": arguments}})
+                           "params": {"name": tool_name, "arguments": arguments}})
 
     def test_jsonrpc_initialize_and_tools_have_read_only_hints(self):
         response = mcp.handle({"jsonrpc": "2.0", "id": 0, "method": "initialize",
@@ -56,6 +57,48 @@ class ToolkitMcpTests(unittest.TestCase):
         self._invoke("toolkit_route_task", task="Please test a backend API")
         self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
         self.assertFalse((self.project / ".adt").exists())
+
+    def test_shared_stage_contract_in_project_mcp(self):
+        self.assertIn("toolkit_prepare_stage", [tool["name"] for tool in self._tools()])
+        args = {"task": "Implement a backend API and test it", "stage": "Implement backend API",
+                "requested_skills": ["implementation"]}
+        first = self._invoke("toolkit_prepare_stage", **args)["result"]["structuredContent"]
+        self.assertEqual([s["name"] for s in first["loaded_skills"]], ["implementation"])
+        seen = {"implementation": first["loaded_skills"][0]["sha256"]}
+        repeated = self._invoke("toolkit_prepare_stage", **args, consulted_skills=seen)
+        self.assertEqual(repeated["result"]["structuredContent"]["loaded_skills"], [])
+        self.assertEqual(repeated["result"]["structuredContent"]["client_activation"], "NOT_OBSERVED")
+        self.assertEqual((self.project / "AGENTS.md").read_text(), "OWNER_PRIVATE_FIXTURE")
+        partial = self._invoke("toolkit_prepare_stage", **args, max_chars=5)["result"]["structuredContent"]
+        item = partial["loaded_skills"][0]
+        self.assertTrue(item["truncated"])
+        rest = self._invoke("toolkit_get_skill", name="implementation", offset=5)["result"]["structuredContent"]
+        self.assertEqual(item["sha256"], rest["sha256"])
+
+    def test_shared_reads_keep_project_manifest_and_reference_boundaries(self):
+        mcp._stage_adapter()
+        source = self.project / 'toolkit'
+        source.mkdir()
+        (source / 'MANIFEST.json').write_text(json.dumps({
+            'package':'ai-development-toolkit', 'version':'1.0.0',
+            'core_skills':['declared'], 'extension_skills':[], 'core_roles':[],
+            'profiles':{'general':['declared'], 'backend':['declared']}, 'extension_packs':{},
+        }), encoding='utf-8')
+        for name in ('declared', 'unmanaged'):
+            folder = source / '.agents' / 'skills' / name
+            folder.mkdir(parents=True)
+            (folder / 'SKILL.md').write_text('# skill', encoding='utf-8')
+            (folder / 'other.txt').write_text('outside references', encoding='utf-8')
+        declared = source / '.agents' / 'skills' / 'declared'
+        with patch.object(mcp, 'ROOT', source), patch.object(mcp, '_sources', return_value={'declared': declared}):
+            with self.assertRaises(ValueError):
+                mcp.invoke('toolkit_get_skill', {'name':'unmanaged'})
+            with self.assertRaises(ValueError):
+                mcp.invoke('toolkit_get_reference', {'skill':'declared', 'path':'other.txt'})
+            result = mcp.invoke('toolkit_prepare_stage', {'task':'Implement API', 'stage':'Implement API',
+                                                           'requested_skills':['unmanaged']})
+            self.assertEqual(result['loaded_skills'], [])
+            self.assertEqual(result['load_errors'][0]['error_type'], 'UNKNOWN_SKILL')
 
     def test_prompt_artifact_and_non_artifact_routing(self):
         cases = (
@@ -531,6 +574,26 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(tool["inputSchema"]["properties"]["references"]["maxItems"], 8)
         self.assertIn("CHECK_CI", tool["inputSchema"]["properties"]["next_action"]["enum"])
 
+    def test_required_setup_policy_and_preview_preserve_existing_skills(self):
+        policy = mcp.catalog()["required_setup_policy"]
+        self.assertEqual("INSTALL_MISSING_FOR_CURRENT_TASK", policy["mode"])
+        self.assertEqual("HOST_CLIENT", policy["executor"])
+        self.assertEqual("ensure", policy["bundled_manager_action"])
+        skill = "qa-strategy"
+        existing = self.project / ".agents/skills" / skill
+        existing.mkdir(parents=True)
+        (existing / "SKILL.md").write_bytes(b"# Private skill\r\n")
+        preview = self._invoke("toolkit_preview_install", project=str(self.project),
+                               layout="codex", skills=[skill])["result"]["structuredContent"]
+        self.assertEqual("PREVIEW_ONLY", preview["status"])
+        self.assertEqual([], preview["result"]["changes"])
+        self.assertEqual([skill], preview["result"]["preserved"])
+        self.assertFalse((self.project / ".adt").exists())
+        self.assertEqual(b"# Private skill\r\n", (existing / "SKILL.md").read_bytes())
+        route = self._invoke("toolkit_route_task", task="Fix backend code")["result"]["structuredContent"]
+        self.assertEqual(policy, route["required_setup_policy"])
+
+
 
     def test_portable_handoff_mcp_declared_read_only(self):
         entry = next(t for t in self._tools() if t["name"] == "toolkit_verify_portable_handoff")
@@ -569,7 +632,6 @@ class ToolkitMcpTests(unittest.TestCase):
                                file=str(packet_path), to_client="hermes")
         self.assertEqual(outcome["result"]["structuredContent"]["decision"], "BLOCKED")
         self.assertNotIn("OWNER_PRIVATE_FIXTURE", json.dumps(outcome))
-
 
 if __name__ == "__main__":
     unittest.main()

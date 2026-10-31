@@ -1,5 +1,7 @@
 # Toolkit routing quick reference
 
+Other request examples: “Use Toolkit guidance to review the repository I connected.” and “Сделай хороший промпт для Codex из моих заметок.”
+
 | Intent | Route | Notes |
 | --- | --- | --- |
 | New website, landing page, major redesign, UX/UI critique | `ui-orchestra` / `ux-ui-design-orchestra` | Design first, compare real visual alternatives, obtain owner approval before implementing unapproved visuals |
@@ -16,6 +18,7 @@
 
 - Project-native skills and rules take precedence; never silently overwrite unmanaged skills.
 - The Toolkit MCP in Codex is **independent** of the ChatGPT skills-only plugin.
+- Reassess skills at meaningful stage changes; use only supported read tools, bounded batches and a client-kept record of complete instructions still in context. Follow the user's exclusions and project gates on every pass. A client without the stage tool can perform targeted reads; neither path proves native activation.
 - A GitHub link is not a local filesystem bridge.
 - Share the **decision contract**, not the CLI/MCP implementation: distinguish `intent_mode` (`FULFILL_REQUEST` by default or explicit `EXPORT_PROMPT`), `status`, primary profile/skills, auxiliary candidates, excluded clauses, evidence basis, uncertainty, and client activation. Do not infer a primary profile from lexical skill hints alone.
 - The ChatGPT plugin cannot execute Python routing code by merely reading this document. Use actual available project context, ignore explicit prohibited work, and state `NOT_OBSERVED` when client skill activation was not verified. Never claim `execution`, `installation_performed` or `project_files_changed` without observed actions.

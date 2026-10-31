@@ -1,5 +1,23 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Stage-aware guidance (source MCP 0.1.15)
+
+`toolkit_prepare_task` remains compatible: `max_skills` is a batch size (default 3, maximum 8), not a task-wide limit. At a meaningful change of stage, requirements, defects or test results, the client calls `toolkit_prepare_stage` with the original `task`, a concise `stage` and, when it has enough evidence, up to `max_skills` justified `requested_skills`. With no explicit selection the existing heuristic suggests and reads at most its primary skill. Selection is advisory, not semantic completeness; inspect the task, original restrictions and project rules.
+
+`candidate_skills` lists names from the existing matched profiles, at most eight per page; it is a heuristic candidate inventory, not an exhaustive semantic assessment. If more metadata is useful, pass `requested_skills=[]` and the returned `next_candidate_offset`; keep the task, stage, exclusions, controller, approval state and source unchanged while paging. An empty selection reads no skill bodies. The client can also inspect the existing catalog and choose another justified skill.
+
+The client keeps a task-local record of complete instructions actually available in its current context. Send the relevant `name: sha256` entries as `consulted_skills`, not an inventory of installed skills. The digest is over the complete UTF-8 instruction text with normalized line endings. An unchanged complete instruction is omitted; a changed source is returned again. A response can be truncated at `max_chars` (default 16000, maximum 32000 characters across one batch); finish it with `toolkit_get_skill` using `offset` and compare the digest of every chunk before recording it. Read references only as needed. Pass only entries relevant to the current batch, so the input bound does not cap the task. After interruption, resume from a reliable client-held record; if context was lost, reread as needed.
+
+Pass task-specific `excluded_skills` and the already applied `active_controller` where relevant. Explicitly named prohibitions in supported sentence forms are also retained from the original task. This is lexical, not a guarantee that every natural-language prohibition or instruction conflict was understood. An unresolved conflict or unavailable source needs client judgment; never bypass a user rule or approval gate. The visual gate accepts `visual_approved` only as a client assertion, not proof of owner approval. Stop a repeated call when `next_step=STOP_OR_REASSESS`; request another batch only for an actual need. `context_load_metrics` reports returned UTF-8 bytes and repeat loads, not tokens.
+
+For example, `task="Audit SEO", stage="Audit SEO"` can return one primary skill. For `task="Build and test a REST API"`, an implementation stage can request `api-design` and `implementation`; after tests reveal a need, a testing stage can request `api-testing`. Send actual returned digests for previously read instructions when they are relevant again. Repeat-load detection covers only client-reported digests; omitting a digest cannot prove that a prior read never occurred.
+
+The same stage/read contract is exposed by Project MCP. The ChatGPT skills-only plugin can follow the process through whatever targeted reading tools it actually has; it does not start MCP calls by itself. The client must initiate every call. Reading, native installation, client activation, actual application and agent execution are separate evidence. A source update does not update the installed MCP or plugin; restart and real client discovery/invocation must be verified separately.
+
+## Personal MCP 0.1.14 — task-required setup
+
+`toolkit_prepare_task` now returns a bounded `required_setup` plan. The host installs missing task-required skills/tools after source review, within granted permissions, preferring user scope and preserving existing files. MCP remains read-only; inventory, installed files, discovery and invocation stay separate. Explicit no-install requests prevail.
+
 ## Personal MCP 0.1.13 — newly discovered risk reassessment for opt-in Model Advisor #401
 
 The `toolkit_model_review_checkpoint` read-only tool lets an opted-in
@@ -44,16 +62,18 @@ cost must remain blocked, and native host model calls are separate actions.
 
 This is a local read-only stdio MCP for Codex, independent of the [ChatGPT plugin](../chatgpt-plugin/README.md), not a hosted ChatGPT integration. It uses a **separate** Toolkit reference checkout and does not write to your work project.
 
-Prerequisites: Codex CLI, Python 3.10+, Git and organization-approved GitHub access. Copy the installer files outside of your work repository. Your Codex client is responsible for reading project-level skill/role names; the MCP only uses the inventory provided.
+Prerequisites for **automatic user-level registration**: Codex CLI, Python 3.10+, Git and organization-approved GitHub access. The connected client can be **Codex Desktop or CLI**; verify it in the surface you actually use. Desktop without the CLI can instead use [Project MCP or native skills](../../docs/INSTALLATION.md#codex-desktop). `-McpOnly` only updates package files and does not create a new registration. Copy the installer files outside of your work repository. Your Codex client is responsible for reading project-level skill/role names; the MCP only uses the inventory provided.
 
 ## Windows (PowerShell)
 
 ```powershell
 $package = 'C:\path\to\ai-development-toolkit\integrations\personal-mcp\adt-personal'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$package\Install-ADT-Personal.ps1" -Codex
+powershell.exe -NoProfile -File "$package\Install-ADT-Personal.ps1" -Codex
 py -3 "$package\diagnose_mcp.py"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$package\Enable-ADT-AutoUpdate.ps1"
 ```
+
+The command respects the host execution policy. If it is blocked, use an organization-approved signed/package route; do not weaken policy. Source-update scheduling is an independent opt-in.
 
 ## Linux (systemd user timer)
 

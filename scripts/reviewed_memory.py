@@ -36,6 +36,8 @@ def _project_url(issue_url: str) -> str:
 
 def _fields(repo: Path, issue_url: str, review_url: str, kind: str,
             summary: str, references: list[str]) -> None:
+    if not isinstance(references, list) or any(not isinstance(item, str) for item in references):
+        raise ValueError("References must be a list of GitHub URLs")
     handoff._handoff_fields(issue_url, "codex", "hermes", references, "NONE")
     if not handoff._project_matches_origin(repo, issue_url):
         raise ValueError("Issue does not match project GitHub origin")
@@ -76,7 +78,8 @@ def verify_record(repo: Path, record: object) -> dict:
     invalid = {"decision": "BLOCKED", "reason": "INVALID_REVIEWED_MEMORY"}
     if not isinstance(record, dict) or set(record) != RECORD_FIELDS:
         return invalid
-    if (record.get("schema") != 1 or record.get("source") != "TOOLKIT_REVIEWED_MEMORY_REFERENCE"
+    if (type(record.get("schema")) is not int or record["schema"] != 1
+            or record.get("source") != "TOOLKIT_REVIEWED_MEMORY_REFERENCE"
             or record.get("scope") != "project"
             or record.get("review_attestation") != "OPERATOR_CLAIM_NOT_AUTHENTICATED"
             or record.get("trust") != "UNTRUSTED_REFERENCE"
@@ -106,6 +109,8 @@ def verify_record(repo: Path, record: object) -> dict:
 
 
 def _file(repo: Path, path: Path, *, create: bool) -> None:
+    if ".." in path.parts:
+        raise ValueError("Parent traversal is forbidden in memory paths")
     if not handoff.HANDOFF_NAME.fullmatch(path.name):
         raise ValueError("Unexpected memory filename")
     handoff._handoff_file(path, repo, create=create)
@@ -117,6 +122,8 @@ def read_record(repo: Path, file: Path) -> dict:
 
 
 def _directory(repo: Path, directory: Path) -> list[Path]:
+    if ".." in directory.parts:
+        raise ValueError("Parent traversal is forbidden in memory paths")
     if not directory.is_absolute() or not directory.is_dir():
         raise ValueError("Explicit absolute memory directory required")
     for parent in (directory, *directory.parents):

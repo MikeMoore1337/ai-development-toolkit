@@ -219,5 +219,77 @@ class ReviewedMemoryTests(unittest.TestCase):
         self.assertEqual(denied["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
 
 
+    def test_explicit_reference_types_schema_and_parent_traversal_rejected(self):
+        for references in ([{"url": REF}], [REF, ["nested"]], (REF,)):
+            with self.subTest(references=references):
+                with self.assertRaises(ValueError):
+                    memory.prepare_record(self.root, ISSUE, REVIEW, "DECISION", SUMMARY, references)
+        forged = self.record()
+        forged["schema"] = True
+        forged["sha256"] = memory.handoff._handoff_digest(forged)
+        self.assertEqual(memory.verify_record(self.root, forged),
+                         {"decision": "BLOCKED", "reason": "INVALID_REVIEWED_MEMORY"})
+        file_with_traversal = self.folder / ".." / self.folder.name / "review-one.json"
+        with self.assertRaises(ValueError):
+            memory._file(self.root, file_with_traversal, create=True)
+        with self.assertRaises(ValueError):
+            memory._directory(self.root, self.folder / ".." / self.folder.name)
+        self.assertFalse(self.file.exists())
+
+    def test_malformed_json_and_digest_rejected_by_read_and_search(self):
+        record = self.record()
+        memory.handoff._capture_handoff_file(self.file, record)
+        record["sha256"] = "0" * 64
+        self.file.write_text(json.dumps(record), encoding="utf-8")
+        self.assertEqual(memory.read_record(self.root, self.file)["reason"],
+                         "TAMPERED_REVIEWED_MEMORY")
+        self.file.write_text("{malformed-json", encoding="utf-8")
+        with self.assertRaises(json.JSONDecodeError):
+            memory.read_record(self.root, self.file)
+        with self.assertRaises(ValueError):
+            memory.search_records(self.root, self.folder, ISSUE)
+
+    def test_cli_full_reviewed_reference_lifecycle_stays_untrusted(self):
+        cli = [sys.executable, str(ROOT / "scripts" / "reviewed_memory.py")]
+        fields = ["--repo", str(self.root), "--issue", ISSUE, "--review-url", REVIEW,
+                  "--kind", "DECISION", "--summary", SUMMARY, "--ref", REF]
+        prepared = subprocess.run(cli + ["prepare"] + fields, capture_output=True, text=True)
+        self.assertEqual(prepared.returncode, 2, prepared.stderr)
+        preview = json.loads(prepared.stdout)
+        self.assertEqual(preview["storage"], "NOT_PERSISTED")
+        self.assertFalse(self.file.exists())
+        stored = subprocess.run(cli + ["record"] + fields +
+                                ["--file", str(self.file), "--operator-reviewed"],
+                                capture_output=True, text=True)
+        self.assertEqual(stored.returncode, 0, stored.stderr)
+        loaded = subprocess.run(cli + ["read", "--repo", str(self.root),
+                                       "--file", str(self.file)], capture_output=True, text=True)
+        self.assertEqual(loaded.returncode, 2, loaded.stderr)
+        self.assertEqual(json.loads(loaded.stdout)["decision"], "REVIEW_REQUIRED")
+        searched = subprocess.run(cli + ["search", "--repo", str(self.root),
+                                         "--directory", str(self.folder), "--issue", ISSUE],
+                                  capture_output=True, text=True)
+        self.assertEqual(searched.returncode, 2, searched.stderr)
+        self.assertEqual(json.loads(searched.stdout)["found_count"], 1)
+        verified = memory.verify_record(self.root, json.loads(self.file.read_text()))
+        self.assertEqual(verified["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(verified["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(verified["review_attestation"], "NOT_VERIFIED")
+
+    @unittest.skipUnless(os.name == "nt", "Windows junction test")
+    def test_windows_directory_junction_rejected(self):
+        junction = Path(self.temp.name) / "linked-memory"
+        process = subprocess.run(["cmd", "/c", "mklink", "/J", str(junction),
+                                  str(self.folder)], capture_output=True, text=True)
+        if process.returncode != 0:
+            self.skipTest("Junction creation unavailable in CI")
+        try:
+            with self.assertRaises(ValueError):
+                memory._directory(self.root, junction)
+            with self.assertRaises(ValueError):
+                memory._file(self.root, junction / "record.json", create=True)
+        finally:
+            junction.rmdir()
+
 if __name__ == "__main__":
     unittest.main()

@@ -1666,6 +1666,26 @@
       "notes": "Issue #265: original offline bounded diagram pilot; Diagram Design only an idea reference, no upstream code; visual comparison NOT_TESTED."
     },
     {
+      "id": "graphify-474-ignore-native",
+      "path": ".graphifyignore",
+      "name": ".graphifyignore",
+      "kind": "metadata",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; original native Graphify ignore configuration authored for Toolkit, no upstream source code bundled; independent chain of title not verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/GRAPHIFY.md",
+      "last_reviewed": "2026-10-29",
+      "distribution": "included",
+      "notes": "Issue #474; original Graphify v0.9.97 reads this file; repository-local excludes for safe fresh code-only graph without a new wrapper."
+    },
+    {
       "id": "graphify-423-guide-en",
       "path": "docs/GRAPHIFY.md",
       "name": "GRAPHIFY.md",
@@ -1681,9 +1701,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/GRAPHIFY.md",
-      "last_reviewed": "2026-10-27",
+      "last_reviewed": "2026-10-29",
       "distribution": "included",
-      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not bundle upstream code. Owner Windows/Codex Desktop and bounded native-scope acceptance recorded in #423; new optional .graphifyignore documented in #474."
     },
     {
       "id": "documentation-docs-en-adaptation-md",
@@ -3641,9 +3661,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/ru/GRAPHIFY.md",
-      "last_reviewed": "2026-10-27",
+      "last_reviewed": "2026-10-29",
       "distribution": "included",
-      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not include upstream code or prove a local build / Codex Desktop activation."
+      "notes": "Issue #423; upstream reference Graphify-Labs/graphify v0.9.97, Apache-2.0. Does not bundle upstream code. Owner Windows/Codex Desktop and bounded native-scope acceptance recorded in #423; new optional .graphifyignore documented in #474."
     },
     {
       "id": "doc-docs-ru-install-linux-md",
@@ -14573,6 +14593,26 @@
       "last_reviewed": "2026-10-29",
       "distribution": "included",
       "notes": "Toolkit #421: original pinned upstream remains external. Windows WSL2 helper and documentation are opt-in; no models, paid API, Codex CLI, Claude CLI or private host changes."
+    },
+    {
+      "id": "harness2-421-integrations-harness2-preflight-sh",
+      "path": "integrations/harness2/preflight.sh",
+      "name": "Read-only native Ubuntu WSL2 Harness2 preflight without bash -c",
+      "kind": "script",
+      "author": "Toolkit maintainers (AI-assisted integration, claimed)",
+      "origin": "original",
+      "source_url": "https://github.com/google-research/harness2",
+      "source_reference": "https://github.com/google-research/harness2/tree/1cfe254e8d25b15f37048c3730134686abe60335",
+      "source_revision": "1cfe254e8d25b15f37048c3730134686abe60335",
+      "license": "MIT",
+      "distribution_basis": "Original Toolkit interface and tests; third-party Harness2 is not bundled and keeps Apache-2.0; rights attribution for new Toolkit code not independently verified.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "integrations/harness2/README.md",
+      "last_reviewed": "2026-10-30",
+      "distribution": "included",
+      "notes": "Toolkit #421: local-only original shell prerequisites executed via file path to preserve Windows PowerShell 5.1 argument boundaries; no downloads, model runs, paid APIs, prohibited CLIs or system changes."
     },
     {
       "id": "ecc-433-scripts-reviewed-memory-py",
