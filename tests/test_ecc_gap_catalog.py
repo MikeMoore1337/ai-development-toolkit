@@ -164,6 +164,27 @@ class CatalogueTests(unittest.TestCase):
         self.assertNotIn(
             'assert any(x["status"] == "ADOPT_AS_IS_CANDIDATE" for x in rows)', workflow)
 
+    def test_additional_ecc_source_review_keeps_non_native_components_on_hold(self):
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        by_path = {row["path"]: row for row in review["decisions"]}
+        expected = {
+            "skills/test-collaboration": "HOLD_REVIEW",
+            "skills/architecture-decision-records": "ALREADY_PRESENT",
+            "skills/ai-regression-testing": "HOLD_CONFLICT",
+            "skills/codebase-onboarding": "HOLD_CONFLICT",
+        }
+        for path, status in expected.items():
+            with self.subTest(source=path):
+                self.assertEqual(status, by_path[path]["status"])
+                self.assertTrue(by_path[path]["reason"])
+                self.assertTrue(by_path[path]["benefit"])
+                self.assertTrue(by_path[path]["test_case"])
+                self.assertTrue((ROOT / by_path[path]["analogue"]).is_file())
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        shipped = set(manifest["extension_packs"]["native-ecc-ports"]["skills"])
+        self.assertTrue({path.split("/")[-1] for path in expected}.isdisjoint(shipped))
+
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
         result = audit.frontmatter(frontmatter)

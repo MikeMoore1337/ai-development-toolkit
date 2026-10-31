@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -121,6 +121,38 @@
       "reason": "Pinned agent is tied to Claude Sonnet and proactive Bash/Write/Edit. It suggests destructive node_modules/package-lock deletion and network npm install; duplicate agent conflicts with existing feature-delivery, minimal-safe-change and failure-triage control.",
       "benefit": "Minimal type/build fixes remain within current trusted controller without dangerous cleanup defaults.",
       "test_case": "Reproduce a TypeScript error, select bounded authorized code diff and rerun; no automatic rm -rf, lockfile deletion, npm install or paid model."
+    },
+    {
+      "path": "skills/test-collaboration",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/qa/skills/requirements-traceability/SKILL.md",
+      "reason": "Pinned original ECC SKILL.md and TESTS.example.md were read. A repository-local TESTS.md asset/TEST-ID registry may add value, but Toolkit requirements-traceability and test-management already connect requirements, stable IDs, tests and evidence. Incremental operational value versus creating a second persistent registry is NOT_MEASURED. No native port or automatic write is approved.",
+      "benefit": "Candidate unified TESTS.md index of missing test points, standard runner groups and evidence. Comparative usefulness and maintenance cost require a controlled fixture.",
+      "test_case": "Synthetic three-module repository with existing Issue/PR traceability: compare TESTS.md against Toolkit mappings for missing coverage, duplication and maintenance; no automatic file creation, client activation or command execution."
+    },
+    {
+      "path": "skills/architecture-decision-records",
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/architecture-decisions/SKILL.md",
+      "reason": "Pinned original ECC ADR guidance includes significant choices, alternatives, consequences and numbered docs/adr templates. Toolkit architecture-decisions already compares tradeoffs, tests and risks and selectively records an ADR for enduring decisions. The numbered template is a presentation preference, not a proven missing function; do not introduce a duplicate ADR controller.",
+      "benefit": "Existing architecture-decisions provides risk-aware decisions and optional ADRs without a mandatory new directory or controller.",
+      "test_case": "Significant database tradeoff can be recorded with context and consequences using existing ADR convention; trivial rename must not force an ADR."
+    },
+    {
+      "path": "skills/ai-regression-testing",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/qa/skills/test-analysis-design/SKILL.md",
+      "reason": "Pinned original has concrete Next.js/Vitest sandbox-vs-production schema tests but also a Claude-only bug-check command and explicit blanket advice not to test code with no prior bug. That conflicts with Toolkit's risk-based tests for new authorization and safety-critical behavior. Existing test-analysis-design, api-testing, contract-testing and feature-delivery provide observable regression oracles. No wholesale port.",
+      "benefit": "Useful cross-mode API parity examples can inform current QA methods without removing proactive new-feature tests or introducing another command controller.",
+      "test_case": "A newly created authorization endpoint with no prior defect still requires meaningful negative checks; synthetic sandbox and production responses must satisfy the same contract. No automatic Claude command."
+    },
+    {
+      "path": "skills/codebase-onboarding",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
+      "reason": "Pinned original repository reconnaissance overlaps Toolkit codebase-knowledge-map and code-tour, but onboarding examples propose generating or updating CLAUDE.md as a default artifact, a host-specific client-instruction write requiring separate owner approval. No silent instruction mutation or duplicate onboarding controller.",
+      "benefit": "Existing read-only architecture mapping and code tours already help onboarding without changing client instruction files.",
+      "test_case": "An unfamiliar repository containing CLAUDE.md and AGENTS.md must retain both unchanged while presenting only verified stack/entrypoint evidence."
     }
   ]
 }
