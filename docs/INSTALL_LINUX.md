@@ -8,6 +8,8 @@ If you only need guidance in ChatGPT, Claude or an IDE agent, installation is op
 
 ## Prerequisites
 
+First [choose your client and interface](INSTALLATION.md). The commands below prepare native skill files: `--layout codex` works for Codex Desktop/CLI and documented clients sharing `.agents/skills`; `--layout claude` works for Claude Code Desktop/CLI. Check whether the selected AI client supports Linux. These commands do not install an AI application, MCP or a hosted chat plugin. Cline/Kiro use the separate custom-folder route in that guide.
+
 Requires Git, Python 3.12+, GitHub read access and an **existing** project directory. Install/configure the AI client separately.
 
 Check Python 3.12+ and Git. Availability of `python` and the `python3.12` distro package varies. Do not run privileged package installation without authorization.

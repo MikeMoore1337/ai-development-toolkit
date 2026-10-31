@@ -12,6 +12,8 @@ AI Development Toolkit offers **two equally important integrations** built on sh
 
 ## Choose one of four paths first
 
+Choose the actual [AI client and interface](INSTALLATION.md) before following OS commands: Desktop, CLI, IDE, cloud and ordinary chat have different installation and verification steps.
+
 Choose by **where the task is performed**. The ChatGPT and Codex integrations are equally important; the other two paths serve different setup needs.
 
 | Need | Route | Required environment | How to verify |
@@ -38,7 +40,7 @@ If you only want to describe your task without installing anything, use [the beg
 
 | Capability | ChatGPT plugin | Codex local MCP |
 | --- | --- | --- |
-| Where it runs | In ChatGPT when the account supports custom plugins | On a computer with Codex CLI and Python |
+| Where it runs | In ChatGPT when the account supports custom plugins | Codex Desktop/CLI on the same host; Python; CLI required by automatic Personal MCP registration |
 | Windows | ChatGPT plugin interface | PowerShell install; Windows Task Scheduler updater |
 | Linux | ChatGPT plugin interface | Shell install; systemd user timer updater |
 | macOS | ChatGPT plugin interface | Shell install; launchd user agent updater |

@@ -77,6 +77,8 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 ## Platform installation
 
+**[Choose the AI client and interface](docs/INSTALLATION.md)** first: Codex Desktop/CLI/IDE/Cloud, Claude Code Desktop/CLI, ChatGPT/Claude chat, and other documented compatible coding clients. Then use the matching OS commands below.
+
 [Windows](docs/INSTALL_WINDOWS.md) · [Linux](docs/INSTALL_LINUX.md) · [macOS (Apple Silicon / Intel)](docs/INSTALL_MACOS.md) · [Safe updates](docs/UPDATING.md)
 
 All three platforms use the same Skill Manager; commands and Python launchers differ. macOS is tested on hosted CI runners, not a personal Mac or a live AI client.
