@@ -26,6 +26,8 @@ On **Windows, Linux and macOS**, ZIP import (where supported) takes place inside
 
 **Freshness:** when live tools are available, read relevant GitHub files at one verified revision and follow `MANIFEST.json` rules; otherwise use bundled instructions with an explicit fallback status. This does not auto-upgrade the installed plugin package. A selected role is guidance, not an automatically spawned subagent.
 
+With a compatible schema 2 source, load only skills needed for the current stage in bounded batches; later stages can request more without a task-wide count. The client initiates each request and keeps track of instructions still in context. A published schema 1 source retains its legacy per-task source limit until that source is updated. These are instruction contracts, not proof of automatic client behavior.
+
 ## Other chatbots
 
 The ChatGPT plugin ZIP is **not a universal plugin standard** for Claude, DeepSeek, Qwen, or other chat clients. For chat-only clients without this plugin format, use [`AGENT_START.md`](../../AGENT_START.md) and provide the Toolkit URL plus available project files. If GitHub reading is inaccessible, attach only the needed `SKILL.md` files. Never claim installed plugins, connected repos, or skills were loaded without evidence.

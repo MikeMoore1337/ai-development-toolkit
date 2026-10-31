@@ -32,6 +32,9 @@ class SourcePackageTests(unittest.TestCase):
         router = (folder / 'skills/toolkit-task-router/SKILL.md').read_text(encoding='utf-8')
         self.assertIn('FULFILL_REQUEST', router)
         self.assertIn('EXPORT_PROMPT', router)
+        self.assertIn('schema 1/generation 1', router)
+        self.assertIn('max_retrieved_sources_per_task', router)
+        self.assertIn('schema 2/generation 2', router)
         self.assertIn('max_retrieved_sources_per_batch', router)
         self.assertIn('SHELL_UPDATE_REQUIRED', router)
         for p in (folder / 'skills').glob('*/SKILL.md'):
