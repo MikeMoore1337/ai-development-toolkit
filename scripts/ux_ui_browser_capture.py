@@ -102,6 +102,8 @@ def parse_plan(raw: object, source_root: Path) -> tuple[str, list[dict]]:
             raise CaptureError("Viewport outside supported range")
         url, origin = _source_uri(item["source"], source_root)
         result.append({"purpose": item["purpose"], "url": url, "origin": origin,
+                       "source_file": (source_root.joinpath(*PurePosixPath(item["source"]).parts)
+                                       if origin == "LOCAL_HTML" else None),
                        "viewport": item["viewport"], "width": width, "height": height})
     purposes = [item["purpose"] for item in result]
     if len(set(purposes)) != len(purposes) or not {"winner:desktop", "winner:mobile"} <= set(purposes):
@@ -229,7 +231,9 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                             if (item["origin"] != "LOCAL_HTML"
                                     or "ERR_BLOCKED_BY_ADMINISTRATOR" not in str(exc)):
                                 raise
-                            local_path = Path(url2pathname(urlsplit(item["url"]).path))
+                            # Keep the already-validated path instead of
+                            # round-tripping through a Windows file: URI.
+                            local_path = item["source_file"]
                             if not _in_root(local_path, source_root) or not local_path.is_file():
                                 raise CaptureError("Local HTML became unsafe before fallback") from exc
                             if local_path.stat().st_size > 2 * 1024 * 1024:
