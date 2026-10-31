@@ -175,6 +175,8 @@ class BudgetPreviewTests(unittest.TestCase):
         self.assertTrue(result["within_budget"])
         self.assertFalse(result["applied"])
         self.assertEqual("NOT_OBSERVED", result["host_context"])
+        self.assertEqual([], list(scripts.rglob("*.pyc")))
+        self.assertEqual([], list(scripts.rglob("__pycache__")))
 
     def test_cli_previews_before_reading_any_source_inventory(self):
         # A rejected preview must not run the broader source-file inventory.
