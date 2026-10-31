@@ -261,5 +261,22 @@ class BudgetPreviewTests(unittest.TestCase):
             mod.preview_metadata_budget(self.root, self.manifest, "focused", 1000)
 
 
+    def test_readonly_validator_loader_does_not_change_process_settings(self):
+        class GuardedSys:
+            def __getattr__(self, name):
+                raise AssertionError(f"Unexpected sys read: {name}")
+
+            def __setattr__(self, name, value):
+                raise AssertionError(f"Unexpected sys mutation: {name}")
+
+        before = sys.dont_write_bytecode
+        with mock.patch.object(mod, "sys", GuardedSys()):
+            output = mod.preview_metadata_budget(
+                self.root, self.manifest, "focused", 1000
+            )
+        self.assertTrue(output["within_budget"])
+        self.assertEqual(before, sys.dont_write_bytecode)
+
+
 if __name__ == "__main__":
     unittest.main()
