@@ -740,6 +740,16 @@ class SkillRoutingTests(unittest.TestCase):
         with self.assertRaisesRegex(routing.RoutingInputError, "Invalid prompt"):
             routing.load_cases(self.path, self.catalog)
 
+    def test_editorial_copy_without_module_changes_is_not_module_regression(self):
+        """A marketing-edit request remains editorial even when it excludes dependent modules."""
+        catalog = routing.read_catalog(ROOT)
+        aliases = routing.read_aliases(ROOT / "fixtures/skill_routing_aliases.json", catalog)
+        description_vectors, idf = routing.vectors(catalog)
+        request = "Update a single marketing headline without touching dependent modules."
+        ranked = routing.ranking(request, catalog, description_vectors, idf, aliases)
+        self.assertEqual("editorial-naturalness", ranked[0])
+        self.assertNotEqual("module-regression", ranked[0])
+
     def test_catalog_is_manifest_driven(self):
         from_manifest = routing.read_catalog(ROOT)
         self.assertEqual(87, len(from_manifest))
