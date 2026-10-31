@@ -85,9 +85,17 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                    for name in declared)
             or len(set(declared)) != len(declared)):
         raise ValueError("Invalid profile skill list")
-    # Reuse the project's existing YAML validator rather than building a
-    # second parser or accepting malformed frontmatter as valid metadata.
-    from validate_pack import validate_skill
+    # Resolve the existing validator from this script's directory. This
+    # also works when profile_metrics is loaded by importlib from a test or
+    # another host that did not add scripts/ to sys.path.
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    validator_path = Path(__file__).resolve().with_name("validate_pack.py")
+    validator_spec = spec_from_file_location("_toolkit_validate_pack", validator_path)
+    if validator_spec is None or validator_spec.loader is None:
+        raise ValueError("Toolkit skill validator unavailable")
+    validator = module_from_spec(validator_spec)
+    validator_spec.loader.exec_module(validator)
 
     sources = skill_paths(root, manifest)
     trusted_root = root.resolve()
@@ -121,7 +129,7 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                   if line.rstrip(b"\r\n") == b"---"]
         if not closes:
             raise ValueError("Unclosed YAML metadata boundary")
-        problems = validate_skill(folder)
+        problems = validator.validate_skill(folder)
         if problems:
             raise ValueError("Invalid skill frontmatter: " + problems[0])
         size = sum(len(line) for line in lines[:closes[0] + 1])
