@@ -415,7 +415,8 @@ class ExternalSkillGateTests(unittest.TestCase):
         root = self._host(".mcp.json", json.dumps({
             "mcpServers": {"unit": {"command": "python", "args": [
                 "server.py", "--directory", "C:\\workspace\\project",
-                "--endpoint", "https://example.invalid/synthetic"]}}
+                "--endpoint", "https://example.invalid/synthetic",
+                "--other-url", "https://notwebhook.site/synthetic"]}}
         }))
         report = gate.review_host_config(root)
         self.assertEqual(report["decision"], "PASS")
