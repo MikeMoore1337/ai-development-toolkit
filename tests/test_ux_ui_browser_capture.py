@@ -234,6 +234,14 @@ class BrowserCaptureTests(unittest.TestCase):
         self.assertTrue(all(item["inline_html_fallback"] for item in report["diagnostics"]))
         self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", report["gate"])
 
+    def test_local_fallback_does_not_decode_windows_file_uri(self):
+        with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
+                "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR")):
+            with patch.object(visual, "url2pathname", side_effect=AssertionError(
+                    "Do not reparse a validated local file URI")):
+                report, _fake, _folder = self._run_fake()
+        self.assertTrue(all(x["inline_html_fallback"] for x in report["diagnostics"]))
+
     def test_inline_fallback_never_applies_to_loopback_http(self):
         self.plan["captures"][0]["source"] = "http://127.0.0.1:6000/preview"
         with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
