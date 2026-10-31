@@ -18,11 +18,11 @@ visual = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(visual)
 
 
-def png(width: int, height: int) -> bytes:
+def png(width: int, height: int, shade: int = 128) -> bytes:
     def chunk(tag, data):
         return struct.pack("!I", len(data)) + tag + data + struct.pack(
             "!I", zlib.crc32(tag + data) & 0xffffffff)
-    pixels = zlib.compress((b"\x00" + b"\x80\x80\x80" * width) * height)
+    pixels = zlib.compress((b"\x00" + bytes([shade, shade, shade]) * width) * height)
     return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(
         "!IIBBBBB", width, height, 8, 2, 0, 0, 0)) + chunk(b"IDAT", pixels)
         + chunk(b"IEND", b""))
@@ -70,8 +70,8 @@ class FakePage:
     def on(self, _event, _handler):
         pass
 
-    def goto(self, _source, **_settings):
-        pass
+    def goto(self, source, **_settings):
+        self.source = source
 
     def evaluate(self, _js):
         return {"viewport_width": self.context.settings["viewport"]["width"],
@@ -81,7 +81,7 @@ class FakePage:
 
     def screenshot(self, *, path, **_settings):
         viewport = self.context.settings["viewport"]
-        Path(path).write_bytes(png(viewport["width"], viewport["height"]))
+        Path(path).write_bytes(png(viewport["width"], viewport["height"], sum(self.source.encode()) % 250))
 
 
 class FakePlaywright:
@@ -169,6 +169,11 @@ class BrowserCaptureTests(unittest.TestCase):
         self.assertEqual("NOT_VERIFIED", report["visual_quality"])
         self.assertEqual("NOT_REQUESTED", report["owner_approval"])
         self.assertEqual(5, len(report["visual_assets"]))
+        self.assertTrue(report["distinct_sketch_files"])
+        gallery = (folder / "comparison.html").read_text(encoding="utf-8")
+        self.assertEqual(5, gallery.count("<figure>"))
+        self.assertIn("wireframe:a", gallery)
+
         self.assertEqual(5, len(fake.browser.contexts))
         self.assertEqual((390, 844), tuple(fake.browser.contexts[-1].settings["viewport"].values()))
         self.assertTrue(fake.browser.contexts[-1].settings["is_mobile"])
@@ -182,6 +187,18 @@ class BrowserCaptureTests(unittest.TestCase):
         report, _fake, _folder = self._run_fake(overflow=37)
         self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
         self.assertEqual(37, report["diagnostics"][0]["layout"]["horizontal_overflow_px"])
+
+    def test_identical_rendered_sketches_require_layout_review(self):
+        class SameImagePage(FakePage):
+            def screenshot(self, *, path, **_settings):
+                viewport = self.context.settings["viewport"]
+                Path(path).write_bytes(png(viewport["width"], viewport["height"]))
+        original = FakeContext.new_page
+        with patch.object(FakeContext, "new_page", lambda ctx: SameImagePage(ctx)):
+            report, _fake, folder = self._run_fake()
+        self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
+        self.assertFalse(report["distinct_sketch_files"])
+        self.assertTrue((folder / "comparison.html").is_file())
 
     def test_minor_fix_does_not_require_three_wireframes(self):
         self.plan["scenario_id"] = "minor-ui-fix"
