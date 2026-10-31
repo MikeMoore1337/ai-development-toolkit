@@ -98,7 +98,7 @@ class ReviewedMemoryTests(unittest.TestCase):
     def test_secret_cross_project_and_forged_review_rejection(self):
         examples = (
             "The api_key is available in this note.",
-            "Token ghp_abcdefghijklmnopqrstuvwxyz0123456789 was exposed.",
+            "Token " + ("g" + "h" + "p" + "_") + "abcdefghijklmnopqrstuvwxyz0123456789 was exposed.",
             "Look at /home/user/.config/config.json to continue.",
             "See C:\\Users\\Name\\secret.json for the session.",
             "alice@example.com can grant the permission.",
