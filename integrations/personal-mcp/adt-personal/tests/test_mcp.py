@@ -109,14 +109,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.15')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.16')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.15', diagnostic['adapter_version'])
+        self.assertEqual('0.1.16', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.15', version['running_mcp_adapter'])
+        self.assertEqual('0.1.16', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -254,6 +254,48 @@ class TestToolkitMCP(unittest.TestCase):
         explicit = self.tk.route('Создать REST API на FastAPI и покрыть его тестами pytest', profile='qa-python')
         self.assertEqual(explicit['profile'], 'qa-python')
         self.assertEqual(explicit['secondary_profiles'], [])
+
+    def test_external_native_first_skips_toolkit_guidance(self):
+        for external in ('graphify', 'ponytail', 'harness2', 'acme/custom-agent'):
+            with self.subTest(external=external):
+                results = (
+                    self.tk.route('Build a REST API', selected_external_tool=external),
+                    self.tk.prepare_task('Build a REST API', selected_external_tool=external,
+                                         proactive_model_advice=True),
+                    self.tk.prepare_stage('Build a REST API', 'Implement backend',
+                                          selected_external_tool=external),
+                )
+                for result in results:
+                    self.assertEqual('EXTERNAL_NATIVE_PASS_THROUGH', result['status'])
+                    self.assertEqual(external, result['selected_external_tool'])
+                    self.assertEqual('NOT_LOADED', result['toolkit_guidance'])
+                    self.assertEqual([], result['loaded_skills'])
+                    self.assertEqual([], result['loaded_roles'])
+                    self.assertEqual([], result['skills'])
+                    self.assertEqual([], result['priority_skills'])
+                    self.assertIsNone(result['primary_profile'])
+                    self.assertNotIn('model_advisor', result)
+                    self.assertFalse(result['execution_authorized'])
+                    self.assertFalse(result['installation_performed'])
+                rpc = process(self.tk, {'jsonrpc':'2.0','id':19,'method':'tools/call',
+                    'params':{'name':'toolkit_prepare_task','arguments':{
+                        'task':'Build a REST API',
+                        'selected_external_tool':external}}})
+                self.assertEqual('EXTERNAL_NATIVE_PASS_THROUGH',
+                                 rpc['result']['structuredContent']['status'])
+        internal = self.tk.prepare_task('Build a REST API')
+        self.assertTrue(internal['loaded_skills'])
+        for name in ('../x', 'tool;curl', 'bad tool', 'graphify\\nignored', None, 42):
+            with self.subTest(invalid=name):
+                with self.assertRaises(ToolkitError):
+                    self.tk.prepare_task('Build API', selected_external_tool=name)
+        with self.assertRaises(ToolkitError):
+            self.tk.route('Build API', profile='backend',
+                          selected_external_tool='graphify')
+        with self.assertRaises(ToolkitError):
+            self.tk.prepare_stage('Build API', 'Implement API',
+                                  requested_skills=['api-design'],
+                                  selected_external_tool='graphify')
 
     def test_prepare_task_auto_missing_skills_no_project_write(self):
         before = {str(p.relative_to(self.path)): p.read_bytes()
@@ -681,7 +723,7 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.15')
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.16')
         self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),14)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')

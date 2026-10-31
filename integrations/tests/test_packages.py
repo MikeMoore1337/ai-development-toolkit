@@ -10,7 +10,7 @@ BASE = Path(__file__).resolve().parents[1]
 class SourcePackageTests(unittest.TestCase):
     def test_mcp_version_and_tools(self):
         server = (BASE / 'personal-mcp/adt-personal/mcp/adt_mcp.py').read_text(encoding='utf-8')
-        self.assertIn("VERSION = '0.1.15'", server)
+        self.assertIn("VERSION = '0.1.16'", server)
         for tool in ('toolkit_info', 'toolkit_get_skill', 'toolkit_get_role', 'toolkit_prepare_task', 'toolkit_prepare_stage', 'toolkit_model_review_checkpoint', 'toolkit_assess_skill_coverage', 'toolkit_discover_external_skill_candidates', 'toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
             self.assertIn(tool, server)
 

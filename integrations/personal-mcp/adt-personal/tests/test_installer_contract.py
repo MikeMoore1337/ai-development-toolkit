@@ -39,6 +39,15 @@ class TestInstallerContract(unittest.TestCase):
         self.assertIn("$ErrorActionPreference = 'Continue'", content)
         self.assertIn('if (Test-ClaudeMcpExists $claude.Source)', content)
 
+    def test_native_first_global_instruction_exception(self):
+        for script in (SCRIPT, SCRIPT.with_suffix('.sh')):
+            with self.subTest(script=script.name):
+                content = script.read_text(encoding='utf-8')
+                self.assertIn('Native-first exception', content)
+                self.assertIn('Do NOT invoke Toolkit prepare/route/stage', content)
+                self.assertIn('user explicitly requests cooperation', content)
+                self.assertIn('host/system safety', content)
+
     def test_required_setup_instructions_reach_both_platform_installers(self):
         for script in (SCRIPT, SCRIPT.with_suffix('.sh')):
             with self.subTest(script=script.name):

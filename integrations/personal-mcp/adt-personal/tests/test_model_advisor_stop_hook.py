@@ -29,8 +29,22 @@ REPORT_EN = (
 
 class StopHookTests(unittest.TestCase):
     def event(self, message, **kwargs):
-        return {"hook_event_name": "Stop", "stop_hook_active": False,
-                "last_assistant_message": message, **kwargs}
+        event = {"hook_event_name": "Stop", "stop_hook_active": False,
+                 "adt_workflow_scope": "TOOLKIT_MODEL_ADVISOR",
+                 "last_assistant_message": message}
+        event.update(kwargs)
+        return event
+
+    def test_external_native_or_unscoped_hook_never_interferes(self):
+        unscoped = self.event(REPORT_RU)
+        del unscoped["adt_workflow_scope"]
+        self.assertEqual({}, module.check_stop(unscoped))
+        self.assertEqual({}, module.check_stop(self.event(
+            REPORT_EN, adt_workflow_scope="UPSTREAM_NATIVE")))
+        self.assertEqual({}, module.check_stop(self.event(
+            REPORT_RU, adt_external_tool_active=True)))
+        self.assertEqual({}, module.check_stop(self.event(
+            REPORT_RU, adt_workflow_scope=None)))
 
     def test_owner_release_blocking_report_triggers_bounded_continuation(self):
         result = module.check_stop(self.event(REPORT_RU))
