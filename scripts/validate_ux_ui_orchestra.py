@@ -137,7 +137,8 @@ def validate_visual_lineage(report: dict) -> list[str]:
             "PASS", "FAIL", "NOT_VERIFIED"}:
         errors.append("visual lineage technical status invalid")
     elif (technical["status"] == "PASS"
-          and not isinstance(technical.get("evidence"), str)):
+          and (not isinstance(technical.get("evidence"), str)
+               or not technical["evidence"].strip())):
         errors.append("technical PASS needs a separate evidence reference")
     if record.get("recommendation") not in VISUAL_RECOMMENDATIONS:
         errors.append("visual lineage recommendation invalid")
@@ -177,6 +178,7 @@ def validate_exploration(exploration: object) -> list[str]:
     selected = exploration.get("selected_id")
     if not isinstance(selected, str) or selected not in ids:
         errors.append("design exploration selected direction missing")
+        selected = None
     rejections = exploration.get("rejections", [])
     if not isinstance(rejections, list):
         errors.append("design exploration rejections must be a list")
@@ -188,7 +190,7 @@ def validate_exploration(exploration: object) -> list[str]:
                 errors.append(f"design exploration rejection {i}: incomplete")
             else:
                 rejected.append(item["id"])
-        if len(rejected) != len(set(rejected)) or set(rejected) - (ids - {selected}):
+        if len(rejected) != len(set(rejected)) or set(rejected) - (ids - ({selected} if selected else set())):
             errors.append("design exploration rejected IDs invalid")
     swap = exploration.get("cross_domain_swap_test")
     if swap is not None and (
@@ -391,11 +393,23 @@ def validate(report: object) -> list[str]:
         if isinstance(exploration, dict):
             comparison = exploration.get("visual_comparison")
             if isinstance(comparison, dict) and comparison.get("status") == "RENDERED":
-                rendered_ids = {row.get("id") for row in ledger if isinstance(row, dict)
-                                and row.get("status") == "RENDERED"}
+                rendered_rows = {row.get("id"): row for row in ledger if isinstance(row, dict)
+                                 and row.get("status") == "RENDERED"}
+                paths, viewports = set(), set()
                 for frame in comparison.get("frames", []) if isinstance(comparison.get("frames"), list) else []:
-                    if isinstance(frame, dict) and frame.get("evidence_id") not in rendered_ids:
+                    if not isinstance(frame, dict):
+                        continue
+                    source = rendered_rows.get(frame.get("evidence_id"))
+                    if not source:
                         errors.append("visual frame missing rendered evidence")
+                        continue
+                    visual_ref = source.get("artifact_ref")
+                    if visual_ref in paths:
+                        errors.append("visual comparison reuses same unsegmented artifact")
+                    paths.add(visual_ref)
+                    viewports.add(source.get("viewport"))
+                if len(viewports) > 1:
+                    errors.append("visual comparison frames must use matching viewport scale")
     quality = report.get("design_quality")
     if quality is not None:
         if not isinstance(quality, dict):
