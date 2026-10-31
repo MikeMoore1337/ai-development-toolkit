@@ -70,25 +70,28 @@ class DesignOrchestraTests(unittest.TestCase):
         self.assertEqual("ux-ui-design-orchestra", manifest["profiles"]["ui-orchestra"][0])
         self.assertNotIn("ux-ui-design-orchestra", manifest["profiles"]["general"])
 
-    def test_new_design_must_have_art_direction_and_non_template_critique(self):
-        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+    def test_new_design_can_use_native_skill_workflow_without_legacy_quality_form(self):
+        payload = self.load_three_directions()
         self.assertEqual([], checker.validate(payload))
         del payload["design_quality"]
-        self.assert_bad("requires design_quality", payload)
+        self.assertEqual([], checker.validate(payload))
 
-    def test_missing_template_risks_rejects_generic_design(self):
-        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
-        payload["design_quality"]["generic_template_risks"] = ["neon glow", "neon glow", "generic pricing"]
-        self.assert_bad("three distinct generic template risks", payload)
-        payload["design_quality"]["generic_template_risks"] = ["card grid"]
-        self.assert_bad("three distinct generic template risks", payload)
+    def test_cards_hero_and_gradient_are_never_banned_by_structure(self):
+        payload = self.load_three_directions()
+        payload["design_quality"]["generic_template_risks"] = [
+            "large hero", "product cards", "neon gradient", "large hero"]
+        self.assertEqual([], checker.validate(payload))
+        payload["design_quality"]["generic_template_risks"] = []
+        self.assertEqual([], checker.validate(payload))
+        payload["design_quality"]["generic_template_risks"] = [None]
+        self.assert_bad("optional template observations", payload)
 
-    def test_unrevised_design_cannot_request_approval(self):
-        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
-        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["demo:desktop", "demo:mobile"])
+    def test_art_direction_assessment_does_not_forbid_user_review(self):
+        payload = self.load_three_directions()
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["demo:mobile"])
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
         payload["design_quality"]["quality_status"] = "NEEDS_DESIGN_REVISION"
-        self.assert_bad("before design quality revision", payload)
+        self.assertEqual([], checker.validate(payload))
 
     def test_mandatory_orchestra_before_generic_frontend_in_source(self):
         skill = (ROOT / ".agents/skills/ux-ui-design-orchestra/SKILL.md").read_text(encoding="utf-8")
@@ -99,20 +102,20 @@ class DesignOrchestraTests(unittest.TestCase):
             self.assertIn("ux-ui-design-orchestra", text)
         self.assertIn("primary coordinator", skill)
         self.assertIn("Mandatory routing precedence", workflow)
-        self.assertIn("generic-template risks", skill)
+        self.assertIn("Tool-native creative freedom", skill)
         self.assertIn("create-design", workflow)
 
-    def test_domain_first_instructions_do_not_default_to_saas_template(self):
-        # Regression guard for both client entrypoints, both guides and the actual skill.
+    def test_ui_policy_follows_native_tools_without_style_bans(self):
         required = {
-            ".agents/skills/ux-ui-design-orchestra/SKILL.md": "Domain-first, not SaaS-first",
-            ".agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md": "Do not make a SaaS website unless",
-            ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md": "Never use SaaS as the default style",
-            ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md": "Do not convert anti-SaaS examples",
-            "AGENT_START.md": "SaaS is not the default design style",
-            "AGENT_START.ru.md": "SaaS-структура не является вариантом по умолчанию",
-            "docs/UX_UI_DESIGN.md": "A SaaS layout is not the default",
-            "docs/ru/UX_UI_DESIGN.md": "SaaS-макет не является вариантом по умолчанию",
+            ".agents/skills/ux-ui-design-orchestra/SKILL.md": "Tool-native creative freedom",
+            ".agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md": "Tool-native creative freedom",
+            ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md": "Tool-native creative freedom",
+            ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md": "Tool-native creative freedom",
+            "AGENT_START.md": "Tool-native creative freedom",
+            "AGENT_START.ru.md": "Свобода UI/UX",
+            "docs/UX_UI_DESIGN.md": "Tool-native creative freedom",
+            "docs/ru/UX_UI_DESIGN.md": "Свобода UI/UX",
+            "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-ui-review/SKILL.md": "Tool-native creative freedom",
         }
         for path, expectation in required.items():
             with self.subTest(path=path):
@@ -150,21 +153,21 @@ class DesignOrchestraTests(unittest.TestCase):
             "synthetic:winner-desktop.png", "synthetic:winner-mobile.png"])
         return payload
 
-    def test_visual_comparison_is_required_before_winner_approval(self):
+    def test_user_review_does_not_require_three_sketches(self):
         payload = self.load_three_directions()
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
-        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
-        self.assert_bad("before three rendered visual sketches", payload)
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["mobile.png"])
+        self.assertEqual([], checker.validate(payload))
         self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
 
-    def test_missing_visual_comparison_status_cannot_be_passed_off_as_rendered(self):
+    def test_optional_visual_comparison_cannot_claim_unrendered_frames(self):
         payload = self.load_three_directions()
         del payload["design_exploration"]["visual_comparison"]
-        self.assert_bad("honest visual comparison status", payload)
+        self.assertEqual([], checker.validate(payload))
         payload = self.load_three_directions()
         payload["design_exploration"]["visual_comparison"]["frames"] = [
             {"direction_id": "training-editorial", "evidence_id": "fake"}]
-        self.assert_bad("missing visual comparison cannot claim frame artifacts", payload)
+        self.assert_bad("missing visual comparison cannot claim frames", payload)
 
     def test_three_real_evidence_declarations_are_required(self):
         payload = self.with_rendered_comparison(self.load_three_directions())
@@ -172,17 +175,16 @@ class DesignOrchestraTests(unittest.TestCase):
         payload["evidence"][0]["status"] = "SOURCE_ONLY"
         self.assert_bad("missing rendered evidence", payload)
 
-    def test_mismatched_visual_frames_and_repeated_layouts_fail(self):
+    def test_comparison_checks_evidence_not_composition_style(self):
         payload = self.with_rendered_comparison(self.load_three_directions())
         payload["design_exploration"]["visual_comparison"]["frames"].pop()
-        self.assert_bad("exactly three rendered frames", payload)
+        self.assert_bad("rendered comparison frames must match", payload)
         payload = self.with_rendered_comparison(self.load_three_directions())
         frames = payload["design_exploration"]["visual_comparison"]["frames"]
         frames[1]["layout_signature"] = frames[0]["layout_signature"]
-        self.assert_bad("repeats same composition signature", payload)
-        payload = self.with_rendered_comparison(self.load_three_directions())
-        payload["design_exploration"]["visual_comparison"]["frames"][1]["direction_id"] = "training-editorial"
-        self.assert_bad("unknown or duplicate direction", payload)
+        self.assertEqual([], checker.validate(payload))
+        frames[1]["direction_id"] = "training-editorial"
+        self.assert_bad("frame directions/evidence inconsistent", payload)
 
     def test_visual_comparison_cannot_reuse_unsegmented_capture_or_inconsistent_scale(self):
         payload = self.with_rendered_comparison(self.load_three_directions())
@@ -192,38 +194,42 @@ class DesignOrchestraTests(unittest.TestCase):
         payload["evidence"][2]["viewport"] = "960x1200"
         self.assert_bad("matching viewport scale", payload)
 
-    def test_winner_requires_both_desktop_and_mobile_at_approval(self):
+    def test_mobile_only_design_can_request_visual_review(self):
         payload = self.with_rendered_comparison(self.load_three_directions())
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
-        payload["proposal"]["artifact_refs"] = ["only-desktop.png"]
-        self.assert_bad("winner desktop and mobile previews", payload)
+        payload["proposal"]["artifact_refs"] = ["only-mobile.png"]
+        self.assertEqual([], checker.validate(payload))
+        payload["proposal"]["artifact_refs"] = []
+        self.assert_bad("visual review requires actual referenced design previews", payload)
 
-    def test_three_distinct_concepts_are_required_for_create_design(self):
+    def test_number_of_directions_is_not_imposed_on_upstream_tools(self):
         payload = self.load_three_directions()
         self.assertEqual([], checker.validate(payload))
         del payload["design_exploration"]
-        self.assert_bad("requires three-direction exploration", payload)
+        self.assertEqual([], checker.validate(payload))
         payload = self.load_three_directions()
-        payload["design_exploration"]["directions"].pop()
-        self.assert_bad("requires exactly three directions", payload)
+        exploration = payload["design_exploration"]
+        exploration["directions"] = exploration["directions"][:1]
+        exploration["rejections"] = []
+        exploration["visual_comparison"] = {"status": "MISSING", "frames": []}
+        self.assertEqual([], checker.validate(payload))
+        exploration["directions"] = []
+        self.assert_bad("nonempty list", payload)
 
-    def test_palette_only_direction_variants_are_rejected(self):
+    def test_multiple_variants_can_share_composition_and_palette(self):
         payload = self.load_three_directions()
         concepts = payload["design_exploration"]["directions"]
         concepts[1]["composition"] = concepts[0]["composition"]
-        self.assert_bad("repeated composition", payload)
-        payload = self.load_three_directions()
-        concepts = payload["design_exploration"]["directions"]
         concepts[2]["information_architecture"] = concepts[0]["information_architecture"]
-        self.assert_bad("repeated information_architecture", payload)
+        self.assertEqual([], checker.validate(payload))
 
-    def test_selected_direction_and_rejections_are_consistent(self):
+    def test_selected_direction_and_rejection_ids_are_consistent(self):
         payload = self.load_three_directions()
         payload["design_exploration"]["selected_id"] = "does-not-exist"
         self.assert_bad("selected direction missing", payload)
         payload = self.load_three_directions()
         payload["design_exploration"]["rejections"][0]["id"] = "training-editorial"
-        self.assert_bad("rejected IDs must match", payload)
+        self.assert_bad("rejected IDs invalid", payload)
 
     def test_invalid_selected_id_fails_closed_without_exception(self):
         payload = self.load_three_directions()
@@ -232,25 +238,26 @@ class DesignOrchestraTests(unittest.TestCase):
                 payload["design_exploration"]["selected_id"] = malformed
                 self.assert_bad("selected direction missing", payload)
 
-    def test_swap_test_blocks_approval_when_generic(self):
-        payload = self.load_three_directions()
+    def test_cross_domain_swap_heuristic_never_bans_a_design(self):
+        payload = self.with_rendered_comparison(self.load_three_directions())
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
-        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
-        self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
-        payload["design_exploration"]["cross_domain_swap_test"]["would_require_structural_redesign"] = False
-        self.assert_bad("passing swap test", payload)
+        swap = payload["design_exploration"]["cross_domain_swap_test"]
+        swap["would_require_structural_redesign"] = False
+        self.assertEqual([], checker.validate(payload))
+        swap["would_require_structural_redesign"] = "forbidden"
+        self.assert_bad("optional swap-test declaration invalid", payload)
 
-    def test_superficial_exploration_not_ready_for_visual_review(self):
+    def test_self_declared_revision_need_does_not_block_owner_feedback(self):
         payload = self.load_three_directions()
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
-        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png", "mobile.png"])
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["desktop.png"])
         payload["design_exploration"]["status"] = "NEEDS_REVISION"
-        self.assert_bad("distinct compared directions", payload)
+        self.assertEqual([], checker.validate(payload))
 
-    def test_substantial_existing_redesign_uses_same_exploration_contract(self):
+    def test_explicitly_requested_comparison_is_respected_without_forcing_three(self):
         payload = copy.deepcopy(self.good)
         payload["design_exploration_required"] = True
-        self.assert_bad("requires three-direction exploration", payload)
+        self.assert_bad("explicitly requested design exploration is missing", payload)
         payload["design_exploration"] = self.load_three_directions()["design_exploration"]
         self.assertEqual([], checker.validate(payload))
 
@@ -264,14 +271,13 @@ class DesignOrchestraTests(unittest.TestCase):
         payload["changed_ui"] = True
         self.assert_bad("no UI changes", payload)
 
-    def test_new_design_cannot_claim_visual_approval_without_render(self):
-        payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
+    def test_visual_approval_still_requires_a_real_preview_declaration(self):
+        payload = self.load_three_directions()
         payload["gate"] = "AWAITING_VISUAL_APPROVAL"
-        self.assert_bad("without rendered visuals", payload)
+        self.assert_bad("visual review requires actual referenced design previews", payload)
         payload["proposal"]["visual_status"] = "RENDERED"
-        payload["proposal"]["artifact_refs"] = ["artifact:desktop", "artifact:mobile"]
-        self.assert_bad("before three rendered visual sketches", payload)
-        self.assertEqual([], checker.validate(self.with_rendered_comparison(payload)))
+        payload["proposal"]["artifact_refs"] = ["artifact:mobile"]
+        self.assertEqual([], checker.validate(payload))
 
     def test_new_design_cannot_claim_existing_ui_audit(self):
         payload = json.loads((ROOT / "fixtures/ux_ui_orchestra_create_design_valid.json").read_text(encoding="utf-8"))
@@ -341,6 +347,124 @@ class DesignOrchestraTests(unittest.TestCase):
         p = copy.deepcopy(self.good)
         p["workers"][0].update(execution="GENERIC_SUBAGENT", source_status="UNAVAILABLE", trace="spawn 1")
         self.assert_bad("unavailable skill", p)
+
+
+    def test_visual_baseline_is_preserved_with_separate_reviews(self):
+        payload = self.load_three_directions()
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["mango:new-mobile.png"])
+        payload["prior_visual_baseline"] = True
+        self.assert_bad("prior preferred visual baseline needs lineage", payload)
+        payload["visual_lineage"] = {
+            "baseline": {"version": "mango-preferred-v1",
+                         "status": "USER_PREFERRED",
+                         "artifact_refs": ["mango:original-desktop.png", "mango:original-mobile.png"],
+                         "strengths": ["Rich fruit photography", "Editorial typography"]},
+            "candidate": {"version": "mango-candidate-v2",
+                          "artifact_refs": ["mango:new-mobile.png"]},
+            "visual_review": {"status": "REVIEWED", "comparisons": [
+                {"aspect": "composition", "assessment": "CHANGED",
+                 "observation": "The new layout loses the original focal photograph."},
+                {"aspect": "usability", "assessment": "UNCERTAIN",
+                 "observation": "Comparative buyer testing was not performed."}]},
+            "technical_review": {"status": "PASS", "evidence": "synthetic:responsive-check"},
+            "recommendation": "KEEP_BASELINE",
+            "owner_decision": "PENDING",
+        }
+        self.assertEqual([], checker.validate(payload))
+        payload["visual_lineage"]["visual_review"] = {"status": "NOT_REVIEWED", "comparisons": []}
+        payload["visual_lineage"]["recommendation"] = "PROPOSE_CANDIDATE"
+        self.assert_bad("candidate replacement needs observed visual comparison", payload)
+        payload["visual_lineage"]["recommendation"] = "UNDECIDED"
+        self.assertEqual([], checker.validate(payload))
+        payload["visual_lineage"]["owner_decision"] = "APPROVE_CANDIDATE"
+        self.assert_bad("cannot claim owner approved candidate", payload)
+
+    def test_technical_pass_is_not_artistic_certification(self):
+        payload = self.load_three_directions()
+        payload["gate"] = "AWAITING_VISUAL_APPROVAL"
+        payload["proposal"].update(visual_status="RENDERED", artifact_refs=["mango:mobile.png"])
+        payload["visual_lineage"] = {
+            "baseline": {"version": "owner-v1", "status": "OWNER_ACCEPTED",
+                         "artifact_refs": ["mango:original.png"], "strengths": ["Distinctive composition"]},
+            "candidate": {"version": "candidate-v2", "artifact_refs": ["mango:mobile.png"]},
+            "visual_review": {"status": "NOT_REVIEWED", "comparisons": []},
+            "technical_review": {"status": "PASS", "evidence": "synthetic:ci-green"},
+            "recommendation": "UNDECIDED", "owner_decision": "PENDING",
+        }
+        self.assertEqual([], checker.validate(payload))
+        payload["visual_lineage"]["technical_review"]["evidence"] = ""
+        self.assert_bad("technical PASS needs", payload)
+
+    def test_preferred_artifact_claims_cannot_be_empty_or_forged(self):
+        payload = self.load_three_directions()
+        payload["visual_lineage"] = {
+            "baseline": {"version": "old", "status": "USER_PREFERRED",
+                         "artifact_refs": ["old.png"], "strengths": ["Strong imagery"]},
+            "candidate": {"version": "new", "artifact_refs": ["new.png"]},
+            "visual_review": {"status": "REVIEWED", "comparisons": [
+                {"aspect": "imagery", "assessment": "PRESERVED",
+                 "observation": "The same composition is retained."}]},
+            "technical_review": {"status": "NOT_VERIFIED"},
+            "recommendation": "REFINE_BASELINE", "owner_decision": "PENDING",
+        }
+        self.assertEqual([], checker.validate(payload))
+        payload["visual_lineage"]["baseline"]["artifact_refs"] = []
+        self.assert_bad("baseline artifact references missing", payload)
+        payload["visual_lineage"]["baseline"]["artifact_refs"] = ["old.png"]
+        payload["visual_lineage"]["visual_review"]["comparisons"][0]["observation"] = ""
+        self.assert_bad("observation missing", payload)
+
+
+
+    def test_malformed_visual_lineage_values_are_refused_without_exception(self):
+        valid = self.load_three_directions()
+        valid["visual_lineage"] = {
+            "baseline": {"version": "v1", "status": "USER_PREFERRED",
+                         "artifact_refs": ["sample:v1"], "strengths": ["Strong imagery"]},
+            "candidate": {"version": "v2", "artifact_refs": ["sample:v2"]},
+            "visual_review": {"status": "REVIEWED", "comparisons": [
+                {"aspect": "layout", "assessment": "CHANGED", "observation": "Different photo hierarchy"}]},
+            "technical_review": {"status": "PASS", "evidence": "synthetic:viewport"},
+            "recommendation": "UNDECIDED", "owner_decision": "PENDING",
+        }
+        self.assertEqual([], checker.validate(valid))
+        paths = [
+            ("baseline", "status"),
+            ("visual_review", "status"),
+            ("technical_review", "status"),
+            ("recommendation", None),
+            ("owner_decision", None),
+        ]
+        for container, field in paths:
+            for malformed in ([], {}, 4, None):
+                payload = copy.deepcopy(valid)
+                if field is None:
+                    payload["visual_lineage"][container] = malformed
+                else:
+                    payload["visual_lineage"][container][field] = malformed
+                with self.subTest(container=container, field=field, malformed=malformed):
+                    self.assertNotEqual([], checker.validate(payload))
+        payload = copy.deepcopy(valid)
+        payload["visual_lineage"]["visual_review"]["comparisons"][0]["assessment"] = []
+        self.assert_bad("decision invalid", payload)
+        payload = copy.deepcopy(valid)
+        payload["design_quality"]["impeccable_source_status"] = []
+        self.assert_bad("source status invalid", payload)
+
+    def test_rendered_frame_malformed_evidence_is_refused_without_exception(self):
+        valid = self.with_rendered_comparison(self.load_three_directions())
+        for bad in ([], {}, None, 100):
+            payload = copy.deepcopy(valid)
+            payload["design_exploration"]["visual_comparison"]["frames"][0]["evidence_id"] = bad
+            with self.subTest(bad=bad):
+                self.assertNotEqual([], checker.validate(payload))
+        payload = copy.deepcopy(valid)
+        payload["evidence"][0]["artifact_ref"] = []
+        self.assert_bad("invalid artifact reference", payload)
+        payload = copy.deepcopy(valid)
+        payload["evidence"][0]["viewport"] = []
+        self.assert_bad("invalid viewport", payload)
 
 
 if __name__ == "__main__":

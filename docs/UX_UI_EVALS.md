@@ -1,35 +1,32 @@
-# UX/UI Evals - visual evidence, not style by checklist
+# UX/UI Evals - evidence, not stylistic censorship
 
 [Русская версия](ru/UX_UI_EVALS.md)
 
-Issue [#192](https://github.com/MikeMoore1337/ai-development-toolkit/issues/192) adds an **optional offline evidence precheck** to the established [UX/UI Design Orchestra](../.agents/skills/ux-ui-design-orchestra/SKILL.md). It is not another orchestration framework, renderer, design generator, screenshot comparison engine, WCAG conformance test, or owner-approval service.
+The optional `scripts/ux_ui_evals.py` is an **offline visual evidence receipt checker** for the existing [UX/UI Design Orchestra](../.agents/skills/ux-ui-design-orchestra/SKILL.md). It cannot create renderings, judge artistic quality, verify accessibility compliance or approve an implementation.
 
-## Scenario catalog
+## Tool-native creative freedom
 
-Four bilingual task fixtures in `fixtures/ux_ui_eval_cases.json`: new site, substantial redesign, previously approved minor UI fix, and responsive/accessibility audit. All include manual criteria and project-specific authority. Three directions are required for new/substantial designs, not for minor fixes. Color palettes and existing brand fonts are **not** penalized as signs of generic SaaS design.
+No fixed number of creative directions, no automatic bans on card layouts, hero sections, photography, typography, gradients, familiar SaaS/e-commerce patterns or other aesthetics. The upstream specialist tools and the user's brief determine how many options to explore. The historical `needs_three` field in `fixtures/ux_ui_eval_cases.json` describes **that particular synthetic test's explicit request**, not a default policy or a production gate.
+
+Use the relevant actual visual previews. An isolated mobile design can have one `winner:mobile` PNG and still be eligible for human review. A complete responsive site commonly benefits from `winner:desktop` and `winner:mobile`. If multiple `wireframe:<id>` assets exist, the report notes whether all claimed alternatives were captured distinctly and at matching viewport sizes; a mismatched or repeated sketch does not make the final preview aesthetically wrong, but cannot serve as proof of a distinct comparison.
+
+Run:
 
 ```bash
 python scripts/ux_ui_evals.py --catalog-only
-```
-
-The fixture list tests that the *criteria exist*. It does not demonstrate aesthetic quality or rendered assets.
-
-## Checking a real review package
-
-```bash
 python scripts/ux_ui_evals.py --packet review.json --asset-root /approved/local/design-preview
 ```
 
-`review.json` needs `schema_version=1`, a `scenario_id`, a named `design_authority`, `directions` (three genuinely different layout-signature and information-architecture statements for new/substantial designs), `chosen_direction`, two `rejected_directions`, `template_risks` (three specific observed/prospective generic-template risks), `visual_assets`, `manual_reviews`, `owner_approval=PENDING` and `implementation_status=NOT_STARTED`. The review is a **separate evidence supplement**; the [existing Orchestra receipt validator](../scripts/validate_ux_ui_orchestra.py) remains the source of structural checks for full design coordination.
+The `review.json` schema remains `schema_version=1` with `scenario_id`, `design_authority`, `directions` (possibly empty), `chosen_direction` (null with no directions), `rejected_directions` (possibly empty), `template_risks` (optional observations, including an empty list), `visual_assets`, `manual_reviews`, `owner_approval=PENDING` and `implementation_status=NOT_STARTED`. IDs and file paths must be consistent and safe. User assets and reports belong in the target project/authorized evidence folder, not Toolkit.
 
-For a new/substantially redesigned site include three distinct local `wireframe:<direction_id>` assets of matching declared viewport and selected `winner:desktop` and `winner:mobile` PNG captures. The checker validates local file existence, path safety, size limits, hashes and reported PNG dimensions. SVG drawings can serve as sketches but they are **source files**, not proof that the team viewed the result. HTML source does **not** count as a captured winning screen; use real screenshots. Distinct SHA-256 hashes do not prove meaningful spatial originality.
+## Evidence checks versus artistic judgment
 
-Manual review IDs come from the scenario, e.g. `product-fit`, `task-hierarchy`, `compositional-originality`, `cross-domain-swap`, `mobile-desktop`, `states`, `accessibility`, `motion`, `design-authority`. Give each status `NOT_REVIEWED`, `ACCEPT` or `REVISE`; any non-pending decision needs a specific explanation. The checker cannot verify human identity, browser interaction, accessible focus, real reduced-motion preferences, font loading, or the owner's actual approval.
+The tool verifies file existence, relative path safety, size, SHA-256 and PNG dimensions. SVG and HTML sources are not proof of a browser rendering. `winner_visual_present` states whether any actual winner PNG exists; `desktop_mobile_present` is descriptive and not a mandatory viewport quota. `comparable_three_artifacts` is a legacy receipt indicating whether the *explicitly requested* alternatives have matching viewports and distinct bytes; it cannot prove artistic diversity.
 
-A visual result may report `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION`, or `AWAITING_HUMAN_VISUAL_REVIEW`. It **never** returns `OWNER_ACCEPTED` or authorizes changes in any target application. Any stated manual approvals remain self-declared and actual visual quality is `NOT_VERIFIED`.
+Manual `visual-appeal` reviews are human judgments, not code scores. Other manual criteria may include product-fit, task-hierarchy, responsive behavior, states, accessibility and motion. The checker cannot verify who reviewed the art, keyboard operation, independent design originality, user preference or WCAG conformance. A `TECH_PASS` is never evidence that a new visual direction is more beautiful.
 
-## Real evaluation procedure
+When an earlier version was preferred/approved, keep its images and strengths as a baseline in the consumer project's context. Compare baseline with a proposed replacement at similar viewports and keep/refine the preferred version unless the owner agrees to another. The optional `visual_lineage` declaration in `scripts/validate_ux_ui_orchestra.py` records version refs, a qualitative comparison, separate technical QA and a decision; it does not inspect pixels or replace owner approval.
 
-On an owner-authorized working copy, use the project's own visual contract and capture desktop/mobile screens with actual viewports and representative interaction states (loading, error, completed, keyboard focus, scrolling, reduced-motion where applicable). Compare three **visibly** different sketches side by side on a consistent scale for major work, with one winning direction and two documented reasons for rejection. Audit product specificity using a cross-domain swap test without banning brand colors or reusable components. Have a human examine the files, log actual observations versus hypotheses, then request approval of a specific visual version **before** implementation. The offline precheck is only an evidence-format quality filter.
+The offline outcome may be `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION` or `AWAITING_HUMAN_VISUAL_REVIEW`. It **never** means `OWNER_ACCEPTED`, automatic aesthetic superiority or permission to modify/deploy a user application.
 
-All examples and unit tests are synthetic. No real project's UI was changed, no browser or external paid API was invoked and there is no measured visual usability improvement yet.
+All example assets and unit tests are synthetic. Browser-backed UX/UI evidence is separately implemented in #486/PR #487; native activation of original design skills is independently tracked in #449.

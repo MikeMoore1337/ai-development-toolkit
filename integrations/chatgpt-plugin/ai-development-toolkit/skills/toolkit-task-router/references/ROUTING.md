@@ -4,7 +4,7 @@ Other request examples: “Use Toolkit guidance to review the repository I conne
 
 | Intent | Route | Notes |
 | --- | --- | --- |
-| New website, landing page, major redesign, UX/UI critique | `ui-orchestra` / `ux-ui-design-orchestra` | Design first, compare real visual alternatives, obtain owner approval before implementing unapproved visuals |
+| New website, landing page, major redesign, UX/UI critique | `ui-orchestra` / `ux-ui-design-orchestra` | Use original tool-native design exploration without imposed style bans or concept quotas; preserve preferred visual baseline and obtain owner approval before implementing |
 | Known narrow CSS bug in already-approved UI | `ui-fix` | Do not force full redesign |
 | REST API, Python services, backend | `backend` | Add QA complement when requested |
 | Frontend implementation | `frontend` | Only after visual approval when substantial design decisions remain |
@@ -25,3 +25,7 @@ Other request examples: “Use Toolkit guidance to review the repository I conne
 - The ChatGPT plugin cannot execute Python routing code by merely reading this document. Use actual available project context, ignore explicit prohibited work, and state `NOT_OBSERVED` when client skill activation was not verified. Never claim `execution`, `installation_performed` or `project_files_changed` without observed actions.
 - For unavailable content use `SOURCE_UNAVAILABLE` rather than pretending to have activated it.
 - If asked for a diagnostic, follow the read-only contract in `docs/CLIENT_CAPABILITIES.md`: name the adapter, separately distinguish adapter version and Toolkit source version, exact verified source SHA or `NOT_VERIFIED`, specific skill instructions actually read, and confirmed bundled fallback or `NOT_VERIFIED`. Treat L4 client discovery, L5 native invocation and L6 benefit as independent unknowns unless directly evidenced. The ChatGPT skills-only plugin does not run MCP/CLI code or prove that native skills were activated. No project path, private data or implicit network activity should be emitted as a prerequisite.
+
+## Tool-native creative freedom (#489)
+
+The personal ChatGPT adapter routes to the existing `ux-ui-design-orchestra` but does not override the original designer tools with Toolkit aesthetic restrictions. Do not require three drafts/risks or forbid cards, hero, gradients, colours, fonts, imagery, glass or familiar e-commerce/SaaS layouts. Preserve the user's preferred visual baseline, compare new variants honestly and distinguish technical checks from artistic judgment. Actual upstream tool activation remains separately verifiable (#449). No user media or reports are stored inside Toolkit.

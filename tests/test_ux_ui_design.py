@@ -164,8 +164,8 @@ class UXUIDesignTests(unittest.TestCase):
         import re
 
         for path, visual_phrase in (
-            ("docs/UX_UI_DESIGN.md", "three genuinely distinct"),
-            ("docs/ru/UX_UI_DESIGN.md", "трёх действительно разных"),
+            ("docs/UX_UI_DESIGN.md", "follow the available original tool workflows"),
+            ("docs/ru/UX_UI_DESIGN.md", "выполняйте оригинальные методы"),
         ):
             with self.subTest(path=path):
                 text = (ROOT / path).read_text(encoding="utf-8")
