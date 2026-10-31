@@ -1,5 +1,9 @@
 # Changelog
 
+**v5.5.7 publication confirmed (2026-10-31)**
+
+[GitHub Release v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7) publishes the task-required setup contract from immutable commit `a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6` with `MANIFEST.json.version = 5.5.7`. Personal MCP 0.1.14 and public ChatGPT plugin source 0.1.4 are independent packages. Exact-SHA CI and archive verification evidence belongs to the release record; source checks do not establish native client invocation or independent rights clearance. Installed clients require their own update.
+
 **v5.5.6 publication confirmed (2026-10-24)**
 
 [GitHub Release v5.5.6](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.6) was published on 24 October 2026 from the annotated tag pointing to commit `490cec222c4c2551a7bbe6f20bb0e9a316af13e1`. The tagged `MANIFEST.json.version` is `5.5.6`. Both tag-push and release-published archive jobs verified the downloaded GitHub ZIP's source checksums and technical provenance (549 components, 82 skills). The release-published **documentation job failed** because README and release guides still named v5.5.5; this follow-up updates `main`, not the immutable archive. The owner-side local pre-tag gate was blocked by four untracked review files, and separate independent rights confirmation for this exact archive was not recorded in #313. Do not retroactively claim those gates passed. The archive checks do not prove real-agent performance, client activation or independent license clearance.
@@ -31,7 +35,7 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.7)
 
-## 5.5.7 (candidate, 2026-10-31)
+## 5.5.7 (released, 2026-10-31)
 
 - Install missing task-required skills and tools through the host after source/license/pin/file review, preferring user scope and respecting no-install requests.
 - Add idempotent Skill Manager `ensure`: install only missing bundled skills, preserve existing files without adoption, and retain drift/lock/recovery guards.
