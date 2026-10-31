@@ -48,6 +48,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File $installer -Disable
 
 ## Expected behavior
 
+**Native-First (#494):** Model Advisor is relevant only to Toolkit-led tasks. Explicit user selection of an upstream-native external agent, skill, plugin or MCP excludes Toolkit routing and advice unless separately requested. The optional Stop hook now requires host-provided `adt_workflow_scope=TOOLKIT_MODEL_ADVISOR`; standard Codex events cannot establish it, so the hook fails open until a supported host path is separately verified. See [policy](EXTERNAL_NATIVE_FIRST.md).
+
 After an ordinary request, Codex uses its connected MCP
 `toolkit_prepare_task` without requiring a Toolkit-specific phrase or
 model ID in the prompt. Before high-impact changes it should make an

@@ -7,6 +7,8 @@ but omitted the new-risk checkpoint after independently discovering release
 blockers. An MCP server cannot force a host to invoke another tool after the
 host reads code. The **Codex lifecycle Stop hook** provides a distinct,
 host-driven reminder path. This source artifact is disabled by default.
+
+**Native-First / task-scoped activation (#494):** the hook returns `{}` unless a trusted host integration supplies `adt_workflow_scope=TOOLKIT_MODEL_ADVISOR` in the Stop event and `adt_external_tool_active` is not `true`. These fields are **not standard Codex Stop-event fields**: normal Codex Desktop events cannot activate this hook. It never infers ownership from a model-generated message. Do not inject or fake a scope marker into an unrelated workflow. Source-only tests of synthetic scoped events do not prove host support, actual invocation or effectiveness.
 Hook docs: https://developers.openai.com/de-DE/docs/hooks.
 
 The portable, stdlib-only script
