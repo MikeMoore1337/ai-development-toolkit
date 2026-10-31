@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -78,9 +79,36 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
     if not isinstance(profiles, dict) or profile not in profiles:
         raise ValueError("Unknown profile for budget preview")
     declared = profiles[profile]
-    if not isinstance(declared, list) or len(set(declared)) != len(declared):
+    if (not isinstance(declared, list) or not declared
+            or any(not isinstance(name, str)
+                   or re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) is None
+                   for name in declared)
+            or len(set(declared)) != len(declared)):
         raise ValueError("Invalid profile skill list")
+    # Load the existing validator from this script's directory. A narrowly
+    # read-only loader prevents __pycache__ writes without altering Python's
+    # process-wide sys.dont_write_bytecode (other threads remain unaffected).
+    from importlib.machinery import SourceFileLoader
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    class ReadOnlyValidatorLoader(SourceFileLoader):
+        def set_data(self, path, data, *, _mode=0o666):
+            return None
+
+    validator_path = Path(__file__).resolve().with_name("validate_pack.py")
+    validator_loader = ReadOnlyValidatorLoader(
+        "_toolkit_validate_pack", str(validator_path)
+    )
+    validator_spec = spec_from_file_location(
+        "_toolkit_validate_pack", validator_path, loader=validator_loader
+    )
+    if validator_spec is None or validator_spec.loader is None:
+        raise ValueError("Toolkit skill validator unavailable")
+    validator = module_from_spec(validator_spec)
+    validator_spec.loader.exec_module(validator)
+
     sources = skill_paths(root, manifest)
+    trusted_root = root.resolve()
     details = []
     total = 0
     for name in declared:
@@ -88,17 +116,35 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
             raise ValueError("Unknown skill in profile: " + name)
         folder = sources[name]
         file = folder / "SKILL.md"
-        if folder.is_symlink() or folder.is_junction() or file.is_symlink():
-            raise ValueError("Linked skill source is not measurable")
+        # Validate path provenance before inspecting the source file's
+        # existence, size or content. An untrusted manifest must not cause
+        # even a metadata lookup outside the approved repository tree.
+        if not file.resolve().is_relative_to(trusted_root):
+            raise ValueError("Skill source escapes Toolkit root")
+        # Reject links and junctions anywhere below the trusted root, not
+        # merely at the final skill directory or SKILL.md path.
+        for part in (file, *file.parents):
+            if part == root:
+                break
+            if part.is_symlink() or part.is_junction():
+                raise ValueError("Linked skill source is not measurable")
         if not file.is_file() or file.stat().st_size > 256 * 1024:
             raise ValueError("Missing or oversized skill source")
         body = file.read_bytes()
+        try:
+            body.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("Non-UTF8 skill metadata") from exc
         lines = body.splitlines(keepends=True)
-        if not lines or lines[0].strip() != b"---":
+        if not lines or lines[0].rstrip(b"\r\n") != b"---":
             raise ValueError("Missing YAML metadata boundary")
-        closes = [i for i, line in enumerate(lines[1:], 1) if line.strip() == b"---"]
+        closes = [i for i, line in enumerate(lines[1:], 1)
+                  if line.rstrip(b"\r\n") == b"---"]
         if not closes:
             raise ValueError("Unclosed YAML metadata boundary")
+        problems = validator.validate_skill(folder)
+        if problems:
+            raise ValueError("Invalid skill frontmatter: " + problems[0])
         size = sum(len(line) for line in lines[:closes[0] + 1])
         details.append({"skill": name, "metadata_bytes": size})
         total += size
@@ -304,13 +350,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
-        report = measure(ROOT, manifest, args.profile)
+        preview = None
         if args.metadata_budget_bytes is not None:
             if args.profile is None:
                 raise ValueError("--metadata-budget-bytes requires --profile")
-            report["metadata_budget_preview"] = preview_metadata_budget(
+            # Fail closed before measure() traverses the selected profile's
+            # source files. Preview validates metadata and path confinement.
+            preview = preview_metadata_budget(
                 ROOT, manifest, args.profile, args.metadata_budget_bytes
             )
+        report = measure(ROOT, manifest, args.profile)
+        if preview is not None:
+            report["metadata_budget_preview"] = preview
         if args.audit_duplicates:
             report["source_overlap_audit"] = audit_exact_sources(ROOT, manifest)
         if args.audit_directives:
