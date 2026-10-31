@@ -18,6 +18,7 @@ SOURCE_BLOBS = {
     "api-connector-builder": "52029f27565b1743b36582de0db7648261b463a5",
     "code-tour": "d66b7e008287833ac592550f9b0941feaea52443",
     "module-regression": "d8186cbfc4c481eb884a13c14b6f2a38aace0b7a",
+    "error-handling": "add87f2cdb6f374781b08a0b1cf971eb9ec1915e",
 }
 
 
@@ -69,6 +70,7 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                 "api-connector-builder": "api-connectors",
                 "code-tour": "code-tours",
                 "module-regression": "module-regression",
+                "error-handling": "error-handling",
             }[name]])
 
     def test_original_single_skill_install_and_no_overwrite(self):
@@ -133,6 +135,31 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
             duplicate = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
             self.assertNotEqual(0, duplicate.returncode)
             self.assertEqual("OWNER RULES\n", rules.read_text(encoding="utf-8"))
+
+
+    def test_error_handling_profile_is_standalone_and_preserves_owner_rules(self):
+        with tempfile.TemporaryDirectory(prefix="ecc-error-handling-") as temp:
+            target = Path(temp)
+            rules = target / "AGENTS.md"
+            rules.write_text("USER POLICY\n", encoding="utf-8")
+            command = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                       "install", "--target", temp, "--profile", "native-error-handling"]
+            preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, preview.returncode, preview.stderr)
+            self.assertFalse((target / ".agents").exists())
+            applied = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, applied.returncode, applied.stderr)
+            installed = target / ".agents/skills/error-handling"
+            self.assertEqual(SOURCE_BLOBS["error-handling"],
+                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+            self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                             (installed / "LICENSE").read_bytes())
+            self.assertEqual(["error-handling"], [p.name for p in installed.parent.iterdir()])
+            self.assertEqual("USER POLICY\n", rules.read_text(encoding="utf-8"))
+            duplicate = subprocess.run([*command, "--apply"], capture_output=True,
+                                       text=True, timeout=30)
+            self.assertNotEqual(0, duplicate.returncode)
+            self.assertEqual("USER POLICY\n", rules.read_text(encoding="utf-8"))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:
