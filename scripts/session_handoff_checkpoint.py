@@ -167,6 +167,42 @@ def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
     return verify_packet(repo, checkpoint)
 
 
+def verify_handoff_portable(repo: Path, packet: object, to_client: str) -> dict:
+    """Compare GitHub project and tracked Git state across devices, never identity.
+
+    A local path hash is intentionally not portable. All v2 validation (including
+    digest, recipient and origin) must succeed before comparing portable fields.
+    This mode NEVER authenticates the sender or grants execution consent.
+    """
+    checked = verify_handoff(repo, packet, to_client)
+    if checked["decision"] == "BLOCKED":
+        return checked
+    if checked["decision"] not in ("PASS", "STALE"):
+        return {"decision": "BLOCKED", "reason": "INVALID_HANDOFF"}
+    if checked["decision"] == "STALE" and checked["reason"] != "repo_id":
+        return checked
+    # verify_handoff checked the full packet schema, digest, recipient and origin.
+    checkpoint = packet["checkpoint"]
+    current = state(repo)
+    for key in ("branch", "commit", "status_sha256", "dirty"):
+        if checkpoint[key] != current[key]:
+            return {"decision": "STALE", "reason": key}
+    return {
+        "decision": "REVIEW_REQUIRED",
+        "reason": "PORTABLE_GIT_MATCH_UNAUTHENTICATED",
+        "git_check": "MATCHED_PORTABLE",
+        "issue_url": packet["issue_url"],
+        "references": list(packet["references"]),
+        "sha256": packet["sha256"],
+        "trust": "UNREVIEWED",
+        "sender_identity": "NOT_VERIFIED",
+        "owner_approval": "NOT_GRANTED",
+        "next_action": "REVIEW_ISSUE",
+        "execution": "NOT_RUN",
+        "network": "NOT_USED",
+    }
+
+
 def _handoff_file(path: Path, repo: Path, *, create: bool) -> None:
     """Refuse linked parents and worktree writes; operator chooses an external file."""
     if not path.is_absolute():
@@ -273,7 +309,7 @@ def search_handoffs(repo: Path, directory: Path, issue_url: str, to_client: str)
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("mode", choices=("capture", "verify", "capture-handoff", "verify-handoff", "search-handoffs"))
+    p.add_argument("mode", choices=("capture", "verify", "capture-handoff", "verify-handoff", "verify-portable-handoff", "search-handoffs"))
     p.add_argument("--repo", type=Path, default=Path.cwd())
     p.add_argument("--issue")
     p.add_argument("--file", type=Path)
@@ -313,11 +349,13 @@ def main() -> int:
             result = search_handoffs(args.repo, args.directory, args.issue, args.to_client)
             print(json.dumps(result, sort_keys=True, ensure_ascii=False))
             return 0 if result["decision"] == "PASS" else 2
-        if args.mode == "verify-handoff":
+        if args.mode in ("verify-handoff", "verify-portable-handoff"):
             if not args.file or not args.to_client:
-                raise ValueError("verify-handoff requires --file and --to-client")
+                raise ValueError("handoff verification requires --file and --to-client")
             _handoff_file(args.file, args.repo, create=False)
-            result = verify_handoff(
+            verifier = (verify_handoff_portable if args.mode == "verify-portable-handoff"
+                        else verify_handoff)
+            result = verifier(
                 args.repo, json.loads(args.file.read_text(encoding="utf-8")), args.to_client
             )
             print(json.dumps(result, sort_keys=True))

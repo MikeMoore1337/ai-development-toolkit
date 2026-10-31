@@ -202,6 +202,14 @@ def _tool_defs() -> list[dict]:
              "required": ["project", "file", "to_client"],
              "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_portable_handoff",
+         "description": "Compare an explicitly provided v2 handoff across machines using same GitHub origin and tracked Git state. Always requires human review; never authenticates sender or executes.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Explicit absolute external v2 handoff JSON file"),
+             "to_client": string("Expected recipient slug")},
+             "required": ["project", "file", "to_client"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_status", "description": "Read Skill Manager ownership status in an existing project, without writes.",
          "inputSchema": {"type": "object",
                          "properties": {"project": string("Existing absolute project directory"),
@@ -461,7 +469,7 @@ def invoke(tool: str, args: dict) -> dict:
         directory = _handoff_input_path(args["directory"], "handoff directory")
         result = module.search_handoffs(project, directory, args["issue_url"], args["to_client"])
         return {**result, "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
-    if tool == "toolkit_verify_handoff":
+    if tool in ("toolkit_verify_handoff", "toolkit_verify_portable_handoff"):
         if set(args) != {"project", "file", "to_client"}:
             raise ValueError("Verification requires explicit project, file and recipient")
         project = _project(args["project"])
@@ -472,7 +480,9 @@ def invoke(tool: str, args: dict) -> dict:
             raise ValueError("Unexpected handoff packet filename")
         module._handoff_file(packet_file, project, create=False)
         packet = json.loads(packet_file.read_text(encoding="utf-8"))
-        outcome = module.verify_handoff(project, packet, args["to_client"])
+        verifier = (module.verify_handoff_portable if tool == "toolkit_verify_portable_handoff"
+                    else module.verify_handoff)
+        outcome = verifier(project, packet, args["to_client"])
         return {**outcome, "trust": "UNREVIEWED", "owner_approval": "NOT_GRANTED",
                 "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY"}
     if tool == "toolkit_observe_project":
