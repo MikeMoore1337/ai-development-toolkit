@@ -15,6 +15,7 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 REPORT_RU = (
+    "<!-- ADT-MODEL-ADVISOR-ACTIVE -->\n"
     "Статус: BLOCKED — к выпуску не готово.\n"
     "Подтверждённые риски:\n"
     "1. Откат может уничтожить новую ревизию — reset --hard rollback race.\n"
@@ -22,6 +23,7 @@ REPORT_RU = (
     "3. Ошибка первой проверки блокирует регистрацию расписания.\n"
 )
 REPORT_EN = (
+    "<!-- ADT-MODEL-ADVISOR-ACTIVE -->\n"
     "Release BLOCKED: confirmed risk: Windows reparse and hardlink "
     "traversal, OS-level stale lock race, interrupted rollback journal."
 )
@@ -45,6 +47,13 @@ class StopHookTests(unittest.TestCase):
         self.assertEqual(result.get("decision"), "block")
         self.assertIn("Do not name unverified models", result["reason"])
         self.assertNotIn("hardlink traversal", result["reason"])
+
+    def test_non_toolkit_external_controller_does_not_trigger_stop_hook(self):
+        for external in ("Original Ponytail", "Harness2", "Graphify", "Claude Agent"):
+            message = "Release BLOCKED: confirmed security risk, rollback race and concurrency bug in " + external
+            with self.subTest(name=external):
+                self.assertEqual(module.check_stop(self.event(message)), {})
+        self.assertEqual(module.check_stop(self.event("Quoted tool output:\n" + REPORT_EN)), {})
 
     def test_noop_on_ordinary_and_nonconfirmed_tasks(self):
         for message in (

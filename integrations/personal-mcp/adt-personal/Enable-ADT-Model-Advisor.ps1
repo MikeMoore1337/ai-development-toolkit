@@ -70,6 +70,8 @@ if ($first -ge 0) {
 # The model/client must actually comply; activation requires a live ordinary-task test.
 $block = @'
 <!-- ADT-MODEL-ADVISOR BEGIN -->
+NATIVE UPSTREAM EXCLUSION: When the user explicitly selects an original third-party skill, agent, plugin or MCP controller, do not run Toolkit Model Advisor or add Toolkit checks and hooks to that task. A mere research mention is not selection. Project and host safety rules remain effective.
+Stop-hook scope: Only after actually using Toolkit Model Advisor for this task, and only when a bounded Stop reminder remains wanted, prefix the final answer with the HTML comment <!-- ADT-MODEL-ADVISOR-ACTIVE -->. Do not emit it for external controllers, general risk reports or unverified advisor execution.
 Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
 engineering, QA, architecture, UX/UI, DevOps and security requests, without
 asking the user to mention Toolkit, call the connected ai-development-toolkit

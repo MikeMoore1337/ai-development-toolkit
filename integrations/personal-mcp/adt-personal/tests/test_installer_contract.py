@@ -12,6 +12,17 @@ class TestInstallerContract(unittest.TestCase):
         self.assertIn('if (-not (Test-CodexMcpExists $codexCommand.Source))', content)
         self.assertNotIn('& $codexCommand.Source mcp get ai-development-toolkit', content)
 
+    def test_native_external_boundary_is_in_both_installer_instructions(self):
+        for script in (SCRIPT, SCRIPT.with_suffix('.sh')):
+            with self.subTest(script=script.name):
+                content = script.read_text(encoding='utf-8')
+                self.assertIn('NATIVE UPSTREAM BOUNDARY', content)
+                self.assertIn('NATIVE_UPSTREAM_PASSTHROUGH', content)
+                self.assertIn('external_controller', content)
+        unix = SCRIPT.with_suffix('.sh').read_text(encoding='utf-8')
+        self.assertIn('--skip-global-instructions', unix)
+        self.assertIn('if [ "$skip_global_instructions" -eq 0 ]; then', unix)
+
     def test_installs_stable_launcher_and_preserves_config(self):
         content = SCRIPT.read_text(encoding='utf-8')
         self.assertIn("'ADT-Personal\\mcp'", content)

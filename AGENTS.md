@@ -1,5 +1,9 @@
 # Repository instructions
 
+## Native-first external tool boundary (#492)
+
+When the user explicitly selects an original third-party skill, agent, plugin, MCP server or tool to lead a task, follow the upstream workflow, features, modes, agents and lifecycle. Toolkit guidance must not inject alternative controllers, hooks or behavioral restrictions. An external tool named in research is not necessarily selected. Additional Toolkit reference advice is permitted only on separate explicit request and cannot take control. Host/system safety, user/project permissions, secret handling, financial consent and release gates remain binding. See [native external boundary](docs/EXTERNAL_NATIVE_BOUNDARY.md). This issue does not modify the UX/UI Orchestra workstream.
+
 This is a portable collection of AI development skills and reference agent roles.
 
 - Do not mutate third-party repositories, merge PRs or deploy as part of toolkit maintenance.
