@@ -752,7 +752,7 @@ class SkillRoutingTests(unittest.TestCase):
 
     def test_catalog_is_manifest_driven(self):
         from_manifest = routing.read_catalog(ROOT)
-        self.assertEqual(87, len(from_manifest))
+        self.assertEqual(88, len(from_manifest))
         self.assertIn("feature-delivery", from_manifest)
         self.assertIn("make-feature", from_manifest)
         self.assertIn("performance-load-testing", from_manifest)
@@ -763,7 +763,7 @@ class SkillRoutingTests(unittest.TestCase):
         aliases = routing.read_aliases(ROOT / "fixtures/skill_routing_aliases.json", catalog)
         report = routing.evaluate(catalog, cases, aliases=aliases)
         self.assertGreaterEqual(len(cases), 12)
-        self.assertEqual(87, report["coverage"]["catalog_total"])
+        self.assertEqual(88, report["coverage"]["catalog_total"])
         # Full RU/EN fixture inventory is not proof of real client activation.
         self.assertEqual(len(catalog), report["coverage"]["curated_targets"])
         self.assertEqual([], report["coverage"]["uncovered_targets"])
