@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      # shortcut: task-only CI trigger; remove after this task is complete
+      - feat/adaptive-skill-routing-20261031
   pull_request:
     branches:
       - main
