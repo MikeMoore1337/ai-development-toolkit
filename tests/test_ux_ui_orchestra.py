@@ -417,5 +417,55 @@ class DesignOrchestraTests(unittest.TestCase):
 
 
 
+    def test_malformed_visual_lineage_values_are_refused_without_exception(self):
+        valid = self.load_three_directions()
+        valid["visual_lineage"] = {
+            "baseline": {"version": "v1", "status": "USER_PREFERRED",
+                         "artifact_refs": ["sample:v1"], "strengths": ["Strong imagery"]},
+            "candidate": {"version": "v2", "artifact_refs": ["sample:v2"]},
+            "visual_review": {"status": "REVIEWED", "comparisons": [
+                {"aspect": "layout", "assessment": "CHANGED", "observation": "Different photo hierarchy"}]},
+            "technical_review": {"status": "PASS", "evidence": "synthetic:viewport"},
+            "recommendation": "UNDECIDED", "owner_decision": "PENDING",
+        }
+        self.assertEqual([], checker.validate(valid))
+        paths = [
+            ("baseline", "status"),
+            ("visual_review", "status"),
+            ("technical_review", "status"),
+            ("recommendation", None),
+            ("owner_decision", None),
+        ]
+        for container, field in paths:
+            for malformed in ([], {}, 4, None):
+                payload = copy.deepcopy(valid)
+                if field is None:
+                    payload["visual_lineage"][container] = malformed
+                else:
+                    payload["visual_lineage"][container][field] = malformed
+                with self.subTest(container=container, field=field, malformed=malformed):
+                    self.assertNotEqual([], checker.validate(payload))
+        payload = copy.deepcopy(valid)
+        payload["visual_lineage"]["visual_review"]["comparisons"][0]["assessment"] = []
+        self.assert_bad("decision invalid", payload)
+        payload = copy.deepcopy(valid)
+        payload["design_quality"]["impeccable_source_status"] = []
+        self.assert_bad("source status invalid", payload)
+
+    def test_rendered_frame_malformed_evidence_is_refused_without_exception(self):
+        valid = self.with_rendered_comparison(self.load_three_directions())
+        for bad in ([], {}, None, 100):
+            payload = copy.deepcopy(valid)
+            payload["design_exploration"]["visual_comparison"]["frames"][0]["evidence_id"] = bad
+            with self.subTest(bad=bad):
+                self.assertNotEqual([], checker.validate(payload))
+        payload = copy.deepcopy(valid)
+        payload["evidence"][0]["artifact_ref"] = []
+        self.assert_bad("invalid artifact reference", payload)
+        payload = copy.deepcopy(valid)
+        payload["evidence"][0]["viewport"] = []
+        self.assert_bad("invalid viewport", payload)
+
+
 if __name__ == "__main__":
     unittest.main()
