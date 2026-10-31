@@ -39,11 +39,19 @@ def _in_root(path: Path, root: Path) -> bool:
     if not path.resolve().is_relative_to(root.resolve()):
         return False
     current = path
-    while current != root:
+    # Compare canonical identities while inspecting each unreduced ancestor for
+    # links. Windows file URI decoding can produce equivalent but lexically
+    # different paths. Every walk must terminate at the filesystem anchor.
+    canonical_root = root.resolve()
+    while True:
         if _linked(current):
             return False
-        current = current.parent
-    return not _linked(root)
+        if current.resolve() == canonical_root:
+            return not _linked(root)
+        parent = current.parent
+        if parent == current:
+            return False
+        current = parent
 
 
 def _source_uri(source: str, root: Path) -> tuple[str, str]:
