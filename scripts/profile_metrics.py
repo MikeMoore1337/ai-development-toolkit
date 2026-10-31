@@ -109,9 +109,6 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                 break
             if part.is_symlink() or part.is_junction():
                 raise ValueError("Linked skill source is not measurable")
-        problems = validate_skill(folder)
-        if problems:
-            raise ValueError("Invalid skill frontmatter: " + problems[0])
         body = file.read_bytes()
         try:
             body.decode("utf-8")
@@ -124,6 +121,9 @@ def preview_metadata_budget(root: Path, manifest: dict, profile: str,
                   if line.rstrip(b"\r\n") == b"---"]
         if not closes:
             raise ValueError("Unclosed YAML metadata boundary")
+        problems = validate_skill(folder)
+        if problems:
+            raise ValueError("Invalid skill frontmatter: " + problems[0])
         size = sum(len(line) for line in lines[:closes[0] + 1])
         details.append({"skill": name, "metadata_bytes": size})
         total += size
