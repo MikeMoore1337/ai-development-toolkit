@@ -28,6 +28,9 @@ def png(width: int, height: int, shade: int = 128) -> bytes:
         + chunk(b"IEND", b""))
 
 
+FakePlaywrightError = type("PlaywrightError", (Exception,), {})
+
+
 class FakeBrowser:
     version = "test-0"
 
@@ -73,6 +76,12 @@ class FakePage:
     def goto(self, source, **_settings):
         self.source = source
 
+    def set_content(self, html, **_settings):
+        self.source = html
+
+    def close(self):
+        pass
+
     def evaluate(self, _js):
         return {"viewport_width": self.context.settings["viewport"]["width"],
                 "document_width": self.context.settings["viewport"]["width"] + self.context.overflow,
@@ -105,7 +114,7 @@ class BrowserCaptureTests(unittest.TestCase):
         self.source.mkdir()
         for name in "abc":
             (self.source / (name + ".html")).write_text(
-                "<!doctype html><html><body><h1>Preview</h1></body></html>", encoding="utf-8")
+                f"<!doctype html><html><body><h1>Preview {name}</h1></body></html>", encoding="utf-8")
         self.plan = {"schema_version": 1, "scenario_id": "new-site", "captures": [
             {"purpose": "wireframe:" + x, "source": x + ".html", "viewport": "400x600"}
             for x in "abc"
@@ -156,7 +165,7 @@ class BrowserCaptureTests(unittest.TestCase):
     def _run_fake(self, overflow=0):
         fake = FakePlaywright(overflow)
         fake_module = ModuleType("playwright.sync_api")
-        fake_module.Error = type("PlaywrightError", (Exception,), {})
+        fake_module.Error = FakePlaywrightError
         fake_module.sync_playwright = lambda: fake
         with patch.dict(sys.modules, {"playwright.sync_api": fake_module}):
             output = self.root / "captures"
@@ -208,6 +217,45 @@ class BrowserCaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(visual.CaptureError, "Output must be a new"):
             self._run_fake()
         self.assertTrue((self.root / "captures").is_symlink())
+
+    def test_blocked_local_navigation_uses_explicit_inline_fallback(self):
+        with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
+                "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR")):
+            report, _fake, folder = self._run_fake()
+        self.assertTrue((folder / "comparison.html").is_file())
+        self.assertTrue(all(item["inline_html_fallback"] for item in report["diagnostics"]))
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", report["gate"])
+
+    def test_inline_fallback_never_applies_to_loopback_http(self):
+        self.plan["captures"][0]["source"] = "http://127.0.0.1:6000/preview"
+        with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
+                "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR")):
+            with self.assertRaisesRegex(visual.CaptureError, "BROWSER_RENDER_FAILED"):
+                self._run_fake()
+        self.assertFalse((self.root / "captures").exists())
+
+    def test_wrong_mobile_layout_viewport_requires_review(self):
+        original = FakePage.evaluate
+        def wrong_mobile(self, js):
+            result = original(self, js)
+            if self.context.settings["is_mobile"]:
+                result["viewport_width"] = 980
+                result["document_width"] = 980
+            return result
+        with patch.object(FakePage, "evaluate", wrong_mobile):
+            report, _fake, _folder = self._run_fake()
+        self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
+        self.assertEqual(980, report["diagnostics"][-1]["layout"]["viewport_width"])
+
+    def test_tiny_interactive_target_requires_review(self):
+        original = FakePage.evaluate
+        def tiny_button(self, js):
+            result = original(self, js)
+            result["small_targets_under_24px"] = ["button"]
+            return result
+        with patch.object(FakePage, "evaluate", tiny_button):
+            report, _fake, _folder = self._run_fake()
+        self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
 
     def test_minor_fix_does_not_require_three_wireframes(self):
         self.plan["scenario_id"] = "minor-ui-fix"
