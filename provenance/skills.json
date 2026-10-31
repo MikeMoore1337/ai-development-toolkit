@@ -14734,6 +14734,27 @@
       "distribution": "included",
       "notes": "Issue #435; manually selected opt-in native skill, no ECC runtime, auto-install, agent CLI, hooks or user host execution.",
       "owner_approval_id": "ECC435_20261101"
+    },
+    {
+      "id": "ecc-v223-optin-error-handling",
+      "path": "optional-original-skills/error-handling",
+      "name": "error-handling",
+      "kind": "skill",
+      "author": "Affaan Mustafa (ECC upstream)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/error-handling/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact original pinned MIT skill and root license; independent rightsholder/chain-of-title verification not performed.",
+      "attribution_required": true,
+      "attribution_path": "optional-original-skills/error-handling/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-10-31",
+      "distribution": "included",
+      "notes": "Issue #435; opt-in native skill, no ECC runtime, auto invocation, forced API envelope, agent CLI, paid API or new controller.",
+      "owner_approval_id": "ECC435_ERRORHANDLING_20261031"
     }
   ],
   "owner_review_record": {
@@ -15488,6 +15509,31 @@
       },
       "approved_metadata": {
         "optional-original-skills/module-regression": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        }
+      }
+    },
+    {
+      "id": "ECC435_ERRORHANDLING_20261031",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_issue": "#435",
+      "reported_at": "2026-10-31",
+      "scope_description": "Owner explicitly authorized selective native MIT ECC components under #435. This review pins the exact original error-handling SKILL.md and root MIT LICENSE, without changing external instructions, enabling execution, extra runtime or paid API. Independent legal ownership not attested.",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "approved_components": {
+        "optional-original-skills/error-handling": {
+          "optional-original-skills/error-handling/SKILL.md": "e8eec6756c950b570486493e64e3bf14c12baf6bf0858bf3928097fe2bfeaf79",
+          "optional-original-skills/error-handling/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        }
+      },
+      "approved_metadata": {
+        "optional-original-skills/error-handling": {
           "origin": "redistributed",
           "license": "MIT",
           "status": "documented",

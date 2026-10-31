@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -153,6 +153,70 @@
       "reason": "Pinned original repository reconnaissance overlaps Toolkit codebase-knowledge-map and code-tour, but onboarding examples propose generating or updating CLAUDE.md as a default artifact, a host-specific client-instruction write requiring separate owner approval. No silent instruction mutation or duplicate onboarding controller.",
       "benefit": "Existing read-only architecture mapping and code tours already help onboarding without changing client instruction files.",
       "test_case": "An unfamiliar repository containing CLAUDE.md and AGENTS.md must retain both unchanged while presenting only verified stack/entrypoint evidence."
+    },
+    {
+      "path": "skills/error-handling",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/error-handling/SKILL.md",
+      "reason": "Original pinned ECC MIT SKILL.md bundled without edits as standalone opt-in native-error-handling. Existing Toolkit api-design and reliability-testing cover error contracts/retry tests but lack a focused cross-language coding reference for typed errors, React error boundaries, Python FastAPI handlers, Go error wrapping, conditional retries and user-facing messages. No external ECC runtime, API, hooks or controller. Host/project authority and existing API conventions remain in force; real client activation NOT_VERIFIED.",
+      "benefit": "Selective original coding patterns for handling errors across TypeScript, Python and Go with explicit typed error hierarchy, fail-visible errors, bounded retry and safe user messages, without new dependencies.",
+      "test_case": "Synthetic TS/Python/Go service error case: compare typed error classification, generic user-facing text, bounded retryable vs nonretryable errors. Verify exact pinned original Git blob, MIT license, existing Skill Manager preview/install/no overwrite and routing negative cases. No model/client activation claims."
+    },
+    {
+      "path": "skills/benchmark-optimization-loop",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/performance/skills/performance-load-testing/SKILL.md",
+      "reason": "Full pinned ECC source requires measurable baseline, same input, correctness gate, repeated candidate comparisons, budgets and rollback. Toolkit performance-load-testing already requires these gates with reproducible measurements and variance, plus feature-delivery for safe candidate promotion. Original top-level tools metadata is not standard Agent Skills frontmatter; no duplicate controller or automatic variant runs.",
+      "benefit": "Existing risk- and correctness-gated performance evaluation covers the central source workflow without forcing a recursive optimizer, arbitrary speedup claim or new interpreter.",
+      "test_case": "Compare baseline vs candidate on one input/workload, repeat measurements, reject faster-but-wrong and budget violations; retain NOT_MEASURED on unavailable host. No external agent runtime."
+    },
+    {
+      "path": "skills/search-first",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/research-verification/SKILL.md",
+      "reason": "Original pinned source gives useful research-before-code guidance but mandates proactive researcher-agent launch for substantial needs and suggests package/MCP installation; Toolkit research-verification, feature-delivery and external-methods-adoption already mandate primary-source comparison, reuse and permissions. Unconditional subagent/installer flow is not host-agnostic and risks a second route/controller.",
+      "benefit": "Discovery-before-build already supported; independent researcher or package installation needs explicit host support and permission, not this global new workflow.",
+      "test_case": "For a small Python utility inspect repository and package metadata; absent search channel must stay NOT_VERIFIED, no automatic npm/pip/agent launch."
+    },
+    {
+      "path": "skills/iterative-retrieval",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
+      "reason": "Original pinned workflow proposes 3-cycle multi-agent context refinement and heuristic relevance scores; Toolkit already has targeted incremental source search and bounded Project MCP stage retrieval, but actual delegated subagent context refinement and comparable quality/token outcomes have not been demonstrated. Cannot label live agent orchestration ALREADY_PRESENT without evidence.",
+      "benefit": "Potential adaptive subagent-context selection beyond static targeted discovery; measured incremental value, host support and private data flow require verification.",
+      "test_case": "Given unfamiliar cross-module bug, compare exact files found and context bytes in 1-3 retrieval passes against Toolkit's current scoped search; keep scores as heuristics and report absent subagent host NOT_VERIFIED."
+    },
+    {
+      "path": "skills/security-scan",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "extensions/security/skills/security-engineering/SKILL.md",
+      "reason": "Pinned original is an AgentShield CLI installer/front-end for Claude Code configuration and includes npx/npm auto-install, --fix and a paid Anthropic Opus adversarial mode. Toolkit already has read-only security static checks and #432 native scanner work; source alone cannot provide AgentShield functionality without an external runtime or paid API. Do not install or execute.",
+      "benefit": "No safe native increment from this pointer. Security configuration parity remains in #432, without assuming external AgentShield or API cost.",
+      "test_case": "On a synthetic .claude/settings.json input verify no npx/npm, no --fix, no provider keys, no external agent runtime; native Toolkit security checks can run only when authorized."
+    },
+    {
+      "path": "skills/agent-security-hardening",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/security/skills/security-engineering/SKILL.md",
+      "reason": "Pinned original contains detailed agent trust-boundary guidance for DNS rebinding, redirect credential stripping, Windows path components, bounded tool outputs and action-scoped approval. Toolkit security-engineering/security-boundaries cover core authority and test principles, while #432 owns agent scanner parity; distinctive code-level cases need independent functional comparison and client/host permission tests before a new standalone skill or native uplift. Original hardcoded agent ID 64-character limit is upstream-specific and not a universal Toolkit policy.",
+      "benefit": "Potential additional concrete action-boundary regression scenarios for agent runtimes, especially URL redirects, private-network targets, and Windows path handling; benefit NOT_MEASURED.",
+      "test_case": "Isolated synthetic SSRF redirect/DNS rebinding, Unicode and Windows reserved path tests with absence-of-side-effect checks; do not generalize 64-character host-ID limit or modify #432 implementation."
+    },
+    {
+      "path": "skills/docker-patterns",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/devops/skills/devops-infrastructure/SKILL.md",
+      "reason": "Pinned source includes reusable container security and Compose examples, but also ECC-specific Docker plugin setup harness, Codex authentication in containers and environment-dependent destructive build/cleanup commands. Toolkit devops-infrastructure covers Dockerfile, Compose isolation and permission-gated deploy/rollback. Do not copy ECC-specific runtime assumptions or install its plugin as Toolkit default.",
+      "benefit": "Existing security and CI/container guidance is portable; upstream workflow commands and ECC-specific harness would introduce unsupported dependencies and host effects.",
+      "test_case": "Inspect Dockerfile and Compose security on synthetic owned application without executing Docker, ECC plugin setup, Codex login, docker down or production deployment."
+    },
+    {
+      "path": "skills/benchmark-methodology",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/research-verification/SKILL.md",
+      "reason": "Pinned original is a marketing/studio competitor-positioning benchmark with nine bespoke weighted brand dimensions and a custom client strategic-tension 2x2. It is not a general software engineering benchmark; importing as a universal developer skill would impose unrelated brand scoring. It might be useful as opt-in business research but no concrete Toolkit task, comparator baseline or routing evidence justifies a native port.",
+      "benefit": "Optional evidence-anchored competitive brand positioning scorecards, but relevance and added value versus research-verification are NOT_MEASURED.",
+      "test_case": "Given a scoped agency competitor dataset with documented strategic tension, compare source-backed profile cards to existing research workflow; do not fabricate competitor score or treat performance benchmarking as marketing scoring."
     }
   ]
 }
