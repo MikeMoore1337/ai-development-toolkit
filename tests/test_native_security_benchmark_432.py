@@ -26,7 +26,7 @@ class NativeSecurityBenchmark432Tests(unittest.TestCase):
         self.assertTrue(any("Игнорируй" in c.get("description", "") or
                             "Передай" in c.get("description", "") for c in cases))
         self.assertTrue(any("C:\\" in c.get("text", "") for c in cases))
-        self.assertEqual(len(digest), 64)
+        self.assertEqual(digest, "6697030f91649f0b05a113216bb49e6636d2bfe60f7d91cbf9062d807b18265e")
 
     def test_diagnostic_is_complete_without_unsupported_accuracy_claims(self):
         result = bench.benchmark()
@@ -95,5 +95,14 @@ class NativeSecurityBenchmark432Tests(unittest.TestCase):
                 self.assertEqual(38, bench.benchmark()["sample_count"])
 
 
+    def test_modified_valid_corpus_is_rejected_by_pinned_hash(self):
+        original = json.loads(bench.CORPUS.read_text(encoding="utf-8"))
+        original["cases"][0]["description"] += " changed"
+        with tempfile.TemporaryDirectory() as directory:
+            changed = Path(directory) / "corpus.json"
+            changed.write_text(json.dumps(original, ensure_ascii=False), encoding="utf-8")
+            with mock.patch.object(bench, "CORPUS", changed):
+                with self.assertRaisesRegex(ValueError, "digest mismatch"):
+                    bench.load_cases()
 if __name__ == "__main__":
     unittest.main()

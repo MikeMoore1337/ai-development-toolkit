@@ -326,7 +326,9 @@ HOST_SENSITIVE_ARG = re.compile(
     r"^C:[/\\]Users[/\\][^/\\]+[/\\]\.(?:ssh|aws|kube)(?:[/\\]|$)", re.I)
 HOST_INTERPRETER_GRANT = re.compile(
     r"^Bash\((?:[^\s()]*[/\\])?"
-    r"(?:bash|sh|zsh|pwsh|powershell|cmd)(?:\s|:\*|\))", re.I)
+    r"(?:bash|sh|zsh|pwsh|powershell|cmd)(?:\.exe)?(?:\s|:\*|\))", re.I)
+HOST_MCP_SHELL = re.compile(
+    r"(?:^|[/\\])(?:bash|sh|zsh|pwsh|powershell|cmd)(?:\.exe)?$", re.I)
 
 
 def _host_finding(items: list[dict], rule: str, path: str, severity: str = "HIGH") -> None:
@@ -405,6 +407,22 @@ def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -
                 raise ValueError("invalid MCP environment entry")
             if HOST_SENSITIVE.search(key) and value and not HOST_ENV_REFERENCE.fullmatch(value):
                 _host_finding(items, "MCP_INLINE_CREDENTIAL", path)
+        transport = server.get("type")
+        if transport is not None and transport not in ("stdio", "http", "sse"):
+            raise ValueError("invalid MCP transport")
+        url = server.get("url")
+        if url is not None:
+            if not isinstance(url, str) or len(url.encode("utf-8")) > 2048 or re.search(r"\s", url):
+                raise ValueError("invalid MCP URL")
+            parsed = urlsplit(url)
+            if parsed.scheme not in ("http", "https") or not parsed.hostname:
+                raise ValueError("invalid MCP URL")
+            if parsed.username is not None or parsed.password is not None:
+                _host_finding(items, "MCP_INLINE_CREDENTIAL", path)
+            if HOST_COLLECTION_ARG.search(url):
+                _host_finding(items, "MCP_COLLECTION_ENDPOINT", path, "MEDIUM")
+        if (transport in ("http", "sse") and url is None) or (transport == "stdio" and url is not None):
+            raise ValueError("inconsistent MCP transport")
         args = server.get("args", [])
         if not isinstance(args, list) or len(args) > 128 or any(not isinstance(v, str) for v in args):
             raise ValueError("invalid MCP argument list")
@@ -426,6 +444,24 @@ def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -
             "-y" in args or "--yes" in args
         ):
             _host_finding(items, "MCP_DYNAMIC_PACKAGE_EXECUTION", path, "MEDIUM")
+        # Static review of explicit argv payloads; never run commands or hooks.
+        if HOST_MCP_SHELL.search(command):
+            for index, flag in enumerate(args):
+                option = flag.casefold()
+                if option in ("-encodedcommand", "-enc"):
+                    _host_finding(items, "MCP_OPAQUE_SHELL_COMMAND", path)
+                if option in ("-c", "-lc", "-ec", "-ce", "-command", "/c"):
+                    if index + 1 >= len(args):
+                        raise ValueError("missing MCP shell payload")
+                    payload = args[index + 1]
+                    for pattern, rule in (
+                        (HOST_NET, "MCP_SHELL_NETWORK_EGRESS"),
+                        (HOST_PIPE, "MCP_SHELL_PIPE"),
+                        (HOST_INTERPOLATION, "MCP_SHELL_UNTRUSTED_INTERPOLATION"),
+                        (HOST_DESTRUCTIVE, "MCP_SHELL_DESTRUCTIVE_COMMAND"),
+                    ):
+                        if pattern.search(payload):
+                            _host_finding(items, rule, path)
 
 
 def review_host_config(root: Path) -> dict:
@@ -439,12 +475,14 @@ def review_host_config(root: Path) -> dict:
         total = 0
         for relative in HOST_FILES:
             target = root / relative
-            if not target.exists() and not target.is_symlink():
+            # Check before existence: dangling directory symlinks cannot be ignored.
+            parts = (target, target.parent)
+            if any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction()) for p in parts):
+                _host_finding(findings, "HOST_PATH_NOT_REGULAR", relative)
                 continue
-            # Reject junctions/links at every inspected level, never follow them.
-            parts = [target, target.parent]
-            if (any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction()) for p in parts)
-                    or not target.is_file()):
+            if not target.exists():
+                continue
+            if not target.is_file():
                 _host_finding(findings, "HOST_PATH_NOT_REGULAR", relative)
                 continue
             try:
@@ -491,14 +529,24 @@ def review_host_config(root: Path) -> dict:
                         if (not isinstance(allowed, list) or len(allowed) > 256
                                 or any(not isinstance(x, str) or len(x) > 512 for x in allowed)):
                             raise ValueError("invalid permission allow-list")
-                        if "Bash(*)" in allowed:
-                            _host_finding(findings, "HOST_UNRESTRICTED_SHELL", relative)
-                        if "Write(*)" in allowed:
-                            _host_finding(findings, "HOST_UNRESTRICTED_WRITE", relative)
-                        if "Edit(*)" in allowed:
-                            _host_finding(findings, "HOST_UNRESTRICTED_EDIT", relative)
-                        if any(HOST_INTERPRETER_GRANT.search(grant) for grant in allowed):
+                        # Bare tool names and (*) grant every operation in Claude Code.
+                        grants = [grant.strip() for grant in allowed]
+                        for tool, rule in (
+                            ("Bash", "HOST_UNRESTRICTED_SHELL"),
+                            ("Write", "HOST_UNRESTRICTED_WRITE"),
+                            ("Edit", "HOST_UNRESTRICTED_EDIT"),
+                        ):
+                            if any(re.fullmatch(tool + r"(?:\(\s*\*\s*\))?", grant, re.I)
+                                   for grant in grants):
+                                _host_finding(findings, rule, relative)
+                        if any(HOST_INTERPRETER_GRANT.search(grant) for grant in grants):
                             _host_finding(findings, "HOST_SHELL_INTERPRETER_GRANTED", relative)
+                        auto_mcp = config.get("enableAllProjectMcpServers", False)
+                        if not isinstance(auto_mcp, bool):
+                            raise ValueError("invalid project MCP approval setting")
+                        if auto_mcp:
+                            _host_finding(findings, "HOST_AUTO_APPROVE_PROJECT_MCP",
+                                          relative, "MEDIUM")
             except (OSError, ValueError, UnicodeError, TypeError, RecursionError):
                 _host_finding(findings, "HOST_CONFIG_UNPARSEABLE", relative)
     if not files and not findings:

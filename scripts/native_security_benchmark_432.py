@@ -18,6 +18,8 @@ import external_skill_gate
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "fixtures" / "native_security_holdout_432.json"
+# Explicitly version and review any corpus changes, independently of SHA256SUMS.
+CORPUS_SHA256 = "6697030f91649f0b05a113216bb49e6636d2bfe60f7d91cbf9062d807b18265e"
 MAX_CORPUS_BYTES = 65536
 CASE_ID = re.compile(r"[MH][0-9]{2}\Z")
 
@@ -37,6 +39,8 @@ def load_cases() -> tuple[list[dict], str]:
     raw = CORPUS.read_bytes()
     if len(raw) > MAX_CORPUS_BYTES:
         raise ValueError("oversized benchmark corpus")
+    if hashlib.sha256(raw).hexdigest() != CORPUS_SHA256:
+        raise ValueError("benchmark corpus digest mismatch")
     doc = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_pairs,
                      parse_constant=lambda _: (_ for _ in ()).throw(ValueError("NaN")))
     if (not isinstance(doc, dict) or doc.get("schema_version") != 1
