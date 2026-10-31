@@ -324,6 +324,9 @@ HOST_SENSITIVE_ARG = re.compile(
     r"(?:^|[/\\])\.(?:ssh|aws|gnupg|kube)(?:[/\\]|$)|"
     r"^/(?:etc|var/log)(?:/|$)|"
     r"^C:[/\\]Users[/\\][^/\\]+[/\\]\.(?:ssh|aws|kube)(?:[/\\]|$)", re.I)
+HOST_INTERPRETER_GRANT = re.compile(
+    r"^Bash\((?:[^\s()]*[/\\])?"
+    r"(?:bash|sh|zsh|pwsh|powershell|cmd)(?:\s|:\*|\))", re.I)
 
 
 def _host_finding(items: list[dict], rule: str, path: str, severity: str = "HIGH") -> None:
@@ -429,7 +432,8 @@ def review_host_config(root: Path) -> dict:
     """Bounded local host-config static audit, no network/process/write effects."""
     findings: list[dict] = []
     files: list[dict] = []
-    if not root.is_dir() or root.is_symlink():
+    if (not root.is_dir() or root.is_symlink()
+            or (hasattr(root, "is_junction") and root.is_junction())):
         _host_finding(findings, "INVALID_HOST_ROOT", "<root>")
     else:
         total = 0
@@ -483,10 +487,18 @@ def review_host_config(root: Path) -> dict:
                         permissions = config.get("permissions", {})
                         if not isinstance(permissions, dict):
                             raise ValueError("invalid permission object")
-                        if "Bash(*)" in permissions.get("allow", []):
+                        allowed = permissions.get("allow", [])
+                        if (not isinstance(allowed, list) or len(allowed) > 256
+                                or any(not isinstance(x, str) or len(x) > 512 for x in allowed)):
+                            raise ValueError("invalid permission allow-list")
+                        if "Bash(*)" in allowed:
                             _host_finding(findings, "HOST_UNRESTRICTED_SHELL", relative)
-                        if "Write(*)" in permissions.get("allow", []):
+                        if "Write(*)" in allowed:
                             _host_finding(findings, "HOST_UNRESTRICTED_WRITE", relative)
+                        if "Edit(*)" in allowed:
+                            _host_finding(findings, "HOST_UNRESTRICTED_EDIT", relative)
+                        if any(HOST_INTERPRETER_GRANT.search(grant) for grant in allowed):
+                            _host_finding(findings, "HOST_SHELL_INTERPRETER_GRANTED", relative)
             except (OSError, ValueError, UnicodeError, TypeError, RecursionError):
                 _host_finding(findings, "HOST_CONFIG_UNPARSEABLE", relative)
     if not files and not findings:
