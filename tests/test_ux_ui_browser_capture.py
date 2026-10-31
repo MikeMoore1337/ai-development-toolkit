@@ -199,6 +199,16 @@ class BrowserCaptureTests(unittest.TestCase):
         self.assertFalse(report["distinct_sketch_files"])
         self.assertTrue((folder / "comparison.html").is_file())
 
+    def test_dangling_output_symlink_rejected_without_overwrite(self):
+        target = self.root / "absent-output"
+        try:
+            (self.root / "captures").symlink_to(target, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Cannot create symlink on this platform")
+        with self.assertRaisesRegex(visual.CaptureError, "Output must be a new"):
+            self._run_fake()
+        self.assertTrue((self.root / "captures").is_symlink())
+
     def test_minor_fix_does_not_require_three_wireframes(self):
         self.plan["scenario_id"] = "minor-ui-fix"
         self.plan["captures"] = self.plan["captures"][-2:]
