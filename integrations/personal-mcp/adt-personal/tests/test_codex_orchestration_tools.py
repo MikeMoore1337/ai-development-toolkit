@@ -51,14 +51,14 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         return result
 
     def test_version_and_tools_registered_read_only(self):
-        self.assertEqual(VERSION, "0.1.14")
+        self.assertEqual(VERSION, "0.1.15")
         tools = {tool["name"]: tool for tool in TOOLS}
         for name in ("toolkit_codex_prepare_delegation",
                      "toolkit_codex_review_delegation"):
             self.assertIn(name, tools)
             self.assertTrue(tools[name]["annotations"]["readOnlyHint"])
             self.assertFalse(tools[name]["annotations"]["destructiveHint"])
-        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.14")
+        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.15")
 
     def test_prepare_denied_without_zero_cost_verified(self):
         args = self.args()

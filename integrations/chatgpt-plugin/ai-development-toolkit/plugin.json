@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-development-toolkit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Chat-first Toolkit routing for engineering, QA, design, SEO and explicit prompt refinement without paid APIs.",
   "repository": "https://github.com/MikeMoore1337/ai-development-toolkit",
   "author": {

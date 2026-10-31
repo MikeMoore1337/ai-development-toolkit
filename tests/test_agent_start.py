@@ -36,8 +36,8 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
     def test_live_protocol_is_bounded_read_only_and_versioned(self):
         import re
         live = MANIFEST["chatgpt_personal_live"]
-        self.assertEqual(live["schema_version"], 1)
-        self.assertEqual(live["protocol_generation"], 1)
+        self.assertEqual(live["schema_version"], 2)
+        self.assertEqual(live["protocol_generation"], 2)
         self.assertEqual(live["canonical_repository"], "MikeMoore1337/ai-development-toolkit")
         self.assertEqual(live["tracked_branch"], "main")
         self.assertEqual(live["commit_resolution"], "exact_sha_required")
@@ -46,7 +46,8 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
         self.assertEqual(live["fallback"], "BUNDLED_ROUTER")
         self.assertEqual(live["activation"], "best_effort_per_task_read_only")
         self.assertIs(live["install_upgrade_automatic"], False)
-        self.assertTrue(1 <= live["max_retrieved_sources_per_task"] <= 8)
+        self.assertTrue(1 <= live["max_retrieved_sources_per_batch"] <= 8)
+        self.assertNotIn("max_retrieved_sources_per_task", live)
 
     def test_exact_head_ci_matrix_required(self):
         live = MANIFEST["chatgpt_personal_live"]
@@ -83,7 +84,7 @@ class ChatGPTPersonalLiveProtocolTests(unittest.TestCase):
         for values in live["source_sets"].values():
             self.assertIsInstance(values, list)
             self.assertGreater(len(values), 0)
-            self.assertLessEqual(len(values), live["max_retrieved_sources_per_task"])
+            self.assertLessEqual(len(values), live["max_retrieved_sources_per_batch"])
             for filename in values:
                 path = PurePosixPath(filename)
                 self.assertFalse(path.is_absolute())

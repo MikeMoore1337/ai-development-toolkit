@@ -592,9 +592,9 @@
   "conversational_client_registry": "compatibility/conversational_clients.json",
   "conversational_client_reviewed_on": "2026-10-21",
   "chatgpt_personal_live": {
-    "schema_version": 1,
+    "schema_version": 2,
     "min_plugin_version": "0.1.5",
-    "protocol_generation": 1,
+    "protocol_generation": 2,
     "canonical_repository": "MikeMoore1337/ai-development-toolkit",
     "tracked_branch": "main",
     "commit_resolution": "exact_sha_required",
@@ -630,7 +630,7 @@
         "extensions/seo/skills/seo-audit/references/CHECKLIST.md"
       ]
     },
-    "max_retrieved_sources_per_task": 8,
+    "max_retrieved_sources_per_batch": 8,
     "activation": "best_effort_per_task_read_only",
     "fallback": "BUNDLED_ROUTER",
     "install_upgrade_automatic": false

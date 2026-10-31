@@ -51,6 +51,8 @@ def main() -> int:
         rpc(47, 'tools/call', {'name': 'toolkit_assess_skill_coverage', 'arguments': {'query': 'qa-strategy'}}),
         rpc(48, 'tools/call', {'name': 'toolkit_assess_skill_coverage', 'arguments': {'query': 'zqxw-no-matching-skill'}}),
         rpc(49, 'tools/call', {'name': 'toolkit_discover_external_skill_candidates', 'arguments': {'query': 'qa-strategy'}}),
+        rpc(50, 'tools/call', {'name': 'toolkit_prepare_stage', 'arguments': {
+            'task': COMPOSITE, 'stage': 'Test backend API', 'requested_skills': ['qa-strategy']}}),
     ]
     for i in range(6, 46):
         queries.append(rpc(i, 'tools/call', {'name': 'toolkit_route_task',
@@ -99,6 +101,7 @@ def main() -> int:
         local_coverage = get_structured(47)
         missing_coverage = get_structured(48)
         external_without_consent = get_structured(49).get('external_discovery', {})
+        stage = get_structured(50)
         tools = get_result(2).get('tools', [])
         tools = tools if isinstance(tools, list) else []
         has_errors = any(isinstance(r, dict) and (
@@ -109,7 +112,10 @@ def main() -> int:
               and pilot.get('profile') == 'backend' and 'qa-core' in pilot.get('secondary_profiles', [])
               and composite.get('profile') == 'backend'
               and 'qa-python' in composite.get('secondary_profiles', [])
-              and len(tools) == 13 and prepared.get('primary_profile') == 'backend'
+              and len(tools) == 14 and any(t.get('name') == 'toolkit_prepare_stage' for t in tools)
+              and [s.get('name') for s in stage.get('loaded_skills', [])] == ['qa-strategy']
+              and stage.get('client_activation') == 'NOT_OBSERVED'
+              and prepared.get('primary_profile') == 'backend'
               and 'qa-python' in prepared.get('secondary_profiles', [])
               and len(prepared.get('loaded_skills', [])) > 0
               and local_coverage.get('coverage') == 'FOUND_LOCAL'
