@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from html import escape
 import json
 from pathlib import Path, PurePosixPath
 import re
@@ -150,6 +151,24 @@ PAGE_METRICS = """() => {
 }"""
 
 
+def comparison_html(assets: list[dict]) -> str:
+    """One read-only local gallery for side-by-side human visual comparison."""
+    panels = []
+    for item in assets:
+        label = escape(item["purpose"])
+        path = escape(item["path"], quote=True)
+        panels.append(f'<figure><img src="{path}" alt="{label}" loading="lazy"><figcaption>{label}</figcaption></figure>')
+    return ('<!doctype html><html lang="en"><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            '<title>UX/UI comparison - local evidence</title>'
+            '<style>body{margin:24px;font:16px system-ui,sans-serif;color:#212121;background:#f4f4f4}'
+            'h1{font-size:24px}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}'
+            'figure{margin:0;padding:12px;border:1px solid #bbb;background:white;border-radius:8px;min-width:0}'
+            'img{display:block;max-width:100%;height:auto;margin:auto}figcaption{margin-top:12px;font-weight:600;overflow-wrap:anywhere}'
+            '</style><h1>UX/UI browser capture comparison</h1><main>'
+            + ''.join(panels) + '</main></html>\n')
+
+
 def capture(plan: dict, source_root: Path, output: Path, *, executable: str | None = None) -> dict:
     scenario, records = parse_plan(plan, source_root)
     toolkit_root = Path(__file__).resolve().parents[1]
@@ -208,7 +227,10 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                 browser_version = browser.version
             finally:
                 browser.close()
-        has_defect = any((x["layout"]["horizontal_overflow_px"] > 1
+        wire_digests = [x["sha256"] for x in diagnostics
+                        if x["purpose"].startswith("wireframe:")]
+        distinct_wires = len(wire_digests) == len(set(wire_digests))
+        has_defect = (not distinct_wires) or any((x["layout"]["horizontal_overflow_px"] > 1
                           or x["page_errors"] > 0 or x["blocked_requests"] > 0
                           or x["layout"]["body_text_characters"] == 0)
                          for x in diagnostics)
@@ -217,9 +239,11 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
             "renderer": "PLAYWRIGHT_CHROMIUM", "browser_version": browser_version,
             "gate": "NEEDS_LAYOUT_REVIEW" if has_defect else "AWAITING_HUMAN_VISUAL_REVIEW",
             "visual_assets": artifacts, "diagnostics": diagnostics,
+            "distinct_sketch_files": distinct_wires,
             "visual_quality": "NOT_VERIFIED", "owner_approval": "NOT_REQUESTED",
             "limitations": "Local browser captures and DOM heuristics only; no aesthetic, WCAG, interaction or owner certification."
         }
+        (stage / "comparison.html").write_text(comparison_html(artifacts), encoding="utf-8")
         (stage / "capture_report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         if output.exists():
             raise CaptureError("Output directory appeared during capture; refusing overwrite")
