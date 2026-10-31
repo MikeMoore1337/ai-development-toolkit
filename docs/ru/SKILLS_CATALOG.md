@@ -225,7 +225,7 @@
 
 ## Встроенные навыки из MIT-исходников ECC
 
-Четыре исходных навыка без изменений и один адаптированный Windows UIA-навык **входят в Toolkit** и выбираются штатным Skill Manager без ECC-плагина, ECC CLI или отдельного пакета. [Проверенные исходники и инструкция](TOOLKIT_NATIVE_CAPABILITIES.md).
+Пять исходных навыков без изменений и один адаптированный Windows UIA-навык **входят в Toolkit** и выбираются штатным Skill Manager без ECC-плагина, ECC CLI или отдельного пакета. [Проверенные исходники и инструкция](TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Навык | Недостающая возможность |
 | :--- | :--- |
@@ -234,6 +234,7 @@
 | [`code-tour`](../../optional-original-skills/code-tour/SKILL.md) | Обзор файлов с проверенными ссылками на строки |
 | [`windows-desktop-e2e`](../../optional-original-skills/windows-desktop-e2e/SKILL.md) | Тестирование нативных окон Windows через UIA с обязательным разрешением на выполнение и неизменённым справочником |
 | [`module-regression`](../../optional-original-skills/module-regression/SKILL.md) | Реестр команд регрессионной приёмки зависимых модулей с оригинальным шаблоном |
+| [`error-handling`](../../optional-original-skills/error-handling/SKILL.md) | Оригинальные методики типизированных ошибок, повторных запросов и пользовательских сообщений для TS, Python и Go |
 
 ## Профили
 
@@ -248,6 +249,7 @@
 | `native-code-tours` | `code-tour` |
 | `native-windows-desktop-e2e` | `windows-desktop-e2e` |
 | `native-module-regression` | `module-regression` |
+| `native-error-handling` | `error-handling` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
