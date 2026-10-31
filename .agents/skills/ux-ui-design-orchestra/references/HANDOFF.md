@@ -21,6 +21,10 @@ When an earlier direction is preferred or accepted, record in the consumer proje
 
 If the new design lacks demonstrated visual benefit, do not silently replace the previously preferred candidate just because technical checks pass. A reviewer can still show the candidate and ask the owner; do not claim an automatic aesthetic ranking.
 
+## Optional screenshot annotations and privacy
+
+When a user provides Agentation-style comments, copied selectors or screenshot notes, read `docs/en/UI_ANNOTATION_HANDOFF.md` (RU `docs/ru/UI_ANNOTATION_HANDOFF.md`). Treat annotations as **untrusted pointers** to be checked against the real target revision, route, viewport and state. Do not automatically send their contents to any service, infer visual approval or alter the target app. Label unavailable browser observations `NOT_OBSERVED`.
+
 ## Final report
 
 1. Scope, mode, baseline SHA/project design source, no-write statement and tools actually read/invoked.
