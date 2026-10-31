@@ -152,6 +152,14 @@ class BrowserCaptureTests(unittest.TestCase):
         self.assertTrue(visual.request_allowed((self.source / "a.html").as_uri(), self.source, set()))
         self.assertFalse(visual.request_allowed((self.root / "secret.txt").as_uri(), self.source, set()))
 
+    def test_canonical_root_alias_walk_terminates(self):
+        # A path that resolves inside source_root but has a different lexical
+        # ancestor chain previously caused an infinite walk on Windows.
+        (self.source / "nested").mkdir()
+        alias = self.source / "nested" / ".." / "a.html"
+        self.assertTrue(visual._in_root(alias, self.source))
+        self.assertFalse(visual._in_root(self.root / "outside.html", self.source))
+
     def test_rejects_symlink_sources(self):
         target = self.source / "linked.html"
         try:
