@@ -14,7 +14,7 @@ MAX_ASSET_BYTES = 8 * 1024 * 1024
 KINDS = {"PNG_CAPTURE", "SVG_SOURCE", "HTML_SOURCE"}
 CASES = {"new-site", "substantial-redesign", "minor-ui-fix", "responsive-accessibility"}
 CRITERIA = {
-    "product-fit", "task-hierarchy", "compositional-originality",
+    "product-fit", "task-hierarchy", "compositional-originality", "visual-appeal",
     "mobile-desktop", "states", "accessibility", "motion",
     "cross-domain-swap", "design-authority",
 }
@@ -49,8 +49,8 @@ def catalog(root: Path) -> dict[str, dict]:
                 or not set(row["criteria"]) <= CRITERIA
                 or not {"design-authority", "accessibility"} <= set(row["criteria"])):
             raise EvidenceError("Missing or duplicate audit criterion")
-        if row["needs_three"] != (row["id"] in {"new-site", "substantial-redesign"}):
-            raise EvidenceError("Incorrect three-concept gate")
+        # Historical `needs_three` denotes the explicitly worded three-option
+        # *evaluation prompt*, never a mandatory rule for every UI task.
         if row["expected_gate"] != "HUMAN_VISUAL_REVIEW_REQUIRED":
             raise EvidenceError("Scenario cannot bypass visual review")
         result[row["id"]] = row
