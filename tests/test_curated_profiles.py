@@ -73,9 +73,15 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(51, len(MANIFEST["profiles"]))
+        self.assertEqual(61, len(MANIFEST["profiles"]))
         self.assertEqual({"native-contract-first", "native-api-connectors", "native-code-tours",
-                          "native-windows-desktop-e2e", "native-module-regression", "native-error-handling"},
+                          "native-windows-desktop-e2e", "native-module-regression", "native-error-handling",
+                          "native-mcp-dependency-review",
+                          "native-agent-introspection-debugging", "native-content-hash-cache-pattern",
+                          "native-loop-design-check", "native-make-interfaces-feel-better",
+                          "native-article-writing", "native-click-path-audit",
+                          "native-brand-voice", "native-content-engine",
+                          "native-editorial-suite"},
                          {x for x in MANIFEST["profiles"] if x.startswith("native-")})
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))
@@ -204,7 +210,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertGreater(result["sources_scanned"], 0)
         self.assertGreater(result["directive_lines_examined"], 0)
         self.assertLessEqual(result["sources_scanned"], 500)
-        self.assertLessEqual(result["directive_lines_examined"], 1500)
+        self.assertLessEqual(result["directive_lines_examined"], 2200)
         self.assertEqual("NOT_VERIFIED", result["semantic_equivalence"])
         self.assertEqual("NOT_MEASURED", result["model_tokens_saved"])
         self.assertEqual("NOT_TESTED", result["runtime_effect"])

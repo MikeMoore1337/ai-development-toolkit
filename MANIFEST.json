@@ -21,9 +21,9 @@
     "researcher",
     "reviewer"
   ],
-  "original_skills_bundled_as_opt_in": 6,
+  "original_skills_bundled_as_opt_in": 15,
   "original_skills_in_inventory": 52,
-  "original_skills_not_bundled": "Five pinned, exact original ECC v2.2.3 source skills are bundled for selective installation through Toolkit's own Skill Manager/installer with no ECC runtime dependency; the original MIT notice is retained under third_party/ecc-v2.2.3/LICENSE. Ponytail v5.3.2 remains reference-only under third_party/ponytail-v5.3.2. Other external originals remain excluded.",
+  "original_skills_not_bundled": "Fourteen pinned, unchanged original ECC MIT SKILL.md files and one compact Windows UIA adaptation with unchanged full original reference ship as opt-in standalone Toolkit skills. One original brand-voice reference schema is bundled unchanged. All include MIT notices and use existing Skill Manager without ECC runtime. Other external originals remain excluded.",
   "automatic_external_binary_installation": false,
   "license_note": "Owner reports ID1337 permits distribution of the exact currently bundled Make Feature 0.3.0, QA adaptation and branding sources, SHA256-pinned in provenance. This is not independent rightsholder, employer-IP or creator verification. Existing third-party or work-derived licenses are not inferred.",
   "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
@@ -356,6 +356,37 @@
     ],
     "native-error-handling": [
       "error-handling"
+    ],
+    "native-mcp-dependency-review": [
+      "mcp-dependency-review"
+    ],
+    "native-agent-introspection-debugging": [
+      "agent-introspection-debugging"
+    ],
+    "native-content-hash-cache-pattern": [
+      "content-hash-cache-pattern"
+    ],
+    "native-loop-design-check": [
+      "loop-design-check"
+    ],
+    "native-make-interfaces-feel-better": [
+      "make-interfaces-feel-better"
+    ],
+    "native-article-writing": [
+      "article-writing"
+    ],
+    "native-click-path-audit": [
+      "click-path-audit"
+    ],
+    "native-brand-voice": [
+      "brand-voice"
+    ],
+    "native-content-engine": [
+      "content-engine"
+    ],
+    "native-editorial-suite": [
+      "brand-voice",
+      "content-engine"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -392,7 +423,16 @@
         "code-tour",
         "windows-desktop-e2e",
         "module-regression",
-        "error-handling"
+        "error-handling",
+        "mcp-dependency-review",
+        "agent-introspection-debugging",
+        "content-hash-cache-pattern",
+        "loop-design-check",
+        "make-interfaces-feel-better",
+        "article-writing",
+        "click-path-audit",
+        "brand-voice",
+        "content-engine"
       ],
       "license": "MIT (unmodified source from affaan-m/ECC, pinned v2.2.3; see third_party/ecc-v2.2.3/LICENSE)",
       "auto_install": false,

@@ -225,7 +225,7 @@
 
 ## Встроенные навыки из MIT-исходников ECC
 
-Пять исходных навыков без изменений и один адаптированный Windows UIA-навык **входят в Toolkit** и выбираются штатным Skill Manager без ECC-плагина, ECC CLI или отдельного пакета. [Проверенные исходники и инструкция](TOOLKIT_NATIVE_CAPABILITIES.md).
+Четырнадцать исходных навыков без изменений и один адаптированный Windows UIA-навык **входят в Toolkit** и выбираются штатным Skill Manager без ECC-плагина, ECC CLI или отдельного пакета. [Проверенные исходники и инструкция](TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Навык | Недостающая возможность |
 | :--- | :--- |
@@ -235,6 +235,15 @@
 | [`windows-desktop-e2e`](../../optional-original-skills/windows-desktop-e2e/SKILL.md) | Тестирование нативных окон Windows через UIA с обязательным разрешением на выполнение и неизменённым справочником |
 | [`module-regression`](../../optional-original-skills/module-regression/SKILL.md) | Реестр команд регрессионной приёмки зависимых модулей с оригинальным шаблоном |
 | [`error-handling`](../../optional-original-skills/error-handling/SKILL.md) | Оригинальные методики типизированных ошибок, повторных запросов и пользовательских сообщений для TS, Python и Go |
+| [`mcp-dependency-review`](../../optional-original-skills/mcp-dependency-review/SKILL.md) | Анализ изменяемых версий npm/Python/Docker в конфигурациях MCP без запуска серверов |
+| [`agent-introspection-debugging`](../../optional-original-skills/agent-introspection-debugging/SKILL.md) | Необязательный оригинальный навык: agent-introspection-debugging |
+| [`content-hash-cache-pattern`](../../optional-original-skills/content-hash-cache-pattern/SKILL.md) | Необязательный оригинальный навык: content-hash-cache-pattern |
+| [`loop-design-check`](../../optional-original-skills/loop-design-check/SKILL.md) | Необязательный оригинальный навык: loop-design-check |
+| [`make-interfaces-feel-better`](../../optional-original-skills/make-interfaces-feel-better/SKILL.md) | Необязательный оригинальный навык: make-interfaces-feel-better |
+| [`article-writing`](../../optional-original-skills/article-writing/SKILL.md) | Необязательный оригинальный навык: article-writing |
+| [`click-path-audit`](../../optional-original-skills/click-path-audit/SKILL.md) | Необязательный оригинальный навык: click-path-audit |
+| [`brand-voice`](../../optional-original-skills/brand-voice/SKILL.md) | Профиль авторского стиля по подтверждённым материалам, исходная схема сохранена |
+| [`content-engine`](../../optional-original-skills/content-engine/SKILL.md) | Переработка исходных материалов в форматы для разных площадок без публикации |
 
 ## Профили
 
@@ -250,6 +259,16 @@
 | `native-windows-desktop-e2e` | `windows-desktop-e2e` |
 | `native-module-regression` | `module-regression` |
 | `native-error-handling` | `error-handling` |
+| `native-mcp-dependency-review` | `mcp-dependency-review` |
+| `native-agent-introspection-debugging` | `agent-introspection-debugging` |
+| `native-content-hash-cache-pattern` | `content-hash-cache-pattern` |
+| `native-loop-design-check` | `loop-design-check` |
+| `native-make-interfaces-feel-better` | `make-interfaces-feel-better` |
+| `native-article-writing` | `article-writing` |
+| `native-click-path-audit` | `click-path-audit` |
+| `native-brand-voice` | `brand-voice` |
+| `native-content-engine` | `content-engine` |
+| `native-editorial-suite` | `brand-voice`, `content-engine` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |

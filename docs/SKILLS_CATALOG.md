@@ -225,7 +225,7 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 ## Native source ports shipped with Toolkit
 
-Five byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
+Fourteen byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Skill | Distinct additional capability |
 | :--- | :--- |
@@ -235,6 +235,15 @@ Five byte-exact original MIT skills and one compact Windows UIA adaptation are *
 | [`windows-desktop-e2e`](../optional-original-skills/windows-desktop-e2e/SKILL.md) | Native Windows UIA test design, with an unchanged full licensed reference and explicit execution approval |
 | [`module-regression`](../optional-original-skills/module-regression/SKILL.md) | Downstream module acceptance ledger with original source/template and exit-code evidence |
 | [`error-handling`](../optional-original-skills/error-handling/SKILL.md) | Original typed errors, retries, error boundaries and user-facing feedback across TS, Python and Go |
+| [`mcp-dependency-review`](../optional-original-skills/mcp-dependency-review/SKILL.md) | Static review of mutable npm/Python/Docker MCP selectors, without executing servers |
+| [`agent-introspection-debugging`](../optional-original-skills/agent-introspection-debugging/SKILL.md) | Four-stage diagnosis of agent tool failures without hidden runtime |
+| [`content-hash-cache-pattern`](../optional-original-skills/content-hash-cache-pattern/SKILL.md) | SHA-256 content-based cache with safe invalidation guidelines |
+| [`loop-design-check`](../optional-original-skills/loop-design-check/SKILL.md) | Check machine-decidable goals, damping and runaway feedback loops |
+| [`make-interfaces-feel-better`](../optional-original-skills/make-interfaces-feel-better/SKILL.md) | Opt-in UI finish checklist; does not control UX/UI Orchestra |
+| [`article-writing`](../optional-original-skills/article-writing/SKILL.md) | Evidence-aware editorial drafting without publishing |
+| [`click-path-audit`](../optional-original-skills/click-path-audit/SKILL.md) | Identify sequential store updates that undo UI intent |
+| [`brand-voice`](../optional-original-skills/brand-voice/SKILL.md) | Reusable original editorial voice profile with preserved schema |
+| [`content-engine`](../optional-original-skills/content-engine/SKILL.md) | Platform-specific drafts from source material; no publication |
 
 ## Profiles
 
@@ -250,6 +259,16 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `native-windows-desktop-e2e` | `windows-desktop-e2e` |
 | `native-module-regression` | `module-regression` |
 | `native-error-handling` | `error-handling` |
+| `native-mcp-dependency-review` | `mcp-dependency-review` |
+| `native-agent-introspection-debugging` | `agent-introspection-debugging` |
+| `native-content-hash-cache-pattern` | `content-hash-cache-pattern` |
+| `native-loop-design-check` | `loop-design-check` |
+| `native-make-interfaces-feel-better` | `make-interfaces-feel-better` |
+| `native-article-writing` | `article-writing` |
+| `native-click-path-audit` | `click-path-audit` |
+| `native-brand-voice` | `brand-voice` |
+| `native-content-engine` | `content-engine` |
+| `native-editorial-suite` | `brand-voice`, `content-engine` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |

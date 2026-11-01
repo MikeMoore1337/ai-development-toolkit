@@ -187,6 +187,90 @@ h.receipt.writeReceipt(receipt, receiptPath);
             with self.assertRaisesRegex(module.EvalInputError, "Node.js required"):
                 module.evaluate(self.data, self.root, verify_native_receipts=True)
 
+    def _three_trial_fixture(self):
+        """Synthetic: same pooled 6/9 acceptance but different repeatability."""
+        baseline = {"a": (True, True, True), "b": (True, True, True),
+                    "c": (False, False, False)}
+        candidate = {name: (True, True, False) for name in baseline}
+        data = {"schema_version": 1, "dataset": "offline-synthetic-only",
+                "model": "no-model", "repository_sha": "test-revision", "runs": []}
+        for task in baseline:
+            for trial in (1, 2, 3):
+                for variant, outcomes in (("baseline", baseline), ("candidate", candidate)):
+                    path = f"trial-{task}-{trial}-{variant}.txt"
+                    (self.root / path).write_text("offline fixture", encoding="utf-8")
+                    data["runs"].append({
+                        "task_id": task, "trial": trial, "variant": variant,
+                        "accepted": outcomes[task][trial - 1], "regressions": 0,
+                        "unsafe_actions": 0, "tokens": None,
+                        "duration_seconds": None, "evidence": [path],
+                    })
+        return data
+
+    def test_observed_repeatability_finds_stability_loss_hidden_by_aggregate(self):
+        data = self._three_trial_fixture()
+        plain = module.evaluate(data, self.root)
+        self.assertEqual(0.6667, plain["baseline"]["acceptance_rate"])
+        self.assertEqual(plain["baseline"]["acceptance_rate"],
+                         plain["candidate"]["acceptance_rate"])
+        self.assertNotIn("observed_repeatability", plain)
+        output = module.evaluate(data, self.root, observed_repeatability=True)
+        rep = output["observed_repeatability"]
+        self.assertEqual(0.6667, rep["observed_pass_at_1"]["baseline"])
+        self.assertEqual(1.0, rep["observed_pass_at_1"]["candidate"])
+        self.assertEqual(0.6667, rep["observed_pass_at_3"]["baseline"])
+        self.assertEqual(1.0, rep["observed_pass_at_3"]["candidate"])
+        self.assertEqual(0.6667, rep["observed_pass_all_3"]["baseline"])
+        self.assertEqual(0.0, rep["observed_pass_all_3"]["candidate"])
+        self.assertEqual(-66.67, rep["observed_pass_all_3"]["delta_percentage_points"])
+        self.assertEqual("OFFLINE_RECORDED_NOT_MODEL_EFFICACY", rep["scope"])
+        self.assertEqual("exploratory", output["classification"])
+        self.assertTrue(output["independent_review_required"])
+        data["runs"].reverse()
+        self.assertEqual(rep, module.evaluate(
+            data, self.root, observed_repeatability=True)["observed_repeatability"])
+
+    def test_observed_repeatability_rejects_missing_trials_and_risky_successes(self):
+        data = self._three_trial_fixture()
+        short = [x for x in data["runs"]
+                 if not (x["task_id"] == "c" and x["trial"] == 3)]
+        rep = module.evaluate({**data, "runs": short}, self.root,
+                              observed_repeatability=True)["observed_repeatability"]
+        self.assertEqual("RECORDED_VERDICTS_ONLY", rep["observed_pass_at_1"]["status"])
+        self.assertEqual("NOT_MEASURED_INCOMPLETE_TRIALS", rep["observed_pass_at_3"]["status"])
+        self.assertIsNone(rep["observed_pass_all_3"]["candidate"])
+        self.assertEqual(2, rep["observed_pass_at_3"]["eligible_tasks"])
+        risky = next(x for x in data["runs"] if x["task_id"] == "a"
+                     and x["variant"] == "candidate" and x["trial"] == 1)
+        risky["unsafe_actions"] = 1
+        out = module.evaluate(data, self.root, observed_repeatability=True)
+        self.assertEqual(0.6667, out["observed_repeatability"]
+                         ["observed_pass_at_1"]["candidate"])
+        self.assertEqual(1, out["candidate"]["unsafe_actions"])
+        self.assertEqual(1.0, out["observed_repeatability"]
+                         ["observed_pass_at_3"]["candidate"])
+
+    def test_observed_repeatability_cli_and_fail_closed_evidence(self):
+        data = self._three_trial_fixture()
+        source = self.root / "paired.json"
+        source.write_text(json.dumps(data), encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "skill_eval.py"),
+             str(source), "--observed-repeatability"],
+            capture_output=True, text=True, encoding="utf-8", timeout=30,
+            check=False)
+        self.assertEqual(0, proc.returncode, proc.stderr)
+        self.assertEqual(0.0, json.loads(proc.stdout)["observed_repeatability"]
+                         ["observed_pass_all_3"]["candidate"])
+        # A missing first numbered trial cannot be assumed a failure or success.
+        data["runs"] = [x for x in data["runs"]
+                        if not (x["task_id"] == "c" and x["trial"] == 1)]
+        rep = module.evaluate(data, self.root, observed_repeatability=True)
+        self.assertIsNone(rep["observed_repeatability"]["observed_pass_at_1"]["baseline"])
+        data["runs"][0]["evidence"] = ["does-not-exist.txt"]
+        with self.assertRaisesRegex(module.EvalInputError, "missing"):
+            module.evaluate(data, self.root, observed_repeatability=True)
+
     def test_missing_pin_is_rejected(self):
         del self.data["repository_sha"]
         with self.assertRaisesRegex(module.EvalInputError, "repository_sha"):

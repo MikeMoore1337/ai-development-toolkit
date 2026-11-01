@@ -58,6 +58,12 @@ class CatalogueTests(unittest.TestCase):
                         "-c", "user.name=Fixture", "commit", "-qm", "synthetic"],
                        check=True, capture_output=True)
         self.rev = audit.git(self.ecc, "rev-parse", "HEAD")
+        # The synthetic manually reviewed entry is pinned like production records.
+        review_file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(review_file.read_text(encoding="utf-8"))
+        review["decisions"][0]["source_blob"] = audit.git(
+            self.ecc, "rev-parse", "HEAD:skills/unique/SKILL.md")
+        review_file.write_text(json.dumps(review), encoding="utf-8")
 
     def test_every_file_group_is_accounted_for_and_no_autoinstall(self):
         rows = audit.build(self.ecc, self.toolkit, self.rev)
@@ -73,7 +79,7 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
-    def test_six_native_source_skills_have_exact_real_manifest_analogues(self):
+    def test_fifteen_native_source_skills_have_exact_real_manifest_analogues(self):
         """A shipped skill is not a future candidate or a live-client success."""
         reviewed = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
@@ -81,7 +87,10 @@ class CatalogueTests(unittest.TestCase):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         native = manifest["extension_packs"]["native-ecc-ports"]
         expected = {"contract-first", "api-connector-builder", "code-tour",
-                    "windows-desktop-e2e", "module-regression", "error-handling"}
+                    "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review",
+                    "agent-introspection-debugging", "content-hash-cache-pattern",
+                    "loop-design-check", "make-interfaces-feel-better", "article-writing",
+                    "click-path-audit", "brand-voice", "content-engine"}
         self.assertEqual(expected, set(native["skills"]))
         self.assertFalse(native["auto_install"])
         self.assertTrue(native["standalone"])
@@ -153,7 +162,8 @@ class CatalogueTests(unittest.TestCase):
         decisions.write_text(json.dumps({"schema_version": 1, "decisions": [{
             "path": "skills/unique", "status": "ALREADY_PRESENT",
             "analogue": ".agents/skills/unique/SKILL.md",
-            "reason": "Synthetic original source already merged into Toolkit"
+            "reason": "Synthetic original source already merged into Toolkit",
+            "source_blob": audit.git(self.ecc, "rev-parse", "HEAD:skills/unique/SKILL.md"),
         }]}), encoding="utf-8")
         rows = audit.build(self.ecc, self.toolkit, self.rev)
         self.assertTrue(any(row["status"] == "ALREADY_PRESENT" for row in rows))
@@ -185,11 +195,250 @@ class CatalogueTests(unittest.TestCase):
         shipped = set(manifest["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({path.split("/")[-1] for path in expected}.isdisjoint(shipped))
 
+
+    def test_nine_additional_pinned_source_decisions_are_nonautomatic(self):
+        """Native source review is not permission to install, delegate or run tools."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        rows = {item["path"]: item for item in review["decisions"]}
+        expected = {
+            "skills/browser-qa": "ALREADY_PRESENT",
+            "skills/frontend-a11y": "ALREADY_PRESENT",
+            "skills/seo": "ALREADY_PRESENT",
+            "skills/python-testing": "HOLD_CONFLICT",
+            "skills/react-testing": "HOLD_REVIEW",
+            "skills/fastapi-patterns": "HOLD_REVIEW",
+            "skills/design-system": "HOLD_REVIEW",
+            "skills/agent-eval": "HOLD_UNSUPPORTED",
+            "skills/python-patterns": "HOLD_REVIEW",
+        }
+        original_blobs = {
+            "skills/browser-qa": "f6358d6ac8b43edb7cb894481de56c53e19b3cf2",
+            "skills/frontend-a11y": "a39419935900b1ac1003827d83c896610350b619",
+            "skills/seo": "a4032a5b5a98c4b09eabf4e4f8971ed664887496",
+            "skills/python-testing": "8e68a084ad890afb901c43741a733e6d076958b0",
+            "skills/react-testing": "babaf6ebef80f1e6ba66ef5242372dd175870a40",
+            "skills/fastapi-patterns": "b4a0a5b5873d90d05797b830ab5966e4cb53ee9d",
+            "skills/design-system": "c041ed8ab627ebad68c00d062603963fc179fae9",
+            "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
+            "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
+        }
+        self.assertEqual(85, len(rows))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
+        for source, status in expected.items():
+            with self.subTest(source=source):
+                row = rows[source]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(original_blobs[source], row["source_blob"])
+                self.assertTrue(all(c in "0123456789abcdef" for c in row["source_blob"]))
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
+        self.assertIn("no runtime", review["note"])
+
+    def test_three_p0_sources_are_pinned_and_no_auto_install(self):
+        data = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        reviewed = {row["path"]: row for row in data["decisions"]}
+        expected = {
+            "skills/mcp-dependency-review": ("ALREADY_PRESENT", "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d"),
+            "skills/click-path-audit": ("ALREADY_PRESENT", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
+            "skills/agent-architecture-audit": ("HOLD_CONFLICT", "a3c2caa67b0ca7e5323d4e853d898f599694ff10"),
+        }
+        self.assertEqual(85, len(reviewed))
+        for path, (status, blob) in expected.items():
+            with self.subTest(path=path):
+                row = reviewed[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(blob, row["source_blob"])
+                self.assertTrue((ROOT / row["analogue"]).is_file())
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        self.assertIn("mcp-dependency-review", native)
+        self.assertIn("click-path-audit", native)
+        self.assertNotIn("agent-architecture-audit", native)
+
+
+    def test_cross_stack_14_original_blobs_and_no_implicit_adoption(self):
+        """Source-backed semantics must not install or execute unapproved upstream skills."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        records = {row["path"]: row for row in review["decisions"]}
+        expected = {
+            "skills/accessibility": ("HOLD_REVIEW", "0685394eef10a1bf1e5c02f67a3a8b06ae210cc4"),
+            "skills/backend-patterns": ("ALREADY_PRESENT", "1142d0a51de34808f8493bac40b68aa745dcd80e"),
+            "skills/github-ops": ("HOLD_CONFLICT", "dbbe7b129d9d722e8f0e622c3d8f045fc97bd855"),
+            "skills/security-review": ("ALREADY_PRESENT", "3f26b0df65661425de4e5c40c295e04edcad7a83"),
+            "skills/mcp-server-patterns": ("HOLD_REVIEW", "503c31bad5ef287368e3badf23226314fad68dbe"),
+            "skills/i18n-sync": ("HOLD_REVIEW", "91e0436803310f58e6929c7a53ae85c7d4ed9802"),
+            "skills/deployment-patterns": ("ALREADY_PRESENT", "b9d279f8a99889b6f36db99b17b762374474dc99"),
+            "skills/react-performance": ("HOLD_REVIEW", "6952967cf4b894f900b5cf692e851ababaf854f5"),
+            "skills/postgres-patterns": ("HOLD_REVIEW", "12a3a4a05c2278c7fe1316d9403b5ca037dadf69"),
+            "skills/docs-governance": ("HOLD_CONFLICT", "ae00cf8b3f96dcca17f6c53176afccd669150157"),
+            "skills/cost-aware-llm-pipeline": ("HOLD_CONFLICT", "e38c15c6d355dfb97c44b9de40f7cb235bfd3f9f"),
+            "skills/skill-host-compat": ("HOLD_REVIEW", "220e8b3117056b3924ed1c9c11e28b5de09f9293"),
+            "skills/frontend-design-direction": ("HOLD_REVIEW", "6139c73ec7de85b33d62f121cb263f95dfd69f8c"),
+            "skills/conventional-commit-review": ("HOLD_REVIEW", "a53c70f6b153c6204ee31bb26b6ee0bc3efb5851"),
+        }
+        self.assertEqual(85, len(records))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        for path, (status, blob) in expected.items():
+            with self.subTest(path=path):
+                row = records[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(blob, row["source_blob"])
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                self.assertNotIn(path.rsplit("/", 1)[-1], native)
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
+
+    def test_agent_runtime_25_decisions_pin_blobs_without_auto_adoption(self):
+        """Original agent and workflow references remain explicitly selected and host-gated."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        actual = {row["path"]: row for row in review["decisions"]}
+        expected = {
+            "skills/agent-harness-construction": ("HOLD_REVIEW", "6f828f92298e9c534c9af1e7f0e9832ef7443a2d"),
+            "skills/autonomous-agent-harness": ("HOLD_CONFLICT", "2f92a5a17f2096b5752ff489600ac282110fc292"),
+            "skills/agent-self-evaluation": ("HOLD_CONFLICT", "4e241380aa8c9b26ea249d7208d78edea9e5f397"),
+            "skills/agent-runtime-gateway-smoke-test": ("HOLD_REVIEW", "d2ed4dd6e10bea3e179607f4f39b3384ebb487dc"),
+            "skills/continuous-learning-v2": ("HOLD_REVIEW", "397b3d334dd1fdf5d7648dd619b6a744cd4734a5"),
+            "skills/context-budget": ("HOLD_REVIEW", "063e29a464e1f7461517569061d14bc31596f10d"),
+            "skills/prompt-optimizer": ("ALREADY_PRESENT", "16ae27d10c3015f456d38f4344643ff56e764f70"),
+            "skills/prompt-caching-strategy": ("HOLD_REVIEW", "c6bd9f18b8da2329f69743250e4d0a258465ef4e"),
+            "skills/eval-harness": ("HOLD_REVIEW", "133193446a3116e96648081aabcf4f2ea863b0e0"),
+            "skills/regex-vs-llm-structured-text": ("HOLD_REVIEW", "18d84e4a5265fee0a4fceaf441617e9b0823f206"),
+            "skills/codehealth-mcp": ("HOLD_UNSUPPORTED", "6119608dcae1fafb83663f12feb52b3a42da731a"),
+            "skills/documentation-lookup": ("HOLD_CONFLICT", "8bb9de6232d1693cd19a8e035712371e7c0e4769"),
+            "skills/canary-watch": ("HOLD_REVIEW", "8397ab540ccf7516fa7194622ea2909a1f98b8af"),
+            "skills/git-workflow": ("HOLD_CONFLICT", "81a858d3a79344a6879fa60322b5a36cdf758206"),
+            "skills/gateguard": ("HOLD_CONFLICT", "208174601bc8387f8efa55e8a8e4945526f7960b"),
+            "skills/config-gc": ("HOLD_REVIEW", "0583e2c8555e476d1d8d4484a35980dacf256cd6"),
+            "skills/workspace-surface-audit": ("HOLD_REVIEW", "6e7e75376c8fd520240425ee5b6bea967da19277"),
+            "skills/rules-distill": ("HOLD_CONFLICT", "9f76d3fe0c36af92c15607a006ba9b99d18559ef"),
+            "skills/project-flow-ops": ("HOLD_CONFLICT", "6ab2e62d15f882208e7e43c7ec4866f53273f62f"),
+            "skills/token-budget-advisor": ("HOLD_CONFLICT", "49987758c37150718bca091e29ecfca6dfc6627d"),
+            "skills/skill-comply": ("HOLD_UNSUPPORTED", "303863e302fe9ff340197fc7442a86bacbb7f425"),
+            "skills/skill-scout": ("HOLD_REVIEW", "8a55c548ccd47e4f5adf738cf5becf0b8b9ad9e7"),
+            "skills/skill-stocktake": ("HOLD_REVIEW", "aa4d16bfd22c297a538cc696ecc4e3e2ee3342d8"),
+            "skills/deep-research": ("HOLD_UNSUPPORTED", "75371ee0ec6e627b1246154f28587da19c81581f"),
+            "skills/benchmark": ("ALREADY_PRESENT", "3020088b5932d0db9275e19c7c0047c92abf84d3"),
+        }
+        self.assertEqual(85, len(actual))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        for path, (status, original_blob) in expected.items():
+            with self.subTest(path=path):
+                row = actual[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(original_blob, row["source_blob"])
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                self.assertNotIn(path.rsplit("/", 1)[-1], native)
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
+
+    def test_source_wide_relevance_is_only_provisional(self):
+        rows = audit.build(self.ecc, self.toolkit, self.rev)
+        report = audit.relevance_report(rows, self.ecc, self.toolkit)
+        self.assertEqual(6, report["total"])
+        self.assertEqual(1, report["manually_decided"])
+        self.assertEqual(5, report["pending_semantic_review"])
+        self.assertFalse(report["autoinstall"])
+        self.assertFalse(report["external_runtime_executed"])
+        self.assertTrue(all(x["live_client"] == "NOT_VERIFIED" for x in report["entries"]))
+        self.assertEqual(6, len({x["upstream_path"] for x in report["entries"]}))
+        unknown = next(x for x in report["entries"] if x["upstream_path"] == "agents/one.md")
+        self.assertEqual("NOT_APPROVED", unknown["adoption"])
+        self.assertEqual("HOST_PRECEDENCE_REVIEW", unknown["source_screen"]
+                         ) if unknown["domains"] else self.assertEqual(
+                             "SPECIALIZED_OR_HOST_BOUND", unknown["source_screen"])
+
+    def test_relevance_screen_flags_commands_but_never_runs_them(self):
+        row = dict(upstream_path="skills/react-testing", primary_file="skills/react-testing/SKILL.md",
+                   name="react-testing", description="React component tests and QA",
+                   trigger="Use when writing tests", kind="skill",
+                   sha256_component="a" * 64, upstream_revision="b" * 40,
+                   toolkit_analogue="NOT_VERIFIED", status="HOLD_REVIEW")
+        source = "# React Testing\n## Examples\nDo not run 'npx tool'.\nNever publish without consent.\n"
+        result = audit.classify_relevance(row, source, set())
+        self.assertEqual("CANDIDATE_FOR_DEEP_REVIEW", result["source_screen"])
+        self.assertIn("testing", result["domains"])
+        self.assertIn("development", result["domains"])
+        self.assertEqual("NOT_APPROVED", result["adoption"])
+        self.assertIn("CHECK_EXTERNAL_RUNTIME_AND_COST", result["source_signals"])
+        self.assertIn("CHECK_SIDE_EFFECTS_AND_PERMISSIONS", result["source_signals"])
+        with self.assertRaisesRegex(ValueError, "missing original"):
+            audit.classify_relevance(row, "", set())
+
+    def test_two_editorial_sources_are_pinned_and_not_autopublished(self):
+        reviewed = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(encoding="utf-8"))
+        by_path = {row["path"]: row for row in reviewed["decisions"]}
+        for name, blob in {
+            "brand-voice": "a70421076f3aba4f2d1a0886888b839095b50380",
+            "content-engine": "28ddd4e1676f4ea67d34a9d244a94164e088b80e",
+        }.items():
+            row = by_path["skills/" + name]
+            self.assertEqual("ALREADY_PRESENT", row["status"])
+            self.assertEqual(blob, row["source_blob"])
+            self.assertTrue((ROOT / row["analogue"]).is_file())
+            self.assertTrue(row["test_case"] and row["reason"])
+            self.assertIn("NOT_VERIFIED", row["test_case"])
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(["brand-voice", "content-engine"],
+                         manifest["profiles"]["native-editorial-suite"])
+        self.assertFalse(manifest["extension_packs"]["native-ecc-ports"]["auto_install"])
+
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
         result = audit.frontmatter(frontmatter)
         self.assertEqual("Cross module dependency audit with schema compatibility.",
                          result["description"])
+
+    def test_all_manual_source_decisions_have_pinned_git_blobs(self):
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        self.assertEqual(85, len(review["decisions"]))
+        self.assertTrue(all(
+            isinstance(row.get("source_blob"), str)
+            and len(row["source_blob"]) == 40
+            and all(char in "0123456789abcdef" for char in row["source_blob"])
+            for row in review["decisions"]
+        ))
+
+    def test_source_blob_must_be_present_and_well_formed(self):
+        file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(file.read_text(encoding="utf-8"))
+        for invalid in (None, "", "z" * 40, "0" * 39):
+            with self.subTest(invalid=invalid):
+                row = dict(review["decisions"][0])
+                if invalid is None:
+                    row.pop("source_blob", None)
+                else:
+                    row["source_blob"] = invalid
+                file.write_text(json.dumps({"schema_version": 1, "decisions": [row]}),
+                                encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "source blob missing or invalid"):
+                    audit.build(self.ecc, self.toolkit, self.rev)
+
+    def test_mismatched_git_blob_fails_closed(self):
+        file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(file.read_text(encoding="utf-8"))
+        review["decisions"][0]["source_blob"] = "0" * 40
+        file.write_text(json.dumps(review), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "source blob differs from pinned Git tree"):
+            audit.build(self.ecc, self.toolkit, self.rev)
+
+    def test_dirty_checkout_with_pinned_head_fails_closed(self):
+        path = self.ecc / "skills" / "unique" / "SKILL.md"
+        path.write_text(path.read_text(encoding="utf-8") + "\nInjected local edit\n",
+                        encoding="utf-8")
+        self.assertEqual(self.rev, audit.git(self.ecc, "rev-parse", "HEAD"))
+        with self.assertRaisesRegex(ValueError, "working tree differs from pinned HEAD"):
+            audit.build(self.ecc, self.toolkit, self.rev)
 
     def test_wrong_source_pin_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "differs"):
@@ -208,7 +457,8 @@ class CatalogueTests(unittest.TestCase):
         file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
         file.write_text(json.dumps({"schema_version": 1, "decisions": [{
             "path": "skills/overlap", "status": "ALREADY_PRESENT", "reason": "fake",
-            "analogue": ".agents/skills/overlap/SKILL.md"
+            "analogue": ".agents/skills/overlap/SKILL.md",
+            "source_blob": audit.git(self.ecc, "rev-parse", "HEAD:skills/overlap/SKILL.md"),
         }]}), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "lacks real Toolkit evidence"):
             audit.build(self.ecc, self.toolkit, self.rev)

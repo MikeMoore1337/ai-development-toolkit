@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Six original ECC-derived opt-in capabilities are now built into Toolkit via PR #448/#453/#490/#497; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution. Three P0 pinned sources were semantically compared: native opt-in mcp-dependency-review adds static selector guidance, click-path-audit remains HOLD_REVIEW, agent-architecture-audit HOLD_CONFLICT. No executable scanner or model/client effectiveness evidence is implied. Six additional exact-original MIT skills are now source-bundled as optional native profiles in the 2026-11-01 selection batch. No original tool is silently injected into UX/UI Orchestra; no live browser, model, agent or release efficacy is claimed. Manual source-based decisions cover 44 of 601 components; the rest are source-triage only. Two more standalone original MIT editorial skills were selectively bundled from pinned sources: brand-voice (including exact source schema) and content-engine. Optional native-editorial-suite deliberately selects both; no social accounts, user data, publishers, models or paid APIs are invoked by installation. Other unreviewed components remain NOT_APPROVED. Editorial-batch checkpoint was 46/601; a subsequent 14-source cross-stack review brings the maintained count to 60/601, with 541 still pending in-depth semantic review. No new runtime, client activation, model usage, paid API, automatic install or rights attestation. Source-level follow-up on pinned ECC 2.2.3 reviewed 25 more agent/runtime, research, QA, workflow and context candidates. Maintained decisions now 85/601; 516 still require substantive review. Two reuse native workflows, 8 conflict, 3 need unsupported external runtimes, 12 remain on HOLD_REVIEW. No skill installation or client/provider efficacy is claimed. Practical source comparison of four HOLD_REVIEW candidates found one deterministic native scorer reporting gap; empirical first-three trial metrics now opt-in. No additional original skill is approved; agent action-space, context window and prompt caching efficacy require real authorized observations. A focused agent-harness source comparison found that pre-call permission/oracle checks already exist; an optional post-call observation envelope now has offline positive/negative checks. No original tool behavior, global controller, client runtime or rights claim is affected.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -8,7 +8,8 @@
       "analogue": "optional-original-skills/windows-desktop-e2e/SKILL.md",
       "reason": "Delivered as Toolkit-native opt-in skill in PR #453 (main SHA 32c3ebddf0c632b67f359d5fe96b9eee79075907): compact entry + byte-exact licensed ECC v2.2.3 original reference, standalone Skill Manager installation, strict owner permissions. Source CI and installation PASS, real interactive Windows GUI/Codex Desktop activation still NOT_VERIFIED (#450).",
       "benefit": "Native Windows pywinauto/UIA E2E method is present without ECC runtime; remains opt-in with real app E2E pending.",
-      "test_case": "Verify pinned original reference Git blob, MIT notice and selective native Toolkit managed installation; check permission gates and true Windows interactive UIA separately under #450."
+      "test_case": "Verify pinned original reference Git blob, MIT notice and selective native Toolkit managed installation; check permission gates and true Windows interactive UIA separately under #450.",
+      "source_blob": "f965b043cee51ed1c464088c08b91cf05710d65f"
     },
     {
       "path": "skills/change-impact",
@@ -16,7 +17,8 @@
       "analogue": "extensions/qa/skills/change-impact-analysis/SKILL.md",
       "reason": "Compared pinned ECC source with Toolkit change-impact-analysis, qa_change_impact.py and code-review: direct/downstream consumers, API/data/schema, tests, documentation, release and unknown call graph were already covered. Toolkit feature-delivery now explicitly reconciles pre-change scope against actual diff and records MATCHED/CHANGED/NOT_VERIFIED, avoiding a duplicate controller. Path-heuristic analysis is never claimed as full dependency graph.",
       "benefit": "Existing feature-delivery controller gains the high-risk before/after diff-alignment step while the license-constrained QA impact skill stays byte-unchanged; a separate ECC skill would duplicate core behavior.",
-      "test_case": "Synthetic cross-module API+schema migration: inventory callers/contracts/rollout before implementation, compare actual diff after, flag uncovered consumer and unexecuted rollback NOT_VERIFIED. Verify no forced report folder, host command or secondary controller."
+      "test_case": "Synthetic cross-module API+schema migration: inventory callers/contracts/rollout before implementation, compare actual diff after, flag uncovered consumer and unexecuted rollback NOT_VERIFIED. Verify no forced report folder, host command or secondary controller.",
+      "source_blob": "b220205a5cb783df3acd5bddba46624ada473637"
     },
     {
       "path": "skills/continuous-learning",
@@ -24,7 +26,8 @@
       "analogue": "NOT_VERIFIED",
       "reason": "Original skill explicitly marked DEPRECATED v1 and introduces Claude Stop-hook behavior. Do not install. Separate #436 must review v2 opt-in.",
       "benefit": "None for new installations; superseded upstream.",
-      "test_case": "Ensure v1 is not included in approved adoption list."
+      "test_case": "Ensure v1 is not included in approved adoption list.",
+      "source_blob": "9fe24a46efac8b17d3577f3684f8779e4bb5ed53"
     },
     {
       "path": "skills/tdd-workflow",
@@ -32,7 +35,8 @@
       "analogue": ".agents/skills/feature-delivery/SKILL.md",
       "reason": "Original ECC TDD workflow adds a useful explicit RED/GREEN evidence cycle but mandates universal 80% coverage, all test layers, automatic staged Git checkpoints and upstream package manager detection; those are not justified across all Toolkit user projects. The existing feature-delivery controller now supports optional test-first RED/GREEN/refactor with real evidence and risk-based coverage, preserving project/owner policies, without copying a 21-KB second controller.",
       "benefit": "Opt-in TDD test-first evidence within Toolkit's canonical feature delivery, without automatic CLI/commits or arbitrary global coverage threshold.",
-      "test_case": "Synthetic authorized bug fix: before-code test fails on intended behavior, same test passes after minimal change; missing runner and malformed plan produce NOT_VERIFIED, not fabricated RED/GREEN; no automatic git commit, 80% mandate or remote package-manager installer."
+      "test_case": "Synthetic authorized bug fix: before-code test fails on intended behavior, same test passes after minimal change; missing runner and malformed plan produce NOT_VERIFIED, not fabricated RED/GREEN; no automatic git commit, 80% mandate or remote package-manager installer.",
+      "source_blob": "ad6517386574e623d954c5e9fec74a3f0e36803a"
     },
     {
       "path": "skills/api-design",
@@ -40,7 +44,8 @@
       "analogue": "extensions/backend/skills/api-design/SKILL.md",
       "reason": "Both source skills directly prescribe endpoint design, request/response/error semantics, pagination, versioning and compatibility. Toolkit includes consumer-version and rollout constraints in its existing canonical skill. No extra copy justified.",
       "benefit": "No incremental core workflow; retain Toolkit api-design.",
-      "test_case": "Compare API-version/error/pagination examples in both original skill sources; existing canonical Skill Manager handles the work."
+      "test_case": "Compare API-version/error/pagination examples in both original skill sources; existing canonical Skill Manager handles the work.",
+      "source_blob": "655d730e64492b997bded91038c52f75398c5563"
     },
     {
       "path": "skills/database-migrations",
@@ -48,7 +53,8 @@
       "analogue": "extensions/backend/skills/database-migrations/SKILL.md",
       "reason": "Both sources explicitly cover expand-contract schema changes, resumable batch backfills, rollback and compatibility checks. Toolkit already requires lock budgets, restartability and recovery, so copying the ECC guidance would duplicate functionality.",
       "benefit": "No unique migration controller; retain existing Toolkit migrations gate.",
-      "test_case": "Use synthetic expand-backfill-contract scenarios including legacy readers and roll-forward recovery."
+      "test_case": "Use synthetic expand-backfill-contract scenarios including legacy readers and roll-forward recovery.",
+      "source_blob": "92d6d693066783cb00c225244a690e851fdab8c1"
     },
     {
       "path": "skills/e2e-testing",
@@ -56,7 +62,8 @@
       "analogue": "extensions/qa/skills/e2e-testing/SKILL.md",
       "reason": "Original ECC covers Playwright E2E reliability and fixtures, and Toolkit already prescribes stable selectors, E2E setup, traces/screenshots, critical user journeys and test evidence. Toolkit source is framework-agnostic, not a literal Playwright POM tutorial; specialized examples may still need separate review.",
       "benefit": "Existing Toolkit QA coverage; no wholesale skill duplication.",
-      "test_case": "Synthetic flaky web E2E with selector, permission flow and trace; original ECC example remains reference-only."
+      "test_case": "Synthetic flaky web E2E with selector, permission flow and trace; original ECC example remains reference-only.",
+      "source_blob": "f9ca797a1badc3a85352e14d31e6262dfde535bc"
     },
     {
       "path": "skills/contract-first",
@@ -64,7 +71,8 @@
       "analogue": "optional-original-skills/contract-first/SKILL.md",
       "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-contract-first. Complements existing API design and contract testing; no external ECC module/runtime.",
       "benefit": "Single authoritative consumer/provider interface agreement for cross-team and cross-service changes without a second contract controller.",
-      "test_case": "Verify exact source blob, MIT license, opt-in managed installation without AGENTS.md overwrite and contract-first routing tests. Client activation NOT_VERIFIED."
+      "test_case": "Verify exact source blob, MIT license, opt-in managed installation without AGENTS.md overwrite and contract-first routing tests. Client activation NOT_VERIFIED.",
+      "source_blob": "a828bd60db452daa6b4edaf4e6cc02d192b99071"
     },
     {
       "path": "skills/api-connector-builder",
@@ -72,7 +80,8 @@
       "analogue": "optional-original-skills/api-connector-builder/SKILL.md",
       "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-api-connectors. New repository-convention-aware provider connector instructions; no external ECC module/runtime.",
       "benefit": "Implementing and registering new API providers using the destination repository's interfaces while retaining Toolkit security and test gates.",
-      "test_case": "Verify exact source blob, MIT license, selective installation, safe no-overwrite behavior, positive/negative connector-builder routing. Actual client activation NOT_VERIFIED."
+      "test_case": "Verify exact source blob, MIT license, selective installation, safe no-overwrite behavior, positive/negative connector-builder routing. Actual client activation NOT_VERIFIED.",
+      "source_blob": "52029f27565b1743b36582de0db7648261b463a5"
     },
     {
       "path": "skills/code-tour",
@@ -80,7 +89,8 @@
       "analogue": "optional-original-skills/code-tour/SKILL.md",
       "reason": "Original pinned ECC MIT SKILL.md bundled byte-identical as Toolkit native opt-in skill in PR #448, profile native-code-tours. Adds CodeTour anchored source walk-throughs distinct from existing repository knowledge mapping.",
       "benefit": "Developer onboarding with verified file/line CodeTour anchors without importing ECC runtime.",
-      "test_case": "Verify exact source blob, MIT license, selective installation and CodeTour positive/negative lexical routing; actual rendered client tour NOT_VERIFIED."
+      "test_case": "Verify exact source blob, MIT license, selective installation and CodeTour positive/negative lexical routing; actual rendered client tour NOT_VERIFIED.",
+      "source_blob": "d66b7e008287833ac592550f9b0941feaea52443"
     },
     {
       "path": "skills/module-regression",
@@ -88,7 +98,8 @@
       "analogue": "optional-original-skills/module-regression/SKILL.md",
       "reason": "Original pinned ECC 2.2.3 MIT SKILL.md and original REGRESSION.example.md are bundled unchanged as native opt-in profile native-module-regression. Unlike existing change-impact-analysis and feature-delivery, this records executable downstream module acceptance commands and verified dependency edges. Repository commands remain untrusted and require explicit trusted host authorization. Offline installation is not actual client activation (NOT_VERIFIED).",
       "benefit": "Adds evidence-based module regression ledger with real exit codes and unknown-edge blockers, not a new agent, external runtime, or global script.",
-      "test_case": "For three linked A->B->C modules, changed A requires recorded approved commands/exits for affected consumers. Missing commands/unverified edges must block green; single-module projects must not create ledger. Test exact original blobs, license, selective installation and no clobber; host client NOT_VERIFIED."
+      "test_case": "For three linked A->B->C modules, changed A requires recorded approved commands/exits for affected consumers. Missing commands/unverified edges must block green; single-module projects must not create ledger. Test exact original blobs, license, selective installation and no clobber; host client NOT_VERIFIED.",
+      "source_blob": "d8186cbfc4c481eb884a13c14b6f2a38aace0b7a"
     },
     {
       "path": "skills/verification-loop",
@@ -96,7 +107,8 @@
       "analogue": ".agents/skills/feature-delivery/SKILL.md",
       "reason": "Pinned six-phase build, type, lint, test, security grep and diff verification already supported with stronger observed-evidence gates in Toolkit feature-delivery, qa-strategy and release-safety. Original blanket 80% coverage, simplistic grep and Claude hooks are neither safe nor universal.",
       "benefit": "Reuse risk-based quality gates without a duplicate verification controller or mandatory 80% threshold.",
-      "test_case": "Synthetic PR must check project-defined build/types/lint/security/tests/diff with real exit codes; absent runners remain NOT_VERIFIED, no unapproved auto hooks."
+      "test_case": "Synthetic PR must check project-defined build/types/lint/security/tests/diff with real exit codes; absent runners remain NOT_VERIFIED, no unapproved auto hooks.",
+      "source_blob": "35cb4b7737ed2389a808b968aa360b00807eaffe"
     },
     {
       "path": "skills/production-audit",
@@ -104,7 +116,8 @@
       "analogue": ".agents/skills/release-safety/SKILL.md",
       "reason": "Pinned source checklist for auth, data, webhooks, operations, UX and rollback is already covered by Toolkit release-safety, security-boundaries and qa-strategy. Subjective 0-100 scoring must not create a new release authority.",
       "benefit": "Retain evidence-based deploy, rollback and permission gates rather than numerical claim.",
-      "test_case": "Green CI with untested rollback/non-idempotent webhook must remain release-blocked; report exact observed evidence without invented score."
+      "test_case": "Green CI with untested rollback/non-idempotent webhook must remain release-blocked; report exact observed evidence without invented score.",
+      "source_blob": "a6d92fa5e91928f2da69c40228a684ce45e3b019"
     },
     {
       "path": "skills/repo-scan",
@@ -112,7 +125,8 @@
       "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
       "reason": "Pinned ECC skill only installs a second external GitHub scanner (haibindev/repo-scan) via shell into global Claude directories. The actual external scanner implementation, source rights and runtime remain unreviewed, so it is not a native Toolkit capability.",
       "benefit": "Potential cross-stack scanning benefit remains unverified and cannot justify auto-installing external code.",
-      "test_case": "No clone, shell installer, $HOME/.claude write, or claimed scanned data until separate external-source license/security/runtime review."
+      "test_case": "No clone, shell installer, $HOME/.claude write, or claimed scanned data until separate external-source license/security/runtime review.",
+      "source_blob": "c2f40eee7ae20da55f5b9e60b658d0574e5cf18d"
     },
     {
       "path": "agents/build-error-resolver.md",
@@ -120,7 +134,8 @@
       "analogue": ".agents/skills/feature-delivery/SKILL.md",
       "reason": "Pinned agent is tied to Claude Sonnet and proactive Bash/Write/Edit. It suggests destructive node_modules/package-lock deletion and network npm install; duplicate agent conflicts with existing feature-delivery, minimal-safe-change and failure-triage control.",
       "benefit": "Minimal type/build fixes remain within current trusted controller without dangerous cleanup defaults.",
-      "test_case": "Reproduce a TypeScript error, select bounded authorized code diff and rerun; no automatic rm -rf, lockfile deletion, npm install or paid model."
+      "test_case": "Reproduce a TypeScript error, select bounded authorized code diff and rerun; no automatic rm -rf, lockfile deletion, npm install or paid model.",
+      "source_blob": "23be5e7c9ed26dbf3751f83eb4853c7add5612a0"
     },
     {
       "path": "skills/test-collaboration",
@@ -128,7 +143,8 @@
       "analogue": "extensions/qa/skills/requirements-traceability/SKILL.md",
       "reason": "Pinned original ECC SKILL.md and TESTS.example.md were read. A repository-local TESTS.md asset/TEST-ID registry may add value, but Toolkit requirements-traceability and test-management already connect requirements, stable IDs, tests and evidence. Incremental operational value versus creating a second persistent registry is NOT_MEASURED. No native port or automatic write is approved.",
       "benefit": "Candidate unified TESTS.md index of missing test points, standard runner groups and evidence. Comparative usefulness and maintenance cost require a controlled fixture.",
-      "test_case": "Synthetic three-module repository with existing Issue/PR traceability: compare TESTS.md against Toolkit mappings for missing coverage, duplication and maintenance; no automatic file creation, client activation or command execution."
+      "test_case": "Synthetic three-module repository with existing Issue/PR traceability: compare TESTS.md against Toolkit mappings for missing coverage, duplication and maintenance; no automatic file creation, client activation or command execution.",
+      "source_blob": "f6623ee2e9c64af5eb749fa59911951ca79dc4fe"
     },
     {
       "path": "skills/architecture-decision-records",
@@ -136,7 +152,8 @@
       "analogue": ".agents/skills/architecture-decisions/SKILL.md",
       "reason": "Pinned original ECC ADR guidance includes significant choices, alternatives, consequences and numbered docs/adr templates. Toolkit architecture-decisions already compares tradeoffs, tests and risks and selectively records an ADR for enduring decisions. The numbered template is a presentation preference, not a proven missing function; do not introduce a duplicate ADR controller.",
       "benefit": "Existing architecture-decisions provides risk-aware decisions and optional ADRs without a mandatory new directory or controller.",
-      "test_case": "Significant database tradeoff can be recorded with context and consequences using existing ADR convention; trivial rename must not force an ADR."
+      "test_case": "Significant database tradeoff can be recorded with context and consequences using existing ADR convention; trivial rename must not force an ADR.",
+      "source_blob": "84f2dd608b4589f7e74e876927ddce866e12a3d1"
     },
     {
       "path": "skills/ai-regression-testing",
@@ -144,7 +161,8 @@
       "analogue": "extensions/qa/skills/test-analysis-design/SKILL.md",
       "reason": "Pinned original has concrete Next.js/Vitest sandbox-vs-production schema tests but also a Claude-only bug-check command and explicit blanket advice not to test code with no prior bug. That conflicts with Toolkit's risk-based tests for new authorization and safety-critical behavior. Existing test-analysis-design, api-testing, contract-testing and feature-delivery provide observable regression oracles. No wholesale port.",
       "benefit": "Useful cross-mode API parity examples can inform current QA methods without removing proactive new-feature tests or introducing another command controller.",
-      "test_case": "A newly created authorization endpoint with no prior defect still requires meaningful negative checks; synthetic sandbox and production responses must satisfy the same contract. No automatic Claude command."
+      "test_case": "A newly created authorization endpoint with no prior defect still requires meaningful negative checks; synthetic sandbox and production responses must satisfy the same contract. No automatic Claude command.",
+      "source_blob": "e8dac65b1792ead1289090e3db0326ec00c26fbf"
     },
     {
       "path": "skills/codebase-onboarding",
@@ -152,7 +170,8 @@
       "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
       "reason": "Pinned original repository reconnaissance overlaps Toolkit codebase-knowledge-map and code-tour, but onboarding examples propose generating or updating CLAUDE.md as a default artifact, a host-specific client-instruction write requiring separate owner approval. No silent instruction mutation or duplicate onboarding controller.",
       "benefit": "Existing read-only architecture mapping and code tours already help onboarding without changing client instruction files.",
-      "test_case": "An unfamiliar repository containing CLAUDE.md and AGENTS.md must retain both unchanged while presenting only verified stack/entrypoint evidence."
+      "test_case": "An unfamiliar repository containing CLAUDE.md and AGENTS.md must retain both unchanged while presenting only verified stack/entrypoint evidence.",
+      "source_blob": "ac70816c9edac808100df8e980dfd15ebd166cee"
     },
     {
       "path": "skills/error-handling",
@@ -160,7 +179,8 @@
       "analogue": "optional-original-skills/error-handling/SKILL.md",
       "reason": "Original pinned ECC MIT SKILL.md bundled without edits as standalone opt-in native-error-handling. Existing Toolkit api-design and reliability-testing cover error contracts/retry tests but lack a focused cross-language coding reference for typed errors, React error boundaries, Python FastAPI handlers, Go error wrapping, conditional retries and user-facing messages. No external ECC runtime, API, hooks or controller. Host/project authority and existing API conventions remain in force; real client activation NOT_VERIFIED.",
       "benefit": "Selective original coding patterns for handling errors across TypeScript, Python and Go with explicit typed error hierarchy, fail-visible errors, bounded retry and safe user messages, without new dependencies.",
-      "test_case": "Synthetic TS/Python/Go service error case: compare typed error classification, generic user-facing text, bounded retryable vs nonretryable errors. Verify exact pinned original Git blob, MIT license, existing Skill Manager preview/install/no overwrite and routing negative cases. No model/client activation claims."
+      "test_case": "Synthetic TS/Python/Go service error case: compare typed error classification, generic user-facing text, bounded retryable vs nonretryable errors. Verify exact pinned original Git blob, MIT license, existing Skill Manager preview/install/no overwrite and routing negative cases. No model/client activation claims.",
+      "source_blob": "add87f2cdb6f374781b08a0b1cf971eb9ec1915e"
     },
     {
       "path": "skills/benchmark-optimization-loop",
@@ -168,7 +188,8 @@
       "analogue": "extensions/performance/skills/performance-load-testing/SKILL.md",
       "reason": "Full pinned ECC source requires measurable baseline, same input, correctness gate, repeated candidate comparisons, budgets and rollback. Toolkit performance-load-testing already requires these gates with reproducible measurements and variance, plus feature-delivery for safe candidate promotion. Original top-level tools metadata is not standard Agent Skills frontmatter; no duplicate controller or automatic variant runs.",
       "benefit": "Existing risk- and correctness-gated performance evaluation covers the central source workflow without forcing a recursive optimizer, arbitrary speedup claim or new interpreter.",
-      "test_case": "Compare baseline vs candidate on one input/workload, repeat measurements, reject faster-but-wrong and budget violations; retain NOT_MEASURED on unavailable host. No external agent runtime."
+      "test_case": "Compare baseline vs candidate on one input/workload, repeat measurements, reject faster-but-wrong and budget violations; retain NOT_MEASURED on unavailable host. No external agent runtime.",
+      "source_blob": "f76d0d54efdd46bd817220f9ded410d7ab733e62"
     },
     {
       "path": "skills/search-first",
@@ -176,7 +197,8 @@
       "analogue": ".agents/skills/research-verification/SKILL.md",
       "reason": "Original pinned source gives useful research-before-code guidance but mandates proactive researcher-agent launch for substantial needs and suggests package/MCP installation; Toolkit research-verification, feature-delivery and external-methods-adoption already mandate primary-source comparison, reuse and permissions. Unconditional subagent/installer flow is not host-agnostic and risks a second route/controller.",
       "benefit": "Discovery-before-build already supported; independent researcher or package installation needs explicit host support and permission, not this global new workflow.",
-      "test_case": "For a small Python utility inspect repository and package metadata; absent search channel must stay NOT_VERIFIED, no automatic npm/pip/agent launch."
+      "test_case": "For a small Python utility inspect repository and package metadata; absent search channel must stay NOT_VERIFIED, no automatic npm/pip/agent launch.",
+      "source_blob": "3d2669e71ba54afba95defb05080253058190600"
     },
     {
       "path": "skills/iterative-retrieval",
@@ -184,7 +206,8 @@
       "analogue": ".agents/skills/codebase-knowledge-map/SKILL.md",
       "reason": "Original pinned workflow proposes 3-cycle multi-agent context refinement and heuristic relevance scores; Toolkit already has targeted incremental source search and bounded Project MCP stage retrieval, but actual delegated subagent context refinement and comparable quality/token outcomes have not been demonstrated. Cannot label live agent orchestration ALREADY_PRESENT without evidence.",
       "benefit": "Potential adaptive subagent-context selection beyond static targeted discovery; measured incremental value, host support and private data flow require verification.",
-      "test_case": "Given unfamiliar cross-module bug, compare exact files found and context bytes in 1-3 retrieval passes against Toolkit's current scoped search; keep scores as heuristics and report absent subagent host NOT_VERIFIED."
+      "test_case": "Given unfamiliar cross-module bug, compare exact files found and context bytes in 1-3 retrieval passes against Toolkit's current scoped search; keep scores as heuristics and report absent subagent host NOT_VERIFIED.",
+      "source_blob": "5b4fbcd58c38701a8ef6a43f80b820f792716982"
     },
     {
       "path": "skills/security-scan",
@@ -192,7 +215,8 @@
       "analogue": "extensions/security/skills/security-engineering/SKILL.md",
       "reason": "Pinned original is an AgentShield CLI installer/front-end for Claude Code configuration and includes npx/npm auto-install, --fix and a paid Anthropic Opus adversarial mode. Toolkit already has read-only security static checks and #432 native scanner work; source alone cannot provide AgentShield functionality without an external runtime or paid API. Do not install or execute.",
       "benefit": "No safe native increment from this pointer. Security configuration parity remains in #432, without assuming external AgentShield or API cost.",
-      "test_case": "On a synthetic .claude/settings.json input verify no npx/npm, no --fix, no provider keys, no external agent runtime; native Toolkit security checks can run only when authorized."
+      "test_case": "On a synthetic .claude/settings.json input verify no npx/npm, no --fix, no provider keys, no external agent runtime; native Toolkit security checks can run only when authorized.",
+      "source_blob": "9026c08e024ce2a9ffcb1db0b999b9957cee6bf0"
     },
     {
       "path": "skills/agent-security-hardening",
@@ -200,7 +224,8 @@
       "analogue": "extensions/security/skills/security-engineering/SKILL.md",
       "reason": "Pinned original contains detailed agent trust-boundary guidance for DNS rebinding, redirect credential stripping, Windows path components, bounded tool outputs and action-scoped approval. Toolkit security-engineering/security-boundaries cover core authority and test principles, while #432 owns agent scanner parity; distinctive code-level cases need independent functional comparison and client/host permission tests before a new standalone skill or native uplift. Original hardcoded agent ID 64-character limit is upstream-specific and not a universal Toolkit policy.",
       "benefit": "Potential additional concrete action-boundary regression scenarios for agent runtimes, especially URL redirects, private-network targets, and Windows path handling; benefit NOT_MEASURED.",
-      "test_case": "Isolated synthetic SSRF redirect/DNS rebinding, Unicode and Windows reserved path tests with absence-of-side-effect checks; do not generalize 64-character host-ID limit or modify #432 implementation."
+      "test_case": "Isolated synthetic SSRF redirect/DNS rebinding, Unicode and Windows reserved path tests with absence-of-side-effect checks; do not generalize 64-character host-ID limit or modify #432 implementation.",
+      "source_blob": "726cd3e2e01e7b03103c98639585868dd3afc392"
     },
     {
       "path": "skills/docker-patterns",
@@ -208,7 +233,8 @@
       "analogue": "extensions/devops/skills/devops-infrastructure/SKILL.md",
       "reason": "Pinned source includes reusable container security and Compose examples, but also ECC-specific Docker plugin setup harness, Codex authentication in containers and environment-dependent destructive build/cleanup commands. Toolkit devops-infrastructure covers Dockerfile, Compose isolation and permission-gated deploy/rollback. Do not copy ECC-specific runtime assumptions or install its plugin as Toolkit default.",
       "benefit": "Existing security and CI/container guidance is portable; upstream workflow commands and ECC-specific harness would introduce unsupported dependencies and host effects.",
-      "test_case": "Inspect Dockerfile and Compose security on synthetic owned application without executing Docker, ECC plugin setup, Codex login, docker down or production deployment."
+      "test_case": "Inspect Dockerfile and Compose security on synthetic owned application without executing Docker, ECC plugin setup, Codex login, docker down or production deployment.",
+      "source_blob": "36e792966e771f84ea0f2ebf48dc9577b05a07a9"
     },
     {
       "path": "skills/benchmark-methodology",
@@ -216,7 +242,530 @@
       "analogue": ".agents/skills/research-verification/SKILL.md",
       "reason": "Pinned original is a marketing/studio competitor-positioning benchmark with nine bespoke weighted brand dimensions and a custom client strategic-tension 2x2. It is not a general software engineering benchmark; importing as a universal developer skill would impose unrelated brand scoring. It might be useful as opt-in business research but no concrete Toolkit task, comparator baseline or routing evidence justifies a native port.",
       "benefit": "Optional evidence-anchored competitive brand positioning scorecards, but relevance and added value versus research-verification are NOT_MEASURED.",
-      "test_case": "Given a scoped agency competitor dataset with documented strategic tension, compare source-backed profile cards to existing research workflow; do not fabricate competitor score or treat performance benchmarking as marketing scoring."
+      "test_case": "Given a scoped agency competitor dataset with documented strategic tension, compare source-backed profile cards to existing research workflow; do not fabricate competitor score or treat performance benchmarking as marketing scoring.",
+      "source_blob": "18722edceb629773fb88ee6c0888dfe1a52950d5"
+    },
+    {
+      "path": "skills/browser-qa",
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/browser-workflow-evidence/SKILL.md",
+      "source_blob": "f6358d6ac8b43edb7cb894481de56c53e19b3cf2",
+      "reason": "Pinned ECC browser-qa combines console/network smoke, screenshots, accessible interaction and release verdict. Toolkit browser-workflow-evidence, extensions/qa/playwright-testing, accessibility-testing and quality gates already cover these operations with stronger observable-evidence boundaries. The original names Claude-specific browser MCP and /canary-watch, which cannot be assumed available; no second browser controller is needed.",
+      "benefit": "Reuse existing tool-dependent browser QA without imposing a second SHIP gate or claiming any live browser run.",
+      "test_case": "On an authorized staging URL, check bounded navigation, no destructive production journey, viewport and accessible interactions, real console/network evidence; missing baseline or unavailable browser must be INCONCLUSIVE/NOT_RUN, never PASS."
+    },
+    {
+      "path": "skills/frontend-a11y",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/accessibility/skills/accessibility-testing/SKILL.md",
+      "source_blob": "a39419935900b1ac1003827d83c896610350b619",
+      "reason": "Pinned ECC gives React/Next.js form labels, aria, keyboard/focus and screen reader examples. Toolkit accessibility-testing already covers applicable WCAG 2.2, keyboard and assistive technology with real observation gates; component-architecture and forms guidance cover implementation. The original custom combobox example should not be imported as a verified accessible widget without browser and AT tests.",
+      "benefit": "Keep one accessibility evidence contract and reuse source examples selectively for relevant framework rather than copy a redundant skill.",
+      "test_case": "React modal/form keyboard focus, invalid-input announcement and restoration should be tested in a real browser with AT where requested; static snippet or axe-only pass must never prove full WCAG conformance."
+    },
+    {
+      "path": "skills/seo",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/seo/skills/seo-audit/SKILL.md",
+      "source_blob": "a4032a5b5a98c4b09eabf4e4f8971ed664887496",
+      "reason": "Original ECC SEO covers robots, sitemap, canonicals, hreflang, structured data, internal linking, Core Web Vitals and keyword intent. All core surfaces are present in Toolkit seo-audit, which explicitly requires page-specific evidence and distinguishes measured site data from hypotheses.",
+      "benefit": "Avoid a duplicate SEO audit and preserve source-specific verification and no-guaranteed-rank claims.",
+      "test_case": "Known sitemap, canonical/noindex and structured-data fixtures must produce URL-specific CONFIRMED/HYPOTHESIS/NOT_VERIFIED findings, without invented traffic or rankings."
+    },
+    {
+      "path": "skills/python-testing",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/qa/skills/pytest-test-design/SKILL.md",
+      "source_blob": "8e68a084ad890afb901c43741a733e6d076958b0",
+      "reason": "Pinned ECC gives a useful broad pytest tutorial, but says always TDD, require 80%+ total and 100% critical-path coverage. As universal defaults these conflict with Toolkit opt-in test-first and risk-based per-project test strategy; existing pytest-test-design, test-analysis-design and feature-delivery already cover most mechanics. No as-is adoption or universal coverage gate.",
+      "benefit": "Consider individual pytest fixture, async and parametrization examples only where a concrete project needs them; retain project-defined coverage targets.",
+      "test_case": "Small authorized Python fix may elect RED/GREEN; absent coverage config must not auto-block at 80%, and no unrequested dependency/plugin install."
+    },
+    {
+      "path": "skills/react-testing",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/frontend/skills/component-architecture/SKILL.md",
+      "source_blob": "babaf6ebef80f1e6ba66ef5242372dd175870a40",
+      "reason": "Pinned ECC provides concrete React Testing Library, userEvent, MSW, Vitest/Jest, hook and accessibility examples. Toolkit generic component-architecture and QA can plan these tests, but a focused source-tested React/MSW fixture is required to establish incremental value, supported versions, and dependency cost before native opt-in inclusion.",
+      "benefit": "Potential framework-specific deterministic frontend test patterns beyond framework-agnostic Toolkit QA; not yet measured or approved.",
+      "test_case": "Use one existing React/Vitest/MSW project fixture to compare baseline Toolkit vs source guidance for async form/error boundary and unhandled network paths; no install without dependency and license review."
+    },
+    {
+      "path": "skills/fastapi-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/backend/skills/service-architecture/SKILL.md",
+      "source_blob": "b4a0a5b5873d90d05797b830ab5966e4cb53ee9d",
+      "reason": "Pinned ECC contains FastAPI/Pydantic v2 and async SQLAlchemy service, DI, auth and httpx testing samples. Existing service-architecture/api-design/auth skills cover cross-stack contracts but not these detailed versioned examples. Native value remains unmeasured; examples require security and dependency compatibility review (JWT/passlib, database lifecycle, session rollback) before reuse.",
+      "benefit": "Potential focused FastAPI 2026-era implementation reference, not a new backend controller or mandatory stack.",
+      "test_case": "Run tests for request/response Pydantic v2, rollback on failure, duplicate race/DB uniqueness and auth 401/403 in an isolated real FastAPI fixture; no startup schema changes or credential use on production."
+    },
+    {
+      "path": "skills/design-system",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/design-system-consistency/SKILL.md",
+      "source_blob": "c041ed8ab627ebad68c00d062603963fc179fae9",
+      "reason": "Pinned ECC offers token extraction to JSON/CSS plus DESIGN.md/HTML preview as well as subjective scoring and an AI-slop detector. Toolkit design-system-consistency already audits tokens and visual rules; automated generation and preview might add value, but requires proof on real target design and coordination with native UX/UI Orchestra, without overriding original tool behavior or owner-approved UI.",
+      "benefit": "Potential repeatable codebase-derived token export and preview, not another design director; value and visual approval remain unverified.",
+      "test_case": "On an isolated sample Tailwind/CSS project compare emitted tokens and responsive preview to existing app, ensure no unapproved UI writes; inspect conflicting variables and visual owner approval separately."
+    },
+    {
+      "path": "skills/agent-eval",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "NOT_VERIFIED",
+      "source_blob": "c082704f19ad58e8f0aa986a25f1da0b29809922",
+      "reason": "Pinned ECC delegates to an additional external agent-eval CLI and invokes coding agent runtimes (Claude Code, Aider, Codex) with potentially payable model judges. The implementation, license, sandbox/host permissions and zero-cost route of that separate program were not verified. It cannot be delivered as a standalone native Toolkit skill or run for the owner under current constraints.",
+      "benefit": "Reproducible agent comparison could be useful only after separate external-source/security review and explicit per-user runtime/cost approval.",
+      "test_case": "No external CLI, paid judge, worktree mutation or third-party agent run by default; any future approved benchmark must pin fixture, isolate worktree and record actual cost, run count and deterministic judge evidence."
+    },
+    {
+      "path": "skills/python-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/implementation/SKILL.md",
+      "source_blob": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
+      "reason": "Pinned ECC gathers Python type hints, protocols, context managers, dataclasses, iterators, async, packaging and performance examples. Toolkit implementation/error-handling covers core maintainable engineering, but these verbose language-specific examples may help beginners; practical improvement and Python-version correctness are not yet measured.",
+      "benefit": "Possible reference-only Python examples with no extra runtime, after a focused task-driven comparison avoids redundant generic instructions.",
+      "test_case": "Compare two Python 3.12 implementation/refactor fixtures under existing Toolkit vs source examples for API typing, generator memory and cleanup; measure real tests and maintenance impact, not prompt length alone."
+    },
+    {
+      "path": "skills/mcp-dependency-review",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/mcp-dependency-review/SKILL.md",
+      "source_blob": "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d",
+      "reason": "Pinned original MIT static workflow classifies mutable npm/npx/pnpm, Python/uvx/pipx and Docker selectors in MCP configs. Existing Toolkit external_skill_gate checks auto-install, credentials and trust boundaries but not this full package-selector/version-drift matrix. Original source is now a standalone opt-in Skill Manager profile, not an executable scanner, new controller or required global gate.",
+      "benefit": "Offline source-guided reproducibility review without starting MCP servers, resolving remote registries, paid APIs or external ECC runtime; SAFE is limited to exact direct selectors, not full dependency integrity.",
+      "test_case": "Authorized synthetic MCP configs with npm @latest/^, Python ==/ranges, Docker @sha256/tag and ambiguous wrappers; require REVIEW for unknown, no secret values in output, no server execution. Source/install tests added; actual AI-client classification NOT_VERIFIED."
+    },
+    {
+      "path": "skills/click-path-audit",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/click-path-audit/SKILL.md",
+      "source_blob": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed.",
+      "test_case": "Isolated Zustand-like synthetic handler where a second setter resets the first: identify the actual final state and repro; no automatic multi-agent execution."
+    },
+    {
+      "path": "skills/agent-architecture-audit",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "source_blob": "a3c2caa67b0ca7e5323d4e853d898f599694ff10",
+      "reason": "Original 12-layer diagnosis of agent wrappers, memory, tools and rendering is useful, but declares itself MANDATORY for every agent release and requests Read/Write/Edit/Bash tools. This would impose a second release controller over Toolkit's existing project/owner permission gates. Can be separately assessed with opt-in permission on a synthetic fixture, never activated globally.",
+      "benefit": "Possible layered agent incident diagnosis; value beyond existing agent-framework-fit, security-boundaries and quality gates NOT_MEASURED.",
+      "test_case": "Synthetic agent wrapper mutation, stale-memory and hidden-retry scenario; compare root-cause findings against native Toolkit without authorizing shell/write operations or release gate."
+    },
+    {
+      "path": "skills/agent-introspection-debugging",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/agent-introspection-debugging/SKILL.md",
+      "source_blob": "7f40c4579f09b15884e7e4e22635ccd41e1ba1a7",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime.",
+      "test_case": "Isolated failed tool-run trace detects repeated attempts and reports grounded recovery without executing unauthorized commands."
+    },
+    {
+      "path": "skills/content-hash-cache-pattern",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/content-hash-cache-pattern/SKILL.md",
+      "source_blob": "fe4ef6f2dd7034aa0ef6caf67600d8bef2e815c5",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance.",
+      "test_case": "Python 3.12 fixture validates same-content cache key on moved file, invalidates changed bytes and does not persist secrets."
+    },
+    {
+      "path": "skills/loop-design-check",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/loop-design-check/SKILL.md",
+      "source_blob": "c54266211898024e69b141fd1993aa9a8e678c58",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler.",
+      "test_case": "Offline loop-fixture with missing termination, verifier-gaming and non-decidable goals yields manual fix recommendations, no live agent run."
+    },
+    {
+      "path": "skills/make-interfaces-feel-better",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/make-interfaces-feel-better/SKILL.md",
+      "source_blob": "e589f3f30312ac4e522dfbdd3e592862f69fd008",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller.",
+      "test_case": "On an authorized sample UI, produce a limited issue-specific checklist without writing CSS or overriding original selected design tools."
+    },
+    {
+      "path": "skills/article-writing",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/article-writing/SKILL.md",
+      "source_blob": "9dfa979ca56940e731ebede2c46ec2dca688818e",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
+      "benefit": "Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings.",
+      "test_case": "Given a user-supplied article brief and source quotes, produce a referenced draft with no automatic publishing."
+    },
+    {
+      "path": "skills/brand-voice",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/brand-voice/SKILL.md",
+      "source_blob": "a70421076f3aba4f2d1a0886888b839095b50380",
+      "reason": "Pinned ECC original and voice-profile schema are bundled unchanged, optional only. Unlike generic research-verification, this produces a reusable, source-derived editorial voice profile from real supplied material, with explicit consent for persistent storage. Its Affaan-specific fallback applies only if that voice is explicitly requested, not to generic Toolkit projects.",
+      "benefit": "Reusable brand voice from user-authorized source examples to align long-form editorial, product launch and distribution copy without platform stereotypes or automatic publishing; actual client effectiveness NOT_MEASURED.",
+      "test_case": "Given authorized real sample texts, derive and reuse a structured VOICE PROFILE, preserve private examples in chat unless explicit persistence consent, avoid X API when not connected, verify no repo writes, and reject fabricated author examples; live client NOT_VERIFIED."
+    },
+    {
+      "path": "skills/content-engine",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/content-engine/SKILL.md",
+      "source_blob": "28ddd4e1676f4ea67d34a9d244a94164e088b80e",
+      "reason": "Pinned original content-engine is now distributed unchanged as opt-in native skill. It adds source-first repurposing into platform-specific editorial drafts beyond technical seo-audit and article-writing; when consistent voice is requested, the separate opt-in native-editorial-suite installs the original brand-voice companion explicitly. Other optional publishing tools (crosspost/x-api) are NOT bundled or authorized.",
+      "benefit": "Editorial/SEO content redistribution from one verifiable article or release note into differentiated channel drafts and a content calendar, with no external APIs or automatic publication. Incremental live client benefit NOT_MEASURED.",
+      "test_case": "Use a synthetic source article with three evidence-backed claims; draft distinct platform posts without inventing citations, creating engagement bait, sending data to social providers or publishing; compare output to baseline article-writing and validate explicit 2-skill suite selection. Real AI-client activation and comparative editorial efficacy remain NOT_VERIFIED."
+    },
+    {
+      "path": "skills/accessibility",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/accessibility/skills/accessibility-testing/SKILL.md",
+      "reason": "Cross-platform WCAG/iOS/Android patterns extend Toolkit's verified web accessibility workflow, but native AT evaluation is absent. Upstream mistakes WCAG SC 2.4.11 (Focus Not Obscured) for a focus-indicator criterion, so automatic exact-content adoption would introduce an inaccurate standard claim.",
+      "benefit": "Optional mobile accessibility reference only after correcting conformance interpretation and observing native assistive technologies.",
+      "test_case": "Compare an authorized Web/SwiftUI/Compose form under keyboard, VoiceOver and TalkBack, validating labels, focus and actual WCAG criteria; unavailable devices remain NOT_VERIFIED.",
+      "source_blob": "0685394eef10a1bf1e5c02f67a3a8b06ae210cc4"
+    },
+    {
+      "path": "skills/backend-patterns",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/backend/skills/service-architecture/SKILL.md",
+      "reason": "Original Express/Next API, service/repository, N+1, caching, background jobs, validation and auth overlap Toolkit service-architecture, api-design, data-access, authentication-authorization and background-processing. Supabase-specific examples are not an independent general backend controller.",
+      "benefit": "Reuse the existing targeted backend skills without a second global workflow or package prescriptions.",
+      "test_case": "Test a synthetic API with N+1 data access, authorization denial and async retry using native architecture, data and QA skills.",
+      "source_blob": "1142d0a51de34808f8493bac40b68aa745dcd80e"
+    },
+    {
+      "path": "skills/github-ops",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/management/skills/project-delivery-management/SKILL.md",
+      "reason": "Original requires gh CLI for operations and proposes auto-closing issues stale for 30 days plus mutations, workflow reruns and releases. Those actions require explicit owner approval and may override the issue-tracker/release rules. Toolkit management already reads Issues/PRs as the source of truth.",
+      "benefit": "Read-only GitHub triage suggestions may help, but no new implicit mutation or stale-closing policy is appropriate.",
+      "test_case": "Review CI/issues in a sandbox with an older still-active issue, confirming no labels, closures, reruns, releases or gh auth changes without permission.",
+      "source_blob": "dbbe7b129d9d722e8f0e622c3d8f045fc97bd855"
+    },
+    {
+      "path": "skills/security-review",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/security/skills/security-engineering/SKILL.md",
+      "reason": "Original secret/input/SQL injection/authorization/XSS/CSRF/logging/dependency checklist is covered by Toolkit security-engineering, security-boundaries, authentication-authorization, QA security-review/testing. Upstream npm audit fix/update and ecosystem-specific crypto examples should not become automatic global actions.",
+      "benefit": "Retain evidence-backed threat, control and negative-test skills instead of duplicate security authority.",
+      "test_case": "Check synthetic cross-tenant denial, sensitive-log redaction and malicious input, recording concrete findings without running dependency mutators.",
+      "source_blob": "3f26b0df65661425de4e5c40c295e04edcad7a83"
+    },
+    {
+      "path": "skills/mcp-server-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "reason": "Original offers specific Node/TypeScript MCP tool/resource/prompt schema and stdio/Streamable HTTP examples beyond Toolkit framework-fit. SDK APIs vary by version, and original uses npm installation plus an ECC-relative reference absent in standalone Toolkit.",
+      "benefit": "Potential focused MCP-server authoring capability after pinning supported SDK and linking only resolved references.",
+      "test_case": "Create a no-network MCP server fixture with one validated tool/resource, rejected invalid input, transport selection and current official SDK compatibility.",
+      "source_blob": "503c31bad5ef287368e3badf23226314fad68dbe"
+    },
+    {
+      "path": "skills/i18n-sync",
+      "status": "HOLD_REVIEW",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Original context-aware JSON-locale key synchronization and placeholder protection lack a direct Toolkit analogue. Optional Locakit, external translation providers and community-origin rights require independent assessment; upstream itself forbids automatic installs and non-preserving apply.",
+      "benefit": "Useful multilingual QA/locale maintenance candidate without a second engine or paid provider requirement.",
+      "test_case": "On isolated RU/EN JSON with plurals, nested non-string data and adversarial placeholders, verify only approved edits and reject out-of-scope writes.",
+      "source_blob": "91e0436803310f58e6929c7a53ae85c7d4ed9802"
+    },
+    {
+      "path": "skills/deployment-patterns",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/devops/skills/devops-infrastructure/SKILL.md",
+      "reason": "Rolling/blue-green/canary rollout, Docker, CI/CD, health and rollback are covered by devops-infrastructure and release-safety. The original sample auto-deploys to production from main, which cannot override Toolkit's explicit release authorization.",
+      "benefit": "No duplicate deployment controller needed; retain exact-SHA CI, rollout and rollback evidence.",
+      "test_case": "Use a synthetic unhealthy probe or mismatched image digest: deployment must remain blocked despite green build checks.",
+      "source_blob": "b9d279f8a99889b6f36db99b17b762374474dc99"
+    },
+    {
+      "path": "skills/react-performance",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/frontend/skills/frontend-performance/SKILL.md",
+      "reason": "Original adapts Vercel Labs React/Next performance guidelines and adds specific render, cache, waterfall and bundle patterns beyond generic Toolkit frontend-performance. Reuse needs full upstream rights review, supported framework versions and measured value; advice is not a proven optimization.",
+      "benefit": "Optional React-specific reference may enrich measured optimization, without bypassing baseline/candidate evidence.",
+      "test_case": "Run matching React/Next waterfall and rerender fixtures with repeated timings, correctness and source-attribution checks.",
+      "source_blob": "6952967cf4b894f900b5cf692e851ababaf854f5"
+    },
+    {
+      "path": "skills/postgres-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/backend/skills/data-access/SKILL.md",
+      "reason": "PostgreSQL-specific indexes, RLS, pg_stat_statements and SKIP LOCKED add detail beyond generic Toolkit data-access. Example Supabase auth.uid() is not universal and ALTER SYSTEM/CREATE EXTENSION require privileged changes; no production execution is authorized.",
+      "benefit": "Potential opt-in PostgreSQL tuning and row-security reference after isolated engine/version verification.",
+      "test_case": "Test EXPLAIN query plans, concurrent queue leasing and cross-tenant RLS denial in disposable PostgreSQL; never ALTER SYSTEM on host.",
+      "source_blob": "12a3a4a05c2278c7fe1316d9403b5ca037dadf69"
+    },
+    {
+      "path": "skills/docs-governance",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/documentation-maintenance/SKILL.md",
+      "reason": "Original router depends on ECC-specific living-docs, regression skill, artifact-role contract and bundled audit-docs.py script. Toolkit already honors existing project docs/issues/ADRs; a partial copy would break references and create duplicate authority.",
+      "benefit": "Potential read-only link/ADR audit must be evaluated independently, not imported with ECC governance routing.",
+      "test_case": "Compare an established project documentation map and a broken relative link, requiring no .governance creation or unrelated writes.",
+      "source_blob": "ae00cf8b3f96dcca17f6c53176afccd669150157"
+    },
+    {
+      "path": "skills/cost-aware-llm-pipeline",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/provider-reality-check/SKILL.md",
+      "reason": "Original sample automatically chooses paid Anthropic models and makes API calls; its budget check considers only already accumulated spend, so the next call can exceed the cap. This would duplicate model-routing authority and violate owner expense/consent policy if default.",
+      "benefit": "Projected-cost techniques are reference-only until independent consent-aware hard-limit implementation is verified.",
+      "test_case": "With 0.99 spent of a 1.00 budget, block a predicted 0.20 call before any provider request; test unknown rates and denied spend.",
+      "source_blob": "e38c15c6d355dfb97c44b9de40f7cb235bfd3f9f"
+    },
+    {
+      "path": "skills/skill-host-compat",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/skill-portability/SKILL.md",
+      "reason": "Original wraps ECC's Node validate-skill-host-compat.js and ECC-specific canonical/Codex/Cursor trees. Toolkit skill-portability already checks metadata and links but does not include that validator or cross-host placeholder checker; importing guidance alone would claim an absent executable.",
+      "benefit": "Potential dedicated offline client-compat lint adapted to Toolkit paths, not an ECC runtime dependency.",
+      "test_case": "Reject an executable fence with ${CLAUDE_PROJECT_DIR} in a Codex projection and test valid Agent Skills metadata in a self-contained fixture.",
+      "source_blob": "220e8b3117056b3924ed1c9c11e28b5de09f9293"
+    },
+    {
+      "path": "skills/frontend-design-direction",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/ux-ui-design-orchestra/SKILL.md",
+      "reason": "Community-salvaged original adds visual evidence states, bundled check-evidence.js and optional UIZZE hosted research. Toolkit already coordinates design originals, but this source's rights/script and remote-data boundaries need review; do not silently inject it or impose alternate design restrictions.",
+      "benefit": "May be useful when explicitly selected in original form, with local rendered evidence and no paid hosted call.",
+      "test_case": "Verify mobile/desktop captures, missing artifacts and error/permission states using reviewed original checker; no UIZZE request without consent.",
+      "source_blob": "6139c73ec7de85b33d62f121cb263f95dfd69f8c"
+    },
+    {
+      "path": "skills/conventional-commit-review",
+      "status": "HOLD_REVIEW",
+      "analogue": "NOT_VERIFIED",
+      "reason": "Original uses staged diff and repository history to draft a Conventional Commits message; no equally focused native composer was found. Source marks personal origin, and redistribution rights and prevention of automatic commit/push must be verified before inclusion.",
+      "benefit": "Potential small optional commit-message reviewer with zero package dependency and no authorized mutation implied.",
+      "test_case": "Evaluate mixed staged diffs and existing message history in disposable Git fixture; output a message/split suggestion without stage, commit or push.",
+      "source_blob": "a53c70f6b153c6204ee31bb26b6ee0bc3efb5851"
+    },
+    {
+      "path": "skills/agent-harness-construction",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "reason": "Original specifies schema-first agent tool action spaces, structured observations, recovery stop conditions and context allocation. Existing agent-framework-fit chooses a runtime but is not a demonstrated complete tool-interface design protocol; original success/cost claims remain unmeasured. Focused source comparison confirmed existing check_tool_call covers pre-call schema and permission checks. New optional check_tool_observation adds static post-call error/retry/stop envelope checks in the same AI QA validator; no new harness/controller or live agent effect is claimed.",
+      "benefit": "Proven narrow deterministic design-time improvement: incomplete synthetic timeout observations fail and explicit reconciliation-first recovery passes; model/tool runtime effectiveness remains NOT_MEASURED.",
+      "test_case": "Use existing AI contract tests for synthetic read success, ambiguous write timeout, missing recovery, malformed fields, authorization-denied retry, unknown effect and false success. Live agent tool-call traces and outcome quality are NOT_VERIFIED.",
+      "source_blob": "6f828f92298e9c534c9af1e7f0e9832ef7443a2d"
+    },
+    {
+      "path": "skills/autonomous-agent-harness",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "reason": "Original is a Claude Code setup recipe for crons, dispatch, persistent memory, computer use and optional remote agents, not a bundled native runtime. Default adoption would create overlapping schedulers/agents and could ingest sessions or incur paid model usage contrary to owner gates.",
+      "benefit": "Do not import a second autonomous controller; separate host-approved schedulers remain an explicit choice.",
+      "test_case": "Use isolated queue and simulated failed callback. Assert no live Claude CLI, cron creation, memory ingestion, remote dispatch or paid call.",
+      "source_blob": "2f92a5a17f2096b5752ff489600ac282110fc292"
+    },
+    {
+      "path": "skills/agent-self-evaluation",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/qa/skills/quality-gate-assessment/SKILL.md",
+      "reason": "Original advises universal post-task 1-5 self-scores and optional Stop hook. Self-rating alone cannot validate actual tests or acceptance; Toolkit quality-gate-assessment uses observed independent evidence and owner approval. Automatic self-scoring introduces competing completion logic without proven added value.",
+      "benefit": "Reuse existing evidence-backed QA/review; user-requested reflection can remain conversational.",
+      "test_case": "Synthetic polished output with failed authorization check must remain BLOCKED regardless of a high subjective score; no Stop hook.",
+      "source_blob": "4e241380aa8c9b26ea249d7208d78edea9e5f397"
+    },
+    {
+      "path": "skills/agent-runtime-gateway-smoke-test",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "reason": "Original covers local agent API through authenticated temporary tunnel to remote sandbox callback and route restoration. It adds specifics beyond generic framework-fit but requires owner-controlled endpoints, credentials, route changes and tested cleanup; none has been run here.",
+      "benefit": "Possible opt-in isolated gateway E2E protocol after live evidence, not an automatic tunnel or deployment.",
+      "test_case": "Test fake 401 gateway probe reaching origin logs, remote callback, and mandatory restoration after timeout/error/cancel without production route writes.",
+      "source_blob": "d2ed4dd6e10bea3e179607f4f39b3384ebb487dc"
+    },
+    {
+      "path": "skills/continuous-learning-v2",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/skill_observation_review.py",
+      "reason": "Original v2.1 observes Claude sessions via PreToolUse/PostToolUse hooks, writes project/global instinct stores and can trigger background model analysis. Native lifecycle and privacy review belong to open Toolkit #436. Source reading is not consent for hooks, session ingestion, paid Haiku or promotion into skills.",
+      "benefit": "Project-scoped evidence-backed learning candidate tracked under #436; no parallel #435 implementation.",
+      "test_case": "In #436 test synthetic secret stripping, project isolation, contradictory evidence and explicit promotion approval with zero paid inference.",
+      "source_blob": "397b3d334dd1fdf5d7648dd619b6a744cd4734a5"
+    },
+    {
+      "path": "skills/context-budget",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/profile_context_audit.py",
+      "reason": "Original delegates live context to client-native Codex/Claude slash commands and restricts static installation audits to explicit consent. Toolkit profile_context_audit reports returned UTF-8 instruction bytes, not live token usage. Claiming supported native client meters without a real session would be inaccurate.",
+      "benefit": "Potential client-aware help and bounded installation-context evidence, not a fabricated token meter.",
+      "test_case": "Compare an authorized live client meter with offline profile counts; unavailable meter stays NOT_VERIFIED and is never estimated from file sizes.",
+      "source_blob": "063e29a464e1f7461517569061d14bc31596f10d"
+    },
+    {
+      "path": "skills/prompt-optimizer",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/ai/skills/prompt-refinement/SKILL.md",
+      "reason": "Original advises refining an explicit prompt request into an actionable ECC-oriented plan and is not an execution skill. Toolkit prompt-refinement already does accurate copy-ready prompt conversion for ChatGPT/Codex/Claude while preserving permissions and not executing the underlying task. ECC-specific routing is not a missing general capability.",
+      "benefit": "Keep one prompt-refinement path, no competing default prompt controller.",
+      "test_case": "With a vague QA prompt request return a refined prompt; with an actual implement request perform task work rather than silently switching to advisory-only.",
+      "source_blob": "16ae27d10c3015f456d38f4344643ff56e764f70"
+    },
+    {
+      "path": "skills/prompt-caching-strategy",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/provider-reality-check/SKILL.md",
+      "reason": "Original adds provider-specific stable-prefix ordering and cache read/write cost accounting beyond generic provider price checks. Cache eligibility/retention and rates vary by model/version; sample arithmetic does not establish live savings and caching still consumes context. Paid calls and private prompts require separate permission.",
+      "benefit": "Optional cache analysis with model-accurate documentation and offline receipts, no mandatory API provider.",
+      "test_case": "Use a repeated-prefix synthetic receipt set to calculate hit rate and compare changed-prefix misses, then label real latency and savings NOT_MEASURED.",
+      "source_blob": "c6bd9f18b8da2329f69743250e4d0a258465ef4e"
+    },
+    {
+      "path": "skills/eval-harness",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/ai/skills/ai-engineering-qa/SKILL.md",
+      "reason": "Original describes capability/regression evals, pass@k/pass^k, code/model/human graders and an ECC-specific utility with Claude tool permissions. Toolkit ai-engineering-qa and scripts/skill_eval.py cover offline paired evidence, but external grader execution and independent oracles have not been proven equivalent. A focused, synthetic, executable source-to-native comparison found that existing paired acceptance reporting could hide first-three trial instability. This narrow gap is addressed by the optional native skill_eval.py --observed-repeatability report. External original model/human graders and any real agent benefit remain unverified; HOLD_REVIEW is retained.",
+      "benefit": "Proven extra offline analytic discrimination from existing paired records without new runtime: two synthetic variants with equal 6/9 pooled acceptance differ on all-three task success 2/3 versus 0/3. Real agent gains NOT_MEASURED.",
+      "test_case": "Offline three-task x three-trial-per-variant fixture: assert first, any-of-three, all-three clean success, missing-trial null, unsafe-action rejection, stable default output and CLI opt-in. Do not claim real model passes or independent grading.",
+      "source_blob": "133193446a3116e96648081aabcf4f2ea863b0e0"
+    },
+    {
+      "path": "skills/regex-vs-llm-structured-text",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/data/skills/data-engineering/SKILL.md",
+      "reason": "Original reports regex-first extraction rates of 95-98% from its examples and escalates difficult records to LLM validation. Those numbers do not generalize; confidence scoring needs calibration, malformed data needs explicit handling and automatic paid fallback is not authorized. Toolkit has data-engineering but no tested matching hybrid workflow.",
+      "benefit": "Candidate offline deterministic-first structured extraction pattern when gain is observed.",
+      "test_case": "Compare RU/EN forms and malformed inputs against labelled fixtures, record precision/recall and guarantee zero provider calls without consent.",
+      "source_blob": "18d84e4a5265fee0a4fceaf441617e9b0823f206"
+    },
+    {
+      "path": "skills/codehealth-mcp",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": ".agents/skills/code-review/SKILL.md",
+      "reason": "Original depends on external CodeScene MCP/npx package and CS_ACCESS_TOKEN. External binary licence, source privacy, pricing and real availability have not been independently verified, so advertised code health scores are not native Toolkit evidence.",
+      "benefit": "No external service dependency or fictitious scores; a separately selected service could be assessed later.",
+      "test_case": "Isolated licensed package review with synthetic project and no secret reads; absent MCP/token produces NOT_VERIFIED, no installation or host write.",
+      "source_blob": "6119608dcae1fafb83663f12feb52b3a42da731a"
+    },
+    {
+      "path": "skills/documentation-lookup",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/research-verification/SKILL.md",
+      "reason": "Original routes all framework questions through Context7-specific MCP tools by default. Toolkit research-verification already prefers current official documentation without requiring third-party services; an automatic external MCP dependency would override tool precedence and network consent. Explicit upstream-tool selection remains possible.",
+      "benefit": "Keep primary-source lookup provider-independent unless user selects Context7.",
+      "test_case": "A changing library API question with Context7 unavailable must use verified docs or report uncertainty, never auto-install/configure MCP.",
+      "source_blob": "8bb9de6232d1693cd19a8e035712371e7c0e4769"
+    },
+    {
+      "path": "skills/canary-watch",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/release-safety/SKILL.md",
+      "reason": "Original proposes post-deploy URL, SSE, asset, browser console and performance watches plus sustained polling/Slack/git-push hook. Toolkit release-safety requires smoke evidence but has no verified always-on monitor; original instructions alone do not supply browser/stream collectors or authorization for production probes.",
+      "benefit": "Possible explicitly selected bounded canary observation separate from merge approval.",
+      "test_case": "On owned fixture detect 5xx/SSE heartbeat loss and asset 404 with bounded polling, cancellation and no Slack, hook or prod probes.",
+      "source_blob": "8397ab540ccf7516fa7194622ea2909a1f98b8af"
+    },
+    {
+      "path": "skills/git-workflow",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/release-safety/SKILL.md",
+      "reason": "Original generic GitHub Flow recommends deployment immediately after merging main. Toolkit respects the actual target branching, CI, approval and rollout policy, including dev-first projects. A universal merge/rebase/deploy convention duplicates release-safety and can bypass owner gates.",
+      "benefit": "Use current feature-delivery/release-safety with actual project Git strategy.",
+      "test_case": "Protected dev->main fixture with failing staging smoke must not receive merge or production release despite generic upstream advice.",
+      "source_blob": "81a858d3a79344a6879fa60322b5a36cdf758206"
+    },
+    {
+      "path": "skills/gateguard",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/feature-delivery/SKILL.md",
+      "reason": "Original adds Claude PreToolUse deny-first Edit/Write/Bash hooks and persistent per-session state. As default this is another global code-edit gate and requires extra host hooks/files. Its reported A/B quality gain has not been independently replicated; it cannot override target project rules or native original-tool workflows.",
+      "benefit": "No implicit interception; optional original hook requires separate explicit review/permission.",
+      "test_case": "Synthetic edits and safe shell commands should not be blocked by an unselected hook; compare validated defect rates in isolation before opt-in.",
+      "source_blob": "208174601bc8387f8efa55e8a8e4945526f7960b"
+    },
+    {
+      "path": "skills/config-gc",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/profile_context_audit.py",
+      "reason": "Original audits ~/.claude skills/hooks/MCP/config and proposes human-confirmed deletion or reversible moves. Toolkit profile_context_audit checks source overlap only, not host-global config. Exact paths, secrets, symlinks, backups and per-item permissions need scoped cross-platform verification.",
+      "benefit": "Potential opt-in local configuration cleanup audit, not silent deletion.",
+      "test_case": "Disposable Claude config with stale/active skills, credentials and symlinks: redact secrets, preserve active items, deny unapproved deletion and verify rollback.",
+      "source_blob": "0583e2c8555e476d1d8d4484a35980dacf256cd6"
+    },
+    {
+      "path": "skills/workspace-surface-audit",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/external-skill-review/SKILL.md",
+      "reason": "Original inventories repo, MCP/plugins/connector/environment and recommends ECC-native capabilities. Toolkit external-skill-review and client registry cover provenance, but actual installed-client enumeration is not verified and reading .env or connectors needs explicit scope; ECC-first bias must not govern Toolkit.",
+      "benefit": "Candidate authorized read-only capability inventory, without extra plugins or external runtime.",
+      "test_case": "Synthetic multi-client workspace with fake secrets and disabled connectors; output only permissions/capability presence, no config reads outside scope or installs.",
+      "source_blob": "6e7e75376c8fd520240425ee5b6bea967da19277"
+    },
+    {
+      "path": "skills/rules-distill",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/skill-portability/SKILL.md",
+      "reason": "Original uses ECC/Claude-specific scan scripts to propose append/revise/create rules. Project AGENTS.md and canonical workflow authority already exist; global rule rewriting would create an unapproved controller and original scripts are not bundled in Toolkit.",
+      "benefit": "Only read-only duplicate-guidance proposals pending explicit owner authorization; no automatic rule changes.",
+      "test_case": "Two overlapping mock skills with immutable AGENTS.md: propose de-duplication without touching files or creating new global rules.",
+      "source_blob": "9f76d3fe0c36af92c15607a006ba9b99d18559ef"
+    },
+    {
+      "path": "skills/project-flow-ops",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/management/skills/project-delivery-management/SKILL.md",
+      "reason": "Original mandates Linear as internal execution truth and GitHub as public truth. Toolkit follows the actual tracker and user projects may use GitHub Projects only; installing a second authority would fragment status and issue ownership without request.",
+      "benefit": "Reuse project-delivery-management and existing GitHub Issues/Projects instead of duplicating in Linear.",
+      "test_case": "GitHub Projects-only fixture must preserve issue/PR/check state without creating a Linear record or implying merge permission.",
+      "source_blob": "6ab2e62d15f882208e7e43c7ec4866f53273f62f"
+    },
+    {
+      "path": "skills/token-budget-advisor",
+      "status": "HOLD_CONFLICT",
+      "analogue": "scripts/profile_context_audit.py",
+      "reason": "Original intercepts an answer with 25/50/75/100% depth selection and heuristic token estimates. This contradicts user-selected response length and direct task completion and is not a measured live context meter. Toolkit already accepts explicit brevity settings without another question controller.",
+      "benefit": "No default depth menu or invented token usage; continue direct response.",
+      "test_case": "Short-answer and exact token-status fixtures should yield concise answer or honest meter limit, never a forced four-choice form.",
+      "source_blob": "49987758c37150718bca091e29ecfca6dfc6627d"
+    },
+    {
+      "path": "skills/skill-comply",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "scripts/skill_routing_eval.py",
+      "reason": "Original runs Claude CLI (`claude -p`) and LLM classifiers over live agent tool-call traces. Toolkit has static skill routing evaluation, not a proved live model-compliance engine; this external paid/host-dependent execution is unavailable without explicit consent.",
+      "benefit": "Potential separate opt-in client experiment, not an automatically bundled runtime.",
+      "test_case": "Offline synthetic trace with competing instructions tests temporal order while denying CLI, external LLM cost and transcript leakage.",
+      "source_blob": "303863e302fe9ff340197fc7442a86bacbb7f425"
+    },
+    {
+      "path": "skills/skill-scout",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/github_skill_discovery.py",
+      "reason": "Original searches local Claude skills, marketplace, GitHub and web sources before skill creation. Toolkit github_skill_discovery and skill_candidate_review cover pinned metadata and safe offline vetting but do not fully prove equivalent local-marketplace discovery; remote sources remain untrusted and cannot authorize install.",
+      "benefit": "Possible broader optional discovery workflow if incremental value and privacy/network scope are established.",
+      "test_case": "Against installed-skill and pinned GitHub fixtures verify provenance and no silent download, install, rights claims or unbounded marketplace scanning.",
+      "source_blob": "8a55c548ccd47e4f5adf738cf5becf0b8b9ad9e7"
+    },
+    {
+      "path": "skills/skill-stocktake",
+      "status": "HOLD_REVIEW",
+      "analogue": "scripts/skill_quality_metrics.py",
+      "reason": "Original Quick/Full Claude skill audit uses Bash scripts, subagent batches and persisted quality records. Toolkit already has deterministic skill quality and routing checks, but the original's holistic installed-client evaluation and privacy/cost boundaries have not been independently reproduced.",
+      "benefit": "Potential read-only installed-skills inventory beyond static Toolkit source audits.",
+      "test_case": "Synthetic changed/archived skill set should preserve path boundaries, redaction and real test evidence without Claude CLI or fabricated agent grades.",
+      "source_blob": "aa4d16bfd22c297a538cc696ecc4e3e2ee3342d8"
+    },
+    {
+      "path": "skills/deep-research",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": ".agents/skills/research-verification/SKILL.md",
+      "reason": "Original depends on Firecrawl or Exa external MCP and may launch parallel research agents. Such tools require separately verified rights, quotas, data egress, consent and potentially paid services; Toolkit already has primary-source research verification without mandatory dependencies.",
+      "benefit": "User may explicitly choose a verified research service; no required Toolkit runtime or invented source counts.",
+      "test_case": "Offline dated-source synthesis with an injection attempt must preserve citations; absent Firecrawl/Exa must not trigger provider calls or claim 15-30 examined sources.",
+      "source_blob": "75371ee0ec6e627b1246154f28587da19c81581f"
+    },
+    {
+      "path": "skills/benchmark",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/performance/skills/performance-load-testing/SKILL.md",
+      "reason": "Original describes Core Web Vitals, API latency and build speed baselines; Toolkit performance-load-testing plus frontend-performance already require bounded comparable measurements, functional oracles and variance. Original /benchmark and tracked .ecc/benchmarks report are not a demonstrated unique measurement runtime and must not become a default file-writing convention.",
+      "benefit": "Reuse measurable native frontend/performance checks without a second benchmark controller.",
+      "test_case": "Identical offline baseline/candidate with one faster but functionally broken endpoint must reject the speedup and never auto-create .ecc/benchmarks.",
+      "source_blob": "3020088b5932d0db9275e19c7c0047c92abf84d3"
     }
   ]
 }

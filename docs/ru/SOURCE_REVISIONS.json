@@ -16,12 +16,12 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "d9153f4df5dd15d0680df4f25c98fd4828b51ef207c23d0849cb7d486baea9ef"
+      "source_sha256": "30d79af61fab79f56e3449a3fd1eed446c5fe7e858917df62ca36ff1cb5fd311"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",
       "translation": "docs/ru/AI_ENGINEERING_QA.md",
-      "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
+      "source_sha256": "77ecd8253f1207e888ae8eeb7e9cd6ae12641f77bdf38777489fba0b7467a96e"
     },
     {
       "source": "docs/BEGINNER_CLIENT_DETAILS.md",
@@ -328,7 +328,7 @@
     {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
-      "source_sha256": "afe8fe5e43b4b2785c8387346f15c4b3293c0e1bd6e9b2c9d8ec074fd0f36413"
+      "source_sha256": "f233378644e0137591c21fd229a51c2c073bc9426306ad1f5c98e209dc84166f"
     },
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
@@ -353,7 +353,7 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "65a9f1f6d339b5f025d1ed2eb5f21b1d50431fe5e931f807ec3f13a8b57af2c6"
+      "source_sha256": "4a2150b3373b0e9458e101e0f94052ef3e9228fdfc001a2b4ec6577fbc419a87"
     },
     {
       "source": "docs/SKILLS_QUALITY_AUDIT.md",

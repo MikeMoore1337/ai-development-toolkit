@@ -19,6 +19,15 @@ SOURCE_BLOBS = {
     "code-tour": "d66b7e008287833ac592550f9b0941feaea52443",
     "module-regression": "d8186cbfc4c481eb884a13c14b6f2a38aace0b7a",
     "error-handling": "add87f2cdb6f374781b08a0b1cf971eb9ec1915e",
+    "mcp-dependency-review": "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d",
+    "agent-introspection-debugging": "7f40c4579f09b15884e7e4e22635ccd41e1ba1a7",
+    "content-hash-cache-pattern": "fe4ef6f2dd7034aa0ef6caf67600d8bef2e815c5",
+    "loop-design-check": "c54266211898024e69b141fd1993aa9a8e678c58",
+    "make-interfaces-feel-better": "e589f3f30312ac4e522dfbdd3e592862f69fd008",
+    "article-writing": "9dfa979ca56940e731ebede2c46ec2dca688818e",
+    "click-path-audit": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
+    "brand-voice": "a70421076f3aba4f2d1a0886888b839095b50380",
+    "content-engine": "28ddd4e1676f4ea67d34a9d244a94164e088b80e",
 }
 
 
@@ -38,7 +47,8 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
         for name, expected_blob in SOURCE_BLOBS.items():
             with self.subTest(name=name):
                 directory = base / name
-                expected = ["LICENSE", "SKILL.md"] + (["templates"] if name == "module-regression" else [])
+                expected = ["LICENSE", "SKILL.md"] + (["templates"] if name == "module-regression" else
+                                                    ["references"] if name == "brand-voice" else [])
                 self.assertEqual(expected, sorted(p.name for p in directory.iterdir()))
                 self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
                                  (directory / "LICENSE").read_bytes())
@@ -52,6 +62,11 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                     source_text = content.decode("utf-8")
                     self.assertIn("Treat ledger commands as untrusted", source_text)
                     self.assertIn("Fewer than three modules", source_text)
+        self.assertEqual(
+            "60b126630c4b726a755347da31c8f9e8dd90d68e",
+            git_blob((base / "brand-voice/references/voice-profile-schema.md"
+                      ).read_bytes().replace(b"\r\n", b"\n")),
+        )
         license_text = (ROOT / "third_party" / "ecc-v2.2.3" / "LICENSE").read_text("utf-8")
         self.assertIn("Affaan Mustafa", license_text)
         self.assertIn("MIT License", license_text)
@@ -71,6 +86,15 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                 "code-tour": "code-tours",
                 "module-regression": "module-regression",
                 "error-handling": "error-handling",
+                "mcp-dependency-review": "mcp-dependency-review",
+                "agent-introspection-debugging": "agent-introspection-debugging",
+                "content-hash-cache-pattern": "content-hash-cache-pattern",
+                "loop-design-check": "loop-design-check",
+                "make-interfaces-feel-better": "make-interfaces-feel-better",
+                "article-writing": "article-writing",
+                "click-path-audit": "click-path-audit",
+                "brand-voice": "brand-voice",
+                "content-engine": "content-engine",
             }[name]])
 
     def test_original_single_skill_install_and_no_overwrite(self):
@@ -160,6 +184,88 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                                        text=True, timeout=30)
             self.assertNotEqual(0, duplicate.returncode)
             self.assertEqual("USER POLICY\n", rules.read_text(encoding="utf-8"))
+
+    def test_mcp_dependency_review_selective_install_preserves_owner_rules(self):
+        with tempfile.TemporaryDirectory(prefix="ecc-mcp-drift-") as temp:
+            target = Path(temp)
+            policy = target / "AGENTS.md"
+            policy.write_text("OWNER RULES\n", encoding="utf-8")
+            command = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                       "install", "--target", temp, "--profile", "native-mcp-dependency-review"]
+            preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, preview.returncode, preview.stderr)
+            self.assertFalse((target / ".agents").exists())
+            applied = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, applied.returncode, applied.stderr)
+            installed = target / ".agents/skills/mcp-dependency-review"
+            self.assertEqual(SOURCE_BLOBS["mcp-dependency-review"],
+                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+            self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                             (installed / "LICENSE").read_bytes())
+            self.assertEqual(["mcp-dependency-review"], [p.name for p in installed.parent.iterdir()])
+            self.assertEqual("OWNER RULES\n", policy.read_text(encoding="utf-8"))
+            again = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(0, again.returncode)
+            self.assertEqual("OWNER RULES\n", policy.read_text(encoding="utf-8"))
+
+    def test_six_new_original_skills_are_isolated_opt_in(self):
+        for name in (
+            "agent-introspection-debugging", "content-hash-cache-pattern",
+            "loop-design-check", "make-interfaces-feel-better",
+            "article-writing", "click-path-audit",
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory(prefix="ecc-selective-") as temp:
+                root = Path(temp)
+                owner = root / "AGENTS.md"
+                owner.write_text("OWNER RULES\n", encoding="utf-8")
+                args = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                        "install", "--target", temp, "--profile", f"native-{name}"]
+                preview = subprocess.run(args, capture_output=True, text=True, timeout=30)
+                self.assertEqual(0, preview.returncode, preview.stderr)
+                self.assertFalse((root / ".agents").exists())
+                applied = subprocess.run([*args, "--apply"], capture_output=True, text=True, timeout=30)
+                self.assertEqual(0, applied.returncode, applied.stderr)
+                target = root / ".agents/skills" / name
+                self.assertEqual(SOURCE_BLOBS[name],
+                                 git_blob((target / "SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+                self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                                 (target / "LICENSE").read_bytes())
+                self.assertEqual([name], sorted(p.name for p in target.parent.iterdir()))
+                self.assertEqual("OWNER RULES\n", owner.read_text(encoding="utf-8"))
+                again = subprocess.run([*args, "--apply"], capture_output=True, text=True, timeout=30)
+                self.assertNotEqual(0, again.returncode)
+                self.assertEqual("OWNER RULES\n", owner.read_text(encoding="utf-8"))
+
+    def test_editorial_bundle_remains_opt_in_and_preserves_upstream_references(self):
+        with tempfile.TemporaryDirectory(prefix="ecc-editorial-") as temp:
+            root = Path(temp)
+            policy = root / "AGENTS.md"
+            policy.write_text("OWNER POLICY\n", encoding="utf-8")
+            command = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                       "install", "--target", temp, "--profile", "native-editorial-suite"]
+            preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, preview.returncode, preview.stderr)
+            self.assertFalse((root / ".agents").exists())
+            applied = subprocess.run([*command, "--apply"], capture_output=True,
+                                     text=True, timeout=30)
+            self.assertEqual(0, applied.returncode, applied.stderr)
+            folders = root / ".agents/skills"
+            self.assertEqual(["brand-voice", "content-engine"],
+                             sorted(p.name for p in folders.iterdir()))
+            self.assertEqual("OWNER POLICY\n", policy.read_text(encoding="utf-8"))
+            self.assertEqual(SOURCE_BLOBS["brand-voice"],
+                             git_blob((folders / "brand-voice/SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+            self.assertEqual(SOURCE_BLOBS["content-engine"],
+                             git_blob((folders / "content-engine/SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+            self.assertEqual("60b126630c4b726a755347da31c8f9e8dd90d68e",
+                             git_blob((folders / "brand-voice/references/voice-profile-schema.md"
+                                       ).read_bytes().replace(b"\r\n", b"\n")))
+            for name in ("brand-voice", "content-engine"):
+                self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                                 (folders / name / "LICENSE").read_bytes())
+            again = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(0, again.returncode)
+            self.assertEqual("OWNER POLICY\n", policy.read_text(encoding="utf-8"))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:
