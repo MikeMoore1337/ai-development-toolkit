@@ -171,6 +171,32 @@ class ParallelPlanTests(unittest.TestCase):
             with self.subTest(value=repr(value)[:100]):
                 self.assertNotEqual([], oracle.validate_parallel_plan(value))
 
+    def test_project_mcp_preflight_is_read_only_and_does_not_claim_agents(self):
+        import toolkit_mcp
+        definitions = {tool["name"]: tool for tool in toolkit_mcp._tool_defs()}
+        descriptor = definitions["toolkit_preflight_parallel_plan"]
+        self.assertTrue(descriptor["annotations"]["readOnlyHint"])
+        self.assertEqual(["plan"], descriptor["inputSchema"]["required"])
+        payload = {"jsonrpc": "2.0", "id": 440, "method": "tools/call",
+                   "params": {"name": "toolkit_preflight_parallel_plan",
+                              "arguments": {"plan": candidate()}}}
+        response = toolkit_mcp.handle(payload)
+        self.assertFalse(response["result"].get("isError", False), response)
+        value = response["result"]["structuredContent"]
+        self.assertEqual("STATIC_PLAN_VALIDATED", value["status"])
+        self.assertEqual("NOT_VERIFIED", value["git_state"])
+        self.assertEqual("NOT_RUN", value["model_execution"])
+        self.assertEqual("NOT_GRANTED", value["authorization"])
+        modified = candidate()
+        modified["tasks"][1]["write_paths"] = ["src/api/"]
+        rejected = toolkit_mcp.invoke("toolkit_preflight_parallel_plan",
+                                      {"plan": modified})
+        self.assertEqual("REJECTED", rejected["status"])
+        self.assertIn("OVERLAPPING_WRITE_SCOPE", rejected["issues"])
+        with self.assertRaises(ValueError):
+            toolkit_mcp.invoke("toolkit_preflight_parallel_plan",
+                               {"plan": candidate(), "execute": True})
+
     def test_cli_static_mode_never_claims_native_agent_execution(self):
         with tempfile.TemporaryDirectory() as temp:
             plan = Path(temp) / "plan.json"
@@ -267,6 +293,18 @@ class SyntheticWorktreeTests(unittest.TestCase):
             self.skipTest("Symbolic links not allowed on runner")
         self.assertIn("WORKTREE_PATH_LINKED", oracle.validate_parallel_plan(
             self.plan, git_root=self.repo))
+
+    def test_project_mcp_optional_git_preflight_reads_only_synthetic_root(self):
+        import toolkit_mcp
+        before = self.git(self.repo, "worktree", "list", "--porcelain").stdout
+        old_head = self.git(self.repo, "rev-parse", "HEAD").stdout
+        response = toolkit_mcp.invoke("toolkit_preflight_parallel_plan", {
+            "plan": self.plan, "project": str(self.repo)})
+        self.assertEqual("STATIC_PLAN_VALIDATED", response["status"])
+        self.assertEqual("READ_ONLY_CHECKED", response["git_state"])
+        self.assertEqual("NOT_RUN", response["worktree_write"])
+        self.assertEqual(before, self.git(self.repo, "worktree", "list", "--porcelain").stdout)
+        self.assertEqual(old_head, self.git(self.repo, "rev-parse", "HEAD").stdout)
 
     def test_git_ref_reality_and_existing_hierarchical_conflict(self):
         # All Git commands are strictly scoped to this disposable CI-owned repo.
