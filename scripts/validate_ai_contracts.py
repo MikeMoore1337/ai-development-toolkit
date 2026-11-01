@@ -230,7 +230,7 @@ def check_tool_observation(observation: object, *, effect: str,
     operation happened or independently grade an agent. Existing tools are
     never required to adopt this output envelope.
     """
-    effects = {"read", "write", "irreversible"}
+    effects = {"read", "write", "reversible", "irreversible"}
     outcomes = {"not_attempted", "applied", "not_applied",
                 "unknown", "authorization_denied"}
     if (not isinstance(effect, str) or effect not in effects
@@ -259,7 +259,8 @@ def check_tool_observation(observation: object, *, effect: str,
     if status == "success":
         if recovery is not None:
             errors.append("success must not claim recovery")
-        if prior_outcome in {"unknown", "authorization_denied", "not_applied"}:
+        if prior_outcome in {"unknown", "authorization_denied", "not_applied",
+                             "not_attempted"}:
             errors.append("success contradicts prior outcome")
     elif status in {"warning", "error"}:
         if not isinstance(recovery, dict) or set(recovery) != {
@@ -277,6 +278,9 @@ def check_tool_observation(observation: object, *, effect: str,
             if (effect != "read" and prior_outcome == "unknown"
                     and retry_policy == "safe_retry"):
                 errors.append("unsafe ambiguous mutation retry")
+            if (effect != "read" and prior_outcome == "applied"
+                    and retry_policy == "safe_retry"):
+                errors.append("unsafe duplicate mutation retry")
             if (prior_outcome == "authorization_denied"
                     and retry_policy != "stop"):
                 errors.append("retry after authorization denial")

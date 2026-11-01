@@ -179,6 +179,23 @@ class AIContractsTests(unittest.TestCase):
                       check_tool_observation(unauthorized_success,
                                              effect="write",
                                              prior_outcome="authorization_denied"))
+        already_applied = copy.deepcopy(good)
+        already_applied["recovery"]["retry_policy"] = "safe_retry"
+        self.assertIn("unsafe duplicate mutation retry",
+                      check_tool_observation(already_applied,
+                                             effect="reversible",
+                                             prior_outcome="applied"))
+        self.assertIn("success contradicts prior outcome",
+                      check_tool_observation(unauthorized_success,
+                                             effect="read",
+                                             prior_outcome="not_attempted"))
+        self.assertEqual([], check_tool_observation(
+            {
+                "status": "warning", "summary": "synthetic incomplete write",
+                "next_actions": [], "artifacts": [],
+                "recovery": {"root_cause": "unknown", "retry_policy": "after_reconciliation",
+                             "stop_condition": "stop if not reconciled"},
+            }, effect="reversible", prior_outcome="unknown"))
         self.assertTrue(check_tool_observation(
             good, effect="no such effect", prior_outcome="unknown"))
         self.assertTrue(check_tool_observation(
