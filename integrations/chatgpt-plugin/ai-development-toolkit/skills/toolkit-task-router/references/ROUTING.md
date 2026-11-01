@@ -1,5 +1,7 @@
 # Toolkit routing quick reference
 
+**Normal Chat is the primary execution surface:** when Toolbox/host exposes authorized GitHub, file, sandbox/remote terminal or image tools, use them **in the current conversation** instead of redirecting the user to Work or Codex. Follow [NORMAL_CHAT_EXECUTION.md](NORMAL_CHAT_EXECUTION.md) for capability preflight, actual tool calls and verification. The plugin cannot create missing tools, give itself permissions, schedule background jobs or bypass plan limits.
+
 Other request examples: “Use Toolkit guidance to review the repository I connected.” and “Сделай хороший промпт для Codex из моих заметок.”
 
 | Intent | Route | Notes |
