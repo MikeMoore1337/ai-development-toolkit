@@ -316,7 +316,10 @@ def _validate_parallel_plan(data: Any, *, git_root: Path | None) -> list[str]:
         if not isinstance(item["base_sha"], str) or item["base_sha"] != revision:
             errors.append("STALE_TASK_SHA")
         branch, workspace, writer = item["branch"], item["worktree"], item["writer"]
-        if not isinstance(branch, str) or not _BRANCH.fullmatch(branch) or not _portable_path(branch) or branch.endswith(".lock"):
+        if (not isinstance(branch, str) or not _BRANCH.fullmatch(branch)
+            or not _portable_path(branch) or branch.endswith(".lock")
+            or branch.casefold() in {"main", "master", "head"}
+            or branch.startswith("refs/") or ".." in branch):
             errors.append("UNSAFE_BRANCH")
         else:
             key = _path_key(branch)
@@ -398,6 +401,10 @@ def _validate_parallel_plan(data: Any, *, git_root: Path | None) -> list[str]:
         for right in tasks[i + 1:]:
             if not isinstance(right, dict) or right.get("id") not in identifiers:
                 continue
+            if (isinstance(left.get("worktree"), str) and isinstance(right.get("worktree"), str)
+                and _portable_path(left["worktree"]) and _portable_path(right["worktree"])
+                and _write_overlap(left["worktree"], right["worktree"])):
+                errors.append("WORKTREE_COLLISION")
             if (isinstance(left.get("writer"), str) and left.get("writer") == right.get("writer")
                 and not (ordered(left["id"], right["id"]) or ordered(right["id"], left["id"]))):
                 errors.append("WRITER_REUSED")
