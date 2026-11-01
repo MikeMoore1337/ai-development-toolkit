@@ -93,6 +93,18 @@ class ParallelPlanTests(unittest.TestCase):
         trial["active_controllers"].append("make-feature")
         self.assertIn("DUPLICATE_CONTROLLER", oracle.validate_parallel_plan(trial))
 
+    def test_nested_worktree_paths_and_protected_branches_rejected(self):
+        for child in ("wt-api/child", "WT-API/nested"):
+            with self.subTest(child=child):
+                trial = candidate()
+                trial["tasks"][1]["worktree"] = child
+                self.assertIn("WORKTREE_COLLISION", oracle.validate_parallel_plan(trial))
+        for unsafe in ("main", "master", "HEAD", "refs/heads/work", "feature..bad"):
+            with self.subTest(branch=unsafe):
+                trial = candidate()
+                trial["tasks"][1]["branch"] = unsafe
+                self.assertIn("UNSAFE_BRANCH", oracle.validate_parallel_plan(trial))
+
     def test_duplicate_ids_writers_branches_and_workspaces(self):
         for key, value, code in (
             ("id", "api", "PARALLEL_TASK_ID"),
