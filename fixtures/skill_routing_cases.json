@@ -1329,8 +1329,8 @@
         "Примени mcp-dependency-review для анализа изменяемых версий npm, Python и Docker в конфигурации MCP без запуска серверов."
       ],
       "negative": [
-        "Audit API RBAC regression tests in Python without reviewing MCP package selectors.",
-        "Сделай визуальную проверку мобильного интерфейса и отступов кнопок, без анализа версий MCP."
+        "Investigate flaky Playwright navigation and screenshot regressions on the checkout page.",
+        "Проверь на скриншоте обрезание кнопки «Сохранить» и отступы формы профиля на телефоне."
       ]
     }
   ]
