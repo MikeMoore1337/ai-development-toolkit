@@ -540,7 +540,7 @@ class ProvenanceTests(unittest.TestCase):
         self.assertTrue(result["ok"], result["issues"][:12])
         self.assertEqual(89, result["skills"])
         self.assertEqual({"contract-first", "api-connector-builder", "code-tour",
-                          "windows-desktop-e2e", "module-regression", "error-handling"},
+                          "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review"},
                          set(json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
                              ["extension_packs"]["native-ecc-ports"]["skills"]))
         self.assertGreater(result["total"], 100)
