@@ -4,6 +4,26 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
+      "id": "native-parallel-440-test-suite",
+      "path": "tests/test_native_parallel_orchestration.py",
+      "name": "Native parallel plan and synthetic worktree safety tests (#440)",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored deterministic static checks and disposable GitHub Actions synthetic Git repositories; no ECC runtime or independent authorship verification.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/FEATURE_DELIVERY_ORCHESTRA.md",
+      "last_reviewed": "2026-11-01",
+      "distribution": "included",
+      "notes": "Issue #440; synthetic Git operations restricted to CI-owned temporary repositories. No native AI agent/client, paid model, real worktree or user project mutated."
+    },
+    {
       "id": "native-learning-436-verification-script",
       "path": "scripts/skill_learning_verification.py",
       "name": "skill_learning_verification.py",

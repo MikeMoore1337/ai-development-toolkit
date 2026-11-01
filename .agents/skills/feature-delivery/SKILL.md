@@ -65,3 +65,7 @@ Read [the feature evidence checklist](references/FEATURE_EVIDENCE.md) when accep
 
 ## Optional orchestration
 For genuinely independent cross-layer work, use the adaptive feature orchestra guide (`docs/FEATURE_DELIVERY_ORCHESTRA.md`) **only if the task warrants delegation**. It keeps this `feature-delivery` controller, one writer, scoped read-only specialists, and current exact-head checks. Small fixes stay single-agent; without real subagents report sequential execution, never invented reviewers. Do not add another workflow state machine or release permission.
+
+## Optional native parallel plan preflight (#440)
+
+When several independently scoped Git tasks are proposed, use **the existing feature-delivery controller**, not a second scheduler. The read-only validator `python scripts/validate_feature_orchestra.py --parallel-plan /external/plan.json` checks bounded task identities, pinned SHA, exclusive writer proposals, write scopes, shared contracts and dependency ordering. An explicitly approved `--git-root /absolute/repo` adds read-only HEAD, dirty worktree, branch and path collision checks. The plan must live outside the checkout and never authorizes writes, native agent sessions, worktree creation/removal or merge. Revalidate the Git snapshot and actual host/permissions before a client-native action. See `docs/FEATURE_DELIVERY_ORCHESTRA.md` (RU/EN); client execution stays `NOT_VERIFIED` until independently observed.
