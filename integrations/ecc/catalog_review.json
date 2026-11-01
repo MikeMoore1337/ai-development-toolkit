@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Five original ECC-derived capabilities are now built into Toolkit via PR #448/#453; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -217,6 +217,87 @@
       "reason": "Pinned original is a marketing/studio competitor-positioning benchmark with nine bespoke weighted brand dimensions and a custom client strategic-tension 2x2. It is not a general software engineering benchmark; importing as a universal developer skill would impose unrelated brand scoring. It might be useful as opt-in business research but no concrete Toolkit task, comparator baseline or routing evidence justifies a native port.",
       "benefit": "Optional evidence-anchored competitive brand positioning scorecards, but relevance and added value versus research-verification are NOT_MEASURED.",
       "test_case": "Given a scoped agency competitor dataset with documented strategic tension, compare source-backed profile cards to existing research workflow; do not fabricate competitor score or treat performance benchmarking as marketing scoring."
+    },
+    {
+      "path": "skills/browser-qa",
+      "status": "ALREADY_PRESENT",
+      "analogue": ".agents/skills/browser-workflow-evidence/SKILL.md",
+      "source_blob": "f6358d6ac8b43edb7cb894481de56c53e19b3cf2",
+      "reason": "Pinned ECC browser-qa combines console/network smoke, screenshots, accessible interaction and release verdict. Toolkit browser-workflow-evidence, extensions/qa/playwright-testing, accessibility-testing and quality gates already cover these operations with stronger observable-evidence boundaries. The original names Claude-specific browser MCP and /canary-watch, which cannot be assumed available; no second browser controller is needed.",
+      "benefit": "Reuse existing tool-dependent browser QA without imposing a second SHIP gate or claiming any live browser run.",
+      "test_case": "On an authorized staging URL, check bounded navigation, no destructive production journey, viewport and accessible interactions, real console/network evidence; missing baseline or unavailable browser must be INCONCLUSIVE/NOT_RUN, never PASS."
+    },
+    {
+      "path": "skills/frontend-a11y",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/accessibility/skills/accessibility-testing/SKILL.md",
+      "source_blob": "a39419935900b1ac1003827d83c896610350b619",
+      "reason": "Pinned ECC gives React/Next.js form labels, aria, keyboard/focus and screen reader examples. Toolkit accessibility-testing already covers applicable WCAG 2.2, keyboard and assistive technology with real observation gates; component-architecture and forms guidance cover implementation. The original custom combobox example should not be imported as a verified accessible widget without browser and AT tests.",
+      "benefit": "Keep one accessibility evidence contract and reuse source examples selectively for relevant framework rather than copy a redundant skill.",
+      "test_case": "React modal/form keyboard focus, invalid-input announcement and restoration should be tested in a real browser with AT where requested; static snippet or axe-only pass must never prove full WCAG conformance."
+    },
+    {
+      "path": "skills/seo",
+      "status": "ALREADY_PRESENT",
+      "analogue": "extensions/seo/skills/seo-audit/SKILL.md",
+      "source_blob": "a4032a5b5a98c4b09eabf4e4f8971ed664887496",
+      "reason": "Original ECC SEO covers robots, sitemap, canonicals, hreflang, structured data, internal linking, Core Web Vitals and keyword intent. All core surfaces are present in Toolkit seo-audit, which explicitly requires page-specific evidence and distinguishes measured site data from hypotheses.",
+      "benefit": "Avoid a duplicate SEO audit and preserve source-specific verification and no-guaranteed-rank claims.",
+      "test_case": "Known sitemap, canonical/noindex and structured-data fixtures must produce URL-specific CONFIRMED/HYPOTHESIS/NOT_VERIFIED findings, without invented traffic or rankings."
+    },
+    {
+      "path": "skills/python-testing",
+      "status": "HOLD_CONFLICT",
+      "analogue": "extensions/qa/skills/pytest-test-design/SKILL.md",
+      "source_blob": "8e68a084ad890afb901c43741a733e6d076958b0",
+      "reason": "Pinned ECC gives a useful broad pytest tutorial, but says always TDD, require 80%+ total and 100% critical-path coverage. As universal defaults these conflict with Toolkit opt-in test-first and risk-based per-project test strategy; existing pytest-test-design, test-analysis-design and feature-delivery already cover most mechanics. No as-is adoption or universal coverage gate.",
+      "benefit": "Consider individual pytest fixture, async and parametrization examples only where a concrete project needs them; retain project-defined coverage targets.",
+      "test_case": "Small authorized Python fix may elect RED/GREEN; absent coverage config must not auto-block at 80%, and no unrequested dependency/plugin install."
+    },
+    {
+      "path": "skills/react-testing",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/frontend/skills/component-architecture/SKILL.md",
+      "source_blob": "babaf6ebef80f1e6ba66ef5242372dd175870a40",
+      "reason": "Pinned ECC provides concrete React Testing Library, userEvent, MSW, Vitest/Jest, hook and accessibility examples. Toolkit generic component-architecture and QA can plan these tests, but a focused source-tested React/MSW fixture is required to establish incremental value, supported versions, and dependency cost before native opt-in inclusion.",
+      "benefit": "Potential framework-specific deterministic frontend test patterns beyond framework-agnostic Toolkit QA; not yet measured or approved.",
+      "test_case": "Use one existing React/Vitest/MSW project fixture to compare baseline Toolkit vs source guidance for async form/error boundary and unhandled network paths; no install without dependency and license review."
+    },
+    {
+      "path": "skills/fastapi-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/backend/skills/service-architecture/SKILL.md",
+      "source_blob": "b4a0a5b5873d90d05797b830ab5966e4cb53ee9d",
+      "reason": "Pinned ECC contains FastAPI/Pydantic v2 and async SQLAlchemy service, DI, auth and httpx testing samples. Existing service-architecture/api-design/auth skills cover cross-stack contracts but not these detailed versioned examples. Native value remains unmeasured; examples require security and dependency compatibility review (JWT/passlib, database lifecycle, session rollback) before reuse.",
+      "benefit": "Potential focused FastAPI 2026-era implementation reference, not a new backend controller or mandatory stack.",
+      "test_case": "Run tests for request/response Pydantic v2, rollback on failure, duplicate race/DB uniqueness and auth 401/403 in an isolated real FastAPI fixture; no startup schema changes or credential use on production."
+    },
+    {
+      "path": "skills/design-system",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/design-system-consistency/SKILL.md",
+      "source_blob": "c041ed8ab627ebad68c00d062603963fc179fae9",
+      "reason": "Pinned ECC offers token extraction to JSON/CSS plus DESIGN.md/HTML preview as well as subjective scoring and an AI-slop detector. Toolkit design-system-consistency already audits tokens and visual rules; automated generation and preview might add value, but requires proof on real target design and coordination with native UX/UI Orchestra, without overriding original tool behavior or owner-approved UI.",
+      "benefit": "Potential repeatable codebase-derived token export and preview, not another design director; value and visual approval remain unverified.",
+      "test_case": "On an isolated sample Tailwind/CSS project compare emitted tokens and responsive preview to existing app, ensure no unapproved UI writes; inspect conflicting variables and visual owner approval separately."
+    },
+    {
+      "path": "skills/agent-eval",
+      "status": "HOLD_UNSUPPORTED",
+      "analogue": "NOT_VERIFIED",
+      "source_blob": "c082704f19ad58e8f0aa986a25f1da0b29809922",
+      "reason": "Pinned ECC delegates to an additional external agent-eval CLI and invokes coding agent runtimes (Claude Code, Aider, Codex) with potentially payable model judges. The implementation, license, sandbox/host permissions and zero-cost route of that separate program were not verified. It cannot be delivered as a standalone native Toolkit skill or run for the owner under current constraints.",
+      "benefit": "Reproducible agent comparison could be useful only after separate external-source/security review and explicit per-user runtime/cost approval.",
+      "test_case": "No external CLI, paid judge, worktree mutation or third-party agent run by default; any future approved benchmark must pin fixture, isolate worktree and record actual cost, run count and deterministic judge evidence."
+    },
+    {
+      "path": "skills/python-patterns",
+      "status": "HOLD_REVIEW",
+      "analogue": ".agents/skills/implementation/SKILL.md",
+      "source_blob": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
+      "reason": "Pinned ECC gathers Python type hints, protocols, context managers, dataclasses, iterators, async, packaging and performance examples. Toolkit implementation/error-handling covers core maintainable engineering, but these verbose language-specific examples may help beginners; practical improvement and Python-version correctness are not yet measured.",
+      "benefit": "Possible reference-only Python examples with no extra runtime, after a focused task-driven comparison avoids redundant generic instructions.",
+      "test_case": "Compare two Python 3.12 implementation/refactor fixtures under existing Toolkit vs source examples for API typing, generator memory and cleanup; measure real tests and maintenance impact, not prompt length alone."
     }
   ]
 }

@@ -185,6 +185,38 @@ class CatalogueTests(unittest.TestCase):
         shipped = set(manifest["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({path.split("/")[-1] for path in expected}.isdisjoint(shipped))
 
+
+    def test_nine_additional_pinned_source_decisions_are_nonautomatic(self):
+        """Native source review is not permission to install, delegate or run tools."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        rows = {item["path"]: item for item in review["decisions"]}
+        expected = {
+            "skills/browser-qa": "ALREADY_PRESENT",
+            "skills/frontend-a11y": "ALREADY_PRESENT",
+            "skills/seo": "ALREADY_PRESENT",
+            "skills/python-testing": "HOLD_CONFLICT",
+            "skills/react-testing": "HOLD_REVIEW",
+            "skills/fastapi-patterns": "HOLD_REVIEW",
+            "skills/design-system": "HOLD_REVIEW",
+            "skills/agent-eval": "HOLD_UNSUPPORTED",
+            "skills/python-patterns": "HOLD_REVIEW",
+        }
+        self.assertEqual(36, len(rows))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
+        for source, status in expected.items():
+            with self.subTest(source=source):
+                row = rows[source]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(40, len(row["source_blob"]))
+                self.assertTrue(all(c in "0123456789abcdef" for c in row["source_blob"]))
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
+        self.assertIn("no runtime", review["note"])
+
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"
         result = audit.frontmatter(frontmatter)
