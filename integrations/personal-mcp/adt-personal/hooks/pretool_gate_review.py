@@ -106,6 +106,17 @@ def _sensitive_path(value: str) -> bool:
             return True
         if part.endswith(SENSITIVE_SUFFIXES):
             return True
+        # A Glob wildcard may match an explicit sensitive basename or suffix.
+        # Do not interpret broad patterns like "*.py" as secret access.
+        if any(ch in part for ch in "*?[") and any(
+            marker in part for marker in (
+                ".env", ".ssh", ".aws", ".azure", ".gnupg", ".kube",
+                "id_rsa", "id_ed25519", ".npmrc", ".pypirc",
+                "credentials.json", "service-account.json", "service_account.json",
+                *SENSITIVE_SUFFIXES,
+            )
+        ):
+            return True
     return False
 
 
