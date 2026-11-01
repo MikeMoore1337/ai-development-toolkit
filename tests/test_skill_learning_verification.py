@@ -258,6 +258,39 @@ class NativeLearningVerificationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "INVALID_CLAIMS_SCHEMA"):
             self.examine(c=bad)
 
+    def test_cli_rejects_ambiguous_and_deep_json_without_tracebacks(self):
+        from contextlib import redirect_stdout
+        import io
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            observations = root / "observations.json"
+            evidence = root / "claims.json"
+            observations.write_text(json.dumps(self.p), encoding="utf-8")
+            cases = [
+                '{"schema_version":1,"claims":[],"claims":[]}',
+                '{"schema_version":1,"claims":[{"source_url":"ok","source_url":"wrong"}]}',
+                "[" * 10000 + "0" + "]" * 10000,
+            ]
+            for content in cases:
+                with self.subTest(content_length=len(content)):
+                    evidence.write_text(content, encoding="utf-8")
+                    captured = io.StringIO()
+                    with redirect_stdout(captured):
+                        exit_code = learning.main([
+                            "--input", str(observations), "--claims", str(evidence),
+                            "--project-repo", REPO, "--as-of", "2026-11-01",
+                        ])
+                    self.assertEqual(2, exit_code)
+                    self.assertEqual(
+                        {"decision": "REJECT", "reason": "INVALID_OR_UNSAFE_INPUT"},
+                        json.loads(captured.getvalue()),
+                    )
+            self.assertEqual(
+                ["claims.json", "observations.json"],
+                sorted(p.name for p in root.iterdir()),
+            )
+
     def test_invalid_claims_cli_exits_before_network_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

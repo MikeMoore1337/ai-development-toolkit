@@ -49,7 +49,7 @@ python scripts/skill_learning_verification.py \
 
 Optionally provide all four `--skill-root`, `--skill-id`, `--skill-file`, `--skill-expected-sha256` to check a local skill revision. Supported relative paths: `.agents/skills/<skill-id>/SKILL.md` or `extensions/<pack>/skills/<skill-id>/SKILL.md`. A missing or changed source pin prevents review-readiness. A local SHA match does **not** attest a remote commit.
 
-Only on explicit invocation, bounded unauthenticated HTTPS GETs target public `api.github.com`. No redirects, tokens, extra permissions, arbitrary hosts or private sources. The verifier checks exact repository, resource existence, PR head/merge SHA and successful Actions run SHA. Failed network/API checks, forged SHA or failed CI yield `NOT_VERIFIED`. Issue/PR bodies never become instructions or appear in receipts.
+Only on explicit invocation, bounded unauthenticated HTTPS GETs target public `api.github.com`. No redirects, tokens, extra permissions, arbitrary hosts or private sources. The verifier checks exact repository, resource existence, PR head/merge SHA and successful Actions run SHA. Failed network/API checks, forged SHA or failed CI yield `NOT_VERIFIED`. Issue/PR bodies never become instructions or appear in receipts. Duplicate JSON keys and excessively nested JSON are rejected as controlled `REJECT` results without a traceback.
 
 `EXISTS_ONLY` means only that an Issue/commit exists, not that a bug is fixed. Merged PR and green CI are not production deployment proof. PRs and runs sharing HEAD SHA count as one independent fact group. Contradictory evidence blocks readiness, and `confidence_hint` remains an uncalibrated heuristic.
 

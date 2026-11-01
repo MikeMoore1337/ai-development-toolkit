@@ -77,6 +77,16 @@ def public_github_get(path: str) -> dict:
     return parsed
 
 
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    """Reject ambiguous duplicate JSON keys, including within nested objects."""
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("DUPLICATE_JSON_KEY")
+        result[key] = value
+    return result
+
+
 def read_bounded_json(path: Path) -> object:
     """Read a small, explicit regular file without following symlinks or junctions."""
     if any(part.is_symlink() or getattr(part, "is_junction", lambda: False)()
@@ -86,7 +96,11 @@ def read_bounded_json(path: Path) -> object:
         data = source.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
         raise ValueError("TOO_LARGE")
-    return json.loads(data.decode("utf-8"))
+    try:
+        return json.loads(data.decode("utf-8"), object_pairs_hook=_unique_json_object)
+    except (RecursionError, OverflowError) as exc:
+        # A sub-32-KiB JSON array can still exceed the Python parser depth.
+        raise ValueError("JSON_NESTING_TOO_DEEP") from exc
 
 
 def validate_claims(payload: object, packet: dict) -> dict[str, dict]:
