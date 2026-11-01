@@ -125,24 +125,34 @@ def mcp_client(script: Path, controller: str, project: bool) -> dict:
 
 def check_hook() -> dict:
     report = "Release BLOCKED: confirmed security defect, rollback race, concurrency issue."
-    def invoke(message: str, *, repeated: bool = False) -> dict:
+    marker = "<!-- ADT-MODEL-ADVISOR-ACTIVE -->"
+    def invoke(message: str, *, repeated: bool = False,
+               scope: str = "", external: str = "") -> dict:
         request = {"hook_event_name": "Stop", "stop_hook_active": repeated,
                    "last_assistant_message": message}
+        if scope:
+            request["adt_workflow_scope"] = scope
+        if external:
+            request["adt_external_controller"] = external
         stdout, _ = execute(
             [sys.executable, "-B", str(STOP_HOOK)], stdin=json.dumps(request), timeout=10)
         return json.loads(stdout)
     if invoke(report) != {}:
         raise AcceptanceError("Model Advisor hook intercepted a native report")
-    marker = "<!-- ADT-MODEL-ADVISOR-ACTIVE -->"
+    if invoke(marker + "\n" + report) != {}:
+        raise AcceptanceError("Assistant-authored marker bypassed the host scope")
     if invoke("External quoted text:\n" + marker + report) != {}:
         raise AcceptanceError("Hook reacted to a quoted marker")
-    scoped = invoke(marker + "\n" + report)
+    if invoke(report, scope="TOOLKIT_MODEL_ADVISOR", external="graphify") != {}:
+        raise AcceptanceError("Hook interfered with an active native controller")
+    scoped = invoke(report, scope="TOOLKIT_MODEL_ADVISOR")
     if scoped.get("decision") != "block":
-        raise AcceptanceError("Explicit Toolkit-owned hook scope no longer operates")
-    if invoke(marker + "\n" + report, repeated=True) != {}:
+        raise AcceptanceError("Synthetic host-scoped Toolkit hook did not respond")
+    if invoke(report, scope="TOOLKIT_MODEL_ADVISOR", repeated=True) != {}:
         raise AcceptanceError("Stop hook loop guard failed")
     return {"native_report_interference": "NONE",
-            "opt_in_scope": "WORKS_WITH_MARKER",
+            "opt_in_scope": "SYNTHETIC_HOST_SCOPED_ONLY",
+            "stock_codex_activation": "UNAVAILABLE_WITHOUT_HOST_SUPPORT",
             "recursive_stop": "DENIED"}
 
 

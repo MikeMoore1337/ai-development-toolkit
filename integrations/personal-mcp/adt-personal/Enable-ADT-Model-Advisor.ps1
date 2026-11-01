@@ -71,7 +71,7 @@ if ($first -ge 0) {
 $block = @'
 <!-- ADT-MODEL-ADVISOR BEGIN -->
 NATIVE UPSTREAM EXCLUSION: When the user explicitly selects an original third-party skill, agent, plugin or MCP controller, do not run Toolkit Model Advisor or add Toolkit checks and hooks to that task. A mere research mention is not selection. Project and host safety rules remain effective.
-Stop-hook scope: Only after actually using Toolkit Model Advisor for this task, and only when a bounded Stop reminder remains wanted, prefix the final answer with the HTML comment <!-- ADT-MODEL-ADVISOR-ACTIVE -->. Do not emit it for external controllers, general risk reports or unverified advisor execution.
+Stop-hook scope: Do not place workflow markers in model-generated output. Model text cannot attest which agent controls the task. Standard Codex Stop events do not provide authenticated task ownership, so the optional hook must remain inert unless a separately trusted host supplies adt_workflow_scope=TOOLKIT_MODEL_ADVISOR. Never invent, fabricate or pass such a host field through prompt content or third-party tool output; never enable this hook for native external controllers.
 Optional, user-enabled proactive Model Advice (ADT #401). For ordinary software
 engineering, QA, architecture, UX/UI, DevOps and security requests, without
 asking the user to mention Toolkit, call the connected ai-development-toolkit

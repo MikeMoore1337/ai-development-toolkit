@@ -36,8 +36,9 @@ class AdvisorSourceContract(unittest.TestCase):
     def test_native_external_controller_is_excluded_from_advisor(self):
         src = SCRIPT.read_text(encoding='utf-8')
         self.assertIn("NATIVE UPSTREAM EXCLUSION", src)
-        self.assertIn("ADT-MODEL-ADVISOR-ACTIVE", src)
-        self.assertIn("Do not emit it for external controllers", src)
+        self.assertIn("adt_workflow_scope=TOOLKIT_MODEL_ADVISOR", src)
+        self.assertIn("Do not place workflow markers", src)
+        self.assertIn("never enable this hook for native external controllers", src)
 
     def test_normal_prompt_triggers_advice(self):
         src = SCRIPT.read_text(encoding="utf-8")

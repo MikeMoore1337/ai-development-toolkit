@@ -13,9 +13,9 @@ import sys
 
 MAX_EVENT_BYTES = 65536
 MAX_MESSAGE_CHARS = 16000
-# Codex Stop events do not identify the active external controller. Never
-# trigger a Toolkit continuation merely because a third-party answer mentions risk.
-SCOPE_MARKER = "<!-- ADT-MODEL-ADVISOR-ACTIVE -->"
+# Standard Codex Stop events do not identify which workflow owns the task.
+# Model-authored text, including markers, cannot be a trusted scope assertion.
+TRUSTED_SCOPE = "TOOLKIT_MODEL_ADVISOR"
 
 # Fixed, bounded lexical signals are heuristic only, never a finding verifier.
 CONFIRMED = re.compile(
@@ -53,8 +53,13 @@ def check_stop(event: object) -> dict[str, object]:
     message = event.get("last_assistant_message")
     if not isinstance(message, str) or len(message) > MAX_MESSAGE_CHARS:
         return {}
-    if not message.startswith(SCOPE_MARKER):
-        return {}  # No affirmative evidence of advisor ownership for this turn.
+    # Host-scoped ownership is nonstandard and absent in ordinary Codex Stop
+    # events; fail open rather than affecting an unrelated native workflow.
+    if event.get("adt_workflow_scope") != TRUSTED_SCOPE:
+        return {}
+    if (event.get("adt_external_tool_active") is True or
+            event.get("adt_external_controller") not in (None, "")):
+        return {}
     if not CONFIRMED.search(message) or ALREADY_ADVISED.search(message):
         return {}
     if NEGATIVE_ONLY.search(message) and not re.search(
