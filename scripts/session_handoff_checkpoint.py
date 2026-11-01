@@ -164,7 +164,20 @@ def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
         return {"decision": "BLOCKED", "reason": "WRONG_RECIPIENT"}
     if not _project_matches_origin(repo, packet["issue_url"]):
         return {"decision": "BLOCKED", "reason": "PROJECT_MISMATCH"}
-    return verify_packet(repo, checkpoint)
+    checked = verify_packet(repo, checkpoint)
+    if checked["decision"] != "PASS":
+        return checked
+    # A matching Git snapshot is context, not proof of who sent the packet
+    # or a new authorization to perform the suggested next action.
+    return {
+        **checked,
+        "verification_scope": "GIT_CONTEXT_ONLY",
+        "sender_identity": "NOT_VERIFIED",
+        "policy_revalidated": "NOT_VERIFIED",
+        "owner_approval": "NOT_GRANTED",
+        "action_authorized": False,
+        "execution_authorized": False,
+    }
 
 
 def verify_handoff_portable(repo: Path, packet: object, to_client: str) -> dict:
@@ -197,6 +210,10 @@ def verify_handoff_portable(repo: Path, packet: object, to_client: str) -> dict:
         "trust": "UNREVIEWED",
         "sender_identity": "NOT_VERIFIED",
         "owner_approval": "NOT_GRANTED",
+        "verification_scope": "GIT_CONTEXT_ONLY",
+        "policy_revalidated": "NOT_VERIFIED",
+        "action_authorized": False,
+        "execution_authorized": False,
         "next_action": "REVIEW_ISSUE",
         "execution": "NOT_RUN",
         "network": "NOT_USED",
@@ -288,6 +305,8 @@ def search_handoffs(repo: Path, directory: Path, issue_url: str, to_client: str)
             "git_check": verified["decision"],
             "trust": "UNREVIEWED",
             "owner_approval": "NOT_GRANTED",
+            "action_authorized": False,
+            "execution_authorized": False,
         })
     count = sum(m["git_check"] == "PASS" for m in matches)
     return {
@@ -303,6 +322,9 @@ def search_handoffs(repo: Path, directory: Path, issue_url: str, to_client: str)
         "execution": "NOT_RUN",
         "network": "NOT_USED",
         "owner_approval": "NOT_GRANTED",
+        "policy_revalidated": "NOT_VERIFIED",
+        "action_authorized": False,
+        "execution_authorized": False,
     }
 
 
