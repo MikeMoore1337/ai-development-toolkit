@@ -1,0 +1,112 @@
+name: Original upstream native-first acceptance (#492, no models)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/native_upstream_acceptance.py'
+      - 'tests/test_native_upstream_acceptance.py'
+      - 'scripts/toolkit_mcp.py'
+      - 'integrations/personal-mcp/adt-personal/**'
+      - '.github/workflows/native-upstream-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  graphify-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # pinned
+        with:
+          version: '0.11.32'
+          enable-cache: false
+      - name: Install original Graphify 0.9.97 in isolated user tool environment
+        shell: bash
+        env:
+          UV_NO_CONFIG: '1'
+          UV_NO_PROGRESS: '1'
+        run: |
+          set -euo pipefail
+          uv tool install --python python3.12 'graphifyy==0.9.97'
+          "$HOME/.local/bin/graphify" --version
+      - name: Run real original CLI twice with live Toolkit MCP between
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python -B scripts/native_upstream_acceptance.py \
+            --tool graphify \
+            --native-bin "$HOME/.local/bin/graphify" \
+            --report "$RUNNER_TEMP/native-graphify-492.json"
+      - name: Preserve bounded source-only evidence, including negative outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: native-492-graphify
+          path: ${{ runner.temp }}/native-graphify-492.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Remove isolated original tool installation
+        if: always()
+        shell: bash
+        run: |
+          uv tool uninstall graphifyy || true
+
+  harness2-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Install original pinned Harness2 source and its own CLI only
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash integrations/harness2/install.sh install
+      - name: Run real original dry-run and help commands with live Toolkit MCP
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          base="$HOME/.local/share/ai-development-toolkit/harness2-1cfe254e8d25b15f37048c3730134686abe60335"
+          python -B scripts/native_upstream_acceptance.py \
+            --tool harness2 \
+            --native-bin "$base/.venv/bin/harness2" \
+            --source "$base/source" \
+            --report "$RUNNER_TEMP/native-harness2-492.json"
+      - name: Preserve bounded source-only evidence, including negative outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: native-492-harness2
+          path: ${{ runner.temp }}/native-harness2-492.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Remove isolated pinned original installation
+        if: always()
+        shell: bash
+        run: |
+          base="$HOME/.local/share/ai-development-toolkit/harness2-1cfe254e8d25b15f37048c3730134686abe60335"
+          if [ -f "$base/.adt-original-harness2" ]; then
+            bash integrations/harness2/install.sh remove --confirm || true
+          fi

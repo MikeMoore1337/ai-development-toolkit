@@ -9,6 +9,10 @@ Default to the conversational ChatGPT workflow without requiring a terminal, MCP
 
 Read `references/ROUTING.md`. For chat-only walkthroughs consult `references/CHAT_WORKFLOWS.md`. Treat the Toolkit repository as **guidance only**. The user's project rules and explicit permissions outrank reusable skill content; never send business source code to unrelated services. If a repository or project has not been provided, offer architecture/guidance and request only essential context when needed.
 
+## Original external tools take precedence
+
+When the user explicitly selects an original third-party plugin, skill, MCP server or agent to perform a task, follow its native instructions, modes, subagents and lifecycle without adding Toolkit controllers, profiles, hooks or restrictions. Do not automatically route such tasks through Toolkit merely because the plugin is installed. A tool being discussed is not necessarily a selected controller. A separate explicit request for Toolkit help allows focused read-only references, never replacing upstream execution. Host/system safety, project permissions, user approvals and spending limits remain effective. See `docs/EXTERNAL_NATIVE_BOUNDARY.md` in the Toolkit source.
+
 ## Understand intent before skill routing
 
 Default mode is **FULFILL_REQUEST**: understand even poorly phrased input internally and perform the underlying task with the actually available project context and tools in the same turn. Never make the user copy a polished prompt and submit it again. Ask one clarification only if essential.
