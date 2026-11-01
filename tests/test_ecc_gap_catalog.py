@@ -202,6 +202,17 @@ class CatalogueTests(unittest.TestCase):
             "skills/agent-eval": "HOLD_UNSUPPORTED",
             "skills/python-patterns": "HOLD_REVIEW",
         }
+        original_blobs = {
+            "skills/browser-qa": "f6358d6ac8b43edb7cb894481de56c53e19b3cf2",
+            "skills/frontend-a11y": "a39419935900b1ac1003827d83c896610350b619",
+            "skills/seo": "a4032a5b5a98c4b09eabf4e4f8971ed664887496",
+            "skills/python-testing": "8e68a084ad890afb901c43741a733e6d076958b0",
+            "skills/react-testing": "babaf6ebef80f1e6ba66ef5242372dd175870a40",
+            "skills/fastapi-patterns": "b4a0a5b5873d90d05797b830ab5966e4cb53ee9d",
+            "skills/design-system": "c041ed8ab627ebad68c00d062603963fc179fae9",
+            "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
+            "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
+        }
         self.assertEqual(36, len(rows))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
@@ -210,7 +221,7 @@ class CatalogueTests(unittest.TestCase):
             with self.subTest(source=source):
                 row = rows[source]
                 self.assertEqual(status, row["status"])
-                self.assertEqual(40, len(row["source_blob"]))
+                self.assertEqual(original_blobs[source], row["source_blob"])
                 self.assertTrue(all(c in "0123456789abcdef" for c in row["source_blob"]))
                 self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
                 if row["analogue"] != "NOT_VERIFIED":
