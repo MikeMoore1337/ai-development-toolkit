@@ -49,6 +49,24 @@ VISIBLE_DANGEROUS = re.compile(
 )
 
 
+# Sensitive read destinations are review signals, never proof that access is denied.
+# Grep's "pattern" is a content expression, not a filesystem path.
+SENSITIVE_DIRS = frozenset({".ssh", ".aws", ".azure", ".gnupg", ".kube"})
+SENSITIVE_FILES = frozenset({
+    ".npmrc", ".pypirc", "id_rsa", "id_ed25519", "credentials.json",
+    "service-account.json", "service_account.json",
+})
+PUBLIC_ENV_TEMPLATES = frozenset({
+    ".env.example", ".env.sample", ".env.template", ".env.dist",
+})
+SENSITIVE_SUFFIXES = (".pem", ".p12", ".pfx", ".key")
+DIRECT_PS_RISK = re.compile(
+    r"(?i)^\s*(?:ri|del|erase|rmdir|Remove-Item|Format-Volume|Clear-Disk|"
+    r"Stop-Computer|shutdown|diskpart|Invoke-Expression|iex|"
+    r"Start-Process|curl|wget|Invoke-WebRequest)\b"
+)
+
+
 class ReviewError(ValueError):
     pass
 
@@ -72,6 +90,23 @@ def _recommendation(decision: str, reason: str) -> dict[str, object]:
 def _invalid_text(value: str) -> bool:
     return any(ord(ch) < 32 and ch not in "\t\r\n" or
                ord(ch) == 127 or 0xD800 <= ord(ch) <= 0xDFFF for ch in value)
+
+
+def _sensitive_path(value: str) -> bool:
+    """Review obvious secret paths without interpreting Globs or accessing files."""
+    segments = [part for part in value.replace("\\", "/").casefold().split("/")
+                if part and part != "."]
+    if ".." in segments:
+        return True
+    for part in segments:
+        if part in SENSITIVE_DIRS or part in SENSITIVE_FILES:
+            return True
+        if part == ".env" or (part.startswith(".env.") and
+                              part not in PUBLIC_ENV_TEMPLATES):
+            return True
+        if part.endswith(SENSITIVE_SUFFIXES):
+            return True
+    return False
 
 
 def _dangerous_bash_tokens(parts: list[str]) -> bool:
@@ -128,23 +163,29 @@ def _shell_review(tool: str, command: str) -> dict[str, object]:
     if not command.strip() or len(command) > MAX_COMMAND_CHARS or _invalid_text(command):
         raise ReviewError("INVALID_COMMAND")
     if tool == "Bash":
-        if UNSAFE_SHELL_CHARS.search(command):
-            if VISIBLE_DANGEROUS.search(command):
-                return _recommendation("BLOCK_RECOMMENDED", "DANGEROUS_OPERATION")
-            return _recommendation("REVIEW_REQUIRED", "COMPOUND_OR_EXPANDED_SHELL")
         try:
             parts = shlex.split(command, posix=True)
         except ValueError as exc:
             raise ReviewError("INVALID_SHELL_SYNTAX") from exc
         if _dangerous_bash_tokens(parts):
             return _recommendation("BLOCK_RECOMMENDED", "DANGEROUS_OPERATION")
+        if UNSAFE_SHELL_CHARS.search(command):
+            # A semicolon or substitution inside a quoted string may be inert.
+            # Without a complete shell parser, do not claim a confirmed risk.
+            # Unknown/expanded expressions still never reach ALLOW_CANDIDATE.
+            if not any(ch in command for ch in "\"'") and VISIBLE_DANGEROUS.search(command):
+                return _recommendation("BLOCK_RECOMMENDED", "DANGEROUS_OPERATION")
+            return _recommendation("REVIEW_REQUIRED", "COMPOUND_OR_EXPANDED_SHELL")
         if PLAIN_BASH.fullmatch(command) and tuple(parts) in SAFE_BASH:
             return _recommendation("ALLOW_CANDIDATE", "EXACT_READONLY_FORM")
     else:
-        # Matching only at visible statement boundaries avoids a common false
-        # positive: Write-Output 'Remove-Item' is not a Remove-Item invocation.
+        # A string containing quotes needs PowerShell-aware interpretation.
+        # Only directly invoked known-risk cmdlets are unambiguous in this case;
+        # potentially executable command chains remain REVIEW_REQUIRED.
         if VISIBLE_DANGEROUS.search(command):
-            return _recommendation("BLOCK_RECOMMENDED", "DANGEROUS_OPERATION")
+            if not any(ch in command for ch in "\"'") or DIRECT_PS_RISK.search(command):
+                return _recommendation("BLOCK_RECOMMENDED", "DANGEROUS_OPERATION")
+            return _recommendation("REVIEW_REQUIRED", "COMPOUND_OR_EXPANDED_SHELL")
         stripped = command.strip(" \t")
         if (not UNSAFE_PS_CHARS.search(command) and PLAIN_PS.fullmatch(stripped)
                 and stripped.casefold() in SAFE_PS):
@@ -185,6 +226,8 @@ def review_event(event: object) -> dict[str, object]:
             len(value) > MAX_TOOL_PATH_CHARS or _invalid_text(value) or
             any(ch in value for ch in "\r\n\x00")):
         raise ReviewError("INVALID_READ_INPUT")
+    if tool in {"Read", "Glob"} and _sensitive_path(value):
+        return _recommendation("REVIEW_REQUIRED", "SENSITIVE_OR_OUT_OF_SCOPE_PATH")
     return _recommendation("ALLOW_CANDIDATE", "READ_ONLY_DECLARATION")
 
 
