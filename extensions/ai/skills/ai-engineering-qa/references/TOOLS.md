@@ -13,7 +13,7 @@ The offline fixture uses an imaginary note service and **only checks requests**.
 When **designing an agent tool response for a project that owns the tool**, the
 same offline QA module can additionally inspect its response shape:
 
-`check_tool_observation(response, effect="write", prior_outcome="unknown")`
+`check_tool_observation(response, effect="write", operation_outcome="unknown")`
 from `scripts/validate_ai_contracts.py`. Do not impose this format on existing
 external MCP tools, SDK responses or an original third-party skill. This is a
 proposed interface contract, not a runtime tool wrapper or permission grant.

@@ -223,20 +223,21 @@ def check_tool_call(spec: dict, call: dict, grant: dict, seen: set[str]) -> list
 
 
 def check_tool_observation(observation: object, *, effect: str,
-                           prior_outcome: str) -> list[str]:
+                           operation_outcome: str) -> list[str]:
     """Review an opt-in agent tool-response contract without executing tools.
 
-    This structural oracle cannot detect prompt injection in strings, prove an
-    operation happened or independently grade an agent. Existing tools are
-    never required to adopt this output envelope.
+    operation_outcome is the caller-supplied outcome of the current attempt,
+    not the result of an earlier retry. This structural oracle cannot prove
+    it, detect prompt injection in strings, or grade an agent. Existing tools
+    are never required to adopt this output envelope.
     """
     effects = {"read", "write", "reversible", "irreversible"}
     outcomes = {"not_attempted", "applied", "not_applied",
                 "unknown", "authorization_denied"}
     if (not isinstance(effect, str) or effect not in effects
-            or not isinstance(prior_outcome, str)
-            or prior_outcome not in outcomes):
-        return ["unsupported effect or prior outcome"]
+            or not isinstance(operation_outcome, str)
+            or operation_outcome not in outcomes):
+        return ["unsupported effect or operation outcome"]
     if not isinstance(observation, dict):
         return ["tool observation must be an object"]
     required = {"status", "summary", "next_actions", "artifacts", "recovery"}
@@ -259,9 +260,9 @@ def check_tool_observation(observation: object, *, effect: str,
     if status == "success":
         if recovery is not None:
             errors.append("success must not claim recovery")
-        if prior_outcome in {"unknown", "authorization_denied", "not_applied",
+        if operation_outcome in {"unknown", "authorization_denied", "not_applied",
                              "not_attempted"}:
-            errors.append("success contradicts prior outcome")
+            errors.append("success contradicts operation outcome")
     elif isinstance(status, str) and status in {"warning", "error"}:
         if not isinstance(recovery, dict) or set(recovery) != {
                 "root_cause", "retry_policy", "stop_condition"}:
@@ -275,13 +276,13 @@ def check_tool_observation(observation: object, *, effect: str,
             if (not isinstance(retry_policy, str)
                     or retry_policy not in {"stop", "safe_retry", "after_reconciliation"}):
                 errors.append("unknown retry policy")
-            if (effect != "read" and prior_outcome == "unknown"
+            if (effect != "read" and operation_outcome == "unknown"
                     and retry_policy == "safe_retry"):
                 errors.append("unsafe ambiguous mutation retry")
-            if (effect != "read" and prior_outcome == "applied"
+            if (effect != "read" and operation_outcome == "applied"
                     and retry_policy == "safe_retry"):
                 errors.append("unsafe duplicate mutation retry")
-            if (prior_outcome == "authorization_denied"
+            if (operation_outcome == "authorization_denied"
                     and retry_policy != "stop"):
                 errors.append("retry after authorization denial")
     return sorted(set(errors))

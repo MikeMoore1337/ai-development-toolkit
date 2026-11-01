@@ -122,15 +122,15 @@ class AIContractsTests(unittest.TestCase):
             },
         }
         self.assertTrue(check_tool_observation(
-            baseline, effect="write", prior_outcome="unknown"))
+            baseline, effect="write", operation_outcome="unknown"))
         self.assertEqual([], check_tool_observation(
-            candidate, effect="write", prior_outcome="unknown"))
+            candidate, effect="write", operation_outcome="unknown"))
         # A passing response schema is not proof that a tool ran or a model improved.
         self.assertEqual([], check_tool_observation({
             "status": "success", "summary": "synthetic read completed",
             "next_actions": [], "artifacts": ["fixture:123"],
             "recovery": None,
-        }, effect="read", prior_outcome="applied"))
+        }, effect="read", operation_outcome="applied"))
 
     def test_agent_harness_negative_observation_mutations(self):
         good = {
@@ -162,56 +162,56 @@ class AIContractsTests(unittest.TestCase):
                 dest[keys[-1]] = value
                 self.assertIn(expected, check_tool_observation(
                     item, effect="irreversible",
-                    prior_outcome="authorization_denied"))
+                    operation_outcome="authorization_denied"))
         self.assertEqual([], check_tool_observation(
             good, effect="irreversible",
-            prior_outcome="authorization_denied"))
+            operation_outcome="authorization_denied"))
         unsafe = copy.deepcopy(good)
         unsafe["recovery"]["retry_policy"] = "safe_retry"
         self.assertIn("unsafe ambiguous mutation retry",
                       check_tool_observation(unsafe, effect="write",
-                                             prior_outcome="unknown"))
+                                             operation_outcome="unknown"))
         unauthorized_success = {
             "status": "success", "summary": "not observed",
             "next_actions": [], "artifacts": [], "recovery": None,
         }
-        self.assertIn("success contradicts prior outcome",
+        self.assertIn("success contradicts operation outcome",
                       check_tool_observation(unauthorized_success,
                                              effect="write",
-                                             prior_outcome="authorization_denied"))
+                                             operation_outcome="authorization_denied"))
         already_applied = copy.deepcopy(good)
         already_applied["recovery"]["retry_policy"] = "safe_retry"
         self.assertIn("unsafe duplicate mutation retry",
                       check_tool_observation(already_applied,
                                              effect="reversible",
-                                             prior_outcome="applied"))
-        self.assertIn("success contradicts prior outcome",
+                                             operation_outcome="applied"))
+        self.assertIn("success contradicts operation outcome",
                       check_tool_observation(unauthorized_success,
                                              effect="read",
-                                             prior_outcome="not_attempted"))
+                                             operation_outcome="not_attempted"))
         self.assertEqual([], check_tool_observation(
             {
                 "status": "warning", "summary": "synthetic incomplete write",
                 "next_actions": [], "artifacts": [],
                 "recovery": {"root_cause": "unknown", "retry_policy": "after_reconciliation",
                              "stop_condition": "stop if not reconciled"},
-            }, effect="reversible", prior_outcome="unknown"))
+            }, effect="reversible", operation_outcome="unknown"))
         self.assertTrue(check_tool_observation(
-            good, effect="no such effect", prior_outcome="unknown"))
+            good, effect="no such effect", operation_outcome="unknown"))
         self.assertTrue(check_tool_observation(
-            None, effect="read", prior_outcome="not_attempted"))
+            None, effect="read", operation_outcome="not_attempted"))
         invalid = copy.deepcopy(good)
         invalid["status"] = ["error"]
         self.assertIn("invalid observation status", check_tool_observation(
-            invalid, effect="read", prior_outcome="not_attempted"))
+            invalid, effect="read", operation_outcome="not_attempted"))
         invalid = copy.deepcopy(good)
         invalid["recovery"]["retry_policy"] = []
         self.assertIn("unknown retry policy", check_tool_observation(
-            invalid, effect="write", prior_outcome="unknown"))
+            invalid, effect="write", operation_outcome="unknown"))
         self.assertTrue(check_tool_observation(
-            good, effect=[], prior_outcome="unknown"))
+            good, effect=[], operation_outcome="unknown"))
         self.assertTrue(check_tool_observation(
-            good, effect="read", prior_outcome=[]))
+            good, effect="read", operation_outcome=[]))
 
 
     def test_integrity_of_zero_spend_lock(self):
