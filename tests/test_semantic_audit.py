@@ -28,7 +28,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         # was reviewed in its original source snapshot.
         self.assertEqual({name: path for name, path in self.expected.items()
                           if name in actual}, actual)
-        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing", "ux-ui-design-orchestra", "observability-sre", "dependency-maintenance", "data-engineering", "maintenance-support", "prompt-refinement", "seo-audit", "contract-first", "api-connector-builder", "code-tour", "windows-desktop-e2e", "module-regression", "error-handling"},
+        self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing", "ux-ui-design-orchestra", "observability-sre", "dependency-maintenance", "data-engineering", "maintenance-support", "prompt-refinement", "seo-audit", "contract-first", "api-connector-builder", "code-tour", "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review"},
                          set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
