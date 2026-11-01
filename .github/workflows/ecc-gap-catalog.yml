@@ -1,8 +1,14 @@
 name: Original ECC complete gap catalogue (opt-in)
 
 on:
-  # Maintenance/source comparison ONLY. Do not fetch or execute ECC in normal Toolkit CI.
+  # Dedicated pinned-source audit on #435 PRs; no ECC CLI/agent runtime on PR.
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/ecc_gap_catalog.py'
+      - 'tests/test_ecc_gap_catalog.py'
+      - 'integrations/ecc/catalog_review.json'
+      - '.github/workflows/ecc-gap-catalog.yml'
 
 permissions:
   contents: read
@@ -19,6 +25,7 @@ jobs:
       - name: Checkout Toolkit sources without credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Checkout exact unmodified ECC release source
@@ -68,7 +75,28 @@ jobs:
           print("VERDICTS=", dict(Counter(x["status"] for x in rows)))
           PY
 
+      - name: Confirm full source-read triage never approves a component automatically
+        env:
+          REVIEW: ${{ runner.temp }}/ecc-gap/ecc-relevance-source-triage.json
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path(os.environ["REVIEW"]).read_text(encoding="utf-8"))
+          assert data["total"] == 601
+          assert data["total"] == data["manually_decided"] + data["pending_semantic_review"]
+          assert len({x["upstream_path"] for x in data["entries"]}) == 601
+          assert all(x["source_revision"] == data["source_revision"] for x in data["entries"])
+          assert all(x["adoption"] == "NOT_APPROVED" for x in data["entries"]
+                     if not x["manual_source_decision"])
+          assert not data["autoinstall"] and not data["external_runtime_executed"]
+          assert all(x["live_client"] == "NOT_VERIFIED" for x in data["entries"])
+          print("ECC_FULL_SOURCE_TRIAGE=PASS", data["manually_decided"],
+                data["pending_semantic_review"])
+          PY
+
       - name: Test original ECC granular selection without mutation
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
           ECC_DRY_RUN: '1'
           NO_COLOR: '1'
