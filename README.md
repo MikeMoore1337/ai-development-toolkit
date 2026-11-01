@@ -59,7 +59,7 @@ These are **illustrative workflows, not claimed real-world test runs**.
 
 [![Skills](https://img.shields.io/badge/skills-89-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 [![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
-[![Profiles](https://img.shields.io/badge/profiles-51-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-52-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 
 | Group | Inventory |
 | :--- | ---: |
