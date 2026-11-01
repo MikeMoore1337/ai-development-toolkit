@@ -356,7 +356,7 @@ class CatalogueTests(unittest.TestCase):
     def test_all_manual_source_decisions_have_pinned_git_blobs(self):
         review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
-        self.assertEqual(46, len(review["decisions"]))
+        self.assertEqual(60, len(review["decisions"]))
         self.assertTrue(all(
             isinstance(row.get("source_blob"), str)
             and len(row["source_blob"]) == 40
