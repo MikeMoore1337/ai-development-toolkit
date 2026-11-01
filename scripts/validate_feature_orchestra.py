@@ -240,12 +240,281 @@ def _validate(data: Any) -> list[str]:
     return sorted(set(errors))
 
 
+
+# Optional static multi-worktree preflight (#440). This is NOT an execution runtime.
+import os
+import subprocess
+import unicodedata
+
+_BRANCH = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,127}\Z")
+_WINDOWS_DEVICE = re.compile(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?\Z", re.I)
+
+
+def _portable_path(value: object, *, directory: bool = False) -> bool:
+    if not isinstance(value, str) or not (1 <= len(value) <= 240):
+        return False
+    candidate = value[:-1] if directory and value.endswith("/") else value
+    parts = candidate.split("/")
+    return bool(candidate) and all(
+        part not in ("", ".", "..") and part.casefold() != ".git"
+        and not _WINDOWS_DEVICE.fullmatch(part)
+        and not part.endswith((".", " "))
+        and not any(ord(char) < 32 or char in '\\:*?"<>|' for char in part)
+        for part in parts
+    )
+
+
+def _path_key(value: str) -> str:
+    return unicodedata.normalize("NFC", value.rstrip("/")).casefold()
+
+
+def _write_overlap(left: str, right: str) -> bool:
+    a, b = _path_key(left), _path_key(right)
+    return a == b or a.startswith(b + "/") or b.startswith(a + "/")
+
+
+def validate_parallel_plan(data: Any, *, git_root: Path | None = None) -> list[str]:
+    """Validate candidates, not executed agents. Optionally inspect an explicit Git root read-only."""
+    try:
+        return _validate_parallel_plan(data, git_root=git_root)
+    except (TypeError, KeyError, ValueError, AttributeError, OSError, subprocess.SubprocessError):
+        return ["INVALID_PARALLEL_INPUT"]
+
+
+def _validate_parallel_plan(data: Any, *, git_root: Path | None) -> list[str]:
+    fields = {"schema_version", "revision", "controller", "active_controllers",
+              "runtime_state", "tasks"}
+    if not isinstance(data, dict) or set(data) != fields:
+        return ["PARALLEL_SCHEMA"]
+    errors: list[str] = []
+    if type(data["schema_version"]) is not int or data["schema_version"] != 1:
+        errors.append("PARALLEL_SCHEMA_VERSION")
+    revision = data["revision"]
+    if not isinstance(revision, str) or not SHA.fullmatch(revision):
+        errors.append("PARALLEL_REVISION")
+    if data["controller"] != "feature-delivery" or data["active_controllers"] != ["feature-delivery"]:
+        errors.append("DUPLICATE_CONTROLLER")
+    if data["runtime_state"] != "CLIENT_RUNTIME_NOT_VERIFIED":
+        errors.append("UNVERIFIED_RUNTIME_CLAIM")
+    tasks = data["tasks"]
+    if not isinstance(tasks, list) or not (2 <= len(tasks) <= 12):
+        return sorted(set(errors + ["PARALLEL_TASK_COUNT"]))
+    identifiers: dict[str, dict] = {}
+    workspaces: set[str] = set()
+    branches: set[str] = set()
+    for item in tasks:
+        expected = {"id", "base_sha", "branch", "worktree", "writer", "write_paths",
+                    "shared_contracts", "depends_on", "acceptance"}
+        if not isinstance(item, dict) or set(item) != expected:
+            errors.append("PARALLEL_TASK_FIELDS")
+            continue
+        uid = item["id"]
+        if not isinstance(uid, str) or not ID.fullmatch(uid) or uid in identifiers:
+            errors.append("PARALLEL_TASK_ID")
+            continue
+        identifiers[uid] = item
+        if not isinstance(item["base_sha"], str) or item["base_sha"] != revision:
+            errors.append("STALE_TASK_SHA")
+        branch, workspace, writer = item["branch"], item["worktree"], item["writer"]
+        if not isinstance(branch, str) or not _BRANCH.fullmatch(branch) or not _portable_path(branch) or branch.endswith(".lock"):
+            errors.append("UNSAFE_BRANCH")
+        else:
+            key = _path_key(branch)
+            if key in branches:
+                errors.append("DUPLICATE_BRANCH")
+            branches.add(key)
+        if not _portable_path(workspace):
+            errors.append("UNSAFE_WORKTREE_PATH")
+        else:
+            key = _path_key(workspace)
+            if key in workspaces:
+                errors.append("WORKTREE_COLLISION")
+            workspaces.add(key)
+        if not isinstance(writer, str) or not ID.fullmatch(writer):
+            errors.append("WRITER_ID")
+        paths = item["write_paths"]
+        if not isinstance(paths, list) or not (1 <= len(paths) <= 24) or any(
+                not _portable_path(p, directory=True) for p in paths):
+            errors.append("WRITE_SCOPE")
+        elif len({_path_key(p) for p in paths}) != len(paths):
+            errors.append("WRITE_SCOPE_DUPLICATE")
+        contracts = item["shared_contracts"]
+        if not isinstance(contracts, list) or len(contracts) > 16 or any(
+                not isinstance(c, str) or not ID.fullmatch(c) for c in contracts):
+            errors.append("SHARED_CONTRACTS")
+        elif len(set(contracts)) != len(contracts):
+            errors.append("SHARED_CONTRACTS")
+        dependencies = item["depends_on"]
+        if not isinstance(dependencies, list) or len(dependencies) > 12 or any(
+                not isinstance(d, str) or not ID.fullmatch(d) for d in dependencies):
+            errors.append("DEPENDENCIES")
+        elif len(set(dependencies)) != len(dependencies):
+            errors.append("DEPENDENCIES")
+        acceptance = item["acceptance"]
+        if not isinstance(acceptance, list) or not (1 <= len(acceptance) <= 12) or any(
+                not isinstance(a, str) or not a.strip() or len(a) > 300 for a in acceptance):
+            errors.append("ACCEPTANCE")
+    graph: dict[str, list[str]] = {}
+    for uid, task in identifiers.items():
+        deps = task["depends_on"]
+        if isinstance(deps, list) and all(isinstance(d, str) for d in deps):
+            graph[uid] = deps
+            if uid in deps or any(dep not in identifiers for dep in deps):
+                errors.append("INVALID_DEPENDENCY")
+    pending: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(node: str) -> None:
+        if node in pending:
+            errors.append("DEPENDENCY_CYCLE")
+            return
+        if node in visited:
+            return
+        pending.add(node)
+        for dep in graph.get(node, []):
+            if dep in graph:
+                visit(dep)
+        pending.remove(node)
+        visited.add(node)
+
+    for uid in graph:
+        visit(uid)
+
+    def ordered(before: str, after: str) -> bool:
+        seen: set[str] = set()
+        queue = list(graph.get(after, []))
+        while queue:
+            current = queue.pop()
+            if current == before:
+                return True
+            if current not in seen:
+                seen.add(current)
+                queue.extend(dep for dep in graph.get(current, []) if dep not in seen)
+        return False
+
+    for i, left in enumerate(tasks):
+        if not isinstance(left, dict) or left.get("id") not in identifiers:
+            continue
+        for right in tasks[i + 1:]:
+            if not isinstance(right, dict) or right.get("id") not in identifiers:
+                continue
+            if (isinstance(left.get("writer"), str) and left.get("writer") == right.get("writer")
+                and not (ordered(left["id"], right["id"]) or ordered(right["id"], left["id"]))):
+                errors.append("WRITER_REUSED")
+            if isinstance(left.get("write_paths"), list) and isinstance(right.get("write_paths"), list):
+                for a in left["write_paths"]:
+                    for b in right["write_paths"]:
+                        if isinstance(a, str) and isinstance(b, str) and _write_overlap(a, b):
+                            errors.append("OVERLAPPING_WRITE_SCOPE")
+            a_contracts, b_contracts = left.get("shared_contracts"), right.get("shared_contracts")
+            if (isinstance(a_contracts, list) and isinstance(b_contracts, list)
+                and all(isinstance(x, str) for x in a_contracts + b_contracts)
+                and set(a_contracts) & set(b_contracts)
+                and not (ordered(left["id"], right["id"]) or ordered(right["id"], left["id"]))):
+                errors.append("UNORDERED_SHARED_CONTRACT")
+    if git_root is not None:
+        errors.extend(_git_preflight(git_root, revision, tasks))
+    return sorted(set(errors))
+
+
+def _git_preflight(root: Path, revision: str, tasks: list[dict]) -> list[str]:
+    """Only Git metadata reads. No worktree add/remove, branch changes or cleanup."""
+    if not isinstance(root, Path) or not root.is_absolute() or not root.is_dir():
+        return ["GIT_ROOT_INVALID"]
+    current = root
+    while True:
+        if current.is_symlink() or (hasattr(current, "is_junction") and current.is_junction()):
+            return ["GIT_PATH_LINKED"]
+        if current == current.parent:
+            break
+        current = current.parent
+    env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+
+    def git(*args: str) -> str:
+        cmd = ["git", "-c", "core.fsmonitor=false", "-C", str(root), *args]
+        process = subprocess.run(cmd, capture_output=True, text=True, timeout=10, env=env, check=False)
+        if process.returncode:
+            raise ValueError("GIT_READ_FAILED")
+        return process.stdout.strip()
+
+    try:
+        top = Path(git("rev-parse", "--show-toplevel")).resolve()
+        common = git("rev-parse", "--git-common-dir")
+        head = git("rev-parse", "HEAD")
+        dirty = git("status", "--porcelain=v1", "--untracked-files=all")
+        listing = git("worktree", "list", "--porcelain")
+        refs = git("show-ref", "--heads")
+        if top != root.resolve() or not common:
+            return ["GIT_ROOT_MISMATCH"]
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return ["GIT_STATE_UNAVAILABLE"]
+    problems: list[str] = []
+    if head != revision:
+        problems.append("STALE_GIT_HEAD")
+    if dirty:
+        problems.append("DIRTY_GIT_STATE")
+    records: list[dict[str, str]] = []
+    for block in listing.split("\n\n"):
+        if not block.strip():
+            continue
+        row = {}
+        for line in block.splitlines():
+            if " " in line:
+                key, value = line.split(" ", 1)
+            else:
+                key, value = line, ""
+            if key not in {"worktree", "HEAD", "branch", "detached", "locked", "prunable", "bare"}:
+                problems.append("UNKNOWN_WORKTREE_METADATA")
+            row[key] = value
+        if not row.get("worktree") or not row.get("HEAD"):
+            problems.append("INVALID_WORKTREE_METADATA")
+        records.append(row)
+    if not records or len(records) > 128:
+        problems.append("INVALID_WORKTREE_METADATA")
+    known_branches = {_path_key(line.split("refs/heads/", 1)[1])
+                      for line in refs.splitlines() if "refs/heads/" in line}
+    active_branches = {_path_key(record["branch"][len("refs/heads/"):])
+                       for record in records if record.get("branch", "").startswith("refs/heads/")}
+    active_paths = {unicodedata.normalize("NFC", record["worktree"]).casefold()
+                    for record in records if record.get("worktree")}
+    for task in tasks:
+        if not isinstance(task, dict):
+            continue
+        branch, relative = task.get("branch"), task.get("worktree")
+        if isinstance(branch, str):
+            if _path_key(branch) in active_branches:
+                problems.append("BRANCH_ALREADY_CHECKED_OUT")
+            elif _path_key(branch) in known_branches:
+                problems.append("BRANCH_ALREADY_EXISTS")
+        if not _portable_path(relative):
+            continue
+        candidate = root.parent.joinpath(*relative.split("/"))
+        if str(candidate.resolve()).casefold() in active_paths:
+            problems.append("WORKTREE_ALREADY_REGISTERED")
+        current = candidate
+        while current != root.parent and current != current.parent:
+            if current.is_symlink() or (hasattr(current, "is_junction") and current.is_junction()):
+                problems.append("WORKTREE_PATH_LINKED")
+                break
+            current = current.parent
+        if candidate.exists() or candidate.is_symlink():
+            problems.append("WORKTREE_PATH_OCCUPIED")
+    return sorted(set(problems))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("report", type=Path)
+    parser.add_argument("--parallel-plan", action="store_true", help="Read-only #440 plan preflight")
+    parser.add_argument("--git-root", type=Path, help="Explicit Git root for read-only state checks; only with --parallel-plan")
     args = parser.parse_args()
     try:
-        issues = validate(json.loads(args.report.read_text(encoding="utf-8")))
+        if args.git_root is not None and not args.parallel_plan:
+            raise ValueError("--git-root requires --parallel-plan")
+        if args.parallel_plan and args.report.stat().st_size > 65536:
+            raise ValueError("Parallel plan is too large")
+        data = json.loads(args.report.read_text(encoding="utf-8"))
+        issues = validate_parallel_plan(data, git_root=args.git_root) if args.parallel_plan else validate(data)
     except (OSError, ValueError, UnicodeError) as exc:
         print(f"INVALID_INPUT: {exc}")
         return 2
@@ -253,7 +522,12 @@ def main() -> int:
         print(f"FAIL: {issue}")
     if issues:
         return 1
-    print("PASS: internal declarations consistent; actual tool runs and authority NOT authenticated")
+    if args.parallel_plan:
+        print("PASS: STATIC_PLAN_VALIDATED; GIT_STATE=" +
+              ("READ_ONLY_CHECKED" if args.git_root else "NOT_VERIFIED") +
+              "; CLIENT_RUNTIME_NOT_VERIFIED; NATIVE_SUBAGENTS_NOT_VERIFIED; MODEL_EXECUTION_NOT_RUN")
+    else:
+        print("PASS: internal declarations consistent; actual tool runs and authority NOT authenticated")
     return 0
 
 
