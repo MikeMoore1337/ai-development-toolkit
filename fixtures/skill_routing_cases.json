@@ -1332,6 +1332,78 @@
         "Investigate flaky Playwright navigation and screenshot regressions on the checkout page.",
         "Проверь на скриншоте обрезание кнопки «Сохранить» и отступы формы профиля на телефоне."
       ]
+    },
+    {
+      "id": "native-agent-introspection-debugging-bilingual",
+      "target": "agent-introspection-debugging",
+      "positive": [
+        "Use agent-introspection-debugging to trace a failing tool loop, identify the root cause and produce evidence-backed recovery notes.",
+        "Используй agent-introspection-debugging, чтобы разобрать повторяющиеся ошибки инструментов агента и документировать восстановление."
+      ],
+      "negative": [
+        "Compare two accessible design references for a new homepage.",
+        "Проверь валидацию полей анкеты фитнес-клиента."
+      ]
+    },
+    {
+      "id": "native-content-hash-cache-pattern-bilingual",
+      "target": "content-hash-cache-pattern",
+      "positive": [
+        "Apply content-hash-cache-pattern to cache repeated PDF processing by SHA-256 bytes rather than source path.",
+        "Используй content-hash-cache-pattern для кэширования обработки файлов по SHA-256 их содержимого."
+      ],
+      "negative": [
+        "Write a release announcement for a mobile application.",
+        "Придумай заголовок для страницы доставки."
+      ]
+    },
+    {
+      "id": "native-loop-design-check-bilingual",
+      "target": "loop-design-check",
+      "positive": [
+        "Use loop-design-check to review an autonomous agent cycle for termination, verifiable goals and runaway retry protection.",
+        "Используй loop-design-check для проверки завершения и корректных целей автономного цикла агента."
+      ],
+      "negative": [
+        "Check incorrect structured data on a product page.",
+        "Составь тест-кейсы для формы авторизации."
+      ]
+    },
+    {
+      "id": "native-make-interfaces-feel-better-bilingual",
+      "target": "make-interfaces-feel-better",
+      "positive": [
+        "Explicitly use make-interfaces-feel-better to polish spacing, typography and button hit areas of an already approved UI.",
+        "Примени make-interfaces-feel-better для проработки отступов, типографики и интерактивных состояний интерфейса."
+      ],
+      "negative": [
+        "Analyze a database transaction rollback deadlock.",
+        "Исправь гонку в очереди фоновых задач."
+      ]
+    },
+    {
+      "id": "native-article-writing-bilingual",
+      "target": "article-writing",
+      "positive": [
+        "Use article-writing to prepare a sourced long-form SEO guide on progressive overload without publishing it.",
+        "Используй article-writing, чтобы подготовить содержательную статью для SEO по прогрессивной перегрузке без публикации."
+      ],
+      "negative": [
+        "Verify a flaky Playwright test and network fixture.",
+        "Проанализируй обработчик исключений FastAPI."
+      ]
+    },
+    {
+      "id": "native-click-path-audit-bilingual",
+      "target": "click-path-audit",
+      "positive": [
+        "Use click-path-audit to trace a button that sets a Zustand flag and then clears it through a later action.",
+        "Примени click-path-audit к кнопке, где второй вызов сбрасывает состояние, установленное первым."
+      ],
+      "negative": [
+        "Research current search console indexing errors.",
+        "Подготовь содержание инструкции по установке программы."
+      ]
     }
   ]
 }
