@@ -223,7 +223,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
             "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
         }
-        self.assertEqual(46, len(rows))
+        self.assertEqual(60, len(rows))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
@@ -247,7 +247,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/click-path-audit": ("ALREADY_PRESENT", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
             "skills/agent-architecture-audit": ("HOLD_CONFLICT", "a3c2caa67b0ca7e5323d4e853d898f599694ff10"),
         }
-        self.assertEqual(46, len(reviewed))
+        self.assertEqual(60, len(reviewed))
         for path, (status, blob) in expected.items():
             with self.subTest(path=path):
                 row = reviewed[path]
@@ -261,6 +261,40 @@ class CatalogueTests(unittest.TestCase):
         self.assertIn("click-path-audit", native)
         self.assertNotIn("agent-architecture-audit", native)
 
+
+    def test_cross_stack_14_original_blobs_and_no_implicit_adoption(self):
+        """Source-backed semantics must not install or execute unapproved upstream skills."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        records = {row["path"]: row for row in review["decisions"]}
+        expected = {
+            "skills/accessibility": ("HOLD_REVIEW", "0685394eef10a1bf1e5c02f67a3a8b06ae210cc4"),
+            "skills/backend-patterns": ("ALREADY_PRESENT", "1142d0a51de34808f8493bac40b68aa745dcd80e"),
+            "skills/github-ops": ("HOLD_CONFLICT", "dbbe7b129d9d722e8f0e622c3d8f045fc97bd855"),
+            "skills/security-review": ("ALREADY_PRESENT", "3f26b0df65661425de4e5c40c295e04edcad7a83"),
+            "skills/mcp-server-patterns": ("HOLD_REVIEW", "503c31bad5ef287368e3badf23226314fad68dbe"),
+            "skills/i18n-sync": ("HOLD_REVIEW", "91e0436803310f58e6929c7a53ae85c7d4ed9802"),
+            "skills/deployment-patterns": ("ALREADY_PRESENT", "b9d279f8a99889b6f36db99b17b762374474dc99"),
+            "skills/react-performance": ("HOLD_REVIEW", "6952967cf4b894f900b5cf692e851ababaf854f5"),
+            "skills/postgres-patterns": ("HOLD_REVIEW", "12a3a4a05c2278c7fe1316d9403b5ca037dadf69"),
+            "skills/docs-governance": ("HOLD_CONFLICT", "ae00cf8b3f96dcca17f6c53176afccd669150157"),
+            "skills/cost-aware-llm-pipeline": ("HOLD_CONFLICT", "e38c15c6d355dfb97c44b9de40f7cb235bfd3f9f"),
+            "skills/skill-host-compat": ("HOLD_REVIEW", "220e8b3117056b3924ed1c9c11e28b5de09f9293"),
+            "skills/frontend-design-direction": ("HOLD_REVIEW", "6139c73ec7de85b33d62f121cb263f95dfd69f8c"),
+            "skills/conventional-commit-review": ("HOLD_REVIEW", "a53c70f6b153c6204ee31bb26b6ee0bc3efb5851"),
+        }
+        self.assertEqual(60, len(records))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        for path, (status, blob) in expected.items():
+            with self.subTest(path=path):
+                row = records[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(blob, row["source_blob"])
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                self.assertNotIn(path.rsplit("/", 1)[-1], native)
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
 
     def test_source_wide_relevance_is_only_provisional(self):
         rows = audit.build(self.ecc, self.toolkit, self.rev)
