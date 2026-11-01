@@ -73,7 +73,7 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
-    def test_five_native_source_skills_have_exact_real_manifest_analogues(self):
+    def test_six_native_source_skills_have_exact_real_manifest_analogues(self):
         """A shipped skill is not a future candidate or a live-client success."""
         reviewed = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
@@ -81,7 +81,7 @@ class CatalogueTests(unittest.TestCase):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         native = manifest["extension_packs"]["native-ecc-ports"]
         expected = {"contract-first", "api-connector-builder", "code-tour",
-                    "windows-desktop-e2e", "module-regression"}
+                    "windows-desktop-e2e", "module-regression", "error-handling"}
         self.assertEqual(expected, set(native["skills"]))
         self.assertFalse(native["auto_install"])
         self.assertTrue(native["standalone"])
