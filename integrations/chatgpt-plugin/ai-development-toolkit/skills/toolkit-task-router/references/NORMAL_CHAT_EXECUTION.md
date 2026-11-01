@@ -12,12 +12,15 @@ This contract applies to the **ordinary ChatGPT conversation with the Toolkit pl
 
 ## Host sandbox first - observed normal-chat browser pilot (#499)
 
+For required design executables, follow [host preparation before invoking the original](../../toolkit-ui-review/references/ORIGINALS.md#prepare-the-host-before-invoking-the-original), including the host's actual network permissions and the original's failure disclosure.
+
 When the ordinary ChatGPT host actually exposes a sandboxed Python/container environment, inspect its toolchain *there* before deciding that a remote Hermes Agent or Work is needed. A host may already provide Python, Node.js, Git, Playwright and Chromium. Use only tools that were genuinely discovered in the current turn; no assumption that every ChatGPT account or session has them.
 
 - Prefer host-provided, authorized execution for standalone prototypes, local data processing and focused QA. Project files and customer secrets are **not** automatically present in the sandbox.
 - For a browser-visible design, use a real browser to capture the specified viewport(s), exercise a representative primary interaction and check JavaScript exceptions, horizontal overflow and network activity. Preserve the screenshot and a concise measurement receipt in the current chat or the explicitly permitted target project. Never put user design files in Toolkit's public repository.
 - Built-in browser evidence is a distinct execution claim from an original skill invocation. An actual local Chromium screenshot can be `BROWSER_EXECUTED` even when Impeccable, Taste Skill and UI UX Pro Max are `NOT_RUN`. Claim a script or engine invocation only after running that original unmodified component with a verifiable result. Follow an original's own documented fallback when its launcher fails; preserve its required disclosure and remaining workflow instead of adding a Toolkit-wide stop. Report playbook use separately from an engine that remains `NOT_RUN` or `BLOCKED`. A fallback does not satisfy an explicit requirement for that engine to run.
-- Do not auto-download engine binaries, install npm packages, enable hooks, bypass browser isolation or run against a production service without the task's separate permissions and source review.
+- Do not auto-download engine binaries or install required runtime packages without the task's existing authorization and source review; use the host's own approval mechanism when it requires additional execution permission.
+- Keep hook activation and production actions within their existing task permissions; never bypass browser isolation.
 
 An observed **synthetic** pilot on 2026-11-01 ran in ordinary ChatGPT without Work/Codex: Python 3.13, Node.js 22, Git, Chromium and Playwright were present; a no-network illustrative HTML page was captured at 1440×900 and 390×844. Both viewports had 0 horizontal overflow, 0 JavaScript exceptions, 0 external requests, and the selection/add-to-cart interaction passed. This is a **single-session observation**, not a universal environment entitlement, a live e-commerce test, or original-skill L5 proof.
 
