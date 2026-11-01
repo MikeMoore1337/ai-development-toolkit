@@ -222,6 +222,67 @@ def check_tool_call(spec: dict, call: dict, grant: dict, seen: set[str]) -> list
     return errors
 
 
+def check_tool_observation(observation: object, *, effect: str,
+                           prior_outcome: str) -> list[str]:
+    """Review an opt-in agent tool-response contract without executing tools.
+
+    This structural oracle cannot detect prompt injection in strings, prove an
+    operation happened or independently grade an agent. Existing tools are
+    never required to adopt this output envelope.
+    """
+    effects = {"read", "write", "irreversible"}
+    outcomes = {"not_attempted", "applied", "not_applied",
+                "unknown", "authorization_denied"}
+    if (not isinstance(effect, str) or effect not in effects
+            or not isinstance(prior_outcome, str)
+            or prior_outcome not in outcomes):
+        return ["unsupported effect or prior outcome"]
+    if not isinstance(observation, dict):
+        return ["tool observation must be an object"]
+    required = {"status", "summary", "next_actions", "artifacts", "recovery"}
+    errors: list[str] = []
+    if set(observation) != required:
+        errors.append("missing or extra observation fields")
+    status = observation.get("status")
+    if not isinstance(status, str) or status not in {"success", "warning", "error"}:
+        errors.append("invalid observation status")
+    summary = observation.get("summary")
+    if not isinstance(summary, str) or not summary.strip() or len(summary) > 500:
+        errors.append("invalid observation summary")
+    for key, limit in (("next_actions", 8), ("artifacts", 24)):
+        values = observation.get(key)
+        if (not isinstance(values, list) or len(values) > limit
+                or any(not isinstance(item, str) or not item.strip()
+                       or len(item) > 500 for item in values)):
+            errors.append("invalid observation " + key)
+    recovery = observation.get("recovery")
+    if status == "success":
+        if recovery is not None:
+            errors.append("success must not claim recovery")
+        if prior_outcome in {"unknown", "authorization_denied", "not_applied"}:
+            errors.append("success contradicts prior outcome")
+    elif status in {"warning", "error"}:
+        if not isinstance(recovery, dict) or set(recovery) != {
+                "root_cause", "retry_policy", "stop_condition"}:
+            errors.append("missing or invalid recovery contract")
+        else:
+            for key in ("root_cause", "stop_condition"):
+                value = recovery[key]
+                if not isinstance(value, str) or not value.strip() or len(value) > 500:
+                    errors.append("invalid recovery " + key)
+            retry_policy = recovery["retry_policy"]
+            if (not isinstance(retry_policy, str)
+                    or retry_policy not in {"stop", "safe_retry", "after_reconciliation"}):
+                errors.append("unknown retry policy")
+            if (effect != "read" and prior_outcome == "unknown"
+                    and retry_policy == "safe_retry"):
+                errors.append("unsafe ambiguous mutation retry")
+            if (prior_outcome == "authorization_denied"
+                    and retry_policy != "stop"):
+                errors.append("retry after authorization denial")
+    return sorted(set(errors))
+
+
 def validate_fixture(fixture: dict) -> list[str]:
     errors = validate_dataset(fixture.get("dataset"))
     dataset = fixture.get("dataset", {})

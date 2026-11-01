@@ -11,7 +11,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_ai_contracts import (
-    check_citations, check_prompt_regression, check_tool_call, digest_cases,
+    check_citations, check_prompt_regression, check_tool_call,
+    check_tool_observation, digest_cases,
     retrieval_metrics, validate_dataset, validate_evaluation, validate_fixture,
 )
 from install import skill_sources
@@ -102,6 +103,99 @@ class AIContractsTests(unittest.TestCase):
         call["prior_outcome"] = "unknown"
         self.assertTrue(any("unsafe retry" in x for x in check_tool_call(
             f["tool_spec"], call, f["checks"][1]["grant"], set())))
+
+    def test_agent_harness_observation_structural_gain_without_new_runtime(self):
+        """The existing call checker cannot validate response recovery envelopes."""
+        source = F["tool"]["checks"][0]
+        self.assertEqual([], check_tool_call(
+            F["tool"]["tool_spec"], source["call"], source["grant"],
+            set(source.get("seen", []))))
+        baseline = {"status": "error", "summary": "timed out"}
+        candidate = {
+            "status": "error", "summary": "ambiguous write timeout",
+            "next_actions": ["reconcile previous operation before retry"],
+            "artifacts": ["synthetic-receipt-id"],
+            "recovery": {
+                "root_cause": "response deadline elapsed",
+                "retry_policy": "after_reconciliation",
+                "stop_condition": "abort if operation outcome cannot be confirmed",
+            },
+        }
+        self.assertTrue(check_tool_observation(
+            baseline, effect="write", prior_outcome="unknown"))
+        self.assertEqual([], check_tool_observation(
+            candidate, effect="write", prior_outcome="unknown"))
+        # A passing response schema is not proof that a tool ran or a model improved.
+        self.assertEqual([], check_tool_observation({
+            "status": "success", "summary": "synthetic read completed",
+            "next_actions": [], "artifacts": ["fixture:123"],
+            "recovery": None,
+        }, effect="read", prior_outcome="applied"))
+
+    def test_agent_harness_negative_observation_mutations(self):
+        good = {
+            "status": "error", "summary": "permission denied",
+            "next_actions": ["request authorization before another attempt"],
+            "artifacts": [],
+            "recovery": {"root_cause": "authorization denied",
+                         "retry_policy": "stop",
+                         "stop_condition": "do not escalate permissions"},
+        }
+        scenarios = [
+            (("status",), "ok", "invalid observation status"),
+            (("summary",), "", "invalid observation summary"),
+            (("next_actions",), "execute now", "invalid observation next_actions"),
+            (("artifacts",), [1], "invalid observation artifacts"),
+            (("recovery",), None, "missing or invalid recovery contract"),
+            (("recovery", "root_cause"), "", "invalid recovery root_cause"),
+            (("recovery", "stop_condition"), " ", "invalid recovery stop_condition"),
+            (("recovery", "retry_policy"), "always", "unknown retry policy"),
+            (("recovery", "retry_policy"), "safe_retry",
+             "retry after authorization denial"),
+        ]
+        for keys, value, expected in scenarios:
+            with self.subTest(keys=keys):
+                item = copy.deepcopy(good)
+                dest = item
+                for key in keys[:-1]:
+                    dest = dest[key]
+                dest[keys[-1]] = value
+                self.assertIn(expected, check_tool_observation(
+                    item, effect="irreversible",
+                    prior_outcome="authorization_denied"))
+        self.assertEqual([], check_tool_observation(
+            good, effect="irreversible",
+            prior_outcome="authorization_denied"))
+        unsafe = copy.deepcopy(good)
+        unsafe["recovery"]["retry_policy"] = "safe_retry"
+        self.assertIn("unsafe ambiguous mutation retry",
+                      check_tool_observation(unsafe, effect="write",
+                                             prior_outcome="unknown"))
+        unauthorized_success = {
+            "status": "success", "summary": "not observed",
+            "next_actions": [], "artifacts": [], "recovery": None,
+        }
+        self.assertIn("success contradicts prior outcome",
+                      check_tool_observation(unauthorized_success,
+                                             effect="write",
+                                             prior_outcome="authorization_denied"))
+        self.assertTrue(check_tool_observation(
+            good, effect="no such effect", prior_outcome="unknown"))
+        self.assertTrue(check_tool_observation(
+            None, effect="read", prior_outcome="not_attempted"))
+        invalid = copy.deepcopy(good)
+        invalid["status"] = ["error"]
+        self.assertIn("invalid observation status", check_tool_observation(
+            invalid, effect="read", prior_outcome="not_attempted"))
+        invalid = copy.deepcopy(good)
+        invalid["recovery"]["retry_policy"] = []
+        self.assertIn("unknown retry policy", check_tool_observation(
+            invalid, effect="write", prior_outcome="unknown"))
+        self.assertTrue(check_tool_observation(
+            good, effect=[], prior_outcome="unknown"))
+        self.assertTrue(check_tool_observation(
+            good, effect="read", prior_outcome=[]))
+
 
     def test_integrity_of_zero_spend_lock(self):
         source = (ROOT / "scripts/agent_eval_runner.py").read_text(encoding="utf-8")

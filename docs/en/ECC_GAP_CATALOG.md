@@ -117,3 +117,25 @@ provider receipts and privacy/cost verification. **No original skill
 was imported or reclassified; coverage remains 85/601, 516 outstanding.**
 See [existing scorer](../SKILL_EVALS.md) for a reproducible, offline-only
 test. All model efficacy remains `NOT_MEASURED`.
+
+## Focused agent-harness practical-value check (1 November 2026)
+
+Compared original ECC `skills/agent-harness-construction/SKILL.md`
+against Toolkit's existing `check_tool_call` and `ai-engineering-qa`.
+Pre-call schema and permission validation is already available, so a
+second harness controller would duplicate an established capability.
+A narrower missing **offline structural oracle** was identified for
+post-call status, artifact IDs, and explicit error/retry/stop observations.
+Toolkit's existing `scripts/validate_ai_contracts.py` now includes
+`check_tool_observation` as an **optional design-time check for owned tool
+interfaces**. Synthetic positive and negative tests show an incomplete
+ambiguous write-timeout envelope fails, while a structured
+reconciliation-first envelope passes. Unauthorized retries, invalid
+types, misleading success and missing recovery are rejected.
+
+This does not alter externally selected original tools, does not run a model,
+does not validate the truth of tool responses, and is not a measured agent
+reliability uplift. Original `agent-harness-construction` retains
+`HOLD_REVIEW` pending independently observed tool-call traces and
+error-recovery quality. Current semantic coverage remains **85/601**;
+**516** still require source-level decisions.
