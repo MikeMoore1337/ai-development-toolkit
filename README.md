@@ -57,9 +57,9 @@ These are **illustrative workflows, not claimed real-world test runs**.
 <details>
 <summary>Inventory counters (automatically checked in CI)</summary>
 
-[![Skills](https://img.shields.io/badge/skills-95-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Skills](https://img.shields.io/badge/skills-97-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 [![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
-[![Profiles](https://img.shields.io/badge/profiles-58-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-61-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 
 | Group | Inventory |
 | :--- | ---: |

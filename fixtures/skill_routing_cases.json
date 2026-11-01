@@ -1404,6 +1404,30 @@
         "Research current search console indexing errors.",
         "Подготовь содержание инструкции по установке программы."
       ]
+    },
+    {
+      "id": "native-brand-voice-bilingual",
+      "target": "brand-voice",
+      "positive": [
+        "Use brand-voice to construct a VOICE PROFILE from verified product announcements and user-authorized posts.",
+        "Примени brand-voice для построения профиля авторского стиля на основе предоставленных оригинальных текстов."
+      ],
+      "negative": [
+        "Write a pytest fixture to reproduce an async deadlock in a database transaction.",
+        "Проверь изменение HTTP-ответа FastAPI для сценария 403 Forbidden."
+      ]
+    },
+    {
+      "id": "native-content-engine-bilingual",
+      "target": "content-engine",
+      "positive": [
+        "Use content-engine to repurpose an evidence-backed product article into distinct newsletter and LinkedIn drafts without publishing.",
+        "Примени content-engine для переработки проверенной статьи в отдельные черновики для разных площадок без публикации."
+      ],
+      "negative": [
+        "Review security boundaries around a new MCP authorization token.",
+        "Устрани сбой Playwright-теста модального окна при вводе данных."
+      ]
     }
   ]
 }

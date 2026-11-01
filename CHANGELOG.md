@@ -35,6 +35,8 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.7)
 
+- #435: bundled original pinned MIT `brand-voice` (with complete reference schema) and `content-engine`, plus opt-in `native-editorial-suite`; no external publishing, paid API or automatic user content persistence; not yet merged or released.
+
 - #435: six more pinned original MIT optional skills for AI debugging, content-hash caching, loop review, UI state trace, interface polish and editorial/SEO drafts; full 601-source automated **triage** without automatic adoption; case-specific tests and RU/EN docs. No host runtime, paid API, publication or merge claimed.
 
 - #435 (stacked source changes): bundled the pinned, unchanged MIT `mcp-dependency-review` as a seventh optional native skill and compared two further ECC P0 sources. Source/install/CI validation is separate from live client activation; no ECC runtime, external scanner, paid API or release claimed.

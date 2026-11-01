@@ -225,7 +225,7 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 ## Native source ports shipped with Toolkit
 
-Twelve byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
+Fourteen byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Skill | Distinct additional capability |
 | :--- | :--- |
@@ -242,6 +242,8 @@ Twelve byte-exact original MIT skills and one compact Windows UIA adaptation are
 | [`make-interfaces-feel-better`](../optional-original-skills/make-interfaces-feel-better/SKILL.md) | Opt-in UI finish checklist; does not control UX/UI Orchestra |
 | [`article-writing`](../optional-original-skills/article-writing/SKILL.md) | Evidence-aware editorial drafting without publishing |
 | [`click-path-audit`](../optional-original-skills/click-path-audit/SKILL.md) | Identify sequential store updates that undo UI intent |
+| [`brand-voice`](../optional-original-skills/brand-voice/SKILL.md) | Reusable original editorial voice profile with preserved schema |
+| [`content-engine`](../optional-original-skills/content-engine/SKILL.md) | Platform-specific drafts from source material; no publication |
 
 ## Profiles
 
@@ -264,6 +266,9 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `native-make-interfaces-feel-better` | `make-interfaces-feel-better` |
 | `native-article-writing` | `article-writing` |
 | `native-click-path-audit` | `click-path-audit` |
+| `native-brand-voice` | `brand-voice` |
+| `native-content-engine` | `content-engine` |
+| `native-editorial-suite` | `brand-voice`, `content-engine` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
