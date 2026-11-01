@@ -8,6 +8,12 @@ The existing [#374 Git checkpoint](../../scripts/session_handoff_checkpoint.py) 
 
 The packet is **unreviewed, not policy, not owner consent**. The SHA-256 detects accidental modification of the file, **not malicious forgery**: any actor can recompute it. A successful check establishes only local repo-path identity, branch, commit and tracked status correspondence, not the truth of cited claims. Cross-machine relocation yields a stale `repo_id` rather than a false PASS; review the authoritative GitHub Issue/PR before continuing.
 
+### Context validation is not execution permission
+
+`verify-handoff` intentionally retains the legacy `decision=PASS` for **matching local Git state only**. A successful verification now also returns `verification_scope=GIT_CONTEXT_ONLY`, `sender_identity=NOT_VERIFIED`, `policy_revalidated=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, `action_authorized=false` and `execution_authorized=false`. The same negative authorization flags are emitted by matching portable verification and handoff search (including a search result's suggested `next_action`). `PASS` and exit code 0 must never cause an executor to run `RUN_TESTS`, open a PR, merge or resume a task automatically.
+
+On a GitHub comment, CI result or other follow-up, reopen the canonical Issue/PR, check the current scope, identity, approvals and current source/CI evidence before taking action. A follow-up is context, not a new mandate; policy changes cannot be inferred from a saved packet. This clarification adopts the **separation-of-context-and-authority principle** described in [DeepSeek's experimental superagent domain model](https://github.com/deepseek-ai/dsh-superagent-prototype/blob/6337fc823ce20251c8de8085948165c81aaa701e/docs/001-domain.md), without installing the prototype, DeepSeek Harness, a watcher, a scheduler or a second authorization engine.
+
 ## Explicit opt-in usage
 
 Create a file in an existing directory **outside the project checkout**. The destination path must be absolute and not pass through a symlink:
