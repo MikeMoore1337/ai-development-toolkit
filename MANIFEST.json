@@ -621,7 +621,8 @@
         ".agents/skills/ux-ui-design-orchestra/SKILL.md",
         ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md",
         ".agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md",
-        ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md"
+        ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md",
+        "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-ui-review/references/ORIGINALS.md"
       ],
       "qa": [
         "docs/SKILLS_CATALOG.md"

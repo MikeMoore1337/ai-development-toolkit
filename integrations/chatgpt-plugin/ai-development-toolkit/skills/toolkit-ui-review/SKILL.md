@@ -6,6 +6,8 @@ description: Use for creating or critiquing UX/UI, landing pages and substantial
 
 Start through `toolkit-task-router`; use the existing `ux-ui-design-orchestra` as the task coordinator. Actually load the source skill and relevant instructions when available; a GitHub link is not native skill invocation. Do not claim that external tools, subagents or browser checks ran unless evidence exists.
 
+Before drawing, follow [original selection and execution](references/ORIGINALS.md): resolve the observed standing/personal `skills.design_originals` preference, load the selected original sources and check their native applicability. A saved `ALL_THREE` applies to ordinary design requests without repeating skill names; missing local configuration does not cancel it. Execute applicable original stages before the final image, including research/planning for an image-only request. Native exclusions and unavailable engines are separate from successful invocation. Preserve the strict all-three evidence gate and the original controller's precedence.
+
 ## Tool-native creative freedom
 
 The original design tools govern their own work as intended. **No Toolkit-imposed UI/UX style bans or quotas**: hero, cards, SaaS structures, grids, gradients, glass, dark/light palettes, typography, photography, motion and familiar retail layouts may all be used when appropriate. The user may ask for one concept or several. When design alternatives are created, draw and inspect the variants actually produced; never mandate three just to satisfy a checklist. Do not penalize an otherwise attractive design only for using common UI patterns.
