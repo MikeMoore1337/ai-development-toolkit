@@ -1296,6 +1296,30 @@
         "Use Playwright to test the embedded HTML view inside an Electron web application.",
         "Проверь совместимость JSON-контракта API между двумя микросервисами."
       ]
+    },
+    {
+      "id": "native-module-regression-bilingual",
+      "target": "module-regression",
+      "positive": [
+        "For this multi-module repository use module regression to validate downstream acceptance commands and record exit codes for every dependent module.",
+        "Проведи module regression для взаимозависимых модулей: проверь downstream-команды приёмки и зафиксируй коды завершения тестов."
+      ],
+      "negative": [
+        "Update a single marketing headline without touching dependent modules.",
+        "Исправь цвет кнопки на отдельной статической странице без взаимосвязанных модулей."
+      ]
+    },
+    {
+      "id": "native-error-handling-bilingual",
+      "target": "error-handling",
+      "positive": [
+        "Use error-handling to design typed AppError classes, retryable HTTP failures, React error boundaries and safe user-facing errors in Python and TypeScript.",
+        "Примени error-handling для типизированных исключений, retry/circuit breaker и безопасных сообщений об ошибках в Python, TypeScript и Go."
+      ],
+      "negative": [
+        "Create a CodeTour .tour onboarding walkthrough with links to exact source lines.",
+        "Сделай визуальное сравнение трёх макетов интерфейса UX/UI Design Orchestra без изменения API."
+      ]
     }
   ]
 }
