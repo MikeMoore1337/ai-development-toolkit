@@ -538,12 +538,12 @@ class ProvenanceTests(unittest.TestCase):
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
-        self.assertEqual(95, result["skills"])
+        self.assertEqual(97, result["skills"])
         self.assertEqual({"contract-first", "api-connector-builder", "code-tour",
                           "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review", "agent-introspection-debugging",
                           "content-hash-cache-pattern", "loop-design-check",
                           "make-interfaces-feel-better", "article-writing",
-                          "click-path-audit"},
+                          "click-path-audit", "brand-voice", "content-engine"},
                          set(json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
                              ["extension_packs"]["native-ecc-ports"]["skills"]))
         self.assertGreater(result["total"], 100)

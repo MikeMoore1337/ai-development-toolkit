@@ -31,7 +31,7 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
         self.assertEqual({"product-discovery", "project-delivery-management", "business-system-analysis", "ux-design-process", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-testing", "ux-ui-design-orchestra", "observability-sre", "dependency-maintenance", "data-engineering", "maintenance-support", "prompt-refinement", "seo-audit", "contract-first", "api-connector-builder", "code-tour", "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review", "agent-introspection-debugging",
                           "content-hash-cache-pattern", "loop-design-check",
                           "make-interfaces-feel-better", "article-writing",
-                          "click-path-audit"},
+                          "click-path-audit", "brand-voice", "content-engine"},
                          set(self.expected) - set(actual))
         core = {x: ".agents/roles/" + x + ".md" for x in self.manifest["core_roles"]}
         qa = self.manifest["extension_packs"]["qa"]
@@ -48,7 +48,8 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                                                          "native-mcp-dependency-review", "native-agent-introspection-debugging",
                                                          "native-content-hash-cache-pattern", "native-loop-design-check",
                                                          "native-make-interfaces-feel-better", "native-article-writing",
-                                                         "native-click-path-audit"}})
+                                                         "native-click-path-audit", "native-brand-voice",
+                                                         "native-content-engine", "native-editorial-suite"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
         self.assertEqual(["product-discovery", "task-scoping", "research-verification"],
