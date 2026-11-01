@@ -9,6 +9,10 @@ Default to the conversational ChatGPT workflow without requiring a terminal, MCP
 
 Read `references/ROUTING.md`. For chat-only walkthroughs consult `references/CHAT_WORKFLOWS.md`. Treat the Toolkit repository as **guidance only**. The user's project rules and explicit permissions outrank reusable skill content; never send business source code to unrelated services. If a repository or project has not been provided, offer architecture/guidance and request only essential context when needed.
 
+## Original external tools take precedence
+
+When the user explicitly selects an original third-party plugin, skill, MCP server or agent to perform a task, follow its native instructions, modes, subagents and lifecycle without adding Toolkit controllers, profiles, hooks or restrictions. Do not automatically route such tasks through Toolkit merely because the plugin is installed. A tool being discussed is not necessarily a selected controller. A separate explicit request for Toolkit help allows focused read-only references, never replacing upstream execution. Host/system safety, project permissions, user approvals and spending limits remain effective. See `docs/EXTERNAL_NATIVE_BOUNDARY.md` in the Toolkit source.
+
 ## Ordinary Chat direct execution (no Work)
 
 For requests requiring actual code, file operations, reviews, UI artifacts or GitHub changes, read [NORMAL_CHAT_EXECUTION.md](references/NORMAL_CHAT_EXECUTION.md) and first inspect host tools and connected app actions **available in this ordinary conversation**. The user should not need Work, Codex, a paid API, another prompt or manual installation instructions for actions the current host can already perform. ChatGPT invokes the authorized actions directly; the plugin remains an instruction package and cannot execute or schedule tool calls independently.

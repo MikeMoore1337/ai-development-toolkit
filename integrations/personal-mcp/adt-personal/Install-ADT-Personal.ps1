@@ -93,6 +93,7 @@ function Add-InstructionBlock([string]$File) {
     $end = '<!-- ADT-PERSONAL END -->'
     $block = @'
 <!-- ADT-PERSONAL BEGIN -->
+0. NATIVE UPSTREAM BOUNDARY: If the user explicitly selects an original external tool, agent, skill, plugin or MCP as task controller, do not call Toolkit routing, inject Toolkit skills/roles/controllers or change upstream modes and hooks. Mentioning a tool is not selection. If routing was accidentally invoked, send its client-observed identifier as external_controller and respect NATIVE_UPSTREAM_PASSTHROUGH. A separate explicit request may obtain focused read-only Toolkit references, but never a second controller. Host/system safety, project rules, permissions, cost consent and release gates remain binding.
 For every software engineering, QA, UI/UX, security or DevOps task in the active Codex workspace:
 1. First honor the active project's applicable AGENTS.md, approved project rules and current workspace permissions. Identify the actual target workspace; never assume the Toolkit checkout is the target.
 2. Inspect names of relevant project/ancestor and user-level Codex skills and available agent roles, using allowed read-only file access. Do not load all skill bodies. The names should be reported to the MCP as existing_skills and existing_roles. Do not claim the inventory is complete if a source is inaccessible.

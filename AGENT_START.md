@@ -4,6 +4,10 @@
 
 This is an **agent-facing entry point**, not an executable agent or installer. A user makes an ordinary request in their project and references the Toolkit URL within that request. **The user's project is the work target; Toolkit is a separate, read-only guidance source.** No extra prompt, installation, target GitHub URL, profile choice or terminal use is required of the user. Execution depends on actual client capabilities.
 
+## Explicitly selected original third-party tools
+
+An original external plugin, skill, MCP, agent or CLI selected by the user remains the task controller. Do not automatically inject Toolkit roles, workflows or hooks. Host/system security and project/user permissions still apply. Read-only Toolkit advice is possible only on a separate explicit request. [Native-first boundary](docs/EXTERNAL_NATIVE_BOUNDARY.md). The parallel UX/UI Orchestra workstream is unchanged.
+
 ## ChatGPT plugin: live Toolkit sources (best effort)
 
 When invoked through the separately installed personal ChatGPT plugin, check the `MANIFEST.json → chatgpt_personal_live` protocol before reading task-specific skills. Use an exact GitHub `main` SHA with all three required CI checks passed, then read relevant files **from that SHA only**. This is **read-only, per-task guidance refresh**; it cannot replace the installed plugin, install tools, change permissions or run in the background. No browsing/GitHub access, pending checks, incompatible protocol or missing source means `FALLBACK_BUNDLED` (or `SHELL_UPDATE_REQUIRED` for incompatible plugin shell), with the limitation stated honestly. [Live source and fallback contract](docs/CLIENT_COMPATIBILITY.md#chatgpt-personal-plugin---verified-live-guidance-not-automatic-binary-updates).

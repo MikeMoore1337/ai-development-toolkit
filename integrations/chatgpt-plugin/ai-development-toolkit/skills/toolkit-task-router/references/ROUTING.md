@@ -18,6 +18,7 @@ Other request examples: “Use Toolkit guidance to review the repository I conne
 | Explicitly "write/improve a prompt" | `toolkit-prompt-refinement` / `EXPORT_PROMPT` | One copy-ready prompt without task execution |
 | Technical/on-page SEO and indexability audit | `toolkit-seo-audit` | Evidence, `NOT_VERIFIED` for unavailable indexing/rank data |
 
+- Explicit native upstream controller selected: skip Toolkit profile/skill/role injection entirely. Preserve original lifecycle and instructions; separate requested Toolkit references remain read-only. Mere mention of an external product is not a selection.
 - Project-native skills and rules take precedence; never silently overwrite unmanaged skills.
 - The Toolkit MCP in Codex is **independent** of the ChatGPT skills-only plugin.
 - Reassess skills at meaningful stage changes; use only supported read tools, bounded batches and a client-kept record of complete instructions still in context. Follow the user's exclusions and project gates on every pass. A client without the stage tool can perform targeted reads; neither path proves native activation.
