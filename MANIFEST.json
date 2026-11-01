@@ -726,6 +726,7 @@
     "validator": "scripts/validate_feature_orchestra.py",
     "execution_backend": "NONE",
     "runtime_state": "CLIENT_RUNTIME_NOT_VERIFIED",
-    "external_ecc_runtime_required": false
+    "external_ecc_runtime_required": false,
+    "mcp_tool": "toolkit_preflight_parallel_plan"
   }
 }
