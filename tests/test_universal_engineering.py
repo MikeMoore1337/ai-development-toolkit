@@ -28,7 +28,7 @@ EXPECTED = {
 class UniversalEngineeringTests(unittest.TestCase):
     def test_three_opt_in_packs_and_unique_metadata(self):
         self.assertEqual([], inspect())
-        self.assertEqual(89, len(skill_sources(M)))
+        self.assertEqual(95, len(skill_sources(M)))
         for pack, expected in EXPECTED.items():
             with self.subTest(pack=pack):
                 cfg = M["extension_packs"][pack]

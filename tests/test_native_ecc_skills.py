@@ -20,6 +20,12 @@ SOURCE_BLOBS = {
     "module-regression": "d8186cbfc4c481eb884a13c14b6f2a38aace0b7a",
     "error-handling": "add87f2cdb6f374781b08a0b1cf971eb9ec1915e",
     "mcp-dependency-review": "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d",
+    "agent-introspection-debugging": "7f40c4579f09b15884e7e4e22635ccd41e1ba1a7",
+    "content-hash-cache-pattern": "fe4ef6f2dd7034aa0ef6caf67600d8bef2e815c5",
+    "loop-design-check": "c54266211898024e69b141fd1993aa9a8e678c58",
+    "make-interfaces-feel-better": "e589f3f30312ac4e522dfbdd3e592862f69fd008",
+    "article-writing": "9dfa979ca56940e731ebede2c46ec2dca688818e",
+    "click-path-audit": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
 }
 
 
@@ -73,6 +79,12 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                 "module-regression": "module-regression",
                 "error-handling": "error-handling",
                 "mcp-dependency-review": "mcp-dependency-review",
+                "agent-introspection-debugging": "agent-introspection-debugging",
+                "content-hash-cache-pattern": "content-hash-cache-pattern",
+                "loop-design-check": "loop-design-check",
+                "make-interfaces-feel-better": "make-interfaces-feel-better",
+                "article-writing": "article-writing",
+                "click-path-audit": "click-path-audit",
             }[name]])
 
     def test_original_single_skill_install_and_no_overwrite(self):
@@ -185,6 +197,34 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
             again = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
             self.assertNotEqual(0, again.returncode)
             self.assertEqual("OWNER RULES\n", policy.read_text(encoding="utf-8"))
+
+    def test_six_new_original_skills_are_isolated_opt_in(self):
+        for name in (
+            "agent-introspection-debugging", "content-hash-cache-pattern",
+            "loop-design-check", "make-interfaces-feel-better",
+            "article-writing", "click-path-audit",
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory(prefix="ecc-selective-") as temp:
+                root = Path(temp)
+                owner = root / "AGENTS.md"
+                owner.write_text("OWNER RULES\n", encoding="utf-8")
+                args = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                        "install", "--target", temp, "--profile", f"native-{name}"]
+                preview = subprocess.run(args, capture_output=True, text=True, timeout=30)
+                self.assertEqual(0, preview.returncode, preview.stderr)
+                self.assertFalse((root / ".agents").exists())
+                applied = subprocess.run([*args, "--apply"], capture_output=True, text=True, timeout=30)
+                self.assertEqual(0, applied.returncode, applied.stderr)
+                target = root / ".agents/skills" / name
+                self.assertEqual(SOURCE_BLOBS[name],
+                                 git_blob((target / "SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
+                self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                                 (target / "LICENSE").read_bytes())
+                self.assertEqual([name], sorted(p.name for p in target.parent.iterdir()))
+                self.assertEqual("OWNER RULES\n", owner.read_text(encoding="utf-8"))
+                again = subprocess.run([*args, "--apply"], capture_output=True, text=True, timeout=30)
+                self.assertNotEqual(0, again.returncode)
+                self.assertEqual("OWNER RULES\n", owner.read_text(encoding="utf-8"))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:

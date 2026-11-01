@@ -47,8 +47,11 @@ class DistributionTests(unittest.TestCase):
     def test_public_manifest(self):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         self.assertTrue(manifest["make_feature_source_bundled"])
-        self.assertEqual(7, manifest["original_skills_bundled_as_opt_in"])
-        self.assertEqual({"contract-first", "api-connector-builder", "code-tour", "module-regression", "error-handling", "mcp-dependency-review"},
+        self.assertEqual(13, manifest["original_skills_bundled_as_opt_in"])
+        self.assertEqual({"contract-first", "api-connector-builder", "code-tour", "module-regression", "error-handling", "mcp-dependency-review",
+                          "agent-introspection-debugging", "content-hash-cache-pattern",
+                          "loop-design-check", "make-interfaces-feel-better",
+                          "article-writing", "click-path-audit"},
                          set(manifest["extension_packs"]["native-ecc-ports"]["skills"]) - {"windows-desktop-e2e"})
         self.assertEqual(
             "16352ac229eb08a9598dcae48fe9f2b342567d86",
