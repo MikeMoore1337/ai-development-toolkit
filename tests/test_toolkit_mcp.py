@@ -58,6 +58,28 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
         self.assertFalse((self.project / ".adt").exists())
 
+    def test_project_mcp_native_first_external_passthrough(self):
+        declared = next(item for item in self._tools()
+                        if item["name"] == "toolkit_route_task")
+        self.assertIn("external_controller", declared["inputSchema"]["properties"])
+        external = self._invoke("toolkit_route_task", task="Review the Python API",
+                                external_controller="graphify")["result"]["structuredContent"]
+        self.assertEqual("NATIVE_UPSTREAM_PASSTHROUGH", external["status"])
+        self.assertEqual([], external["skills"])
+        self.assertEqual([], external["roles"])
+        self.assertEqual("NOT_RUN", external["execution"])
+        self.assertEqual("SKIPPED_EXTERNAL_NATIVE", external["required_setup"]["status"])
+        stage = self._invoke("toolkit_prepare_stage", task="Review the Python API",
+                             stage="analysis", external_controller="graphify")
+        self.assertEqual("NATIVE_UPSTREAM_PASSTHROUGH",
+                         stage["result"]["structuredContent"]["status"])
+        ordinary = self._invoke("toolkit_route_task", task="Please test a backend API")
+        self.assertEqual("ADVISORY_ONLY", ordinary["result"]["structuredContent"]["status"])
+        for malformed in ("../unsafe", "graphify;evil", 5, None):
+            response = self._invoke("toolkit_route_task", task="Safe API",
+                                    external_controller=malformed)
+            self.assertTrue(response["result"]["isError"], malformed)
+
     def test_shared_stage_contract_in_project_mcp(self):
         self.assertIn("toolkit_prepare_stage", [tool["name"] for tool in self._tools()])
         args = {"task": "Implement a backend API and test it", "stage": "Implement backend API",

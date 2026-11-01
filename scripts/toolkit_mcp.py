@@ -32,6 +32,8 @@ INSTRUCTIONS = (
     "only relevant skills; a plan does not install them. Never claim that an "
     "AI client activated a skill unless independently observed. Never use this "
     "server to edit a user project, run commands, or publish. "
+    "When an original third-party controller is selected, skip Toolkit routing; " 
+    "an accidental call with external_controller must return no Toolkit overlay. "
     "The host must install missing task-required skills and tools after source review, "
     "within existing permissions, preferring user scope and preserving existing files. "
     "Preview bundled skills with Skill Manager ensure, then apply through the host; "
@@ -148,7 +150,9 @@ def _tool_defs() -> list[dict]:
              "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_route_task", "description": "Return an advisory profile and matching skill suggestions for a task.",
-         "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
+         "inputSchema": {"type": "object", "properties": {
+             "task": string("Task description"),
+             "external_controller": string("Explicitly selected original external controller; do not add Toolkit guidance")},
                          "required": ["task"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         *[tool for tool in _stage_adapter().TOOLS if tool['name'] in
@@ -571,6 +575,14 @@ def invoke(tool: str, args: dict) -> dict:
         return {"role": name, "text": path.read_text(encoding="utf-8"),
                 "status": "ROLE_REFERENCE_NOT_STARTED_AGENT"}
     if tool in ("toolkit_search_skills", "toolkit_route_task"):
+        if tool == "toolkit_route_task":
+            adapter = _stage_adapter()
+            try:
+                native = adapter._validate_external_controller(args.get("external_controller", ""))
+            except adapter.ToolkitError as exc:
+                raise ValueError(str(exc)) from exc
+            if native:
+                return adapter.Toolkit(ROOT)._native_passthrough(native)
         query = args.get("query") if tool == "toolkit_search_skills" else args.get("task")
         matches = _search(query)
         if tool == "toolkit_search_skills":
