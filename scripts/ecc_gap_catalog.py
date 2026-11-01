@@ -133,6 +133,13 @@ def build(ecc: Path, toolkit: Path, sha: str) -> list[dict]:
         raise ValueError("pin must be exact 40-character lowercase SHA")
     if git(ecc, "rev-parse", "HEAD") != sha:
         raise ValueError("ECC source HEAD differs from the approved immutable pin")
+    # A matching HEAD is insufficient if tracked working-tree files were edited.
+    # No original scripts or hooks are executed; Git checks source bytes only.
+    pristine = subprocess.run(
+        ["git", "-C", str(ecc), "diff", "--quiet", "HEAD", "--",
+         *KINDS, "manifests"], capture_output=True, check=False, timeout=35)
+    if pristine.returncode != 0:
+        raise ValueError("ECC working tree differs from pinned HEAD or cannot be verified")
     paths = source_paths(ecc)
     if not paths:
         raise ValueError("upstream ECC content roots are missing")
@@ -163,6 +170,15 @@ def build(ecc: Path, toolkit: Path, sha: str) -> list[dict]:
         targets = sorted({target for m in module_ids for target in modules.get(m, {}).get("targets", [])})
         chosen = decisions.get(path)
         if chosen:
+            # Every manual decision must attest its *real* primary Git object.
+            # Unlike a copied literal in a test, the blob is resolved from
+            # the pinned upstream commit, without executing upstream content.
+            pinned_blob = chosen.get("source_blob")
+            if not isinstance(pinned_blob, str) or not re.fullmatch(r"[a-f0-9]{40}", pinned_blob):
+                raise ValueError("audited source blob missing or invalid: " + path)
+            actual_blob = git(ecc, "rev-parse", "HEAD:" + primary)
+            if actual_blob != pinned_blob:
+                raise ValueError("audited source blob differs from pinned Git tree: " + path)
             status = chosen["status"]
             reason = chosen["reason"]
             analogue = chosen.get("analogue") or (exact_analogue[0] if exact_analogue else "NOT_VERIFIED")

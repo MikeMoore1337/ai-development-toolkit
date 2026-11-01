@@ -58,6 +58,12 @@ class CatalogueTests(unittest.TestCase):
                         "-c", "user.name=Fixture", "commit", "-qm", "synthetic"],
                        check=True, capture_output=True)
         self.rev = audit.git(self.ecc, "rev-parse", "HEAD")
+        # The synthetic manually reviewed entry is pinned like production records.
+        review_file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(review_file.read_text(encoding="utf-8"))
+        review["decisions"][0]["source_blob"] = audit.git(
+            self.ecc, "rev-parse", "HEAD:skills/unique/SKILL.md")
+        review_file.write_text(json.dumps(review), encoding="utf-8")
 
     def test_every_file_group_is_accounted_for_and_no_autoinstall(self):
         rows = audit.build(self.ecc, self.toolkit, self.rev)
@@ -156,7 +162,8 @@ class CatalogueTests(unittest.TestCase):
         decisions.write_text(json.dumps({"schema_version": 1, "decisions": [{
             "path": "skills/unique", "status": "ALREADY_PRESENT",
             "analogue": ".agents/skills/unique/SKILL.md",
-            "reason": "Synthetic original source already merged into Toolkit"
+            "reason": "Synthetic original source already merged into Toolkit",
+            "source_blob": audit.git(self.ecc, "rev-parse", "HEAD:skills/unique/SKILL.md"),
         }]}), encoding="utf-8")
         rows = audit.build(self.ecc, self.toolkit, self.rev)
         self.assertTrue(any(row["status"] == "ALREADY_PRESENT" for row in rows))
@@ -312,6 +319,48 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("Cross module dependency audit with schema compatibility.",
                          result["description"])
 
+    def test_all_manual_source_decisions_have_pinned_git_blobs(self):
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        self.assertEqual(46, len(review["decisions"]))
+        self.assertTrue(all(
+            isinstance(row.get("source_blob"), str)
+            and len(row["source_blob"]) == 40
+            and all(char in "0123456789abcdef" for char in row["source_blob"])
+            for row in review["decisions"]
+        ))
+
+    def test_source_blob_must_be_present_and_well_formed(self):
+        file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(file.read_text(encoding="utf-8"))
+        for invalid in (None, "", "z" * 40, "0" * 39):
+            with self.subTest(invalid=invalid):
+                row = dict(review["decisions"][0])
+                if invalid is None:
+                    row.pop("source_blob", None)
+                else:
+                    row["source_blob"] = invalid
+                file.write_text(json.dumps({"schema_version": 1, "decisions": [row]}),
+                                encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "source blob missing or invalid"):
+                    audit.build(self.ecc, self.toolkit, self.rev)
+
+    def test_mismatched_git_blob_fails_closed(self):
+        file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
+        review = json.loads(file.read_text(encoding="utf-8"))
+        review["decisions"][0]["source_blob"] = "0" * 40
+        file.write_text(json.dumps(review), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "source blob differs from pinned Git tree"):
+            audit.build(self.ecc, self.toolkit, self.rev)
+
+    def test_dirty_checkout_with_pinned_head_fails_closed(self):
+        path = self.ecc / "skills" / "unique" / "SKILL.md"
+        path.write_text(path.read_text(encoding="utf-8") + "\nInjected local edit\n",
+                        encoding="utf-8")
+        self.assertEqual(self.rev, audit.git(self.ecc, "rev-parse", "HEAD"))
+        with self.assertRaisesRegex(ValueError, "working tree differs from pinned HEAD"):
+            audit.build(self.ecc, self.toolkit, self.rev)
+
     def test_wrong_source_pin_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "differs"):
             audit.build(self.ecc, self.toolkit, "a" * 40)
@@ -329,7 +378,8 @@ class CatalogueTests(unittest.TestCase):
         file = self.toolkit / "integrations" / "ecc" / "catalog_review.json"
         file.write_text(json.dumps({"schema_version": 1, "decisions": [{
             "path": "skills/overlap", "status": "ALREADY_PRESENT", "reason": "fake",
-            "analogue": ".agents/skills/overlap/SKILL.md"
+            "analogue": ".agents/skills/overlap/SKILL.md",
+            "source_blob": audit.git(self.ecc, "rev-parse", "HEAD:skills/overlap/SKILL.md"),
         }]}), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "lacks real Toolkit evidence"):
             audit.build(self.ecc, self.toolkit, self.rev)
