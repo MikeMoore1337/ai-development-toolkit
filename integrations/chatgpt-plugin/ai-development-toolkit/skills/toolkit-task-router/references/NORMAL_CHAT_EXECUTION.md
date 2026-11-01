@@ -10,6 +10,17 @@ This contract applies to the **ordinary ChatGPT conversation with the Toolkit pl
 4. Execute permitted steps **in the same chat turn**, using available host actions. For GitHub: inspect issue/code, create a scoped branch/PR, run or examine exact-head CI and report verified outcomes. For a runner: inspect environment, use only authorized isolated workspaces, execute relevant tests/builds, read outputs and produce actual artifacts. For visual design: use original skill scripts if the executor is approved and ready; otherwise distinguish a native generated concept from an original skill result.
 5. Confirm results and unresolved gates, including user visual acceptance before target UI changes, permissions before merge/deploy, security of third-party binaries/hooks and the absence of unexpected billing. Return a concrete artifact or a precise `BLOCKED` status, not a prompt to copy into Work.
 
+## Host sandbox first - observed normal-chat browser pilot (#499)
+
+When the ordinary ChatGPT host actually exposes a sandboxed Python/container environment, inspect its toolchain *there* before deciding that a remote Hermes Agent or Work is needed. A host may already provide Python, Node.js, Git, Playwright and Chromium. Use only tools that were genuinely discovered in the current turn; no assumption that every ChatGPT account or session has them.
+
+- Prefer host-provided, authorized execution for standalone prototypes, local data processing and focused QA. Project files and customer secrets are **not** automatically present in the sandbox.
+- For a browser-visible design, use a real browser to capture the specified viewport(s), exercise a representative primary interaction and check JavaScript exceptions, horizontal overflow and network activity. Preserve the screenshot and a concise measurement receipt in the current chat or the explicitly permitted target project. Never put user design files in Toolkit's public repository.
+- Built-in browser evidence is a distinct execution claim from an original skill invocation. An actual local Chromium screenshot can be `BROWSER_EXECUTED` even when Impeccable, Taste Skill and UI UX Pro Max are `NOT_RUN`. Their original unmodified scripts must be installed/trusted and invoked with separate traces before claiming them.
+- Do not auto-download engine binaries, install npm packages, enable hooks, bypass browser isolation or run against a production service without the task's separate permissions and source review.
+
+An observed **synthetic** pilot on 2026-11-01 ran in ordinary ChatGPT without Work/Codex: Python 3.13, Node.js 22, Git, Chromium and Playwright were present; a no-network illustrative HTML page was captured at 1440×900 and 390×844. Both viewports had 0 horizontal overflow, 0 JavaScript exceptions, 0 external requests, and the selection/add-to-cart interaction passed. This is a **single-session observation**, not a universal environment entitlement, a live e-commerce test, or original-skill L5 proof.
+
 ## Capability-based adapters
 
 | Current host adapter | Useful observed actions | Absent capability to avoid inventing |
