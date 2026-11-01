@@ -258,6 +258,66 @@ class NativeLearningVerificationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "INVALID_CLAIMS_SCHEMA"):
             self.examine(c=bad)
 
+    def test_proposal_fingerprint_binds_evidence_sha_dates_and_skill_revision(self):
+        original = self.examine()["candidates"][0]["proposal"]["proposal_id"]
+        newer_observation = json.loads(json.dumps(self.p))
+        newer_observation["observations"][0]["observed_on"] = "2026-10-21"
+        later = self.examine(p=newer_observation)["candidates"][0]["proposal"]["proposal_id"]
+        self.assertNotEqual(original, later)
+
+        head_claims = claims(
+            claim(self.a, "pr_head_at_sha", HEAD1),
+            claim(self.b, "pr_head_at_sha", HEAD2),
+        )
+        old_head = self.examine(c=head_claims)["candidates"][0]["proposal"]["proposal_id"]
+        self.db["/repos/" + REPO + "/pulls/101"]["head"]["sha"] = HEAD3
+        head_claims["claims"][0]["expected_sha"] = HEAD3
+        new_head = self.examine(c=head_claims)["candidates"][0]["proposal"]["proposal_id"]
+        self.assertNotEqual(old_head, new_head)
+
+        lock = {
+            "skill_id": "api-testing", "expected_sha256": "a" * 64,
+            "actual_sha256": "a" * 64, "status": "LOCAL_SHA_MATCH",
+        }
+        approved_source = self.examine(skill_lock=lock)["candidates"][0]["proposal"]["proposal_id"]
+        lock["actual_sha256"] = "b" * 64
+        lock["status"] = "STALE_SKILL_SOURCE"
+        stale_source = self.examine(skill_lock=lock)["candidates"][0]["proposal"]["proposal_id"]
+        self.assertNotEqual(approved_source, stale_source)
+
+    def test_cli_rejects_ambiguous_and_deep_json_without_tracebacks(self):
+        from contextlib import redirect_stdout
+        import io
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            observations = root / "observations.json"
+            evidence = root / "claims.json"
+            observations.write_text(json.dumps(self.p), encoding="utf-8")
+            cases = [
+                '{"schema_version":1,"claims":[],"claims":[]}',
+                '{"schema_version":1,"claims":[{"source_url":"ok","source_url":"wrong"}]}',
+                "[" * 10000 + "0" + "]" * 10000,
+            ]
+            for content in cases:
+                with self.subTest(content_length=len(content)):
+                    evidence.write_text(content, encoding="utf-8")
+                    captured = io.StringIO()
+                    with redirect_stdout(captured):
+                        exit_code = learning.main([
+                            "--input", str(observations), "--claims", str(evidence),
+                            "--project-repo", REPO, "--as-of", "2026-11-01",
+                        ])
+                    self.assertEqual(2, exit_code)
+                    self.assertEqual(
+                        {"decision": "REJECT", "reason": "INVALID_OR_UNSAFE_INPUT"},
+                        json.loads(captured.getvalue()),
+                    )
+            self.assertEqual(
+                ["claims.json", "observations.json"],
+                sorted(p.name for p in root.iterdir()),
+            )
+
     def test_invalid_claims_cli_exits_before_network_and_writes_nothing(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
