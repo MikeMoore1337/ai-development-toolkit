@@ -41,7 +41,8 @@ class SemanticAuditIntegrityTests(unittest.TestCase):
                                       in self.manifest["profiles"].items()
                                       if name not in {"docs-technical", "product-discovery", "project-delivery-management", "business-system-analysis", "ux-design", "ai-engineering-qa", "reliability-testing", "performance-load-testing", "security-engineering", "devops-infrastructure", "accessibility-qa", "ui-orchestra", "observability-sre", "dependency-maintenance", "data-engineering", "maintenance-support", "prompt-refinement", "seo-audit", "native-contract-first",
                                                          "native-api-connectors", "native-code-tours",
-                                                         "native-windows-desktop-e2e", "native-module-regression", "native-error-handling"}})
+                                                         "native-windows-desktop-e2e", "native-module-regression", "native-error-handling",
+                                                         "native-mcp-dependency-review"}})
         self.assertEqual(["documentation-maintenance", "research-verification"],
                          self.manifest["profiles"]["docs-technical"])
         self.assertEqual(["product-discovery", "task-scoping", "research-verification"],

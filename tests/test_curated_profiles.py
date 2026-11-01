@@ -75,7 +75,8 @@ class CuratedProfileTests(unittest.TestCase):
     def test_all_profiles_valid_and_new_compositions_minimal(self):
         self.assertEqual(51, len(MANIFEST["profiles"]))
         self.assertEqual({"native-contract-first", "native-api-connectors", "native-code-tours",
-                          "native-windows-desktop-e2e", "native-module-regression", "native-error-handling"},
+                          "native-windows-desktop-e2e", "native-module-regression", "native-error-handling",
+                          "native-mcp-dependency-review"},
                          {x for x in MANIFEST["profiles"] if x.startswith("native-")})
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))

@@ -167,7 +167,7 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="ecc-mcp-drift-") as temp:
             target = Path(temp)
             policy = target / "AGENTS.md"
-            policy.write_text("OWNER RULES\\n", encoding="utf-8")
+            policy.write_text("OWNER RULES\n", encoding="utf-8")
             command = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
                        "install", "--target", temp, "--profile", "native-mcp-dependency-review"]
             preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
@@ -177,14 +177,14 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
             self.assertEqual(0, applied.returncode, applied.stderr)
             installed = target / ".agents/skills/mcp-dependency-review"
             self.assertEqual(SOURCE_BLOBS["mcp-dependency-review"],
-                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\\r\\n", b"\\n")))
+                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\r\n", b"\n")))
             self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
                              (installed / "LICENSE").read_bytes())
             self.assertEqual(["mcp-dependency-review"], [p.name for p in installed.parent.iterdir()])
-            self.assertEqual("OWNER RULES\\n", policy.read_text(encoding="utf-8"))
+            self.assertEqual("OWNER RULES\n", policy.read_text(encoding="utf-8"))
             again = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
             self.assertNotEqual(0, again.returncode)
-            self.assertEqual("OWNER RULES\\n", policy.read_text(encoding="utf-8"))
+            self.assertEqual("OWNER RULES\n", policy.read_text(encoding="utf-8"))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:

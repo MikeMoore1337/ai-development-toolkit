@@ -1320,6 +1320,18 @@
         "Create a CodeTour .tour onboarding walkthrough with links to exact source lines.",
         "Сделай визуальное сравнение трёх макетов интерфейса UX/UI Design Orchestra без изменения API."
       ]
+    },
+    {
+      "id": "native-mcp-dependency-review-bilingual",
+      "target": "mcp-dependency-review",
+      "positive": [
+        "Use mcp-dependency-review to inspect .mcp.json npm @latest, uvx Python ranges and Docker tags without executing MCP servers.",
+        "Примени mcp-dependency-review для анализа изменяемых версий npm, Python и Docker в конфигурации MCP без запуска серверов."
+      ],
+      "negative": [
+        "Audit API RBAC regression tests in Python without reviewing MCP package selectors.",
+        "Сделай визуальную проверку мобильного интерфейса и отступов кнопок, без анализа версий MCP."
+      ]
     }
   ]
 }
