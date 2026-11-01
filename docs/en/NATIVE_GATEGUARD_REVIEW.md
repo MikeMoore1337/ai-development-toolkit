@@ -24,3 +24,25 @@ Pass JSON via stdin; no command is executed. The tool is not automatically invok
 ## Verification and rollback
 
 Offline unit tests cover benign reads, Windows PowerShell, destructive Git/shell commands, SQL, unknown commands, compound and nested shell forms, bad schema, duplicate event idempotence and no secret echo. No paid API, Codex CLI, Claude CLI, external ECC runtime or telemetry. Undo is removal of these optional source files/docs/tests through an ordinary reviewed PR; host settings are untouched. A separate versioned Toolkit release and interactive Windows acceptance still require their own gates.
+
+## Static reviewer hardening (#438, 2026-11-01)
+
+This remains **advisory only**, with no installed hook, executed action or granted permission. Duplicate JSON keys, `NaN`/`Infinity`, malformed encoding, unsupported control characters, excessive nesting and oversized input are rejected. A `RecursionError` produces bounded `BLOCK_RECOMMENDED` JSON without a traceback or original command.
+
+Recognition now covers directly visible `git -C ... reset --hard`, `git clean --force`, `git push -f`, `git worktree remove`, PowerShell `ri`/`Remove-Item` and command chains. Inert text such as `echo "rm -rf file"` is no longer falsely treated as a confirmed destructive operation. Unknown syntax, escaping and nested interpreters always require review rather than an allow recommendation.
+
+**ECC capability -> Toolkit -> verified gap -> decision -> test:**
+
+| ECC capability | Existing Toolkit | Gap | Decision | Test |
+| --- | --- | --- | --- | --- |
+| Claude `PreToolUse` execution denial | Explicit input reviewer | No verified Codex Desktop pre-execution callback | Do not register hooks; keep enforcement unverified | Result contract; client E2E NOT_RUN |
+| Shell/Git/PowerShell scrutiny | Bounded lexical classifier | Known variant misses and inert-quote false positives | Harden direct-operation checks; unknowns require review | `test_pretool_gate_hardening.py` |
+| Transcript evidence and session state | Intentionally absent | Not needed for source-only analysis | Do not port, log or collect | Idempotency/side-effect tests |
+| Input validation and trust | JSON with size limit | Duplicate keys and deep recursion | Reject ambiguous payloads; catch `RecursionError` | Negative CLI tests |
+| ECC Node bootstrap and SessionStart | Not integrated | No proven Codex `PreToolUse` GateGuard | Do not install or copy | Pinned upstream inspection |
+
+**Provenance.** Consulted `affaan-m/ECC@25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (MIT, Affaan Mustafa) and independently `zunoworks/gateguard` (MIT, Hirokazu Seto / ZUNO WORKS K.K.). No original third-party hook or dependencies have been copied. The ECC root license is not, by itself, evidence of third-party file provenance.
+
+Submit one synthetic JSON event to the documented Python script's stdin to use the optional reviewer. `ALLOW_CANDIDATE` is not permission to run; `BLOCK_RECOMMENDED` is not a host-enforced denial. Regex patterns and exact allowlists are not a shell parser or proof against obfuscation. User/project/client/sandbox permissions retain precedence. To disable, stop invoking the optional script; rollback source changes through an ordinary PR, since client configurations were never changed.
+
+**Unverified boundaries:** `HOST_ENFORCEMENT=NOT_VERIFIED`, `CODEX_DESKTOP_E2E=NOT_RUN`, `WINDOWS_HOOK_TRUST=NOT_VERIFIED`, `RELEASE=NOT_PUBLISHED`. GitHub CI only tests the source-level contract. Keep #438 OPEN until an authorized host demonstrably delivers a trusted callback before execution and refuses a harmless synthetic test operation.

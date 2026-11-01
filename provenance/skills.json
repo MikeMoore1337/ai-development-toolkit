@@ -14510,9 +14510,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "integrations/personal-mcp/adt-personal/hooks/pretool_gate_review.py",
-      "last_reviewed": "2026-10-28",
+      "last_reviewed": "2026-11-01",
       "distribution": "included",
-      "notes": "Issue #438, synthetic-only, not OS sandbox or native Codex Desktop pre-action interception; user consent and host integration NOT_VERIFIED."
+      "notes": "Issue #438; strict JSON duplicate/encoding/error handling and direct-operation lexical review; synthetic-only, not Codex Desktop hook or OS enforcement."
     },
     {
       "id": "ecc-438-integrations-personal-mcp-adt-personal-tests-test-pretool-gate-review-py",
@@ -14530,9 +14530,9 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "integrations/personal-mcp/adt-personal/tests/test_pretool_gate_review.py",
-      "last_reviewed": "2026-10-28",
+      "last_reviewed": "2026-11-01",
       "distribution": "included",
-      "notes": "Issue #438, synthetic-only, not OS sandbox or native Codex Desktop pre-action interception; user consent and host integration NOT_VERIFIED."
+      "notes": "Issue #438; existing regression tests maintained alongside separate hardening negative and quality tests; host enforcement NOT_VERIFIED."
     },
     {
       "id": "ecc-438-docs-en-native-gateguard-review-md",
@@ -14550,7 +14550,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/en/NATIVE_GATEGUARD_REVIEW.md",
-      "last_reviewed": "2026-10-28",
+      "last_reviewed": "2026-11-01",
       "distribution": "included",
       "notes": "Issue #438, synthetic-only, not OS sandbox or native Codex Desktop pre-action interception; user consent and host integration NOT_VERIFIED."
     },
@@ -14570,7 +14570,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/ru/NATIVE_GATEGUARD_REVIEW.md",
-      "last_reviewed": "2026-10-28",
+      "last_reviewed": "2026-11-01",
       "distribution": "included",
       "notes": "Issue #438, synthetic-only, not OS sandbox or native Codex Desktop pre-action interception; user consent and host integration NOT_VERIFIED."
     },
@@ -15184,6 +15184,26 @@
       "distribution": "included",
       "notes": "Issue #435: explicitly selected user-scoped editorial skills; no automatic publication, X API, host behavior mutation, controller, hook or paid model.",
       "owner_approval_id": "ECC435_EDITORIAL_20261101"
+    },
+    {
+      "id": "ecc-438-integrations-personal-mcp-adt-personal-tests-test-pretool-gate-hardening-py",
+      "path": "integrations/personal-mcp/adt-personal/tests/test_pretool_gate_hardening.py",
+      "name": "GateGuard static hardening negative regressions",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted, claimed)",
+      "origin": "original",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/tree/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored offline synthetic CLI and API tests with no ECC source copying, no paid APIs or host activation.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "integrations/personal-mcp/adt-personal/tests/test_pretool_gate_hardening.py",
+      "last_reviewed": "2026-11-01",
+      "distribution": "included",
+      "notes": "Issue #438; duplicate keys/NaN/oversize/Unicode, known Git/PowerShell variants, false positives, RecursionError and side effects; host interception NOT_VERIFIED."
     }
   ],
   "owner_review_record": {
