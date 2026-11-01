@@ -30,4 +30,6 @@ Other request examples: “Use Toolkit guidance to review the repository I conne
 
 ## Tool-native creative freedom (#489)
 
+Resolve observed standing/personal design preferences before selecting originals, including the packaged `USER_PREFERENCES.json`. A saved `ALL_THREE` applies without another opt-in phrase; an absent local config does not reset it. Follow [original selection and execution](../../toolkit-ui-review/references/ORIGINALS.md) before drawing: load sources, honor their scope and execute applicable stages. Do not substitute image generation or a source citation for a required original's work.
+
 The personal ChatGPT adapter routes to the existing `ux-ui-design-orchestra` but does not override the original designer tools with Toolkit aesthetic restrictions. Do not require three drafts/risks or forbid cards, hero, gradients, colours, fonts, imagery, glass or familiar e-commerce/SaaS layouts. Preserve the user's preferred visual baseline, compare new variants honestly and distinguish technical checks from artistic judgment. Actual upstream tool activation remains separately verifiable (#449). No user media or reports are stored inside Toolkit.
