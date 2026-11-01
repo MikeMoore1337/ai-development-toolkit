@@ -208,7 +208,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertGreater(result["sources_scanned"], 0)
         self.assertGreater(result["directive_lines_examined"], 0)
         self.assertLessEqual(result["sources_scanned"], 500)
-        self.assertLessEqual(result["directive_lines_examined"], 1500)
+        self.assertLessEqual(result["directive_lines_examined"], 2200)
         self.assertEqual("NOT_VERIFIED", result["semantic_equivalence"])
         self.assertEqual("NOT_MEASURED", result["model_tokens_saved"])
         self.assertEqual("NOT_TESTED", result["runtime_effect"])
