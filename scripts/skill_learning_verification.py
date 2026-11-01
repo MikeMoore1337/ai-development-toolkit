@@ -273,6 +273,7 @@ def verify_learning(packet: object, claims: object, *, project_repo: str,
             "practice_correctness_verified": False,
         })
     receipt_by_id = {r["observation_id"]: r for r in receipts}
+    observation_by_id = {row["observation_id"]: row for row in packet["observations"]}
     for candidate in preview["candidates"]:
         matched = [
             receipt_by_id[row["observation_id"]]
@@ -294,9 +295,16 @@ def verify_learning(packet: object, claims: object, *, project_repo: str,
         fingerprint = hashlib.sha256(json.dumps({
             "repo": repo, "skill_id": candidate["skill_id"],
             "category": candidate["category"],
+            "as_of": preview["as_of"],
             "source_sha256": lock["expected_sha256"] if lock else None,
-            "facts": sorted((r["source_url"], r["predicate"], r["fact_status"],
-                             r["signal"]) for r in matched),
+            "source_actual_sha256": lock["actual_sha256"] if lock else None,
+            "source_revision_gate": source_status,
+            "facts": sorted((
+                r["source_url"], r["predicate"],
+                expected[r["source_url"]]["expected_sha"],
+                observation_by_id[r["observation_id"]]["observed_on"],
+                r["fact_status"], r["fact_group"], r["signal"],
+            ) for r in matched),
         }, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
         candidate.update({
             "verified_independent_support_facts": len(supports),

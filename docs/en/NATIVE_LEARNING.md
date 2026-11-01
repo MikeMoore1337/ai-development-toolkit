@@ -55,7 +55,7 @@ Only on explicit invocation, bounded unauthenticated HTTPS GETs target public `a
 
 ## Owner approval and reversible reuse
 
-Candidates produce deterministic structured proposals: `proposal_id`, change type, project scope, narrow evidence status, source revision, necessary tests, risks and rollback. No executable diff is automatically generated, and no skill or `AGENTS.md` is modified.
+Candidates produce deterministic structured proposals: `proposal_id`, change type, project scope, narrow evidence status, source revision, necessary tests, risks and rollback. The ID binds exact asserted evidence SHAs, observation and verification dates, and the expected and actual local skill SHA, so changed evidence requires a fresh review. No executable diff is automatically generated, and no skill or `AGENTS.md` is modified.
 
 An authorized owner must **separately** inspect a specific proposal, review factual relevance and exact skill source, and approve the concrete change/diff. The normal branch/PR/review/CI/merge process then makes a reviewed change available in the existing Toolkit scope. Regressions use a separately reviewed revert PR; source SHA changes require re-review. Authorization to merge Issue #436 mechanism code is not approval of a future practice.
 
