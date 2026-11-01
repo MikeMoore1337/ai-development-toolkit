@@ -146,6 +146,61 @@ class GateGuardHardeningTests(unittest.TestCase):
             out = self.cmd("Bash", "git status")
             self.assertEqual(out["decision"], "ALLOW_CANDIDATE")
 
+    def test_quote_embedded_shell_metacharacters_need_review(self):
+        for tool, command in (
+            ("Bash", 'echo "notice; rm -rf folder"'),
+            ("Bash", "printf 'shown; git reset --hard HEAD'"),
+            ("Bash", "echo '$(rm -rf folder)'"),
+            ("Bash", 'echo "audit; git push --force origin main"'),
+            ("PowerShell", 'Write-Output "audit; Remove-Item -Recurse x"'),
+            ("PowerShell", "Write-Output 'text | Remove-Item -Recurse x'"),
+        ):
+            with self.subTest(tool=tool, command=command):
+                self.assertEqual(self.cmd(tool, command)["decision"], "REVIEW_REQUIRED")
+        for tool, command in (
+            ("Bash", "git status && rm -rf folder"),
+            ("Bash", 'rm -rf "file;name"'),
+            ("Bash", "echo $(rm -rf folder)"),
+            ("PowerShell", 'Remove-Item -Path "a;b"'),
+            ("PowerShell", "Get-ChildItem | Remove-Item"),
+        ):
+            with self.subTest(tool=tool, command=command):
+                self.assertEqual(self.cmd(tool, command)["decision"], "BLOCK_RECOMMENDED")
+
+    def test_sensitive_file_reads_require_owner_and_host_review(self):
+        for tool, value in (
+            ("Read", ".env"),
+            ("Read", "src/.env.production"),
+            ("Read", "../outside/file.txt"),
+            ("Read", "C:\\Users\\test\\.ssh\\id_rsa"),
+            ("Read", "config/service_account.json"),
+            ("Read", "keys/private.pem"),
+            ("Glob", "**/.aws/**"),
+            ("Glob", "**/.env"),
+            ("Glob", "**/*.p12"),
+            ("Glob", "**/.env*"),
+            ("Glob", "**/.ssh*"),
+            ("Glob", "**/id_rsa*"),
+            ("Glob", "**/*.pem*"),
+        ):
+            with self.subTest(tool=tool, value=value):
+                payload = {"path" if tool == "Read" else "pattern": value}
+                out = module.review_event(self.event(tool, payload))
+                self.assertEqual(out["decision"], "REVIEW_REQUIRED")
+                self.assertEqual(out["reason_code"], "SENSITIVE_OR_OUT_OF_SCOPE_PATH")
+                self.assertNotIn(value, json.dumps(out))
+        for tool, value in (
+            ("Read", "src/app.py"),
+            ("Read", ".env.example"),
+            ("Glob", "**/*.py"),
+            ("Glob", "src/.env.template"),
+            ("Grep", r"\.env"),
+        ):
+            with self.subTest(tool=tool, value=value):
+                payload = {"path" if tool == "Read" else "pattern": value}
+                self.assertEqual(module.review_event(self.event(tool, payload))["decision"],
+                                 "ALLOW_CANDIDATE")
+
     def test_cli_catches_recursion_error_no_traceback(self):
         with patch.object(module.json, "loads", side_effect=RecursionError):
             fake_input = type("BytesInput", (), {"read": lambda _self, _size: b"{}"})()
