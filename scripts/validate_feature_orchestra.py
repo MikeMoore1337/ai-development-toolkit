@@ -482,7 +482,7 @@ def _git_preflight(root: Path, revision: str, tasks: list[dict]) -> list[str]:
                       for line in refs.splitlines() if "refs/heads/" in line}
     active_branches = {_path_key(record["branch"][len("refs/heads/"):])
                        for record in records if record.get("branch", "").startswith("refs/heads/")}
-    active_paths = {unicodedata.normalize("NFC", record["worktree"]).casefold()
+    active_paths = {_path_key(record["worktree"].replace(chr(92), "/"))
                     for record in records if record.get("worktree")}
     for task in tasks:
         if not isinstance(task, dict):
@@ -496,7 +496,7 @@ def _git_preflight(root: Path, revision: str, tasks: list[dict]) -> list[str]:
         if not _portable_path(relative):
             continue
         candidate = root.parent.joinpath(*relative.split("/"))
-        if str(candidate.resolve()).casefold() in active_paths:
+        if _path_key(str(candidate.resolve()).replace(chr(92), "/")) in active_paths:
             problems.append("WORKTREE_ALREADY_REGISTERED")
         current = candidate
         while current != root.parent and current != current.parent:
