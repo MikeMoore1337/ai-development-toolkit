@@ -684,6 +684,17 @@
     "fallback": "BUNDLED_ROUTER",
     "install_upgrade_automatic": false
   },
+  "native_continuous_learning": {
+    "issue": 436,
+    "preview_cli": "scripts/skill_observation_review.py",
+    "public_fact_review_cli": "scripts/skill_learning_verification.py",
+    "schema": "v2_observations_with_separate_v1_typed_claims",
+    "activation": "EXPLICIT_USER_OPT_IN_ONLY",
+    "network": "PUBLIC_GITHUB_GET_ONLY",
+    "practice_approval": "SEPARATE_OWNER_APPROVAL_REQUIRED",
+    "writes_or_auto_promotion": false,
+    "real_client_e2e": "NOT_VERIFIED"
+  },
   "design_originals_policy": {
     "default_mode": "STANDARD",
     "opt_in_mode": "ALL_THREE",
