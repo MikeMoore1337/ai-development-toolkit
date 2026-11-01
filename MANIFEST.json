@@ -718,5 +718,14 @@
     "verification": "FILES_THEN_CLIENT_DISCOVERY_THEN_INVOCATION",
     "fallback": "BLOCKED_IF_REQUIRED_SETUP_UNAVAILABLE",
     "reference_only_opt_out": true
+  },
+  "native_parallel_orchestration": {
+    "issue": 440,
+    "mode": "opt_in_read_only_preflight",
+    "controller": "feature-delivery",
+    "validator": "scripts/validate_feature_orchestra.py",
+    "execution_backend": "NONE",
+    "runtime_state": "CLIENT_RUNTIME_NOT_VERIFIED",
+    "external_ecc_runtime_required": false
   }
 }
