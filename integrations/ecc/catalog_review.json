@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Six original ECC-derived opt-in capabilities are now built into Toolkit via PR #448/#453/#490/#497; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution. Three P0 pinned sources were semantically compared: native opt-in mcp-dependency-review adds static selector guidance, click-path-audit remains HOLD_REVIEW, agent-architecture-audit HOLD_CONFLICT. No executable scanner or model/client effectiveness evidence is implied.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Six original ECC-derived opt-in capabilities are now built into Toolkit via PR #448/#453/#490/#497; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution. Three P0 pinned sources were semantically compared: native opt-in mcp-dependency-review adds static selector guidance, click-path-audit remains HOLD_REVIEW, agent-architecture-audit HOLD_CONFLICT. No executable scanner or model/client effectiveness evidence is implied. Six additional exact-original MIT skills are now source-bundled as optional native profiles in the 2026-11-01 selection batch. No original tool is silently injected into UX/UI Orchestra; no live browser, model, agent or release efficacy is claimed. Manual source-based decisions cover 44 of 601 components; the rest are source-triage only.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -310,12 +310,12 @@
     },
     {
       "path": "skills/click-path-audit",
-      "status": "HOLD_REVIEW",
-      "analogue": "extensions/qa/skills/playwright-testing/SKILL.md",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/click-path-audit/SKILL.md",
       "source_blob": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
-      "reason": "Original offers specific sequential UI state-write/reset tracing beyond generic click E2E. Its /superpowers integration and example-specific parallel agent split are not guaranteed dependencies; separate React/Zustand fixture and real comparative findings needed before registering a seventh QA controller.",
-      "benefit": "Potential high-value diagnosis of sequential undo, stale-closure and async race defects. Incremental detection vs Toolkit Playwright and existing debugging NOT_MEASURED.",
-      "test_case": "Model-free React/Zustand fixture with setComposeMode followed by selectThread undo and an async race; compare findings with existing Toolkit and source instructions, without assuming /superpowers or auto-spawning agents."
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed.",
+      "benefit": "Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed.",
+      "test_case": "Isolated Zustand-like synthetic handler where a second setter resets the first: identify the actual final state and repro; no automatic multi-agent execution."
     },
     {
       "path": "skills/agent-architecture-audit",
@@ -325,6 +325,51 @@
       "reason": "Original 12-layer diagnosis of agent wrappers, memory, tools and rendering is useful, but declares itself MANDATORY for every agent release and requests Read/Write/Edit/Bash tools. This would impose a second release controller over Toolkit's existing project/owner permission gates. Can be separately assessed with opt-in permission on a synthetic fixture, never activated globally.",
       "benefit": "Possible layered agent incident diagnosis; value beyond existing agent-framework-fit, security-boundaries and quality gates NOT_MEASURED.",
       "test_case": "Synthetic agent wrapper mutation, stale-memory and hidden-retry scenario; compare root-cause findings against native Toolkit without authorizing shell/write operations or release gate."
+    },
+    {
+      "path": "skills/agent-introspection-debugging",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/agent-introspection-debugging/SKILL.md",
+      "source_blob": "7f40c4579f09b15884e7e4e22635ccd41e1ba1a7",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime.",
+      "benefit": "Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime.",
+      "test_case": "Isolated failed tool-run trace detects repeated attempts and reports grounded recovery without executing unauthorized commands."
+    },
+    {
+      "path": "skills/content-hash-cache-pattern",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/content-hash-cache-pattern/SKILL.md",
+      "source_blob": "fe4ef6f2dd7034aa0ef6caf67600d8bef2e815c5",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance.",
+      "benefit": "Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance.",
+      "test_case": "Python 3.12 fixture validates same-content cache key on moved file, invalidates changed bytes and does not persist secrets."
+    },
+    {
+      "path": "skills/loop-design-check",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/loop-design-check/SKILL.md",
+      "source_blob": "c54266211898024e69b141fd1993aa9a8e678c58",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler.",
+      "benefit": "Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler.",
+      "test_case": "Offline loop-fixture with missing termination, verifier-gaming and non-decidable goals yields manual fix recommendations, no live agent run."
+    },
+    {
+      "path": "skills/make-interfaces-feel-better",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/make-interfaces-feel-better/SKILL.md",
+      "source_blob": "e589f3f30312ac4e522dfbdd3e592862f69fd008",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller.",
+      "benefit": "Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller.",
+      "test_case": "On an authorized sample UI, produce a limited issue-specific checklist without writing CSS or overriding original selected design tools."
+    },
+    {
+      "path": "skills/article-writing",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/article-writing/SKILL.md",
+      "source_blob": "9dfa979ca56940e731ebede2c46ec2dca688818e",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings.",
+      "benefit": "Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings.",
+      "test_case": "Given a user-supplied article brief and source quotes, produce a referenced draft with no automatic publishing."
     }
   ]
 }
