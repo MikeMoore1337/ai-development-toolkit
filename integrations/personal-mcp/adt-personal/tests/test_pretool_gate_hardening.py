@@ -178,6 +178,10 @@ class GateGuardHardeningTests(unittest.TestCase):
             ("Glob", "**/.aws/**"),
             ("Glob", "**/.env"),
             ("Glob", "**/*.p12"),
+            ("Glob", "**/.env*"),
+            ("Glob", "**/.ssh*"),
+            ("Glob", "**/id_rsa*"),
+            ("Glob", "**/*.pem*"),
         ):
             with self.subTest(tool=tool, value=value):
                 payload = {"path" if tool == "Read" else "pattern": value}
