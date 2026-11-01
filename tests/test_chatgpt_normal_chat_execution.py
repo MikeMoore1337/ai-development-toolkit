@@ -39,6 +39,20 @@ class ChatGPTNormalChatTests(unittest.TestCase):
             with self.subTest(expected=expected):
                 self.assertIn(expected, text)
 
+    def test_native_chatgpt_sandbox_is_an_actual_execution_option(self):
+        router = (ROUTER / "SKILL.md").read_text(encoding="utf-8")
+        reference = EXECUTION.read_text(encoding="utf-8")
+        self.assertIn("native ChatGPT Python/container/browser sandbox", router)
+        self.assertIn("Host sandbox first", reference)
+        self.assertIn("Python 3.13, Node.js 22, Git, Chromium and Playwright", reference)
+        self.assertIn("single-session observation", reference)
+        self.assertIn("0 horizontal overflow", reference)
+        self.assertIn("0 external requests", reference)
+        self.assertIn("BROWSER_EXECUTED", reference)
+        self.assertIn("original-skill L5 proof", reference)
+        self.assertIn("Do not auto-download engine binaries", reference)
+        self.assertIn("Never put user design files in Toolkit", reference)
+
     def test_existing_plugin_source_does_not_advertise_fictitious_tools(self):
         manifest = json.loads((PLUGIN / "plugin.json").read_text(encoding="utf-8"))
         capabilities = manifest["extensions"]["com.openai"]["interface"]["capabilities"]
