@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Six original ECC-derived opt-in capabilities are now built into Toolkit via PR #448/#453/#490/#497; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution.",
+  "note": "Only evidence-backed native functional coverage and remaining HOLD statuses. Six original ECC-derived opt-in capabilities are now built into Toolkit via PR #448/#453/#490/#497; semantic uplift of change-impact and TDD via #454. Unreviewed components remain HOLD_REVIEW/HOLD_CONFLICT; catalog decisions are never installation authorization; no runtime, client activation, permission or legal-rights attestation is implied by presence in this catalog. Five more pinned-source semantic decisions on 2026-11-01, with no live client claim. Four more pinned ECC original skill sources were semantically compared. test-collaboration remains HOLD_REVIEW rather than silently importing a potentially duplicative TESTS.md controller; all client runtime claims remain NOT_VERIFIED. Eight further pinned sources compared on 2026-11-01; only the standalone MIT error-handling coding skill was approved for native opt-in distribution. Others retain functional reuse or HOLD statuses; nothing activates a client by itself. Nine further pinned ECC 2.2.3 source skills were compared against existing native functionality on 2026-11-01; all approvals require native evidence, and no source-only review authorizes client execution. Three P0 pinned sources were semantically compared: native opt-in mcp-dependency-review adds static selector guidance, click-path-audit remains HOLD_REVIEW, agent-architecture-audit HOLD_CONFLICT. No executable scanner or model/client effectiveness evidence is implied.",
   "decisions": [
     {
       "path": "skills/windows-desktop-e2e",
@@ -298,6 +298,33 @@
       "reason": "Pinned ECC gathers Python type hints, protocols, context managers, dataclasses, iterators, async, packaging and performance examples. Toolkit implementation/error-handling covers core maintainable engineering, but these verbose language-specific examples may help beginners; practical improvement and Python-version correctness are not yet measured.",
       "benefit": "Possible reference-only Python examples with no extra runtime, after a focused task-driven comparison avoids redundant generic instructions.",
       "test_case": "Compare two Python 3.12 implementation/refactor fixtures under existing Toolkit vs source examples for API typing, generator memory and cleanup; measure real tests and maintenance impact, not prompt length alone."
+    },
+    {
+      "path": "skills/mcp-dependency-review",
+      "status": "ALREADY_PRESENT",
+      "analogue": "optional-original-skills/mcp-dependency-review/SKILL.md",
+      "source_blob": "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d",
+      "reason": "Pinned original MIT static workflow classifies mutable npm/npx/pnpm, Python/uvx/pipx and Docker selectors in MCP configs. Existing Toolkit external_skill_gate checks auto-install, credentials and trust boundaries but not this full package-selector/version-drift matrix. Original source is now a standalone opt-in Skill Manager profile, not an executable scanner, new controller or required global gate.",
+      "benefit": "Offline source-guided reproducibility review without starting MCP servers, resolving remote registries, paid APIs or external ECC runtime; SAFE is limited to exact direct selectors, not full dependency integrity.",
+      "test_case": "Authorized synthetic MCP configs with npm @latest/^, Python ==/ranges, Docker @sha256/tag and ambiguous wrappers; require REVIEW for unknown, no secret values in output, no server execution. Source/install tests added; actual AI-client classification NOT_VERIFIED."
+    },
+    {
+      "path": "skills/click-path-audit",
+      "status": "HOLD_REVIEW",
+      "analogue": "extensions/qa/skills/playwright-testing/SKILL.md",
+      "source_blob": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
+      "reason": "Original offers specific sequential UI state-write/reset tracing beyond generic click E2E. Its /superpowers integration and example-specific parallel agent split are not guaranteed dependencies; separate React/Zustand fixture and real comparative findings needed before registering a seventh QA controller.",
+      "benefit": "Potential high-value diagnosis of sequential undo, stale-closure and async race defects. Incremental detection vs Toolkit Playwright and existing debugging NOT_MEASURED.",
+      "test_case": "Model-free React/Zustand fixture with setComposeMode followed by selectThread undo and an async race; compare findings with existing Toolkit and source instructions, without assuming /superpowers or auto-spawning agents."
+    },
+    {
+      "path": "skills/agent-architecture-audit",
+      "status": "HOLD_CONFLICT",
+      "analogue": ".agents/skills/agent-framework-fit/SKILL.md",
+      "source_blob": "a3c2caa67b0ca7e5323d4e853d898f599694ff10",
+      "reason": "Original 12-layer diagnosis of agent wrappers, memory, tools and rendering is useful, but declares itself MANDATORY for every agent release and requests Read/Write/Edit/Bash tools. This would impose a second release controller over Toolkit's existing project/owner permission gates. Can be separately assessed with opt-in permission on a synthetic fixture, never activated globally.",
+      "benefit": "Possible layered agent incident diagnosis; value beyond existing agent-framework-fit, security-boundaries and quality gates NOT_MEASURED.",
+      "test_case": "Synthetic agent wrapper mutation, stale-memory and hidden-retry scenario; compare root-cause findings against native Toolkit without authorizing shell/write operations or release gate."
     }
   ]
 }

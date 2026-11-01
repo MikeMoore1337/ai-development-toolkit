@@ -73,7 +73,7 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
-    def test_six_native_source_skills_have_exact_real_manifest_analogues(self):
+    def test_seven_native_source_skills_have_exact_real_manifest_analogues(self):
         """A shipped skill is not a future candidate or a live-client success."""
         reviewed = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
@@ -81,7 +81,7 @@ class CatalogueTests(unittest.TestCase):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         native = manifest["extension_packs"]["native-ecc-ports"]
         expected = {"contract-first", "api-connector-builder", "code-tour",
-                    "windows-desktop-e2e", "module-regression", "error-handling"}
+                    "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review"}
         self.assertEqual(expected, set(native["skills"]))
         self.assertFalse(native["auto_install"])
         self.assertTrue(native["standalone"])
@@ -213,7 +213,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
             "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
         }
-        self.assertEqual(36, len(rows))
+        self.assertEqual(39, len(rows))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
@@ -227,6 +227,28 @@ class CatalogueTests(unittest.TestCase):
                 if row["analogue"] != "NOT_VERIFIED":
                     self.assertTrue((ROOT / row["analogue"]).is_file())
         self.assertIn("no runtime", review["note"])
+
+    def test_three_p0_sources_are_pinned_and_no_auto_install(self):
+        data = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        reviewed = {row["path"]: row for row in data["decisions"]}
+        expected = {
+            "skills/mcp-dependency-review": ("ALREADY_PRESENT", "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d"),
+            "skills/click-path-audit": ("HOLD_REVIEW", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
+            "skills/agent-architecture-audit": ("HOLD_CONFLICT", "a3c2caa67b0ca7e5323d4e853d898f599694ff10"),
+        }
+        self.assertEqual(39, len(reviewed))
+        for path, (status, blob) in expected.items():
+            with self.subTest(path=path):
+                row = reviewed[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(blob, row["source_blob"])
+                self.assertTrue((ROOT / row["analogue"]).is_file())
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        self.assertIn("mcp-dependency-review", native)
+        self.assertTrue({"click-path-audit", "agent-architecture-audit"}.isdisjoint(native))
 
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"

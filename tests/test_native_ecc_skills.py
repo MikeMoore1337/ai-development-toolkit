@@ -19,6 +19,7 @@ SOURCE_BLOBS = {
     "code-tour": "d66b7e008287833ac592550f9b0941feaea52443",
     "module-regression": "d8186cbfc4c481eb884a13c14b6f2a38aace0b7a",
     "error-handling": "add87f2cdb6f374781b08a0b1cf971eb9ec1915e",
+    "mcp-dependency-review": "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d",
 }
 
 
@@ -71,6 +72,7 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                 "code-tour": "code-tours",
                 "module-regression": "module-regression",
                 "error-handling": "error-handling",
+                "mcp-dependency-review": "mcp-dependency-review",
             }[name]])
 
     def test_original_single_skill_install_and_no_overwrite(self):
@@ -160,6 +162,29 @@ class ToolkitNativePortedSkillsTests(unittest.TestCase):
                                        text=True, timeout=30)
             self.assertNotEqual(0, duplicate.returncode)
             self.assertEqual("USER POLICY\n", rules.read_text(encoding="utf-8"))
+
+    def test_mcp_dependency_review_selective_install_preserves_owner_rules(self):
+        with tempfile.TemporaryDirectory(prefix="ecc-mcp-drift-") as temp:
+            target = Path(temp)
+            policy = target / "AGENTS.md"
+            policy.write_text("OWNER RULES\\n", encoding="utf-8")
+            command = [sys.executable, str(ROOT / "scripts/skill_manager.py"),
+                       "install", "--target", temp, "--profile", "native-mcp-dependency-review"]
+            preview = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, preview.returncode, preview.stderr)
+            self.assertFalse((target / ".agents").exists())
+            applied = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertEqual(0, applied.returncode, applied.stderr)
+            installed = target / ".agents/skills/mcp-dependency-review"
+            self.assertEqual(SOURCE_BLOBS["mcp-dependency-review"],
+                             git_blob((installed / "SKILL.md").read_bytes().replace(b"\\r\\n", b"\\n")))
+            self.assertEqual((ROOT / "third_party/ecc-v2.2.3/LICENSE").read_bytes(),
+                             (installed / "LICENSE").read_bytes())
+            self.assertEqual(["mcp-dependency-review"], [p.name for p in installed.parent.iterdir()])
+            self.assertEqual("OWNER RULES\\n", policy.read_text(encoding="utf-8"))
+            again = subprocess.run([*command, "--apply"], capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(0, again.returncode)
+            self.assertEqual("OWNER RULES\\n", policy.read_text(encoding="utf-8"))
 
     def test_user_visible_profile_dry_run_does_not_mutate(self):
         with tempfile.TemporaryDirectory(prefix="ecc-cli-test-") as temp:
