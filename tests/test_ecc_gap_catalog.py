@@ -223,7 +223,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
             "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
         }
-        self.assertEqual(60, len(rows))
+        self.assertEqual(85, len(rows))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
@@ -247,7 +247,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/click-path-audit": ("ALREADY_PRESENT", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
             "skills/agent-architecture-audit": ("HOLD_CONFLICT", "a3c2caa67b0ca7e5323d4e853d898f599694ff10"),
         }
-        self.assertEqual(60, len(reviewed))
+        self.assertEqual(85, len(reviewed))
         for path, (status, blob) in expected.items():
             with self.subTest(path=path):
                 row = reviewed[path]
@@ -283,7 +283,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/frontend-design-direction": ("HOLD_REVIEW", "6139c73ec7de85b33d62f121cb263f95dfd69f8c"),
             "skills/conventional-commit-review": ("HOLD_REVIEW", "a53c70f6b153c6204ee31bb26b6ee0bc3efb5851"),
         }
-        self.assertEqual(60, len(records))
+        self.assertEqual(85, len(records))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         for path, (status, blob) in expected.items():
@@ -291,6 +291,51 @@ class CatalogueTests(unittest.TestCase):
                 row = records[path]
                 self.assertEqual(status, row["status"])
                 self.assertEqual(blob, row["source_blob"])
+                self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
+                self.assertNotIn(path.rsplit("/", 1)[-1], native)
+                if row["analogue"] != "NOT_VERIFIED":
+                    self.assertTrue((ROOT / row["analogue"]).is_file())
+
+    def test_agent_runtime_25_decisions_pin_blobs_without_auto_adoption(self):
+        """Original agent and workflow references remain explicitly selected and host-gated."""
+        review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
+            encoding="utf-8"))
+        actual = {row["path"]: row for row in review["decisions"]}
+        expected = {
+            "skills/agent-harness-construction": ("HOLD_REVIEW", "6f828f92298e9c534c9af1e7f0e9832ef7443a2d"),
+            "skills/autonomous-agent-harness": ("HOLD_CONFLICT", "2f92a5a17f2096b5752ff489600ac282110fc292"),
+            "skills/agent-self-evaluation": ("HOLD_CONFLICT", "4e241380aa8c9b26ea249d7208d78edea9e5f397"),
+            "skills/agent-runtime-gateway-smoke-test": ("HOLD_REVIEW", "d2ed4dd6e10bea3e179607f4f39b3384ebb487dc"),
+            "skills/continuous-learning-v2": ("HOLD_REVIEW", "397b3d334dd1fdf5d7648dd619b6a744cd4734a5"),
+            "skills/context-budget": ("HOLD_REVIEW", "063e29a464e1f7461517569061d14bc31596f10d"),
+            "skills/prompt-optimizer": ("ALREADY_PRESENT", "16ae27d10c3015f456d38f4344643ff56e764f70"),
+            "skills/prompt-caching-strategy": ("HOLD_REVIEW", "c6bd9f18b8da2329f69743250e4d0a258465ef4e"),
+            "skills/eval-harness": ("HOLD_REVIEW", "133193446a3116e96648081aabcf4f2ea863b0e0"),
+            "skills/regex-vs-llm-structured-text": ("HOLD_REVIEW", "18d84e4a5265fee0a4fceaf441617e9b0823f206"),
+            "skills/codehealth-mcp": ("HOLD_UNSUPPORTED", "6119608dcae1fafb83663f12feb52b3a42da731a"),
+            "skills/documentation-lookup": ("HOLD_CONFLICT", "8bb9de6232d1693cd19a8e035712371e7c0e4769"),
+            "skills/canary-watch": ("HOLD_REVIEW", "8397ab540ccf7516fa7194622ea2909a1f98b8af"),
+            "skills/git-workflow": ("HOLD_CONFLICT", "81a858d3a79344a6879fa60322b5a36cdf758206"),
+            "skills/gateguard": ("HOLD_CONFLICT", "208174601bc8387f8efa55e8a8e4945526f7960b"),
+            "skills/config-gc": ("HOLD_REVIEW", "0583e2c8555e476d1d8d4484a35980dacf256cd6"),
+            "skills/workspace-surface-audit": ("HOLD_REVIEW", "6e7e75376c8fd520240425ee5b6bea967da19277"),
+            "skills/rules-distill": ("HOLD_CONFLICT", "9f76d3fe0c36af92c15607a006ba9b99d18559ef"),
+            "skills/project-flow-ops": ("HOLD_CONFLICT", "6ab2e62d15f882208e7e43c7ec4866f53273f62f"),
+            "skills/token-budget-advisor": ("HOLD_CONFLICT", "49987758c37150718bca091e29ecfca6dfc6627d"),
+            "skills/skill-comply": ("HOLD_UNSUPPORTED", "303863e302fe9ff340197fc7442a86bacbb7f425"),
+            "skills/skill-scout": ("HOLD_REVIEW", "8a55c548ccd47e4f5adf738cf5becf0b8b9ad9e7"),
+            "skills/skill-stocktake": ("HOLD_REVIEW", "aa4d16bfd22c297a538cc696ecc4e3e2ee3342d8"),
+            "skills/deep-research": ("HOLD_UNSUPPORTED", "75371ee0ec6e627b1246154f28587da19c81581f"),
+            "skills/benchmark": ("ALREADY_PRESENT", "3020088b5932d0db9275e19c7c0047c92abf84d3"),
+        }
+        self.assertEqual(85, len(actual))
+        native = set(json.loads((ROOT / "MANIFEST.json").read_text(
+            encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
+        for path, (status, original_blob) in expected.items():
+            with self.subTest(path=path):
+                row = actual[path]
+                self.assertEqual(status, row["status"])
+                self.assertEqual(original_blob, row["source_blob"])
                 self.assertTrue(row["reason"] and row["benefit"] and row["test_case"])
                 self.assertNotIn(path.rsplit("/", 1)[-1], native)
                 if row["analogue"] != "NOT_VERIFIED":
@@ -356,7 +401,7 @@ class CatalogueTests(unittest.TestCase):
     def test_all_manual_source_decisions_have_pinned_git_blobs(self):
         review = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
-        self.assertEqual(60, len(review["decisions"]))
+        self.assertEqual(85, len(review["decisions"]))
         self.assertTrue(all(
             isinstance(row.get("source_blob"), str)
             and len(row["source_blob"]) == 40
