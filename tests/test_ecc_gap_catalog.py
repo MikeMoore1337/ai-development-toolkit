@@ -73,7 +73,7 @@ class CatalogueTests(unittest.TestCase):
         self.assertEqual("codex,hermes", one["host_targets"])
         self.assertEqual("NOT_VERIFIED", one["live_client"])
 
-    def test_seven_native_source_skills_have_exact_real_manifest_analogues(self):
+    def test_thirteen_native_source_skills_have_exact_real_manifest_analogues(self):
         """A shipped skill is not a future candidate or a live-client success."""
         reviewed = json.loads((ROOT / "integrations/ecc/catalog_review.json").read_text(
             encoding="utf-8"))
@@ -81,7 +81,10 @@ class CatalogueTests(unittest.TestCase):
         manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
         native = manifest["extension_packs"]["native-ecc-ports"]
         expected = {"contract-first", "api-connector-builder", "code-tour",
-                    "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review"}
+                    "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review",
+                    "agent-introspection-debugging", "content-hash-cache-pattern",
+                    "loop-design-check", "make-interfaces-feel-better", "article-writing",
+                    "click-path-audit"}
         self.assertEqual(expected, set(native["skills"]))
         self.assertFalse(native["auto_install"])
         self.assertTrue(native["standalone"])
@@ -213,7 +216,7 @@ class CatalogueTests(unittest.TestCase):
             "skills/agent-eval": "c082704f19ad58e8f0aa986a25f1da0b29809922",
             "skills/python-patterns": "ced3d588d816fb6880dfef4d67f30cab9d1b82df",
         }
-        self.assertEqual(39, len(rows))
+        self.assertEqual(44, len(rows))
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertTrue({p.rsplit("/", 1)[-1] for p in expected}.isdisjoint(native))
@@ -234,10 +237,10 @@ class CatalogueTests(unittest.TestCase):
         reviewed = {row["path"]: row for row in data["decisions"]}
         expected = {
             "skills/mcp-dependency-review": ("ALREADY_PRESENT", "4b08af8b05d44a0301693fc025a60ca5f4e8ee6d"),
-            "skills/click-path-audit": ("HOLD_REVIEW", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
+            "skills/click-path-audit": ("ALREADY_PRESENT", "ffc469829b6c4bf893c4f6212d4110e87e9568d6"),
             "skills/agent-architecture-audit": ("HOLD_CONFLICT", "a3c2caa67b0ca7e5323d4e853d898f599694ff10"),
         }
-        self.assertEqual(39, len(reviewed))
+        self.assertEqual(44, len(reviewed))
         for path, (status, blob) in expected.items():
             with self.subTest(path=path):
                 row = reviewed[path]
@@ -248,7 +251,42 @@ class CatalogueTests(unittest.TestCase):
         native = set(json.loads((ROOT / "MANIFEST.json").read_text(
             encoding="utf-8"))["extension_packs"]["native-ecc-ports"]["skills"])
         self.assertIn("mcp-dependency-review", native)
-        self.assertTrue({"click-path-audit", "agent-architecture-audit"}.isdisjoint(native))
+        self.assertIn("click-path-audit", native)
+        self.assertNotIn("agent-architecture-audit", native)
+
+
+    def test_source_wide_relevance_is_only_provisional(self):
+        rows = audit.build(self.ecc, self.toolkit, self.rev)
+        report = audit.relevance_report(rows, self.ecc, self.toolkit)
+        self.assertEqual(6, report["total"])
+        self.assertEqual(1, report["manually_decided"])
+        self.assertEqual(5, report["pending_semantic_review"])
+        self.assertFalse(report["autoinstall"])
+        self.assertFalse(report["external_runtime_executed"])
+        self.assertTrue(all(x["live_client"] == "NOT_VERIFIED" for x in report["entries"]))
+        self.assertEqual(6, len({x["upstream_path"] for x in report["entries"]}))
+        unknown = next(x for x in report["entries"] if x["upstream_path"] == "agents/one.md")
+        self.assertEqual("NOT_APPROVED", unknown["adoption"])
+        self.assertEqual("HOST_PRECEDENCE_REVIEW", unknown["source_screen"]
+                         ) if unknown["domains"] else self.assertEqual(
+                             "SPECIALIZED_OR_HOST_BOUND", unknown["source_screen"])
+
+    def test_relevance_screen_flags_commands_but_never_runs_them(self):
+        row = dict(upstream_path="skills/react-testing", primary_file="skills/react-testing/SKILL.md",
+                   name="react-testing", description="React component tests and QA",
+                   trigger="Use when writing tests", kind="skill",
+                   sha256_component="a" * 64, upstream_revision="b" * 40,
+                   toolkit_analogue="NOT_VERIFIED", status="HOLD_REVIEW")
+        source = "# React Testing\n## Examples\nDo not run 'npx tool'.\nNever publish without consent.\n"
+        result = audit.classify_relevance(row, source, set())
+        self.assertEqual("CANDIDATE_FOR_DEEP_REVIEW", result["source_screen"])
+        self.assertIn("testing", result["domains"])
+        self.assertIn("development", result["domains"])
+        self.assertEqual("NOT_APPROVED", result["adoption"])
+        self.assertIn("CHECK_EXTERNAL_RUNTIME_AND_COST", result["source_signals"])
+        self.assertIn("CHECK_SIDE_EFFECTS_AND_PERMISSIONS", result["source_signals"])
+        with self.assertRaisesRegex(ValueError, "missing original"):
+            audit.classify_relevance(row, "", set())
 
     def test_multiline_original_description_is_not_lost(self):
         frontmatter = "---\ndescription: >-\n  Cross module dependency audit\n  with schema compatibility.\n---\n"

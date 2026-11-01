@@ -313,7 +313,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/click-path-audit/SKILL.md",
       "source_blob": "ffc469829b6c4bf893c4f6212d4110e87e9568d6",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Ordered store mutations and final UI state conflicts missing from static handler checks; explicit opt-in only, original related /superpowers commands are not assumed installed.",
       "test_case": "Isolated Zustand-like synthetic handler where a second setter resets the first: identify the actual final state and repro; no automatic multi-agent execution."
     },
@@ -331,7 +331,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/agent-introspection-debugging/SKILL.md",
       "source_blob": "7f40c4579f09b15884e7e4e22635ccd41e1ba1a7",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Structured evidence-first agent run failure triage beyond ordinary code debugging; no hidden runtime.",
       "test_case": "Isolated failed tool-run trace detects repeated attempts and reports grounded recovery without executing unauthorized commands."
     },
@@ -340,7 +340,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/content-hash-cache-pattern/SKILL.md",
       "source_blob": "fe4ef6f2dd7034aa0ef6caf67600d8bef2e815c5",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Concrete path-independent SHA-256 cache pattern for expensive parsing pipelines; complements general data-processing guidance.",
       "test_case": "Python 3.12 fixture validates same-content cache key on moved file, invalidates changed bytes and does not persist secrets."
     },
@@ -349,7 +349,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/loop-design-check/SKILL.md",
       "source_blob": "c54266211898024e69b141fd1993aa9a8e678c58",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Explicit goal-deciding, anti-Goodhart loop review to prevent runaway agents; not a new automatic scheduler.",
       "test_case": "Offline loop-fixture with missing termination, verifier-gaming and non-decidable goals yields manual fix recommendations, no live agent run."
     },
@@ -358,7 +358,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/make-interfaces-feel-better/SKILL.md",
       "source_blob": "e589f3f30312ac4e522dfbdd3e592862f69fd008",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Optional original UI polish review on spacing, typography, motion and hit targets; not a globally imposed design style or UX/UI Orchestra controller.",
       "test_case": "On an authorized sample UI, produce a limited issue-specific checklist without writing CSS or overriding original selected design tools."
     },
@@ -367,7 +367,7 @@
       "status": "ALREADY_PRESENT",
       "analogue": "optional-original-skills/article-writing/SKILL.md",
       "source_blob": "9dfa979ca56940e731ebede2c46ec2dca688818e",
-      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings.",
+      "reason": "Pinned ECC 2.2.3 original source is now distributed unchanged in an opt-in Toolkit-native standalone skill without ECC runtime, automatic invocation, global controls or paid APIs. Distinct use: Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings. Source-only no-clobber tests do not prove execution effectiveness; actual client activation NOT_VERIFIED.",
       "benefit": "Opt-in source-grounded article drafting to complement technical SEO audit; no publication or fabricated rankings.",
       "test_case": "Given a user-supplied article brief and source quotes, produce a referenced draft with no automatic publishing."
     }
