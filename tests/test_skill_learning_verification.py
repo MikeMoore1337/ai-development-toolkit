@@ -151,6 +151,17 @@ class NativeLearningVerificationTests(unittest.TestCase):
                 claims(claim(self.a, "deployment_succeeded", MERGE1),
                        claim(self.b, "pr_merged_at_sha", MERGE2)), self.p)
 
+    def test_malformed_api_nested_object_fails_closed(self):
+        self.db["/repos/" + REPO + "/pulls/101"] = {
+            "number": 101, "head": {"sha": HEAD1},
+            "base": {"repo": "bad-untrusted-shape"},
+            "merged": True, "merged_at": "2026-10-25T12:00:00Z",
+            "merge_commit_sha": MERGE1,
+        }
+        receipts = self.examine()["fact_checks"]
+        self.assertEqual("NOT_VERIFIED", receipts[0]["fact_status"])
+        self.assertEqual("VERIFIED_FACT", receipts[1]["fact_status"])
+
     def test_same_pr_and_run_share_sha_and_are_not_independent(self):
         run = observation("obs-run", "actions/runs/104")
         result = self.examine(

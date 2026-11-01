@@ -233,7 +233,7 @@ def verify_learning(packet: object, claims: object, *, project_repo: str,
         metadata = fetch("/repos/" + repo)
         accessible = (isinstance(metadata, dict) and metadata.get("private") is False
                       and _same_repo(metadata.get("full_name"), repo))
-    except (OSError, ValueError, TypeError, KeyError, error.URLError):
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, error.URLError):
         accessible = False
     cache: dict[str, tuple[str, str | None]] = {}
     receipts = []
@@ -245,7 +245,7 @@ def verify_learning(packet: object, claims: object, *, project_repo: str,
                 try:
                     obj = fetch(_object_path(repo, source))
                     verdict = _fact_verdict(expected[source], obj, repo)
-                except (OSError, ValueError, TypeError, KeyError, error.URLError):
+                except (OSError, ValueError, TypeError, KeyError, AttributeError, error.URLError):
                     pass
             cache[source] = verdict
         status, group = cache[source]
