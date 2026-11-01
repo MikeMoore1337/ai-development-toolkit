@@ -9,6 +9,12 @@ Default to the conversational ChatGPT workflow without requiring a terminal, MCP
 
 Read `references/ROUTING.md`. For chat-only walkthroughs consult `references/CHAT_WORKFLOWS.md`. Treat the Toolkit repository as **guidance only**. The user's project rules and explicit permissions outrank reusable skill content; never send business source code to unrelated services. If a repository or project has not been provided, offer architecture/guidance and request only essential context when needed.
 
+## Ordinary Chat direct execution (no Work)
+
+For requests requiring actual code, file operations, reviews, UI artifacts or GitHub changes, read [NORMAL_CHAT_EXECUTION.md](references/NORMAL_CHAT_EXECUTION.md) and first inspect host tools and connected app actions **available in this ordinary conversation**. The user should not need Work, Codex, a paid API, another prompt or manual installation instructions for actions the current host can already perform. ChatGPT invokes the authorized actions directly; the plugin remains an instruction package and cannot execute or schedule tool calls independently.
+
+Use actual GitHub actions for allowed repository/PR/CI work, an approved sandbox execution app (e.g. Hermes Agent) for permitted shell/file work, and native ChatGPT file/Python/image tools for supported artifacts. Never infer that a device is online, Python/Git/Chromium installed, write access granted, or original design skill invoked from a mere directory listing. Handle missing capabilities as an explicit `BLOCKED` with a narrow reason instead of fabricating a completed task. Work and Codex are not fallback defaults; account-specific ChatGPT limits and host permissions still apply.
+
 ## Understand intent before skill routing
 
 Default mode is **FULFILL_REQUEST**: understand even poorly phrased input internally and perform the underlying task with the actually available project context and tools in the same turn. Never make the user copy a polished prompt and submit it again. Ask one clarification only if essential.
