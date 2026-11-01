@@ -15042,6 +15042,48 @@
       "distribution": "included",
       "notes": "Issue #435 native selective opt-in. No ECC external runtime, automatic execution or paid API; review is source-level, real client activation remains NOT_VERIFIED.",
       "owner_approval_id": "ECC435_CROSSDOMAIN_20261101"
+    },
+    {
+      "id": "ecc-v223-optin-brand-voice",
+      "path": "optional-original-skills/brand-voice",
+      "name": "brand-voice",
+      "kind": "skill",
+      "author": "ECC upstream contributors (MIT root)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/brand-voice/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact original pinned MIT SKILL.md and accompanying original reference/notice where applicable; upstream ownership chain not independently attested.",
+      "attribution_required": true,
+      "attribution_path": "optional-original-skills/brand-voice/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-11-01",
+      "distribution": "included",
+      "notes": "Issue #435: explicitly selected user-scoped editorial skills; no automatic publication, X API, host behavior mutation, controller, hook or paid model.",
+      "owner_approval_id": "ECC435_EDITORIAL_20261101"
+    },
+    {
+      "id": "ecc-v223-optin-content-engine",
+      "path": "optional-original-skills/content-engine",
+      "name": "content-engine",
+      "kind": "skill",
+      "author": "ECC upstream contributors (MIT root)",
+      "origin": "redistributed",
+      "source_url": "https://github.com/affaan-m/ECC",
+      "source_reference": "https://github.com/affaan-m/ECC/blob/25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b/skills/content-engine/SKILL.md",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "distribution_basis": "Exact original pinned MIT SKILL.md and accompanying original reference/notice where applicable; upstream ownership chain not independently attested.",
+      "attribution_required": true,
+      "attribution_path": "optional-original-skills/content-engine/LICENSE",
+      "status": "documented",
+      "evidence": "docs/en/TOOLKIT_NATIVE_CAPABILITIES.md",
+      "last_reviewed": "2026-11-01",
+      "distribution": "included",
+      "notes": "Issue #435: explicitly selected user-scoped editorial skills; no automatic publication, X API, host behavior mutation, controller, hook or paid model.",
+      "owner_approval_id": "ECC435_EDITORIAL_20261101"
     }
   ],
   "owner_review_record": {
@@ -15926,6 +15968,43 @@
           "kind": "skill"
         },
         "optional-original-skills/click-path-audit": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        }
+      }
+    },
+    {
+      "id": "ECC435_EDITORIAL_20261101",
+      "source": "owner_reported",
+      "review_outcomes": "permitted",
+      "scope_issue": "#435",
+      "reported_at": "2026-11-01",
+      "scope_description": "Owner asked to select and integrate beneficial native ECC tools across development, design, QA and SEO. Pinned original MIT brand-voice and content-engine sources with complete brand-voice schema, opt-in only, no automatic persistent personal writing data, external social accounts or publishing. This is not independent legal clearance or merge/release permission.",
+      "source_revision": "25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b",
+      "license": "MIT",
+      "approved_components": {
+        "optional-original-skills/brand-voice": {
+          "optional-original-skills/brand-voice/SKILL.md": "57c7f8440b7bd4c91c0d325640b5c6fb7a3dc7fc05595946c7bc705761a987a7",
+          "optional-original-skills/brand-voice/references/voice-profile-schema.md": "3c5c2b04fd4b68642d2d3279829541bc56d211fdefc3498e86c1486abee8261b",
+          "optional-original-skills/brand-voice/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        },
+        "optional-original-skills/content-engine": {
+          "optional-original-skills/content-engine/SKILL.md": "a1ccc0ecfe30ae53db26a73159a80ecad8c63a6a96c461a297789d889bf9ad2c",
+          "optional-original-skills/content-engine/LICENSE": "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
+        }
+      },
+      "approved_metadata": {
+        "optional-original-skills/brand-voice": {
+          "origin": "redistributed",
+          "license": "MIT",
+          "status": "documented",
+          "distribution": "included",
+          "kind": "skill"
+        },
+        "optional-original-skills/content-engine": {
           "origin": "redistributed",
           "license": "MIT",
           "status": "documented",
