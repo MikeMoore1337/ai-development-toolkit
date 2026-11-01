@@ -319,12 +319,16 @@ def _validate_parallel_plan(data: Any, *, git_root: Path | None) -> list[str]:
         if (not isinstance(branch, str) or not _BRANCH.fullmatch(branch)
             or not _portable_path(branch) or branch.endswith(".lock")
             or branch.casefold() in {"main", "master", "head"}
-            or branch.startswith("refs/") or ".." in branch):
+            or branch.startswith("refs/") or ".." in branch
+            or any(part.startswith(".") or part.casefold().endswith(".lock")
+                   for part in branch.split("/"))):
             errors.append("UNSAFE_BRANCH")
         else:
             key = _path_key(branch)
             if key in branches:
                 errors.append("DUPLICATE_BRANCH")
+            elif any(_write_overlap(key, previous) for previous in branches):
+                errors.append("BRANCH_NAMESPACE_COLLISION")
             branches.add(key)
         if not _portable_path(workspace):
             errors.append("UNSAFE_WORKTREE_PATH")
@@ -435,7 +439,16 @@ def _git_preflight(root: Path, revision: str, tasks: list[dict]) -> list[str]:
         if current == current.parent:
             break
         current = current.parent
-    env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+    metadata = root / ".git"
+    if metadata.is_symlink() or (hasattr(metadata, "is_junction") and metadata.is_junction()):
+        return ["GIT_METADATA_LINKED"]
+    if not metadata.is_dir() and not metadata.is_file():
+        return ["GIT_METADATA_UNAVAILABLE"]
+    # Prevent inherited Git trace/config/repository environment from redirecting
+    # reads or writing trace files outside this explicitly requested checkout.
+    env = {key: value for key, value in os.environ.items()
+           if not key.upper().startswith("GIT_")}
+    env["GIT_OPTIONAL_LOCKS"] = "0"
 
     def git(*args: str) -> str:
         cmd = ["git", "-c", "core.fsmonitor=false", "-C", str(root), *args]
@@ -493,6 +506,9 @@ def _git_preflight(root: Path, revision: str, tasks: list[dict]) -> list[str]:
                 problems.append("BRANCH_ALREADY_CHECKED_OUT")
             elif _path_key(branch) in known_branches:
                 problems.append("BRANCH_ALREADY_EXISTS")
+            elif any(_write_overlap(branch, existing)
+                     for existing in known_branches | active_branches):
+                problems.append("BRANCH_NAMESPACE_COLLISION")
         if not _portable_path(relative):
             continue
         candidate = root.parent.joinpath(*relative.split("/"))

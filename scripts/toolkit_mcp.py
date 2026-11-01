@@ -165,6 +165,13 @@ def _tool_defs() -> list[dict]:
                                         "layout": {"type": "string", "enum": ["codex", "claude"]}},
                          "required": ["project", "skills", "layout"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_preflight_parallel_plan",
+         "description": "Check proposed independent Git worktree tasks read-only; no Git mutations or native agents.",
+         "inputSchema": {"type": "object", "properties": {
+             "plan": {"type": "object", "description": "Bounded parallel plan schema #440"},
+             "project": string("Optional explicit absolute local Git repository root (read-only)")},
+             "required": ["plan"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_observe_project",
          "description": "Opt-in read-only local Git/worktree diagnostics. No transcript, agent or client runtime claims.",
          "inputSchema": {"type": "object", "properties": {
@@ -487,6 +494,23 @@ def invoke(tool: str, args: dict) -> dict:
                                     confirmed_for_this_call=args["confirmed_for_this_call"])
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
+    if tool == "toolkit_preflight_parallel_plan":
+        if set(args) not in ({"plan"}, {"plan", "project"}):
+            raise ValueError("Parallel preflight requires a plan and optional explicit project")
+        import validate_feature_orchestra as parallel
+        root = _project(args["project"]) if "project" in args else None
+        issues = parallel.validate_parallel_plan(args["plan"], git_root=root)
+        return {"schema_version": 1,
+                "status": "REJECTED" if issues else "STATIC_PLAN_VALIDATED",
+                "issues": issues,
+                "git_state": ("NOT_VERIFIED" if root is None or issues else "READ_ONLY_CHECKED"),
+                "single_controller": "feature-delivery",
+                "host_execution": "NOT_VERIFIED",
+                "native_subagents": "NOT_VERIFIED",
+                "model_execution": "NOT_RUN",
+                "authorization": "NOT_GRANTED",
+                "worktree_write": "NOT_RUN",
+                "external_ecc_runtime": "NOT_USED"}
     if tool == "toolkit_prepare_handoff":
         if set(args) != {"project", "issue_url", "from_client", "to_client",
                          "references", "next_action"}:

@@ -140,6 +140,21 @@ class ParallelPlanTests(unittest.TestCase):
                 trial["tasks"][1]["worktree"] = worktree
                 self.assertIn("UNSAFE_WORKTREE_PATH", oracle.validate_parallel_plan(trial))
 
+    def test_git_ref_components_and_branch_namespace_collision(self):
+        # Git check-ref-format prohibits dot-prefixed and .lock components.
+        for ref in ("feature/.private", "feature/inner.lock/child",
+                    "feature/INNER.LOCK/child", "feature/..hidden/x"):
+            with self.subTest(ref=ref):
+                plan = candidate()
+                plan["tasks"][1]["branch"] = ref
+                self.assertIn("UNSAFE_BRANCH", oracle.validate_parallel_plan(plan))
+        plan = candidate()
+        plan["tasks"][0]["branch"] = "feature/api"
+        plan["tasks"][1]["branch"] = "FEATURE/API/child"
+        self.assertIn("BRANCH_NAMESPACE_COLLISION", oracle.validate_parallel_plan(plan))
+        plan["tasks"][1]["branch"] = "feature/api_v2"
+        self.assertEqual([], oracle.validate_parallel_plan(plan))
+
     def test_bad_branch_and_acceptance_are_blocked(self):
         trial = candidate()
         trial["tasks"][0]["branch"] = "feature/api.lock"
@@ -155,6 +170,32 @@ class ParallelPlanTests(unittest.TestCase):
                       {**candidate(), "extra": "ignore"}):
             with self.subTest(value=repr(value)[:100]):
                 self.assertNotEqual([], oracle.validate_parallel_plan(value))
+
+    def test_project_mcp_preflight_is_read_only_and_does_not_claim_agents(self):
+        import toolkit_mcp
+        definitions = {tool["name"]: tool for tool in toolkit_mcp._tool_defs()}
+        descriptor = definitions["toolkit_preflight_parallel_plan"]
+        self.assertTrue(descriptor["annotations"]["readOnlyHint"])
+        self.assertEqual(["plan"], descriptor["inputSchema"]["required"])
+        payload = {"jsonrpc": "2.0", "id": 440, "method": "tools/call",
+                   "params": {"name": "toolkit_preflight_parallel_plan",
+                              "arguments": {"plan": candidate()}}}
+        response = toolkit_mcp.handle(payload)
+        self.assertFalse(response["result"].get("isError", False), response)
+        value = response["result"]["structuredContent"]
+        self.assertEqual("STATIC_PLAN_VALIDATED", value["status"])
+        self.assertEqual("NOT_VERIFIED", value["git_state"])
+        self.assertEqual("NOT_RUN", value["model_execution"])
+        self.assertEqual("NOT_GRANTED", value["authorization"])
+        modified = candidate()
+        modified["tasks"][1]["write_paths"] = ["src/api/"]
+        rejected = toolkit_mcp.invoke("toolkit_preflight_parallel_plan",
+                                      {"plan": modified})
+        self.assertEqual("REJECTED", rejected["status"])
+        self.assertIn("OVERLAPPING_WRITE_SCOPE", rejected["issues"])
+        with self.assertRaises(ValueError):
+            toolkit_mcp.invoke("toolkit_preflight_parallel_plan",
+                               {"plan": candidate(), "execute": True})
 
     def test_cli_static_mode_never_claims_native_agent_execution(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -251,6 +292,63 @@ class SyntheticWorktreeTests(unittest.TestCase):
         except (OSError, NotImplementedError):
             self.skipTest("Symbolic links not allowed on runner")
         self.assertIn("WORKTREE_PATH_LINKED", oracle.validate_parallel_plan(
+            self.plan, git_root=self.repo))
+
+    def test_project_mcp_optional_git_preflight_reads_only_synthetic_root(self):
+        import toolkit_mcp
+        before = self.git(self.repo, "worktree", "list", "--porcelain").stdout
+        old_head = self.git(self.repo, "rev-parse", "HEAD").stdout
+        response = toolkit_mcp.invoke("toolkit_preflight_parallel_plan", {
+            "plan": self.plan, "project": str(self.repo)})
+        self.assertEqual("STATIC_PLAN_VALIDATED", response["status"])
+        self.assertEqual("READ_ONLY_CHECKED", response["git_state"])
+        self.assertEqual("NOT_RUN", response["worktree_write"])
+        self.assertEqual(before, self.git(self.repo, "worktree", "list", "--porcelain").stdout)
+        self.assertEqual(old_head, self.git(self.repo, "rev-parse", "HEAD").stdout)
+
+    def test_git_ref_reality_and_existing_hierarchical_conflict(self):
+        # All Git commands are strictly scoped to this disposable CI-owned repo.
+        for ref in ("feature/.hidden", "feature/dir.lock/sub"):
+            with self.subTest(ref=ref):
+                self.assertNotEqual(0, self.git(
+                    self.repo, "check-ref-format", "--branch", ref, check=False).returncode)
+                trial = copy.deepcopy(self.plan)
+                trial["tasks"][0]["branch"] = ref
+                self.assertIn("UNSAFE_BRANCH", oracle.validate_parallel_plan(trial))
+        self.git(self.repo, "branch", "feature/api", self.sha)
+        proposed = copy.deepcopy(self.plan)
+        proposed["tasks"][0]["branch"] = "feature/api/sub"
+        self.assertIn("BRANCH_NAMESPACE_COLLISION", oracle.validate_parallel_plan(
+            proposed, git_root=self.repo))
+        self.assertNotEqual(0, self.git(
+            self.repo, "branch", "feature/api/sub", self.sha, check=False).returncode)
+
+    def test_inherited_git_trace_and_repository_override_do_not_escape_root(self):
+        from unittest import mock
+        trace = self.parent / "unexpected-git-trace.txt"
+        trace2 = self.parent / "unexpected-trace2.json"
+        with mock.patch.dict(os.environ, {
+            "GIT_DIR": str(self.parent / "nonexistent-git-dir"),
+            "GIT_WORK_TREE": str(self.parent / "other-worktree"),
+            "GIT_TRACE": str(trace),
+            "GIT_TRACE2_EVENT": str(trace2),
+        }):
+            self.assertEqual([], oracle.validate_parallel_plan(
+                self.plan, git_root=self.repo))
+        self.assertFalse(trace.exists())
+        self.assertFalse(trace2.exists())
+
+    def test_git_metadata_link_or_absence_fail_closed(self):
+        actual = self.repo / ".git"
+        displaced = self.repo / "temporary-git-data"
+        actual.rename(displaced)  # only synthetic CI-owned .git metadata
+        self.assertIn("GIT_METADATA_UNAVAILABLE", oracle.validate_parallel_plan(
+            self.plan, git_root=self.repo))
+        try:
+            actual.symlink_to(displaced, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("Metadata symlink requires unavailable runner privilege")
+        self.assertIn("GIT_METADATA_LINKED", oracle.validate_parallel_plan(
             self.plan, git_root=self.repo))
 
     def test_no_project_root_or_symlink_root_is_allowed(self):
