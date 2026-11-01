@@ -111,3 +111,29 @@ All three locations are **relative to the paired-results JSON**, contained in th
 A successful result contains `native_receipts_verified` and `native_evidence_integrity: OFFLINE_VERIFIED_NOT_OUTCOME`. **This authenticates the integrity of the supplied capsule, receipt and artifact within this local verifier - NOT the source's identity, human grading, actual task success, global anti-tamper witnessing, or an approved deploy/release.** Records bearing a `native_receipt` field are rejected without the explicit flag, rather than silently omitting integrity validation. This does not change the original no-receipts evaluation output or permission model.
 
 See [Native Eval Capsules](en/NATIVE_EVAL_CAPSULES.md) for pinned ECC MIT source, provenance and limitations.
+
+## Optional offline repeatability of already recorded trials (#435)
+
+```bash
+python scripts/skill_eval.py /path/to/recorded-runs.json --observed-repeatability
+```
+
+Without this flag the scorer's schema and output are unchanged.
+`observed_repeatability` reports `observed_pass_at_1` (clean success in
+trial 1), `observed_pass_at_3` (at least one clean success in numbered
+trials 1-3) and `observed_pass_all_3` (three clean successes).
+A clean success requires `accepted=true`, `regressions=0` and
+`unsafe_actions=0`. If **any** task lacks the required numbered trials,
+the corresponding metric is `null` and status
+`NOT_MEASURED_INCOMPLETE_TRIALS`; it is never silently scored as zero.
+Additional trials beyond the first three do not enter these metrics.
+
+The executable **synthetic** fixture has three tasks × three recorded trials
+per variant. Both variants have pooled acceptance `6/9=66.67%`,
+but the first has all-three success on two tasks (`2/3`) while the
+second has none (`0/3`). This is a measurable offline *reporting*
+difference, not improved model performance. These are empirical recorded
+outcomes, **not** unbiased statistical pass@k estimators, live agent
+execution, validation of the supplied verdicts or proof of independent trials.
+`classification: exploratory` and independent review are unchanged.
+The full original ECC `eval-harness` remains `HOLD_REVIEW` for live graders.

@@ -94,3 +94,26 @@ Reviewed 25 original ECC 2.2.3 `SKILL.md` primary files against actual Toolkit s
 **HOLD_REVIEW (12):** `agent-harness-construction`, `agent-runtime-gateway-smoke-test`, `continuous-learning-v2`, `context-budget`, `prompt-caching-strategy`, `eval-harness`, `regex-vs-llm-structured-text`, `canary-watch`, `config-gc`, `workspace-surface-audit`, `skill-scout`, `skill-stocktake`. These have possible incremental value for agent action-space schemas, gateway E2E, project-scoped learning (separately owned by #436), native-client context meters, prompt caching, eval/structured-text oracles, bounded canary watching, configuration and tool inventory, and safe skill discovery. Each needs isolated executable evidence, provenance/rights and effect measurement before adoption.
 
 **Current maintained source decisions: 85/601. Remaining 516 need substantive review.** No new original source files, Skill Manager registration, global controller, hooks, paid APIs, installed-client verification, merge, deployment or release in this batch. Exact-head CI and the pinned-source catalogue workflow must pass separately. The earlier 60/601 count above is the previous checkpoint.
+
+## Practical candidate-value proof: agent QA and context (1 November 2026)
+
+Four `HOLD_REVIEW` originals were compared with existing functionality:
+`eval-harness`, `agent-harness-construction`, `context-budget` and
+`prompt-caching-strategy`. The only proved **offline reporting** gap in
+this round is in `scripts/skill_eval.py`: overall paired acceptance
+could hide a task's repeated-run instability. An opt-in
+`--observed-repeatability` now reports first-trial, within-three, and
+all-three clean-success rates from already recorded verdicts, without
+another evaluation runtime, model or package. A synthetic three-task
+fixture keeps pooled acceptance at 6/9 in both conditions while
+all-three success differs 2/3 versus 0/3. Missing repetitions yield null,
+not false success; risky recorded actions cannot count as clean success.
+
+`eval-harness` remains `HOLD_REVIEW` for actual model execution and
+independent graders. `agent-harness-construction` still lacks a measured
+tool-use comparison; `context-budget` cannot convert measured source
+bytes to live provider tokens; `prompt-caching-strategy` needs real
+provider receipts and privacy/cost verification. **No original skill
+was imported or reclassified; coverage remains 85/601, 516 outstanding.**
+See [existing scorer](../SKILL_EVALS.md) for a reproducible, offline-only
+test. All model efficacy remains `NOT_MEASURED`.
