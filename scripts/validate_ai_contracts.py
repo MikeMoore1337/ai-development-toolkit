@@ -262,7 +262,7 @@ def check_tool_observation(observation: object, *, effect: str,
         if prior_outcome in {"unknown", "authorization_denied", "not_applied",
                              "not_attempted"}:
             errors.append("success contradicts prior outcome")
-    elif status in {"warning", "error"}:
+    elif isinstance(status, str) and status in {"warning", "error"}:
         if not isinstance(recovery, dict) or set(recovery) != {
                 "root_cause", "retry_policy", "stop_condition"}:
             errors.append("missing or invalid recovery contract")
