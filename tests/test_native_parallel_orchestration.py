@@ -93,6 +93,11 @@ class ParallelPlanTests(unittest.TestCase):
         trial["active_controllers"].append("make-feature")
         self.assertIn("DUPLICATE_CONTROLLER", oracle.validate_parallel_plan(trial))
 
+    def test_windows_git_path_separator_alias(self):
+        # Git commonly lists D:/... while Windows Path.resolve uses D:\...
+        self.assertEqual(oracle._path_key(r"D:\Checkout\worktree".replace(chr(92), "/")),
+                         oracle._path_key("d:/checkout/worktree"))
+
     def test_nested_worktree_paths_and_protected_branches_rejected(self):
         for child in ("wt-api/child", "WT-API/nested"):
             with self.subTest(child=child):
