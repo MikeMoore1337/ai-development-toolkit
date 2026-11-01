@@ -387,7 +387,7 @@
       "source_blob": "28ddd4e1676f4ea67d34a9d244a94164e088b80e",
       "reason": "Pinned original content-engine is now distributed unchanged as opt-in native skill. It adds source-first repurposing into platform-specific editorial drafts beyond technical seo-audit and article-writing; when consistent voice is requested, the separate opt-in native-editorial-suite installs the original brand-voice companion explicitly. Other optional publishing tools (crosspost/x-api) are NOT bundled or authorized.",
       "benefit": "Editorial/SEO content redistribution from one verifiable article or release note into differentiated channel drafts and a content calendar, with no external APIs or automatic publication. Incremental live client benefit NOT_MEASURED.",
-      "test_case": "Use a synthetic source article with three evidence-backed claims; draft distinct platform posts without inventing citations, creating engagement bait, sending data to social providers or publishing; compare output to baseline article-writing and validate explicit 2-skill suite selection."
+      "test_case": "Use a synthetic source article with three evidence-backed claims; draft distinct platform posts without inventing citations, creating engagement bait, sending data to social providers or publishing; compare output to baseline article-writing and validate explicit 2-skill suite selection. Real AI-client activation and comparative editorial efficacy remain NOT_VERIFIED."
     }
   ]
 }

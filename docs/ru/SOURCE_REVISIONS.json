@@ -16,7 +16,7 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "8980e6f0d880e01da400675b251856350370acbc5e250284fbf823ab805afa62"
+      "source_sha256": "30d79af61fab79f56e3449a3fd1eed446c5fe7e858917df62ca36ff1cb5fd311"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",
@@ -353,7 +353,7 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "b04b170b16f4580aeb68f3ba860ff6e4cad496f7f0482a4e434c0588e1225160"
+      "source_sha256": "4a2150b3373b0e9458e101e0f94052ef3e9228fdfc001a2b4ec6577fbc419a87"
     },
     {
       "source": "docs/SKILLS_QUALITY_AUDIT.md",
