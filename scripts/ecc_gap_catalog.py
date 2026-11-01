@@ -212,6 +212,98 @@ def build(ecc: Path, toolkit: Path, sha: str) -> list[dict]:
     return rows
 
 
+
+# Evidence-first broad screening is NOT a manually approved semantic decision.
+# No ECC commands, model, packages, hooks or agents are executed by this report.
+RELEVANCE_TERMS = {
+    "development": r"\b(?:python|fastapi|react|vue|node|typescript|javascript|api|backend|frontend|code|coding|software|repository|git|database|cache|architecture|devops|deployment|framework|refactor|performance|mcp|integration|debug|engineering)\b",
+    "testing": r"\b(?:test|testing|qa|quality|verification|regression|playwright|vitest|pytest|e2e|audit|security|accessibility|eval|CI|flaky|bug|failure|canary)\b",
+    "design": r"\b(?:design|ui|ux|interface|visual|typography|animation|motion|layout|accessibility|screenshot|figma|dashboard|css|style)\b",
+    "seo": r"\b(?:seo|search engine|indexing|canonical|sitemap|ranking|keyword|search console|content|article|blog|meta.?tags|structured data|schema.org)\b",
+}
+EXTERNAL_RUNTIME_SIGNAL = re.compile(
+    r"\b(?:claude\s+code|codex\s+cli|anthropic\s+api|openai\s+api|"
+    r"npx|uvx|pipx|docker\s+run|firecrawl|socialclaw|api.?key)\b", re.I)
+MUTATION_SIGNAL = re.compile(
+    r"\b(?:publish|deploy|install|write\s+(?:to\s+)?(?:files?|configs?)|"
+    r"delete\s+files?|modify\s+AGENTS\.md|hooks?|sidecar)\b", re.I)
+
+
+def classify_relevance(row: dict, source: str, reviewed: set[str]) -> dict:
+    """Describe source-visible scope and risks; do not authorize adoption."""
+    if not isinstance(source, str) or not source.strip():
+        raise ValueError("missing original primary source: " + row["upstream_path"])
+    # Domain relevance comes from the trigger/heading/path, not incidental
+    # words such as "test" in a long unrelated example's body.
+    identity = " ".join([row["name"], row["description"], row["trigger"]]).lower()
+    domains = sorted(
+        key for key, pattern in RELEVANCE_TERMS.items()
+        if re.search(pattern, identity, re.I))
+    kind = row["kind"]
+    manual = row["upstream_path"] in reviewed
+    if manual:
+        screen = "MANUAL_SOURCE_DECISION"
+    elif kind in {"agent", "command", "rule"}:
+        screen = "HOST_PRECEDENCE_REVIEW" if domains else "SPECIALIZED_OR_HOST_BOUND"
+    elif domains:
+        screen = "CANDIDATE_FOR_DEEP_REVIEW"
+    else:
+        screen = "SPECIALIZED_OUTSIDE_TARGET_DOMAINS"
+    flags = []
+    if EXTERNAL_RUNTIME_SIGNAL.search(source):
+        flags.append("CHECK_EXTERNAL_RUNTIME_AND_COST")
+    if MUTATION_SIGNAL.search(source):
+        flags.append("CHECK_SIDE_EFFECTS_AND_PERMISSIONS")
+    if kind in {"agent", "command", "rule"}:
+        flags.append("CHECK_HOST_PRECEDENCE")
+    # Heading evidence prevents name-only triage from masquerading as a
+    # content read; keep source text untrusted and never execute its commands.
+    headings = [re.sub(r"\s+", " ", item).strip()[:120]
+                for item in re.findall(r"(?m)^#{1,3}\s+([^\n]+)", source)[:4]]
+    return {
+        "upstream_path": row["upstream_path"],
+        "primary_file": row["primary_file"],
+        "source_revision": row["upstream_revision"],
+        "component_sha256": row["sha256_component"],
+        "source_headings": headings,
+        "kind": kind,
+        "domains": domains,
+        "source_screen": screen,
+        "source_signals": flags,
+        "manual_source_decision": manual,
+        "existing_status": row["status"],
+        "existing_toolkit_analogue": row["toolkit_analogue"],
+        "adoption": "EXPLICITLY_REVIEWED_ONLY" if manual else "NOT_APPROVED",
+        "live_client": "NOT_VERIFIED",
+    }
+
+
+def relevance_report(rows: list[dict], ecc_root: Path, toolkit_root: Path) -> dict:
+    approved = set(decision_index(toolkit_root))
+    result = []
+    for row in rows:
+        result.append(classify_relevance(
+            row, read_text(ecc_root, row["primary_file"]), approved))
+    if len(result) != len(rows) or len({x["upstream_path"] for x in result}) != len(rows):
+        raise ValueError("relevance triage coverage differs from source inventory")
+    manually_decided = sum(x["manual_source_decision"] for x in result)
+    return {
+        "schema_version": 1,
+        "method": "DETERMINISTIC_SOURCE_VISIBLE_SCREEN_NOT_FUNCTIONAL_REVIEW",
+        "source_revision": rows[0]["upstream_revision"],
+        "total": len(result),
+        "manually_decided": manually_decided,
+        "pending_semantic_review": len(result) - manually_decided,
+        "source_screen_counts": dict(sorted(Counter(x["source_screen"] for x in result).items())),
+        "domains": dict(sorted(Counter(domain for x in result for domain in x["domains"]).items())),
+        "all_unreviewed_default": "NOT_APPROVED",
+        "autoinstall": False,
+        "external_runtime_executed": False,
+        "live_client": "NOT_VERIFIED",
+        "entries": result,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ecc-root", type=Path, required=True)
@@ -232,6 +324,13 @@ def main() -> int:
                     "rows": rows}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+    triage = relevance_report(rows, args.ecc_root.resolve(), args.toolkit_root.resolve())
+    (args.output_dir / "ecc-relevance-source-triage.json").write_text(
+        json.dumps(triage, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print("ECC_RELEVANCE_SOURCE_TRIAGE=PASS",
+          f"source_read={triage['total']}",
+          f"manual={triage['manually_decided']}",
+          f"pending={triage['pending_semantic_review']}")
     by_type = Counter(row["kind"] for row in rows)
     by_status = Counter(row["status"] for row in rows)
     summary = {"source_revision": args.source_revision, "component_count": len(rows),
