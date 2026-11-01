@@ -225,7 +225,7 @@ Roles are reference instructions, not separately running programs. Installers cu
 
 ## Native source ports shipped with Toolkit
 
-Five byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
+Six byte-exact original MIT skills and one compact Windows UIA adaptation are **bundled locally** and can be selected with the existing Toolkit Skill Manager, without installing or running ECC. Exact upstream sources and attribution: [Native capabilities](en/TOOLKIT_NATIVE_CAPABILITIES.md).
 
 | Skill | Distinct additional capability |
 | :--- | :--- |
@@ -235,6 +235,7 @@ Five byte-exact original MIT skills and one compact Windows UIA adaptation are *
 | [`windows-desktop-e2e`](../optional-original-skills/windows-desktop-e2e/SKILL.md) | Native Windows UIA test design, with an unchanged full licensed reference and explicit execution approval |
 | [`module-regression`](../optional-original-skills/module-regression/SKILL.md) | Downstream module acceptance ledger with original source/template and exit-code evidence |
 | [`error-handling`](../optional-original-skills/error-handling/SKILL.md) | Original typed errors, retries, error boundaries and user-facing feedback across TS, Python and Go |
+| [`mcp-dependency-review`](../optional-original-skills/mcp-dependency-review/SKILL.md) | Static review of mutable npm/Python/Docker MCP selectors, without executing servers |
 
 ## Profiles
 
@@ -250,6 +251,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 | `native-windows-desktop-e2e` | `windows-desktop-e2e` |
 | `native-module-regression` | `module-regression` |
 | `native-error-handling` | `error-handling` |
+| `native-mcp-dependency-review` | `mcp-dependency-review` |
 | `data-engineering` | `data-engineering`, `data-access`, `contract-testing`, `database-validation`, `reliability-testing` |
 | `dependency-maintenance` | `dependency-maintenance`, `minimal-safe-change`, `code-review`, `security-engineering`, `release-safety` |
 | `maintenance-support` | `maintenance-support`, `defect-management`, `failure-triage`, `quality-gate-assessment`, `release-safety` |
