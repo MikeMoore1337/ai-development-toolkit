@@ -35,6 +35,8 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.7)
 
+- #435 (stacked source changes): bundled the pinned, unchanged MIT `mcp-dependency-review` as a seventh optional native skill and compared two further ECC P0 sources. Source/install/CI validation is separate from live client activation; no ECC runtime, external scanner, paid API or release claimed.
+
 ## 5.5.7 (released, 2026-10-31)
 
 - Install missing task-required skills and tools through the host after source/license/pin/file review, preferring user scope and respecting no-install requests.

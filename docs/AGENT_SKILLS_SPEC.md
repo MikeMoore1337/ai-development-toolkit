@@ -40,7 +40,7 @@ python -m unittest discover -s tests -p integration_skills_ref.py -v
 ```
 
 The default `--scope all` covers **all skills currently declared** in
-`MANIFEST.json` (88 in the checked revision: 24 core/generic,
+`MANIFEST.json` (89 in the checked revision: 24 core/generic,
 27 QA, 1 Make Feature, 5 Frontend, 6 Backend, 3 Fullstack and 1 Product, 1 Management, 1 Analysis, 1 Design, 2 AI, 1 SEO, 1 Reliability, 1 Performance, 1 Security, 1 DevOps and 1 Accessibility and 3 Operations and 1 Data Engineering and 6 native bundled ECC-source skills).
 These counts are a current inventory, not a historic validation result.
 The runner compares
