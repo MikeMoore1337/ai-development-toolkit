@@ -44,6 +44,78 @@ class DesignOrchestraTests(unittest.TestCase):
         good["original_design_skills"]["invocations"][2]["name"] = "impeccable"
         self.assert_bad("unknown or duplicate", good)
 
+    def native_scope_exclusion_report(self):
+        """Synthetic claims for validation only; no original skill is run."""
+        report = copy.deepcopy(self.good)
+        report["original_design_skills"] = {
+            "mode": "ALL_THREE",
+            "invocations": [
+                {"name": name, "status": "INVOKED", "loaded": True,
+                 "source_revision": "a" * 40,
+                 "invocation_evidence": "synthetic invocation claim for structural testing"}
+                for name in checker.ORIGINALS
+            ],
+        }
+        report["original_design_skills"]["invocations"][1] = {
+            "name": "design-taste-frontend",
+            "status": "NOT_APPLICABLE_NATIVE_SCOPE",
+            "loaded": True,
+            "source_revision": "a" * 40,
+            "applicability_reason": "Native scope excludes app dashboards; this target is a dashboard.",
+            "applicability_source": "skills/taste-skill/SKILL.md",
+        }
+        return report
+
+    def test_original_native_scope_exclusion_allows_nonapproval_receipt(self):
+        for gate in ("VISUAL_PACKAGE_MISSING", "NEEDS_DESIGN_REVISION", "AUDIT_COMPLETE"):
+            with self.subTest(gate=gate):
+                report = self.native_scope_exclusion_report()
+                report["gate"] = gate
+                self.assertEqual([], checker.validate(report))
+                row = report["original_design_skills"]["invocations"][1]
+                for empty_evidence in (None, ""):
+                    row["invocation_evidence"] = empty_evidence
+                    self.assertEqual([], checker.validate(report))
+
+    def test_original_native_scope_exclusion_requires_loaded_source_and_details(self):
+        invalid_values = {
+            "loaded": (None, False, 0, 1, "true", [], {}),
+            "source_revision": (None, False, 40, [], {}, "", " ",
+                                "a" * 39, "a" * 41, "g" * 40),
+            "applicability_reason": (None, False, 1, [], {}, "", " \t\n"),
+            "applicability_source": (None, False, 1, [], {}, "", " \t\n"),
+        }
+        for field, values in invalid_values.items():
+            with self.subTest(field=field, missing=True):
+                report = self.native_scope_exclusion_report()
+                del report["original_design_skills"]["invocations"][1][field]
+                self.assert_bad("native-scope exclusion lacks", report)
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    report = self.native_scope_exclusion_report()
+                    report["original_design_skills"]["invocations"][1][field] = value
+                    self.assert_bad("native-scope exclusion lacks", report)
+
+    def test_original_native_scope_exclusion_cannot_claim_invocation(self):
+        for evidence in ("synthetic trace", " ", True, False, 0, 1, [], {},
+                         ["trace"], {"trace": "synthetic"}):
+            with self.subTest(evidence=evidence):
+                report = self.native_scope_exclusion_report()
+                report["original_design_skills"]["invocations"][1]["invocation_evidence"] = evidence
+                self.assert_bad("native-scope exclusion cannot claim invocation evidence", report)
+
+    def test_original_native_scope_exclusion_blocks_all_approval_gates(self):
+        for gate in ("AWAITING_VISUAL_APPROVAL", "OWNER_ACCEPTED", "IMPLEMENTED_NOT_RELEASED"):
+            with self.subTest(gate=gate):
+                report = self.native_scope_exclusion_report()
+                report.update(gate=gate, mode="implement-approved",
+                              owner_approval_evidence="synthetic approval claim for structural testing")
+                if gate == "IMPLEMENTED_NOT_RELEASED":
+                    report["implementation"]["status"] = "IMPLEMENTED"
+                    report["changed_ui"] = True
+                self.assertEqual(["all-three approval requires three actual invocations"],
+                                 checker.validate(report))
+
     def test_original_presence_is_not_activation(self):
         with tempfile.TemporaryDirectory() as temp:
             target = Path(temp)

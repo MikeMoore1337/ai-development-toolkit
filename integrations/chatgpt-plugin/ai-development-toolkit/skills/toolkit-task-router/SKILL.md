@@ -4,6 +4,10 @@ description: Use for substantial software engineering, QA, security, DevOps or U
 ---
 # Toolkit task router for ChatGPT
 
+## Persisted user preferences
+
+Read [packaged user preferences](references/USER_PREFERENCES.json) when routing a task. This uses the existing preference schema; the public file has no personal choice. Honor an observed standing user choice without asking them to repeat it in every request. For design, bind `skills.design_originals` to the existing Orchestra using [original selection and execution](../toolkit-ui-review/references/ORIGINALS.md). Missing sandbox configuration or a `defaults`-origin `STANDARD` must not overwrite a saved personal opt-in. Explicit task/project overrides and a directly selected original controller retain precedence. This is routing policy, not new execution permission or proof that a local client setting was read.
+
 ## Source and workspace
 Default to the conversational ChatGPT workflow without requiring a terminal, MCP, project URL or skill names from the user. Determine which project the user means. Inspect the actual attached files, Project files, connected repositories, or other authorized workspace sources available in the current chat. Do not assert access to a user's local laptop, IDE, private repository, or MCP merely because the skill is selected.
 

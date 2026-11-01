@@ -251,7 +251,8 @@ def validate_originals(report: dict) -> list[str]:
             continue
         seen.add(name)
         status = row.get("status")
-        if status not in ("INVOKED", "NOT_VERIFIED", "UNAVAILABLE"):
+        if status not in ("INVOKED", "NOT_VERIFIED", "UNAVAILABLE",
+                          "NOT_APPLICABLE_NATIVE_SCOPE"):
             errors.append(f"{name}: invalid invocation status")
         if status == "INVOKED":
             revision = row.get("source_revision")
@@ -261,6 +262,18 @@ def validate_originals(report: dict) -> list[str]:
                     or any(c not in "0123456789abcdef" for c in revision.lower())
                     or not isinstance(evidence, str) or not evidence.strip()):
                 errors.append(f"{name}: invocation lacks source or trace")
+        elif status == "NOT_APPLICABLE_NATIVE_SCOPE":
+            revision = row.get("source_revision")
+            # Record the original's scope rule; do not infer an invocation or
+            # independently attest the referenced native source.
+            if (row.get("loaded") is not True or not isinstance(revision, str)
+                    or len(revision) != 40
+                    or any(c not in "0123456789abcdef" for c in revision.lower())
+                    or any(not isinstance(row.get(key), str) or not row[key].strip()
+                           for key in ("applicability_reason", "applicability_source"))):
+                errors.append(f"{name}: native-scope exclusion lacks loaded source or applicability details")
+            if row.get("invocation_evidence") is not None and row["invocation_evidence"] != "":
+                errors.append(f"{name}: native-scope exclusion cannot claim invocation evidence")
         elif row.get("invocation_evidence"):
             errors.append(f"{name}: unverified invocation claims evidence")
     if seen != set(ORIGINALS):
