@@ -14512,7 +14512,7 @@
       "evidence": "integrations/personal-mcp/adt-personal/hooks/pretool_gate_review.py",
       "last_reviewed": "2026-11-01",
       "distribution": "included",
-      "notes": "Issue #438; strict JSON duplicate/encoding/error handling and direct-operation lexical review; synthetic-only, not Codex Desktop hook or OS enforcement."
+      "notes": "Issue #438; synthetic-only Git/shell/PowerShell review, strict input handling, conservative quoted-operation and sensitive Read/Glob path review; no Codex Desktop interception or OS enforcement."
     },
     {
       "id": "ecc-438-integrations-personal-mcp-adt-personal-tests-test-pretool-gate-review-py",
@@ -15203,7 +15203,7 @@
       "evidence": "integrations/personal-mcp/adt-personal/tests/test_pretool_gate_hardening.py",
       "last_reviewed": "2026-11-01",
       "distribution": "included",
-      "notes": "Issue #438; duplicate keys/NaN/oversize/Unicode, known Git/PowerShell variants, false positives, RecursionError and side effects; host interception NOT_VERIFIED."
+      "notes": "Issue #438; offline 11-method regression suite including quote-embedded metacharacters and sensitive-path review, no host hook activation; Windows Desktop E2E NOT_RUN."
     }
   ],
   "owner_review_record": {
