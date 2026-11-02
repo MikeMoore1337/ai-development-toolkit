@@ -288,6 +288,12 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual("", p.stderr)
 
 
+    def test_public_docs_have_no_owner_workstation_paths(self):
+        forbidden_folder = "Pet" + "-projects"
+        for path in (ROOT / "docs").rglob("*.md"):
+            with self.subTest(file=str(path.relative_to(ROOT))):
+                self.assertNotIn(forbidden_folder, path.read_text(encoding="utf-8"))
+
     def test_public_windows_mcp_paths_are_neutral_placeholders(self):
         for name in ("docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md"):
             with self.subTest(name=name):
