@@ -213,9 +213,10 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                         context.route(re.compile(r"^https?://"), route_guard)
                         if not hasattr(context, "route_web_socket"):
                             raise CaptureError("WebSocket blocking unavailable in this Playwright version")
-                        def websocket_guard(socket):
+                        def websocket_guard(_socket):
+                            # No connect_to_server: the intercepted socket cannot reach upstream.
+                            # Synchronous close() here can deadlock Playwright.
                             blocked[0] += 1
-                            socket.close()
                         context.route_web_socket("**/*", websocket_guard)
                         page = context.new_page()
                         page.on("pageerror", lambda _error: errors.__setitem__(0, errors[0] + 1))

@@ -272,6 +272,24 @@ class BrowserCaptureTests(unittest.TestCase):
             report, _fake, _folder = self._run_fake()
         self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
 
+    def test_websocket_is_intercepted_without_synchronous_close(self):
+        (self.source / "a.html").write_text(
+            "<html><body>Safe<script>new WebSocket('wss://external.invalid/ws')</script></body></html>",
+            encoding="utf-8")
+        original = FakePage.set_content
+        def simulate_socket(self, html, **kwargs):
+            if "new WebSocket(" in html:
+                def forbidden():
+                    raise AssertionError("Do not connect or close intercepted WebSocket")
+                self.context.socket_guard(SimpleNamespace(
+                    url="wss://external.invalid/ws", close=forbidden,
+                    connect_to_server=forbidden))
+            return original(self, html, **kwargs)
+        with patch.object(FakePage, "set_content", simulate_socket):
+            report, _fake, _folder = self._run_fake()
+        self.assertEqual(1, report["diagnostics"][0]["blocked_requests"])
+        self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
+
     def test_malformed_scenario_id_fails_closed(self):
         self.plan["scenario_id"] = ["new-site"]
         with self.assertRaisesRegex(visual.CaptureError, "Invalid browser capture plan"):
