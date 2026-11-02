@@ -15244,6 +15244,26 @@
       "last_reviewed": "2026-11-01",
       "distribution": "included",
       "notes": "Issue #438; offline 11-method regression suite including quote-embedded metacharacters and sensitive-path review, no host hook activation; Windows Desktop E2E NOT_RUN."
+    },
+    {
+      "id": "workflow-521-github-observe-export",
+      "path": ".github/workflows/github-observe-export.yml",
+      "name": "Project GitHub Observe (read-only source)",
+      "kind": "workflow",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Original Toolkit GitHub Actions observation source; repository MIT declaration, independently confirmed authorship/rights not attested.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PUBLICATION_POLICY.md",
+      "last_reviewed": "2026-11-02",
+      "distribution": "included",
+      "notes": "Issue #521: fixed GitHub-generated metadata only; zero token scopes, checkout, credentials, model calls or user text; approval/agent execution not granted."
     }
   ],
   "owner_review_record": {
