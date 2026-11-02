@@ -79,6 +79,23 @@ class ChatGPTNormalChatTests(unittest.TestCase):
         self.assertIn("never Work/Codex by default", reference)
         self.assertIn("unrelated Playwright PASS", router)
 
+    def test_original_browser_bootstrap_handoff_keeps_native_inspector(self):
+        """#499: a detached Chromium bootstrap is not proof of browser absence."""
+        reference = EXECUTION.read_text(encoding="utf-8")
+        for required in (
+            "Chrome exited early, code 0",
+            "DevToolsActivePort",
+            "temporary process-lifetime adapter",
+            "unchanged browser arguments",
+            "unmodified original inspector",
+            "disable browser sandbox",
+            "original inspector's actual exit 0",
+            "clean up only task-scoped browser processes",
+            "ORIGINAL_INSPECT_FAILED",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, reference)
+
     def test_existing_plugin_source_does_not_advertise_fictitious_tools(self):
         manifest = json.loads((PLUGIN / "plugin.json").read_text(encoding="utf-8"))
         capabilities = manifest["extensions"]["com.openai"]["interface"]["capabilities"]
