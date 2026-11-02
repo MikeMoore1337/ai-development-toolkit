@@ -288,6 +288,13 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual("", p.stderr)
 
 
+    def test_public_windows_mcp_paths_are_neutral_placeholders(self):
+        for name in ("docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md"):
+            with self.subTest(name=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                self.assertIn(r"$toolkit = 'C:\path\to\ai-development-toolkit'", text)
+                self.assertIn(r"$project = 'C:\path\to\my-project'", text)
+
     def test_mcp_install_guides_separate_preview_from_writes(self):
         """Windows must preflight paths, preview, apply, and doctor in separate steps."""
         import re

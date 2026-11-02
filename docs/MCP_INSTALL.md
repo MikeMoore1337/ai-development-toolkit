@@ -35,8 +35,8 @@ The installer writes `.codex/config.toml` or `.mcp.json` in that project; it doe
 **2. Set the paths and validate them.** The examples below use Windows folders; replace both with your actual paths. You may run this block from **any** PowerShell directory because the installer script is referenced by its absolute path.
 
 ~~~powershell
-$toolkit = 'D:\Pet-projects\ai-development-toolkit'
-$project = 'D:\Pet-projects\your-fitness-coach'
+$toolkit = 'C:\path\to\ai-development-toolkit'
+$project = 'C:\path\to\my-project'
 $script = Join-Path $toolkit 'scripts\toolkit_mcp.py'
 if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { throw 'Toolkit not found: check $toolkit' }
 if (-not (Test-Path -LiteralPath $project -PathType Container)) { throw 'Project not found: check $project' }
