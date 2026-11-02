@@ -28,10 +28,10 @@
 
 ## Предварительная проверка без запуска моделей
 
-Следующие команды приведены для локального проекта на Windows. Без `--execute` они не запускают модель и не должны создавать рабочие результаты:
+Замените условный путь к Toolkit на путь к своей локальной копии. Следующие команды приведены для локального проекта на Windows. Без `--execute` они не запускают модель и не должны создавать рабочие результаты:
 
 ```powershell
-cd D:\Pet-projects\ai-development-toolkit
+cd C:\path\to\ai-development-toolkit
 py -3 scripts/agent_eval_runner.py --provider codex
 py -3 scripts/agent_eval_runner.py --provider claude
 ```
