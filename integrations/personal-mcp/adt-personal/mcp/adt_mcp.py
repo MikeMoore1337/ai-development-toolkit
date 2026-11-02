@@ -237,6 +237,13 @@ def _model_review_hint(task: str, observed_findings: list[str] | None = None) ->
 class ToolkitError(Exception):
     pass
 
+def _validate_external_controller(value: str) -> str:
+    """An explicitly selected native controller must not gain Toolkit overlays."""
+    if type(value) is not str or (value and not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._/-]{0,127}', value)):
+        raise ToolkitError('external_controller must be a short native tool identifier')
+    return value
+
+
 class Toolkit:
     def __init__(self, source: Path):
         self.source = source.expanduser().resolve(strict=True)
@@ -411,6 +418,32 @@ class Toolkit:
                 'offset':offset,'total_chars':len(content),'truncated':offset+limit < len(content),
                 'provenance':'LOCAL_SOURCE_GUIDANCE_ONLY'}
 
+    def _native_passthrough(self, external_controller: str) -> dict[str, Any]:
+        """Explicit native control: never load or suggest Toolkit controllers."""
+        return {
+            'status': 'NATIVE_UPSTREAM_PASSTHROUGH',
+            'controller': external_controller,
+            'controller_source': 'CLIENT_REPORTED_NOT_INDEPENDENTLY_VERIFIED',
+            'toolkit_overlay': 'NOT_REQUESTED',
+            'toolkit_skill_injection': 'SKIPPED',
+            'toolkit_hook_injection': 'SKIPPED',
+            'profile': None, 'primary_profile': None, 'secondary_profiles': [],
+            'skills': [], 'priority_skills': [], 'selected_skills': [],
+            'loaded_skills': [], 'loaded_roles': [], 'roles': [],
+            'skills_to_consult': [], 'remaining_skills_to_consult': [],
+            'required_setup': {'status': 'SKIPPED_EXTERNAL_NATIVE', 'skills': [], 'executor': 'NONE'},
+            'candidate_skills': [], 'suggested_skills': [],
+            'execution': 'NOT_RUN', 'external_invocation': 'NOT_VERIFIED',
+            'installation_performed': False, 'project_files_changed': False,
+            'source_revision': self.source_revision,
+            'instructions': [
+                'Respect the original third-party controller, its supported modes and lifecycle.',
+                'Do not add Toolkit controllers, skills, roles, hooks or behavioral restrictions.',
+                'Host/system safety, project permissions, financial consent and release gates remain in force.',
+                'Only if separately requested, read focused Toolkit reference guidance without transferring control.',
+            ],
+        }
+
     def guide(self, name: str = 'AGENT_START.ru.md', offset: int = 0, limit: int = 16000) -> dict[str, Any]:
         if name not in ('AGENT_START.ru.md', 'AGENT_START.md', 'AGENTS.md'):
             raise ToolkitError('Unsupported guide name')
@@ -446,7 +479,8 @@ class Toolkit:
     def prepare_task(self, task: str, existing_skills: list[str] | None = None,
                      existing_roles: list[str] | None = None, profile: str = '',
                      max_skills: int = 3,
-                     proactive_model_advice: bool = False) -> dict[str, Any]:
+                     proactive_model_advice: bool = False,
+                     external_controller: str = '') -> dict[str, Any]:
         """Load narrow task guidance by comparing inventories supplied by Codex.
 
         This does NOT scan or write the corporate workspace. An omitted inventory is
@@ -460,6 +494,9 @@ class Toolkit:
                 raise ToolkitError(f'{label} must be an array of up to 256 names')
             return set(value), 'PROVIDED_BY_CLIENT_NOT_VERIFIED'
 
+        external_controller = _validate_external_controller(external_controller)
+        if external_controller:
+            return self._native_passthrough(external_controller)
         installed_skills, skill_inventory_status = inventory(existing_skills, 'existing_skills')
         installed_roles, role_inventory_status = inventory(existing_roles, 'existing_roles')
         if not isinstance(max_skills, int) or isinstance(max_skills, bool) or not 1 <= max_skills <= 8:
@@ -573,7 +610,8 @@ class Toolkit:
                       consulted_skills: dict[str, str] | None = None,
                       excluded_skills: list[str] | None = None, active_controller: str = '',
                       visual_approved: bool = False, max_skills: int = 3,
-                      max_chars: int = 16000, candidate_offset: int = 0) -> dict[str, Any]:
+                      max_chars: int = 16000, candidate_offset: int = 0,
+                      external_controller: str = '') -> dict[str, Any]:
         """Route a client-described stage and return one bounded, read-only batch."""
         if not isinstance(stage, str) or not stage.strip() or len(stage) > 4000:
             raise ToolkitError('stage must be nonempty text up to 4000 characters')
@@ -606,6 +644,9 @@ class Toolkit:
                        for n, d in consulted_skills.items())):
             raise ToolkitError('consulted_skills must map up to 256 valid names to SHA256 digests')
 
+        external_controller = _validate_external_controller(external_controller)
+        if external_controller:
+            return self._native_passthrough(external_controller)
         base = self.route(task)
         _, original_exclusions = _split_explicit_prohibitions(task)
         stage_route = self.route('; '.join([stage] + original_exclusions))
@@ -775,11 +816,15 @@ class Toolkit:
             'source_revision': self.source_revision,
         }
 
-    def route(self, task: str, profile: str = '') -> dict[str, Any]:
+    def route(self, task: str, profile: str = '',
+              external_controller: str = '') -> dict[str, Any]:
         if not isinstance(task, str) or not task.strip() or len(task) > 12000:
             raise ToolkitError('task must be nonempty text up to 12000 characters')
         if not isinstance(profile, str):
             raise ToolkitError('profile must be a string')
+        external_controller = _validate_external_controller(external_controller)
+        if external_controller:
+            return self._native_passthrough(external_controller)
         actionable_task, excluded_clauses = _split_explicit_prohibitions(task)
         text = re.sub(r'\s+', ' ', actionable_task.casefold().replace('ё', 'е'))
         no_positive_intent = bool(excluded_clauses) and not actionable_task
@@ -980,7 +1025,8 @@ TOOLS: list[dict[str, Any]] = [
     {'name':'toolkit_catalog','description':'List available real Toolkit skills, roles or profiles (read-only).',
      'inputSchema':{'type':'object','properties':{'kind':{'type':'string','enum':['skills','roles','profiles']},'query':{'type':'string'}},'required':['kind'],'additionalProperties':False}},
     {'name':'toolkit_route_task','description':'Select primary and secondary Toolkit profiles for natural-language software engineering and QA tasks. Returns priority skills to read first; selection is heuristic, not model inference.',
-     'inputSchema':{'type':'object','properties':{'task':{'type':'string'},'profile':{'type':'string','description':'Optional explicit manifest profile'}},'required':['task'],'additionalProperties':False}},
+     'inputSchema':{'type':'object','properties':{'task':{'type':'string'},'profile':{'type':'string','description':'Optional explicit manifest profile'},
+         'external_controller':{'type':'string','maxLength':128,'description':'User-selected original third-party controller; skip Toolkit routing.'}},'required':['task'],'additionalProperties':False}},
     {'name':'toolkit_assess_skill_coverage',
      'description':'Read-only local lexical skill coverage advisory: exact local / ambiguous / missing. Never searches external sources or installs skills.',
      'inputSchema':{'type':'object','properties':{'query':{'type':'string','minLength':1,'maxLength':500}},
@@ -1007,7 +1053,9 @@ TOOLS: list[dict[str, Any]] = [
      'inputSchema':{'type':'object','properties':{
          'task':{'type':'string'},'existing_skills':{'type':'array','items':{'type':'string'},'maxItems':256},
          'existing_roles':{'type':'array','items':{'type':'string'},'maxItems':256},
-         'profile':{'type':'string'},'max_skills':{'type':'integer','minimum':1,'maximum':8,
+         'profile':{'type':'string'},'external_controller':{'type':'string','maxLength':128,
+             'description':'Active original third-party controller; no Toolkit skills/roles or setup.'},
+         'max_skills':{'type':'integer','minimum':1,'maximum':8,
              'description':'Default 3 priority skills, up to 8 on explicit request; remaining skills remain selectable'},
          'proactive_model_advice':{'type':'boolean',
              'description':'Explicit user opt-in: return bounded task-risk advisory metadata only; no models or calls.'}},
@@ -1021,6 +1069,7 @@ TOOLS: list[dict[str, Any]] = [
              'description':'Client-confirmed complete instruction SHA256 by name; send relevant names only.'},
          'excluded_skills':{'type':'array','maxItems':256,'items':{'type':'string'}},
          'active_controller':{'type':'string','enum':['','feature-delivery','make-feature','adaptive-delivery']},
+         'external_controller':{'type':'string','maxLength':128,'description':'Active original third-party controller; do not load Toolkit guidance.'},
          'visual_approved':{'type':'boolean','description':'Client-provided boolean; this tool does not validate it.'},
          'max_skills':{'type':'integer','minimum':1,'maximum':8},
          'max_chars':{'type':'integer','minimum':1,'maximum':32000},
@@ -1055,7 +1104,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if name == 'toolkit_catalog':
         return tk.catalog(args.get('kind', ''), args.get('query', ''))
     if name == 'toolkit_route_task':
-        return tk.route(args.get('task', ''), args.get('profile', ''))
+        return tk.route(args.get('task', ''), args.get('profile', ''),
+                        args.get('external_controller', ''))
     if name == 'toolkit_assess_skill_coverage':
         return tk.assess_skill_coverage(args.get('query', ''))
     if name == 'toolkit_discover_external_skill_candidates':
@@ -1068,7 +1118,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if name == 'toolkit_prepare_task':
         return tk.prepare_task(args.get('task',''), args.get('existing_skills'),
                                args.get('existing_roles'), args.get('profile',''), args.get('max_skills',3),
-                               args.get('proactive_model_advice', False))
+                               args.get('proactive_model_advice', False),
+                               args.get('external_controller', ''))
     if name == 'toolkit_prepare_stage':
         allowed = next(tool['inputSchema']['properties'] for tool in TOOLS
                        if tool['name'] == 'toolkit_prepare_stage')
@@ -1078,7 +1129,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
                                 args.get('requested_skills'), args.get('consulted_skills'),
                                 args.get('excluded_skills'), args.get('active_controller', ''),
                                 args.get('visual_approved', False), args.get('max_skills', 3),
-                                args.get('max_chars', 16000), args.get('candidate_offset', 0))
+                                args.get('max_chars', 16000), args.get('candidate_offset', 0),
+                                args.get('external_controller', ''))
     if name == 'toolkit_get_reference':
         return tk.reference(args.get('skill',''),args.get('path',''),args.get('offset',0),args.get('limit',16000))
     if name == 'toolkit_get_guide':

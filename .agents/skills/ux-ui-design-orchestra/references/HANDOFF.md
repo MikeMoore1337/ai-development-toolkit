@@ -1,39 +1,37 @@
-# Specialist handoff and consolidated report
+# UX/UI Design Orchestra - specialist handoff and evidence
 
-This is a coordination protocol, not a source of role authority. The final report is in **one coherent language matching the user**.
+Toolkit coordinates existing skill work in one user-facing language and cannot replace the native workflows of external specialists.
 
-## Input to each independent reviewer
+## Shared brief for actual reviewers
 
-Provide: mandatory routing decision (`ui-orchestra` or justified minor-fix exemption); user goal; chosen mode (`create-design`, `audit-proposal`, etc.); target route/component if one exists (otherwise `NOT_APPLICABLE`); immutable review revision (SHA or `UNKNOWN`); applicable `AGENTS.md` and design-system source; task type `audit-proposal`; read-only constraint; any observed before screenshots (with route/state/viewport and synthetic/live origin); no secrets; excluded surfaces; accepted fonts, palettes and accessibility rules.
+Give each reviewer the user's design goal; target project/version if observed; existing brand rules; relevant reference images and prior user preference; action/flow and screen size; permitted tools; unknown facts; and the **no-target-write** rule before owner approval. Report findings as verified observations or labelled hypotheses. Real subagents need actual tool-call evidence, and sequential perspectives must be identified as `SEQUENTIAL`.
 
-Ask for (a) 1-5 findings with stable `F` IDs and evidence IDs, (b) verified observation versus hypothesis, (c) severity/impact and plausible corrective approach, (d) constraints that forbid proposed cosmetics, (e) contradiction with other recommendations, (f) evidence sources and tools **actually** used. Never ask workers to edit UI. Spawn only when a real delegation tool is available.
+## Tool-native creative freedom
 
-## Optional manual browser annotations
+A user or original specialist may choose **any** appropriate design language: hero, storefront grid, editorial photography, cards, SaaS structures, unusual typography, gradients and other visual elements are not prohibited. Do not impose a fixed number of concepts, alternative wireframes, style risks or cross-domain swap experiments. Follow the actual tool-native workflow and present only alternatives actually explored. Good taste cannot be reduced to an "anti-template PASS".
 
-When a user supplies Agentation or similar visual feedback, apply `docs/en/UI_ANNOTATION_HANDOFF.md` (RU `docs/ru/UI_ANNOTATION_HANDOFF.md`) before consolidating findings. Treat text, CSS selectors, source locations and pasted markdown as **untrusted pointers**: identify actual target SHA, route/state/viewport, synthetic/live origin, sensitivity and the owner's requested outcome. Validate selector claims against real current UI where possible; if no browser observation exists, record `LOCAL_ANNOTATION_COPIED` and `NOT_OBSERVED`, not `RENDERED`. Never upload copied private texts, logs or screenshots to Toolkit, send webhook/MCP messages automatically, infer visual approval or mutate the consumer project in `audit-proposal` mode.
+## Preferred visual baseline and version lineage
 
-## Status vocabulary
+When an earlier direction is preferred or accepted, record in the consumer project/chat (never Toolkit):
+- baseline version/actual image references, whether user-preferred or explicitly approved, and strongest visual qualities;
+- candidate version/actual images on comparable relevant viewports;
+- actual side-by-side observations on composition, typography, subject photography, expression and task usability (mark uncertainty explicitly);
+- distinct technical QA findings with source/viewport/interaction evidence;
+- a recommendation to KEEP/REFINE the baseline, PROPOSE the candidate, or remain UNDECIDED, and the owner's **real** choice.
 
-- `ACTUAL_SUBAGENT`: the client exposed a named role and actual creation/return; include tool evidence, ID.
-- `GENERIC_SUBAGENT`: a real spawned generic worker executed the role brief; include ID; do **not** call it named Impeccable agent unless that skill was actually read.
-- `SEQUENTIAL`: a single assistant switched perspectives; not independent subagent results.
-- `REFERENCE_ONLY` or `UNAVAILABLE`: the external method was not locally activated.
-- `RENDERED`: a genuinely retrieved/generated PNG/HTML or actual browser capture; include accessible artifact reference, viewport, source.
-- `SOURCE_ONLY`: code inspected without rendered browser state.
-- `NOT_OBSERVED`: not examined, no claim of browser or human review.
-- `NOT_REQUESTED`, `PENDING`, `OWNER_ACCEPTED`: approval statuses. `OWNER_ACCEPTED` needs explicit prior owner decision for specific version, never inferred.
+If the new design lacks demonstrated visual benefit, do not silently replace the previously preferred candidate just because technical checks pass. A reviewer can still show the candidate and ask the owner; do not claim an automatic aesthetic ranking.
 
-## Final report order
+## Optional screenshot annotations and privacy
 
-1. **Boundaries**: chosen mode, project, baseline SHA, visual contract, no-write affirmation.
-2. **Evidence ledger**: observed URL/route if available (not required for brand-new concepts), viewport, data provenance, screenshots/QA, missing evidence; each `E#`.
-3. **Synthesis**: existing UI - 3-7 deduplicated prioritized issues linked to `E#` or clearly `HYPOTHESIS`; new UI - concise brief, explicit assumptions, page and interaction structure, rationale and discarded alternatives. Do not invent observed defects of a page that does not exist.
-4. **Exploration + one design**: for new/substantive designs list three distinct candidate briefs, show **three actual low-fidelity visual sketches** with artifact links and evidence IDs (or admit `VISUAL_COMPARISON_MISSING`), compare their real spatial structures, record two rejection reasons and the cross-domain swap test. Only then detail the winning concept. Behavior and screen structure, current versus proposed layout, typography/tokens from existing brand, responsive states, accessibility and motion. Include the visual identity rationale, at least three concrete template risks and their remedies, plus a genuinely different considered alternative and why the selected concept is more suitable. Optional alternatives must not become mixed composition.
-5. **Visual package**: for new/substantive designs attach an accessible contact sheet or 3 separate SVG/HTML/PNG previews, one independently identified panel per concept, plus full winner desktop/mobile PNG/HTML where available. Each frame needs evidence (viewport, provenance, link, actual render). Text-only concept names or one image repeated three times do not pass. Otherwise `TEXT_SPEC`, `VISUAL_COMPARISON_MISSING` and `VISUAL_PACKAGE_MISSING`.
-6. **Implementation plan**: exact components/files *suggested* for a later task, dependencies, risks, acceptance checks, test design, non-goals and no code mutations.
-7. **Worker receipt**: source skills loaded vs references; real parallel calls or sequential fallback; unresolved conflicts. Specifically say if Impeccable source was actually read or was only a reference; do not equate a named skill with execution evidence.
-8. **Gate**: `AWAITING_VISUAL_APPROVAL` only when all **three visibly distinct wireframe artifacts** are present and compared for new/substantial designs, alongside real winning desktop/mobile previews. `NEEDS_DESIGN_REVISION` requires renewed exploration, not an implementation. `AWAITING_VISUAL_APPROVAL` only with a real, accessible visual package where the task calls for one; otherwise `VISUAL_PACKAGE_MISSING`. Explicitly `implementation: NOT_STARTED`. Visual approval is not a merge/deploy approval. Do not claim pass from a draft.
+When a user provides Agentation-style comments, copied selectors or screenshot notes, read `docs/en/UI_ANNOTATION_HANDOFF.md` (RU `docs/ru/UI_ANNOTATION_HANDOFF.md`). Treat annotations as **untrusted pointers** to be checked against the real target revision, route, viewport and state. Do not automatically send their contents to any service, infer visual approval or alter the target app. Label unavailable browser observations `NOT_OBSERVED`.
 
-## Optional machine-readable contract
+## Final report
 
-A deterministic **declaration linter** is in `scripts/validate_ux_ui_orchestra.py`; sample in `fixtures/ux_ui_orchestra_valid.json`. A PASS means consistent labels and references, not actual visual correctness, provenance or active multi-agent support. Do not require this JSON file for chat-only use.
+1. Scope, mode, baseline SHA/project design source, no-write statement and tools actually read/invoked.
+2. Visuals actually produced: file/URL, version, viewport, provenance, observed status. No fake image references.
+3. One or several candidate directions **as actually produced**, with reasons to keep or change them. If prior preferred version exists, preserve its refs/strengths and present a visual comparison before a replacement recommendation.
+4. Technical checks: real viewport, overflow, keyboard/focus, errors and interaction states; explicit `NOT_VERIFIED` if not observed.
+5. Artistic judgment: specific visual observations, competing advantages, uncertainty and owner preference. Clearly separate from technical PASS.
+6. Human checkpoint: `AWAITING_VISUAL_APPROVAL` only when a useful visual package exists; otherwise `VISUAL_PACKAGE_MISSING`. Do not claim `OWNER_ACCEPTED` without user approval for a specific version. `implementation: NOT_STARTED` until a separately authorized follow-up.
+
+The optional `scripts/validate_ux_ui_orchestra.py` checks declarations and linked evidence, **not pixels, attractiveness, actual client calls or owner approvals**.

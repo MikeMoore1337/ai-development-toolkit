@@ -32,6 +32,8 @@ INSTRUCTIONS = (
     "only relevant skills; a plan does not install them. Never claim that an "
     "AI client activated a skill unless independently observed. Never use this "
     "server to edit a user project, run commands, or publish. "
+    "When an original third-party controller is selected, skip Toolkit routing; " 
+    "an accidental call with external_controller must return no Toolkit overlay. "
     "The host must install missing task-required skills and tools after source review, "
     "within existing permissions, preferring user scope and preserving existing files. "
     "Preview bundled skills with Skill Manager ensure, then apply through the host; "
@@ -148,7 +150,9 @@ def _tool_defs() -> list[dict]:
              "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_route_task", "description": "Return an advisory profile and matching skill suggestions for a task.",
-         "inputSchema": {"type": "object", "properties": {"task": string("Task description")},
+         "inputSchema": {"type": "object", "properties": {
+             "task": string("Task description"),
+             "external_controller": string("Explicitly selected original external controller; do not add Toolkit guidance")},
                          "required": ["task"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         *[tool for tool in _stage_adapter().TOOLS if tool['name'] in
@@ -160,6 +164,13 @@ def _tool_defs() -> list[dict]:
                                         "skills": {"type": "array", "items": string("Skill name"), "minItems": 1, "maxItems": 10},
                                         "layout": {"type": "string", "enum": ["codex", "claude"]}},
                          "required": ["project", "skills", "layout"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_preflight_parallel_plan",
+         "description": "Check proposed independent Git worktree tasks read-only; no Git mutations or native agents.",
+         "inputSchema": {"type": "object", "properties": {
+             "plan": {"type": "object", "description": "Bounded parallel plan schema #440"},
+             "project": string("Optional explicit absolute local Git repository root (read-only)")},
+             "required": ["plan"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_observe_project",
          "description": "Opt-in read-only local Git/worktree diagnostics. No transcript, agent or client runtime claims.",
@@ -483,6 +494,23 @@ def invoke(tool: str, args: dict) -> dict:
                                     confirmed_for_this_call=args["confirmed_for_this_call"])
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
+    if tool == "toolkit_preflight_parallel_plan":
+        if set(args) not in ({"plan"}, {"plan", "project"}):
+            raise ValueError("Parallel preflight requires a plan and optional explicit project")
+        import validate_feature_orchestra as parallel
+        root = _project(args["project"]) if "project" in args else None
+        issues = parallel.validate_parallel_plan(args["plan"], git_root=root)
+        return {"schema_version": 1,
+                "status": "REJECTED" if issues else "STATIC_PLAN_VALIDATED",
+                "issues": issues,
+                "git_state": ("NOT_VERIFIED" if root is None or issues else "READ_ONLY_CHECKED"),
+                "single_controller": "feature-delivery",
+                "host_execution": "NOT_VERIFIED",
+                "native_subagents": "NOT_VERIFIED",
+                "model_execution": "NOT_RUN",
+                "authorization": "NOT_GRANTED",
+                "worktree_write": "NOT_RUN",
+                "external_ecc_runtime": "NOT_USED"}
     if tool == "toolkit_prepare_handoff":
         if set(args) != {"project", "issue_url", "from_client", "to_client",
                          "references", "next_action"}:
@@ -571,6 +599,14 @@ def invoke(tool: str, args: dict) -> dict:
         return {"role": name, "text": path.read_text(encoding="utf-8"),
                 "status": "ROLE_REFERENCE_NOT_STARTED_AGENT"}
     if tool in ("toolkit_search_skills", "toolkit_route_task"):
+        if tool == "toolkit_route_task":
+            adapter = _stage_adapter()
+            try:
+                native = adapter._validate_external_controller(args.get("external_controller", ""))
+            except adapter.ToolkitError as exc:
+                raise ValueError(str(exc)) from exc
+            if native:
+                return adapter.Toolkit(ROOT)._native_passthrough(native)
         query = args.get("query") if tool == "toolkit_search_skills" else args.get("task")
         matches = _search(query)
         if tool == "toolkit_search_skills":

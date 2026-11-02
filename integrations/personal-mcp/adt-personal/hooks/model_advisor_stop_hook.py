@@ -13,6 +13,9 @@ import sys
 
 MAX_EVENT_BYTES = 65536
 MAX_MESSAGE_CHARS = 16000
+# Standard Codex Stop events do not identify which workflow owns the task.
+# Model-authored text, including markers, cannot be a trusted scope assertion.
+TRUSTED_SCOPE = "TOOLKIT_MODEL_ADVISOR"
 
 # Fixed, bounded lexical signals are heuristic only, never a finding verifier.
 CONFIRMED = re.compile(
@@ -49,6 +52,13 @@ def check_stop(event: object) -> dict[str, object]:
         return {}
     message = event.get("last_assistant_message")
     if not isinstance(message, str) or len(message) > MAX_MESSAGE_CHARS:
+        return {}
+    # Host-scoped ownership is nonstandard and absent in ordinary Codex Stop
+    # events; fail open rather than affecting an unrelated native workflow.
+    if event.get("adt_workflow_scope") != TRUSTED_SCOPE:
+        return {}
+    if (event.get("adt_external_tool_active") is True or
+            event.get("adt_external_controller") not in (None, "")):
         return {}
     if not CONFIRMED.search(message) or ALREADY_ADVISED.search(message):
         return {}

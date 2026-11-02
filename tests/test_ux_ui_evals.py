@@ -106,26 +106,27 @@ class UXUIEvidenceTests(unittest.TestCase):
                 self.assertEqual("NOT_TESTED", report["working_interactions"])
                 self.assertEqual("NOT_STARTED", report["implementation_status"])
 
-    def test_three_distinct_visual_sources_still_require_human_review(self):
+    def test_three_explicit_concepts_still_require_human_review(self):
         result = module.audit(self.request(with_art=True), self.root, self.scenarios)
         self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", result["gate"])
         self.assertTrue(result["comparable_three_artifacts"])
         self.assertTrue(result["desktop_mobile_present"])
-        self.assertEqual(9, result["manual_review_pending"])
+        self.assertTrue(result["winner_visual_present"])
+        self.assertEqual(8, result["manual_review_pending"])
         self.assertEqual("PENDING", result["owner_approval"])
         self.assertEqual("NOT_VERIFIED", result["independent_visual_quality"])
         self.assertTrue(all(
             x["verification"].endswith("NOT_OBSERVED")
             for x in result["asset_digests"] if x["kind"] == "SVG_SOURCE"))
 
-    def test_same_image_reused_for_three_concepts_never_counts_as_comparison(self):
+    def test_identical_wireframes_report_no_actual_comparison_not_style_failure(self):
         item = self.request(with_art=True)
         original = (self.root / "wire0.svg").read_bytes()
         for index in (1, 2):
             (self.root / f"wire{index}.svg").write_bytes(original)
         report = module.audit(item, self.root, self.scenarios)
-        self.assertEqual("VISUAL_PACKAGE_MISSING", report["gate"])
         self.assertFalse(report["comparable_three_artifacts"])
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", report["gate"])
 
     def test_mismatched_sketch_viewports_block_comparison(self):
         item = self.request(with_art=True)
@@ -133,15 +134,15 @@ class UXUIEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(module.EvidenceError, "SVG viewBox does not match"):
             module.audit(item, self.root, self.scenarios)
 
-    def test_palette_swaps_and_duplicate_risks_fail_closed(self):
-        x = self.request()
-        x["directions"][1]["layout_signature"] = x["directions"][0]["layout_signature"]
-        with self.assertRaisesRegex(module.EvidenceError, "Palette-only"):
-            module.audit(x, self.root, self.scenarios)
-        y = self.request()
-        y["template_risks"][2] = y["template_risks"][0]
-        with self.assertRaisesRegex(module.EvidenceError, "Three distinct"):
-            module.audit(y, self.root, self.scenarios)
+    def test_familiar_patterns_and_repeated_style_notes_are_allowed(self):
+        payload = self.request()
+        payload["directions"][1]["layout_signature"] = payload["directions"][0]["layout_signature"]
+        payload["template_risks"] = ["card grid", "hero image", "card grid"]
+        self.assertEqual("VISUAL_PACKAGE_MISSING",
+                         module.audit(payload, self.root, self.scenarios)["gate"])
+        payload["template_risks"] = [None]
+        with self.assertRaisesRegex(module.EvidenceError, "Optional design observations"):
+            module.audit(payload, self.root, self.scenarios)
 
     def test_fake_owner_acceptance_or_implementation_rejected(self):
         report = self.request("minor-ui-fix", with_art=True)
@@ -174,7 +175,7 @@ class UXUIEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(module.EvidenceError, "dimensions do not match"):
             module.asset_record(record, self.root)
 
-    def test_html_source_is_not_automatically_rendered_winner(self):
+    def test_html_is_not_png_but_single_mobile_preview_is_enough(self):
         report = self.request("minor-ui-fix", with_art=True)
         (self.root / "desktop.png").unlink()
         (self.root / "desktop.html").write_text("<!doctype html><html><body>Preview</body></html>",
@@ -183,8 +184,9 @@ class UXUIEvidenceTests(unittest.TestCase):
             if artifact["purpose"] == "winner:desktop":
                 artifact.update(path="desktop.html", kind="HTML_SOURCE")
         result = module.audit(report, self.root, self.scenarios)
-        self.assertEqual("VISUAL_PACKAGE_MISSING", result["gate"])
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", result["gate"])
         self.assertFalse(result["desktop_mobile_present"])
+        self.assertTrue(result["winner_visual_present"])
 
     def test_symlink_traversal_and_missing_artifacts_rejected(self):
         r = self.request("minor-ui-fix")
@@ -209,15 +211,21 @@ class UXUIEvidenceTests(unittest.TestCase):
             with self.assertRaisesRegex(module.EvidenceError, "Symlink"):
                 module.asset_record(bad, self.root)
 
-    def test_small_fix_is_exempt_from_three_concepts_but_needs_visual_evidence(self):
+    def test_single_concept_and_mobile_only_can_be_reviewed(self):
         item = self.request("minor-ui-fix", with_art=True)
         result = module.audit(item, self.root, self.scenarios)
         self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", result["gate"])
         self.assertFalse(result["comparable_three_artifacts"])
-        item["directions"] = [{"id": "needless"}]
-        with self.assertRaisesRegex(module.EvidenceError, "must not fabricate"):
-            module.audit(item, self.root, self.scenarios)
-
+        item["directions"] = [{"id": "compact", "layout_signature": "compact", "information_architecture": "one view"}]
+        item["chosen_direction"] = "compact"
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW",
+                         module.audit(item, self.root, self.scenarios)["gate"])
+        item["directions"] = []
+        item["chosen_direction"] = None
+        item["rejected_directions"] = []
+        item["visual_assets"] = [x for x in item["visual_assets"] if x["purpose"] == "winner:mobile"]
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW",
+                         module.audit(item, self.root, self.scenarios)["gate"])
 
 if __name__ == "__main__":
     unittest.main()

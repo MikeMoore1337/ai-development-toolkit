@@ -65,7 +65,15 @@ class CheckpointTests(unittest.TestCase):
         issue = ISSUE
         refs = ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/460"]
         packet = m.make_handoff(self.root, issue, "codex", "hermes", refs, "REVIEW_PR")
-        self.assertEqual(m.verify_handoff(self.root, packet, "hermes")["decision"], "PASS")
+        verdict = m.verify_handoff(self.root, packet, "hermes")
+        self.assertEqual(verdict["decision"], "PASS")
+        self.assertEqual(verdict["verification_scope"], "GIT_CONTEXT_ONLY")
+        self.assertEqual(verdict["sender_identity"], "NOT_VERIFIED")
+        self.assertEqual(verdict["policy_revalidated"], "NOT_VERIFIED")
+        self.assertEqual(verdict["owner_approval"], "NOT_GRANTED")
+        self.assertIs(verdict["action_authorized"], False)
+        self.assertIs(verdict["execution_authorized"], False)
+        self.assertNotIn("next_action", verdict)
         self.assertEqual(packet["trust"], "UNREVIEWED")
         self.assertEqual(packet["owner_approval"], "NOT_GRANTED")
         self.assertNotIn(str(self.root), str(packet))
@@ -143,7 +151,11 @@ class CheckpointTests(unittest.TestCase):
                   str(self.root), "--to-client", "hermes", "--file", str(output)]
         result = subprocess.run(verify, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(json.loads(result.stdout)["decision"], "PASS")
+        verified = json.loads(result.stdout)
+        self.assertEqual(verified["decision"], "PASS")
+        self.assertIs(verified["action_authorized"], False)
+        self.assertIs(verified["execution_authorized"], False)
+        self.assertEqual(verified["owner_approval"], "NOT_GRANTED")
         self.assertEqual(subprocess.run(verify[:verify.index("hermes")] +
                                         ["codex", "--file", str(output)],
                                         capture_output=True).returncode, 2)
@@ -188,6 +200,12 @@ class CheckpointTests(unittest.TestCase):
         self.assertEqual(result["inspected_count"], 1)
         self.assertEqual(result["matches"][0]["sha256"], p["sha256"])
         self.assertEqual(result["matches"][0]["next_action"], "REVIEW_PR")
+        # A suggested action remains untrusted even when the Git snapshot matches.
+        self.assertIs(result["matches"][0]["action_authorized"], False)
+        self.assertIs(result["matches"][0]["execution_authorized"], False)
+        self.assertIs(result["action_authorized"], False)
+        self.assertIs(result["execution_authorized"], False)
+        self.assertEqual(result["policy_revalidated"], "NOT_VERIFIED")
         self.assertEqual(result["matches"][0]["trust"], "UNREVIEWED")
         self.assertEqual(result["semantic_search"], "NOT_AVAILABLE")
         self.assertEqual(result["network"], "NOT_USED")
@@ -291,6 +309,9 @@ class CheckpointTests(unittest.TestCase):
         self.assertEqual(result["next_action"], "REVIEW_ISSUE")
         self.assertEqual(result["sender_identity"], "NOT_VERIFIED")
         self.assertEqual(result["owner_approval"], "NOT_GRANTED")
+        self.assertIs(result["action_authorized"], False)
+        self.assertIs(result["execution_authorized"], False)
+        self.assertEqual(result["policy_revalidated"], "NOT_VERIFIED")
         self.assertNotIn(str(copied), str(result))
         self.assertEqual(m.verify_handoff_portable(self.root, packet, "hermes")["decision"],
                          "REVIEW_REQUIRED")

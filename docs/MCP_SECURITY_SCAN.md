@@ -92,3 +92,32 @@ Initial native rule baseline deliberately exposes both missed instruction varian
 ### Native heuristic calibration (#432)
 
 The native gate now recognizes narrowly defined **whole-description** defensive examples and direct English/Russian instructions to override safety policies. A generic `example:` prefix or benign-sounding disclaimer appended to a malicious instruction never grants exemption. This reduces known synthetic false positives and false negatives, but **does not** guarantee injection resistance: variants, obfuscation and multilingual attacks outside the static patterns can still be missed. Run `python scripts/cisco_mcp_gate.py --benchmark-native` to inspect current **synthetic** confusion metrics; only the full output of that exact code version is evidence. Upstream AgentShield comparison and real-client enforcement remain NOT_RUN/NOT_VERIFIED.
+
+### Cross-surface frozen synthetic benchmark (#432)
+
+Run `python scripts/native_security_benchmark_432.py` and
+`python -m unittest tests.test_native_security_benchmark_432 -v`.
+The separate 38-case (19 positive, 19 benign) **synthetic-only** corpus at
+`fixtures/native_security_holdout_432.json` was committed before the
+baseline was evaluated. Initial baseline (unmodified native rules):
+TP=12, FP=5, TN=14, FN=7, precision=0.7059, recall=0.6316, F1=0.6667.
+The exact corpus SHA-256 is
+`6697030f91649f0b05a113216bb49e6636d2bfe60f7d91cbf9062d807b18265e`.
+The report includes only aggregate metrics, categories, sanitized case IDs and
+the corpus hash; malicious descriptions, fake secret values and temporary
+paths are not copied into its results.
+
+The benchmark invokes **existing native static functions only**. It never
+executes fixture hooks or commands, calls a model, connects to an MCP server,
+installs AgentShield or reads the user's home directory. Non-zero FP/FN must
+be reported, not masked by the command's exit code 0 (which means that the
+diagnostic itself completed). After observing any errors and adjusting rules,
+do **not** call this evaluation an untouched independent holdout; its cases
+remain useful for development/regression only. Real-world accuracy is
+`NOT_MEASURED`, upstream head-to-head comparison `NOT_RUN`, live
+client enforcement `NOT_VERIFIED`.
+
+As an additional narrow, opt-in rule set, the native MCP check also flags
+direct instructions to disclose a system prompt/conversation context or
+to harvest sensitive local files. Heuristics can both miss paraphrases
+and flag defensive quotations; a clean result is not an authorization.

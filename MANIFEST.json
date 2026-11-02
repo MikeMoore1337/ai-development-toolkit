@@ -21,9 +21,9 @@
     "researcher",
     "reviewer"
   ],
-  "original_skills_bundled_as_opt_in": 4,
+  "original_skills_bundled_as_opt_in": 15,
   "original_skills_in_inventory": 52,
-  "original_skills_not_bundled": "Three pinned, exact original ECC v2.2.3 source skills are bundled for selective installation through Toolkit's own Skill Manager/installer with no ECC runtime dependency; the original MIT notice is retained under third_party/ecc-v2.2.3/LICENSE. Ponytail v5.3.2 remains reference-only under third_party/ponytail-v5.3.2. Other external originals remain excluded.",
+  "original_skills_not_bundled": "Fourteen pinned, unchanged original ECC MIT SKILL.md files and one compact Windows UIA adaptation with unchanged full original reference ship as opt-in standalone Toolkit skills. One original brand-voice reference schema is bundled unchanged. All include MIT notices and use existing Skill Manager without ECC runtime. Other external originals remain excluded.",
   "automatic_external_binary_installation": false,
   "license_note": "Owner reports ID1337 permits distribution of the exact currently bundled Make Feature 0.3.0, QA adaptation and branding sources, SHA256-pinned in provenance. This is not independent rightsholder, employer-IP or creator verification. Existing third-party or work-derived licenses are not inferred.",
   "original_source_sha256": "517858e2c82f831ed4b74e6b3cef65c7aa491bfed8d6fad0c2c60e269ead9db5",
@@ -350,6 +350,43 @@
     ],
     "native-windows-desktop-e2e": [
       "windows-desktop-e2e"
+    ],
+    "native-module-regression": [
+      "module-regression"
+    ],
+    "native-error-handling": [
+      "error-handling"
+    ],
+    "native-mcp-dependency-review": [
+      "mcp-dependency-review"
+    ],
+    "native-agent-introspection-debugging": [
+      "agent-introspection-debugging"
+    ],
+    "native-content-hash-cache-pattern": [
+      "content-hash-cache-pattern"
+    ],
+    "native-loop-design-check": [
+      "loop-design-check"
+    ],
+    "native-make-interfaces-feel-better": [
+      "make-interfaces-feel-better"
+    ],
+    "native-article-writing": [
+      "article-writing"
+    ],
+    "native-click-path-audit": [
+      "click-path-audit"
+    ],
+    "native-brand-voice": [
+      "brand-voice"
+    ],
+    "native-content-engine": [
+      "content-engine"
+    ],
+    "native-editorial-suite": [
+      "brand-voice",
+      "content-engine"
     ]
   },
   "third_party_runtime_bundled": false,
@@ -384,7 +421,18 @@
         "contract-first",
         "api-connector-builder",
         "code-tour",
-        "windows-desktop-e2e"
+        "windows-desktop-e2e",
+        "module-regression",
+        "error-handling",
+        "mcp-dependency-review",
+        "agent-introspection-debugging",
+        "content-hash-cache-pattern",
+        "loop-design-check",
+        "make-interfaces-feel-better",
+        "article-writing",
+        "click-path-audit",
+        "brand-voice",
+        "content-engine"
       ],
       "license": "MIT (unmodified source from affaan-m/ECC, pinned v2.2.3; see third_party/ecc-v2.2.3/LICENSE)",
       "auto_install": false,
@@ -613,7 +661,8 @@
         ".agents/skills/ux-ui-design-orchestra/SKILL.md",
         ".agents/skills/ux-ui-design-orchestra/references/WORKFLOW.md",
         ".agents/skills/ux-ui-design-orchestra/references/CREATE_DESIGN.md",
-        ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md"
+        ".agents/skills/ux-ui-design-orchestra/references/SPECIALISTS.md",
+        "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-ui-review/references/ORIGINALS.md"
       ],
       "qa": [
         "docs/SKILLS_CATALOG.md"
@@ -634,6 +683,17 @@
     "activation": "best_effort_per_task_read_only",
     "fallback": "BUNDLED_ROUTER",
     "install_upgrade_automatic": false
+  },
+  "native_continuous_learning": {
+    "issue": 436,
+    "preview_cli": "scripts/skill_observation_review.py",
+    "public_fact_review_cli": "scripts/skill_learning_verification.py",
+    "schema": "v2_observations_with_separate_v1_typed_claims",
+    "activation": "EXPLICIT_USER_OPT_IN_ONLY",
+    "network": "PUBLIC_GITHUB_GET_ONLY",
+    "practice_approval": "SEPARATE_OWNER_APPROVAL_REQUIRED",
+    "writes_or_auto_promotion": false,
+    "real_client_e2e": "NOT_VERIFIED"
   },
   "design_originals_policy": {
     "default_mode": "STANDARD",
@@ -658,5 +718,15 @@
     "verification": "FILES_THEN_CLIENT_DISCOVERY_THEN_INVOCATION",
     "fallback": "BLOCKED_IF_REQUIRED_SETUP_UNAVAILABLE",
     "reference_only_opt_out": true
+  },
+  "native_parallel_orchestration": {
+    "issue": 440,
+    "mode": "opt_in_read_only_preflight",
+    "controller": "feature-delivery",
+    "validator": "scripts/validate_feature_orchestra.py",
+    "execution_backend": "NONE",
+    "runtime_state": "CLIENT_RUNTIME_NOT_VERIFIED",
+    "external_ecc_runtime_required": false,
+    "mcp_tool": "toolkit_preflight_parallel_plan"
   }
 }

@@ -53,6 +53,36 @@ class LayeredPreferencesTests(unittest.TestCase):
             self.assertTrue(report["per_task_consent_required"])
             self.assertEqual(0, report["model_calls"])
 
+    def test_portable_plugin_has_no_personal_design_opt_in(self):
+        path = ROOT / ("integrations/chatgpt-plugin/ai-development-toolkit/skills/"
+                       "toolkit-task-router/references/USER_PREFERENCES.json")
+        report = prefs.preview(user_path=path)
+        self.assertEqual("STANDARD", report["effective"]["skills"]["design_originals"])
+        self.assertEqual("defaults", report["sources"]["skills.design_originals"])
+        self.assertFalse(report["execution_authorized"])
+
+    def test_packaged_user_choice_survives_missing_project_and_allows_task_override(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            user = root / "USER_PREFERENCES.json"
+            user.write_text(json.dumps(self.layer(
+                skills={"design_originals": "ALL_THREE"})), encoding="utf-8")
+            before = user.read_bytes()
+            # No target, local user config or skill names in a task are needed
+            # to resolve this persisted preference. This is not model routing.
+            report = prefs.preview(user_path=user)
+            self.assertEqual("ALL_THREE", report["effective"]["skills"]["design_originals"])
+            self.assertEqual("user", report["sources"]["skills.design_originals"])
+            self.assertFalse(report["execution_authorized"])
+            self.assertFalse(any(report["effective"]["execution"].values()))
+            self.assertEqual(before, user.read_bytes())
+            task = root / "task.json"
+            task.write_text(json.dumps(self.layer(
+                skills={"design_originals": "STANDARD"})), encoding="utf-8")
+            overridden = prefs.preview(user_path=user, task_path=task)
+            self.assertEqual("STANDARD", overridden["effective"]["skills"]["design_originals"])
+            self.assertEqual("task", overridden["sources"]["skills.design_originals"])
+
     def test_user_opt_in_not_execution_permission(self):
         user = self.layer(
             clients={"preferred": "codex-cli", "allowed": ["codex-cli", "chatgpt"]},

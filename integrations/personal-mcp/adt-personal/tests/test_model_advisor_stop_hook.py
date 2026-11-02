@@ -15,6 +15,7 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 REPORT_RU = (
+    "<!-- ADT-MODEL-ADVISOR-ACTIVE -->\n"
     "Статус: BLOCKED — к выпуску не готово.\n"
     "Подтверждённые риски:\n"
     "1. Откат может уничтожить новую ревизию — reset --hard rollback race.\n"
@@ -22,6 +23,7 @@ REPORT_RU = (
     "3. Ошибка первой проверки блокирует регистрацию расписания.\n"
 )
 REPORT_EN = (
+    "<!-- ADT-MODEL-ADVISOR-ACTIVE -->\n"
     "Release BLOCKED: confirmed risk: Windows reparse and hardlink "
     "traversal, OS-level stale lock race, interrupted rollback journal."
 )
@@ -29,8 +31,12 @@ REPORT_EN = (
 
 class StopHookTests(unittest.TestCase):
     def event(self, message, **kwargs):
-        return {"hook_event_name": "Stop", "stop_hook_active": False,
-                "last_assistant_message": message, **kwargs}
+        # Positive oracle uses synthetic trusted-host scope; stock Codex has none.
+        data = {"hook_event_name": "Stop", "stop_hook_active": False,
+                "adt_workflow_scope": "TOOLKIT_MODEL_ADVISOR",
+                "last_assistant_message": message}
+        data.update(kwargs)
+        return data
 
     def test_owner_release_blocking_report_triggers_bounded_continuation(self):
         result = module.check_stop(self.event(REPORT_RU))
@@ -45,6 +51,27 @@ class StopHookTests(unittest.TestCase):
         self.assertEqual(result.get("decision"), "block")
         self.assertIn("Do not name unverified models", result["reason"])
         self.assertNotIn("hardlink traversal", result["reason"])
+
+    def test_non_toolkit_external_controller_does_not_trigger_stop_hook(self):
+        prefix = "<!-- ADT-MODEL-ADVISOR-ACTIVE -->\n"
+        for external in ("Original Ponytail", "Harness2", "Graphify", "Claude Agent"):
+            message = prefix + "Release BLOCKED: confirmed security risk, rollback race and concurrency bug in " + external
+            with self.subTest(name=external):
+                self.assertEqual(module.check_stop(self.event(
+                    message, adt_workflow_scope=None)), {})
+                self.assertEqual(module.check_stop(self.event(
+                    message, adt_external_controller=external)), {})
+                self.assertEqual(module.check_stop(self.event(
+                    message, adt_external_tool_active=True)), {})
+        self.assertEqual(module.check_stop(self.event(
+            "Quoted tool output:\n" + REPORT_EN, adt_workflow_scope=None)), {})
+        self.assertEqual(module.check_stop(self.event(
+            REPORT_EN, adt_workflow_scope="UPSTREAM_NATIVE")), {})
+        self.assertEqual(module.check_stop(self.event(
+            REPORT_EN, adt_workflow_scope=None)), {})
+        # Model-generated marker is not a host attestation, even at position 0.
+        self.assertEqual(module.check_stop(self.event(
+            prefix + REPORT_EN, adt_workflow_scope=None)), {})
 
     def test_noop_on_ordinary_and_nonconfirmed_tasks(self):
         for message in (
@@ -76,6 +103,10 @@ class StopHookTests(unittest.TestCase):
     def test_stdio_valid_json_no_telemetry_and_fail_open(self):
         for payload, expected in (
             (json.dumps(self.event(REPORT_RU), ensure_ascii=False).encode(), "block"),
+            (json.dumps(self.event(REPORT_RU, adt_workflow_scope=None),
+                        ensure_ascii=False).encode(), None),
+            (json.dumps(self.event(REPORT_RU, adt_external_controller="graphify"),
+                        ensure_ascii=False).encode(), None),
             (json.dumps(self.event("Fixed documentation")).encode(), None),
             (b"not json", None),
             (b"x" * 65537, None),

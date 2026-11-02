@@ -12,9 +12,13 @@ Hook docs: https://developers.openai.com/de-DE/docs/hooks.
 The portable, stdlib-only script
 `integrations/personal-mcp/adt-personal/hooks/model_advisor_stop_hook.py`
 reads a bounded Stop-event JSON from stdin and tests the **last assistant
-message** for a conservative combination of confirmed high-risk defects.
-If triggered, it returns one bounded `decision=block` continuation reason
-to ask the *same primary model* to offer optional independent review.
+message** for confirmed high-risk defects **only if a trusted host explicitly
+provided `adt_workflow_scope=TOOLKIT_MODEL_ADVISOR`**. The standard Codex
+Stop event does not carry this nonstandard scope: the hook returns `{}` on
+stock Codex Desktop, regardless of model-written scope markers. A future,
+separately verified host integration can provide that signal, at which point
+the hook may return a bounded `decision=block` continuation reason for the
+*same primary model* to offer optional independent review.
 It neither inspects files nor verifies the truth of a finding. It cannot
 attest that Codex Desktop will honor or display the suggestion.
 
@@ -24,7 +28,11 @@ No default installation, client configuration edit, file writes, external
 network access, model API, Codex/Claude CLI, transcript reads, persistent
 telemetry or delegated model call. Original assistant content is never
 reflected in the hook output. Input is limited to 64 KiB, and malformed
-events fail open as `{}`.
+events fail open as `{}`. Missing host-scoped context is not treated
+as consent or evidence that Toolkit owns the task; model-written markers
+and quoted third-party content cannot activate the hook. A synthetic
+host-scoped positive unit test does not prove any native client supports
+the required metadata.
 
 A Stop continuation uses the **same** model and may consume more included
 subscription quota. `stop_hook_active` prevents recurrence within that

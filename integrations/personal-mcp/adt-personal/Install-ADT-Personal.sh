@@ -8,8 +8,13 @@ if [ "$(uname -s)" != Linux ] && [ "$(uname -s)" != Darwin ]; then
   printf '%s\n' 'ERROR: Use Install-ADT-Personal.ps1 on Windows.' >&2
   exit 2
 fi
+skip_global_instructions=0
+if [ "${1:-}" = "--skip-global-instructions" ]; then
+  skip_global_instructions=1
+  shift
+fi
 if [ "$#" -ne 0 ] && { [ "$#" -ne 2 ] || [ "$1" != '--source' ]; }; then
-  printf '%s\n' 'Usage: sh Install-ADT-Personal.sh [--source EXISTING_TOOLKIT_CHECKOUT]' >&2
+  printf '%s\n' 'Usage: sh Install-ADT-Personal.sh [--skip-global-instructions] [--source EXISTING_TOOLKIT_CHECKOUT]' >&2
   exit 2
 fi
 command -v python3 >/dev/null 2>&1 || { echo 'ERROR: Python 3.10+ is required.' >&2; exit 2; }
@@ -120,11 +125,13 @@ fi
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_home"
 # Update only the owned instruction block. Preserve other project/user rules.
+if [ "$skip_global_instructions" -eq 0 ]; then
 python3 - "$codex_home/AGENTS.md" <<'PY'
 import pathlib, sys, datetime
 file = pathlib.Path(sys.argv[1])
 begin, end = '<!-- ADT-PERSONAL BEGIN -->', '<!-- ADT-PERSONAL END -->'
 block = '''<!-- ADT-PERSONAL BEGIN -->
+0. NATIVE UPSTREAM BOUNDARY: If the user explicitly selects an original external tool, agent, skill, plugin or MCP as task controller, do not call Toolkit routing, inject Toolkit skills/roles/controllers or change upstream modes and hooks. Mentioning a tool is not selection. If routing was accidentally invoked, send its client-observed identifier as external_controller and respect NATIVE_UPSTREAM_PASSTHROUGH. A separate explicit request may obtain focused read-only Toolkit references, but never a second controller. Host/system safety, project rules, permissions, cost consent and release gates remain binding.
 For substantial software development, QA, DevOps and UX/UI tasks in the active Codex workspace:
 1. Follow project-local AGENTS.md and workspace permissions first; Toolkit is reference guidance, never the project target.
 2. Inspect available project/ancestor/user skills and roles by name using permitted read-only access, without reading every skill body.
@@ -153,5 +160,6 @@ if updated != original:
 else:
     print('Codex AGENTS already up to date:', file)
 PY
+fi
 printf '%s\n' 'Installed local MCP. Restart Codex and verify toolkit_info and toolkit_prepare_task.'
 printf 'Run diagnostics: python3 "%s/diagnose_mcp.py" --launcher "%s" --source "%s"\n' "$package" "$launcher" "$source"

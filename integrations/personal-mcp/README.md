@@ -1,5 +1,11 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Native-first external controller passthrough (#492)
+
+For an explicitly selected original third-party controller, the host must skip Toolkit routing. As a defensive fallback, `toolkit_route_task`, `toolkit_prepare_task` and `toolkit_prepare_stage` accept optional `external_controller="original/tool"`; `NATIVE_UPSTREAM_PASSTHROUGH` returns no Toolkit skills, roles, setup or execution. With no such parameter, routing stays unchanged. A mention of another tool is not a selection. This does not prove native tool invocation. For separately requested Toolkit research use focused read-only `toolkit_get_skill` or `toolkit_get_reference`. See [contract](../../docs/EXTERNAL_NATIVE_BOUNDARY.md).
+
+Unix installer: optional `--skip-global-instructions`; Windows installer: `-SkipGlobalInstructions`. Update existing global instructions/installed hooks separately.
+
 ## Stage-aware guidance (source MCP 0.1.15)
 
 `toolkit_prepare_task` remains compatible: `max_skills` is a batch size (default 3, maximum 8), not a task-wide limit. At a meaningful change of stage, requirements, defects or test results, the client calls `toolkit_prepare_stage` with the original `task`, a concise `stage` and, when it has enough evidence, up to `max_skills` justified `requested_skills`. With no explicit selection the existing heuristic suggests and reads at most its primary skill. Selection is advisory, not semantic completeness; inspect the task, original restrictions and project rules.

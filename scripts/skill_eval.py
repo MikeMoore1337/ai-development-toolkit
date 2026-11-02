@@ -128,8 +128,55 @@ def _verify_native_receipts(records: list[dict[str, Any]], root: Path) -> int:
     return len(records)
 
 
+def _observed_repeatability(pairs: dict[tuple[str, int], dict[str, dict[str, Any]]]) -> dict[str, Any]:
+    """Empirical first-three repeated-task outcomes, never a probability estimate.
+
+    All required numbered trials must exist for all tasks. A clean pass needs
+    accepted=True and zero recorded regressions or unsafe actions.
+    """
+    by_task: dict[str, dict[int, dict[str, dict[str, Any]]]] = {}
+    for (task, trial), variants in pairs.items():
+        by_task.setdefault(task, {})[trial] = variants
+    task_count = len(by_task)
+
+    def measure(indices: tuple[int, ...], *, every: bool = False) -> dict[str, Any]:
+        eligible = sum(all(i in runs for i in indices) for runs in by_task.values())
+        if eligible != task_count:
+            return {"status": "NOT_MEASURED_INCOMPLETE_TRIALS",
+                    "eligible_tasks": eligible, "baseline": None,
+                    "candidate": None, "delta_percentage_points": None}
+
+        def rate(variant: str) -> float:
+            passed = 0
+            for trials in by_task.values():
+                clean = [(trials[i][variant]["accepted"]
+                          and trials[i][variant]["regressions"] == 0
+                          and trials[i][variant]["unsafe_actions"] == 0)
+                         for i in indices]
+                passed += all(clean) if every else any(clean)
+            return passed / task_count
+
+        baseline, candidate = rate("baseline"), rate("candidate")
+        return {"status": "RECORDED_VERDICTS_ONLY", "eligible_tasks": eligible,
+                "baseline": round(baseline, 4),
+                "candidate": round(candidate, 4),
+                "delta_percentage_points": round(100 * (candidate - baseline), 2)}
+
+    return {
+        "task_count": task_count,
+        "observed_pass_at_1": measure((1,)),
+        "observed_pass_at_3": measure((1, 2, 3)),
+        "observed_pass_all_3": measure((1, 2, 3), every=True),
+        "scope": "OFFLINE_RECORDED_NOT_MODEL_EFFICACY",
+        "note": ("These are empirical clean task outcomes for the first three "
+                 "numbered trials, not statistical pass@k estimates or verified "
+                 "live agent behavior. Missing trials yield null, never zero."),
+    }
+
+
 def evaluate(data: dict[str, Any], evidence_root: Path, *,
-             verify_native_receipts: bool = False) -> dict[str, Any]:
+             verify_native_receipts: bool = False,
+             observed_repeatability: bool = False) -> dict[str, Any]:
     if not isinstance(data, dict) or data.get("schema_version") != 1:
         raise EvalInputError("schema_version must be 1")
     for field in ("dataset", "model", "repository_sha"):
@@ -204,6 +251,8 @@ def evaluate(data: dict[str, Any], evidence_root: Path, *,
         "independent_review_required": True,
         "note": "Recorded verdicts are self-reported; evidence files were checked for existence only.",
     }
+    if observed_repeatability:
+        summary["observed_repeatability"] = _observed_repeatability(pairs)
     if verify_native_receipts:
         summary["native_receipts_verified"] = verified
         summary["native_evidence_integrity"] = "OFFLINE_VERIFIED_NOT_OUTCOME"
@@ -217,11 +266,14 @@ def main() -> int:
     parser.add_argument("file", type=Path, help="Paired run records in JSON")
     parser.add_argument("--verify-native-receipts", action="store_true",
                         help="Opt-in read-only Node verification of pinned capsule receipts")
+    parser.add_argument("--observed-repeatability", action="store_true",
+                        help="Report offline empirical first-three stability from paired trials")
     args = parser.parse_args()
     try:
         data = json.loads(args.file.read_text(encoding="utf-8"))
         summary = evaluate(data, args.file.resolve().parent,
-                           verify_native_receipts=args.verify_native_receipts)
+                           verify_native_receipts=args.verify_native_receipts,
+                            observed_repeatability=args.observed_repeatability)
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1

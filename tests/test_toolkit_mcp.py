@@ -58,6 +58,28 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(before, (self.project / "AGENTS.md").read_bytes())
         self.assertFalse((self.project / ".adt").exists())
 
+    def test_project_mcp_native_first_external_passthrough(self):
+        declared = next(item for item in self._tools()
+                        if item["name"] == "toolkit_route_task")
+        self.assertIn("external_controller", declared["inputSchema"]["properties"])
+        external = self._invoke("toolkit_route_task", task="Review the Python API",
+                                external_controller="graphify")["result"]["structuredContent"]
+        self.assertEqual("NATIVE_UPSTREAM_PASSTHROUGH", external["status"])
+        self.assertEqual([], external["skills"])
+        self.assertEqual([], external["roles"])
+        self.assertEqual("NOT_RUN", external["execution"])
+        self.assertEqual("SKIPPED_EXTERNAL_NATIVE", external["required_setup"]["status"])
+        stage = self._invoke("toolkit_prepare_stage", task="Review the Python API",
+                             stage="analysis", external_controller="graphify")
+        self.assertEqual("NATIVE_UPSTREAM_PASSTHROUGH",
+                         stage["result"]["structuredContent"]["status"])
+        ordinary = self._invoke("toolkit_route_task", task="Please test a backend API")
+        self.assertEqual("ADVISORY_ONLY", ordinary["result"]["structuredContent"]["status"])
+        for malformed in ("../unsafe", "graphify;evil", 5, None):
+            response = self._invoke("toolkit_route_task", task="Safe API",
+                                    external_controller=malformed)
+            self.assertTrue(response["result"]["isError"], malformed)
+
     def test_shared_stage_contract_in_project_mcp(self):
         self.assertIn("toolkit_prepare_stage", [tool["name"] for tool in self._tools()])
         args = {"task": "Implement a backend API and test it", "stage": "Implement backend API",
@@ -393,6 +415,11 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(result["decision"], "PASS")
         self.assertEqual(result["verified_count"], 1)
         self.assertEqual(result["matches"][0]["next_action"], "CHECK_CI")
+        self.assertIs(result["matches"][0]["action_authorized"], False)
+        self.assertIs(result["matches"][0]["execution_authorized"], False)
+        self.assertIs(result["action_authorized"], False)
+        self.assertIs(result["execution_authorized"], False)
+        self.assertEqual(result["policy_revalidated"], "NOT_VERIFIED")
         self.assertEqual(result["matches"][0]["references"],
                          ["https://github.com/example/team-repo/pull/12"])
         self.assertEqual(result["owner_approval"], "NOT_GRANTED")
@@ -404,6 +431,10 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(verified["result"]["structuredContent"]["decision"], "PASS")
         self.assertEqual(verified["result"]["structuredContent"]["trust"], "UNREVIEWED")
         self.assertEqual(verified["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
+        self.assertEqual(verified["result"]["structuredContent"]["verification_scope"], "GIT_CONTEXT_ONLY")
+        self.assertEqual(verified["result"]["structuredContent"]["sender_identity"], "NOT_VERIFIED")
+        self.assertIs(verified["result"]["structuredContent"]["action_authorized"], False)
+        self.assertIs(verified["result"]["structuredContent"]["execution_authorized"], False)
         self.assertNotIn(str(folder), json.dumps(result))
         self.assertNotIn(str(self.project), json.dumps(result))
         self.assertFalse((self.project / ".adt").exists())

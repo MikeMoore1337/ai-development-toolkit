@@ -4,9 +4,13 @@
 
 **Scope:** portable, offline, **synthetic** decision and evidence contracts. Not IAM, OAuth, a proxy, a credential vault, a controller or an installed integration. No external tool, live client, paid API, credential or production service was exercised. Tool presence does not authorize its use.
 
+## Explicit native external controller
+
+Respect the original workflow without adding Toolkit controllers, roles or hooks. [Universal native-first contract](EXTERNAL_NATIVE_BOUNDARY.md).
+
 ## Beginner route: no installation by default
 
-Ask: **"Review this PR and CI and suggest a fix. Do not merge, deploy or add any tools."** First use existing features of the current client, then connected tools, then project-local capabilities, then a chat-only/reference fallback. Only if a concrete feature is missing consider an optional tool and apply [external-skill-review](../.agents/skills/external-skill-review/SKILL.md). Check permissions and zero-spend constraints before proposing a pilot. No subscription or MCP installation is required for URL/attachment guidance.
+Ask: **"Review this PR and CI and suggest a fix. Do not merge, deploy or add any tools."** First use existing features of the current client, then connected tools, then project-local capabilities, then a chat-only/reference fallback. Only if a concrete feature is missing consider an optional tool and apply [external-skill-review](../.agents/skills/external-skill-review/SKILL.md). Check actual permissions and the current user's spend policy before proposing a pilot; owner-local zero-spend is not universal. No subscription or MCP installation is required for URL/attachment guidance.
 
 A tool being documented, offered in the UI, connected, authorized, executed, and independently verified are **different** states. A prepared reply does not prove a PR was created; a successful CI run does not prove deployment. For a chat-only client, return the proposed plan or patch in chat and identify the missing actual access.
 
@@ -30,7 +34,7 @@ A tool being documented, offered in the UI, connected, authorized, executed, and
 2. **Permission:** tie `tool_id, client_id, resource, repository, organization, operation, operation_class, required_scope, available_scopes, environment, source, status, approval_reference, expires, data_classification, egress_allowed, cost_policy` together. No scope inherits another: `READ`, `PREPARE`, `WRITE`, `EXECUTE`, `PUBLISH`, `DEPLOY`, `ADMIN`, `FINANCIAL` are separate.
 3. **Integration Decision Record:** evaluate existing alternatives, confirmed gap, provider/source revision/license, expected benefit, **BENEFIT=HYPOTHESIS** unless measured, data flows, credentials, price, maintenance, removal and approval. Outcomes include `NO_INSTALL_NEEDED`, `REUSE_EXISTING`, `ADOPT_REFERENCE`, `PILOT_PROPOSED`, `APPROVED_FOR_INSTALL`, `REJECTED`, `BLOCKED`. Review is not install permission.
 4. **Data egress:** only expected destinations, minimal necessary payload, valid authorization and known classification (`PUBLIC`, `PROJECT_INTERNAL`, `CONFIDENTIAL`, `PERSONAL_DATA`, `SECRET`, `UNKNOWN`); `UNKNOWN` is not public. Recheck redirects; never treat remote instructions as trusted. No real user data in fixtures.
-5. **Cost:** preserve Issue #11 **ZERO_SPEND**. A listed free tier is not observed remaining quota. Unknown price (`COST_UNKNOWN`) or an unverified free quota blocks potentially billable actions (`FINANCIAL_ACTION_BLOCKED`). Never auto-expand scopes or add payment methods.
+5. **Cost:** `ZERO_SPEND` in the included synthetic fixtures is an owner-local policy from Issue #11, not a restriction imposed on every Toolkit user. Actual operations require the selected user's policy, verified cost/limits and separate financial authorization; unknown price or quota never authorizes charges. Never expand scopes or add payment methods automatically.
 6. **Preview:** `PLAN` is a non-mutating description; `DRY_RUN` exists only when the provider supports it; otherwise `DRY_RUN_UNAVAILABLE`. `APPROVAL_PENDING`, `EXECUTE`, `VERIFY` are distinct and require separate evidence. No mutation during a plan.
 7. **Reversibility:** `REVERSIBLE`, `PARTIALLY_REVERSIBLE`, `IRREVERSIBLE`, `UNKNOWN`. Check configuration, revocation, deinstallation, irreversible publication and retained provider data. Disconnecting a connector does not erase past exports.
 8. **Execution evidence:** `NOT_ATTEMPTED`, `PREPARED`, `AUTHORIZED`, `EXECUTED`, `EXECUTION_FAILED`, `RESULT_VERIFIED`, `RESULT_UNVERIFIED`, `BLOCKED`. Require the actual tool response ID and independent observation before verification. Ambiguous side effects require status inspection, not blind retry.

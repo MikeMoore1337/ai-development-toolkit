@@ -41,3 +41,33 @@ Technical evidence boundaries: offline oracle PASS is not model effectiveness; c
 | Cost/token reporting | Issue #11 evidence reports | REUSE evidence discipline: UNKNOWN/NOT_MEASURED |
 
 One optional AI skill, no new controller, retriever, runner, model judge or mandatory dependency.
+
+## Agent tool observation recovery: practical offline comparison (#435)
+
+The existing `check_tool_call` already rejects invalid arguments, cross-scope
+actions, missing approvals and unsafe retries **before** tool execution.
+Original pinned ECC `agent-harness-construction` highlights a separate
+problem: an agent cannot reliably interpret a sparse tool response without a
+consistent status and bounded recovery guidance.
+
+Toolkit therefore adds the **optional** `check_tool_observation` to its
+existing `scripts/validate_ai_contracts.py` for **new, project-owned tool
+interfaces only**. It validates status/summary/next-actions/artifacts and
+explicit cause/retry/stop conditions on warnings and errors. An ambiguous
+mutation cannot be marked safe to retry, and authorization denial must stop.
+All actions inside tool results remain untrusted suggestions; passing structural
+checks never authorizes execution or proves a live agent correctly recovered.
+
+```bash
+python -m unittest tests.test_ai_contracts -v
+python scripts/validate_ai_contracts.py
+```
+
+Offline examples include a structurally incomplete write-timeout response,
+a complete response requiring reconciliation, valid synthetic reads, and
+negative mutations (missing recovery, malformed fields, unsupported retry,
+permission denial and contradictory success). They demonstrate **static
+discrimination**, not measured reduction in real tool-call retries, latency,
+model failures or unsafe actions. ECC `agent-harness-construction` remains
+`HOLD_REVIEW` pending a separate authorized live-agent comparison. No new
+skill registration, global response mandate or ECC runtime dependency.

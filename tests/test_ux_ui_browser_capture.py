@@ -130,14 +130,13 @@ class BrowserCaptureTests(unittest.TestCase):
         self.assertTrue(items[0]["url"].startswith("file:"))
         self.assertEqual("LOCAL_HTML", items[0]["origin"])
 
-    def test_rejects_missing_or_duplicate_directions(self):
+    def test_rejects_duplicate_directions_without_global_three_view_quota(self):
         self.plan["captures"][1]["purpose"] = self.plan["captures"][0]["purpose"]
         with self.assertRaisesRegex(visual.CaptureError, "Duplicate"):
             visual.parse_plan(self.plan, self.source)
         self.plan["captures"][1]["purpose"] = "wireframe:b"
         self.plan["captures"][1]["viewport"] = "420x600"
-        with self.assertRaisesRegex(visual.CaptureError, "equal-sized"):
-            visual.parse_plan(self.plan, self.source)
+        self.assertEqual(5, len(visual.parse_plan(self.plan, self.source)[1]))
 
     def test_prevents_unsafe_paths_and_outside_requests(self):
         for source in ("../private.html", "/etc/passwd", "C:/private.html", "http://example.com/", "https://localhost/", "a\\b.html"):
@@ -226,17 +225,17 @@ class BrowserCaptureTests(unittest.TestCase):
             self._run_fake()
         self.assertTrue((self.root / "captures").is_symlink())
 
-    def test_blocked_local_navigation_uses_explicit_inline_fallback(self):
-        with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
-                "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR")):
+    def test_local_navigation_always_uses_confined_inline_html(self):
+        with patch.object(FakePage, "goto", side_effect=AssertionError(
+                "Local HTML must not use unguarded file navigation")):
             report, _fake, folder = self._run_fake()
         self.assertTrue((folder / "comparison.html").is_file())
         self.assertTrue(all(item["inline_html_fallback"] for item in report["diagnostics"]))
         self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", report["gate"])
 
-    def test_local_fallback_does_not_decode_windows_file_uri(self):
-        with patch.object(FakePage, "goto", side_effect=FakePlaywrightError(
-                "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR")):
+    def test_local_inline_html_does_not_decode_windows_file_uri(self):
+        with patch.object(FakePage, "goto", side_effect=AssertionError(
+                "Local HTML must not use unguarded file navigation")):
             with patch.object(visual, "url2pathname", side_effect=AssertionError(
                     "Do not reparse a validated local file URI")):
                 report, _fake, _folder = self._run_fake()
@@ -272,6 +271,35 @@ class BrowserCaptureTests(unittest.TestCase):
         with patch.object(FakePage, "evaluate", tiny_button):
             report, _fake, _folder = self._run_fake()
         self.assertEqual("NEEDS_LAYOUT_REVIEW", report["gate"])
+
+    def test_malformed_scenario_id_fails_closed(self):
+        self.plan["scenario_id"] = ["new-site"]
+        with self.assertRaisesRegex(visual.CaptureError, "Invalid browser capture plan"):
+            visual.parse_plan(self.plan, self.source)
+
+    def test_mobile_only_new_site_capture_is_valid(self):
+        self.plan["captures"] = [self.plan["captures"][-1]]
+        _scenario, sources = visual.parse_plan(self.plan, self.source)
+        self.assertEqual(["winner:mobile"], [source["purpose"] for source in sources])
+        report, _fake, _folder = self._run_fake()
+        self.assertEqual(1, len(report["visual_assets"]))
+        self.assertEqual("AWAITING_HUMAN_VISUAL_REVIEW", report["gate"])
+
+    def test_browser_missing_produces_explicit_failure(self):
+        with patch.dict(sys.modules, {"playwright.sync_api": None}):
+            with self.assertRaisesRegex(visual.CaptureError, "PLAYWRIGHT_UNAVAILABLE"):
+                visual.capture(self.plan, self.source, self.root / "captures")
+        self.assertFalse((self.root / "captures").exists())
+
+    def test_local_inline_content_limit_blocks_large_file(self):
+        (self.source / "a.html").write_text("X" * (2 * 1024 * 1024 + 1), encoding="utf-8")
+        with self.assertRaisesRegex(visual.CaptureError, "2 MiB inline limit"):
+            self._run_fake()
+        self.assertFalse((self.root / "captures").exists())
+
+    def test_rejects_outside_root_output(self):
+        with self.assertRaisesRegex(visual.CaptureError, "Output must be a new"):
+            visual.capture(self.plan, self.source, ROOT / "forbidden-capture-output")
 
     def test_minor_fix_does_not_require_three_wireframes(self):
         self.plan["scenario_id"] = "minor-ui-fix"

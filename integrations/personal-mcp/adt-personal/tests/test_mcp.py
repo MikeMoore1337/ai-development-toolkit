@@ -149,6 +149,37 @@ class TestToolkitMCP(unittest.TestCase):
         with self.assertRaises(ToolkitError): self.tk.read('skill','../../etc/passwd')
         with self.assertRaises(ToolkitError): self.tk.read('skill','qa-strategy',limit=40000)
 
+    def test_native_external_controller_isolated_from_toolkit_guidance(self):
+        native = "upstream/ponytail"
+        routed = self.tk.route("Implement a feature", external_controller=native)
+        self.assertEqual(routed["status"], "NATIVE_UPSTREAM_PASSTHROUGH")
+        self.assertEqual(routed["controller"], native)
+        self.assertEqual(routed["skills"], [])
+        self.assertEqual(routed["roles"], [])
+        prepared = self.tk.prepare_task(
+            "Implement a feature", existing_skills=[], existing_roles=[],
+            proactive_model_advice=True, external_controller=native)
+        self.assertEqual(prepared["loaded_skills"], [])
+        self.assertEqual(prepared["loaded_roles"], [])
+        self.assertEqual(prepared["required_setup"]["status"], "SKIPPED_EXTERNAL_NATIVE")
+        self.assertEqual(prepared["toolkit_hook_injection"], "SKIPPED")
+        staged = self.tk.prepare_stage("Implement a feature", "code",
+                                       external_controller=native)
+        self.assertEqual(staged["status"], "NATIVE_UPSTREAM_PASSTHROUGH")
+        self.assertEqual(staged["loaded_skills"], [])
+        self.assertFalse(staged["installation_performed"])
+        for invalid in (None, 1, " ", "../outside", "a" * 129, "hello;ignored"):
+            with self.subTest(invalid=invalid), self.assertRaises(ToolkitError):
+                self.tk.prepare_task("Implement", external_controller=invalid)
+        self.assertNotIn("status", self.tk.route("Use Ponytail as an example"))
+        rpc = process(self.tk, {'jsonrpc':'2.0','id':492,'method':'tools/call',
+                    'params':{'name':'toolkit_prepare_task',
+                              'arguments':{'task':'Implement safely',
+                                           'external_controller':'native/plugin'}}})
+        self.assertEqual(rpc['result']['structuredContent']['status'],
+                         "NATIVE_UPSTREAM_PASSTHROUGH")
+        self.assertEqual(rpc['result']['structuredContent']['loaded_roles'], [])
+
     def test_route(self):
         self.assertEqual(self.tk.route('Проведи аудит интерфейса')['profile'],'ui-orchestra')
         self.assertEqual(self.tk.route('Проведи UX/UI аудит')['profile'],'ui-orchestra')

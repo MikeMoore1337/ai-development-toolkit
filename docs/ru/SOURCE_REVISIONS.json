@@ -16,12 +16,12 @@
     {
       "source": "docs/AGENT_SKILLS_SPEC.md",
       "translation": "docs/ru/AGENT_SKILLS_SPEC.md",
-      "source_sha256": "38d9c6e88078c8710d08782fb04851adc48fdcb17b17a08152fcb3f9845ea722"
+      "source_sha256": "30d79af61fab79f56e3449a3fd1eed446c5fe7e858917df62ca36ff1cb5fd311"
     },
     {
       "source": "docs/AI_ENGINEERING_QA.md",
       "translation": "docs/ru/AI_ENGINEERING_QA.md",
-      "source_sha256": "b494547515f81d53e56f1dfe9da702268953a20b0b5953d46419ee60ea02c483"
+      "source_sha256": "77ecd8253f1207e888ae8eeb7e9cd6ae12641f77bdf38777489fba0b7467a96e"
     },
     {
       "source": "docs/BEGINNER_CLIENT_DETAILS.md",
@@ -114,6 +114,11 @@
       "source_sha256": "9050c8061882cd8f23095716c4003e2a0baaf5f8cd88dfe9ede41db0432bfe09"
     },
     {
+      "source": "docs/EXTERNAL_NATIVE_BOUNDARY.md",
+      "translation": "docs/ru/EXTERNAL_NATIVE_BOUNDARY.md",
+      "source_sha256": "9255791ea2e17a559aa57b3177f993c1e6ad091b8eb45b3889755b699d8629cc"
+    },
+    {
       "source": "docs/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "translation": "docs/ru/EXTERNAL_SKILL_CANDIDATE_REVIEW.md",
       "source_sha256": "e5401845d00760da7118bb6067df9851c731e5922b94a9c561cafe81ac7863ae"
@@ -187,7 +192,7 @@
     {
       "source": "docs/MCP_SECURITY_SCAN.md",
       "translation": "docs/ru/MCP_SECURITY_SCAN.md",
-      "source_sha256": "560adf67d660d86a5dd6d953453cd57fd171fb301625719db675d27a715ac660"
+      "source_sha256": "bede7358578acdd896c6603076f284da699c2a9aa20319feb330d8a3481830d4"
     },
     {
       "source": "docs/NEUTRALITY_RELEASE_GATE.md",
@@ -323,7 +328,7 @@
     {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
-      "source_sha256": "afe8fe5e43b4b2785c8387346f15c4b3293c0e1bd6e9b2c9d8ec074fd0f36413"
+      "source_sha256": "f233378644e0137591c21fd229a51c2c073bc9426306ad1f5c98e209dc84166f"
     },
     {
       "source": "docs/SKILL_QUALITY_METRICS.md",
@@ -348,7 +353,7 @@
     {
       "source": "docs/SKILLS_CATALOG.md",
       "translation": "docs/ru/SKILLS_CATALOG.md",
-      "source_sha256": "d57950f0af5ff2b2d81d00c1621f4b09256ffbd445b64bc052c7af60be1458aa"
+      "source_sha256": "4a2150b3373b0e9458e101e0f94052ef3e9228fdfc001a2b4ec6577fbc419a87"
     },
     {
       "source": "docs/SKILLS_QUALITY_AUDIT.md",
@@ -370,7 +375,7 @@
     {
       "source": "docs/TOOL_INTEGRATIONS.md",
       "translation": "docs/ru/TOOL_INTEGRATIONS.md",
-      "source_sha256": "4efacc056ac4794fb58428738e47c95a828fd5a5b09e5e058c5d5b69d0bd9d0f"
+      "source_sha256": "f5c8ec5d6d5f20ed15afe6113cc9dd1230ff46903419d756004821cc302af8bd"
     },
     {
       "source": "docs/UNIVERSAL_ENGINEERING.md",
@@ -390,12 +395,12 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "b00c7f2f559a02ad3961f209725cc5a4168f40a1d89c87a1d1e6c85676b62d04"
+      "source_sha256": "79f2d0d2da40e080179d74c2c5c3f4dfbdba63110104b2b4f2aa23baff1d71b0"
     },
     {
       "source": "docs/UX_UI_EVALS.md",
       "translation": "docs/ru/UX_UI_EVALS.md",
-      "source_sha256": "bca1b3f9b8c1f36fd41339ac9801a55fd750ef3d1a591159172bfaf7b1985622"
+      "source_sha256": "b4e3e02c10aa4d8cbf6ab65b75b6268eda5c63d83f5bee1eae475ebec620e617"
     },
     {
       "source": "docs/VERIFIED_EXAMPLES.md",

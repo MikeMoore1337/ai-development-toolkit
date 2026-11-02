@@ -81,13 +81,14 @@ def _source_uri(source: str, root: Path) -> tuple[str, str]:
 
 def parse_plan(raw: object, source_root: Path) -> tuple[str, list[dict]]:
     if (not isinstance(raw, dict) or set(raw) != {"schema_version", "scenario_id", "captures"}
-            or raw["schema_version"] != 1 or raw["scenario_id"] not in SCENARIOS):
+            or type(raw["schema_version"]) is not int or raw["schema_version"] != 1
+            or not isinstance(raw["scenario_id"], str) or raw["scenario_id"] not in SCENARIOS):
         raise CaptureError("Invalid browser capture plan")
     if not source_root.is_dir() or _linked(source_root):
         raise CaptureError("Source root missing or linked")
     records = raw["captures"]
-    if not isinstance(records, list) or not 2 <= len(records) <= MAX_CAPTURES:
-        raise CaptureError("Expected 2-12 visual captures")
+    if not isinstance(records, list) or not 1 <= len(records) <= MAX_CAPTURES:
+        raise CaptureError("Expected 1-12 visual captures")
     result = []
     for item in records:
         if (not isinstance(item, dict) or set(item) != {"purpose", "source", "viewport"}
@@ -106,20 +107,16 @@ def parse_plan(raw: object, source_root: Path) -> tuple[str, list[dict]]:
                                        if origin == "LOCAL_HTML" else None),
                        "viewport": item["viewport"], "width": width, "height": height})
     purposes = [item["purpose"] for item in result]
-    if len(set(purposes)) != len(purposes) or not {"winner:desktop", "winner:mobile"} <= set(purposes):
-        raise CaptureError("Duplicate purposes or missing desktop/mobile winners")
-    winner_desktop = next(x for x in result if x["purpose"] == "winner:desktop")
-    winner_mobile = next(x for x in result if x["purpose"] == "winner:mobile")
-    if winner_desktop["width"] < 800 or winner_mobile["width"] > 600:
-        raise CaptureError("Winners must use distinct desktop/mobile widths")
-    wires = [x for x in result if x["purpose"].startswith("wireframe:")]
-    if raw["scenario_id"] in {"new-site", "substantial-redesign"}:
-        if len(wires) != 3 or len({x["viewport"] for x in wires}) != 1:
-            raise CaptureError("Major design requires three equal-sized wireframe captures")
-        if len({x["url"] for x in wires}) != 3:
-            raise CaptureError("Wireframes must have three independent source views")
-    elif wires:
-        raise CaptureError("Minor/a11y scenarios do not fabricate three candidates")
+    if len(set(purposes)) != len(purposes):
+        raise CaptureError("Duplicate capture purposes")
+    # A user-requested preview may be mobile-only, desktop-only, or a comparison.
+    # Three wireframes plus two winner captures belong to #486's test fixture,
+    # not to every Orchestra design request.
+    for purpose, invalid in (("winner:desktop", lambda width: width < 800),
+                             ("winner:mobile", lambda width: width > 600)):
+        match = next((x for x in result if x["purpose"] == purpose), None)
+        if match is not None and invalid(match["width"]):
+            raise CaptureError("Winner viewport outside expected desktop/mobile range")
     return raw["scenario_id"], result
 
 
@@ -196,7 +193,6 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True, executable_path=executable)
             try:
-                origins = {x["origin"] for x in records if x["origin"] != "LOCAL_HTML"}
                 for index, item in enumerate(records):
                     mobile = item["width"] <= 600
                     context = browser.new_context(
@@ -207,7 +203,7 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                     errors = [0]
                     try:
                         def route_guard(route):
-                            if request_allowed(route.request.url, source_root, origins):
+                            if request_allowed(route.request.url, source_root, ({item["origin"]} if item["origin"] != "LOCAL_HTML" else set())):
                                 route.continue_()
                             else:
                                 blocked[0] += 1
@@ -217,38 +213,30 @@ def capture(plan: dict, source_root: Path, output: Path, *, executable: str | No
                         context.route(re.compile(r"^https?://"), route_guard)
                         if not hasattr(context, "route_web_socket"):
                             raise CaptureError("WebSocket blocking unavailable in this Playwright version")
-                        context.route_web_socket("**/*", lambda socket: socket.close())
+                        def websocket_guard(socket):
+                            blocked[0] += 1
+                            socket.close()
+                        context.route_web_socket("**/*", websocket_guard)
                         page = context.new_page()
                         page.on("pageerror", lambda _error: errors.__setitem__(0, errors[0] + 1))
-                        local_inline_fallback = False
-                        try:
-                            page.goto(item["url"], wait_until="domcontentloaded", timeout=20000)
-                        except PlaywrightError as exc:
-                            # Some managed browsers disallow file: navigation but
-                            # permit rendering content through document.write.
-                            # Only the validated local HTML path may use this
-                            # fallback: remote/loopback URLs must never bypass it.
-                            if (item["origin"] != "LOCAL_HTML"
-                                    or "ERR_BLOCKED_BY_ADMINISTRATOR" not in str(exc)):
-                                raise
-                            # Keep the already-validated path instead of
-                            # round-tripping through a Windows file: URI.
+                        local_inline_fallback = item["origin"] == "LOCAL_HTML"
+                        if local_inline_fallback:
                             local_path = item["source_file"]
                             if not _in_root(local_path, source_root) or not local_path.is_file():
-                                raise CaptureError("Local HTML became unsafe before fallback") from exc
+                                raise CaptureError("Local HTML became unsafe before read")
                             if local_path.stat().st_size > 2 * 1024 * 1024:
-                                raise CaptureError("Local HTML exceeds 2 MiB fallback limit") from exc
+                                raise CaptureError("Local HTML exceeds 2 MiB inline limit")
                             try:
                                 html = local_path.read_text(encoding="utf-8")
-                            except UnicodeDecodeError as decode_exc:
-                                raise CaptureError("Local HTML must be UTF-8") from decode_exc
-                            # Failed file: navigation may destroy this page's
-                            # execution context; switch to a fresh about:blank.
-                            page.close()
-                            page = context.new_page()
-                            page.on("pageerror", lambda _error: errors.__setitem__(0, errors[0] + 1))
+                            except UnicodeDecodeError as exc:
+                                raise CaptureError("Local HTML must be UTF-8") from exc
+                            if not _in_root(local_path, source_root):
+                                raise CaptureError("Local HTML path changed during read")
+                            # about:blank cannot load file: subresources outside root,
+                            # unlike a top-level file: document in some Chromium builds.
                             page.set_content(html, wait_until="domcontentloaded", timeout=20000)
-                            local_inline_fallback = True
+                        else:
+                            page.goto(item["url"], wait_until="domcontentloaded", timeout=20000)
                         metrics = page.evaluate(PAGE_METRICS)
                         name = f"{index + 1:02d}-{item['purpose'].replace(':', '-')}.png"
                         png = stage / name

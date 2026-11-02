@@ -2,7 +2,17 @@
 
 **ChatGPT workflow:** use the portable skills-only ChatGPT plugin to route engineering, QA, UX/UI and DevOps tasks without installing a local server, supplying an API key, or copying skills into projects. It provides **instructions**, not filesystem/terminal/IDE access.
 
-## Install from GitHub (recommended on supported desktop clients)
+## Use in ordinary ChatGPT - without Work or Codex
+
+In a regular chat, select the installed **AI Development Toolkit** plugin and ask for the actual engineering, QA or design task. **Work, Codex CLI/Desktop and paid APIs are not prerequisites** when the current ChatGPT host already provides the necessary capabilities. You do not need to run individual skills, MCP or shell commands yourself. ChatGPT selects the Toolkit route and invokes permitted tools **in the same conversation**.
+
+Where available, the native ChatGPT Python/container runtime can produce files, execute tests and render HTML with Chromium; a separately connected GitHub app can inspect and change authorized repositories and verify CI. Other approved connected apps may provide their own actions. These tools are not bundled with the skill-only plugin. If unavailable, report the specific blocker instead of claiming installed originals or successful execution.
+
+**Observed normal-chat pilot (2026-11-01):** a synthetic HTML prototype was rendered using real Python, Chromium and Playwright at 1440×900 and 390×844; primary controls were clicked and JavaScript exceptions/horizontal overflow checked. It does **not** verify native Impeccable/Taste/UI UX Pro Max calls or guarantee identical tools on every account.
+
+See [NORMAL_CHAT_EXECUTION.md](ai-development-toolkit/skills/toolkit-task-router/references/NORMAL_CHAT_EXECUTION.md) for the portable routing contract. It grants no additional permissions, background runner or exemption from ordinary ChatGPT limits.
+
+## Alternative GitHub installation for supported desktop clients
 
 You do **not** need a public Plugin Directory listing. The repository includes `.agents/plugins/marketplace.json`, so a user with Codex CLI can register the GitHub marketplace source in one command:
 
