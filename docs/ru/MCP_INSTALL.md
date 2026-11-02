@@ -28,19 +28,46 @@ Toolkit содержит настоящий **MCP-сервер stdio** (`scripts
 
 ## Windows (PowerShell)
 
-Команды из корня Toolkit; выбранный рабочий проект должен уже существовать.
+**Нужны два разных пути:** `$toolkit` - папка клонированного **AI Development Toolkit**, содержащая `scripts\toolkit_mcp.py`; `$project` - папка **существующего проекта, в котором Codex будет использовать Toolkit** (например, `your-fitness-coach`). Путь к самому ADT в `$project` указывайте только тогда, когда подключаете Toolkit к разработке Toolkit. Этот установщик не подключает MCP глобально ко всем проектам.
+
+**1. Сначала проверьте Python.** Выполните в PowerShell `py --list-paths` и `py -3 --version`. Выбранная версия должна быть **3.12 или новее**. Команда `py -3.12` работает только при наличии именно Python 3.12; `py -3` выбирает доступный Python 3. Если `py` недоступен, проверьте `python --version` и замените `py -3` в примерах на `python` (если версия 3.12+). Если подходящего Python нет, установите его с [python.org](https://www.python.org/downloads/windows/), заново откройте PowerShell и повторите проверку. Ошибка `No suitable Python runtime found` означает, что **установщик даже не запустился**.
+
+**2. Укажите обе папки и проверьте их.** Замените пути в примере на свои. Команды можно выполнять **из любой папки PowerShell**: для скрипта используется абсолютный путь.
 
 ~~~powershell
-$project = 'C:\Work\existing-project'
-py -3.12 scripts/toolkit_mcp.py install --client codex --project $project
+$toolkit = 'D:\Pet-projects\ai-development-toolkit'
+$project = 'D:\Pet-projects\your-fitness-coach'
+$script = Join-Path $toolkit 'scripts\toolkit_mcp.py'
+if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { throw 'Не найдена папка Toolkit: проверьте $toolkit' }
+if (-not (Test-Path -LiteralPath $project -PathType Container)) { throw 'Не найдена папка проекта: проверьте $project' }
+py -3 -c "import sys; assert sys.version_info >= (3, 12), 'Нужен Python 3.12+'; print(sys.version)"
 ~~~
 
-**Остановитесь и проверьте план.** Убедитесь, что выбраны правильный проект, имя MCP и только ожидаемые изменения конфигурации. Затем выполните следующую команду отдельно:
+**3. Просмотрите план (без изменений файлов).** В **том же окне PowerShell** выполните:
 
 ~~~powershell
-py -3.12 scripts/toolkit_mcp.py install --client codex --project $project --apply
-py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
+py -3 $script install --client codex --project $project
 ~~~
+
+Проверьте путь проекта, имя MCP и список планируемых изменений. Это только предварительный просмотр, установка ещё не выполняется.
+
+**4. Примените изменения, только если план корректен.**
+
+~~~powershell
+py -3 $script install --client codex --project $project --apply
+~~~
+
+Команда создаёт или обновляет проектный `.codex/config.toml`, не удаляя посторонние настройки.
+
+**5. Проверьте конфигурацию.**
+
+~~~powershell
+py -3 $script doctor --client codex --project $project
+~~~
+
+Затем перезапустите **Codex Desktop** с выбранным проектом и попросите вызвать `toolkit_catalog`, а затем `toolkit_read_skill` для `qa-strategy`. Команда `doctor` проверяет конфигурацию, но не обнаружение инструментов самим клиентом. **Codex CLI не требуется.** Если между шагами открыли новое окно PowerShell, заново выполните шаг 2, чтобы восстановить переменные.
+
+Если Toolkit должен быть доступен **сразу во всех проектах Codex**, вместо этого используйте [Personal MCP](ONE_COMMAND_SETUP.md): это другое подключение, с другими командами и именами инструментов.
 
 ## Linux (bash)
 
