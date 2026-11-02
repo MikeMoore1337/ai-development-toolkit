@@ -36,3 +36,7 @@ A good visual comparison explicitly separates `observed`, `inferred` and `unknow
 - `INTERACTIVE_VERIFIED`: only after actually exercising working controls
 
 A structural report can check consistency, **not aesthetic quality, actual ownership of screenshots, or installation and invocation of external skills**.
+
+## Optional browser-backed HTML previews (#486)
+
+When approved local HTML or a loopback development server is available, scripts/ux_ui_browser_capture.py can render the selected user-requested captures with Chromium, inspect CSS viewports, horizontal overflow, small interactive targets, script exceptions, and blocked requests. Choose the number and size of previews from the task itself - not from a mandatory three-sketch or desktop/mobile quota. The #486 acceptance fixture intentionally exercises three equal-size alternatives plus two winner viewports. Examine actual PNGs before offering a visual judgment. A green technical receipt is not an aesthetic or owner approval, and browser capture does not replace the original specialist workflows.

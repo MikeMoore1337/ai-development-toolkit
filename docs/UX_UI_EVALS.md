@@ -29,4 +29,30 @@ When an earlier version was preferred/approved, keep its images and strengths as
 
 The offline outcome may be `VISUAL_PACKAGE_MISSING`, `NEEDS_DESIGN_REVISION` or `AWAITING_HUMAN_VISUAL_REVIEW`. It **never** means `OWNER_ACCEPTED`, automatic aesthetic superiority or permission to modify/deploy a user application.
 
-All example assets and unit tests are synthetic. Browser-backed UX/UI evidence is separately implemented in #486/PR #487; native activation of original design skills is independently tracked in #449.
+The optional browser renderer from #486 does not constitute a native invocation of original design skills (#449). Unit test doubles, real Chromium captures, interaction tests and human visual approval are separate evidence categories.
+
+## Optional local Chromium capture (#486)
+
+The existing evaluation checker inspects evidence; it does not render HTML. For a user-approved local prototype, run the separately optional helper scripts/ux_ui_browser_capture.py with an already installed Playwright Chromium. It produces real PNGs, comparison.html, capture_report.json, image SHA256 digests and DOM diagnostics. All outputs must be written to a new folder OUTSIDE Toolkit.
+
+Example capture-plan.json for the specific five-view #486 test (NOT a universal design quota):
+
+~~~json
+{
+  "schema_version": 1,
+  "scenario_id": "new-site",
+  "captures": [
+    {"purpose": "wireframe:editorial", "source": "editorial.html", "viewport": "400x600"},
+    {"purpose": "wireframe:catalog", "source": "catalog.html", "viewport": "400x600"},
+    {"purpose": "wireframe:journey", "source": "journey.html", "viewport": "400x600"},
+    {"purpose": "winner:desktop", "source": "winner.html", "viewport": "1440x900"},
+    {"purpose": "winner:mobile", "source": "winner.html", "viewport": "390x844"}
+  ]
+}
+~~~
+
+Run: python scripts/ux_ui_browser_capture.py --plan /approved/capture-plan.json --source-root /approved/prototype --output /approved/visual-evidence-v1 --chromium-executable /path/to/approved/chromium
+
+Use only authorized local HTML paths or explicit loopback HTTP preview URLs. The local HTML case is loaded into an isolated about:blank document using set_content after strict root, symlink, UTF-8 and 2 MiB checks: Chromium file: navigation cannot safely constrain subresources to the authorized source root. Relative CSS/images/scripts might not load in inline mode; use self-contained HTML or an authorized loopback server for those assets. The helper never installs Playwright/Chromium, enables unrestricted file: access or permits remote HTTP(S)/WebSocket access. Every blocked request requires review. The actual CSS viewport must match the declared screenshot size; overflow over 1 px, targets under 24 px, JavaScript errors, missing text and repeated candidate images are flagged for review.
+
+The output visual_assets entries can be carried into the existing review.json evidence packet, without skipping its human approval process. A single user-requested mobile view is accepted. Sketch count, content and responsive sizes come from the user's requirements. Inspect the actual PNG images, not just report status. An inaccessible browser must be reported as PLAYWRIGHT_UNAVAILABLE or BROWSER_RENDER_FAILED. Source-level tests, an original skill invocation and owner approval are NOT implied.
