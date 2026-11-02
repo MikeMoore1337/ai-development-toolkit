@@ -23,6 +23,8 @@ For requests requiring actual code, file operations, reviews, UI artifacts or Gi
 
 Prefer the actually available **native ChatGPT Python/container/browser sandbox** for standalone code, generated files, tests and screenshots; use real GitHub actions for repository/PR/CI work, and an approved connected remote sandbox (e.g. Hermes Agent) only when needed and authorized. An offline Windows bridge or a remote container lacking Python/Git/Chromium must not block a separate available ChatGPT host runner. Never infer that a device is online, Python/Git/Chromium installed, write access granted, or original design skill invoked from a mere directory listing. Handle missing capabilities as an explicit `BLOCKED` with a narrow reason instead of fabricating a completed task. Work and Codex are not fallback defaults; account-specific ChatGPT limits and host permissions still apply.
 
+When an original design executable is absent despite a working native sandbox, or the sandbox cannot fetch its immutable source, use the existing reference's `ORIGINAL_EXECUTOR_FAILOVER`: discover and validate another authorized connected executor before reporting a terminal `BLOCKED`. An unrelated Playwright PASS cannot stand in for an original skill invocation.
+
 ## Understand intent before skill routing
 
 Default mode is **FULFILL_REQUEST**: understand even poorly phrased input internally and perform the underlying task with the actually available project context and tools in the same turn. Never make the user copy a polished prompt and submit it again. Ask one clarification only if essential.
