@@ -289,20 +289,46 @@ class ToolkitMcpTests(unittest.TestCase):
 
 
     def test_mcp_install_guides_separate_preview_from_writes(self):
-        """Both languages must stop between preview and each explicit apply."""
+        """Windows must preflight paths, preview, apply, and doctor in separate steps."""
         import re
 
         for name in ("docs/MCP_INSTALL.md", "docs/ru/MCP_INSTALL.md"):
             with self.subTest(path=name):
                 text = (ROOT / name).read_text(encoding="utf-8")
-                blocks = re.findall(r"~~~(?:powershell|bash)\n(.*?)\n~~~", text, re.S)
-                self.assertEqual(8, len(blocks))
-                preview = [b for b in blocks if "scripts/toolkit_mcp.py" in b and "--apply" not in b]
-                apply = [b for b in blocks if "scripts/toolkit_mcp.py" in b and "--apply" in b]
-                self.assertEqual(4, len(preview))
-                self.assertEqual(4, len(apply))
-                self.assertTrue(all("--apply" not in b for b in preview))
-                self.assertTrue(all("doctor" in b for b in apply[:3]))
+                sections = re.split(r"^## ", text, flags=re.M)
+                windows = next(section for section in sections if section.startswith("Windows "))
+                linux = next(section for section in sections if section.startswith("Linux "))
+                mac = next(section for section in sections if section.startswith("macOS "))
+                removal = next(section for section in sections
+                               if section.startswith(("Removal ", "Удаление ")))
+                extract = lambda section: re.findall(
+                    r"~~~(?:powershell|bash)\n(.*?)\n~~~", section, re.S
+                )
+
+                windows_blocks = extract(windows)
+                self.assertEqual(4, len(windows_blocks))
+                preflight, preview, apply, doctor = windows_blocks
+                self.assertIn("$toolkit =", preflight)
+                self.assertIn("$project =", preflight)
+                self.assertIn("Join-Path", preflight)
+                self.assertIn("Test-Path", preflight)
+                self.assertIn("py -3 -c", preflight)
+                self.assertNotIn("--apply", preflight)
+                self.assertIn("$script install", preview)
+                self.assertNotIn("--apply", preview)
+                self.assertIn("$script install", apply)
+                self.assertIn("--apply", apply)
+                self.assertIn("$script doctor", doctor)
+                self.assertNotIn("--apply", doctor)
+
+                for section in (linux, mac, removal):
+                    with self.subTest(section=section.splitlines()[0]):
+                        blocks = extract(section)
+                        self.assertEqual(2, len(blocks))
+                        self.assertNotIn("--apply", blocks[0])
+                        self.assertIn("--apply", blocks[1])
+                self.assertIn("doctor", extract(linux)[1])
+                self.assertIn("doctor", extract(mac)[1])
                 self.assertIn("--client claude", text)
                 self.assertIn("Python 3.12", text)
 
