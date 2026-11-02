@@ -53,6 +53,32 @@ class ChatGPTNormalChatTests(unittest.TestCase):
         self.assertIn("Do not auto-download engine binaries", reference)
         self.assertIn("Never put user design files in Toolkit", reference)
 
+    def test_original_executor_failover_after_sandbox_network_block(self):
+        """Source contract for the observed #499 network-partitioned ChatGPT session."""
+        router = (ROUTER / "SKILL.md").read_text(encoding="utf-8")
+        reference = EXECUTION.read_text(encoding="utf-8")
+        originals = (PLUGIN / "skills/toolkit-ui-review/references/ORIGINALS.md").read_text(encoding="utf-8")
+        self.assertIn("ORIGINAL_EXECUTOR_FAILOVER", router)
+        self.assertIn("ORIGINAL_EXECUTOR_FAILOVER", reference)
+        self.assertIn("ORIGINAL_EXECUTOR_FAILOVER", originals)
+        for required in (
+            "source acquisition, installed skill, native invocation",
+            "another currently connected and authorized executor",
+            "fresh isolated workspace",
+            "original unchanged launchers",
+            "existing dirty checkout",
+            "BLOCKED_ORIGINAL_EXECUTOR",
+            "ORIGINAL_INSPECT_FAILED",
+            "Independent Playwright/Chromium QA",
+            "not a downloadable chat artifact",
+            "full original process",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, reference)
+        self.assertIn("explicit refusal remains a boundary", originals)
+        self.assertIn("never Work/Codex by default", reference)
+        self.assertIn("unrelated Playwright PASS", router)
+
     def test_existing_plugin_source_does_not_advertise_fictitious_tools(self):
         manifest = json.loads((PLUGIN / "plugin.json").read_text(encoding="utf-8"))
         capabilities = manifest["extensions"]["com.openai"]["interface"]["capabilities"]
