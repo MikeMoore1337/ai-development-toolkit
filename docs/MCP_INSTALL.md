@@ -28,19 +28,46 @@ The installer writes `.codex/config.toml` or `.mcp.json` in that project; it doe
 
 ## Windows PowerShell
 
-Run from the Toolkit checkout; the selected project directory must already exist.
+**Two different paths are required:** `$toolkit` is the checkout of **AI Development Toolkit** (the folder containing `scripts\toolkit_mcp.py`); `$project` is the **existing project where you want Codex to use Toolkit**, for example `your-fitness-coach`. Point `$project` to the Toolkit repository only when you intentionally want MCP inside Toolkit itself. The installer configures that project, not all Codex workspaces.
+
+**1. Check Python first.** Run `py --list-paths` and `py -3 --version` in PowerShell. The selected Python must be **3.12 or newer**. `py -3.12` works only if that exact version is installed; `py -3` selects the available Python 3 runtime. If `py` is unavailable, check `python --version` and use `python` instead of `py -3` in the examples below, provided the version is 3.12+. Otherwise install Python from [python.org](https://www.python.org/downloads/windows/), reopen PowerShell and repeat the check. A `No suitable Python runtime found` message means the installer **has not started**.
+
+**2. Set the paths and validate them.** The examples below use Windows folders; replace both with your actual paths. You may run this block from **any** PowerShell directory because the installer script is referenced by its absolute path.
 
 ~~~powershell
-$project = 'C:\Work\existing-project'
-py -3.12 scripts/toolkit_mcp.py install --client codex --project $project
+$toolkit = 'D:\Pet-projects\ai-development-toolkit'
+$project = 'D:\Pet-projects\your-fitness-coach'
+$script = Join-Path $toolkit 'scripts\toolkit_mcp.py'
+if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { throw 'Toolkit not found: check $toolkit' }
+if (-not (Test-Path -LiteralPath $project -PathType Container)) { throw 'Project not found: check $project' }
+py -3 -c "import sys; assert sys.version_info >= (3, 12), 'Python 3.12+ required'; print(sys.version)"
 ~~~
 
-**Stop and review the preview.** Verify the project path, MCP server name and proposed config changes, then run the following command separately:
+**3. Preview the changes (read-only).** In the **same PowerShell session**, run:
 
 ~~~powershell
-py -3.12 scripts/toolkit_mcp.py install --client codex --project $project --apply
-py -3.12 scripts/toolkit_mcp.py doctor --client codex --project $project
+py -3 $script install --client codex --project $project
 ~~~
+
+Review the target folder, MCP registration name and exact proposed changes. A preview is not an installation.
+
+**4. Apply only if the preview is correct.**
+
+~~~powershell
+py -3 $script install --client codex --project $project --apply
+~~~
+
+This writes the project-scoped `.codex/config.toml` while preserving unrelated configuration.
+
+**5. Validate the configuration.**
+
+~~~powershell
+py -3 $script doctor --client codex --project $project
+~~~
+
+Then restart **Codex Desktop** with the chosen project open and request `toolkit_catalog` followed by `toolkit_read_skill` for `qa-strategy`. The `doctor` result verifies configuration, not live client discovery. The project-scoped installer does **not** require Codex CLI. If you open a new terminal between steps, repeat step 2 to restore the variables.
+
+If you want Toolkit available across **all** your Codex projects instead of configuring each one separately, see [Personal MCP](ONE_COMMAND_SETUP.md); it has different installation commands and tool names.
 
 ## Linux bash
 
