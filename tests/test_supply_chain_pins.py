@@ -48,6 +48,7 @@ class SupplyChainPinTests(unittest.TestCase):
             "cisco-mcp-smoke.yml", "episodic-memory-windows.yml",
             "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
             "publish-integration-sources.yml", "release-archive.yml",
+            "github-observe-export.yml",
             "validate.yml", "replica-public-parity.yml", "harness2-upstream.yml",
             "ecc-agentshield.yml", "ecc-memory-vault.yml", "ecc-observability.yml", "ecc-gap-catalog.yml", "native-upstream-acceptance.yml",
         }
@@ -55,6 +56,12 @@ class SupplyChainPinTests(unittest.TestCase):
         observed = {}
         for path in paths:
             references = ACTION.findall(path.read_text(encoding="utf-8"))
+            if path.name == "github-observe-export.yml":
+                # Reviewed GitHub-native metadata emitter deliberately installs
+                # no GitHub Action and uses no checkout/token/third-party code.
+                self.assertEqual(references, [])
+                self.assertIn("permissions: {}", path.read_text(encoding="utf-8"))
+                continue
             self.assertTrue(references, path.as_posix())
             for value in references:
                 with self.subTest(path=path.name, reference=value):

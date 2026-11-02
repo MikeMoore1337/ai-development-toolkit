@@ -35,8 +35,8 @@ Toolkit содержит настоящий **MCP-сервер stdio** (`scripts
 **2. Укажите обе папки и проверьте их.** Замените пути в примере на свои. Команды можно выполнять **из любой папки PowerShell**: для скрипта используется абсолютный путь.
 
 ~~~powershell
-$toolkit = 'D:\Pet-projects\ai-development-toolkit'
-$project = 'D:\Pet-projects\your-fitness-coach'
+$toolkit = 'C:\path\to\ai-development-toolkit'
+$project = 'C:\path\to\my-project'
 $script = Join-Path $toolkit 'scripts\toolkit_mcp.py'
 if (-not (Test-Path -LiteralPath $script -PathType Leaf)) { throw 'Не найдена папка Toolkit: проверьте $toolkit' }
 if (-not (Test-Path -LiteralPath $project -PathType Container)) { throw 'Не найдена папка проекта: проверьте $project' }
