@@ -27,8 +27,10 @@ reading/invocation and record `skill_activation_observed` explicitly.
 
 ## Preflight (no network, no writes, no agent calls)
 
+Replace the placeholder path below with your actual local Toolkit directory.
+
 ```powershell
-cd D:\Pet-projects\ai-development-toolkit
+cd C:\path\to\ai-development-toolkit
 py -3 scripts/agent_eval_runner.py --provider codex
 py -3 scripts/agent_eval_runner.py --provider claude
 ```
