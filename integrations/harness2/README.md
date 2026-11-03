@@ -87,3 +87,45 @@ a configured benchmark, a model result or a Windows WSL2 installation.
 
 
 **Artifact-root compatibility:** `artifacts` uses upstream's actual `HARNESS2_RUNS_DIR` (default `source/runs`) rather than a fixed location. The path is canonically resolved before listing, rejecting symlinks in intermediate components that would escape the current user's home. Only `judged.json` filenames are listed, never file contents. Out-of-home paths are rejected.
+
+## Opt-in free-cloud Windows/WSL2 OpenCode acceptance (Groq Free)
+
+A separate, **explicitly confirmed** Windows entry point exercises the pinned original
+OpenCode agent against the owner's verified **Groq Free** provider through an existing
+FreeLLMAPI desktop gateway. Unlike `cli.sh`, this mode **does invoke a cloud model**.
+It does not run the Harness² Propose–Probe–Compose evaluation or a judge.
+
+Prerequisites: original pinned Harness², OpenCode and JobBench dependencies already
+installed in unprivileged Ubuntu WSL2; Windows Python 3.x (`py.exe -3`);
+FreeLLMAPI Desktop **running locally on Windows**, with one enabled Groq Free key;
+`openai/gpt-oss-20b` explicitly allowed by **both** Groq organization and project.
+From PowerShell at the Toolkit checkout root:
+
+```powershell
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeCheck
+# One bounded live model test, ONLY after confirming the Groq account's Free plan:
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeSmoke -ConfirmGroqFree
+```
+
+`GroqFreeCheck` calls the **original** `harness2-check --bench jb` with dummy local
+judge configuration. It makes no model calls; a PASS verifies installation and
+configuration only, **not** a usable judge or an evaluated benchmark score.
+`GroqFreeSmoke` rechecks JobBench, starts a short-lived WSL2 loopback bridge to the
+existing Windows FreeLLMAPI process, launches the **original pinned OpenCode source**
+through its Bun entry point, and independently verifies a real `read` tool call
+against a disposable sentinel file and the exact AI response.
+
+Safety: Windows-only gateway credentials never enter WSL, CLI arguments, repository
+or output logs. The WSL bridge has a random ephemeral bearer, binds only to
+`127.0.0.1`, allows only `groq:openai/gpt-oss-20b` and
+`groq:openai/gpt-oss-120b`, at most six inference requests, and at most 512
+output tokens per request. All agent tools except `read` are denied. The shell
+passes `/dev/null` as stdin to avoid native OpenCode's otherwise blocking pipe
+read, stops the bridge, and removes the temporary workspace on exit. It does not
+install a model, modify WSL/proxy defaults, change existing provider keys, or
+fall back to other/paid endpoints. A failed upstream response is **FAIL**, never
+silently reclassified as success.
+
+Original JobBench pilot rollouts and independent rubric judging remain separate,
+more expensive experimental operations; **neither is authorized or validated by
+this smoke test**. Do not report a benchmark score from `GroqFreeSmoke`.
