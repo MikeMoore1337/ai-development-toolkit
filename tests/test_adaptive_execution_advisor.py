@@ -67,6 +67,22 @@ class AdvisorTests(unittest.TestCase):
         self.assertEqual(current["model_selection_policy"], "CURRENT_MODEL_ONLY")
         self.assertFalse(current["automatic_model_selection_allowed"])
 
+    def test_unknown_per_call_quota_does_not_block_read_only_advice(self):
+        for locale in ("ru", "en"):
+            req = {**self.req(), "locale": locale,
+                   "delegation": "VERIFIED", "switching": "UNAVAILABLE",
+                   "zero_incremental_cost_verified": False}
+            advice = advisor.advise(req)
+            self.assertEqual(advice["recommended_mode"],
+                             "RECOMMEND_WITH_CONFIRMATION")
+            opts = {item["mode"]: item for item in advice["options"]}
+            self.assertTrue(opts["RECOMMEND_WITH_CONFIRMATION"]["enabled"])
+            self.assertFalse(opts["AUTO_OPT_IN"]["enabled"])
+            self.assertFalse(advice["automatic_model_selection_allowed"])
+            self.assertEqual(advice["quota_remaining"], "UNKNOWN")
+            self.assertEqual(advice["quota_savings"], "NOT_MEASURED")
+            self.assertEqual(advice["extra_model_calls"], 0)
+
     def test_one_model_only(self):
         req = self.req()
         req["available_models"] = ["primary"]

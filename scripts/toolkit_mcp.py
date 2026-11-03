@@ -136,7 +136,8 @@ def _tool_defs() -> list[dict]:
              "target_model": {"type": "string"}, "state": {"type": "object"},
              "client_snapshot": {"type": "object"}, "context": {"type": "string"},
              "confirmed_for_this_call": {"type": "boolean"},
-             "native_runtime": {"type": "string", "enum": ["V1", "V2"]}},
+             "native_runtime": {"type": "string", "enum": ["V1", "V2"]},
+             "subscription_guard": {"type": "object"}},
              "required": ["request", "consent", "target_model", "state",
                           "client_snapshot", "context", "confirmed_for_this_call"],
              "additionalProperties": False},
@@ -486,7 +487,7 @@ def invoke(tool: str, args: dict) -> dict:
         else:
             expected = {"plan", "spawn_response", "wait_response"}
         extra = ({"host_claimed_one_shot_lease"} if tool == "toolkit_codex_review_delegation"
-                 else {"native_runtime"})
+                 else {"native_runtime", "subscription_guard"})
         if not expected <= set(args) or set(args) - expected - extra:
             raise ValueError("Invalid Codex orchestration arguments")
         contract = _codex_orchestration_module()
@@ -494,7 +495,8 @@ def invoke(tool: str, args: dict) -> dict:
             return contract.prepare(args["request"], args["consent"], args["target_model"],
                                     args["state"], args["client_snapshot"], args["context"],
                                     confirmed_for_this_call=args["confirmed_for_this_call"],
-                                    native_runtime=args.get("native_runtime", "V1"))
+                                    native_runtime=args.get("native_runtime", "V1"),
+                                    subscription_guard=args.get("subscription_guard"))
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
     if tool == "toolkit_preflight_parallel_plan":

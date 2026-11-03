@@ -78,6 +78,27 @@ class AdvisorSourceContract(unittest.TestCase):
         ):
             self.assertIn(required, src)
 
+    def test_missing_quota_meter_does_not_hide_recommendation_or_auto_grant(self):
+        src = SCRIPT.read_text(encoding="utf-8")
+        for phrase in (
+            "COST / QUOTA ADVISORY BOUNDARY (#401)",
+            "must NEVER suppress a useful MODEL RECOMMENDATION",
+            "Unknown per-call quota telemetry",
+            "RECOMMEND_WITH_CONFIRMATION remains a valid ADVICE mode",
+            "subscription_guard",
+            "owner_confirmed_this_call",
+            "credit_balance_zero_observed",
+            "automatic_topup_disabled_observed",
+            "included_allowance_remaining_observed",
+            "unknown_per_call_usage_acknowledged",
+            "OWNER DECLARATIONS",
+            "manual Codex UI",
+            "AUTO_OPT_IN without verified zero-incremental-cost evidence",
+        ):
+            self.assertIn(phrase, src)
+        self.assertIn("Do not invent remaining percentage", src)
+        self.assertIn("Never use a paid API", src)
+
     def test_simple_tasks_not_interrupted_and_refusal_is_final(self):
         src = SCRIPT.read_text(encoding="utf-8")
         for token in (

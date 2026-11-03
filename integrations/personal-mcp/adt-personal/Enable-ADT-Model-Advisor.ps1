@@ -113,6 +113,25 @@ HEURISTIC recommendation, not a verified performance ranking. If comparative cos
 label it UNKNOWN, do not fabricate savings or rank by unsupported facts,
 and offer to continue on the current model. Never make a paid API call
 to measure performance or discover availability.
+COST / QUOTA ADVISORY BOUNDARY (#401): Failure to obtain an exact per-call
+quota or cost receipt must NEVER suppress a useful MODEL RECOMMENDATION or
+the user-choice question. A verified live model inventory and genuine task
+fit may justify suggesting one model even while subscription quota usage
+is UNKNOWN. UNKNOWN is NOT proof of free execution, but also NOT proof
+that every consultation costs extra money. Distinguish:
+- ADVICE: read-only, no billing attestation or extra-model call required.
+- PRIMARY-MODEL CHANGE: usually user selects model in Codex UI; suggesting
+  such a switch adds NO subagent call and may be more quota-efficient.
+- SUBAGENT CALL: requires exact per-call consent (unless separately
+  bounded AUTO_OPT_IN), trustworthy native tools, one-shot lease, and
+  applicable included-usage billing guard. Do not replace this with a
+  general statement that cost cannot be verified.
+If billing or quota cannot be measured by the host, offer the user a
+CHOICE and state the missing evidence. Do not invent remaining percentage,
+per-call price, or zero-cost guarantee. Do not poll for a billing tool
+which Codex Desktop does not expose. Continue implementing with the current
+model when the user declines or does not answer.
+
 Use its task profiles and source guidance plus the actual task to assess,
 once per task and at genuine new risk boundaries, whether independent model
 review may materially improve correctness. If toolkit_route_task has already
@@ -132,7 +151,9 @@ SINGLE_MODEL_SUFFICIENT if not; or CAPABILITY_UNAVAILABLE when the
 host cannot verify live model availability/delegation/cost.
 On `REVIEW_CANDIDATE` for a real security/concurrency/integrity risk,
 surface a concise opt-in chat choice BEFORE implementing high-risk edits
-unless live capability is verified unavailable. No request for models,
+unless live model delegation and manual UI selection are both confirmed
+unavailable. Unknown per-call quota telemetry is NOT a reason to suppress
+the choice; it can block execution until owner confirmation. No request for models,
 consent or execution is implied by the MCP hint itself.
 If `model_advisor` is absent from the tool response, treat this as a
 stale Personal MCP adapter: do not claim the new advisory gate ran, and
@@ -192,7 +213,9 @@ Codex Desktop modal/overlay exists.
 
 Only suggest named models when the active Codex client's CURRENT native
 model inventory provides them. Never invent entitlement, model availability,
-quota, billing provenance or backend model identity. If native inventory
+quota, billing provenance or backend model identity. A known model catalog
+with UNKNOWN per-call quota cost still permits recommending a suitable
+model and asking first. If native inventory
 is UNKNOWN but a new material risk is REVIEW_CANDIDATE, do NOT silently
 discard the advisory. Show at most one concise honest suggestion that a
 second opinion might help, with risk reason, and explicitly say model
@@ -200,7 +223,9 @@ availability is NOT VERIFIED. Offer SINGLE_MODEL (continue now), or
 RECOMMEND_WITH_CONFIRMATION (first verify native expert availability,
 then request separate consent); AUTO_OPT_IN is DISABLED until a verified
 native inventory, host execution capability, zero-extra-cost permission
-and scoped consent exist. Do not suggest actual model names or pretend
+and scoped consent exist. When AUTO is disabled for unavailable billing
+evidence, RECOMMEND_WITH_CONFIRMATION remains a valid ADVICE mode; do
+not conflate a blocked extra call with a blocked recommendation. Do not suggest actual model names or pretend
 there is a usable choice before host verification. Never block safe task
 progress solely due to missing inventory, or run unknown models.
 If the host explicitly confirms delegation is UNAVAILABLE, only note
@@ -234,20 +259,48 @@ tools and local Python interpreter, but never Codex CLI:
    spawn_agent with task_name, model, fork_turns and list_agents with
    agent_status; model override must actually be offered in the tool schema.
    No matching tools or insufficient model override -> SINGLE_MODEL fallback.
-2. Verify the current native model inventory, permitted quota/cost route,
+2. Verify the current native model inventory, native ChatGPT-account route,
    task-scoped consent, chosen model and inventory revision; UNKNOWN is not
-   VERIFIED. For V2 set client_snapshot.native_runtime=V2 and
+   VERIFIED. Do NOT require the client to expose an exact per-call quota
+   meter before ASKING which model the user prefers. For execution:
+   a) If real zero-incremental-cost evidence exists, use the original
+      zero_incremental_cost_verified=true contract, honestly sourced.
+   b) Otherwise, ONLY for one RECOMMEND_WITH_CONFIRMATION consultation,
+      after explicit owner confirmation of THIS model and call, request
+      confirmation of all current facts: ChatGPT subscription login,
+      no paid API route, credit balance observed ZERO, automatic credit
+      top-up observed OFF, included allowance observed REMAINING, and
+      consent to unmetered (UNKNOWN) per-call quota consumption.
+      Set zero_incremental_cost_verified=false (do not forge true).
+      Pass subscription_guard with exact task_id, inventory_revision,
+      requested_model, route=CODEX_CHATGPT_SUBSCRIPTION, and booleans
+      owner_confirmed_this_call=true, paid_api_route_disabled=true,
+      credit_balance_zero_observed=true,
+      automatic_topup_disabled_observed=true,
+      included_allowance_remaining_observed=true,
+      unknown_per_call_usage_acknowledged=true.
+      These are OWNER DECLARATIONS, NOT independent billing proof.
+      Never invent/assume them or reuse old confirmations.
+      If any are unknown, skip native spawn and recommend manual Codex UI
+      model selection instead. Never use a paid API, credit balance, or
+      automatic top-up to complete this optional review.
+   c) AUTO_OPT_IN without verified zero-incremental-cost evidence remains
+      BLOCKED. A manual included-allowance attestation never enables AUTO.
+   For V2 set client_snapshot.native_runtime=V2 and
    client_snapshot.native_model_override=VERIFIED ONLY after checking the
    actual exposed native tool schema. Never trust a model's assertion alone.
 3. Request read-only toolkit_codex_prepare_delegation with the approved
    task/request/consent/state/snapshot/minimal context and native_runtime
-   V1 or V2. A preflight plan/fingerprint is NOT a reservation.
+   V1 or V2; include exact subscription_guard only for user-approved
+   manual included-allowance mode. A preflight plan/fingerprint is NOT
+   a reservation.
 4. Use the trusted local Toolkit source's
    scripts/codex_host_one_shot.py via local Python (NOT Codex CLI).
    Call init --root on a host-approved private, absolute user ledger path,
    preferably inside CODEX_HOME or ~/.codex, only after consent. On Windows,
    the host must verify its filesystem ACL separately. Send claim --root required
-   bounded JSON exclusively by stdin; do not persist user prompts, print
+   bounded JSON exclusively by stdin (including subscription_guard when
+   applicable); do not persist user prompts, print
    raw context in logs, or substitute an untrusted script. The claim must
    return HOST_ONE_SHOT_RESERVED for this exact plan before native spawn.
    This is a trusted host-owned one-shot claim, without retry or bypass.
