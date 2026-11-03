@@ -82,12 +82,31 @@ class CodexV2Tests(unittest.TestCase):
         p = self.plan()
         ref = p["native_spawn_arguments"]["task_name"]
         for returned in (ref, "/root/" + ref):
-            result = contract.review(p, {"task_name": returned}, self.complete(p),
+            agents = {"agents": [{"agent_name": returned,
+                                  "agent_status": {"completed": "Synthetic review"}}]}
+            result = contract.review(p, {"task_name": returned}, agents,
                                      host_claimed_one_shot_lease=True)
             self.assertEqual(result["status"], "HOST_COMPLETED_MODEL_UNVERIFIED")
             self.assertEqual(result["native_reference_kind"], "TASK_NAME")
             self.assertEqual(result["observed_model"], "UNKNOWN")
             self.assertEqual(result["backend_model_attestation"], "NOT_VERIFIED")
+
+    def test_nested_canonical_task_ref_is_accepted_without_cross_tree_alias(self):
+        p = self.plan()
+        ref = p["native_spawn_arguments"]["task_name"]
+        canonical = "/root/security_review/" + ref
+        actual = {"agents": [{"agent_name": canonical,
+                              "agent_status": {"completed": "Done"}}]}
+        result = contract.review(p, {"task_name": canonical}, actual)
+        self.assertEqual(result["status"], "HOST_COMPLETED_MODEL_UNVERIFIED")
+        unrelated = {"agents": [{"agent_name": "/root/other/" + ref,
+                                 "agent_status": {"completed": "Unrelated"}}]}
+        report = contract.review(p, {"task_name": canonical}, unrelated)
+        self.assertEqual(report["status"], "HOST_RESULT_NOT_CONFIRMED")
+        for forged in ("/root/../" + ref, "/different_parent/" + ref,
+                       "/root//" + ref):
+            with self.subTest(forged=forged), self.assertRaises(ValueError):
+                contract.review(p, {"task_name": forged}, actual)
 
     def test_missing_proof_and_unknown_runtime_fail_closed(self):
         with self.assertRaisesRegex(ValueError, "UNSUPPORTED_NATIVE_RUNTIME"):

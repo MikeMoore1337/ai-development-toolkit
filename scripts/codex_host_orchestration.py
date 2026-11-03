@@ -196,9 +196,18 @@ def review(plan: dict, spawn_response: dict, wait_response: dict,
                 "task_name" not in spawn_response):
             raise HostOrchestrationError("INVALID_SPAWN_RESPONSE")
         task_ref = spawn_response["task_name"]
-        accepted_refs = {expected, "/root/" + expected}
-        if not isinstance(task_ref, str) or task_ref not in accepted_refs:
+        # Spawn returns a CANONICAL path under the current parent, which
+        # may be /root/parent/child rather than /root/child.
+        canonical = (isinstance(task_ref, str) and len(task_ref) <= 512
+                     and task_ref.startswith("/root/")
+                     and task_ref.endswith("/" + expected)
+                     and all(segment.isascii() and
+                             segment.replace("_", "").isalnum() and
+                             segment == segment.lower() and segment
+                             for segment in task_ref[6:].split("/")))
+        if not (task_ref == expected or canonical):
             raise HostOrchestrationError("MISMATCHED_SPAWN_TASK")
+        accepted_refs = ({task_ref} if canonical else {expected, "/root/" + expected})
         if ("nickname" in spawn_response and spawn_response["nickname"] is not None
                 and not isinstance(spawn_response["nickname"], str)):
             raise HostOrchestrationError("INVALID_NICKNAME")
