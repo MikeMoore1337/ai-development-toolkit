@@ -11828,6 +11828,26 @@
       "notes": "Original read-only two-stage Codex native-tool preview and response-normalization contract (#357); host lease and actual model attestation unverified."
     },
     {
+      "id": "codex-401-tests-test-codex-host-v2-py",
+      "path": "tests/test_codex_host_v2.py",
+      "name": "test_codex_host_v2.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PROACTIVE_MODEL_ADVISOR.md",
+      "last_reviewed": "2026-11-03",
+      "distribution": "included",
+      "notes": "Offline guarded Codex V2 spawn/list_agents preflight, host one-shot reservation, source-only negative and MCP contract tests; actual backend model remains unverified."
+    },
+    {
       "id": "adapters-357-tests-test-codex-native-bridge-py",
       "path": "tests/test_codex_native_bridge.py",
       "name": "test_codex_native_bridge.py",

@@ -6,6 +6,18 @@ For an explicitly selected original third-party controller, the host must skip T
 
 Unix installer: optional `--skip-global-instructions`; Windows installer: `-SkipGlobalInstructions`. Update existing global instructions/installed hooks separately.
 
+## Personal MCP 0.1.16 - guarded Codex V1/V2 native delegation (#401)
+
+The optional read-only `toolkit_codex_prepare_delegation` accepts
+`native_runtime=V2` for a host with a verified V2 native model override.
+V2 preflight uses `spawn_agent(task_name, model, fork_turns=none)`;
+`list_agents` supplies its completion evidence. The legacy V1 contract
+remains the default. A separately invoked local
+`scripts/codex_host_one_shot.py init/claim/record` prevents repeated
+attempts for the same approved task. None of these modules invokes
+native tools, authenticates billing or verifies the actual backend
+model. Consult the [host flow](../../docs/PROACTIVE_MODEL_ADVISOR.md).
+
 ## Stage-aware guidance (source MCP 0.1.15)
 
 `toolkit_prepare_task` remains compatible: `max_skills` is a batch size (default 3, maximum 8), not a task-wide limit. At a meaningful change of stage, requirements, defects or test results, the client calls `toolkit_prepare_stage` with the original `task`, a concise `stage` and, when it has enough evidence, up to `max_skills` justified `requested_skills`. With no explicit selection the existing heuristic suggests and reads at most its primary skill. Selection is advisory, not semantic completeness; inspect the task, original restrictions and project rules.
