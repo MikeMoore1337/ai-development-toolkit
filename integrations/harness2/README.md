@@ -42,7 +42,7 @@ bash integrations/harness2/install.sh status
 bash integrations/harness2/install.sh remove --confirm
 ```
 
-Removal deletes only the exact marked installation directory after checkout/SHA/origin verification. It never deletes upstream output stored outside that directory. On an interrupted install, inspect the partial directory yourself before cleaning up; do not rerun installer with elevated privileges.
+Removal deletes only the exact marked installation directory after checkout/SHA/origin verification. It never deletes upstream output stored outside that directory. A failed installation normally cleans up only the new directory created by that invocation; any pre-existing directory and its files are preserved. After an abrupt process termination, inspect any partial directory manually before cleanup; never retry with elevated privileges.
 
 ## Readiness and validation
 
@@ -86,4 +86,4 @@ CLI help, official setup preview and fail-closed checks. It is **not** proof of
 a configured benchmark, a model result or a Windows WSL2 installation.
 
 
-**Artifact-root compatibility:** `artifacts` uses upstream's actual `HARNESS2_RUNS_DIR` (default `source/runs`) rather than a fixed location. Its read-only listing stays inside the current user's home and lists only `judged.json` filenames, never file contents. Out-of-home paths are rejected.
+**Artifact-root compatibility:** `artifacts` uses upstream's actual `HARNESS2_RUNS_DIR` (default `source/runs`) rather than a fixed location. The path is canonically resolved before listing, rejecting symlinks in intermediate components that would escape the current user's home. Only `judged.json` filenames are listed, never file contents. Out-of-home paths are rejected.

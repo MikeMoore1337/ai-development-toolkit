@@ -54,14 +54,20 @@ case "$action" in
     runs_root="$("$BIN/python" -c 'from harness2 import config; print(config.RUNS)')"
     [[ "$runs_root" == "$HOME/"* ]] || fail 'upstream runs root must be inside user home'
     [[ "$runs_root" != "$HOME" && "$runs_root" != "$SRC" ]] || fail 'unsafe runs root'
+    # A symlink in an intermediate path component can escape HOME even when
+    # the final runs directory is not itself a symlink. Resolve before finding.
+    command -v realpath >/dev/null || fail 'realpath required for safe artifact discovery'
+    canonical_home="$(realpath -e -- "$HOME")" || fail 'cannot resolve HOME'
+    canonical_runs="$(realpath -m -- "$runs_root")" || fail 'cannot resolve runs root'
+    [[ "$canonical_runs" == "$canonical_home/"* ]] || fail 'resolved runs root outside user home'
     if [[ -n "${HARNESS2_RUNS_DIR:-}" && -L "$HARNESS2_RUNS_DIR" ]]; then
       fail 'linked custom runs root'
     fi
     [[ ! -L "$runs_root" ]] || fail 'linked upstream runs root'
-    printf 'HARNESS2_RUNS_ROOT=%s\n' "$runs_root"
-    [[ -d "$runs_root" ]] || { printf 'HARNESS2_ARTIFACTS=NOT_PRESENT\n'; exit 0; }
+    printf 'HARNESS2_RUNS_ROOT=%s\n' "$canonical_runs"
+    [[ -d "$canonical_runs" ]] || { printf 'HARNESS2_ARTIFACTS=NOT_PRESENT\n'; exit 0; }
     # Only report filenames. Do not traverse symlinks to private files.
-    find -P "$runs_root" -type f -name 'judged.json' -print | sort
+    find -P "$canonical_runs" -type f -name 'judged.json' -print | sort
     ;;
   setup)
     [[ $# == 2 && "$2" == --confirm-network-downloads ]] || fail 'setup requires BENCH --confirm-network-downloads'
