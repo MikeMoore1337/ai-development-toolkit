@@ -52,6 +52,7 @@ def _digest(payload: dict) -> str:
 def prepare(
     request: dict, consent: dict, target_model: str, state: dict,
     client_snapshot: dict, context: str, *, confirmed_for_this_call: bool,
+    native_runtime: str = "V1",
 ) -> dict:
     """Fail-closed *advice*, not an executable permission or atomic lease.
 
@@ -82,23 +83,33 @@ def prepare(
             or client_snapshot.get("inventory_status") != "VERIFIED"
             or client_snapshot.get("delegation") != "VERIFIED"):
         raise HostOrchestrationError("STALE_OR_UNVERIFIED_SNAPSHOT")
-    spawn = {
-        "model": target_model,
-        "message": context,
-        "fork_context": False,
-    }
+    if native_runtime not in ("V1", "V2"):
+        raise HostOrchestrationError("UNSUPPORTED_NATIVE_RUNTIME")
+    if native_runtime == "V2" and (
+            client_snapshot.get("native_runtime") != "V2"
+            or client_snapshot.get("native_model_override") != "VERIFIED"):
+        raise HostOrchestrationError("V2_MODEL_OVERRIDE_NOT_VERIFIED")
+    if native_runtime == "V1":
+        spawn = {"model": target_model, "message": context, "fork_context": False}
+    else:
+        # Opaque, deterministic, privacy-preserving one-shot name. Never echo
+        # the raw task ID into native task names or durable records.
+        task_name = "adt_review_" + hashlib.sha256(
+            request["task_id"].encode("utf-8")).hexdigest()[:16]
+        spawn = {"task_name": task_name, "model": target_model,
+                 "message": context, "fork_turns": "none"}
     # The fingerprint binds the returned preview to content but is not secret,
     # cannot authenticate the host, and cannot prevent replay.
     plan = {
-        "schema_version": 1, "task_id": request["task_id"],
+        "schema_version": 1 if native_runtime == "V1" else 2, "task_id": request["task_id"],
         "inventory_revision": request["inventory_revision"],
         "requested_model": target_model, "primary_model": request["current_model"],
         "mode": approval["authorized_mode"],
         "status": "PREFLIGHT_ONLY_NOT_EXECUTED",
-        "native_spawn_tool": "multi_agent_v1__spawn_agent",
+        "native_spawn_tool": ("multi_agent_v1__spawn_agent" if native_runtime == "V1" else "spawn_agent"),
         "native_spawn_arguments": spawn,
-        "native_wait_tool": "multi_agent_v1__wait_agent",
-        "native_wait_timeout_ms": 10000,
+        "native_wait_tool": ("multi_agent_v1__wait_agent" if native_runtime == "V1" else "list_agents"),
+        "native_wait_timeout_ms": 10000 if native_runtime == "V1" else 300000,
         "expected_extra_calls_after_claim": used + 1,
         "host_atomic_lease_required": True,
         "host_lease_observed": False,
@@ -106,81 +117,141 @@ def prepare(
         "observed_model": "UNKNOWN",
         "billing_attestation": "CALLER_DECLARED_NOT_INDEPENDENTLY_ATTESTED",
     }
+    if native_runtime == "V2":
+        plan["native_runtime"] = "V2"
     plan["plan_fingerprint"] = _digest(plan)
     return plan
 
 
 def review(plan: dict, spawn_response: dict, wait_response: dict,
            *, host_claimed_one_shot_lease: bool = False) -> dict:
-    """Interpret one supplied host spawn and wait response, no native calls.
+    """Validate one host-supplied V1/V2 spawn and completion snapshot.
 
-    A host claiming a one-shot lease is NOT proof of atomicity. Callers must
-    never pass this result off as independent telemetry.
+    V2's wait_agent returns mailbox metadata, NOT completion content.
+    The host must use native list_agents to provide the task's completed
+    agent_status. No caller-supplied response authenticates actual execution.
     """
-    if not isinstance(plan, dict) or set(plan) != {
+    base_fields = {
         "schema_version", "task_id", "inventory_revision", "requested_model",
         "primary_model", "mode", "status", "native_spawn_tool",
         "native_spawn_arguments", "native_wait_tool", "native_wait_timeout_ms",
         "expected_extra_calls_after_claim", "host_atomic_lease_required",
         "host_lease_observed", "host_executed", "observed_model",
         "billing_attestation", "plan_fingerprint",
-    }:
+    }
+    if not isinstance(plan, dict) or plan.get("schema_version") not in (1, 2):
+        raise HostOrchestrationError("INVALID_PREFLIGHT_PLAN")
+    v2 = plan["schema_version"] == 2
+    if set(plan) != (base_fields | ({"native_runtime"} if v2 else set())):
         raise HostOrchestrationError("INVALID_PREFLIGHT_PLAN")
     original = {k: v for k, v in plan.items() if k != "plan_fingerprint"}
     if not isinstance(plan["plan_fingerprint"], str) or _digest(original) != plan["plan_fingerprint"]:
         raise HostOrchestrationError("PLAN_FINGERPRINT_MISMATCH")
-    spawn_args = plan["native_spawn_arguments"]
-    if (plan["schema_version"] != 1 or plan["status"] != "PREFLIGHT_ONLY_NOT_EXECUTED"
-            or plan["native_spawn_tool"] != "multi_agent_v1__spawn_agent"
-            or plan["native_wait_tool"] != "multi_agent_v1__wait_agent"
-            or type(plan["native_wait_timeout_ms"]) is not int
-            or not 10000 <= plan["native_wait_timeout_ms"] <= 3600000
-            or type(plan["expected_extra_calls_after_claim"]) is not int
-            or not 1 <= plan["expected_extra_calls_after_claim"] <= 10
-            or plan["host_atomic_lease_required"] is not True
-            or plan["host_lease_observed"] is not False
-            or plan["host_executed"] is not False
-            or plan["observed_model"] != "UNKNOWN"
-            or not isinstance(spawn_args, dict)
-            or set(spawn_args) != {"model", "message", "fork_context"}
-            or spawn_args["model"] != plan["requested_model"]
-            or spawn_args["fork_context"] is not False
-            or not isinstance(spawn_args["message"], str)
-            or not spawn_args["message"].strip()
-            or len(spawn_args["message"]) > 16000):
+
+    args = plan["native_spawn_arguments"]
+    common_valid = (
+        plan["status"] == "PREFLIGHT_ONLY_NOT_EXECUTED"
+        and type(plan["native_wait_timeout_ms"]) is int
+        and 10000 <= plan["native_wait_timeout_ms"] <= 3600000
+        and type(plan["expected_extra_calls_after_claim"]) is int
+        and 1 <= plan["expected_extra_calls_after_claim"] <= 10
+        and plan["host_atomic_lease_required"] is True
+        and plan["host_lease_observed"] is False
+        and plan["host_executed"] is False
+        and plan["observed_model"] == "UNKNOWN"
+        and isinstance(args, dict)
+        and args.get("model") == plan["requested_model"]
+        and isinstance(args.get("message"), str)
+        and bool(args["message"].strip()) and len(args["message"]) <= 16000
+    )
+    if not common_valid:
+        raise HostOrchestrationError("INVALID_NATIVE_PLAN")
+    if v2:
+        expected = "adt_review_" + hashlib.sha256(
+            plan["task_id"].encode("utf-8")).hexdigest()[:16]
+        valid = (
+            plan["native_runtime"] == "V2"
+            and plan["native_spawn_tool"] == "spawn_agent"
+            and plan["native_wait_tool"] == "list_agents"
+            and plan["native_wait_timeout_ms"] == 300000
+            and set(args) == {"model", "message", "task_name", "fork_turns"}
+            and args["task_name"] == expected
+            and args["fork_turns"] == "none"
+        )
+    else:
+        valid = (
+            plan["native_spawn_tool"] == "multi_agent_v1__spawn_agent"
+            and plan["native_wait_tool"] == "multi_agent_v1__wait_agent"
+            and set(args) == {"model", "message", "fork_context"}
+            and args["fork_context"] is False
+        )
+    if not valid:
         raise HostOrchestrationError("INVALID_NATIVE_PLAN")
     if type(host_claimed_one_shot_lease) is not bool:
         raise HostOrchestrationError("INVALID_LEASE_CLAIM")
-    if not isinstance(spawn_response, dict) or set(spawn_response) - {"agent_id", "nickname"} or "agent_id" not in spawn_response:
-        raise HostOrchestrationError("INVALID_SPAWN_RESPONSE")
-    agent_id = _uuid(spawn_response["agent_id"])
-    if ("nickname" in spawn_response and spawn_response["nickname"] is not None
-            and not isinstance(spawn_response["nickname"], str)):
-        raise HostOrchestrationError("INVALID_NICKNAME")
-    if not isinstance(wait_response, dict) or set(wait_response) != {"status", "timed_out"}:
-        raise HostOrchestrationError("INVALID_WAIT_RESPONSE")
-    if type(wait_response["timed_out"]) is not bool:
-        raise HostOrchestrationError("INVALID_TIMEOUT_FLAG")
-    statuses = wait_response["status"]
-    if not isinstance(statuses, dict) or set(statuses) != {agent_id}:
-        raise HostOrchestrationError("MISMATCHED_WAIT_TARGET")
-    entry = statuses[agent_id]
-    success = (wait_response["timed_out"] is False and
-               isinstance(entry, dict) and set(entry) == {"completed"} and
-               isinstance(entry["completed"], str) and bool(entry["completed"].strip()))
+
+    if v2:
+        if (not isinstance(spawn_response, dict) or
+                set(spawn_response) - {"task_name", "nickname"} or
+                "task_name" not in spawn_response):
+            raise HostOrchestrationError("INVALID_SPAWN_RESPONSE")
+        task_ref = spawn_response["task_name"]
+        accepted_refs = {expected, "/root/" + expected}
+        if not isinstance(task_ref, str) or task_ref not in accepted_refs:
+            raise HostOrchestrationError("MISMATCHED_SPAWN_TASK")
+        if ("nickname" in spawn_response and spawn_response["nickname"] is not None
+                and not isinstance(spawn_response["nickname"], str)):
+            raise HostOrchestrationError("INVALID_NICKNAME")
+        if not isinstance(wait_response, dict) or set(wait_response) != {"agents"}:
+            raise HostOrchestrationError("INVALID_AGENT_LIST")
+        agents = wait_response["agents"]
+        if not isinstance(agents, list) or len(agents) > 64:
+            raise HostOrchestrationError("INVALID_AGENT_LIST")
+        matching = []
+        for entry in agents:
+            if (not isinstance(entry, dict) or set(entry) != {"agent_name", "agent_status"}
+                    or not isinstance(entry["agent_name"], str)):
+                raise HostOrchestrationError("INVALID_AGENT_LIST")
+            if entry["agent_name"] in accepted_refs:
+                matching.append(entry["agent_status"])
+        if len(matching) > 1:
+            raise HostOrchestrationError("AMBIGUOUS_AGENT_LIST")
+        status = matching[0] if matching else None
+        success = (isinstance(status, dict) and set(status) == {"completed"}
+                   and isinstance(status["completed"], str)
+                   and bool(status["completed"].strip()))
+        agent_ref = task_ref
+    else:
+        if (not isinstance(spawn_response, dict) or
+                set(spawn_response) - {"agent_id", "nickname"} or
+                "agent_id" not in spawn_response):
+            raise HostOrchestrationError("INVALID_SPAWN_RESPONSE")
+        agent_ref = _uuid(spawn_response["agent_id"])
+        if ("nickname" in spawn_response and spawn_response["nickname"] is not None
+                and not isinstance(spawn_response["nickname"], str)):
+            raise HostOrchestrationError("INVALID_NICKNAME")
+        if not isinstance(wait_response, dict) or set(wait_response) != {"status", "timed_out"}:
+            raise HostOrchestrationError("INVALID_WAIT_RESPONSE")
+        if type(wait_response["timed_out"]) is not bool:
+            raise HostOrchestrationError("INVALID_TIMEOUT_FLAG")
+        statuses = wait_response["status"]
+        if not isinstance(statuses, dict) or set(statuses) != {agent_ref}:
+            raise HostOrchestrationError("MISMATCHED_WAIT_TARGET")
+        status = statuses[agent_ref]
+        success = (wait_response["timed_out"] is False
+                   and isinstance(status, dict) and set(status) == {"completed"}
+                   and isinstance(status["completed"], str)
+                   and bool(status["completed"].strip()))
+
     return {
         "status": "HOST_COMPLETED_MODEL_UNVERIFIED" if success else "HOST_RESULT_NOT_CONFIRMED",
-        "agent_id": agent_id, "task_id": plan["task_id"],
-        "requested_model": plan["requested_model"],
-        "observed_model": "UNKNOWN",
-        "backend_model_attestation": "NOT_VERIFIED",
+        "agent_id": agent_ref, "native_reference_kind": "TASK_NAME" if v2 else "AGENT_UUID",
+        "task_id": plan["task_id"], "requested_model": plan["requested_model"],
+        "observed_model": "UNKNOWN", "backend_model_attestation": "NOT_VERIFIED",
         "host_execution_evidence": "CALLER_SUPPLIED_NATIVE_RESPONSE_NOT_INDEPENDENTLY_ATTESTED",
         "host_lease_evidence": ("CLAIMED_NOT_ATTESTED" if host_claimed_one_shot_lease
                                 else "NOT_OBSERVED"),
-        "model_calls_requested": 1,
-        "extra_calls_used": "HOST_MUST_RECONCILE",
-        "quality_benefit": "NOT_MEASURED",
-        "quota_cost": "NOT_MEASURED",
-        "fallback": "NONE",
-        "retry": "NONE",
+        "model_calls_requested": 1, "extra_calls_used": "HOST_MUST_RECONCILE",
+        "quality_benefit": "NOT_MEASURED", "quota_cost": "NOT_MEASURED",
+        "fallback": "NONE", "retry": "NONE",
     }

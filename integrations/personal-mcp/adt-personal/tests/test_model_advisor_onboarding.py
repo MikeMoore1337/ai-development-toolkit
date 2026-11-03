@@ -78,6 +78,10 @@ class AdvisorSourceContract(unittest.TestCase):
         self.assertIn("toolkit_codex_prepare_delegation", src)
         self.assertIn("toolkit_codex_review_delegation", src)
         self.assertIn("host-owned one-shot claim", src)
+        for required in ("native_runtime", "fork_turns=none", "list_agents",
+                         "AUTO_OPT_IN", "HOST_ONE_SHOT_RESERVED",
+                         "trusted local Toolkit source", "claim --root"):
+            self.assertIn(required, src)
         self.assertIn("without retry", src)
         self.assertIn("not claim a native", src)
         self.assertNotIn("codex mcp add", src)

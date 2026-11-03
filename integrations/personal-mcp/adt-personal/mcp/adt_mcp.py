@@ -17,7 +17,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.15'
+VERSION = '0.1.16'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -988,11 +988,12 @@ def _host_orchestration_tool(tk: Toolkit, name: str, args: dict[str, Any]) -> di
     if name == 'toolkit_codex_prepare_delegation':
         exact = {'request', 'consent', 'target_model', 'state',
                  'client_snapshot', 'context', 'confirmed_for_this_call'}
-        if set(args) != exact:
+        if not exact <= set(args) or set(args) - exact - {'native_runtime'}:
             raise ToolkitError('INVALID_PREPARE_ARGUMENTS')
         return module.prepare(args['request'], args['consent'], args['target_model'],
                               args['state'], args['client_snapshot'], args['context'],
-                              confirmed_for_this_call=args['confirmed_for_this_call'])
+                              confirmed_for_this_call=args['confirmed_for_this_call'],
+                              native_runtime=args.get('native_runtime', 'V1'))
     if name == 'toolkit_codex_review_delegation':
         required = {'plan', 'spawn_response', 'wait_response'}
         if not required <= set(args) or set(args) - required - {'host_claimed_one_shot_lease'}:
@@ -1009,7 +1010,8 @@ TOOLS: list[dict[str, Any]] = [
          'request':{'type':'object'},'consent':{'type':'object'},
          'target_model':{'type':'string'},'state':{'type':'object'},
          'client_snapshot':{'type':'object'},'context':{'type':'string'},
-         'confirmed_for_this_call':{'type':'boolean'}},
+         'confirmed_for_this_call':{'type':'boolean'},
+         'native_runtime':{'type':'string','enum':['V1','V2']}},
          'required':['request','consent','target_model','state','client_snapshot',
                      'context','confirmed_for_this_call'],'additionalProperties':False}},
     {'name':'toolkit_codex_review_delegation',

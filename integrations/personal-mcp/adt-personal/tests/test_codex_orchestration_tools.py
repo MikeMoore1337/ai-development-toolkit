@@ -51,14 +51,14 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         return result
 
     def test_version_and_tools_registered_read_only(self):
-        self.assertEqual(VERSION, "0.1.15")
+        self.assertEqual(VERSION, "0.1.16")
         tools = {tool["name"]: tool for tool in TOOLS}
         for name in ("toolkit_codex_prepare_delegation",
                      "toolkit_codex_review_delegation"):
             self.assertIn(name, tools)
             self.assertTrue(tools[name]["annotations"]["readOnlyHint"])
             self.assertFalse(tools[name]["annotations"]["destructiveHint"])
-        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.15")
+        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.16")
 
     def test_prepare_denied_without_zero_cost_verified(self):
         args = self.args()
@@ -94,6 +94,36 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         self.assertEqual(result["status"], "HOST_COMPLETED_MODEL_UNVERIFIED")
         self.assertEqual(result["observed_model"], "UNKNOWN")
         self.assertEqual(result["host_lease_evidence"], "NOT_OBSERVED")
+
+    def test_native_v2_contract_via_personal_mcp_is_read_only(self):
+        args = self.args()
+        args["native_runtime"] = "V2"
+        args["client_snapshot"].update(
+            native_runtime="V2", native_model_override="VERIFIED")
+        response = self.call("toolkit_codex_prepare_delegation", args)
+        self.assertFalse(response["result"].get("isError", False), response)
+        plan = response["result"]["structuredContent"]
+        self.assertEqual(plan["schema_version"], 2)
+        self.assertEqual(plan["native_spawn_tool"], "spawn_agent")
+        self.assertEqual(plan["native_wait_tool"], "list_agents")
+        self.assertEqual(plan["native_spawn_arguments"]["fork_turns"], "none")
+        name = plan["native_spawn_arguments"]["task_name"]
+        reviewed = self.call("toolkit_codex_review_delegation", {
+            "plan": plan,
+            "spawn_response": {"task_name": name},
+            "wait_response": {"agents": [{"agent_name": name,
+                                          "agent_status": {"completed": "Synthetic review"}}]},
+        })
+        self.assertFalse(reviewed["result"].get("isError", False), reviewed)
+        self.assertEqual(reviewed["result"]["structuredContent"]["observed_model"],
+                         "UNKNOWN")
+
+        missing_override = self.args()
+        missing_override["native_runtime"] = "V2"
+        refused = self.call("toolkit_codex_prepare_delegation", missing_override)
+        self.assertTrue(refused["result"].get("isError", False))
+        self.assertIn("V2_MODEL_OVERRIDE_NOT_VERIFIED",
+                      refused["result"]["content"][0]["text"])
 
     def test_invalid_consent_and_native_response_fail_closed(self):
         args = self.args()
