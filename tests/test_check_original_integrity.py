@@ -70,7 +70,7 @@ class OriginalIntegrityTests(unittest.TestCase):
 
     def test_references_require_check_before_originality_claim(self):
         source = (ROOT / "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-ui-review/references/ORIGINALS.md").read_text(encoding="utf-8")
-        for phrase in ("check_original_integrity.py", "SOURCE_DRIFT", "originality", "independently verified"):
+        for phrase in ("check_original_integrity.py", "SOURCE_DRIFT", "originality", "independently verified", "Verified-source failover", "pristine source copy", "original entrypoint", "not** the original blind run"):
             self.assertIn(phrase, source)
 
 
