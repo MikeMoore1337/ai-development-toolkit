@@ -106,8 +106,14 @@ def advise(request: Any) -> dict:
                              if alternatives else []),
         "recommended_mode": recommended, "options": options,
         "user_selection_required": True, "selected_mode": None,
+        # This is a recommendation only. An automatic model choice never
+        # follows from task difficulty, the inventory or the advisor being on.
+        "model_selection_policy": "USER_CONFIRMATION_DEFAULT",
+        "automatic_model_selection_allowed": False,
+        "recommended_model": None,  # host must assess live task/model suitability
         "execution": "NOT_RUN", "extra_model_calls": 0,
-        "quality_benefit": "NOT_MEASURED", "quota_remaining": "UNKNOWN",
+        "quality_benefit": "NOT_MEASURED", "quota_savings": "NOT_MEASURED",
+        "quota_remaining": "UNKNOWN",
         "evidence": "CALLER_DECLARED_CAPABILITY_NOT_INDEPENDENTLY_VERIFIED",
     }
 
@@ -136,8 +142,11 @@ def authorize(request: Any, consent: Any) -> dict:
         if models or cap:
             raise AdvisorError("SINGLE_MODEL_MUST_NOT_DELEGATE")
         return {"authorized_mode": mode, "approved_models": [], "max_extra_calls": 0,
-                "extra_calls_authorized": False, "execution": "NOT_RUN",
-                "task_id": r["task_id"]}
+                "extra_calls_authorized": False,
+                "automatic_model_selection_allowed": False,
+                "per_call_confirmation_required": False,
+                "model_selection_policy": "CURRENT_MODEL_ONLY",
+                "execution": "NOT_RUN", "task_id": r["task_id"]}
     if (not models or cap < 1 or r["inventory_status"] != "VERIFIED"
             or any(m == r["current_model"] or m not in r["available_models"] for m in models)):
         raise AdvisorError("UNVERIFIED_OR_EMPTY_MODEL_SELECTION")
@@ -145,8 +154,13 @@ def authorize(request: Any, consent: Any) -> dict:
             r["switching"] != "VERIFIED" and r["delegation"] != "VERIFIED"
             or not r["zero_incremental_cost_verified"]):
         raise AdvisorError("AUTO_CAPABILITY_OR_COST_UNVERIFIED")
+    automatic = mode == "AUTO_OPT_IN"
     return {"authorized_mode": mode, "approved_models": models,
-            "max_extra_calls": cap, "extra_calls_authorized": mode == "AUTO_OPT_IN",
+            "max_extra_calls": cap, "extra_calls_authorized": automatic,
+            "automatic_model_selection_allowed": automatic,
+            "per_call_confirmation_required": not automatic,
+            "model_selection_policy": ("TASK_SCOPED_AUTO" if automatic
+                                       else "ASK_BEFORE_EACH_CALL"),
             "execution": "NOT_RUN", "task_id": r["task_id"]}
 
 def main() -> int:
