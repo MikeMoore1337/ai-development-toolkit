@@ -15,7 +15,14 @@ if command -v uv >/dev/null; then
 else
     printf 'UV=MISSING_FOR_SETUP\n'
 fi
-if command -v npm >/dev/null; then
+# WSL may inherit Windows npm from /mnt/c even if Linux Node.js is absent.
+# Only report setup readiness for a runnable native Linux Node.js 20+ / npm pair.
+node_path="$(command -v node 2>/dev/null || true)"
+npm_path="$(command -v npm 2>/dev/null || true)"
+node_ver="$(node --version 2>/dev/null || true)"
+if [[ "$node_path" == /* && "$node_path" != /mnt/* &&
+      "$npm_path" == /* && "$npm_path" != /mnt/* &&
+      "$node_ver" =~ ^v(2[0-9]|[3-9][0-9])\.[0-9]+\.[0-9]+$ ]]; then
     printf 'NPM=PRESENT\n'
 else
     printf 'NPM=MISSING_FOR_SETUP\n'

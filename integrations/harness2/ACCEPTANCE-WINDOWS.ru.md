@@ -6,9 +6,11 @@
 
 - Windows 11, WSL2 с Ubuntu. По умолчанию скрипт автоматически выбирает установленный `Ubuntu-24.04`, `Ubuntu` или `Ubuntu-22.04` (другие версии `Ubuntu-XX.YY` также распознаются). Для явного выбора используйте `-Distribution Ubuntu-24.04`. Внутренний `docker-desktop` не используется.
 - Если Ubuntu не установлена, выполните в PowerShell `wsl --list --verbose`, затем `wsl --list --online` и `wsl --install -d Ubuntu-24.04`. Это отдельная команда установки Linux, **сам сценарий Harness² её не выполняет**. При первой загрузке Ubuntu создайте непривилегированного Linux-пользователя; может потребоваться перезагрузка Windows.
-- В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, npm и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
+- В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, **нативный Node.js 20+ для Linux вместе с npm** и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
 - Checkout Toolkit, доступный с Windows и из WSL2 через wslpath.
 
+
+WSL может видеть Windows-версию `npm` через `/mnt/c`, даже когда Node.js для Linux отсутствует. В этом случае preflight сообщает `NPM=MISSING_FOR_SETUP`, пока в Ubuntu `PATH` не появятся нативные Node.js 20+ и npm. Глобальный `PATH` сценарий не меняет.
 
 **Предупреждение WSL о localhost-прокси в NAT** само по себе не является ошибкой Bash или отказом preflight. Если после установки пакет не скачивается из GitHub/PyPI, сначала отдельно проверьте сеть и прокси внутри Ubuntu. Сценарий не меняет системный прокси и не отключает проверки безопасности.
 
