@@ -137,6 +137,7 @@ def claim(
     root: str, plan: dict, request: dict, consent: dict, state: dict,
     client_snapshot: dict, context: str, *,
     confirmed_for_this_call: bool = False,
+    subscription_guard: dict | None = None,
 ) -> dict[str, Any]:
     """Atomically consume one task ID in host storage, before native spawn.
 
@@ -154,6 +155,7 @@ def claim(
         client_snapshot, context,
         confirmed_for_this_call=confirmed_for_this_call,
         native_runtime=plan.get("native_runtime", "V1"),
+        subscription_guard=subscription_guard,
     )
     if validated != plan:
         raise LeaseDenied("PLAN_DOES_NOT_MATCH_CURRENT_PREFLIGHT")
@@ -268,15 +270,17 @@ def main(argv: list[str] | None = None) -> int:
                 response = record_outcome(args.root, params["plan"],
                                           params["spawn_response"], params["wait_response"])
             else:
-                if set(params) != {
+                required = {
                     "plan", "request", "consent", "state", "client_snapshot",
                     "context", "confirmed_for_this_call",
-                }:
+                }
+                if not required <= set(params) or set(params) - required - {"subscription_guard"}:
                     raise LeaseDenied("INVALID_CLAIM_REQUEST")
                 response = claim(args.root, params["plan"], params["request"],
                                  params["consent"], params["state"],
                                  params["client_snapshot"], params["context"],
-                                 confirmed_for_this_call=params["confirmed_for_this_call"])
+                                 confirmed_for_this_call=params["confirmed_for_this_call"],
+                                 subscription_guard=params.get("subscription_guard"))
     except (LeaseDenied, ValueError, TypeError, OSError) as exc:
         print(json.dumps({"status": "REFUSED", "reason": str(exc)[:120]}))
         return 2

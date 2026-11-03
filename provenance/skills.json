@@ -11828,6 +11828,26 @@
       "notes": "Original read-only two-stage Codex native-tool preview and response-normalization contract (#357); host lease and actual model attestation unverified."
     },
     {
+      "id": "codex-401-tests-test-codex-included-quota-guard-py",
+      "path": "tests/test_codex_included_quota_guard.py",
+      "name": "test_codex_included_quota_guard.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Repository MIT declaration; chain of title not independently verified",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/PROACTIVE_MODEL_ADVISOR.md",
+      "last_reviewed": "2026-11-03",
+      "distribution": "included",
+      "notes": "Offline one-time owner-confirmed included subscription allowance manual consultation, strict non-auto cost guard negative tests; does not attest actual billing or native invocation."
+    },
+    {
       "id": "codex-401-tests-test-codex-host-v2-py",
       "path": "tests/test_codex_host_v2.py",
       "name": "test_codex_host_v2.py",

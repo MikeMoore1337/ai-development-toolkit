@@ -1,5 +1,52 @@
 # Proactive model advice for normal Codex Desktop tasks (#401)
 
+## Unknown per-call subscription quota is not an advisory blocker
+
+When the live Codex client has a verified native model candidate but does
+not expose per-call quota or price, it should **still recommend the model
+and ask the user**. Recommendation is read-only; no billing claim is needed.
+If the task primarily needs a different implementation model, recommend
+the main Codex **UI model selector** first instead of adding a consultant:
+an extra subagent may consume *more* allowance, not less.
+
+### Optional ONE manually confirmed native subscription review
+
+The existing no-extra-paid-spend preflight stays strict by default.
+When `zero_incremental_cost_verified=false`, a *single*
+`RECOMMEND_WITH_CONFIRMATION` consultation can be prepared only after
+the owner confirms **the exact model and this call**, plus all of:
+
+- The native Codex client is signed in using their existing ChatGPT
+  subscription, **not** an API-key or paid provider route.
+- The owner has checked their current usage/credit page: **zero** purchased
+  credits available, **automatic credit top-up disabled**, and included
+  subscription allowance still remaining.
+- The owner explicitly accepts **unknown usage amount for this one
+  consultation**, within existing subscription limits only.
+
+The host passes these as a separate structured `subscription_guard`
+to read-only `toolkit_codex_prepare_delegation` and the corresponding
+local one-shot `claim`. It must contain the same task ID, inventory
+revision, exact requested model, `route=CODEX_CHATGPT_SUBSCRIPTION`,
+`owner_confirmed_this_call=true`, `paid_api_route_disabled=true`,
+`credit_balance_zero_observed=true`,
+`automatic_topup_disabled_observed=true`,
+`included_allowance_remaining_observed=true`, and
+`unknown_per_call_usage_acknowledged=true`.
+These fields represent **user-supplied claims**, not verified account
+telemetry. If any fact cannot be established, no subagent is started;
+the user can choose the primary model manually in Codex instead.
+
+This manual guard **never** enables `AUTO_OPT_IN`, spending credits,
+automatic top-up, multi-call chains, or paid APIs. It does not bypass
+live inventory, native tool schema, consent, one-shot lease, task-specific
+approval or independent evidence rules. The plan explicitly reports
+`OWNER_DECLARED_INCLUDED_USAGE_NOT_ATTESTED` and keeps observed backend
+model `UNKNOWN`. Offline tests cannot prove no spending in a live
+session. The Codex Desktop E2E gate remains open.
+
+
+
 ## User-controlled model selection and quota efficiency
 
 **By default, recommend an appropriate model and ask the user.**

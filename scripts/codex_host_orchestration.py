@@ -49,10 +49,45 @@ def _digest(payload: dict) -> str:
                                      allow_nan=False).encode("utf-8")).hexdigest()
 
 
+def _manual_included_quota_guard(
+    request: dict, consent: dict, target_model: str, guard: Any, confirmed: bool,
+) -> None:
+    """Validate *owner-declared* usage restrictions, never attest billing.
+
+    This allows ONE manually approved native Codex subscription consultation
+    when per-call quota metering is unavailable. The trusted host must collect
+    these facts directly from the owner, not infer them from an LLM response.
+    Account state and actual credit spend remain NOT independently verified.
+    """
+    expected = {
+        "task_id", "inventory_revision", "requested_model", "route",
+        "owner_confirmed_this_call", "paid_api_route_disabled",
+        "credit_balance_zero_observed", "automatic_topup_disabled_observed",
+        "included_allowance_remaining_observed",
+        "unknown_per_call_usage_acknowledged",
+    }
+    if not isinstance(guard, dict) or set(guard) != expected:
+        raise HostOrchestrationError("OWNER_INCLUDED_QUOTA_GUARD_REQUIRED")
+    if (consent.get("mode") != "RECOMMEND_WITH_CONFIRMATION"
+            or consent.get("max_extra_calls") != 1
+            or confirmed is not True
+            or guard["route"] != "CODEX_CHATGPT_SUBSCRIPTION"
+            or guard["task_id"] != request["task_id"]
+            or guard["inventory_revision"] != request["inventory_revision"]
+            or guard["requested_model"] != target_model
+            or any(guard[field] is not True for field in (
+                "owner_confirmed_this_call", "paid_api_route_disabled",
+                "credit_balance_zero_observed", "automatic_topup_disabled_observed",
+                "included_allowance_remaining_observed",
+                "unknown_per_call_usage_acknowledged",
+            ))):
+        raise HostOrchestrationError("OWNER_INCLUDED_QUOTA_GUARD_DENIED")
+
 def prepare(
     request: dict, consent: dict, target_model: str, state: dict,
     client_snapshot: dict, context: str, *, confirmed_for_this_call: bool,
     native_runtime: str = "V1",
+    subscription_guard: dict | None = None,
 ) -> dict:
     """Fail-closed *advice*, not an executable permission or atomic lease.
 
@@ -70,8 +105,18 @@ def prepare(
         raise HostOrchestrationError("TARGET_NOT_APPROVED")
     if used >= approval["max_extra_calls"]:
         raise HostOrchestrationError("CALL_LIMIT_EXHAUSTED")
-    if not request["zero_incremental_cost_verified"]:
-        raise HostOrchestrationError("ZERO_INCREMENTAL_COST_NOT_VERIFIED")
+    billing_attestation = "CALLER_DECLARED_NOT_INDEPENDENTLY_ATTESTED"
+    if request["zero_incremental_cost_verified"]:
+        if subscription_guard is not None:
+            raise HostOrchestrationError("AMBIGUOUS_BILLING_GUARD")
+    else:
+        if subscription_guard is None:
+            raise HostOrchestrationError("ZERO_INCREMENTAL_COST_NOT_VERIFIED")
+        _manual_included_quota_guard(
+            request, consent, target_model, subscription_guard,
+            confirmed_for_this_call,
+        )
+        billing_attestation = "OWNER_DECLARED_INCLUDED_USAGE_NOT_ATTESTED"
     if (approval["authorized_mode"] == "RECOMMEND_WITH_CONFIRMATION"
             and confirmed_for_this_call is not True):
         raise HostOrchestrationError("PER_CALL_CONFIRMATION_REQUIRED")
@@ -115,7 +160,7 @@ def prepare(
         "host_lease_observed": False,
         "host_executed": False,
         "observed_model": "UNKNOWN",
-        "billing_attestation": "CALLER_DECLARED_NOT_INDEPENDENTLY_ATTESTED",
+        "billing_attestation": billing_attestation,
     }
     if native_runtime == "V2":
         plan["native_runtime"] = "V2"
@@ -159,6 +204,10 @@ def review(plan: dict, spawn_response: dict, wait_response: dict,
         and plan["host_lease_observed"] is False
         and plan["host_executed"] is False
         and plan["observed_model"] == "UNKNOWN"
+        and plan["billing_attestation"] in (
+            "CALLER_DECLARED_NOT_INDEPENDENTLY_ATTESTED",
+            "OWNER_DECLARED_INCLUDED_USAGE_NOT_ATTESTED",
+        )
         and isinstance(args, dict)
         and args.get("model") == plan["requested_model"]
         and isinstance(args.get("message"), str)
