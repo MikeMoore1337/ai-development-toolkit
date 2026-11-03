@@ -58,6 +58,26 @@ class AdvisorSourceContract(unittest.TestCase):
         ):
             self.assertIn(token, src)
 
+    def test_owner_manual_by_default_auto_only_with_explicit_scope(self):
+        src = SCRIPT.read_text(encoding="utf-8")
+        for required in (
+            "OWNER MODEL-CHOICE POLICY (#401)",
+            "Default mode is",
+            "RECOMMEND_WITH_CONFIRMATION",
+            "NOT AUTO_OPT_IN",
+            "separate per-call confirmation",
+            "Do NOT silently change the main model",
+            "only among models and call/usage caps",
+            "Do not select mode 3 on",
+            "UNKNOWN",
+            "task requirements",
+            "Do NOT assume a model is cheaper",
+            "Never make a paid API call",
+            "Selecting SINGLE_MODEL forbids extra calls",
+            "Client model UI selection is manual",
+        ):
+            self.assertIn(required, src)
+
     def test_simple_tasks_not_interrupted_and_refusal_is_final(self):
         src = SCRIPT.read_text(encoding="utf-8")
         for token in (

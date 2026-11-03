@@ -79,6 +79,40 @@ MCP `toolkit_prepare_task` with optional `proactive_model_advice=true`
 from Personal MCP 0.1.13, as directed by the existing ADT-PERSONAL block.
 This activates only a bounded read-only risk hint; it does NOT opt in to
 extra model calls for the current or any future task.
+
+OWNER MODEL-CHOICE POLICY (#401): Default mode is
+RECOMMEND_WITH_CONFIRMATION for any *proposed* model change or additional
+consultation, NOT AUTO_OPT_IN. On a task where another model could improve
+quality or conserve included quota, proactively recommend the ONE best
+currently available candidate, explaining why its capabilities fit the
+task (label uncertain task-fit judgments as HEURISTIC), and ASK before
+selecting or invoking it. State quota impact only with actual evidence,
+otherwise UNKNOWN. No response
+or generic approval to "make good decisions" means no model switch/spawn.
+Do NOT silently change the main model, reasoning level, or spawn an expert.
+Only after the user explicitly selects AUTO_OPT_IN for this task, specifies
+the approved models, maximum extra calls, and applicable stop/usage
+boundaries, may Codex independently choose a suitable approved model
+within those boundaries. Selecting RECOMMEND_WITH_CONFIRMATION alone
+still requires a separate per-call confirmation for the exact model.
+Selecting SINGLE_MODEL forbids extra calls, preserves the current main
+model, and should not trigger another offer for unchanged task scope.
+Client model UI selection is manual when this host lacks a native,
+trusted, permitted programmatic switch. No hidden fallbacks or repeated
+questions when the client lacks capabilities.
+
+Quota-efficiency policy: Prefer the current model or least expensive
+*verified-sufficient* available model for the task; keep trivial work on
+the current model rather than spending another consultation just to
+consider optimization. Escalate only when the expected reduction in
+rework/error risk plausibly outweighs additional latency and quota use.
+Do NOT assume a model is cheaper, faster, more accurate, or in a
+different usage pool from its name. Use live host-reported models, capability descriptions, quota categories,
+user preferences and task requirements. A task-fit judgment may be a
+HEURISTIC recommendation, not a verified performance ranking. If comparative cost is UNKNOWN,
+label it UNKNOWN, do not fabricate savings or rank by unsupported facts,
+and offer to continue on the current model. Never make a paid API call
+to measure performance or discover availability.
 Use its task profiles and source guidance plus the actual task to assess,
 once per task and at genuine new risk boundaries, whether independent model
 review may materially improve correctness. If toolkit_route_task has already
@@ -134,16 +168,24 @@ important result. Briefly explain the concrete reason, expected benefit,
 possible latency, extra context transfer and possible included-usage impact.
 Quality improvement is not guaranteed.
 
-When worth proposing and no applicable user permission exists, show a small
-TEXT recommendation within the current Codex chat, in the user's language:
-  "A second opinion could help: <one specific reason>.
-   1. Continue on current model (SINGLE_MODEL).
-   2. Ask an available expert once, with my confirmation
-      (RECOMMEND_WITH_CONFIRMATION).
-   3. Allow selected experts automatically within a task-specific call cap
-      (AUTO_OPT_IN), only after explicit opt-in.
-   Extra consultation may use more time and subscription quota.
-   Choose 1/2/3."
+When a different model or independent consultation is materially worth
+proposing and no applicable user permission exists, show a short TEXT
+recommendation within the current Codex chat, in the user's language:
+  "Recommended: <ONE verified available model, or UNKNOWN>.
+   Task fit: <one concrete reason grounded in observed capabilities>.
+   Quota impact: <observed comparative impact, or UNKNOWN>.
+   1. Keep current model and do not delegate (SINGLE_MODEL).
+   2. Recommend suitable model, then ask me to approve the exact
+      model and each consultation/switch (RECOMMEND_WITH_CONFIRMATION).
+   3. Choose automatically only among models and call/usage caps that
+      I explicitly approve for THIS task (AUTO_OPT_IN).
+   Potential extra time/quota and quality uncertainty: <short explanation>.
+   Which mode do you choose?"
+For unknown native inventory, do NOT name or rank a model. For a main
+model switch, explain whether the user must change it in Codex UI.
+Never call the user's selection of mode 2 permission to use a model:
+wait for separate, specific authorization. Do not select mode 3 on
+the user's behalf.
 No separate template prompt, manual Toolkit invocation, or GitHub URL from
 the user is needed. This is a CHAT text fallback; do not claim a native
 Codex Desktop modal/overlay exists.

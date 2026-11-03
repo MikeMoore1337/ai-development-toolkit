@@ -1,5 +1,32 @@
 # Proactive model advice for normal Codex Desktop tasks (#401)
 
+## User-controlled model selection and quota efficiency
+
+**By default, recommend an appropriate model and ask the user.**
+A recommendation is never permission to switch models or spawn agents.
+
+- `SINGLE_MODEL`: remain on the current model, with no extra calls.
+- `RECOMMEND_WITH_CONFIRMATION`: recommend one verified available model,
+  explain task suitability and quota impact, then request an explicit
+  confirmation for **each** exact model switch or subagent call.
+- `AUTO_OPT_IN`: choose models independently **only after the user
+  explicitly selects this mode**, within that task's approved live model
+  allowlist, call cap and stop conditions. Do not inherit consent across
+  tasks or infer it from installing the Advisor.
+
+No response is not consent. Never silently switch the primary model or
+reasoning effort. Where the host cannot change the primary model natively,
+recommend a manual model selection in Codex UI instead of claiming one.
+
+For quota efficiency, avoid extra consultation for routine tasks unless
+verified evidence supports a benefit. Recommend a more capable model
+for complex tasks only when expected reduction in rework and risk
+justifies extra calls. Do not invent cost/quality rankings from model
+names. If relative quota usage is unverified, report `UNKNOWN` and do
+not claim measured savings.
+
+
+
 The model advisor is **opt-in once**, not a per-task prompt template. The
 existing #356/#357 contracts provide consent and native delegation; this
 layer supplies a user-level Codex Desktop instruction entry point to
