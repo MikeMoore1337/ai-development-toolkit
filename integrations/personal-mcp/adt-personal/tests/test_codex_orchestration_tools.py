@@ -51,14 +51,14 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         return result
 
     def test_version_and_tools_registered_read_only(self):
-        self.assertEqual(VERSION, "0.1.16")
+        self.assertEqual(VERSION, "0.1.17")
         tools = {tool["name"]: tool for tool in TOOLS}
         for name in ("toolkit_codex_prepare_delegation",
                      "toolkit_codex_review_delegation"):
             self.assertIn(name, tools)
             self.assertTrue(tools[name]["annotations"]["readOnlyHint"])
             self.assertFalse(tools[name]["annotations"]["destructiveHint"])
-        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.16")
+        self.assertEqual(self.tk.info()["mcp_server_version"], "0.1.17")
 
     def test_prepare_denied_without_zero_cost_verified(self):
         args = self.args()
@@ -68,6 +68,37 @@ class PersonalCodexOrchestrationTests(unittest.TestCase):
         self.assertTrue(outcome["result"].get("isError", False))
         self.assertIn("ZERO_INCREMENTAL_COST_NOT_VERIFIED",
                       outcome["result"]["content"][0]["text"])
+
+    def test_included_quota_owner_approval_is_not_independent_cost_proof(self):
+        args = self.args()
+        args["request"]["zero_incremental_cost_verified"] = False
+        args["client_snapshot"]["zero_incremental_cost_verified"] = False
+        args["subscription_guard"] = {
+            "task_id": args["request"]["task_id"],
+            "inventory_revision": args["request"]["inventory_revision"],
+            "requested_model": args["target_model"],
+            "route": "CODEX_CHATGPT_SUBSCRIPTION",
+            "owner_confirmed_this_call": True,
+            "paid_api_route_disabled": True,
+            "credit_balance_zero_observed": True,
+            "automatic_topup_disabled_observed": True,
+            "included_allowance_remaining_observed": True,
+            "unknown_per_call_usage_acknowledged": True,
+        }
+        reply = self.call("toolkit_codex_prepare_delegation", args)
+        self.assertFalse(reply["result"].get("isError", False), reply)
+        p = reply["result"]["structuredContent"]
+        self.assertEqual(p["billing_attestation"],
+                         "OWNER_DECLARED_INCLUDED_USAGE_NOT_ATTESTED")
+        self.assertFalse(p["host_executed"])
+        self.assertFalse(p["host_lease_observed"])
+        self.assertEqual(p["observed_model"], "UNKNOWN")
+
+        args["consent"]["mode"] = "AUTO_OPT_IN"
+        refused = self.call("toolkit_codex_prepare_delegation", args)
+        self.assertTrue(refused["result"].get("isError", False))
+        self.assertIn("CONSENT_OR_STATE_DENIED",
+                      refused["result"]["content"][0]["text"])
 
     def test_prepare_uses_real_source_contract_without_native_execution(self):
         response = self.call("toolkit_codex_prepare_delegation", self.args())

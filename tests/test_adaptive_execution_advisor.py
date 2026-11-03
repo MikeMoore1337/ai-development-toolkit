@@ -36,6 +36,53 @@ class AdvisorTests(unittest.TestCase):
         for item in outcome["options"]:
             self.assertTrue(item["benefit"] and item["risk"])
 
+    def test_default_requires_user_choice_and_never_claims_quota_savings(self):
+        for locale in ("ru", "en"):
+            req = {**self.req(), "locale": locale}
+            advice = advisor.advise(req)
+            self.assertEqual("USER_CONFIRMATION_DEFAULT",
+                             advice["model_selection_policy"])
+            self.assertFalse(advice["automatic_model_selection_allowed"])
+            self.assertIsNone(advice["recommended_model"])
+            self.assertEqual("NOT_MEASURED", advice["quota_savings"])
+            self.assertTrue(advice["user_selection_required"])
+            self.assertEqual("NOT_RUN", advice["execution"])
+            with self.assertRaises(advisor.AdvisorError):
+                advisor.authorize(req, None)
+
+    def test_only_explicit_auto_opt_in_grants_automatic_selection(self):
+        manual = advisor.authorize(self.req(), self.consent("RECOMMEND_WITH_CONFIRMATION"))
+        self.assertEqual(manual["model_selection_policy"], "ASK_BEFORE_EACH_CALL")
+        self.assertTrue(manual["per_call_confirmation_required"])
+        self.assertFalse(manual["automatic_model_selection_allowed"])
+        self.assertFalse(manual["extra_calls_authorized"])
+        automatic = advisor.authorize(self.req(), self.consent("AUTO_OPT_IN"))
+        self.assertEqual(automatic["model_selection_policy"], "TASK_SCOPED_AUTO")
+        self.assertFalse(automatic["per_call_confirmation_required"])
+        self.assertTrue(automatic["automatic_model_selection_allowed"])
+        self.assertTrue(automatic["extra_calls_authorized"])
+        single = self.consent("SINGLE_MODEL")
+        single.update(approved_models=[], max_extra_calls=0)
+        current = advisor.authorize(self.req(), single)
+        self.assertEqual(current["model_selection_policy"], "CURRENT_MODEL_ONLY")
+        self.assertFalse(current["automatic_model_selection_allowed"])
+
+    def test_unknown_per_call_quota_does_not_block_read_only_advice(self):
+        for locale in ("ru", "en"):
+            req = {**self.req(), "locale": locale,
+                   "delegation": "VERIFIED", "switching": "UNAVAILABLE",
+                   "zero_incremental_cost_verified": False}
+            advice = advisor.advise(req)
+            self.assertEqual(advice["recommended_mode"],
+                             "RECOMMEND_WITH_CONFIRMATION")
+            opts = {item["mode"]: item for item in advice["options"]}
+            self.assertTrue(opts["RECOMMEND_WITH_CONFIRMATION"]["enabled"])
+            self.assertFalse(opts["AUTO_OPT_IN"]["enabled"])
+            self.assertFalse(advice["automatic_model_selection_allowed"])
+            self.assertEqual(advice["quota_remaining"], "UNKNOWN")
+            self.assertEqual(advice["quota_savings"], "NOT_MEASURED")
+            self.assertEqual(advice["extra_model_calls"], 0)
+
     def test_one_model_only(self):
         req = self.req()
         req["available_models"] = ["primary"]

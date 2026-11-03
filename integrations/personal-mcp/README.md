@@ -1,5 +1,19 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.17 - optional, manually authorized included-usage guard (#401)
+
+When precise per-call subscription quota is unavailable, the Model Advisor
+still **recommends** a live available model and asks the owner; no extra
+model is executed by advisory tools. For **one** owner-confirmed
+`RECOMMEND_WITH_CONFIRMATION` consultation, `subscription_guard` can
+carry the owner's current claim of a ChatGPT subscription route, zero
+credit balance, auto-topup off, available included allowance, no paid API,
+and acknowledgment of unmetered quota consumption. The guard is **not**
+independent billing proof. No `AUTO_OPT_IN` cost-gate bypass; no paid
+provider call. See [owner instructions](../../docs/PROACTIVE_MODEL_ADVISOR.md).
+
+
+
 ## Native-first external controller passthrough (#492)
 
 For an explicitly selected original third-party controller, the host must skip Toolkit routing. As a defensive fallback, `toolkit_route_task`, `toolkit_prepare_task` and `toolkit_prepare_stage` accept optional `external_controller="original/tool"`; `NATIVE_UPSTREAM_PASSTHROUGH` returns no Toolkit skills, roles, setup or execution. With no such parameter, routing stays unchanged. A mention of another tool is not a selection. This does not prove native tool invocation. For separately requested Toolkit research use focused read-only `toolkit_get_skill` or `toolkit_get_reference`. See [contract](../../docs/EXTERNAL_NATIVE_BOUNDARY.md).
