@@ -133,3 +133,45 @@ call or blocks routine task progress. Source tests cannot prove client behavior.
 ## Experimental Codex Desktop Stop hook
 
 Native #401 acceptance found the client may omit the new-risk MCP checkpoint after confirming real defects. An independent, **separately trusted and manually enabled** [Stop hook](MODEL_ADVISOR_STOP_HOOK.md) can ask the current model to show an optional review advisory at turn end **only if a separately trusted host provides task-scoped ownership** (`adt_workflow_scope=TOOLKIT_MODEL_ADVISOR`). Stock Codex Stop events cannot provide that field, so the hook is intentionally inert there, preserving external-native workflows. Assistant-written markers cannot activate it. It is never installed by the Advisor setup, does not execute another model, and requires native acceptance after host support becomes available.
+
+## Approved native delegation for V1/V2
+
+An advisor choice does not execute a model. Native consultation requires
+explicit task-scoped consent, live approved model inventory, an actually
+exposed spawn tool with model override, included-cost authorization, and
+a trusted local Python interpreter. The primary model remains the writer.
+
+1. Verify exposed tools in **this Codex session**. V1 uses
+   `multi_agent_v1__spawn_agent` and `multi_agent_v1__wait_agent`.
+   V2 uses `spawn_agent` with `task_name`, `model` and
+   `fork_turns="none"`, plus `list_agents` with `agent_status`.
+   V2 `wait_agent` only reports mailbox notifications, **not** completed
+   content; never treat it as a completed consultant result.
+2. Select the model only from the live allowlist. For
+   `RECOMMEND_WITH_CONFIRMATION` request this call's confirmation.
+   `AUTO_OPT_IN` may select among the task's explicitly approved
+   models within its call cap; it does not grant permanent permission.
+3. Ask read-only `toolkit_codex_prepare_delegation` for a preflight.
+   Set `native_runtime="V2"` only when the current host exposes V2
+   model overrides; also supply `client_snapshot.native_runtime="V2"`
+   and `native_model_override="VERIFIED"`. These are **host declarations**,
+   not independent authentication. V1 remains the default.
+4. Use the verified local Toolkit script
+   `scripts/codex_host_one_shot.py init --root <private-absolute-path>`
+   once if needed. On Windows, independently validate effective private
+   filesystem ACLs. Then pipe bounded JSON containing the same
+   plan/request/consent/state/snapshot/context and confirmation directly
+   to `codex_host_one_shot.py claim --root ...` via stdin. Never log
+   the raw context. Require `HOST_ONE_SHOT_RESERVED` before native spawn.
+5. Spawn once using the plan's **exact** native arguments. V1 validates
+   the matching UUID via one wait. V2 validates an explicit completed
+   target task from `list_agents`. Review via
+   `toolkit_codex_review_delegation` and persist one redacted outcome
+   with `codex_host_one_shot.py record`. No second spawn or auto-retry.
+
+No backend model identity or cost is independently attested by the ledger.
+Without a live native tool, true consent, cost authorization, private
+ledger, or valid one-shot reservation, continue with the primary model
+and report the blocker once. The solution uses no Codex CLI, paid API,
+project writes or custom native Codex UI. Source tests are not evidence
+of a live Codex Desktop run.

@@ -135,7 +135,8 @@ def _tool_defs() -> list[dict]:
              "request": {"type": "object"}, "consent": {"type": "object"},
              "target_model": {"type": "string"}, "state": {"type": "object"},
              "client_snapshot": {"type": "object"}, "context": {"type": "string"},
-             "confirmed_for_this_call": {"type": "boolean"}},
+             "confirmed_for_this_call": {"type": "boolean"},
+             "native_runtime": {"type": "string", "enum": ["V1", "V2"]}},
              "required": ["request", "consent", "target_model", "state",
                           "client_snapshot", "context", "confirmed_for_this_call"],
              "additionalProperties": False},
@@ -484,14 +485,16 @@ def invoke(tool: str, args: dict) -> dict:
                         "client_snapshot", "context", "confirmed_for_this_call"}
         else:
             expected = {"plan", "spawn_response", "wait_response"}
-        extra = {"host_claimed_one_shot_lease"} if tool == "toolkit_codex_review_delegation" else set()
+        extra = ({"host_claimed_one_shot_lease"} if tool == "toolkit_codex_review_delegation"
+                 else {"native_runtime"})
         if not expected <= set(args) or set(args) - expected - extra:
             raise ValueError("Invalid Codex orchestration arguments")
         contract = _codex_orchestration_module()
         if tool == "toolkit_codex_prepare_delegation":
             return contract.prepare(args["request"], args["consent"], args["target_model"],
                                     args["state"], args["client_snapshot"], args["context"],
-                                    confirmed_for_this_call=args["confirmed_for_this_call"])
+                                    confirmed_for_this_call=args["confirmed_for_this_call"],
+                                    native_runtime=args.get("native_runtime", "V1"))
         return contract.review(args["plan"], args["spawn_response"], args["wait_response"],
                                host_claimed_one_shot_lease=args.get("host_claimed_one_shot_lease", False))
     if tool == "toolkit_preflight_parallel_plan":

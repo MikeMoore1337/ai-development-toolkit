@@ -173,13 +173,60 @@ general preference as unlimited approval. A chosen AUTO_OPT_IN mode requires
 a separate, explicit scoped agreement, NOT an automatic persistent default.
 Never call subagents simply because this instruction block was installed.
 
-If and only if a permissible delegated execution is approved, use the
-existing ADT #357 read-only `toolkit_codex_prepare_delegation`, trusted
-host-owned one-shot claim, native spawn/wait and
-`toolkit_codex_review_delegation`, without retry or silent fallback.
+When the user has selected RECOMMEND_WITH_CONFIRMATION for a task and
+approved one exact consultation, select only that live, approved model.
+For AUTO_OPT_IN, after one explicit task-scoped consent listing allowlisted
+models and call cap, choose the most relevant currently available model
+yourself without asking again within the approved scope. If several are
+equivalent, prefer lower included-quota impact. The main model remains
+the only writer. Do not claim that model ranking is measured or known when
+the current host does not provide evidence. A recommendation is not a
+completed consultation.
+
+For an approved extra consultation, do not stop after recommending a model
+merely because the MCP does not run native tools. The trusted Codex Desktop
+HOST (not MCP) may perform the following sequence using its own native
+tools and local Python interpreter, but never Codex CLI:
+1. Check the tools exposed in THIS session. V1 requires
+   multi_agent_v1__spawn_agent plus multi_agent_v1__wait_agent. V2 requires
+   spawn_agent with task_name, model, fork_turns and list_agents with
+   agent_status; model override must actually be offered in the tool schema.
+   No matching tools or insufficient model override -> SINGLE_MODEL fallback.
+2. Verify the current native model inventory, permitted quota/cost route,
+   task-scoped consent, chosen model and inventory revision; UNKNOWN is not
+   VERIFIED. For V2 set client_snapshot.native_runtime=V2 and
+   client_snapshot.native_model_override=VERIFIED ONLY after checking the
+   actual exposed native tool schema. Never trust a model's assertion alone.
+3. Request read-only toolkit_codex_prepare_delegation with the approved
+   task/request/consent/state/snapshot/minimal context and native_runtime
+   V1 or V2. A preflight plan/fingerprint is NOT a reservation.
+4. Use the trusted local Toolkit source's
+   scripts/codex_host_one_shot.py via local Python (NOT Codex CLI).
+   Call init --root on a host-approved private, absolute user ledger path,
+   preferably inside CODEX_HOME or ~/.codex, only after consent. On Windows,
+   the host must verify its filesystem ACL separately. Send claim --root required
+   bounded JSON exclusively by stdin; do not persist user prompts, print
+   raw context in logs, or substitute an untrusted script. The claim must
+   return HOST_ONE_SHOT_RESERVED for this exact plan before native spawn.
+   This is a trusted host-owned one-shot claim, without retry or bypass.
+   If script, private ledger, execution permission or the lease is missing,
+   refuse to spawn; explain the specific preflight blocker once.
+5. Invoke the ONE approved native spawn with exact arguments from the
+   preflight plan. For V1 perform one matching wait_agent and review its
+   final status. For V2, wait for mailbox only if actually blocked, then
+   use list_agents to get the target task's completed agent_status; V2
+   wait_agent alone does NOT contain a final result. Never use fork_context
+   in V2; use fork_turns=none with the selected model override.
+6. Call toolkit_codex_review_delegation, then record outcome once with
+   the ledger script using only the bounded native responses; redact
+   substantive output from durable receipts. Reconcile actual usage as
+   host-reported, never fabricate backend model verification. No retry,
+   alternative model, unapproved additional spawn or silent primary switch.
+
 Respect real cost gates, project AGENTS.md, security/network/visual/release
-approval rules, and the user's restrictions. Never use paid APIs or CLI
-unless an individual user explicitly permits those routes.
+approval rules, and the user's restrictions. Never use paid APIs or Codex
+CLI to work around missing native capabilities. If any gate cannot be
+verified, continue the primary-model task without a repeated prompt.
 
 Uninstalling this opt-in block restores ordinary Toolkit skill routing.
 <!-- ADT-MODEL-ADVISOR END -->

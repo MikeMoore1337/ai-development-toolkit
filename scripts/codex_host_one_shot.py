@@ -105,6 +105,34 @@ def _write_once(path: Path, data: dict) -> None:
         raise LeaseDenied("LEDGER_WRITE_UNCERTAIN_STOP_NO_RETRY") from exc
 
 
+def init(root: str) -> dict[str, Any]:
+    """Prepare an explicit one-shot ledger once; never create its parents.
+
+    All files remain within an existing caller-controlled private directory.
+    Windows ACL inheritance is not independently attested by this module.
+    """
+    if not isinstance(root, str) or not 1 <= len(root) <= 4096:
+        raise LeaseDenied("INVALID_LEDGER_ROOT")
+    target = Path(root).expanduser()
+    if not target.is_absolute() or target == target.parent:
+        raise LeaseDenied("LEDGER_REQUIRES_ABSOLUTE_PATH")
+    for candidate in (target, *target.parents):
+        if candidate.is_symlink() or (hasattr(candidate, "is_junction") and candidate.is_junction()):
+            raise LeaseDenied("LINKED_LEDGER_ROOT_REFUSED")
+    parent = _safe_directory(str(target.parent))
+    if not parent.is_dir():
+        raise LeaseDenied("LEDGER_PARENT_NOT_PRIVATE")
+    try:
+        target.mkdir(mode=0o700)
+        outcome = "CREATED"
+    except FileExistsError:
+        outcome = "ALREADY_EXISTS"
+    _safe_directory(str(target))
+    return {"status": "LEDGER_READY", "action": outcome,
+            "windows_acl_attestation": "HOST_REQUIRED" if os.name == "nt" else "NOT_APPLICABLE",
+            "native_calls_executed": 0}
+
+
 def claim(
     root: str, plan: dict, request: dict, consent: dict, state: dict,
     client_snapshot: dict, context: str, *,
@@ -125,6 +153,7 @@ def claim(
         request, consent, plan.get("requested_model"), state,
         client_snapshot, context,
         confirmed_for_this_call=confirmed_for_this_call,
+        native_runtime=plan.get("native_runtime", "V1"),
     )
     if validated != plan:
         raise LeaseDenied("PLAN_DOES_NOT_MATCH_CURRENT_PREFLIGHT")
@@ -202,18 +231,24 @@ def record_outcome(root: str, plan: dict, spawn_response: dict,
         "cost_incurred": "UNKNOWN",
         "repeat_allowed": False,
     }
+    if result.get("native_reference_kind") == "TASK_NAME":
+        summary["native_task_name"] = summary.pop("native_agent_id")
     _write_once(root_path / (key + ".outcome.json"), summary)
     return summary
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Codex host one-shot claim (no native invocation)")
-    parser.add_argument("action", choices=("claim", "inspect", "record"))
+    parser.add_argument("action", choices=("init", "claim", "inspect", "record"))
     parser.add_argument("--root", required=True, help="Prepared absolute private ledger folder")
     parser.add_argument("--task-id", help="Required for inspect only")
     args = parser.parse_args(argv)
     try:
-        if args.action == "inspect":
+        if args.action == "init":
+            if args.task_id:
+                raise LeaseDenied("TASK_ID_NOT_ACCEPTED_WITH_INIT")
+            response = init(args.root)
+        elif args.action == "inspect":
             if not args.task_id:
                 raise LeaseDenied("TASK_ID_REQUIRED")
             response = inspect(args.root, args.task_id)
