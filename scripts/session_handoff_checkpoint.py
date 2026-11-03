@@ -136,6 +136,19 @@ def make_handoff(repo: Path, issue_url: str, from_client: str, to_client: str,
     return packet
 
 
+def _context_without_authority(outcome: dict) -> dict:
+    """Even a stale or matched Git state is never an execution grant."""
+    return {
+        **outcome,
+        "verification_scope": "GIT_CONTEXT_ONLY",
+        "sender_identity": "NOT_VERIFIED",
+        "policy_revalidated": "NOT_VERIFIED",
+        "owner_approval": "NOT_GRANTED",
+        "action_authorized": False,
+        "execution_authorized": False,
+    }
+
+
 def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
     """Read-only local Git-state check. Digest is not proof of a human author."""
     invalid = {"decision": "BLOCKED", "reason": "INVALID_HANDOFF"}
@@ -165,19 +178,8 @@ def verify_handoff(repo: Path, packet: object, to_client: str) -> dict:
     if not _project_matches_origin(repo, packet["issue_url"]):
         return {"decision": "BLOCKED", "reason": "PROJECT_MISMATCH"}
     checked = verify_packet(repo, checkpoint)
-    if checked["decision"] != "PASS":
-        return checked
-    # A matching Git snapshot is context, not proof of who sent the packet
-    # or a new authorization to perform the suggested next action.
-    return {
-        **checked,
-        "verification_scope": "GIT_CONTEXT_ONLY",
-        "sender_identity": "NOT_VERIFIED",
-        "policy_revalidated": "NOT_VERIFIED",
-        "owner_approval": "NOT_GRANTED",
-        "action_authorized": False,
-        "execution_authorized": False,
-    }
+    # A matching or stale Git snapshot is only context, never execution consent.
+    return _context_without_authority(checked)
 
 
 def verify_handoff_portable(repo: Path, packet: object, to_client: str) -> dict:
@@ -199,7 +201,7 @@ def verify_handoff_portable(repo: Path, packet: object, to_client: str) -> dict:
     current = state(repo)
     for key in ("branch", "commit", "status_sha256", "dirty"):
         if checkpoint[key] != current[key]:
-            return {"decision": "STALE", "reason": key}
+            return _context_without_authority({"decision": "STALE", "reason": key})
     return {
         "decision": "REVIEW_REQUIRED",
         "reason": "PORTABLE_GIT_MATCH_UNAUTHENTICATED",
