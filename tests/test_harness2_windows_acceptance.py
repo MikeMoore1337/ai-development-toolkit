@@ -149,10 +149,13 @@ try {
             text=True, capture_output=True, check=False, timeout=20, env=environment,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+        # Localized PowerShell 5.1 errors may use the console code page rather
+        # than UTF-8; keep ASCII fail-closed markers readable in either case.
         denied = subprocess.run(
             ["powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
              "-File", str(SCRIPT), "-Action", "Setup", "-Benchmark", "lab"],
-            text=True, capture_output=True, check=False, timeout=20, env=environment,
+            text=True, capture_output=True, errors="replace",
+            check=False, timeout=20, env=environment,
         )
         self.assertNotEqual(denied.returncode, 0)
         self.assertIn("HARNESS2_SETUP_REQUIRES_NETWORK_CONFIRMATION", denied.stderr)
