@@ -690,6 +690,17 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertNotIn(str(clone), json.dumps(data))
         self.assertFalse((clone / ".adt").exists())
         self.assertTrue(packet_path.is_file())
+        subprocess.run(["git", "-C", str(clone), "-c", "user.name=Test",
+                        "-c", "user.email=test@example.invalid", "commit", "--allow-empty",
+                        "-m", "synthetic moved head"], check=True, capture_output=True)
+        stale = self._invoke("toolkit_verify_portable_handoff", project=str(clone),
+                             file=str(packet_path), to_client="hermes")
+        outcome = stale["result"]["structuredContent"]
+        self.assertEqual((outcome["decision"], outcome["reason"]), ("STALE", "commit"))
+        self.assertEqual(outcome["owner_approval"], "NOT_GRANTED")
+        self.assertIs(outcome["action_authorized"], False)
+        self.assertIs(outcome["execution_authorized"], False)
+        self.assertNotIn("references", outcome)
 
     def test_portable_handoff_mcp_rejects_tamper_and_extra_args(self):
         folder, issue, packet_path = self._handoff_fixture()

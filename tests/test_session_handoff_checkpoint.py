@@ -101,7 +101,11 @@ class CheckpointTests(unittest.TestCase):
         subprocess.run(["git", "-C", str(self.root), "-c", "user.name=Test",
                         "-c", "user.email=test@example.com", "commit", "--allow-empty",
                         "-m", "new"], check=True, capture_output=True)
-        self.assertEqual(m.verify_handoff(self.root, packet, "hermes")["decision"], "STALE")
+        stale = m.verify_handoff(self.root, packet, "hermes")
+        self.assertEqual(stale["decision"], "STALE")
+        self.assertEqual(stale["owner_approval"], "NOT_GRANTED")
+        self.assertIs(stale["action_authorized"], False)
+        self.assertIs(stale["execution_authorized"], False)
 
     def test_native_handoff_reject_tamper_and_forged_approval(self):
         packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", [], "NONE")
@@ -300,8 +304,11 @@ class CheckpointTests(unittest.TestCase):
         references = ["https://github.com/MikeMoore1337/ai-development-toolkit/pull/472"]
         packet = m.make_handoff(self.root, ISSUE, "codex", "hermes", references, "RUN_TESTS")
         copied = self._portable_copy()
-        self.assertEqual(m.verify_handoff(copied, packet, "hermes"),
-                         {"decision": "STALE", "reason": "repo_id"})
+        strict = m.verify_handoff(copied, packet, "hermes")
+        self.assertEqual((strict["decision"], strict["reason"]), ("STALE", "repo_id"))
+        self.assertEqual(strict["owner_approval"], "NOT_GRANTED")
+        self.assertIs(strict["action_authorized"], False)
+        self.assertIs(strict["execution_authorized"], False)
         result = m.verify_handoff_portable(copied, packet, "hermes")
         self.assertEqual(result["decision"], "REVIEW_REQUIRED")
         self.assertEqual(result["git_check"], "MATCHED_PORTABLE")
@@ -351,12 +358,22 @@ class CheckpointTests(unittest.TestCase):
         subprocess.run(["git", "-C", str(copied), "add", "tracked.txt"],
                        check=True, capture_output=True)
         changed = m.verify_handoff_portable(copied, packet, "hermes")
-        self.assertEqual(changed, {"decision": "STALE", "reason": "status_sha256"})
+        self.assertEqual((changed["decision"], changed["reason"]), ("STALE", "status_sha256"))
+        self.assertEqual(changed["policy_revalidated"], "NOT_VERIFIED")
+        self.assertEqual(changed["owner_approval"], "NOT_GRANTED")
+        self.assertIs(changed["action_authorized"], False)
+        self.assertIs(changed["execution_authorized"], False)
+        self.assertNotIn("references", changed)
         subprocess.run(["git", "-C", str(copied), "-c", "user.name=Test",
                         "-c", "user.email=test@example.com", "commit", "-m", "changed"],
                        check=True, capture_output=True)
         newer = m.verify_handoff_portable(copied, packet, "hermes")
-        self.assertEqual(newer, {"decision": "STALE", "reason": "commit"})
+        self.assertEqual((newer["decision"], newer["reason"]), ("STALE", "commit"))
+        self.assertEqual(newer["sender_identity"], "NOT_VERIFIED")
+        self.assertEqual(newer["owner_approval"], "NOT_GRANTED")
+        self.assertIs(newer["action_authorized"], False)
+        self.assertIs(newer["execution_authorized"], False)
+        self.assertNotIn("references", newer)
 
     def test_git_reader_never_enables_configured_fsmonitor(self):
         from unittest import mock
