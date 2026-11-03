@@ -92,6 +92,9 @@ class GroqFreeContract(unittest.TestCase):
                           self.request(tokens=0), self.request(tokens=513),
                           self.request(tokens=True),
                           self.request(tools=[{"function": {"name": "bash"}}]),
+                          self.request(tools=[{"function": "read"}]),
+                          self.request(tools=[{"function": []}]),
+                          self.request(tools=[None]),
                           self.request(tools=[{"function": {"name": "read"}}] * 2)):
             data = json.dumps(candidate).encode()
             frame = {"method": "POST", "path": "/v1/chat/completions",
@@ -144,6 +147,7 @@ class GroqFreeContract(unittest.TestCase):
                             return urlopen(req, timeout=12)
                         for bad in (self.request(model="auto"),
                                     self.request(tools=[{"function": {"name": "bash"}}]),
+                                    self.request(tools=[{"function": "read"}]),
                                     self.request(tokens=2048)):
                             with self.assertRaises(HTTPError) as denied:
                                 send(bad)
@@ -188,6 +192,8 @@ class GroqFreeContract(unittest.TestCase):
         self.assertIn('"read"', sh)
         self.assertIn('timeout --kill-after=5s 85s', sh)
         self.assertIn("mktemp -d", sh)
+        self.assertIn('realpath -e -- "$TEMP_ROOT"', sh)
+        self.assertIn('"$canonical_temp" == "$canonical_home/"*', sh)
         self.assertNotIn("harness2-judge", sh)
         for name in (WIN, WSL):
             self.assertTrue(name.is_file())

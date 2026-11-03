@@ -78,6 +78,10 @@ HARNESS2_GROQ_BRIDGE_TOKEN="$(python3.12 -c 'import secrets; print(secrets.token
 
 readonly TEMP_ROOT="$HOME/.local/share/ai-development-toolkit"
 [[ -d "$TEMP_ROOT" && ! -L "$TEMP_ROOT" ]] || fail 'unsafe user-only storage'
+# An intermediate symlink must not divert the disposable workspace outside HOME.
+canonical_home="$(realpath -e -- "$HOME")" || fail 'cannot resolve HOME'
+canonical_temp="$(realpath -e -- "$TEMP_ROOT")" || fail 'cannot resolve workspace parent'
+[[ "$canonical_temp" == "$canonical_home/"* ]] || fail 'workspace parent escapes HOME'
 umask 077
 run_root="$(mktemp -d "$TEMP_ROOT/h421-groq-free-XXXXXXXX")" || fail 'cannot create isolated workspace'
 bridge_pid=""

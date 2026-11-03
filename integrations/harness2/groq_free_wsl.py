@@ -34,7 +34,8 @@ def validate_chat(payload: object) -> None:
     if not isinstance(tools, list) or len(tools) > 1:
         raise ValueError("only one read tool may be exposed")
     for item in tools:
-        if not isinstance(item, dict) or (item.get("function") or {}).get("name") != "read":
+        function = item.get("function") if isinstance(item, dict) else None
+        if not isinstance(function, dict) or function.get("name") != "read":
             raise ValueError("tool not allowed")
 
 

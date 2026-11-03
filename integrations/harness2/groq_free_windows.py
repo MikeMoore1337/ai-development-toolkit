@@ -47,7 +47,8 @@ def validate_request(message: object) -> tuple[str, str, bytes]:
         if not isinstance(tools, list) or len(tools) > 1:
             raise ValueError("unsafe tool count")
         for tool in tools:
-            if not isinstance(tool, dict) or (tool.get("function") or {}).get("name") != "read":
+            function = tool.get("function") if isinstance(tool, dict) else None
+            if not isinstance(function, dict) or function.get("name") != "read":
                 raise ValueError("only read tool is allowed")
     elif raw:
         raise ValueError("GET requests must be empty")
