@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,6 +79,45 @@ class Harness2WindowsAcceptanceContract(unittest.TestCase):
                                 text=True, capture_output=True, check=False, timeout=10)
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    @unittest.skipUnless(
+        os.name == "posix" and shutil.which("bash") and shutil.which("python3.12")
+        and hasattr(os, "geteuid") and os.geteuid() != 0,
+        "Unprivileged POSIX Bash and Python 3.12 required",
+    )
+    def test_native_node_required_even_if_npm_is_on_path(self):
+        # WSL inherits Windows npm from /mnt/c, but npm alone is not usable.
+        with tempfile.TemporaryDirectory() as directory:
+            binaries = Path(directory) / "bin"
+            binaries.mkdir()
+            for name in ("id", "git", "python3.12"):
+                executable = shutil.which(name)
+                self.assertIsNotNone(executable, name)
+                (binaries / name).symlink_to(executable)
+            grep = binaries / "grep"
+            grep.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            grep.chmod(0o755)
+            npm = binaries / "npm"
+            npm.write_text("#!/bin/sh\necho 11.19.1\n", encoding="utf-8")
+            npm.chmod(0o755)
+            env = {**os.environ, "PATH": str(binaries)}
+            command = [shutil.which("bash"), str(PREFLIGHT)]
+            missing_node = subprocess.run(
+                command, env=env, capture_output=True, text=True, timeout=10,
+                check=False,
+            )
+            self.assertEqual(missing_node.returncode, 0, missing_node.stderr)
+            self.assertIn("NPM=MISSING_FOR_SETUP", missing_node.stdout)
+
+            node = binaries / "node"
+            node.write_text("#!/bin/sh\necho v24.22.2\n", encoding="utf-8")
+            node.chmod(0o755)
+            native_node = subprocess.run(
+                command, env=env, capture_output=True, text=True, timeout=10,
+                check=False,
+            )
+            self.assertEqual(native_node.returncode, 0, native_node.stderr)
+            self.assertIn("NPM=PRESENT", native_node.stdout)
+
     @unittest.skipUnless(os.name == "nt" and shutil.which("powershell.exe"), "Windows PowerShell required")
     def test_windows_wsl_auto_discovery_and_missing_distro_with_stub(self):
         # A function shadowing wsl.exe exercises Windows PowerShell 5.1 command
@@ -149,10 +189,13 @@ try {
             text=True, capture_output=True, check=False, timeout=20, env=environment,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+        # Localized PowerShell 5.1 errors may use the console code page rather
+        # than UTF-8; keep ASCII fail-closed markers readable in either case.
         denied = subprocess.run(
             ["powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
              "-File", str(SCRIPT), "-Action", "Setup", "-Benchmark", "lab"],
-            text=True, capture_output=True, check=False, timeout=20, env=environment,
+            text=True, capture_output=True, errors="replace",
+            check=False, timeout=20, env=environment,
         )
         self.assertNotEqual(denied.returncode, 0)
         self.assertIn("HARNESS2_SETUP_REQUIRES_NETWORK_CONFIRMATION", denied.stderr)

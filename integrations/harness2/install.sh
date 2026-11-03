@@ -25,6 +25,17 @@ readonly BASE="$HOME/.local/share/ai-development-toolkit"
 readonly DEST="$BASE/harness2-$UPSTREAM_SHA"
 readonly MARKER="$DEST/.adt-original-harness2"
 
+# Never clean up an installation that existed before this invocation.
+# Only a newly created, failed destination may be removed on normal shell exit.
+install_created=0
+cleanup_failed_install() {
+  local rc=$?
+  if [[ "$rc" -ne 0 && "$install_created" -eq 1 && -d "$DEST" && ! -L "$DEST" ]]; then
+    rm -rf -- "$DEST" || printf 'harness2: failed to clean incomplete installation\n' >&2
+  fi
+}
+trap cleanup_failed_install EXIT
+
 check_installed() {
   [[ -d "$DEST" && ! -L "$DEST" && -d "$DEST/source" && ! -L "$DEST/source" ]] || die "not installed or unsafe checkout"
   [[ -f "$MARKER" && ! -L "$MARKER" ]] || die "missing install marker"
@@ -61,6 +72,7 @@ case "$1" in
     mkdir -p -- "$BASE"
     [[ -d "$BASE" && ! -L "$BASE" ]] || die "unsafe installation parent"
     mkdir -- "$DEST"
+    install_created=1
     # No submodules, no fork, no patched source. Pin a full Git commit.
     git clone --no-checkout -- "$UPSTREAM_URL" "$DEST/source"
     git -C "$DEST/source" checkout --detach "$UPSTREAM_SHA"
@@ -69,6 +81,7 @@ case "$1" in
     "$DEST/.venv/bin/python" -m pip install --disable-pip-version-check -e "$DEST/source[render]"
     printf '%s\n' "$UPSTREAM_SHA" > "$MARKER"
     check_installed
+    install_created=0
     printf 'HARNESS2_INSTALL=COMPLETE\n'
     ;;
   remove)

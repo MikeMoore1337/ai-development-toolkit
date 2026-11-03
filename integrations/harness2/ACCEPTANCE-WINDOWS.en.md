@@ -1,8 +1,10 @@
 # Harness²: original upstream acceptance on Windows/WSL2
 
-This Toolkit #421 entry point invokes only its own read-only `preflight.sh` and the existing `install.sh` and `cli.sh` bridges inside Ubuntu WSL2. It does not change Windows Python 3.14, Codex Desktop, Hermes, YFC or Second Brain. No model runs, judges, Codex CLI or Claude CLI are invoked. Preflight is executed as a checked-in Bash file path, not a multiline `bash -c` argument, avoiding Windows PowerShell 5.1 quote and newline corruption.
+This Toolkit #421 entry point invokes only its own read-only `preflight.sh` and the existing `install.sh` and `cli.sh` bridges inside Ubuntu WSL2. It does not change Windows Python 3.14, Codex Desktop, Hermes, YFC or Second Brain. Ordinary actions never run a model or judge. The separately confirmed `GroqFreeSmoke` below is the sole exception: it runs a bounded Groq Free model through original OpenCode, not a judge, Codex CLI or Claude CLI. Preflight is executed as a checked-in Bash file path, not a multiline `bash -c` argument, avoiding Windows PowerShell 5.1 quote and newline corruption.
 
-Requirements: Windows 11 and Ubuntu under WSL2. The script automatically selects an installed `Ubuntu-24.04`, `Ubuntu`, `Ubuntu-22.04` or another versioned `Ubuntu-XX.YY` distribution; use `-Distribution Ubuntu-24.04` for explicit selection. The Docker-managed `docker-desktop` distro is not used. A non-root Ubuntu user, Git and Python 3.12 are required. A full official benchmark setup additionally needs uv, npm, and the prerequisites in [upstream SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md). The Toolkit checkout must be reachable from WSL2 through wslpath.
+Requirements: Windows 11 and Ubuntu under WSL2. The script automatically selects an installed `Ubuntu-24.04`, `Ubuntu`, `Ubuntu-22.04` or another versioned `Ubuntu-XX.YY` distribution; use `-Distribution Ubuntu-24.04` for explicit selection. The Docker-managed `docker-desktop` distro is not used. A non-root Ubuntu user, Git and Python 3.12 are required. A full official benchmark setup additionally needs uv, **native Linux Node.js 20+ with npm**, and the prerequisites in [upstream SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md). The Toolkit checkout must be reachable from WSL2 through wslpath.
+
+WSL can expose Windows `npm` from `/mnt/c` even without a working Linux `node`. Preflight reports `NPM=MISSING_FOR_SETUP` until a native Linux Node.js 20+ and npm are available on the Ubuntu `PATH`; it never installs them or changes PATH globally.
 
 If Ubuntu is missing, run `wsl --list --verbose`, `wsl --list --online`, then `wsl --install -d Ubuntu-24.04` in Windows PowerShell. Installing a distribution is an explicit Windows administrator decision; this Harness² script **never** installs Linux, selects Docker, or changes your WSL defaults. On first launch create an unprivileged Linux account; a Windows restart may be necessary.
 
@@ -37,3 +39,23 @@ Safe rollback also requires explicit confirmation:
 ~~~
 
 Removal touches only the verified pinned installation; external results remain. Resolve missing WSL2, Git or Python 3.12 inside Ubuntu rather than modifying global Windows Python. These steps do not establish Codex Desktop compatibility, model effectiveness, or complete live acceptance of Toolkit #421.
+
+## Explicit Groq Free model and read-tool smoke
+
+The **default actions above remain model-free**. The separate optional action
+below does call an explicitly authorized free cloud model; it is never run by
+`Preflight`, `Setup`, `Check` or `RunPreview`:
+
+~~~powershell
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeCheck
+# Requires the FreeLLMAPI desktop already running and Groq Free plan confirmed:
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeSmoke -ConfirmGroqFree
+~~~
+
+The original JobBench source/dataset and pinned OpenCode/Bun runtime must be
+prepared first. `GroqFreeCheck` requires no real judge/model key; it tests only
+original upstream readiness. `GroqFreeSmoke` executes one disposable read-tool
+agent scenario through Groq Free. The user credential stays in Windows; an
+expiring WSL loopback bridge, strict model/request/tool bounds and cleanup
+protect the smoke. This **does not** run real Harness² experiments or judging.
+See [the free-cloud contract](README.md#opt-in-free-cloud-windowswsl2-opencode-acceptance-groq-free).

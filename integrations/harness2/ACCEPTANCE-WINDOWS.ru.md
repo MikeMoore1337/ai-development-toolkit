@@ -1,14 +1,16 @@
 # Harness²: приёмка оригинального upstream на Windows/WSL2
 
-Этот сценарий относится к Toolkit #421 и вызывает только собственный проверочный `preflight.sh`, существующие `install.sh` и `cli.sh`. Он не устанавливает Harness² в Python 3.14 Windows, не меняет Codex Desktop, YFC, Hermes или Second Brain. Все команды выполняются в Ubuntu WSL2. Никакие модели, judge, Codex CLI и Claude CLI не запускаются. Проверка `preflight.sh` передаётся в WSL как путь к файлу, а не как многострочная строка для `bash -c` - это устраняет искажение кавычек/переводов строк в Windows PowerShell 5.1.
+Этот сценарий относится к Toolkit #421 и вызывает только собственный проверочный `preflight.sh`, существующие `install.sh` и `cli.sh`. Он не устанавливает Harness² в Python 3.14 Windows, не меняет Codex Desktop, YFC, Hermes или Second Brain. Все команды выполняются в Ubuntu WSL2. Обычные действия не вызывают модель или оценщика. Отдельный режим `GroqFreeSmoke` запускает ограниченную проверку Groq Free через оригинальный OpenCode только после явного подтверждения, без judge, Codex CLI или Claude CLI. Проверка `preflight.sh` передаётся в WSL как путь к файлу, а не как многострочная строка для `bash -c` - это устраняет искажение кавычек/переводов строк в Windows PowerShell 5.1.
 
 ## Требования
 
 - Windows 11, WSL2 с Ubuntu. По умолчанию скрипт автоматически выбирает установленный `Ubuntu-24.04`, `Ubuntu` или `Ubuntu-22.04` (другие версии `Ubuntu-XX.YY` также распознаются). Для явного выбора используйте `-Distribution Ubuntu-24.04`. Внутренний `docker-desktop` не используется.
 - Если Ubuntu не установлена, выполните в PowerShell `wsl --list --verbose`, затем `wsl --list --online` и `wsl --install -d Ubuntu-24.04`. Это отдельная команда установки Linux, **сам сценарий Harness² её не выполняет**. При первой загрузке Ubuntu создайте непривилегированного Linux-пользователя; может потребоваться перезагрузка Windows.
-- В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, npm и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
+- В Ubuntu: непривилегированный пользователь, Git и Python 3.12. Для полного штатного benchmark setup дополнительно потребуются uv, **нативный Node.js 20+ для Linux вместе с npm** и компоненты из [официального SETUP](https://github.com/google-research/harness2/blob/1cfe254e8d25b15f37048c3730134686abe60335/docs/SETUP.md).
 - Checkout Toolkit, доступный с Windows и из WSL2 через wslpath.
 
+
+WSL может видеть Windows-версию `npm` через `/mnt/c`, даже когда Node.js для Linux отсутствует. В этом случае preflight сообщает `NPM=MISSING_FOR_SETUP`, пока в Ubuntu `PATH` не появятся нативные Node.js 20+ и npm. Глобальный `PATH` сценарий не меняет.
 
 **Предупреждение WSL о localhost-прокси в NAT** само по себе не является ошибкой Bash или отказом preflight. Если после установки пакет не скачивается из GitHub/PyPI, сначала отдельно проверьте сеть и прокси внутри Ubuntu. Сценарий не меняет системный прокси и не отключает проверки безопасности.
 
@@ -40,3 +42,22 @@
 ~~~
 
 Удаляется только исходная проверенная установка, внешние результаты не удаляются. Если Preflight сообщает об отсутствии Python 3.12, Git или Ubuntu, исправьте системные требования отдельно, не меняя глобальный Python 3.14 Windows. Эти проверки не доказывают поддержку Codex Desktop или улучшение качества моделей. Для закрытия #421 нужны результаты настоящей приёмки WSL2 и отдельно статус разрешённого официального benchmark.
+
+## Отдельная бесплатная проверка OpenCode через Groq Free
+
+Перечисленные выше обычные команды **не вызывают модель**. Для отдельно
+согласованного обращения к Groq Free доступны:
+
+~~~powershell
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeCheck
+# FreeLLMAPI Desktop должен быть запущен, тариф Groq Free подтверждён:
+.\integrations\harness2\acceptance.ps1 -Action GroqFreeSmoke -ConfirmGroqFree
+~~~
+
+Требуются заранее подготовленные оригинальные JobBench, OpenCode и Bun внутри
+Ubuntu WSL2. `GroqFreeCheck` проверяет комплектность без ключа оценщика и без
+обращения к модели. `GroqFreeSmoke` выполняет короткое реальное испытание
+оригинального OpenCode с разрешённым только `read`. Настоящий ключ остаётся
+в Windows, а временный WSL-сервер закрывается после испытания. Это **не**
+испытание оптимизации Harness² и не независимая оценка JobBench.
+Подробнее: [бесплатная модельная приёмка](README.ru.md#бесплатная-облачная-проверка-opencode-в-windowswsl2).

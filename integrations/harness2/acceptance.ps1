@@ -2,20 +2,21 @@
 .SYNOPSIS
     Opt-in acceptance of ORIGINAL pinned Harness2 from Windows/Ubuntu WSL2.
 .DESCRIPTION
-    Runs only the existing Toolkit installer and safe native CLI bridge in WSL2.
-    Does not invoke models, agent benchmarks, judge, Codex CLI or Claude CLI.
+    Runs original Harness2 readiness checks and optional bounded Groq Free
+    OpenCode smoke in WSL2. No paid models, judge, Codex or Claude CLI.
     Preflight is read-only. Install and Setup require explicit -Action values.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Preflight', 'Install', 'Remove', 'Status', 'SetupPreview', 'Setup', 'Check', 'RunPreview', 'Report', 'Artifacts')]
+    [ValidateSet('Preflight', 'Install', 'Remove', 'Status', 'SetupPreview', 'Setup', 'Check', 'RunPreview', 'Report', 'Artifacts', 'GroqFreeCheck', 'GroqFreeSmoke')]
     [string]$Action = 'Preflight',
     [ValidateSet('lab', 'jb', 'wb')]
     [string]$Benchmark = 'lab',
     [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')]
     [string]$Distribution = 'auto',
     [switch]$ConfirmNetworkDownloads,
-    [switch]$ConfirmRemove
+    [switch]$ConfirmRemove,
+    [switch]$ConfirmGroqFree
 )
 
 Set-StrictMode -Version Latest
@@ -33,6 +34,12 @@ if ($Action -eq 'Remove' -and -not $ConfirmRemove) {
 }
 if ($Action -ne 'Remove' -and $ConfirmRemove) {
     throw 'HARNESS2_UNEXPECTED_REMOVE_CONFIRMATION'
+}
+if ($Action -eq 'GroqFreeSmoke' -and -not $ConfirmGroqFree) {
+    throw 'HARNESS2_GROQ_FREE_SMOKE_REQUIRES_CONFIRMATION'
+}
+if ($Action -ne 'GroqFreeSmoke' -and $ConfirmGroqFree) {
+    throw 'HARNESS2_UNEXPECTED_GROQ_FREE_CONFIRMATION'
 }
 if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
     throw 'HARNESS2_WSL_UNAVAILABLE'
@@ -96,6 +103,7 @@ $sourceDirectory = $sourcePath.Substring(0, $sourcePath.Length - '/acceptance.ps
 $installer = "$sourceDirectory/install.sh"
 $bridge = "$sourceDirectory/cli.sh"
 $preflightScript = "$sourceDirectory/preflight.sh"
+$groqFreeScript = "$sourceDirectory/groq-free-smoke.sh"
 
 # Preflight is read-only and never runs models or downloads dependencies.
 Invoke-WSLChecked -Arguments @('bash', $preflightScript)
@@ -113,5 +121,43 @@ switch ($Action) {
     'RunPreview'   { Invoke-WSLChecked -Arguments @('bash', $bridge, 'run-preview', $Benchmark) }
     'Report'       { Invoke-WSLChecked -Arguments @('bash', $bridge, 'report', $Benchmark) }
     'Artifacts'    { Invoke-WSLChecked -Arguments @('bash', $bridge, 'artifacts') }
+    'GroqFreeCheck' {
+        # Original JobBench installation check only. No provider calls or real credentials.
+        Invoke-WSLChecked -Arguments @('bash', $groqFreeScript, 'check')
+    }
+    'GroqFreeSmoke' {
+        # The existing Windows desktop gateway owns the actual provider credential.
+        # Never copy it into WSL, argv, a public Toolkit repository or a log.
+        $configFile = Join-Path $env:APPDATA 'FreeLLMAPI\config.json'
+        if (-not (Test-Path -LiteralPath $configFile -PathType Leaf)) {
+            throw 'HARNESS2_GROQ_FREE_ROUTER_NOT_INSTALLED'
+        }
+        $settings = Get-Content -LiteralPath $configFile -Raw | ConvertFrom-Json
+        $port = [int]$settings.port
+        if ($port -lt 1024 -or $port -gt 65535) {
+            throw 'HARNESS2_GROQ_FREE_ROUTER_PORT_INVALID'
+        }
+        try {
+            $response = Invoke-WebRequest -UseBasicParsing -Uri ("http://127.0.0.1:" + $port + "/health") -TimeoutSec 3
+            if ([int]$response.StatusCode -ne 200) {
+                throw 'HARNESS2_GROQ_FREE_ROUTER_NOT_RUNNING'
+            }
+        } catch {
+            throw 'HARNESS2_GROQ_FREE_ROUTER_NOT_RUNNING: start the installed FreeLLMAPI desktop app'
+        }
+        if (-not (Get-Command py.exe -ErrorAction SilentlyContinue)) {
+            throw 'HARNESS2_GROQ_FREE_WINDOWS_PYTHON_MISSING'
+        }
+        $windowsPython = @(& py.exe -3 -c 'import sys; print(sys.executable)' 2>$null)
+        if ($LASTEXITCODE -ne 0 -or $windowsPython.Count -ne 1) {
+            throw 'HARNESS2_GROQ_FREE_WINDOWS_PYTHON_INVALID'
+        }
+        $pythonWSL = @(& wsl.exe --distribution $Distribution --exec wslpath -u $windowsPython[0].Trim())
+        if ($LASTEXITCODE -ne 0 -or $pythonWSL.Count -ne 1 -or
+            -not $pythonWSL[0].Trim().StartsWith('/mnt/')) {
+            throw 'HARNESS2_GROQ_FREE_WINDOWS_PYTHON_NOT_MOUNTED'
+        }
+        Invoke-WSLChecked -Arguments @('bash', $groqFreeScript, 'smoke', $pythonWSL[0].Trim(), '--confirm-groq-free')
+    }
     default        { throw 'HARNESS2_UNKNOWN_ACTION' }
 }

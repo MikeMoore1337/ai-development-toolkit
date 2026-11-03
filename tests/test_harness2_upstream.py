@@ -50,6 +50,45 @@ class OriginalHarness2InstallerContract(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unknown command", result.stderr)
 
+    def test_failed_clone_cleans_up_its_own_partial_install(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            home = base / "home"
+            home.mkdir()
+            mock_bin = base / "mock-bin"
+            mock_bin.mkdir()
+            git_stub = mock_bin / "git"
+            git_stub.write_text("#!/bin/sh\nexit 42\n", encoding="utf-8")
+            git_stub.chmod(0o755)
+            env = {
+                **os.environ,
+                "HOME": str(home),
+                "PATH": f"{mock_bin}{os.pathsep}{os.environ['PATH']}",
+            }
+            result = subprocess.run(
+                ["bash", str(INSTALLER), "install"],
+                text=True, capture_output=True, check=False, timeout=10, env=env,
+            )
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+            dest = home / ".local" / "share" / "ai-development-toolkit" / f"harness2-{UPSTREAM_SHA}"
+            self.assertFalse(dest.exists() or dest.is_symlink(),
+                             f"failed clone left an unusable installation: {result.stderr}")
+
+    def test_existing_unmarked_user_files_are_preserved(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            dest = home / ".local" / "share" / "ai-development-toolkit" / f"harness2-{UPSTREAM_SHA}"
+            dest.mkdir(parents=True)
+            note = dest / "user-data.txt"
+            note.write_text("preserve me", encoding="utf-8")
+            result = subprocess.run(
+                ["bash", str(INSTALLER), "install"],
+                text=True, capture_output=True, check=False, timeout=10,
+                env={**os.environ, "HOME": str(home)},
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(note.read_text(encoding="utf-8"), "preserve me")
+
     def test_pinned_unmodified_upstream_not_demo(self):
         text = INSTALLER.read_text(encoding="utf-8")
         self.assertIn(UPSTREAM_SHA, text)
