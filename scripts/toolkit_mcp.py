@@ -251,6 +251,16 @@ def _tool_defs() -> list[dict]:
              "issue_url": string("Exact public GitHub Issue URL in this repository")},
              "required": ["project", "directory", "issue_url"], "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_owner_reviewed_memory",
+         "description": "Explicit opt-in, read-only public GitHub account-owner review of one memory reference; never grants action permission.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Existing external project-memory JSON file"),
+             "attestation_url": string("Public owner comment on the exact same GitHub Issue"),
+             "allow_public_github_fetch": {"type": "boolean"}},
+             "required": ["project", "file", "attestation_url", "allow_public_github_fetch"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
         {"name": "toolkit_status", "description": "Read Skill Manager ownership status in an existing project, without writes.",
          "inputSchema": {"type": "object",
                          "properties": {"project": string("Existing absolute project directory"),
@@ -585,6 +595,19 @@ def invoke(tool: str, args: dict) -> dict:
             result = memory.read_record(project, file)
         return {**result, "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY",
                 "client_activation": "NOT_VERIFIED", "owner_approval": "NOT_GRANTED"}
+    if tool == "toolkit_verify_owner_reviewed_memory":
+        if set(args) != {"project", "file", "attestation_url", "allow_public_github_fetch"}:
+            raise ValueError("Owner-review check requires an explicit file, comment, and opt-in")
+        project = _project(args["project"])
+        _handoff_project_root(project, _handoff_module())
+        memory = _reviewed_memory_module()
+        file = _handoff_input_path(args["file"], "memory file")
+        result = memory.verify_owner_review(
+            project, file, args["attestation_url"],
+            allow_public_github_fetch=args["allow_public_github_fetch"])
+        return {**result, "mcp_surface": "TOOLKIT_PROJECT_MCP_READ_ONLY",
+                "owner_approval": "NOT_GRANTED", "action_authorized": False,
+                "execution_authorized": False}
     if tool == "toolkit_observe_project":
         if set(args) != {"project", "client"}:
             raise ValueError("Observer requires only project and client")

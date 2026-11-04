@@ -97,4 +97,40 @@ python scripts/reviewed_memory.py search --repo /path/to/repo --directory /exter
 
 `prepare` **never saves**. The opt-in `record` command is a separate local operator action; no Project MCP write capability is added. Three Project MCP **read-only** tools `toolkit_prepare_reviewed_memory`, `toolkit_read_reviewed_memory`, and `toolkit_search_reviewed_memory` expose previews, one explicit external file, and exact-Issue lookup in one selected directory (max 16 entries). A record can be copied between machines manually because its project key is the same-repository GitHub origin, not a private absolute filesystem path. Deleting the selected JSON file removes the record; no background process or user-scope scan is involved.
 
-**Limits:** `--operator-reviewed` represents a *local operator claim*, **not authenticated human review**. The stored review permalink is **not fetched or verified** and may be forged; SHA-256 protects against accidental corruption, not malicious authors. All retrieval returns `REVIEW_REQUIRED`, `trust=UNTRUSTED_REFERENCE`, `review_attestation=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, with no action execution. The memory index is lexical/exact-Issue, not #338 episodic semantic memory or a canonical policy source. Cross-device transport, authenticated reviewers, client opt-in installation, real Codex Desktop ↔ Hermes E2E and a versioned Toolkit release remain **NOT_VERIFIED**.
+**Limits:** `--operator-reviewed` represents a *local operator claim*, **not authenticated human review**. The stored review permalink is **not fetched or verified** and may be forged; SHA-256 protects against accidental corruption, not malicious authors. All retrieval returns `REVIEW_REQUIRED`, `trust=UNTRUSTED_REFERENCE`, `review_attestation=NOT_VERIFIED`, `owner_approval=NOT_GRANTED`, with no action execution. The memory index is lexical/exact-Issue, not #338 episodic semantic memory or a canonical policy source. The real Codex Desktop ↔ Hermes handoff acceptance is recorded separately in Issue #433. It does not establish reviewer identity, memory approval, user-scope installation or a versioned Toolkit release.
+
+## Explicit GitHub repository-owner account check for one reference (#433)
+
+Records remain untrusted by default. The optional, read-only Project MCP tool
+`toolkit_verify_owner_reviewed_memory` requires exact `project`, `file`,
+`attestation_url`, and `allow_public_github_fetch=true`. Only an explicit invocation
+reads two public official GitHub REST resources over HTTPS without a token and
+compares the *numeric account ID* to the public repository owner.
+
+The attestation is a **separate owner-authored comment on the same Issue**,
+created after the memory file exists. Its entire body must be (substitute values):
+
+```text
+TOOLKIT-MEMORY-OWNER-REVIEW-V1
+record_sha256=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+decision=APPROVE_REFERENCE
+expires_utc=2026-11-20T12:00:00Z
+```
+
+The hash names the *existing* reference record. Expiry is UTC, after the
+verification clock and no later than 30 days after comment creation. Each
+explicit check refetches current owner identity, exact Issue and comment,
+bounded statement, and expiry. Editing or deleting the comment revokes
+the attestation on subsequent checks. Organization-owned repositories
+are not supported in this first opt-in account-owner-only contract.
+
+A positive `REFERENCE_REVIEW_ATTESTED` says that **GitHub currently attributes
+the statement to the repository-owner account**, not that a physical person
+was present. It verifies a project reference only. Execution, deployment,
+merge or broader owner consent is **never granted**: `owner_approval=NOT_GRANTED`,
+`action_authorized=false`, `execution_authorized=false`. Existing read/search
+remain fully offline and do not trigger automatic network activity.
+
+```sh
+python scripts/reviewed_memory.py verify-owner-review --repo /path/to/repo --file /path/to/existing-memory.json --attestation-url https://github.com/ORG/REPO/issues/123#issuecomment-456 --allow-public-github-fetch
+```

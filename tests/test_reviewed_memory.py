@@ -276,6 +276,106 @@ class ReviewedMemoryTests(unittest.TestCase):
         self.assertEqual(verified["owner_approval"], "NOT_GRANTED")
         self.assertEqual(verified["review_attestation"], "NOT_VERIFIED")
 
+    def test_public_github_owner_attestation_only_for_exact_digest(self):
+        from datetime import datetime, timezone
+        from unittest.mock import patch
+        attestation = "https://github.com/example/toolkit-demo/issues/11#issuecomment-99"
+        record = self.record()
+        memory.handoff._capture_handoff_file(self.file, record)
+        date = datetime(2026, 11, 4, 12, tzinfo=timezone.utc)
+        repository = {"full_name": "example/toolkit-demo", "private": False,
+                      "owner": {"type": "User", "login": "example", "id": 42}}
+        comment = {
+            "id": 99, "html_url": attestation,
+            "issue_url": "https://api.github.com/repos/example/toolkit-demo/issues/11",
+            "author_association": "OWNER", "user": {"type": "User", "login": "example", "id": 42},
+            "created_at": "2026-11-04T10:00:00Z",
+            "body": ("TOOLKIT-MEMORY-OWNER-REVIEW-V1\n"
+                     "record_sha256=" + record["sha256"] + "\n"
+                     "decision=APPROVE_REFERENCE\nexpires_utc=2026-11-11T10:00:00Z\n"),
+        }
+        def fetch(path):
+            if path == "/repos/example/toolkit-demo":
+                return repository
+            if path == "/repos/example/toolkit-demo/issues/comments/99":
+                return comment
+            raise AssertionError("Unexpected external endpoint")
+        with patch.object(memory, "_public_github_json", side_effect=AssertionError("NETWORK_FORBIDDEN")):
+            disabled = memory.verify_owner_review(self.root, self.file, attestation)
+        self.assertEqual(disabled["reason"], "PUBLIC_GITHUB_OPT_IN_REQUIRED")
+        self.assertEqual(disabled["network"], "NOT_USED")
+        result = memory.verify_owner_review(self.root, self.file, attestation,
+            allow_public_github_fetch=True, fetcher=fetch, now=date)
+        self.assertEqual(result["decision"], "REFERENCE_REVIEW_ATTESTED")
+        self.assertEqual(result["review_attestation"], "GITHUB_REPOSITORY_OWNER_ACCOUNT_VERIFIED")
+        self.assertEqual(result["reviewer_user_id"], 42)
+        self.assertEqual(result["human_presence"], "NOT_VERIFIED")
+        self.assertEqual(result["owner_approval"], "NOT_GRANTED")
+        self.assertIs(result["action_authorized"], False)
+        self.assertIs(result["execution_authorized"], False)
+        self.assertEqual(len(list(self.folder.iterdir())), 1)
+        self.assertNotIn(str(self.root), json.dumps(result))
+
+        cases = [
+            (repository, {**comment, "user": {"type": "User", "login": "outsider", "id": 57}}),
+            (repository, {**comment, "author_association": "COLLABORATOR"}),
+            (repository, {**comment, "user": {**comment["user"], "login": None}}),
+            (repository, {**comment, "issue_url": "https://api.github.com/repos/example/toolkit-demo/issues/12"}),
+            (repository, {**comment, "body": comment["body"].replace(record["sha256"], "0" * 64)}),
+            (repository, {**comment, "body": comment["body"].replace("APPROVE_REFERENCE", "REVOKE_REFERENCE")}),
+            (repository, {**comment, "body": comment["body"].replace("2026-11-11", "2026-11-03")}),
+            (repository, {**comment, "body": comment["body"].replace("2026-11-11", "2027-11-11")}),
+            ({**repository, "private": True}, comment),
+            ({**repository, "owner": {"type": "Organization", "login": "example", "id": 42}}, comment),
+        ]
+        for rep, com in cases:
+            with self.subTest(comment=com.get("body", "")[-36:], repository=rep):
+                def forged_fetch(path):
+                    return rep if path.endswith("toolkit-demo") else com
+                verdict = memory.verify_owner_review(self.root, self.file, attestation,
+                    allow_public_github_fetch=True, fetcher=forged_fetch, now=date)
+                self.assertEqual(verdict["decision"], "REVIEW_REQUIRED")
+                self.assertEqual(verdict["review_attestation"], "NOT_VERIFIED")
+                self.assertIs(verdict["execution_authorized"], False)
+        self.assertEqual(memory.verify_owner_review(
+            self.root, self.file, attestation,
+            allow_public_github_fetch=True, fetcher=lambda _: (_ for _ in ()).throw(OSError()),
+            now=date)["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(memory.verify_owner_review(self.root, self.file,
+            "https://github.com/foreign/repo/issues/11#issuecomment-99",
+            allow_public_github_fetch=True, fetcher=lambda _: (_ for _ in ()).throw(AssertionError()),
+            now=date)["reason"], "INVALID_OWNER_ATTESTATION_SCOPE")
+        self.assertEqual(memory.verify_owner_review(self.root, self.file,
+            "https://github.com/example/toolkit-demo/issues/12#issuecomment-99",
+            allow_public_github_fetch=True, fetcher=lambda _: (_ for _ in ()).throw(AssertionError()),
+            now=date)["reason"], "INVALID_OWNER_ATTESTATION_SCOPE")
+
+    def test_owner_attestation_mcp_explicit_scope_and_mocked_remote_evidence(self):
+        from unittest.mock import patch
+        self.assertIn("toolkit_verify_owner_reviewed_memory",
+                      {t["name"] for t in mcp._tool_defs()})
+        definition = next(t for t in mcp._tool_defs()
+                          if t["name"] == "toolkit_verify_owner_reviewed_memory")
+        self.assertTrue(definition["annotations"]["readOnlyHint"])
+        self.assertFalse(definition["inputSchema"]["additionalProperties"])
+        record = self.record()
+        memory.handoff._capture_handoff_file(self.file, record)
+        attestation = "https://github.com/example/toolkit-demo/issues/11#issuecomment-99"
+        args = {"project": str(self.root), "file": str(self.file),
+                "attestation_url": attestation, "allow_public_github_fetch": False}
+        outcome = self._invoke("toolkit_verify_owner_reviewed_memory", **args)
+        self.assertEqual(outcome["result"]["structuredContent"]["network"], "NOT_USED")
+        self.assertEqual(outcome["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
+        with patch.object(mcp, "_reviewed_memory_module", return_value=memory):
+            with patch.object(memory, "_public_github_json", side_effect=OSError("offline")):
+                failed = self._invoke("toolkit_verify_owner_reviewed_memory",
+                                      **{**args, "allow_public_github_fetch": True})
+        self.assertEqual(failed["result"]["structuredContent"]["decision"], "REVIEW_REQUIRED")
+        self.assertEqual(failed["result"]["structuredContent"]["owner_approval"], "NOT_GRANTED")
+        self.assertTrue(self._invoke("toolkit_verify_owner_reviewed_memory",
+            **{**args, "unexpected": "deny"})["result"]["isError"])
+        self.assertFalse((self.root / ".adt").exists())
+
     @unittest.skipUnless(os.name == "nt", "Windows junction test")
     def test_windows_directory_junction_rejected(self):
         junction = Path(self.temp.name) / "linked-memory"
