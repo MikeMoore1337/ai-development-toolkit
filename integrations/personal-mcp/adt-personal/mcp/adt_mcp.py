@@ -17,7 +17,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.17'
+VERSION = '0.1.18'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -1092,12 +1092,190 @@ TOOLS: list[dict[str, Any]] = [
     {'name':'toolkit_get_role','description':'Read a real agent role file from your local Toolkit checkout.',
      'inputSchema':{'type':'object','properties':{'name':{'type':'string'},'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'required':['name'],'additionalProperties':False}},
 ]
+
+# Static native source schemas: tools/list never imports or executes project code.
+def _native_project_tool_defs():
+    string = lambda description: {"type": "string", "description": description}
+    definitions = [
+        {"name": "toolkit_prepare_handoff",
+         "description": "Generate an unreviewed project-bound handoff packet in memory only. Does not save, approve, transfer or execute it.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "issue_url": string("Public Issue URL of the same GitHub repository"),
+             "from_client": string("Sender client slug, e.g. codex"),
+             "to_client": string("Recipient client slug, e.g. hermes"),
+             "references": {"type": "array",
+                            "items": string("Same-repo public Issue/PR URL"),
+                            "maxItems": 8},
+             "next_action": {"type": "string", "enum": [
+                 "REVIEW_ISSUE", "REVIEW_PR", "RUN_TESTS", "CHECK_CI", "WAIT_FOR_OWNER", "NONE"]}},
+             "required": ["project", "issue_url", "from_client", "to_client", "references",
+                          "next_action"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_search_handoffs",
+         "description": "Search manually created project handoffs by exact GitHub Issue and recipient in an explicit external directory. No memory sync, no client authorization.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Absolute local Git repository root"),
+             "directory": string("Explicit absolute directory of manual handoff packets outside the project"),
+             "issue_url": string("Exact same-repository public GitHub Issue URL"),
+             "to_client": string("Expected handoff recipient slug")},
+             "required": ["project", "directory", "issue_url", "to_client"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_handoff",
+         "description": "Verify one manual handoff packet against recipient and local Git metadata. Never execute instructions or grant trust.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Absolute local Git repository root"),
+             "file": string("Explicit absolute handoff JSON file outside the project"),
+             "to_client": string("Expected handoff recipient slug")},
+             "required": ["project", "file", "to_client"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_portable_handoff",
+         "description": "Compare an explicitly provided v2 handoff across machines using same GitHub origin and tracked Git state. Always requires human review; never authenticates sender or executes.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Explicit absolute external v2 handoff JSON file"),
+             "to_client": string("Expected recipient slug")},
+             "required": ["project", "file", "to_client"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_prepare_reviewed_memory",
+         "description": "Preview an untrusted project-reviewed reference in memory; no confirmation, disk write or claimed human authentication.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "issue_url": string("Public Issue URL in this GitHub repository"),
+             "review_url": string("Exact same-repo GitHub comment or PR-review permalink"),
+             "kind": {"type": "string", "enum": ["DECISION", "PRACTICE", "LIMITATION"]},
+             "summary": {"type": "string", "minLength": 8, "maxLength": 240},
+             "references": {"type": "array", "items": string("Public same-repo Issue/PR"),
+                            "maxItems": 8}},
+             "required": ["project", "issue_url", "review_url", "kind", "summary", "references"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_read_reviewed_memory",
+         "description": "Read one explicit untrusted project memory reference outside the checkout. Requires external review; no execution.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Explicit absolute external memory JSON file")},
+             "required": ["project", "file"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_search_reviewed_memory",
+         "description": "Exact-Issue search within an explicit project memory directory; never silently loads session history or claims human identity.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "directory": string("Existing explicit absolute external memory directory"),
+             "issue_url": string("Exact public GitHub Issue URL in this repository")},
+             "required": ["project", "directory", "issue_url"], "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_verify_owner_reviewed_memory",
+         "description": "Explicit opt-in, read-only public GitHub account-owner review of one memory reference; never grants action permission.",
+         "inputSchema": {"type": "object", "properties": {
+             "project": string("Exact absolute local Git repository root"),
+             "file": string("Existing external project-memory JSON file"),
+             "attestation_url": {"type": "string", "minLength": 1, "maxLength": 256,
+                                 "description": "Public owner comment on the exact same GitHub Issue"},
+             "allow_public_github_fetch": {"type": "boolean"}},
+             "required": ["project", "file", "attestation_url", "allow_public_github_fetch"],
+             "additionalProperties": False},
+         "annotations": {"readOnlyHint": True}},
+    ]
+    for entry in definitions:
+        entry["annotations"] = {
+            "readOnlyHint": True, "destructiveHint": False,
+            "openWorldHint": entry["name"] == "toolkit_verify_owner_reviewed_memory",
+            "idempotentHint": True,
+        }
+    return definitions
+
+
+PROJECT_NATIVE_TOOLS = _native_project_tool_defs()
+PROJECT_NATIVE_NAMES = frozenset(item["name"] for item in PROJECT_NATIVE_TOOLS)
+
+
+def _native_project_module(tk: Toolkit):
+    """Delegate explicit read-only tools to a clean, tracked native Toolkit source."""
+    current_revision, current_status = tk._source_revision()
+    if (tk.working_tree_status != "CLEAN_TRACKED" or
+            current_status != "CLEAN_TRACKED" or
+            current_revision != tk.source_revision or
+            not re.fullmatch(r"[0-9a-f]{40}", current_revision)):
+        raise ToolkitError("NATIVE_PROJECT_REQUIRES_CLEAN_GIT_CHECKOUT")
+    try:
+        path = tk._safe_file("scripts/toolkit_mcp.py")
+        tracked = subprocess.run(
+            ["git", "-C", str(tk.source), "ls-files", "--error-unmatch",
+             "--", "scripts/toolkit_mcp.py"],
+            capture_output=True, timeout=4, check=False,
+            env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"},
+        )
+        if tracked.returncode != 0:
+            raise ToolkitError("NATIVE_PROJECT_SOURCE_NOT_TRACKED")
+        cache = getattr(tk, "_native_project_module_cache", None)
+        if cache is not None:
+            return cache
+        spec = importlib.util.spec_from_file_location("_adt_personal_native_project", path)
+        if spec is None or spec.loader is None:
+            raise ToolkitError("NATIVE_PROJECT_SOURCE_UNAVAILABLE")
+        module = importlib.util.module_from_spec(spec)
+        original_bytecode = sys.dont_write_bytecode
+        sys.dont_write_bytecode = True
+        sys.path.insert(0, str(path.parent))
+        try:
+            spec.loader.exec_module(module)
+        finally:
+            sys.path.pop(0)
+            sys.dont_write_bytecode = original_bytecode
+        actual = {tool["name"]: tool for tool in module._tool_defs()}
+        for expected in PROJECT_NATIVE_TOOLS:
+            current = actual.get(expected["name"])
+            if (not isinstance(current, dict)
+                    or current.get("inputSchema") != expected["inputSchema"]
+                    or current.get("annotations", {}).get("readOnlyHint") is not True):
+                raise ToolkitError("NATIVE_PROJECT_SCHEMA_MISMATCH")
+        tk._native_project_module_cache = module
+        return module
+    except ToolkitError:
+        raise
+    except (OSError, ImportError, AttributeError, ValueError, TypeError,
+            subprocess.TimeoutExpired) as exc:
+        raise ToolkitError("NATIVE_PROJECT_SOURCE_UNAVAILABLE") from exc
+
+
+def _native_project_call(tk: Toolkit, name: str, args: dict) -> dict:
+    if name not in PROJECT_NATIVE_NAMES:
+        raise ToolkitError("NATIVE_PROJECT_TOOL_NOT_ALLOWLISTED")
+    native = _native_project_module(tk)
+    # Native helpers import sibling modules lazily; resolve them only during
+    # this explicit, bounded call and restore Python process state afterwards.
+    original_bytecode = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(tk.source / "scripts"))
+    try:
+        try:
+            result = native.invoke(name, args)
+        except (OSError, KeyError, TypeError, ValueError, ImportError,
+                subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+            raise ToolkitError("NATIVE_PROJECT_READONLY_REQUEST_REFUSED") from exc
+    finally:
+        sys.path.pop(0)
+        sys.dont_write_bytecode = original_bytecode
+    if not isinstance(result, dict):
+        raise ToolkitError("NATIVE_PROJECT_INVALID_RESULT")
+    return {
+        **result, "personal_mcp_bridge": "PROJECT_READ_ONLY_OPT_IN",
+        "owner_approval": "NOT_GRANTED", "action_authorized": False,
+        "execution_authorized": False,
+    }
+
+
 for t in TOOLS:
     t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': t['name'] == 'toolkit_discover_external_skill_candidates', 'idempotentHint': True}
 
 def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(args, dict):
         raise ToolkitError('Arguments must be an object')
+    if name in PROJECT_NATIVE_NAMES:
+        return _native_project_call(tk, name, args)
     if name in ('toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
         try:
             return _host_orchestration_tool(tk, name, args)
@@ -1163,7 +1341,7 @@ def process(tk: Toolkit, request: dict[str, Any]) -> dict[str, Any] | None:
         elif method == 'ping':
             result = {}
         elif method == 'tools/list':
-            result = {'tools':TOOLS}
+            result = {'tools':TOOLS + PROJECT_NATIVE_TOOLS}
         elif method == 'tools/call':
             p = request.get('params', {})
             try:
