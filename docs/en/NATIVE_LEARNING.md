@@ -12,7 +12,7 @@ Use the existing read-only validation script, only after selecting an explicitly
 python scripts/skill_observation_review.py --input sanitized-public-observations.json --learning-preview --project-repo example/repo --as-of 2026-10-28
 ```
 
-The file must already exist. The command reads it once, validates a strict 32-KiB/20-observation bound, and writes **no files**. A normal `--input` without `--learning-preview` continues to use the existing version-1 review schema. No network and no paid API.
+The file must already exist. The command reads it once, validates a strict 32-KiB/20-observation bound, rejects symlinks and junctions in the supplied file path (including its parent directories), and writes **no files**. A normal `--input` without `--learning-preview` continues to use the existing version-1 review schema. No network and no paid API.
 
 ## Output semantics
 

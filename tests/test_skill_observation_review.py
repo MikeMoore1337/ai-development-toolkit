@@ -256,6 +256,35 @@ class ObservationReviewTest(unittest.TestCase):
             self.assertEqual("DUPLICATE_JSON_KEY",
                              json.loads(output.getvalue())["reason"])
 
+    def test_main_rejects_symlinked_parent(self):
+        # The path is not itself a symlink; a parent folder redirects elsewhere.
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            real = root / "real"
+            real.mkdir()
+            link = root / "link"
+            try:
+                link.symlink_to(real, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("Directory symlinks unavailable on this runner")
+            for data, extra in (
+                (self.packet(), []),
+                (self.learning_packet(), [
+                    "--learning-preview", "--project-repo", "example/repo",
+                    "--as-of", "2026-10-28",
+                ]),
+            ):
+                file = real / "observations.json"
+                file.write_text(json.dumps(data), encoding="utf-8")
+                out = StringIO()
+                with redirect_stdout(out):
+                    exit_code = gate.main(["--input", str(link / file.name), *extra])
+                self.assertEqual(2, exit_code)
+                self.assertEqual(
+                    {"decision": "REJECT", "reason": "INVALID_FILE"},
+                    json.loads(out.getvalue()),
+                )
+
     def test_main_rejects_symlink(self):
         with tempfile.TemporaryDirectory() as d:
             target = Path(d) / "valid.json"

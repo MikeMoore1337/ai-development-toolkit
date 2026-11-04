@@ -199,7 +199,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--as-of")
     args = parser.parse_args(argv)
     try:
-        if args.input.is_symlink() or not args.input.is_file():
+        if (any(part.is_symlink() or getattr(part, "is_junction", lambda: False)()
+                for part in (args.input, *args.input.parents))
+                or not args.input.is_file()):
             raise ValueError("INVALID_FILE")
         with args.input.open("rb") as handle:
             data = handle.read(MAX_BYTES + 1)
