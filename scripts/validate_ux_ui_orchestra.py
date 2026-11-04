@@ -19,6 +19,96 @@ GATES = {"AWAITING_VISUAL_APPROVAL", "VISUAL_PACKAGE_MISSING", "NEEDS_DESIGN_REV
 # that a browser, a model, or any external binary actually ran.
 ORIGINALS = ("impeccable", "design-taste-frontend", "ui-ux-pro-max")
 
+# These are structural fields reported by the host, NEVER independent proof that
+# a remote process ran. The verifier rejects source-only "INVOKED" claims at a
+# visual approval gate, but a human must still cross-check source/log references.
+NATIVE_STAGE_MARKERS = {
+    "impeccable": {
+        "create-design": (("concept-seed", "impeccable", "concept-seed"),),
+        "other": (("shape", "impeccable", "shape"),
+                  ("critique", "impeccable", "critique"),
+                  ("audit", "impeccable", "audit"),
+                  ("concept-seed", "impeccable", "concept-seed")),
+    },
+    "design-taste-frontend": {
+        "create-design": (("draw-app", "draw.mjs", "--app"),
+                          ("draw-page", "draw.mjs", "--sector")),
+        "other": (("draw-app", "draw.mjs", "--app"),
+                  ("draw-page", "draw.mjs", "--sector"),
+                  ("inspect-app", "inspect.mjs", "--app")),
+    },
+    "ui-ux-pro-max": {
+        "create-design": (("design-system", "search.py", "--design-system"),),
+        "other": (("design-system", "search.py", "--design-system"),),
+    },
+}
+
+
+def validate_native_receipt(name: str, row: dict, mode: str) -> list[str]:
+    """Reject claims that substitute source reads, help, or browser QA for L5.
+
+    The host must separately attest that the refs refer to real tool calls.
+    """
+    records = row.get("native_execution")
+    if not isinstance(records, list) or not records:
+        return [f"{name}: invocation lacks native execution receipt"]
+    errors = []
+    successful = False
+    candidates = NATIVE_STAGE_MARKERS[name]["create-design" if mode == "create-design" else "other"]
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            errors.append(f"{name}: native execution {index} must be a record")
+            continue
+        stage, command = record.get("stage"), record.get("command")
+        exit_code = record.get("exit_code")
+        tool_result_ref = record.get("tool_result_ref")
+        executor = record.get("executor")
+        output = record.get("output")
+        valid = (isinstance(stage, str) and stage.strip()
+                 and isinstance(command, str) and command.strip()
+                 and type(exit_code) is int
+                 and isinstance(tool_result_ref, str) and len(tool_result_ref.strip()) >= 8
+                 and isinstance(executor, str) and executor.strip()
+                 and isinstance(output, str) and output.strip())
+        if not valid:
+            errors.append(f"{name}: native execution {index} lacks command, exit code or result")
+            continue
+        command_lower = command.lower()
+        if stage == "help" or command_lower.lstrip().startswith("echo "):
+            errors.append(f"{name}: native execution {index} is a non-executing probe")
+            continue
+        if any(stage == kind and all(token.lower() in command_lower for token in (entry, argument))
+               for kind, entry, argument in candidates):
+            if exit_code == 0:
+                successful = True
+        elif stage not in {"context", "engine-probe", "draw-options", "inspect-app"}:
+            errors.append(f"{name}: native execution {index} does not match an original design stage")
+    if not successful:
+        errors.append(f"{name}: required original design stage has no successful native execution")
+    return errors
+
+
+def validate_finish_review(report: dict) -> list[str]:
+    """Structural check of the native Impeccable review at implementation handoff."""
+    review = report.get("impeccable_finish_review")
+    if not isinstance(review, dict):
+        return ["implemented all-three lacks Impeccable finish-review evidence"]
+    mode = review.get("mode")
+    disposition = review.get("disposition")
+    trace = review.get("tool_result_ref")
+    artifact = review.get("output_ref")
+    if (mode not in ("INDEPENDENT_AGENT", "INLINE_DEGRADED") or
+            disposition not in ("ship", "fix", "rebuild", "recapture") or
+            not isinstance(trace, str) or len(trace.strip()) < 8 or
+            not isinstance(artifact, str) or not artifact.strip()):
+        return ["implemented all-three has invalid Impeccable finish-review evidence"]
+    if disposition != "ship":
+        return ["implemented all-three has unresolved Impeccable finish-review findings"]
+    if mode == "INLINE_DEGRADED" and report.get("verdict") == "PASS":
+        return ["inline Impeccable finish-review fallback must be labeled DEGRADED"]
+    return []
+
+
 
 def inspect_originals(project: Path) -> list[dict]:
     """Non-executing local file inventory. No downloads, hooks or skill activation."""
@@ -241,6 +331,8 @@ def validate_originals(report: dict) -> list[str]:
     if not isinstance(rows, list) or len(rows) != 3:
         return ["all-three originals require exactly three receipts"]
     errors, seen = [], set()
+    approval = report.get("gate") in ("AWAITING_VISUAL_APPROVAL", "OWNER_ACCEPTED",
+                                       "IMPLEMENTED_NOT_RELEASED")
     for row in rows:
         if not isinstance(row, dict):
             errors.append("invalid original skill receipt")
@@ -262,6 +354,8 @@ def validate_originals(report: dict) -> list[str]:
                     or any(c not in "0123456789abcdef" for c in revision.lower())
                     or not isinstance(evidence, str) or not evidence.strip()):
                 errors.append(f"{name}: invocation lacks source or trace")
+            if approval:
+                errors.extend(validate_native_receipt(name, row, report.get("mode", "")))
         elif status == "NOT_APPLICABLE_NATIVE_SCOPE":
             revision = row.get("source_revision")
             # Record the original's scope rule; do not infer an invocation or
@@ -278,11 +372,12 @@ def validate_originals(report: dict) -> list[str]:
             errors.append(f"{name}: unverified invocation claims evidence")
     if seen != set(ORIGINALS):
         errors.append("all-three originals incomplete")
-    if report.get("gate") in ("AWAITING_VISUAL_APPROVAL", "OWNER_ACCEPTED",
-                              "IMPLEMENTED_NOT_RELEASED"):
+    if approval:
         if errors or any(not isinstance(x, dict) or x.get("status") != "INVOKED"
                          for x in rows):
             errors.append("all-three approval requires three actual invocations")
+        elif report.get("gate") == "IMPLEMENTED_NOT_RELEASED":
+            errors.extend(validate_finish_review(report))
     return errors
 
 

@@ -4,6 +4,28 @@ description: Use for creating or critiquing UX/UI, landing pages and substantial
 ---
 # Toolkit UX/UI review
 
+## Required native call before code (#524)
+
+When the personal preference selects `ALL_THREE`, **first** load the actual
+`ux-ui-design-orchestra` source and enter `create-design`. Invoke each selected
+original's applicable *design* stage via an authorized executor, in its own documented
+order, before application UI code or final visual handoff. For Impeccable, its native
+concept seed cannot be replaced by reading the new-work playbook. For Taste Skill,
+run its original direction draw; for UI UX Pro Max, its original design search.
+Capture original source SHA, executable/script, exact command, exit code, result
+reference, and stage in the same turn. An invocation of `--help`, a directory check,
+an offline source contract test or browser-only Playwright does **not** satisfy this gate.
+
+When a required engine fails, follow that original's launcher-failure disclosure
+and fallback, then try `ORIGINAL_EXECUTOR_FAILOVER` only within permissions.
+Do not silently skip straight to a working prototype. Stay
+`VISUAL_PACKAGE_MISSING` / `NATIVE_STAGE_NOT_RUN` rather than asserting
+`AWAITING_VISUAL_APPROVAL` with zero original commands. The owner must approve a
+specific rendered design before implementation. At finish, use Impeccable's native
+reviewer or the original inline `DEGRADED` procedure; neither is a browser test.
+Use `scripts/validate_ux_ui_orchestra.py` for **structural** evidence verification;
+it cannot independently attest the host's calls.
+
 Start through `toolkit-task-router`; use the existing `ux-ui-design-orchestra` as the task coordinator. Actually load the source skill and relevant instructions when available; a GitHub link is not native skill invocation. Do not claim that external tools, subagents or browser checks ran unless evidence exists.
 
 Before drawing, follow [original selection and execution](references/ORIGINALS.md): resolve the observed standing/personal `skills.design_originals` preference, load the selected original sources and check their native applicability. A saved `ALL_THREE` applies to ordinary design requests without repeating skill names; missing local configuration does not cancel it. Execute applicable original stages before the final image, including research/planning for an image-only request. Native exclusions and unavailable engines are separate from successful invocation. Preserve the strict all-three evidence gate and the original controller's precedence.

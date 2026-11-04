@@ -2,6 +2,28 @@
 
 This contract applies to the **ordinary ChatGPT conversation with the Toolkit plugin selected**. ChatGPT Work and Codex are **not prerequisites**. Toolkit is a task-scoped skill coordinator, not an executable host, filesystem bridge or autonomous daemon. Only host-exposed tools and connected apps that actually exist in the current turn can be called. This reference does not expand account limits, permissions or app availability.
 
+## Pre-design L5 barrier for saved ALL_THREE (#524)
+
+When a substantial app/site design arrives, do not confuse final delivery speed
+with confirmed skill execution. **Immediately read the packaged preference** and the
+existing Orchestra's source before creating implementation files. An observed
+`ALL_THREE` is already the owner's selection: do not demand skill names in the
+request. Follow the three original tools' real native design stages and record
+`native_execution` for each, with actual commands/exits/outputs, while the tool
+results remain available. The structural checker now rejects a successful
+`AWAITING_VISUAL_APPROVAL` receipt containing only a sentence such as
+"observed client trace". If the engine cannot run, mark the concrete blocker,
+not an invented PASS. An available browser, image generator or healthy app is not
+a substitute. Do not repair a past blind test by backdating later calls.
+
+The task may still deliver clearly labeled partial files when an engine is
+blocked, but `ALL_THREE` and Orchestra approval/implementation completion remain
+unverified until their distinct original calls and owner approval are proved.
+Do not switch to a new, duplicate controller and do not download/execute external
+code without the original source and safety reviews. At finish, invoke the real
+Impeccable reviewer or the native documented inline fallback with a visible
+`DEGRADED` label and evidence of actual review work.
+
 ## One user request -> one best feasible execution path
 
 1. Understand the task and identify its authorized target (repository, supplied file or isolated project) and source-of-truth. Do not demand a developer prompt or an extra Work/Codex conversation. Respect user-imposed zero-additional-cost policies.
