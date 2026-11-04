@@ -158,7 +158,7 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(supported.working_tree_status, 'CLEAN_TRACKED')
         names = {t['name'] for t in process(supported, {
             'jsonrpc': '2.0', 'id': 12, 'method': 'tools/list'})['result']['tools']}
-        self.assertEqual(len(names), 22)
+        self.assertEqual(len(names), 23)
         self.assertTrue(required.issubset(names))
         self.assertNotIn('toolkit_unapproved_write', names)
         answer = process(supported, {'jsonrpc': '2.0', 'id': 13,
@@ -193,14 +193,14 @@ class TestToolkitMCP(unittest.TestCase):
     def test_info_read_no_mutations(self):
         before = {str(p.relative_to(self.path)):p.read_bytes() for p in self.path.rglob('*') if p.is_file()}
         self.assertEqual(self.tk.info()['toolkit_version'], '5.4.0')
-        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.18')
+        self.assertEqual(self.tk.info()['mcp_server_version'], '0.1.19')
         diagnostic = self.tk.info()['diagnostics']
         self.assertEqual('PERSONAL_MCP', diagnostic['adapter'])
-        self.assertEqual('0.1.18', diagnostic['adapter_version'])
+        self.assertEqual('0.1.19', diagnostic['adapter_version'])
         self.assertEqual('5.4.0', diagnostic['toolkit_version'])
         self.assertEqual('UNAVAILABLE', diagnostic['source_sha'])
         version = diagnostic['version_boundaries']
-        self.assertEqual('0.1.18', version['running_mcp_adapter'])
+        self.assertEqual('0.1.19', version['running_mcp_adapter'])
         self.assertEqual('5.4.0', version['toolkit_checkout_manifest'])
         self.assertEqual('UNAVAILABLE', version['toolkit_checkout_sha'])
         self.assertEqual('NOT_VERIFIED', version['published_github_release'])
@@ -796,8 +796,8 @@ class TestToolkitMCP(unittest.TestCase):
     def test_json_rpc(self):
         init=process(self.tk,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-06-18'}})
         self.assertEqual(init['result']['serverInfo']['name'],'ai-development-toolkit-personal')
-        self.assertEqual(init['result']['serverInfo']['version'],'0.1.18')
-        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),22)
+        self.assertEqual(init['result']['serverInfo']['version'],'0.1.19')
+        self.assertEqual(len(process(self.tk,{'jsonrpc':'2.0','id':2,'method':'tools/list'})['result']['tools']),23)
         route=process(self.tk,{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'toolkit_route_task','arguments':{'task':'Проведи аудит интерфейса'}}})
         self.assertEqual(route['result']['structuredContent']['profile'],'ui-orchestra')
         self.assertIsNone(process(self.tk,{'jsonrpc':'2.0','method':'notifications/initialized'}))

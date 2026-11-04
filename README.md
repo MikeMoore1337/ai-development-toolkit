@@ -57,13 +57,13 @@ These are **illustrative workflows, not claimed real-world test runs**.
 <details>
 <summary>Inventory counters (automatically checked in CI)</summary>
 
-[![Skills](https://img.shields.io/badge/skills-97-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Skills](https://img.shields.io/badge/skills-98-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 [![Roles](https://img.shields.io/badge/roles-16-5162A9?style=flat-square)](docs/SKILLS_CATALOG.md)
-[![Profiles](https://img.shields.io/badge/profiles-61-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
+[![Profiles](https://img.shields.io/badge/profiles-62-0E7A6B?style=flat-square)](docs/SKILLS_CATALOG.md)
 
 | Group | Inventory |
 | :--- | ---: |
-| **Core skills** | 24 |
+| **Core skills** | 25 |
 | **Frontend / Backend / Fullstack** | 14 |
 | **QA Engineering Pack** | 27 |
 

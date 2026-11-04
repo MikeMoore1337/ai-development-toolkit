@@ -538,7 +538,7 @@ class ProvenanceTests(unittest.TestCase):
     def test_real_repository_inventory(self):
         result = validate(ROOT)
         self.assertTrue(result["ok"], result["issues"][:12])
-        self.assertEqual(97, result["skills"])
+        self.assertEqual(98, result["skills"])
         self.assertEqual({"contract-first", "api-connector-builder", "code-tour",
                           "windows-desktop-e2e", "module-regression", "error-handling", "mcp-dependency-review", "agent-introspection-debugging",
                           "content-hash-cache-pattern", "loop-design-check",

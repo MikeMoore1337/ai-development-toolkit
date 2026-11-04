@@ -4,7 +4,7 @@
 
 ## Основные навыки
 
-Эти 24 навыка находятся в `.agents/skills/`.
+Эти 25 навыка находятся в `.agents/skills/`.
 
 | Навык | Когда использовать |
 | :--- | :--- |
@@ -23,6 +23,7 @@
 | [`implementation`](../../.agents/skills/implementation/SKILL.md) | Реализуйте ограниченное изменение кода, соблюдая соглашения проекта и проверяя поведение. |
 | [`minimal-safe-change`](../../.agents/skills/minimal-safe-change/SKILL.md) | Выбирайте минимальное поддерживаемое решение с учётом тестов, безопасности и совместимости. |
 | [`motion-quality`](../../.agents/skills/motion-quality/SKILL.md) | Оценивайте назначение, длительность, доступность и производительность анимаций. |
+| [`native-learning-review`](../../.agents/skills/native-learning-review/SKILL.md) | Ручная проверка кандидатов Native Learning v2 с доказательствами, областью проекта и без автоматического внедрения. |
 | [`provider-reality-check`](../../.agents/skills/provider-reality-check/SKILL.md) | Проверяйте актуальные условия и бесплатные лимиты поставщиков LLM API по официальным источникам. |
 | [`qa-strategy`](../../.agents/skills/qa-strategy/SKILL.md) | Выбирайте риск-ориентированные unit, integration, contract, UI и E2E-проверки. |
 | [`release-safety`](../../.agents/skills/release-safety/SKILL.md) | Подготавливайте выпуск и развёртывание по реальному процессу проекта и только в пределах полученных разрешений. |
@@ -253,6 +254,7 @@
 
 | Профиль | Навыки |
 | :--- | :--- |
+| `native-learning-review` | `native-learning-review` |
 | `native-contract-first` | `contract-first` |
 | `native-api-connectors` | `api-connector-builder` |
 | `native-code-tours` | `code-tour` |

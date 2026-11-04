@@ -1,5 +1,7 @@
 # Локальный MCP для Codex (Windows, Linux и macOS)
 
+## Personal MCP 0.1.19 - Native Learning v2 review (#436)
+Добавлены `native-learning-review` и явный read-only инструмент `toolkit_native_learning_review`. Публичный GitHub GET возможен только с отдельным `allow_public_github_get=true`. Никакого фонового наблюдения, внедрения практик или дополнительных расходов. Код не утверждает активацию навыка в живом Codex Desktop; после разрешённого обновления MCP нужна независимая приёмка.
 
 ## Personal MCP 0.1.18 - нативная проектная память и handoff (#433)
 

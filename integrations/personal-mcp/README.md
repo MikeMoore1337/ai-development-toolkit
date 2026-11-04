@@ -1,5 +1,7 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+## Personal MCP 0.1.19 - Native Learning v2 review (#436)
+Adds `native-learning-review` and explicitly invoked read-only `toolkit_native_learning_review`. Public GitHub GET requires `allow_public_github_get=true`. No background observer, practice promotion, skill installation or model inference. A separate live Codex Desktop activation check remains required after an owner-approved MCP update.
 
 ## Personal MCP 0.1.18 - native project memory and handoff (#433)
 

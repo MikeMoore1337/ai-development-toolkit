@@ -97,6 +97,21 @@ def _tool_defs() -> list[dict]:
         {"name": "toolkit_catalog", "description": "List local Toolkit skills/profiles and version. Read only.",
          "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
+        {"name": "toolkit_native_learning_review",
+         "description": "Explicit read-only in-process Native Learning v2 review and opt-in public GitHub fact verification. Never writes, approves, installs or invokes models.",
+         "inputSchema": {"type": "object",
+                         "properties": {
+                             "packet": {"type": "object"},
+                             "claims": {"type": "object"},
+                             "project_repo": {"type": "string"},
+                             "as_of": {"type": "string"},
+                             "allow_public_github_get": {"type": "boolean"},
+                             "skill_id": {"type": "string"},
+                             "skill_file": {"type": "string"},
+                             "expected_skill_sha256": {"type": "string"}},
+                         "required": ["packet", "project_repo", "as_of"],
+                         "additionalProperties": False},
+         "annotations": {"readOnlyHint": True, "openWorldHint": True}},
         {"name": "toolkit_list_roles", "description": "List available specialist and QA reference roles.",
          "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
          "annotations": {"readOnlyHint": True}},
@@ -485,6 +500,24 @@ def invoke(tool: str, args: dict) -> dict:
             return adapter.dispatch(toolkit, tool, args)
         except adapter.ToolkitError as exc:
             raise ValueError(str(exc)) from exc
+    if tool == "toolkit_native_learning_review":
+        allowed = {"packet", "project_repo", "as_of", "claims",
+                   "allow_public_github_get", "skill_id", "skill_file",
+                   "expected_skill_sha256"}
+        if set(args) - allowed or not {"packet", "project_repo", "as_of"} <= set(args):
+            raise ValueError("INVALID_LEARNING_ARGUMENTS")
+        import native_learning_mcp as learning
+        try:
+            return learning.review(
+                packet=args["packet"], project_repo=args["project_repo"],
+                as_of=args["as_of"], claims=args.get("claims"),
+                allow_public_github_get=args.get("allow_public_github_get", False),
+                skill_id=args.get("skill_id"), skill_file=args.get("skill_file"),
+                expected_skill_sha256=args.get("expected_skill_sha256"),
+                source_root=ROOT,
+            )
+        except learning.LearningMcpError as exc:
+            raise ValueError(str(exc)) from None
     if tool == "toolkit_advise_execution":
         return _adaptive_advice(args.get("request"))
     if tool == "toolkit_check_execution_consent":
@@ -743,14 +776,39 @@ def handle(message: object) -> dict | None:
     return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 
+def _reject_excessive_json_nesting(value: object) -> None:
+    """Bound nested JSON-RPC structures independently of parser recursion limit."""
+    stack = [(value, 0)]
+    while stack:
+        node, depth = stack.pop()
+        if depth > 128:
+            raise ValueError("JSON_NESTING_TOO_DEEP")
+        if isinstance(node, dict):
+            stack.extend((part, depth + 1) for part in node.values())
+        elif isinstance(node, list):
+            stack.extend((part, depth + 1) for part in node)
+
+
+def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    """Fail closed before dispatch on duplicate nested JSON-RPC object keys."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("DUPLICATE_JSON_KEY")
+        result[key] = value
+    return result
+
+
 def serve() -> None:
     for raw in sys.stdin.buffer:
         if len(raw) > MAX_INPUT:
             response = _error(None, -32700, "Request too large")
         else:
             try:
-                response = handle(json.loads(raw))
-            except (ValueError, UnicodeError, TypeError):
+                parsed = json.loads(raw, object_pairs_hook=_reject_duplicate_json_keys)
+                _reject_excessive_json_nesting(parsed)
+                response = handle(parsed)
+            except (ValueError, UnicodeError, TypeError, RecursionError, OverflowError):
                 response = _error(None, -32700, "Parse error")
             except Exception:  # Keep the stdio transport alive without leaking secrets.
                 response = _error(None, -32603, "Internal server error")
