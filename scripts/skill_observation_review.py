@@ -28,6 +28,16 @@ CATEGORIES = frozenset({
 OBS_KEYS = frozenset({"observation_id", "skill_id", "category", "source_url"})
 
 
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    """Reject duplicate keys at any JSON nesting level in both learning CLIs."""
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("DUPLICATE_JSON_KEY")
+        result[key] = value
+    return result
+
+
 def review_packet(packet: object) -> dict:
     """Validate a limited handoff; never promote claimed evidence to verified."""
     if not isinstance(packet, dict) or set(packet) != {"schema_version", "observations"}:
@@ -189,13 +199,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--as-of")
     args = parser.parse_args(argv)
     try:
-        if args.input.is_symlink() or not args.input.is_file():
+        if (any(part.is_symlink() or getattr(part, "is_junction", lambda: False)()
+                for part in (args.input, *args.input.parents))
+                or not args.input.is_file()):
             raise ValueError("INVALID_FILE")
         with args.input.open("rb") as handle:
             data = handle.read(MAX_BYTES + 1)
         if len(data) > MAX_BYTES:
             raise ValueError("TOO_LARGE")
-        content = json.loads(data.decode("utf-8"))
+        try:
+            content = json.loads(
+                data.decode("utf-8"), object_pairs_hook=_unique_json_object,
+            )
+        except (RecursionError, OverflowError) as exc:
+            raise ValueError("JSON_NESTING_TOO_DEEP") from exc
         if args.learning_preview:
             report = preview_learning(content, project_repo=args.project_repo,
                                       as_of=args.as_of)
@@ -212,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
             "INVALID_PROJECT_SCOPE", "INVALID_DATE", "INVALID_SIGNAL",
             "CROSS_PROJECT_SOURCE", "STALE_OR_FUTURE_EVIDENCE",
             "DUPLICATE_SOURCE", "INVALID_MODE",
+            "DUPLICATE_JSON_KEY", "JSON_NESTING_TOO_DEEP",
         } else "INVALID_INPUT"
         print(json.dumps({"decision": "REJECT", "reason": code}, sort_keys=True))
         return 2
