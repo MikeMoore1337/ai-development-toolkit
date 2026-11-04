@@ -10,8 +10,18 @@ BASE = Path(__file__).resolve().parents[1]
 class SourcePackageTests(unittest.TestCase):
     def test_mcp_version_and_tools(self):
         server = (BASE / 'personal-mcp/adt-personal/mcp/adt_mcp.py').read_text(encoding='utf-8')
-        self.assertIn("VERSION = '0.1.17'", server)
-        for tool in ('toolkit_info', 'toolkit_get_skill', 'toolkit_get_role', 'toolkit_prepare_task', 'toolkit_prepare_stage', 'toolkit_model_review_checkpoint', 'toolkit_assess_skill_coverage', 'toolkit_discover_external_skill_candidates', 'toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation'):
+        self.assertIn("VERSION = '0.1.18'", server)
+        for tool in (
+            'toolkit_info', 'toolkit_get_skill', 'toolkit_get_role',
+            'toolkit_prepare_task', 'toolkit_prepare_stage',
+            'toolkit_model_review_checkpoint', 'toolkit_assess_skill_coverage',
+            'toolkit_discover_external_skill_candidates',
+            'toolkit_codex_prepare_delegation', 'toolkit_codex_review_delegation',
+            'toolkit_prepare_handoff', 'toolkit_search_handoffs',
+            'toolkit_verify_handoff', 'toolkit_verify_portable_handoff',
+            'toolkit_prepare_reviewed_memory', 'toolkit_read_reviewed_memory',
+            'toolkit_search_reviewed_memory', 'toolkit_verify_owner_reviewed_memory',
+        ):
             self.assertIn(tool, server)
 
     def test_plugin_manifest_and_skill_refs(self):
