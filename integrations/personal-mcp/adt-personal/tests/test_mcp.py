@@ -176,6 +176,11 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual({p.name for p in native_file.parent.iterdir()},
                          {"toolkit_mcp.py", "delayed_native_helper.py"})
         native_file.write_text(native_source + '\n# tracked change\n', encoding='utf-8')
+        cached_denial = process(supported, {'jsonrpc': '2.0', 'id': 16,
+            'method': 'tools/call', 'params': {
+                'name': 'toolkit_prepare_handoff', 'arguments': {}}})
+        self.assertTrue(cached_denial['result']['isError'])
+        self.assertIn('CLEAN_GIT_CHECKOUT', cached_denial['result']['content'][0]['text'])
         modified = Toolkit(self.path)
         self.assertEqual(modified.working_tree_status, 'MODIFIED_TRACKED')
         denied_modification = process(modified, {'jsonrpc': '2.0', 'id': 15,

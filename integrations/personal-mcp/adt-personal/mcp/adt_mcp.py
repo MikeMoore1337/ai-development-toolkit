@@ -1194,8 +1194,11 @@ PROJECT_NATIVE_NAMES = frozenset(item["name"] for item in PROJECT_NATIVE_TOOLS)
 
 def _native_project_module(tk: Toolkit):
     """Delegate explicit read-only tools to a clean, tracked native Toolkit source."""
-    if tk.working_tree_status != "CLEAN_TRACKED" or not re.fullmatch(
-            r"[0-9a-f]{40}", tk.source_revision):
+    current_revision, current_status = tk._source_revision()
+    if (tk.working_tree_status != "CLEAN_TRACKED" or
+            current_status != "CLEAN_TRACKED" or
+            current_revision != tk.source_revision or
+            not re.fullmatch(r"[0-9a-f]{40}", current_revision)):
         raise ToolkitError("NATIVE_PROJECT_REQUIRES_CLEAN_GIT_CHECKOUT")
     try:
         path = tk._safe_file("scripts/toolkit_mcp.py")
