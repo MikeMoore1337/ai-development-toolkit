@@ -1,5 +1,27 @@
 # Native manual learning preview (#436)
 
+
+## Codex Desktop and MCP: explicit native review route (#436)
+
+Toolkit source declares the `native-learning-review` skill and the
+read-only `toolkit_native_learning_review` MCP tool. This is a thin,
+in-process adapter to the existing preview and typed fact verifier, not a
+new observer, memory, ECC runtime, background agent or skill installer.
+
+Provide `packet` (strict v2 JSON object), `project_repo` (`owner/repo`),
+and `as_of` (`YYYY-MM-DD`). With no `claims`, review is fully offline.
+Public GitHub fact verification requires both the separate strict v1 `claims`
+object and `allow_public_github_get=true` **in the same invocation**.
+Otherwise no network is used. Optionally provide `skill_id`, `skill_file`
+and `expected_skill_sha256` together to check one local source lock read-only.
+
+The MCP transport rejects duplicate object keys and JSON nesting beyond 128 levels before processing any tool call. The review tool never approves or applies a practice, modifies files, runs a model,
+or attests to a native Codex skill activation: `owner_approval=NOT_GRANTED`,
+`practice_auto_promotion=false`, `approved_practices_written=0`.
+Tool discovery, guidance returned, an actual MCP invocation, and real Codex
+Desktop skill activation are separate evidence gates. Updating the GitHub
+repository does not automatically update or restart an installed MCP.
+
 Toolkit implements a **read-only, project-scoped candidate preview** on top of the existing opt-in Task Observer review handoff. It does not install or execute ECC, depend on Claude/Codex CLI, call a model, start hooks, watch a session, capture private prompts or automatically promote practices. Source comparison: ECC `skills/continuous-learning-v2/SKILL.md` at `affaan-m/ECC@25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (MIT root license claim). The original project observer/Haiku daemon and instinct installation are **not** imported.
 
 ## Authorized offline preview

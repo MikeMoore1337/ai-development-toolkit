@@ -17,7 +17,7 @@ from typing import Any
 from adt_discovery import DiscoveryDenied, discover as discover_pinned_skills
 
 NAME = 'ai-development-toolkit-personal'
-VERSION = '0.1.17'
+VERSION = '0.1.18'
 PROTOCOL = '2025-06-18'
 
 # Routing guidance only; the toolkit manifest remains the source of truth.
@@ -32,6 +32,12 @@ ROUTES: tuple[tuple[str, tuple[str, ...]], ...] = (
                    'сео аудит', 'индексац страниц', 'не индексируется',
                    'indexability', 'search engine optimization', 'sitemap.xml',
                    'robots.txt', 'canonical url')),
+    ('native-learning-review', ('native continuous learning', 'native learning',
+                                'learning v2', 'learning review', 'learning observations',
+                                'review observations', 'обзор наблюдений',
+                                'анализ наблюдений', 'проверка наблюдений',
+                                'проверить доказательства практики',
+                                'candidate evidence review')),
     ('ui-orchestra', ('ux audit', 'ui audit', 'ux/ui аудит', 'ui/ux аудит', 'аудит ux', 'аудит ui', 'design audit', 'design orchestra', 'аудит интерфейс', 'аудит дизай', 'оцени интерфейс', 'проверь дизайн', 'review ui')),
     ('ui-motion', ('animation', 'motion', 'анимац', 'переходы интерфейс')),
     ('ux-design', ('design landing', 'design screen', 'user flow', 'wireframe', 'нарисуй дизайн', 'дизайн лендинг', 'спроектируй интерфейс', 'проектировани ux')),
@@ -80,6 +86,7 @@ TEST_ONLY_ACTIONS = ('создай тест', 'создать тест', 'реа
                      'сделай тест', 'добавь тест', 'разработай e2e тест', 'реализуй api-тест', 'создай api-тест', 'разработай api-тест', 'create api test', 'create test', 'implement test', 'build test')
 # Read at most the highest-signal skills first; all selected skills remain available in `skills`.
 PRIORITY_SKILLS = {
+    'native-learning-review': ('native-learning-review',),
     'backend': ('api-design', 'service-architecture', 'implementation', 'qa-strategy'),
     'frontend': ('component-architecture', 'frontend-api-integration', 'implementation', 'qa-strategy'),
     'fullstack': ('end-to-end-feature-design', 'fullstack-integration', 'implementation', 'qa-strategy'),
@@ -368,6 +375,41 @@ class Toolkit:
             'target_execution': 'NOT_RUN',
             'project_files_changed': False,
         }
+
+    def native_learning_review(self, args: dict[str, Any]) -> dict[str, Any]:
+        """Invoke existing learning v2 in this read-only server, not a Codex agent."""
+        if set(args) - {
+            'packet', 'project_repo', 'as_of', 'claims',
+            'allow_public_github_get', 'skill_id', 'skill_file',
+            'expected_skill_sha256',
+        } or not {'packet', 'project_repo', 'as_of'} <= set(args):
+            raise ToolkitError('INVALID_LEARNING_ARGUMENTS')
+        feature = self.manifest.get('native_continuous_learning')
+        if (not isinstance(feature, dict) or
+                feature.get('activation') != 'EXPLICIT_USER_OPT_IN_ONLY'):
+            raise ToolkitError('NATIVE_LEARNING_NOT_DECLARED')
+        module_path = self._safe_file('scripts/native_learning_mcp.py')
+        scripts = str(self.source / 'scripts')
+        spec = importlib.util.spec_from_file_location('_adt_native_learning_mcp', module_path)
+        if spec is None or spec.loader is None:
+            raise ToolkitError('NATIVE_LEARNING_SOURCE_UNAVAILABLE')
+        module = importlib.util.module_from_spec(spec)
+        sys.path.insert(0, scripts)
+        try:
+            spec.loader.exec_module(module)
+            try:
+                return module.review(
+                    packet=args['packet'], project_repo=args['project_repo'],
+                    as_of=args['as_of'], claims=args.get('claims'),
+                    allow_public_github_get=args.get('allow_public_github_get', False),
+                    skill_id=args.get('skill_id'), skill_file=args.get('skill_file'),
+                    expected_skill_sha256=args.get('expected_skill_sha256'),
+                    source_root=self.source,
+                )
+            except module.LearningMcpError as exc:
+                raise ToolkitError(str(exc)) from None
+        finally:
+            sys.path.remove(scripts)
 
     def info(self) -> dict[str, Any]:
         return {'source': str(self.source), 'toolkit_version': self.manifest.get('version'),
@@ -1024,6 +1066,16 @@ TOOLS: list[dict[str, Any]] = [
          'host_claimed_one_shot_lease':{'type':'boolean'}},
          'required':['plan','spawn_response','wait_response'],'additionalProperties':False}},
 
+    {'name':'toolkit_native_learning_review',
+     'description':'Explicit opt-in in-process review of sanitized Native Learning v2 observations, candidates and typed public GitHub facts; no disk writes, approval, skill activation or model execution.',
+     'inputSchema':{'type':'object','properties':{
+         'packet':{'type':'object'},'claims':{'type':'object'},
+         'project_repo':{'type':'string','maxLength':140},
+         'as_of':{'type':'string','description':'Fixed YYYY-MM-DD'},
+         'allow_public_github_get':{'type':'boolean','description':'Explicit true is mandatory for network-backed claim verification; offline default false'},
+         'skill_id':{'type':'string'},'skill_file':{'type':'string'},
+         'expected_skill_sha256':{'type':'string'}},
+         'required':['packet','project_repo','as_of'],'additionalProperties':False}},
     {'name':'toolkit_info','description':'Inspect installed AI Development Toolkit version and capabilities (read-only).',
      'inputSchema':{'type':'object','properties':{},'additionalProperties':False}},
     {'name':'toolkit_catalog','description':'List available real Toolkit skills, roles or profiles (read-only).',
@@ -1093,7 +1145,7 @@ TOOLS: list[dict[str, Any]] = [
      'inputSchema':{'type':'object','properties':{'name':{'type':'string'},'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':32000}},'required':['name'],'additionalProperties':False}},
 ]
 for t in TOOLS:
-    t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': t['name'] == 'toolkit_discover_external_skill_candidates', 'idempotentHint': True}
+    t['annotations'] = {'readOnlyHint': True, 'destructiveHint': False, 'openWorldHint': t['name'] in ('toolkit_discover_external_skill_candidates', 'toolkit_native_learning_review'), 'idempotentHint': True}
 
 def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(args, dict):
@@ -1103,6 +1155,8 @@ def dispatch(tk: Toolkit, name: str, args: dict[str, Any]) -> dict[str, Any]:
             return _host_orchestration_tool(tk, name, args)
         except (ValueError, TypeError, KeyError) as exc:
             raise ToolkitError(str(exc)[:160]) from exc
+    if name == 'toolkit_native_learning_review':
+        return tk.native_learning_review(args)
     if name == 'toolkit_info':
         return tk.info()
     if name == 'toolkit_catalog':
@@ -1182,6 +1236,29 @@ def process(tk: Toolkit, request: dict[str, Any]) -> dict[str, Any] | None:
     except (TypeError, AttributeError, ValueError) as exc:
         return {'jsonrpc':'2.0','id':rid,'error':{'code':-32602,'message':str(exc)}}
 
+def _reject_excessive_json_nesting(value: object) -> None:
+    """Bound nested JSON-RPC structures independently of parser recursion limit."""
+    stack = [(value, 0)]
+    while stack:
+        node, depth = stack.pop()
+        if depth > 128:
+            raise ValueError("JSON_NESTING_TOO_DEEP")
+        if isinstance(node, dict):
+            stack.extend((part, depth + 1) for part in node.values())
+        elif isinstance(node, list):
+            stack.extend((part, depth + 1) for part in node)
+
+
+def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    """Fail closed before dispatch on duplicate nested JSON-RPC object keys."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("DUPLICATE_JSON_KEY")
+        result[key] = value
+    return result
+
+
 def serve(tk: Toolkit) -> None:
     """MCP JSON-RPC over UTF-8 stdio, with matching request IDs on errors.
 
@@ -1190,8 +1267,10 @@ def serve(tk: Toolkit) -> None:
     """
     for line in sys.stdin.buffer:
         try:
-            request = json.loads(line)
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            request = json.loads(line, object_pairs_hook=_reject_duplicate_json_keys)
+            _reject_excessive_json_nesting(request)
+        except (UnicodeDecodeError, json.JSONDecodeError, ValueError,
+        RecursionError, OverflowError) as exc:
             response = {'jsonrpc': '2.0', 'id': None,
                         'error': {'code': -32700, 'message': 'Parse error'}}
             print(f'{NAME}: invalid JSON request: {type(exc).__name__}', file=sys.stderr)

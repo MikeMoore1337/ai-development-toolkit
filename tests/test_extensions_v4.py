@@ -8,8 +8,8 @@ class NewExtensionTests(unittest.TestCase):
     def test_manifest_and_all_skills(self):
         self.assertEqual([], inspect())
         m=json.loads((ROOT/'MANIFEST.json').read_text())
-        self.assertEqual(15,len(m['extension_skills']))
-        self.assertEqual(24,len(m['core_skills']+m['extension_skills']))
+        self.assertEqual(16,len(m['extension_skills']))
+        self.assertEqual(25,len(m['core_skills']+m['extension_skills']))
     def test_profile_selective_dry_run(self):
         m=json.loads((ROOT/'MANIFEST.json').read_text())
         with tempfile.TemporaryDirectory() as d:

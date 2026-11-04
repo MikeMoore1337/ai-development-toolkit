@@ -1428,6 +1428,18 @@
         "Review security boundaries around a new MCP authorization token.",
         "Устрани сбой Playwright-теста модального окна при вводе данных."
       ]
+    },
+    {
+      "id": "native-learning-review-synthetic-bilingual",
+      "target": "native-learning-review",
+      "positive": [
+        "Use native-learning-review to evaluate synthetic observations, verify GitHub evidence and prepare a manual-only practice candidate.",
+        "Используй native-learning-review для проверки обезличенных наблюдений, источников GitHub и подготовки практики к ручному утверждению."
+      ],
+      "negative": [
+        "Optimize PostgreSQL query latency and fix a database migration rollback.",
+        "Проверь адаптивность мобильного интерфейса и скорость отображения страницы."
+      ]
     }
   ]
 }

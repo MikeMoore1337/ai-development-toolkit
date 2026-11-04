@@ -73,7 +73,7 @@ class CuratedProfileTests(unittest.TestCase):
         self.assertEqual(LEGACY_PROFILE_DIGEST, fingerprint)
 
     def test_all_profiles_valid_and_new_compositions_minimal(self):
-        self.assertEqual(61, len(MANIFEST["profiles"]))
+        self.assertEqual(62, len(MANIFEST["profiles"]))
         self.assertEqual({"native-contract-first", "native-api-connectors", "native-code-tours",
                           "native-windows-desktop-e2e", "native-module-regression", "native-error-handling",
                           "native-mcp-dependency-review",
@@ -81,7 +81,7 @@ class CuratedProfileTests(unittest.TestCase):
                           "native-loop-design-check", "native-make-interfaces-feel-better",
                           "native-article-writing", "native-click-path-audit",
                           "native-brand-voice", "native-content-engine",
-                          "native-editorial-suite"},
+                          "native-editorial-suite", "native-learning-review"},
                          {x for x in MANIFEST["profiles"] if x.startswith("native-")})
         self.assertTrue(set(NEW).issubset(MANIFEST["profiles"]))
         available = set(skill_sources(MANIFEST))

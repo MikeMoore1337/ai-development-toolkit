@@ -6,7 +6,7 @@ A maintained reference based on `MANIFEST.json` and the actual `SKILL.md` files 
 
 ## Core skills
 
-These 24 skills live under `.agents/skills/`.
+These 25 skills live under `.agents/skills/`.
 
 | Skill | When to use it |
 | :--- | :--- |
@@ -25,6 +25,7 @@ These 24 skills live under `.agents/skills/`.
 | [`implementation`](../.agents/skills/implementation/SKILL.md) | Implement a bounded source-code change while preserving project conventions and verifying changed behavior. Use for actual software implementation tasks. |
 | [`minimal-safe-change`](../.agents/skills/minimal-safe-change/SKILL.md) | Prefer the smallest maintainable solution while preserving tests, security and compatibility. Use for implementation, refactoring, debugging or code review. |
 | [`motion-quality`](../.agents/skills/motion-quality/SKILL.md) | Review and improve animation purpose, timing, accessibility and performance. Use when adding, auditing or optimizing web or mobile motion. |
+| [`native-learning-review`](../.agents/skills/native-learning-review/SKILL.md) | Manual Native Learning v2 candidate review; project-scoped, evidence-bound, never auto-promoted. |
 | [`provider-reality-check`](../.agents/skills/provider-reality-check/SKILL.md) | Evaluate current LLM provider free tiers and API compatibility using official sources and reproducible checks. Use for API routing, budget estimates and free-provider sel… |
 | [`qa-strategy`](../.agents/skills/qa-strategy/SKILL.md) | Choose risk-based unit, integration, contract, UI and end-to-end validation. Use for changes requiring test design or verification evidence. |
 | [`release-safety`](../.agents/skills/release-safety/SKILL.md) | Prepare and verify a release or production deployment based on the real project pipeline and granted authorization. Use for release readiness, merge or deployment work. |
@@ -253,6 +254,7 @@ A profile is simply a named selection of existing skills. Inspect before applyin
 
 | Profile | Skills |
 | :--- | :--- |
+| `native-learning-review` | `native-learning-review` |
 | `native-contract-first` | `contract-first` |
 | `native-api-connectors` | `api-connector-builder` |
 | `native-code-tours` | `code-tour` |
