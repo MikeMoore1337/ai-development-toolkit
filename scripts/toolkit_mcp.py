@@ -256,7 +256,8 @@ def _tool_defs() -> list[dict]:
          "inputSchema": {"type": "object", "properties": {
              "project": string("Exact absolute local Git repository root"),
              "file": string("Existing external project-memory JSON file"),
-             "attestation_url": string("Public owner comment on the exact same GitHub Issue"),
+             "attestation_url": {"type": "string", "minLength": 1, "maxLength": 256,
+                                 "description": "Public owner comment on the exact same GitHub Issue"},
              "allow_public_github_fetch": {"type": "boolean"}},
              "required": ["project", "file", "attestation_url", "allow_public_github_fetch"],
              "additionalProperties": False},

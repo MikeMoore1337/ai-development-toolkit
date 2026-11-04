@@ -349,6 +349,10 @@ class ReviewedMemoryTests(unittest.TestCase):
             "https://github.com/example/toolkit-demo/issues/12#issuecomment-99",
             allow_public_github_fetch=True, fetcher=lambda _: (_ for _ in ()).throw(AssertionError()),
             now=date)["reason"], "INVALID_OWNER_ATTESTATION_SCOPE")
+        self.assertEqual(memory.verify_owner_review(self.root, self.file,
+            attestation + "9" * 300, allow_public_github_fetch=True,
+            fetcher=lambda _: (_ for _ in ()).throw(AssertionError()), now=date)["reason"],
+                         "INVALID_OWNER_ATTESTATION_SCOPE")
 
     def test_owner_attestation_mcp_explicit_scope_and_mocked_remote_evidence(self):
         from unittest.mock import patch
@@ -375,6 +379,20 @@ class ReviewedMemoryTests(unittest.TestCase):
         self.assertTrue(self._invoke("toolkit_verify_owner_reviewed_memory",
             **{**args, "unexpected": "deny"})["result"]["isError"])
         self.assertFalse((self.root / ".adt").exists())
+
+    def test_verified_owner_account_cli_still_returns_review_required_exit(self):
+        from unittest.mock import patch
+        record = self.record()
+        memory.handoff._capture_handoff_file(self.file, record)
+        args = ["reviewed_memory.py", "verify-owner-review", "--repo", str(self.root),
+                "--file", str(self.file), "--attestation-url",
+                "https://github.com/example/toolkit-demo/issues/11#issuecomment-99",
+                "--allow-public-github-fetch"]
+        with patch.object(sys, "argv", args):
+            with patch.object(memory, "verify_owner_review",
+                              return_value={"decision": "REFERENCE_REVIEW_ATTESTED"}):
+                with patch("builtins.print"):
+                    self.assertEqual(memory.main(), 2)
 
     @unittest.skipUnless(os.name == "nt", "Windows junction test")
     def test_windows_directory_junction_rejected(self):

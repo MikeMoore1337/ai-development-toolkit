@@ -130,6 +130,8 @@ was present. It verifies a project reference only. Execution, deployment,
 merge or broader owner consent is **never granted**: `owner_approval=NOT_GRANTED`,
 `action_authorized=false`, `execution_authorized=false`. Existing read/search
 remain fully offline and do not trigger automatic network activity.
+Even when the owner account matches, CLI intentionally exits 2: reference review
+is not authority to execute commands. The comment URL is limited to 256 characters.
 
 ```sh
 python scripts/reviewed_memory.py verify-owner-review --repo /path/to/repo --file /path/to/existing-memory.json --attestation-url https://github.com/ORG/REPO/issues/123#issuecomment-456 --allow-public-github-fetch

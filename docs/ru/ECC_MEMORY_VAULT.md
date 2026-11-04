@@ -136,3 +136,5 @@ python scripts/reviewed_memory.py verify-owner-review --repo /path/to/repo --fil
 команд, публикации или слияния: всегда `owner_approval=NOT_GRANTED`,
 `action_authorized=false`, `execution_authorized=false`.
 Обычное чтение и поиск остаются офлайн, без автоматического сетевого запроса.
+Даже при подтверждённом аккаунте CLI намеренно возвращает код 2 - это ссылка на решение,
+а не допуск к запуску команд. Ссылка на комментарий ограничена 256 символами.

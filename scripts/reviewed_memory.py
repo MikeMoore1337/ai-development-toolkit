@@ -188,9 +188,11 @@ def verify_owner_review(repo: Path, file: Path, attestation_url: str, *,
         return refused("INVALID_LOCAL_REFERENCE", blocked=True)
     if entry.get("decision") != "REVIEW_REQUIRED":
         return refused("INVALID_LOCAL_REFERENCE", blocked=True)
-    url = OWNER_REVIEW_URL.fullmatch(attestation_url) if isinstance(attestation_url, str) else None
-    if not url or entry["issue_url"].casefold() != (
-            f"https://github.com/{url[1]}/{url[2]}/issues/{url[3]}".casefold()):
+    url = (OWNER_REVIEW_URL.fullmatch(attestation_url)
+           if isinstance(attestation_url, str) and len(attestation_url) <= 256 else None)
+    if (not url or len(url[3]) > 12 or len(url[4]) > 20
+            or entry["issue_url"].casefold() != (
+            f"https://github.com/{url[1]}/{url[2]}/issues/{url[3]}".casefold())):
         return refused("INVALID_OWNER_ATTESTATION_SCOPE", blocked=True)
 
     owner, project, issue_number, comment_number = url.groups()
@@ -333,7 +335,7 @@ def main() -> int:
             result = verify_owner_review(args.repo, args.file, args.attestation_url,
                                          allow_public_github_fetch=args.allow_public_github_fetch)
             print(json.dumps(result, sort_keys=True, ensure_ascii=False))
-            return 0 if result["decision"] == "REFERENCE_REVIEW_ATTESTED" else 2
+            return 2  # A reviewed reference is never execution consent.
         if args.mode == "read":
             if not args.file:
                 raise ValueError("Explicit memory file required")
