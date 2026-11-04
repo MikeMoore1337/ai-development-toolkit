@@ -1,6 +1,8 @@
 """Offline rejection tests for the opt-in Task Observer -> Toolkit handoff."""
 from __future__ import annotations
 
+from contextlib import redirect_stdout
+from io import StringIO
 import json
 from pathlib import Path
 import sys
@@ -208,6 +210,51 @@ class ObservationReviewTest(unittest.TestCase):
             old = p.read_bytes()
             self.assertEqual(0, gate.main(["--input", str(p)]))
             self.assertEqual(old, p.read_bytes())
+
+    def test_learning_cli_rejects_duplicate_keys_at_any_depth(self):
+        samples = (
+            # Duplicate at root must not be interpreted as a legitimate packet.
+            json.dumps(self.learning_packet()).replace(
+                '"schema_version": 2',
+                '"schema_version": 2, "schema_version": 2', 1,
+            ),
+            # Duplicate inside an observation must not silently override a signal.
+            json.dumps(self.learning_packet()).replace(
+                '"signal": "support"',
+                '"signal": "support", "signal": "contradict"', 1,
+            ),
+        )
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "observations.json"
+            for raw in samples:
+                path.write_text(raw, encoding="utf-8")
+                output = StringIO()
+                with redirect_stdout(output):
+                    code = gate.main([
+                        "--input", str(path), "--learning-preview",
+                        "--project-repo", "example/repo", "--as-of", "2026-10-28",
+                    ])
+                self.assertEqual(2, code)
+                self.assertEqual(
+                    {"decision": "REJECT", "reason": "DUPLICATE_JSON_KEY"},
+                    json.loads(output.getvalue()),
+                )
+
+    def test_legacy_cli_rejects_duplicate_keys_without_regression(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "observations.json"
+            path.write_text(
+                json.dumps(self.packet()).replace(
+                    '"schema_version": 1',
+                    '"schema_version": 1, "schema_version": 1', 1,
+                ), encoding="utf-8",
+            )
+            output = StringIO()
+            with redirect_stdout(output):
+                code = gate.main(["--input", str(path)])
+            self.assertEqual(2, code)
+            self.assertEqual("DUPLICATE_JSON_KEY",
+                             json.loads(output.getvalue())["reason"])
 
     def test_main_rejects_symlink(self):
         with tempfile.TemporaryDirectory() as d:

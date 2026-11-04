@@ -22,7 +22,7 @@ Output always reports `evidence_verified=false`, `owner_approval=NOT_GRANTED`, `
 
 ## Failure containment and remaining gates
 
-Fail closed on malformed or extra fields, unsupported project scope, non-public sources, dates in the future or older than 730 days, contradictory/duplicate source accounting or untrusted plan text. The review result is ephemeral; rollback is simply discarding the preview. Actual client execution, learning utility, human evidence validation and an approved reusable-practice lifecycle remain **NOT_VERIFIED** until independently demonstrated. This is not the full automatic ECC instinct pipeline; those background/hook behaviors remain excluded for this owner's environment.
+Fail closed on duplicate JSON keys (including nested keys), malformed or extra fields, unsupported project scope, non-public sources, dates in the future or older than 730 days, contradictory/duplicate source accounting or untrusted plan text. The review result is ephemeral; rollback is simply discarding the preview. Actual client execution, learning utility, human evidence validation and an approved reusable-practice lifecycle remain **NOT_VERIFIED** until independently demonstrated. This is not the full automatic ECC instinct pipeline; those background/hook behaviors remain excluded for this owner's environment.
 
 ## Explicit public GitHub fact verification (separate opt-in)
 
