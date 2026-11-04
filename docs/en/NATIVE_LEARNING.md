@@ -94,3 +94,7 @@ Reports always retain `approval=NOT_GRANTED`, `applied=false` and `practice_auto
 | Revoke/decay | Observation age | Changed skill source | Local SHA gate and manual revert |
 
 CI uses synthetic GitHub responses with an injected GET fake: these tests are not live network or model improvement evidence.
+
+## Trusted source requirement for Personal MCP
+
+The in-process Personal MCP route loads executable Python only from a clean, Git-tracked Toolkit source revision. Tracked edits, moving HEAD, missing tracked entrypoints, symlinks or junctions are rejected before import. The adapter suppresses bytecode writes while loading and restores Python process state afterwards. GitHub source delivery is not an installed MCP update or evidence of Codex Desktop native skill activation.

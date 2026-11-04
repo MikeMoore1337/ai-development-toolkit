@@ -112,7 +112,7 @@ def main() -> int:
               and pilot.get('profile') == 'backend' and 'qa-core' in pilot.get('secondary_profiles', [])
               and composite.get('profile') == 'backend'
               and 'qa-python' in composite.get('secondary_profiles', [])
-              and len(tools) == 15 and any(t.get('name') == 'toolkit_prepare_stage' for t in tools)
+              and len(tools) == 23 and any(t.get('name') == 'toolkit_prepare_stage' for t in tools)
               and [s.get('name') for s in stage.get('loaded_skills', [])] == ['qa-strategy']
               and stage.get('client_activation') == 'NOT_OBSERVED'
               and prepared.get('primary_profile') == 'backend'

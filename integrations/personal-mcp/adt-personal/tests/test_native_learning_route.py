@@ -139,6 +139,19 @@ class PersonalNativeLearningRouteTests(unittest.TestCase):
         self.assertEqual(0,completed.returncode)
         self.assertEqual(-32700,json.loads(completed.stdout)["error"]["code"])
 
+    def test_dirty_tracked_source_blocks_inprocess_loading(self):
+        prior=self.tk.working_tree_status
+        try:
+            self.tk.working_tree_status="MODIFIED_TRACKED"
+            result=self.tool(
+                "toolkit_native_learning_review",packet=PACKET,
+                project_repo=REPO,as_of="2026-11-04")
+            self.assertTrue(result["isError"])
+            self.assertIn("NATIVE_LEARNING_REQUIRES_CLEAN_GIT_CHECKOUT",
+                          result["content"][0]["text"])
+        finally:
+            self.tk.working_tree_status=prior
+
     def test_no_public_network_without_separate_explicit_opt_in(self):
         claim={"schema_version":1,"claims":[
             {"source_url":p["source_url"],"predicate":"pr_merged_at_sha",

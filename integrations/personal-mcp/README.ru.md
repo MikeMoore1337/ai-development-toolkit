@@ -1,7 +1,32 @@
 # Локальный MCP для Codex (Windows, Linux и macOS)
 
-# Personal MCP 0.1.18 - Native Learning v2 review (#436)
+## Personal MCP 0.1.19 - Native Learning v2 review (#436)
 Добавлены `native-learning-review` и явный read-only инструмент `toolkit_native_learning_review`. Публичный GitHub GET возможен только с отдельным `allow_public_github_get=true`. Никакого фонового наблюдения, внедрения практик или дополнительных расходов. Код не утверждает активацию навыка в живом Codex Desktop; после разрешённого обновления MCP нужна независимая приёмка.
+
+## Personal MCP 0.1.18 - нативная проектная память и handoff (#433)
+
+В стандартный Personal MCP добавлены восемь инструментов из существующего Project MCP:
+`toolkit_prepare_handoff`, `toolkit_search_handoffs`, `toolkit_verify_handoff`,
+`toolkit_verify_portable_handoff`, `toolkit_prepare_reviewed_memory`,
+`toolkit_read_reviewed_memory`, `toolkit_search_reviewed_memory` и
+`toolkit_verify_owner_reviewed_memory`. Не требуется отдельное подключение
+Project MCP, новый движок памяти или ECC.
+
+Инструменты объявляются без запуска кода Project MCP. Исполняемый нативный
+проверяющий модуль загружается только при отдельном вызове из чистого
+отслеживаемого Git-источника Toolkit, со сверкой точной схемы и списка
+разрешённых операций. Сохраняются исходные ограничения на Git-корень,
+проектные ссылки, внешние файлы и отсутствие записи через MCP.
+Утверждение записи владельцем проверяет публичный GitHub API **только** при
+явном аргументе `allow_public_github_fetch=true`. Все ответы сохраняют
+`owner_approval=NOT_GRANTED`, `action_authorized=false`,
+`execution_authorized=false`; даже успешное утверждение ссылки не
+разрешает агенту выполнять действия.
+
+Это изменение исходного Personal MCP. Для появления инструментов в Codex
+требуется отдельное обновление уже установленного Personal MCP и
+перезапуск клиента; одних изменений в `main` недостаточно. Глобальные
+настройки и пользовательские проекты здесь не меняются.
 
 
 ## Personal MCP 0.1.17 - согласованная консультация из лимита подписки (#401)

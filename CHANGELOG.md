@@ -35,6 +35,8 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.7)
 
+- **Personal MCP 0.1.18 (source candidate; not installed):** expose the eight existing native project handoff / reviewed-memory read-only tools through the single Personal MCP, with a clean tracked Toolkit source gate, explicit public GitHub opt-in for owner-account verification, no new engine or data store and no action authorization (#433). Runtime client acceptance and versioned release remain separate.
+
 - #435: bundled original pinned MIT `brand-voice` (with complete reference schema) and `content-engine`, plus opt-in `native-editorial-suite`; no external publishing, paid API or automatic user content persistence; not yet merged or released.
 
 - #435: six more pinned original MIT optional skills for AI debugging, content-hash caching, loop review, UI state trace, interface polish and editorial/SEO drafts; full 601-source automated **triage** without automatic adoption; case-specific tests and RU/EN docs. No host runtime, paid API, publication or merge claimed.
