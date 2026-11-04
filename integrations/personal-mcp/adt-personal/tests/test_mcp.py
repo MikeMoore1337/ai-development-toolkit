@@ -158,7 +158,7 @@ class TestToolkitMCP(unittest.TestCase):
         self.assertEqual(supported.working_tree_status, 'CLEAN_TRACKED')
         names = {t['name'] for t in process(supported, {
             'jsonrpc': '2.0', 'id': 12, 'method': 'tools/list'})['result']['tools']}
-        self.assertEqual(len(names), 22)
+        self.assertEqual(len(names), 23)
         self.assertTrue(required.issubset(names))
         self.assertNotIn('toolkit_unapproved_write', names)
         answer = process(supported, {'jsonrpc': '2.0', 'id': 13,
