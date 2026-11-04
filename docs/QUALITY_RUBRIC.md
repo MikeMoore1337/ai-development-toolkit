@@ -53,7 +53,7 @@ Official sources: [Ruff](https://docs.astral.sh/ruff/),
 ```shell
 python scripts/check_public_package.py
 python -m unittest discover -s tests -p test_security_scanner.py -v
-python -m pip install ruff==0.17.1
+python -m pip install ruff==0.17.3
 ruff check --isolated --target-version py312 --select F821,F822,F823,E9 scripts tests
 # Optional: install the official actionlint 1.7.12 binary for your OS,
 # verify its release checksum, then:
