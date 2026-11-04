@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import hmac
 import json
 import re
 import subprocess
 import unicodedata
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import session_handoff_checkpoint as handoff
@@ -121,6 +123,136 @@ def read_record(repo: Path, file: Path) -> dict:
     return verify_record(repo, json.loads(file.read_text(encoding="utf-8")))
 
 
+# A separate same-Issue owner attestation binds the digest without changing
+# legacy create-only records or granting action authority.
+OWNER_REVIEW_URL = re.compile(
+    r"https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/issues/"
+    r"([1-9][0-9]*)#issuecomment-([1-9][0-9]*)\Z"
+)
+OWNER_REVIEW_BODY = re.compile(
+    r"TOOLKIT-MEMORY-OWNER-REVIEW-V1\n"
+    r"record_sha256=([0-9a-f]{64})\n"
+    r"decision=APPROVE_REFERENCE\n"
+    r"expires_utc=(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\n?\Z"
+)
+MAX_GITHUB_RESPONSE = 32_768
+
+
+def _public_github_json(path: str) -> dict:
+    """GET only from GitHub's fixed TLS host; no tokens, proxy or redirects."""
+    connection = http.client.HTTPSConnection("api.github.com", timeout=5)
+    try:
+        connection.request("GET", path, headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "toolkit-owner-review-readonly",
+        })
+        response = connection.getresponse()
+        if response.status != 200:
+            raise ValueError("GITHUB_NOT_AVAILABLE")
+        raw = response.read(MAX_GITHUB_RESPONSE + 1)
+        if len(raw) > MAX_GITHUB_RESPONSE:
+            raise ValueError("GITHUB_RESPONSE_TOO_LARGE")
+        data = json.loads(raw)
+        if not isinstance(data, dict):
+            raise ValueError("GITHUB_RESPONSE_INVALID")
+        return data
+    finally:
+        connection.close()
+
+
+def verify_owner_review(repo: Path, file: Path, attestation_url: str, *,
+                        allow_public_github_fetch: bool = False,
+                        fetcher=None, now: datetime | None = None) -> dict:
+    """Optional live GitHub owner-account review of a reference, never consent.
+
+    Only an explicit public GitHub GET is permitted. A record checksum is not
+    authentication, and a GitHub account does not establish physical human presence.
+    """
+    common = {
+        "decision": "REVIEW_REQUIRED", "review_attestation": "NOT_VERIFIED",
+        "owner_approval": "NOT_GRANTED", "action_authorized": False,
+        "execution_authorized": False, "execution": "NOT_RUN",
+        "trust": "UNTRUSTED_REFERENCE", "network": "NOT_USED",
+    }
+
+    def refused(reason: str, *, blocked: bool = False, network: str = "NOT_USED") -> dict:
+        return {**common, "decision": "BLOCKED" if blocked else "REVIEW_REQUIRED",
+                "reason": reason, "network": network}
+
+    if allow_public_github_fetch is not True:
+        return refused("PUBLIC_GITHUB_OPT_IN_REQUIRED")
+    try:
+        entry = read_record(repo, file)
+    except (OSError, ValueError, subprocess.CalledProcessError,
+            subprocess.TimeoutExpired):
+        return refused("INVALID_LOCAL_REFERENCE", blocked=True)
+    if entry.get("decision") != "REVIEW_REQUIRED":
+        return refused("INVALID_LOCAL_REFERENCE", blocked=True)
+    url = (OWNER_REVIEW_URL.fullmatch(attestation_url)
+           if isinstance(attestation_url, str) and len(attestation_url) <= 256 else None)
+    if (not url or len(url[3]) > 12 or len(url[4]) > 20
+            or entry["issue_url"].casefold() != (
+            f"https://github.com/{url[1]}/{url[2]}/issues/{url[3]}".casefold())):
+        return refused("INVALID_OWNER_ATTESTATION_SCOPE", blocked=True)
+
+    owner, project, issue_number, comment_number = url.groups()
+    api_prefix = f"/repos/{owner}/{project}"
+    issue_api_url = f"https://api.github.com{api_prefix}/issues/{issue_number}"
+    getter = fetcher if fetcher is not None else _public_github_json
+    network = "PUBLIC_GITHUB_READ_ATTEMPTED"
+    try:
+        metadata = getter(api_prefix)
+        comment = getter(f"{api_prefix}/issues/comments/{comment_number}")
+    except (OSError, ValueError, TypeError, KeyError, http.client.HTTPException):
+        return refused("GITHUB_OWNER_REVIEW_NOT_VERIFIED", network=network)
+
+    identity = metadata.get("owner") if isinstance(metadata, dict) else None
+    author = comment.get("user") if isinstance(comment, dict) else None
+    if (not isinstance(identity, dict) or not isinstance(author, dict)
+            or metadata.get("private") is not False
+            or str(metadata.get("full_name", "")).casefold() != f"{owner}/{project}".casefold()
+            or identity.get("type") != "User" or author.get("type") != "User"
+            or type(identity.get("id")) is not int or identity["id"] <= 0
+            or type(author.get("id")) is not int or author["id"] != identity["id"]
+            or not isinstance(identity.get("login"), str)
+            or not isinstance(author.get("login"), str)
+            or author["login"].casefold() != identity["login"].casefold()
+            or identity["login"].casefold() != owner.casefold()
+            or comment.get("author_association") != "OWNER"
+            or type(comment.get("id")) is not int or comment["id"] != int(comment_number)
+            or str(comment.get("issue_url", "")).casefold() != issue_api_url.casefold()
+            or str(comment.get("html_url", "")).casefold() != attestation_url.casefold()):
+        return refused("GITHUB_OWNER_IDENTITY_OR_SCOPE_MISMATCH", network=network)
+
+    body = comment.get("body")
+    statement = OWNER_REVIEW_BODY.fullmatch(body) if isinstance(body, str) and len(body) <= 256 else None
+    if not statement or not hmac.compare_digest(statement[1], entry["sha256"]):
+        return refused("OWNER_ATTESTATION_MISSING_OR_REVOKED", network=network)
+    try:
+        issued = datetime.strptime(comment["created_at"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        expiry = datetime.strptime(statement[2], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        current = now if now is not None else datetime.now(timezone.utc)
+        if not isinstance(current, datetime) or current.tzinfo is None:
+            raise ValueError("Invalid verification clock")
+    except (ValueError, TypeError, KeyError):
+        return refused("OWNER_ATTESTATION_TIME_INVALID", network=network)
+    if (issued > current + timedelta(minutes=5) or expiry <= current
+            or expiry > issued + timedelta(days=30)):
+        return refused("OWNER_ATTESTATION_EXPIRED_OR_OUT_OF_BOUNDS", network=network)
+    return {
+        **common, "decision": "REFERENCE_REVIEW_ATTESTED",
+        "reason": "PUBLIC_GITHUB_OWNER_ACCOUNT_MATCH",
+        "review_attestation": "GITHUB_REPOSITORY_OWNER_ACCOUNT_VERIFIED",
+        "review_scope": "REFERENCE_ONLY",
+        "human_presence": "NOT_VERIFIED",
+        "reviewer_login": identity["login"],
+        "reviewer_user_id": identity["id"],
+        "record_sha256": entry["sha256"],
+        "attestation_url": attestation_url,
+        "expires_utc": statement[2], "network": network,
+    }
+
+
 def _directory(repo: Path, directory: Path) -> list[Path]:
     if ".." in directory.parts:
         raise ValueError("Parent traversal is forbidden in memory paths")
@@ -168,7 +300,7 @@ def search_records(repo: Path, directory: Path, issue_url: str) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("prepare", "record", "read", "search"))
+    parser.add_argument("mode", choices=("prepare", "record", "read", "search", "verify-owner-review"))
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--issue")
     parser.add_argument("--review-url")
@@ -178,6 +310,8 @@ def main() -> int:
     parser.add_argument("--file", type=Path)
     parser.add_argument("--directory", type=Path)
     parser.add_argument("--operator-reviewed", action="store_true")
+    parser.add_argument("--attestation-url")
+    parser.add_argument("--allow-public-github-fetch", action="store_true")
     args = parser.parse_args()
     try:
         if args.mode in ("prepare", "record"):
@@ -195,6 +329,13 @@ def main() -> int:
             print(json.dumps({"decision": "RECORDED_UNVERIFIED", "stored": True,
                               "owner_approval": "NOT_GRANTED"}))
             return 0
+        if args.mode == "verify-owner-review":
+            if not args.file or not args.attestation_url:
+                raise ValueError("Explicit memory file and owner attestation required")
+            result = verify_owner_review(args.repo, args.file, args.attestation_url,
+                                         allow_public_github_fetch=args.allow_public_github_fetch)
+            print(json.dumps(result, sort_keys=True, ensure_ascii=False))
+            return 2  # A reviewed reference is never execution consent.
         if args.mode == "read":
             if not args.file:
                 raise ValueError("Explicit memory file required")
