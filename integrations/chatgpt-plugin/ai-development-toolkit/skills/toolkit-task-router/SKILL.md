@@ -4,6 +4,36 @@ description: Use for substantial software engineering, QA, security, DevOps or U
 ---
 # Toolkit task router for ChatGPT
 
+## Native-originals checkpoint for ordinary visual requests (#524)
+
+**Before authoring any new app UI or requesting visual approval**, read the actual packaged
+`USER_PREFERENCES.json`. For a substantial visual task with an observed
+`skills.design_originals=ALL_THREE`, enter the **existing**
+`ux-ui-design-orchestra` in `create-design` mode and load its task-specific
+instructions. Reading their SKILL.md files is L4 guidance, **not L5 execution**.
+
+Choose the actual authorized host executor and invoke the three applicable **original,
+unchanged** methods on the same brief **before** declaring a design ready for approval:
+Impeccable's native concept/shape flow (including its mandatory context/setup and
+concept seed for a new visual world), Taste Skill's original app/page direction draw,
+and UI UX Pro Max's original design-system search. Honor each upstream tool's own
+sequence, applicability and failure rules. A native command produces a trace with its
+pinned source SHA, original entrypoint, exact invocation, observed exit, stage and
+output/artifact; collect these facts **as each call returns**, not from final prose.
+
+**Fail closed:** If all three methods were not actually invoked, use the existing
+`ORIGINAL_EXECUTOR_FAILOVER` only when the second host is available and authorized.
+Otherwise report `BLOCKED_ORIGINAL_EXECUTOR` / `NATIVE_STAGE_NOT_RUN` with the
+specific missing prerequisite. Do not advance the Orchestra approval or call the
+overall ALL_THREE run complete. Independent Playwright tests or a generated screen
+never count as a native original. Keep any safe partial deliverable clearly labeled.
+
+After the owner's real visual approval, enter `implement-approved`; following the
+build, run the upstream's genuine inspector and Impeccable's independent finish
+reviewer (or its **documented** inline fallback with `DEGRADED`). A missing reviewer,
+or source-only advice, cannot be promoted to a PASS. The Toolkit package cannot force
+host tool calls; verify the live tool trace in a fresh chat to establish L5.
+
 ## Persisted user preferences
 
 Read [packaged user preferences](references/USER_PREFERENCES.json) when routing a task. This uses the existing preference schema; the public file has no personal choice. Honor an observed standing user choice without asking them to repeat it in every request. For design, bind `skills.design_originals` to the existing Orchestra using [original selection and execution](../toolkit-ui-review/references/ORIGINALS.md). Missing sandbox configuration or a `defaults`-origin `STANDARD` must not overwrite a saved personal opt-in. Explicit task/project overrides and a directly selected original controller retain precedence. This is routing policy, not new execution permission or proof that a local client setting was read.

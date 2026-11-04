@@ -21,6 +21,21 @@ class ChatGPTNormalChatTests(unittest.TestCase):
         self.assertIn("plugin remains an instruction package", text)
         self.assertIn("BLOCKED", text)
 
+    def test_blind_all_three_requires_native_checkpoint_before_code(self):
+        """Regression guard for the observed #524 source-loaded/engine-not-run miss."""
+        router = (ROUTER / "SKILL.md").read_text(encoding="utf-8")
+        ui = (PLUGIN / "skills/toolkit-ui-review/SKILL.md").read_text(encoding="utf-8")
+        execution = EXECUTION.read_text(encoding="utf-8")
+        self.assertLess(router.index("## Native-originals checkpoint"),
+                        router.index("## Ordinary Chat direct execution"))
+        for text in (router, ui, execution):
+            for required in ("ALL_THREE", "ORIGINAL_EXECUTOR_FAILOVER"):
+                self.assertIn(required, text)
+        self.assertIn("before application UI code", ui)
+        self.assertIn("native_execution", execution)
+        self.assertIn("source-only advice", router)
+        self.assertIn("NATIVE_STAGE_NOT_RUN", router)
+
     def test_execution_reference_uses_real_apps_not_fake_shell(self):
         text = EXECUTION.read_text(encoding="utf-8")
         for expected in (

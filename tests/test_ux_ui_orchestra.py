@@ -37,12 +37,75 @@ class DesignOrchestraTests(unittest.TestCase):
             item.update(status="INVOKED", loaded=True,
                         source_revision="a" * 40,
                         invocation_evidence="observed client trace")
+        self.assert_bad("native execution receipt", good)
+        receipts = {
+            "impeccable": ("concept-seed", "impeccable concept-seed --scope direction --mode operate"),
+            "design-taste-frontend": ("draw-app", "node draw.mjs --app --kind builder"),
+            "ui-ux-pro-max": ("design-system", "py -3 search.py travel --design-system"),
+        }
+        for item in good["original_design_skills"]["invocations"]:
+            stage, command = receipts[item["name"]]
+            item["native_execution"] = [{
+                "stage": stage,
+                "command": command,
+                "exit_code": 0,
+                "executor": "isolated test runner",
+                "tool_result_ref": "synthetic-tool-result-123",
+                "output": "synthetic original output, not live invocation evidence",
+            }]
+        self.assertEqual([], checker.validate(good))
+        missing = good["original_design_skills"]["invocations"][0]
+        original = missing.pop("native_execution")
+        self.assert_bad("native execution receipt", good)
+        missing["native_execution"] = original
+        original[0]["exit_code"] = 1
+        self.assert_bad("no successful native execution", good)
+        original[0]["exit_code"] = 0
+        original[0]["command"] = "echo impeccable concept-seed --scope direction"
+        self.assert_bad("non-executing probe", good)
+        original[0]["command"] = receipts["impeccable"][1]
         self.assertEqual([], checker.validate(good))
         good["original_design_skills"]["invocations"][0]["invocation_evidence"] = ""
         self.assert_bad("invocation lacks", good)
         good["original_design_skills"]["invocations"][0]["invocation_evidence"] = "observed"
         good["original_design_skills"]["invocations"][2]["name"] = "impeccable"
         self.assert_bad("unknown or duplicate", good)
+
+    def test_all_three_finished_requires_real_review_receipt(self):
+        good = self.with_rendered_comparison(self.load_three_directions())
+        good["mode"] = "implement-approved"
+        good["gate"] = "IMPLEMENTED_NOT_RELEASED"
+        good["changed_ui"] = True
+        good["owner_approval_evidence"] = "specific approved design version B"
+        good["implementation"]["status"] = "IMPLEMENTED"
+        good["original_design_skills"] = {"mode": "ALL_THREE", "invocations": []}
+        commands = {
+            "impeccable": ("concept-seed", "impeccable concept-seed --scope direction"),
+            "design-taste-frontend": ("draw-app", "node draw.mjs --app --kind builder"),
+            "ui-ux-pro-max": ("design-system", "python search.py travel --design-system"),
+        }
+        for name in checker.ORIGINALS:
+            stage, command = commands[name]
+            good["original_design_skills"]["invocations"].append({
+                "name": name, "status": "INVOKED", "loaded": True,
+                "source_revision": "a" * 40, "invocation_evidence": "synthetic",
+                "native_execution": [{
+                    "stage": stage, "command": command, "exit_code": 0,
+                    "executor": "isolated synthetic test", "tool_result_ref": "fixture-trace-1",
+                    "output": "fixture output only",
+                }],
+            })
+        self.assert_bad("finish-review", good)
+        good["impeccable_finish_review"] = {
+            "mode": "INLINE_DEGRADED", "disposition": "ship",
+            "tool_result_ref": "fixture-review-trace", "output_ref": "fixture-review-output",
+        }
+        good["verdict"] = "PASS"
+        self.assert_bad("must be labeled DEGRADED", good)
+        good["verdict"] = "DEGRADED"
+        self.assertEqual([], checker.validate(good))
+        good["impeccable_finish_review"]["disposition"] = "fix"
+        self.assert_bad("unresolved Impeccable finish-review", good)
 
     def native_scope_exclusion_report(self):
         """Synthetic claims for validation only; no original skill is run."""
@@ -113,8 +176,10 @@ class DesignOrchestraTests(unittest.TestCase):
                 if gate == "IMPLEMENTED_NOT_RELEASED":
                     report["implementation"]["status"] = "IMPLEMENTED"
                     report["changed_ui"] = True
-                self.assertEqual(["all-three approval requires three actual invocations"],
-                                 checker.validate(report))
+                errors = checker.validate(report)
+                self.assertIn("all-three approval requires three actual invocations", errors)
+                self.assertIn("impeccable: invocation lacks native execution receipt", errors)
+                self.assertIn("ui-ux-pro-max: invocation lacks native execution receipt", errors)
 
     def test_original_presence_is_not_activation(self):
         with tempfile.TemporaryDirectory() as temp:
