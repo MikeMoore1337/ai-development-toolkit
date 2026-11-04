@@ -1,5 +1,32 @@
 # AI Development Toolkit local Codex MCP for Windows, Linux and macOS
 
+
+## Personal MCP 0.1.18 - native project memory and handoff (#433)
+
+The existing Personal MCP now exposes eight read-only native Project MCP
+handoff and reviewed-memory tools: `toolkit_prepare_handoff`,
+`toolkit_search_handoffs`, `toolkit_verify_handoff`,
+`toolkit_verify_portable_handoff`, `toolkit_prepare_reviewed_memory`,
+`toolkit_read_reviewed_memory`, `toolkit_search_reviewed_memory` and
+`toolkit_verify_owner_reviewed_memory`. This reuses the original native
+Project MCP implementation; no second MCP registration, ECC runtime or
+memory store is required.
+
+Tool discovery never executes native Project MCP code. An explicit call
+loads only a clean, Git-tracked Toolkit source, verifies the read-only
+schema and enforces the strict native project, external-file and
+same-repository validation. GitHub network access is possible only for
+`toolkit_verify_owner_reviewed_memory` and only with explicit
+`allow_public_github_fetch=true`. All results remain non-authorizing:
+`owner_approval=NOT_GRANTED`, `action_authorized=false`, and
+`execution_authorized=false`.
+
+Source delivery is not an installed client update. Update the trusted,
+separate Personal MCP package through the existing owner-approved
+installer and restart the client before testing native invocation.
+No global configuration or unrelated project is changed by this PR.
+
+
 ## Personal MCP 0.1.17 - optional, manually authorized included-usage guard (#401)
 
 When precise per-call subscription quota is unavailable, the Model Advisor
