@@ -16,7 +16,7 @@ import sys
 from urllib import error, request
 
 from skill_observation_review import (
-    ID, MAX_BYTES, MAX_ITEMS, SOURCE, preview_learning,
+    ID, MAX_BYTES, MAX_ITEMS, SOURCE, preview_learning, _unique_json_object,
 )
 
 SHA40 = re.compile(r"[a-f0-9]{40}\Z")
@@ -75,16 +75,6 @@ def public_github_get(path: str) -> dict:
     if not isinstance(parsed, dict):
         raise ValueError("INVALID_GITHUB_RESPONSE")
     return parsed
-
-
-def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
-    """Reject ambiguous duplicate JSON keys, including within nested objects."""
-    result: dict[str, object] = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError("DUPLICATE_JSON_KEY")
-        result[key] = value
-    return result
 
 
 def read_bounded_json(path: Path) -> object:
