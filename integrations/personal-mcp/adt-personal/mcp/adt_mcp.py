@@ -1242,11 +1242,20 @@ def _native_project_call(tk: Toolkit, name: str, args: dict) -> dict:
     if name not in PROJECT_NATIVE_NAMES:
         raise ToolkitError("NATIVE_PROJECT_TOOL_NOT_ALLOWLISTED")
     native = _native_project_module(tk)
+    # Native helpers import sibling modules lazily; resolve them only during
+    # this explicit, bounded call and restore Python process state afterwards.
+    original_bytecode = sys.dont_write_bytecode
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(tk.source / "scripts"))
     try:
-        result = native.invoke(name, args)
-    except (OSError, KeyError, TypeError, ValueError,
-            subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
-        raise ToolkitError("NATIVE_PROJECT_READONLY_REQUEST_REFUSED") from exc
+        try:
+            result = native.invoke(name, args)
+        except (OSError, KeyError, TypeError, ValueError, ImportError,
+                subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+            raise ToolkitError("NATIVE_PROJECT_READONLY_REQUEST_REFUSED") from exc
+    finally:
+        sys.path.pop(0)
+        sys.dont_write_bytecode = original_bytecode
     if not isinstance(result, dict):
         raise ToolkitError("NATIVE_PROJECT_INVALID_RESULT")
     return {
