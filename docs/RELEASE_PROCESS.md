@@ -1,5 +1,7 @@
 # Reproducible release procedure
 
+**Prepared candidate:** `5.5.8` (candidate, NOT PUBLISHED), Issue [#540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540). The last released tag is still `v5.5.7`; see [candidate notes](releases/v5.5.8.md). The final SHA, rights and file set must be approved separately after merging and exact-SHA pre-tag checks.
+
 [Русская версия](ru/RELEASE_PROCESS.md)
 
 The repository follows PR-based delivery. CI on a PR is necessary, not a

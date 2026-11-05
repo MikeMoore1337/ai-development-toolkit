@@ -33,18 +33,25 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.7)
+## Unreleased (main after v5.5.8)
 
-- **Personal MCP 0.1.18 (source candidate; not installed):** expose the eight existing native project handoff / reviewed-memory read-only tools through the single Personal MCP, with a clean tracked Toolkit source gate, explicit public GitHub opt-in for owner-account verification, no new engine or data store and no action authorization (#433). Runtime client acceptance and versioned release remain separate.
+No additional changes after this release candidate at preparation time.
 
-- #435: bundled original pinned MIT `brand-voice` (with complete reference schema) and `content-engine`, plus opt-in `native-editorial-suite`; no external publishing, paid API or automatic user content persistence; not yet merged or released.
+## 5.5.8 (candidate, 2026-11-05)
 
-- #435: six more pinned original MIT optional skills for AI debugging, content-hash caching, loop review, UI state trace, interface polish and editorial/SEO drafts; full 601-source automated **triage** without automatic adoption; case-specific tests and RU/EN docs. No host runtime, paid API, publication or merge claimed.
+**v5.5.8 is a CANDIDATE, NOT A PUBLISHED RELEASE.** Preparation under [#540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540) must be merged and pass exact-SHA pre-tag checks before a separately approved tag and GitHub Release. The last published version is still v5.5.7. The owner must explicitly approve the final SHA, full distributable contents and rights. Nothing here authorizes automatic publication.
 
-- #435 (stacked source changes): bundled the pinned, unchanged MIT `mcp-dependency-review` as a seventh optional native skill and compared two further ECC P0 sources. Source/install/CI validation is separate from live client activation; no ECC runtime, external scanner, paid API or release claimed.
+Compared to immutable `v5.5.7@a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6`, the reviewed `main@8137a7ddf72571d8f648b7aa1a8a419f14d5c79e` baseline includes **267 commits / 207 changed paths**. [Complete comparison and file list](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.7...8137a7ddf72571d8f648b7aa1a8a419f14d5c79e); the release PR adds version, checksums and RU/EN release notes. Final release source is the **post-merge main SHA**, to be checked again after merging.
 
-- #492: Native-first boundary for explicitly selected original third-party tools. Personal MCP defensive passthrough, global installer/ChatGPT router exclusions, scoped optional Model Advisor Stop hook, and RU/EN documentation. No changes to the parallel UX/UI Orchestra or external upstream sources; live client execution remains separately verifiable.
+- **Native Continuous Learning v2 (#436):** opt-in, project-scoped read-only observation preview; bounded typed public GitHub fact checks with explicit network consent; duplicate/malformed JSON rejection, conflicting evidence and false SHA guards; reviewed, source-hash-bound proposal without approval or writes. The `native-learning-review` source skill and `toolkit_native_learning_review` Personal MCP tool are included. No ECC runtime/hooks/daemon, unattended practice promotion or model training. MCP invocation has been observed; Codex native Agent Skill activation remains **NOT_VERIFIED** and measurable model-quality improvement **NOT_MEASURED**.
+- **Personal MCP and ChatGPT boundaries (#433, #499):** reviewed project handoff and memory references, explicit owner-account verification, chat-first native routing and original-executor fallback. Current Personal MCP **source** is `0.1.19` and ChatGPT plugin **source** is `0.1.5`; both have independent installation and update lifecycles.
+- **Security and safe orchestration (#432, #438, #440):** GateGuard and fail-closed review improvements, read-only parallel preflight and hostile-input fixtures. The preflight does not execute agents.
+- **Model guidance and third-party isolation (#401, #492):** user-controlled, quota-aware model advice and scoped native-first optional third-party paths. Source-only compatibility is not proof of a live host model switch.
+- **Design, QA and Windows integration (#486, #489, #524, #421, #522):** reviewed browser/visual evidence flows, actual original-skill proof gates, Harness² acceptance material and GitHub observation export; these do not establish arbitrary real-client activation.
+- **Optional upstream skills (#435):** pinned MIT sources/attribution and native-only opt-in additions, with source triage and coverage tests. No ECC installation, automatic publishing or new paid inference.
+- **Maintenance:** RU/EN documentation, dependencies, audit fixtures, checks and package boundaries as enumerated in the exact comparison. Root MIT and recorded technical provenance are not independent rightsholder/employer clearance.
 
+[EN candidate notes, update/rollback and gates](docs/releases/v5.5.8.md) · [RU notes, update/rollback and gates](docs/ru/releases/v5.5.8.md). Public GitHub Release alone never updates an installed MCP adapter or private ChatGPT plugin. Existing historical release records below remain unchanged.
 
 ## 5.5.7 (released, 2026-10-31)
 
