@@ -1,5 +1,15 @@
 # AI Development Toolkit integrations - capabilities and environments
 
+## Cursor Plugin - existing Personal MCP plus native Agent Skills
+
+The [Cursor integration guide](../integrations/cursor-plugin/README.md) describes a native local Cursor Plugin with focused development, QA, security and UX/UI skills, routing rules, four commands, and a launcher that reuses the existing read-only ADT Personal MCP. No new server, paid API or Codex CLI is required. From a clean Toolkit checkout, preview using:
+
+    python integrations/cursor-plugin/scripts/manage.py install
+    python integrations/cursor-plugin/scripts/manage.py install --apply
+    python integrations/cursor-plugin/scripts/manage.py doctor
+
+Reload Cursor and confirm actual toolkit_info/toolkit_prepare_task calls. Local doctor and static CI do not prove live activation. Updates use update/update --apply; rollback uses rollback/rollback --apply. Do not duplicate an existing standalone ADT MCP registration.
+
 AI Development Toolkit offers **two equally important integrations** built on shared skill, role and workflow guidance: the [ChatGPT plugin](../integrations/chatgpt-plugin/README.md) and the [local Codex MCP](../integrations/personal-mcp/README.md). **Choose by where the project and authorized tools are available**, not by a ranking of users or clients. Neither route requires a paid API.
 
 ## What you can do

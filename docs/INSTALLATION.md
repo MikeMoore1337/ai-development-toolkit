@@ -1,5 +1,9 @@
 # Installing skills safely
 
+## Native Cursor Plugin (local)
+
+For Cursor Desktop, use [the separate Cursor plugin guide](../integrations/cursor-plugin/README.md). Unlike the portable skills-only layout, this plugin bundles Cursor commands, rules, and a stdio wrapper for an EXISTING installed Personal MCP. Use manager install (preview), install --apply, doctor, and verify live discovery in Cursor Customize. Upgrades and rollback remain explicit. No paid API or automatic installation of another MCP is performed.
+
 [Русский](ru/INSTALLATION.md) · [Windows](INSTALL_WINDOWS.md) · [Linux](INSTALL_LINUX.md) · [macOS](INSTALL_MACOS.md)
 
 ## Automatic setup for the current task

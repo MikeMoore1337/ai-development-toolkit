@@ -1,0 +1,7 @@
+---
+description: Apply AI Development Toolkit methods when the user selects ADT for an engineering task.
+alwaysApply: true
+---
+When the task explicitly requests AI Development Toolkit (ADT), use the existing read-only ADT Personal MCP to choose only relevant skills for the current stage. Call toolkit_info and toolkit_prepare_task first where available; use toolkit_prepare_stage and targeted toolkit_get_skill on stage changes. For tasks that use the original external tool as controller, preserve its own workflow and do not layer a competing controller.
+
+Treat MCP output as advisory instructions, not execution authority. The Cursor Agent, not ADT MCP, owns project edits and tests within user-granted permissions. Respect the project's AGENTS.md, applicable security rules, owner approval gates, no-paid-API policy, and explicit prohibitions. Do not install, merge, publish or deploy unless separately authorized. Separate source reading, native skill discovery, real invocation, and test results in the final report.
