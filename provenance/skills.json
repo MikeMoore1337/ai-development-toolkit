@@ -4,6 +4,26 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
+      "id": "independent-432-tests-native-security-regression-432-py",
+      "path": "tests/test_native_security_regression_432.py",
+      "name": "test_native_security_regression_432.py",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted; claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Original read-only synthetic test cases under repository MIT claim, rights of third-party components not asserted.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "docs/MCP_SECURITY_SCAN.md",
+      "last_reviewed": "2026-11-05",
+      "distribution": "included",
+      "notes": "Positive and negative regression tests for host permissions, dangerous hooks, unsafe paths and POSIX world-writable file mode; simulates Windows junction metadata, never creates real junctions or executes commands."
+    },
+    {
       "id": "independent-432-fixtures-native-security-independent-432-json",
       "path": "fixtures/native_security_independent_432.json",
       "name": "native_security_independent_432.json",
