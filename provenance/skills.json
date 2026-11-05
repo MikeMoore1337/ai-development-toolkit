@@ -19,7 +19,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/SECURITY_NATIVE_ACCEPTANCE_432.md",
-      "last_reviewed": "2026-11-06",
+      "last_reviewed": "2026-11-05",
       "distribution": "included",
       "notes": "Issue #432 original source and independent 60-case synthetic acceptance, CI, constraints, and advisory vs host enforcement distinction."
     },
@@ -39,7 +39,7 @@
       "attribution_path": null,
       "status": "documented",
       "evidence": "docs/SECURITY_NATIVE_ACCEPTANCE_432.md",
-      "last_reviewed": "2026-11-06",
+      "last_reviewed": "2026-11-05",
       "distribution": "included",
       "notes": "Issue #432 original source and independent 60-case synthetic acceptance, CI, constraints, and advisory vs host enforcement distinction."
     },
