@@ -194,17 +194,21 @@ def review(candidate_dir: Path, manifest_file: Path,
                 issues.append(_issue("COST_UNVERIFIED", "REVIEW"))
             if declared["removal_plan"] == "UNKNOWN":
                 issues.append(_issue("REMOVAL_PLAN_MISSING", "REVIEW"))
-    if candidate_dir.is_symlink() or not candidate_dir.is_dir():
+    linked_root = (candidate_dir.is_symlink()
+                   or (hasattr(candidate_dir, "is_junction") and candidate_dir.is_junction()))
+    if linked_root or not candidate_dir.is_dir():
         issues.append(_issue("INVALID_CANDIDATE_DIRECTORY", "BLOCK"))
     actual: dict[str, Path] = {}
     total = 0
-    if candidate_dir.is_dir() and not candidate_dir.is_symlink():
+    if candidate_dir.is_dir() and not linked_root:
         for directory, subdirs, filenames in os.walk(candidate_dir, topdown=True, followlinks=False):
             parent = Path(directory)
             for subdir in list(subdirs):
                 folder = parent / subdir
                 rel = folder.relative_to(candidate_dir).as_posix()
-                if folder.is_symlink() or subdir == ".git":
+                if (folder.is_symlink()
+                        or (hasattr(folder, "is_junction") and folder.is_junction())
+                        or subdir == ".git"):
                     issues.append(_issue("UNSAFE_DIRECTORY", "BLOCK", rel))
                     subdirs.remove(subdir)
             for filename in filenames:
@@ -313,6 +317,23 @@ HOST_NET = re.compile(r"\b(?:curl|wget|Invoke-WebRequest|Invoke-RestMethod|iwr|i
 HOST_PIPE = re.compile(r"\|\s*(?:sh|bash|pwsh|powershell)\b", re.I)
 HOST_INTERPOLATION = re.compile(r"\$\{(?:file|command|content|input|args?)\}", re.I)
 HOST_DESTRUCTIVE = re.compile(r"\brm\s+-rf\b|\bRemove-Item\b[^\n]{0,120}-Recurse\b", re.I)
+HOST_PS_DYNAMIC_DOWNLOAD = re.compile(
+    r"\b(?:IEX|Invoke-Expression)\b[^\n]{0,250}"
+    r"\b(?:DownloadString|DownloadFile|WebClient|Invoke-WebRequest|Invoke-RestMethod)\b",
+    re.I,
+)
+HOST_PY_DYNAMIC_CALL = re.compile(
+    r"\b(?:os\.system|subprocess\.(?:run|Popen|call|check_call|check_output)|"
+    r"exec\s*\(|eval\s*\()",
+    re.I,
+)
+HOST_PY_HOOK = re.compile(
+    r"\bpython(?:3(?:\.\d+)?)?(?:\.exe)?\s+-c\s+[^\n]{0,250}"
+    r"(?:os\.system|subprocess\.(?:run|Popen|call|check_call|check_output)|"
+    r"exec\s*\(|eval\s*\()",
+    re.I,
+)
+HOST_MCP_PYTHON = re.compile(r"(?:^|[/\\])python(?:3(?:\.\d+)?)?(?:\.exe)?$", re.I)
 HOST_SENSITIVE = re.compile(r"(?:API[_-]?KEY|TOKEN|SECRET|PASSWORD|PRIVATE[_-]?KEY|CREDENTIAL)", re.I)
 HOST_ENV_REFERENCE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?\Z")
 # Review explicit MCP argv references to known collectors or sensitive roots.
@@ -383,6 +404,8 @@ def _host_check_hooks(config: dict, path: str, items: list[dict]) -> None:
             (HOST_PIPE, "HOOK_SHELL_PIPE"),
             (HOST_INTERPOLATION, "HOOK_UNTRUSTED_INTERPOLATION"),
             (HOST_DESTRUCTIVE, "HOOK_DESTRUCTIVE_COMMAND"),
+            (HOST_PS_DYNAMIC_DOWNLOAD, "HOOK_POWERSHELL_DYNAMIC_DOWNLOAD"),
+            (HOST_PY_HOOK, "HOOK_PYTHON_DYNAMIC_EXECUTION"),
         ):
             if pattern.search(command):
                 _host_finding(items, rule, path)
@@ -430,6 +453,13 @@ def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -
             _host_finding(items, "MCP_COLLECTION_ENDPOINT", path, "MEDIUM")
         if any(HOST_SENSITIVE_ARG.search(arg) for arg in args):
             _host_finding(items, "MCP_SENSITIVE_FILESYSTEM_PATH", path, "MEDIUM")
+        # Relative parent traversal is a review signal, not a sandbox escape proof.
+        if any(
+            args[i] in ("--allow-root", "--filesystem-root", "--directory")
+            and ".." in args[i + 1].replace("\\", "/").split("/")
+            for i in range(len(args) - 1)
+        ):
+            _host_finding(items, "MCP_RELATIVE_FILESYSTEM_TRAVERSAL", path, "MEDIUM")
         if len(args) >= 2 and any(
             args[i] in ("--allow-root", "--filesystem-root", "--directory")
             and args[i + 1] in ("/", "C:\\", "C:/")
@@ -462,6 +492,13 @@ def _host_check_mcp(config: dict, path: str, items: list[dict], *, toml: bool) -
                     ):
                         if pattern.search(payload):
                             _host_finding(items, rule, path)
+        if HOST_MCP_PYTHON.search(command):
+            for index, flag in enumerate(args):
+                if flag == "-c":
+                    if index + 1 >= len(args):
+                        raise ValueError("missing MCP Python payload")
+                    if HOST_PY_DYNAMIC_CALL.search(args[index + 1]):
+                        _host_finding(items, "MCP_PYTHON_DYNAMIC_EXECUTION", path)
 
 
 def review_host_config(root: Path) -> dict:
@@ -492,6 +529,10 @@ def review_host_config(root: Path) -> dict:
                     _host_finding(findings, "HOST_CONFIG_TOO_LARGE", relative)
                     continue
                 body = target.read_bytes()
+                # POSIX-only advisory: a world-writable config can be replaced
+                # by an untrusted local user before any later host invocation.
+                if os.name != "nt" and target.stat().st_mode & 0o002:
+                    _host_finding(findings, "HOST_WORLD_WRITABLE_CONFIG", relative)
                 if len(body) > HOST_MAX_BYTES or b"\x00" in body:
                     raise ValueError("invalid config bytes")
                 files.append({
@@ -533,6 +574,7 @@ def review_host_config(root: Path) -> dict:
                         grants = [grant.strip() for grant in allowed]
                         for tool, rule in (
                             ("Bash", "HOST_UNRESTRICTED_SHELL"),
+                            ("Read", "HOST_UNRESTRICTED_READ"),
                             ("Write", "HOST_UNRESTRICTED_WRITE"),
                             ("Edit", "HOST_UNRESTRICTED_EDIT"),
                         ):
