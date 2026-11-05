@@ -89,6 +89,42 @@ class CursorPluginContract(unittest.TestCase):
             self.assertEqual((status, body["status"]), (0, "UNINSTALLED"))
             self.assertFalse(target.exists())
 
+    def test_reuse_existing_global_mcp_installs_without_duplicate(self):
+        from unittest.mock import patch
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('adt_cursor_manage', MANAGER)
+        adapter = importlib.util.module_from_spec(spec)
+        with patch.object(sys, 'dont_write_bytecode', True):
+            spec.loader.exec_module(adapter)
+        with tempfile.TemporaryDirectory() as scratch:
+            target = Path(scratch) / "ai-development-toolkit"
+            state = Path(scratch) / "state"
+            with patch.object(adapter, "has_global_adt_mcp", return_value=True):
+                result = adapter.perform_install(PLUGIN, target, state, reuse_global_mcp=True)
+                self.assertEqual(result["mcp_mode"], "reuse-global")
+                self.assertFalse((target / "mcp.json").exists())
+                manifest = json.loads((target / ".cursor-plugin/plugin.json").read_text(encoding="utf-8"))
+                self.assertNotIn("mcpServers", manifest)
+                status, info = adapter.inspection(target)
+                self.assertEqual(status, "MANAGED_CLEAN")
+                self.assertEqual(info["mcp_mode"], "reuse-global")
+                self.assertEqual(adapter.perform_install(PLUGIN, target, state, reuse_global_mcp=True)["status"], "ALREADY_CURRENT")
+                self.assertEqual(adapter.perform_rollback(target, state)["status"], "UNINSTALLED")
+
+    def test_reuse_requires_existing_global_mcp(self):
+        from unittest.mock import patch
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('adt_cursor_manage', MANAGER)
+        adapter = importlib.util.module_from_spec(spec)
+        with patch.object(sys, 'dont_write_bytecode', True):
+            spec.loader.exec_module(adapter)
+        with tempfile.TemporaryDirectory() as scratch:
+            target = Path(scratch) / "ai-development-toolkit"
+            with patch.object(adapter, "has_global_adt_mcp", return_value=False):
+                with self.assertRaisesRegex(ValueError, "global ADT MCP"):
+                    adapter.perform_install(PLUGIN, target, Path(scratch) / "state", reuse_global_mcp=True)
+            self.assertFalse(target.exists())
+
     def test_launcher_doctor_does_not_start_server(self):
         with tempfile.TemporaryDirectory() as scratch:
             root = Path(scratch)
