@@ -90,9 +90,9 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 
 
-**Latest published release:** [v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7). For technical checksums, commit SHAs and verification history see [CHANGELOG.md](CHANGELOG.md) and [release process](docs/RELEASE_PROCESS.md). Publishing Toolkit does not automatically update installed MCP or ChatGPT plugins.
+**Latest published release:** [v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) (2026-11-05), exact source `374f1cf5088b59a690a720f128bd81827f2a888c`. [Release notes and rollback](docs/releases/v5.5.8.md), [CHANGELOG](CHANGELOG.md), [release process](docs/RELEASE_PROCESS.md). Publishing a Toolkit release does not update installed MCP or ChatGPT plugins.
 
-**Next release candidate:** `v5.5.8` - **NOT PUBLISHED**; [exact source scope, update and rollback](docs/releases/v5.5.8.md). PR and pre-tag/rights review are required; GitHub publication does not update installed MCP or ChatGPT plugins.
+
 
 For new installations, use **Skill Manager v2** to keep ownership records, preview changes, detect local edits, and support update, rollback and recovery.
 

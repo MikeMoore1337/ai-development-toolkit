@@ -1,5 +1,9 @@
 # Changelog
 
+**v5.5.8 publication confirmed (2026-11-05)**
+
+[GitHub Release v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) is published on exact SHA `374f1cf5088b59a690a720f128bd81827f2a888c`; tagged `MANIFEST.json.version = 5.5.8`. [Post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42031352833) and [published ZIP archive check](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) PASS. Actual GitHub ZIP SHA256: `f21bb997a63b6982880ef3e1ad21ab9126e960539f2927c0f4e7fed8bc0875f4` (973 files, provenance 774 components / 98 skills). Owner explicitly approved distribution for this exact source/rights scope in #540; independent third-party/employer rightsholder verification is not attested. Native Codex Skill activation NOT_VERIFIED, model improvement NOT_MEASURED. Installed Personal MCP and private ChatGPT plugin are not automatically updated. Initial release-published documentation CI reported PUBLICATION_DOCS_STALE; a separate forward-only PR updates main without modifying the tag.
+
 **v5.5.7 publication confirmed (2026-10-31)**
 
 [GitHub Release v5.5.7](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.7) publishes the task-required setup contract from immutable commit `a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6` with `MANIFEST.json.version = 5.5.7`. Personal MCP 0.1.14 and public ChatGPT plugin source 0.1.4 are independent packages. Exact-SHA CI and archive verification evidence belongs to the release record; source checks do not establish native client invocation or independent rights clearance. Installed clients require their own update.
@@ -35,13 +39,13 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.8)
 
-No additional changes after this release candidate at preparation time.
+Post-publication synchronization of v5.5.8 documentation (#540), not contained in the tagged archive.
 
-## 5.5.8 (candidate, 2026-11-05)
+## 5.5.8 (released, 2026-11-05)
 
-**v5.5.8 is a CANDIDATE, NOT A PUBLISHED RELEASE.** Preparation under [#540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540) must be merged and pass exact-SHA pre-tag checks before a separately approved tag and GitHub Release. The last published version is still v5.5.7. The owner must explicitly approve the final SHA, full distributable contents and rights. Nothing here authorizes automatic publication.
+**Published 2026-11-05** on exact merged SHA `374f1cf5088b59a690a720f128bd81827f2a888c` after independent owner rights and release approval, LOCAL_PRETAG_PASS and REMOTE_PRETAG_PASS. All changes since v5.5.7 are included; no installed MCP/plugin update is implied.
 
-Compared to immutable `v5.5.7@a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6`, the reviewed `main@8137a7ddf72571d8f648b7aa1a8a419f14d5c79e` baseline includes **267 commits / 207 changed paths**. [Complete comparison and file list](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.7...8137a7ddf72571d8f648b7aa1a8a419f14d5c79e); the release PR adds version, checksums and RU/EN release notes. Final release source is the **post-merge main SHA**, to be checked again after merging.
+Compared to immutable `v5.5.7@a17cc68f6b38fd9b5fe8e1a40a77a6c300750eb6`, the reviewed `main@8137a7ddf72571d8f648b7aa1a8a419f14d5c79e` baseline includes **267 commits / 207 changed paths**. [Complete comparison and file list](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.7...8137a7ddf72571d8f648b7aa1a8a419f14d5c79e); the release PR adds version, checksums and RU/EN release notes. The final release source is exact merged SHA **`374f1cf5088b59a690a720f128bd81827f2a888c`**; the published GitHub ZIP passed inventory, checksums and provenance.
 
 - **Native Continuous Learning v2 (#436):** opt-in, project-scoped read-only observation preview; bounded typed public GitHub fact checks with explicit network consent; duplicate/malformed JSON rejection, conflicting evidence and false SHA guards; reviewed, source-hash-bound proposal without approval or writes. The `native-learning-review` source skill and `toolkit_native_learning_review` Personal MCP tool are included. No ECC runtime/hooks/daemon, unattended practice promotion or model training. MCP invocation has been observed; Codex native Agent Skill activation remains **NOT_VERIFIED** and measurable model-quality improvement **NOT_MEASURED**.
 - **Personal MCP and ChatGPT boundaries (#433, #499):** reviewed project handoff and memory references, explicit owner-account verification, chat-first native routing and original-executor fallback. Current Personal MCP **source** is `0.1.19` and ChatGPT plugin **source** is `0.1.5`; both have independent installation and update lifecycles.
