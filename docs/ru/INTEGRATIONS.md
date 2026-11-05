@@ -2,6 +2,8 @@
 
 ## Cursor Plugin - существующий Personal MCP и нативные Agent Skills
 
+**Перед командами:** проверьте актуальность локальной копии. Если integrations/cursor-plugin/scripts/manage.py отсутствует, не обновляйте грязный checkout вслепую. Используйте отдельную чистую копию по [пошаговой инструкции](../../integrations/cursor-plugin/README.ru.md#если-managepy-не-найден). При зарегистрированном в Cursor глобальном MCP ai-development-toolkit используйте флаг --reuse-global-mcp для install и install --apply.
+
 [Инструкция для Cursor](../../integrations/cursor-plugin/README.ru.md) описывает отдельный локальный плагин с навыками для разработки, QA, безопасности и UX/UI, правилами, четырьмя командами и подключением существующего ADT Personal MCP (только чтение). Новый сервер, платный API и Codex CLI не нужны. Из чистой копии Toolkit выполните предпросмотр, применение и диагностику:
 
     python integrations/cursor-plugin/scripts/manage.py install

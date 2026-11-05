@@ -16,6 +16,34 @@ PLUGIN = Path(__file__).resolve().parents[1]
 PAYLOAD = ("mcp.json", ".cursor-plugin", "skills", "rules", "commands", "README.md",
            "README.ru.md", "scripts/launch_mcp.py")
 MARKER = ".adt-managed.json"
+REUSE_GLOBAL = "reuse-global"
+BUNDLED_MCP = "bundled"
+
+
+def has_global_adt_mcp() -> bool:
+    """Recognize the already registered ADT stdio server, without altering it."""
+    config = Path.home() / ".cursor" / "mcp.json"
+    if not config.is_file():
+        return False
+    reject_links(config)
+    try:
+        obj = json.loads(config.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    if not isinstance(obj, dict) or not isinstance(obj.get("mcpServers"), dict):
+        return False
+    item = obj["mcpServers"].get("ai-development-toolkit")
+    if not isinstance(item, dict) or item.get("type", "stdio") != "stdio":
+        return False
+    cmd = str(item.get("command", ""))
+    arguments = item.get("args", [])
+    if not isinstance(arguments, list) or not all(isinstance(arg, str) for arg in arguments):
+        return False
+    if Path(cmd).name.lower() not in {"python", "python.exe", "py", "py.exe"}:
+        return False
+    return "--source" in arguments and any(
+        Path(arg).name.lower() == "adt_mcp.py" for arg in arguments
+    )
 
 
 def default_target() -> Path:
@@ -55,6 +83,19 @@ def source_files(source: Path) -> dict[str, Path]:
     return found
 
 
+def payload_bytes(source: Path, reuse_global_mcp: bool) -> dict[str, bytes]:
+    payload = {name: path.read_bytes() for name, path in source_files(source).items()}
+    if reuse_global_mcp:
+        payload.pop("mcp.json")
+        manifest = json.loads(payload[".cursor-plugin/plugin.json"].decode("utf-8"))
+        manifest.pop("mcpServers", None)
+        # Cursor's default MCP discovery requires mcp.json, intentionally omitted here.
+        payload[".cursor-plugin/plugin.json"] = (
+            json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+        ).encode("utf-8")
+    return payload
+
+
 def inspection(target: Path) -> tuple[str, dict]:
     if not target.exists() and not target.is_symlink():
         return "NOT_INSTALLED", {}
@@ -89,30 +130,34 @@ def write_json(path: Path, obj: dict) -> None:
             temp.unlink()
 
 
-def perform_install(source: Path, target: Path, state_dir: Path) -> dict:
+def perform_install(source: Path, target: Path, state_dir: Path, *, reuse_global_mcp: bool = False) -> dict:
     reject_links(target)
     reject_links(state_dir)
     state, _ = inspection(target)
     if state not in ("NOT_INSTALLED", "MANAGED_CLEAN"):
         raise ValueError("Refusing to overwrite " + state)
-    files = source_files(source)
-    planned = {relative: digest(p) for relative, p in files.items()}
+    if reuse_global_mcp and not has_global_adt_mcp():
+        raise ValueError("No compatible global ADT MCP found in ~/.cursor/mcp.json")
+    files = payload_bytes(source, reuse_global_mcp)
+    planned = {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}
+    mode = REUSE_GLOBAL if reuse_global_mcp else BUNDLED_MCP
     if state == "MANAGED_CLEAN":
         marker = json.loads((target / MARKER).read_text(encoding="utf-8"))
-        if marker["files"] == planned:
-            return {"status": "ALREADY_CURRENT", "files": len(files)}
+        if marker["files"] == planned and marker.get("mcp_mode", BUNDLED_MCP) == mode:
+            return {"status": "ALREADY_CURRENT", "files": len(files), "mcp_mode": mode}
     target.parent.mkdir(parents=True, exist_ok=True)
     state_dir.mkdir(parents=True, exist_ok=True)
     staging = target.parent / (".adt-cursor-stage-" + uuid.uuid4().hex)
     backup = None
     try:
         staging.mkdir()
-        for rel, source_file in files.items():
+        for rel, data in files.items():
             destination = staging / Path(rel)
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source_file, destination, follow_symlinks=False)
+            destination.write_bytes(data)
         version = json.loads((source / ".cursor-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
-        write_json(staging / MARKER, {"schema": 1, "version": version, "files": planned})
+        write_json(staging / MARKER, {"schema": 1, "version": version, "files": planned,
+                                      "mcp_mode": mode})
         if target.exists():
             backup_dir = state_dir / "backups"
             backup_dir.mkdir(parents=True, exist_ok=True)
@@ -128,7 +173,7 @@ def perform_install(source: Path, target: Path, state_dir: Path) -> dict:
                 backup.rename(target)
             raise
         return {"status": "UPDATED" if backup else "INSTALLED", "version": version,
-                "files": len(files), "rollback_available": True}
+                "files": len(files), "mcp_mode": mode, "rollback_available": True}
     finally:
         if staging.exists():
             shutil.rmtree(staging)
@@ -166,6 +211,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["install", "update", "status", "doctor", "rollback"])
     parser.add_argument("--apply", action="store_true", help="Explicitly approve filesystem changes")
+    parser.add_argument("--reuse-global-mcp", action="store_true",
+                        help="Use the already configured Cursor ADT MCP without registering a duplicate")
     parser.add_argument("--source", type=Path, default=PLUGIN)
     parser.add_argument("--target", type=Path, default=default_target())
     parser.add_argument("--state-dir", type=Path, default=default_state())
@@ -177,14 +224,22 @@ def main() -> int:
         reject_links(target)
         status, info = inspection(target)
         if args.action in ("install", "update"):
-            desired = source_files(source)
-            result = {"status": "PREVIEW", "target_status": status, "target": str(target),
-                      "version": json.loads((source / ".cursor-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"],
-                      "payload_files": len(desired), "applied": False}
             if status not in ("NOT_INSTALLED", "MANAGED_CLEAN"):
                 raise ValueError("Refusing to overwrite " + status)
+            reuse = (args.reuse_global_mcp or
+                     (status == "MANAGED_CLEAN" and info.get("mcp_mode") == REUSE_GLOBAL))
+            detected_global = has_global_adt_mcp()
+            if reuse and not detected_global:
+                raise ValueError("Requested --reuse-global-mcp but no compatible ADT MCP is registered")
+            if not reuse and detected_global and target == default_target().absolute():
+                raise ValueError("ADT MCP already registered in Cursor; rerun with --reuse-global-mcp")
+            desired = payload_bytes(source, reuse)
+            result = {"status": "PREVIEW", "target_status": status, "target": str(target),
+                      "version": json.loads((source / ".cursor-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"],
+                      "payload_files": len(desired), "mcp_mode": REUSE_GLOBAL if reuse else BUNDLED_MCP,
+                      "applied": False}
             if args.apply:
-                result = perform_install(source, target, state_dir)
+                result = perform_install(source, target, state_dir, reuse_global_mcp=reuse)
                 result["applied"] = True
         elif args.action == "rollback":
             result = {"status": "ROLLBACK_PREVIEW", "target_status": status, "applied": False}
@@ -192,8 +247,11 @@ def main() -> int:
                 result = perform_rollback(target, state_dir)
                 result["applied"] = True
         else:
-            result = {"status": status, "version": info.get("version"), "applied": False}
+            result = {"status": status, "version": info.get("version"),
+                      "mcp_mode": info.get("mcp_mode"), "applied": False}
             if args.action == "doctor":
+                if info.get("mcp_mode") == REUSE_GLOBAL:
+                    result["global_adt_mcp_registered"] = has_global_adt_mcp()
                 if status == "MANAGED_CLEAN":
                     proc = subprocess.run([sys.executable, str(target / "scripts" / "launch_mcp.py"), "--doctor"],
                                           capture_output=True, text=True, timeout=20, check=False)

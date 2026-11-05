@@ -11,6 +11,19 @@
 - `scripts/manage.py`: проверка, установка, обновление и безопасный откат локального пакета.
 - `scripts/launch_mcp.py`: использует существующие файлы ADT Personal MCP и его отдельный Git-источник, ничего не загружает и не устанавливает.
 
+## Если manage.py не найден
+
+Это **устаревшая локальная копия Toolkit**, а не ошибка версии Python. Сначала проверьте git status --short --branch и наличие integrations/cursor-plugin/scripts/manage.py. **Не запускайте git reset --hard или git pull поверх несохранённых правок.** Безопаснее сохранить старую рабочую папку и создать новую рядом с ней.
+
+Находясь в корне старого Toolkit, выполните в PowerShell:
+
+    Set-Location ..
+    git clone --depth 1 --branch main https://github.com/MikeMoore1337/ai-development-toolkit.git ai-development-toolkit-cursor
+    Set-Location .\ai-development-toolkit-cursor
+    Test-Path .\integrations\cursor-plugin\scripts\manage.py
+
+Последняя команда должна вернуть True. Если папка ai-development-toolkit-cursor уже существует, не клонируйте поверх неё: проверьте её git status. Обновлять разрешённую чистую выделенную копию можно через git pull --ff-only.
+
 ## Перед установкой
 
 Нужны Python 3.10+, Cursor и установленный ADT Personal MCP с постоянной копией Toolkit (см. [Personal MCP](../personal-mcp/README.ru.md)). На Windows стандартные пути:
@@ -33,6 +46,16 @@ python integrations/cursor-plugin/scripts/manage.py doctor
 В **Cursor → Customize** убедитесь, что четыре навыка, правила, команды и MCP обнаружены. В Cursor Agent действительно вызовите `toolkit_info`, `toolkit_prepare_task` и подходящий `toolkit_get_skill`. Отдельно проверьте реальное использование методики на небольшой задаче. Успешный `doctor` проверяет локальные файлы, **не** обнаружение Cursor.
 
 **Важно:** не добавляйте тот же MCP ещё раз в глобальный `~/.cursor/mcp.json`: получите дублирование. Если уже добавлен, сохраните другой существующий MCP и удалите только прежнюю запись ADT после проверки.
+
+### Если ADT MCP уже подключён в Cursor
+
+Если в ~/.cursor/mcp.json уже зарегистрирован сервер ai-development-toolkit, **не создавайте второй экземпляр MCP**. Подключите нативные компоненты плагина через существующий сервер:
+
+    python integrations/cursor-plugin/scripts/manage.py install --reuse-global-mcp
+    python integrations/cursor-plugin/scripts/manage.py install --reuse-global-mcp --apply
+    python integrations/cursor-plugin/scripts/manage.py doctor
+
+Флаг --reuse-global-mcp требует совместимую существующую локальную регистрацию. Установленный плагин не содержит второго mcp.json; глобальная запись не изменяется. Без флага установщик проверяет конфликт и останавливается. Если MCP в Cursor ещё нет, используйте обычные команды выше.
 
 ## Обновление, диагностика, откат
 

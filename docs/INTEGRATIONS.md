@@ -2,6 +2,8 @@
 
 ## Cursor Plugin - existing Personal MCP plus native Agent Skills
 
+**Before running commands:** check that the local Toolkit checkout is current. If integrations/cursor-plugin/scripts/manage.py is missing, do not pull into a dirty checkout. Prepare a separate clean source as described in the [Cursor setup guide](../integrations/cursor-plugin/README.md#managepy-not-found-in-the-local-checkout). If Cursor already has a global ai-development-toolkit MCP registration, use --reuse-global-mcp on install and install --apply to avoid duplicating it.
+
 The [Cursor integration guide](../integrations/cursor-plugin/README.md) describes a native local Cursor Plugin with focused development, QA, security and UX/UI skills, routing rules, four commands, and a launcher that reuses the existing read-only ADT Personal MCP. No new server, paid API or Codex CLI is required. From a clean Toolkit checkout, preview using:
 
     python integrations/cursor-plugin/scripts/manage.py install
