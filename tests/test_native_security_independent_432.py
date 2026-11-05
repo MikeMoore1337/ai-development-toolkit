@@ -86,10 +86,10 @@ def scan_case(case: dict) -> tuple[bool, list[str]]:
             candidate = root / "candidate"
             candidate.mkdir()
             skill_file = candidate / "SKILL.md"
-            skill_file.write_text(case["skill"], encoding="utf-8")
+            skill_file.write_bytes(case["skill"].encode("utf-8"))
             if case.get("symlink_file"):
                 external = root / "synthetic-linked-file.md"
-                external.write_text(case["skill"], encoding="utf-8")
+                external.write_bytes(case["skill"].encode("utf-8"))
                 skill_file.unlink()
                 try:
                     skill_file.symlink_to(external)
@@ -181,6 +181,13 @@ class IndependentSecurity432Tests(unittest.TestCase):
         self.assertEqual(sum(report["counts"].values()) + len(report["skipped"]), 40)
         self.assertEqual(report["host_enforcement"], "NOT_VERIFIED")
         print("INDEPENDENT_432_BASELINE=" + json.dumps(report, sort_keys=True), flush=True)
+
+    def test_clean_skill_fixture_uses_identical_utf8_bytes_on_all_platforms(self) -> None:
+        # Ensures CRLF text-mode conversion cannot create fake checksum failures.
+        cases, _ = load_cases()
+        benign = next(case for case in cases if case["id"] == "N53")
+        detected, rules = scan_case(benign)
+        self.assertFalse(detected, rules)
 
     def test_host_sarif_source_rules_unique_and_redacted(self) -> None:
         with tempfile.TemporaryDirectory(prefix="adt432-redacted-") as directory:
