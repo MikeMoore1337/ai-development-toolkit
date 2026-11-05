@@ -326,6 +326,11 @@
       "source_sha256": "e3f03dad3537cff829a664e51dfde16a30ead8cf77b305c9e3f7becaef3b4416"
     },
     {
+      "source": "docs/SECURITY_NATIVE_ACCEPTANCE_432.md",
+      "translation": "docs/ru/SECURITY_NATIVE_ACCEPTANCE_432.md",
+      "source_sha256": "daa496432109e67a4cbdb7ba0cb64b0f3dbbb7fb9d170042e26b3b84bf6310c8"
+    },
+    {
       "source": "docs/SKILL_EVALS.md",
       "translation": "docs/ru/SKILL_EVALS.md",
       "source_sha256": "f233378644e0137591c21fd229a51c2c073bc9426306ad1f5c98e209dc84166f"
