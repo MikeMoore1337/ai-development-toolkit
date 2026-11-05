@@ -204,6 +204,17 @@ class IndependentSecurity432Tests(unittest.TestCase):
             self.assertEqual(sarif["version"], "2.1.0")
             runs = sarif["runs"]
             self.assertEqual(len(runs), 1)
+            artifacts = runs[0]["artifacts"]
+            self.assertEqual(len(artifacts), 1)
+            self.assertEqual(artifacts[0]["location"]["uri"], ".mcp.json")
+            self.assertEqual(artifacts[0]["hashes"]["sha-256"],
+                             report["evidence"]["files"][0]["sha256"])
+            self.assertEqual(artifacts[0]["length"],
+                             report["evidence"]["files"][0]["size_bytes"])
+            self.assertEqual(runs[0]["properties"]["analysis_mode"],
+                             "OFFLINE_STATIC_ADVISORY_ONLY")
+            self.assertEqual(runs[0]["properties"]["runtime_enforcement"], "NOT_VERIFIED")
+            self.assertFalse(runs[0]["properties"]["source_origin_verified"])
             entries = runs[0]["results"]
             self.assertEqual(len(entries), len(report["findings"]))
             ids = {rule["id"] for rule in runs[0]["tool"]["driver"]["rules"]}
