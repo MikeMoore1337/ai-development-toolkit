@@ -1,5 +1,9 @@
 # AI client compatibility: offline contracts
 
+## Cursor plugin integration
+
+The existing compatibility table documents shared Agent Skills paths. Separately, the [native Cursor Plugin](../integrations/cursor-plugin/README.md) uses the Cursor-specific manifest, rules, commands and existing read-only Personal MCP. Source contract and offline tests do not establish live Cursor discovery or skill use. Test the actual installed client.
+
 **Installation by interface (audited 2026-10-31):** [Codex Desktop/CLI, Claude Code Desktop/CLI and other compatible clients](INSTALLATION.md). Additional clients there have documentation-supported routes, **not** new runtime certification or changes to this historical L1-L3 registry.
 
 

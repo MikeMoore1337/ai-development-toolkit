@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adt-personal": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "${CURSOR_PLUGIN_ROOT}/scripts/launch_mcp.py"
+      ]
+    }
+  }
+}

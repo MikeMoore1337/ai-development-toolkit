@@ -1,5 +1,15 @@
 # Интеграции AI Development Toolkit - возможности и среды применения
 
+## Cursor Plugin - существующий Personal MCP и нативные Agent Skills
+
+[Инструкция для Cursor](../../integrations/cursor-plugin/README.ru.md) описывает отдельный локальный плагин с навыками для разработки, QA, безопасности и UX/UI, правилами, четырьмя командами и подключением существующего ADT Personal MCP (только чтение). Новый сервер, платный API и Codex CLI не нужны. Из чистой копии Toolkit выполните предпросмотр, применение и диагностику:
+
+    python integrations/cursor-plugin/scripts/manage.py install
+    python integrations/cursor-plugin/scripts/manage.py install --apply
+    python integrations/cursor-plugin/scripts/manage.py doctor
+
+Перезапустите Cursor, проверьте реальные вызовы toolkit_info/toolkit_prepare_task. Диагностика файлов не доказывает активацию в клиенте. Обновление: update/update --apply; безопасный откат: rollback/rollback --apply. Не регистрируйте ADT MCP дважды.
+
 AI Development Toolkit предоставляет **две равноправные интеграции** с общей библиотекой навыков, ролей и процессов: [плагин ChatGPT](../../integrations/chatgpt-plugin/README.ru.md) и [локальный MCP для Codex](../../integrations/personal-mcp/README.ru.md). **Способ подключения зависит от среды работы и доступности проекта**, а не от приоритета одних пользователей над другими. Платный API не требуется.
 
 ## Возможности Toolkit
