@@ -61,7 +61,7 @@
     {
       "source": "docs/CLIENT_COMPATIBILITY.md",
       "translation": "docs/ru/CLIENT_COMPATIBILITY.md",
-      "source_sha256": "9f2154cd249edbb03686b28d91738ff6c18a96309a636c61610c2f92a6ef8330"
+      "source_sha256": "25434188808debf8ba47957a45d0e3f6303235f857d2d036f5278515ba5e0b4e"
     },
     {
       "source": "docs/CLIENT_MIGRATION.md",
@@ -156,7 +156,7 @@
     {
       "source": "docs/INSTALLATION.md",
       "translation": "docs/ru/INSTALLATION.md",
-      "source_sha256": "0f401676933b3a9f17dcad6100fb25ce186eae412111b0331cec9e0e4138e1fd"
+      "source_sha256": "add47fe64a4f6d428869fe3540954952457c700832190f3605dfd1f60a47b081"
     },
     {
       "source": "docs/INTEGRATION_MATRIX.md",
@@ -167,7 +167,7 @@
     {
       "source": "docs/INTEGRATIONS.md",
       "translation": "docs/ru/INTEGRATIONS.md",
-      "source_sha256": "62983978f51339ef533576b65860cceffbae132fc4820c33cfd12b7518eadf59"
+      "source_sha256": "ec561183256f8f85d5c3589d7bc911f3f27c3d0c044341947ea2b8d07b0e0247"
     },
     {
       "source": "docs/LANGUAGE_POLICY.md",
@@ -192,7 +192,7 @@
     {
       "source": "docs/MCP_SECURITY_SCAN.md",
       "translation": "docs/ru/MCP_SECURITY_SCAN.md",
-      "source_sha256": "bede7358578acdd896c6603076f284da699c2a9aa20319feb330d8a3481830d4"
+      "source_sha256": "48d7ca855a22f2012bb80199c096da8634c0b8768c8828ee335b247644a2e062"
     },
     {
       "source": "docs/NEUTRALITY_RELEASE_GATE.md",

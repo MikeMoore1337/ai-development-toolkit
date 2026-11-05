@@ -1,5 +1,9 @@
 # AI Development Toolkit integrations
 
+## Cursor integration
+
+[Native Cursor plugin](cursor-plugin/README.md) reuses the installed read-only Personal MCP and includes four Cursor Agent Skills, routing rules and task commands. Use the preview/apply installer and independent runtime verification. The plugin does not silently update the MCP executable or grant project write permissions.
+
 **Two equal integration paths, one Toolkit skill and role catalog.** Choose based on where your work happens and which project sources the client is allowed to access:
 
 | Integration | What it adds | Setup |

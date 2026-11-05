@@ -1,5 +1,9 @@
 # Безопасная установка навыков
 
+## Нативный плагин Cursor (локальный)
+
+Для Cursor Desktop используйте [отдельную инструкцию](../../integrations/cursor-plugin/README.ru.md). Помимо общего каталога Agent Skills, плагин включает команды, правила и stdio-подключение к УЖЕ установленному Personal MCP. Сначала выполняйте install без изменений, затем install --apply и doctor; проверяйте настоящие инструменты в Cursor Customize. Обновление и откат требуют явного подтверждения; платных API и второй установки MCP нет.
+
 [English](../INSTALLATION.md) · [Windows](INSTALL_WINDOWS.md) · [Linux](INSTALL_LINUX.md) · [macOS](INSTALL_MACOS.md)
 
 ## Автоматическая установка необходимого для задачи

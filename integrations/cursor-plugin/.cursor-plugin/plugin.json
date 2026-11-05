@@ -1,0 +1,23 @@
+{
+  "name": "ai-development-toolkit",
+  "version": "0.1.1",
+  "description": "Read-only ADT Personal MCP, native Agent Skills, task routing and optional commands for Cursor.",
+  "author": {
+    "name": "MikeMoore1337"
+  },
+  "homepage": "https://adt.mikemoore.top/",
+  "repository": "https://github.com/MikeMoore1337/ai-development-toolkit",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "qa",
+    "security",
+    "ux",
+    "development",
+    "mcp"
+  ],
+  "skills": "./skills",
+  "rules": "./rules",
+  "commands": "./commands",
+  "mcpServers": "./mcp.json"
+}
