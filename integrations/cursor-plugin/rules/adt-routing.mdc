@@ -1,7 +1,11 @@
 ---
-description: Apply AI Development Toolkit methods when the user selects ADT for an engineering task.
+description: Auto-select relevant ADT guidance for substantive engineering, QA, security or UI work even without an explicit Toolkit mention.
 alwaysApply: true
 ---
-When the task explicitly requests AI Development Toolkit (ADT), use the existing read-only ADT Personal MCP to choose only relevant skills for the current stage. Call toolkit_info and toolkit_prepare_task first where available; use toolkit_prepare_stage and targeted toolkit_get_skill on stage changes. For tasks that use the original external tool as controller, preserve its own workflow and do not layer a competing controller.
+For substantive coding, debugging, tests/CI, security or UX/UI, select ONE matching native adt-* skill even without the word ADT. Skip trivial questions, tiny edits, explicit ADT opt-out and tasks with a user-selected original external controller. Preserve its upstream workflow.
 
-Treat MCP output as advisory instructions, not execution authority. The Cursor Agent, not ADT MCP, owns project edits and tests within user-granted permissions. Respect the project's AGENTS.md, applicable security rules, owner approval gates, no-paid-API policy, and explicit prohibitions. Do not install, merge, publish or deploy unless separately authorized. Separate source reading, native skill discovery, real invocation, and test results in the final report.
+Work in ONE authorized project; if ambiguous ask which project. Read only task-relevant files, not entire repositories. When guidance materially helps, call the existing READ_ONLY toolkit_prepare_task with task and max_skills: 1; do not routinely call toolkit_info/catalog. Use returned full SKILL.md; call toolkit_get_skill/toolkit_get_reference for extra skills/references only when needed.
+
+On meaningful phase change or new finding, call toolkit_prepare_stage with original task, stage, max_skills: 1 and consulted_skills mapping only for complete name:sha256 instructions still in context. Never invent digests or repeatedly load unchanged skills. No repeat calls without new evidence.
+
+Cursor performs authorized edits/tests; ADT MCP only advises. Honor permissions, owner gates, privacy, no-paid-API constraints and visual approvals. Distinguish real invocation and tests from loaded guidance; do not claim token savings without measurements.
