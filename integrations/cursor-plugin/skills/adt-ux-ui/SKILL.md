@@ -1,10 +1,10 @@
 ---
 name: adt-ux-ui
-description: Use for existing UI reviews, accessible responsive fixes and approved design implementation with ADT in Cursor.
+description: Use for responsive UI defects, accessibility, existing-screen usability audits, approved redesign implementation and visual regression in any app, even without ADT explicitly named.
 ---
-# ADT UX/UI
-1. Inspect current screenshots/source, component system, mobile and desktop breakpoints, accessibility requirements and prior design approvals.
-2. For substantial new visual design load the original Toolkit `ux-ui-design-orchestra` and its selected original skills. Do not claim Impeccable, Taste or UI UX Pro Max ran without real traces.
-3. Obtain the required specific visual approval before implementing new design; a narrow requested UI fix may follow the existing approved design.
-4. Use Cursor to implement authorized changes. Run real browser interactions, check console errors, keyboard focus and horizontal overflow at relevant viewports.
-5. Report separate visual review, implementation, browser verification and deployment statuses.
+# Focused UX/UI
+1. Select current app and affected screen/viewport. Inspect actual components, screenshots, themes and previous approvals without broad scans.
+2. For substantive visual tasks consult ADT via toolkit_prepare_task with max_skills: 1; use existing ux-ui-design-orchestra when needed, preserving original upstream specialists where selected.
+3. Never claim an original specialist ran just because SKILL.md was read. Do not implement substantial unapproved design; narrow approved fixes preserve existing visuals.
+4. On actual phase change (approved design -> implementation -> responsive QA), call toolkit_prepare_stage with max_skills: 1 and confirmed full consulted_skills hashes.
+5. Verify real mobile/desktop DOM behavior, JS errors, focus, overflow and interactions when browser available; separate visual preview and deployed evidence.

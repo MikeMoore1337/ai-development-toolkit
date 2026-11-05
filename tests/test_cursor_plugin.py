@@ -33,6 +33,48 @@ class CursorPluginContract(unittest.TestCase):
         for p in (PLUGIN / "commands").glob("*.md"):
             self.assertIn("description:", p.read_text(encoding="utf-8"))
 
+    def test_progressive_auto_routing_source_contract(self):
+        # Static contract only: it cannot prove Cursor Agent invoked these tools.
+        rule = (PLUGIN / "rules" / "adt-routing.mdc").read_text(encoding="utf-8")
+        self.assertLessEqual(len(rule.encode("utf-8")), 1700)
+        self.assertIn("alwaysApply: true", rule)
+        self.assertIn("even without", rule)
+        self.assertIn("max_skills: 1", rule)
+        self.assertIn("toolkit_prepare_task", rule)
+        self.assertIn("toolkit_prepare_stage", rule)
+        self.assertIn("consulted_skills", rule)
+        self.assertIn("toolkit_get_skill", rule)
+        self.assertIn("toolkit_get_reference", rule)
+        self.assertIn("opt-out", rule)
+        self.assertIn("external controller", rule)
+        self.assertIn("ONE authorized project", rule)
+        self.assertIn("no-paid-API", rule)
+        self.assertNotIn("When the task explicitly requests AI Development Toolkit", rule)
+        self.assertNotIn("Call toolkit_info and toolkit_prepare_task first", rule)
+
+        expected = ("adt-development", "adt-qa", "adt-security", "adt-ux-ui")
+        for name in expected:
+            skill = (PLUGIN / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn("max_skills: 1", skill, name)
+            self.assertIn("toolkit_prepare_stage", skill, name)
+            self.assertIn("consulted_skills", skill, name)
+            self.assertRegex(skill.lower(), r"(?:without|not named|even if|even when)", name)
+            self.assertNotIn("when the user requests AI Development Toolkit", skill, name)
+        self.assertIn("FastAPI/pytest", (PLUGIN/"skills"/"adt-qa"/"SKILL.md").read_text(encoding="utf-8"))
+
+    def test_progressive_docs_are_explicit_about_evidence_limits(self):
+        ru = (PLUGIN / "README.ru.md").read_text(encoding="utf-8")
+        en = (PLUGIN / "README.md").read_text(encoding="utf-8")
+        for text in (ru, en):
+            self.assertIn("toolkit_prepare_task", text)
+            self.assertIn("toolkit_prepare_stage", text)
+            self.assertIn("max_skills=1", text)
+            self.assertIn("READ_ONLY", text)
+            self.assertIn("consulted_skills", text)
+            self.assertIn("NOT_VERIFIED", text)
+        self.assertIn("лимитов Cursor", ru)
+        self.assertIn("subscription consumption", en)
+
     def run_manager(self, *args, source=PLUGIN, target=None, state=None):
         command = [sys.executable, str(MANAGER), *args, "--source", str(source)]
         if target:

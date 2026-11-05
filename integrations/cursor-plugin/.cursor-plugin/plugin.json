@@ -1,6 +1,6 @@
 {
   "name": "ai-development-toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Read-only ADT Personal MCP, native Agent Skills, task routing and optional commands for Cursor.",
   "author": {
     "name": "MikeMoore1337"
