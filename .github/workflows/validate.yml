@@ -139,8 +139,8 @@ jobs:
         # Typical runtime is <1 minute; bound hangs and preserve the last test in logs.
         timeout-minutes: 5
         run: python -u -m unittest discover -s tests -v
-      - name: Independent #432 sealed holdout (synthetic data, no dangerous execution)
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13' && github.event_name == 'pull_request' && github.event.pull_request.number == 543
+      - name: Independent #432 held-out corpus (static regression after first measurement)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
         run: python tests/test_native_security_independent_432.py --cohort holdout
       - name: Test portable MCP, updater and plugin source packages (offline)
         timeout-minutes: 5
