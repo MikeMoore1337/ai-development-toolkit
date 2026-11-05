@@ -606,14 +606,30 @@ def review_host_config(root: Path) -> dict:
 
 
 def host_report_sarif(report: dict) -> dict:
-    """SARIF 2.1.0 redacted projection of native host-config findings."""
+    """SARIF 2.1.0 file-level redacted projection of host-config findings.
+
+    Paths are fixed HOST_FILES, hashes are source byte digests, and neither
+    source contents nor runtime enforcement are claimed. No invented lines.
+    """
     rules = sorted({x["rule"] for x in report["findings"]})
+    artifacts = [{
+        "location": {"uri": item["path"]},
+        "hashes": {"sha-256": item["sha256"]},
+        "length": item["size_bytes"],
+    } for item in report["evidence"]["files"]]
     return {
         "version": "2.1.0", "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
         "runs": [{
             "tool": {"driver": {"name": "Toolkit Native Host Config Gate",
                                 "rules": [{"id": key, "shortDescription": {"text": key}}
                                           for key in rules]}},
+            "artifacts": artifacts,
+            "properties": {
+                "analysis_mode": "OFFLINE_STATIC_ADVISORY_ONLY",
+                "runtime_enforcement": "NOT_VERIFIED",
+                "source_origin_verified": False,
+                "location_granularity": "file_only",
+            },
             "results": [{
                 "ruleId": x["rule"], "level": HOST_SEVERITY[x["severity"]],
                 "message": {"text": x["rule"] + " - manual review required"},
