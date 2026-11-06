@@ -939,7 +939,8 @@ class Toolkit:
             elif ('docs-technical' in matches and not building and
                   re.search(
                       r'(?<!\w)(?:обнови|обновить|дополни|проверь|проверить|'
-                      r'отредактируй|edit|update|review)\s+(?:\S+\s+){0,2}'
+                      r'отредактируй|напиши|составь|edit|update|review|write|draft)\s+'
+                      r'(?:\S+\s+){0,2}(?:api[- ]?)?'
                       r'(?:документац\w*|documentation|readme|docs)(?!\w)',
                       text,
                   )):
