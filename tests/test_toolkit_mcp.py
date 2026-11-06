@@ -555,6 +555,17 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertTrue(all(not x["result"].get("isError", False) for x in results))
         self.assertTrue(all(x == results[0] for x in results))
 
+    def test_observer_link_rejection_error_redacts_absolute_path(self):
+        self._init_observer_git()
+        secret_path = str(self.project)
+        with patch.object(mcp, "_ensure_no_symlink_chain",
+                          side_effect=ValueError("Linked destination blocked: " + secret_path)):
+            response = self._invoke("toolkit_observe_project",
+                                    project=secret_path, client="codex")
+        self.assertTrue(response["result"]["isError"], response)
+        self.assertNotIn(secret_path, json.dumps(response))
+        self.assertIn("Linked project directory is not permitted", json.dumps(response))
+
     # #433 MCP discovery uses the already-shipped manual Git handoff contract.
     # Only synthetic public references and a temporary external packet folder.
     def _handoff_fixture(self):
