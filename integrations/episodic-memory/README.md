@@ -32,7 +32,8 @@ the direct MCP `read` guard:
 
 The same patch now checks the exclusion marker before manually copying/indexing,
 and suppresses excluded or unreadable archive paths on both text and vector result
-paths. The `index` CLI also honors `EPISODIC_MEMORY_SKIP_SUMMARIES=1`,
+paths. MCP reads and searches also check the original synthetic source, because
+a source can gain an opt-out marker while the older archive remains unmarked. The `index` CLI also honors `EPISODIC_MEMORY_SKIP_SUMMARIES=1`,
 in addition to explicit `--no-summaries`. It does not replace the original
 embedding model, index, parser, SQLite layer or search algorithm.
 
@@ -69,7 +70,7 @@ Use a **throwaway copy** of the original source, never the user's live Codex fol
 python3 scripts/check_episodic_memory_patch.py --upstream-dir /absolute/disposable/episodic-memory
 ```
 
-The verifier checks the upstream SHA and patch digest `51c3ac5cdc06d76e5e7ff6d98aa2897ccc9b15b905fe59237f8e2419212e555d`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
+The verifier checks the upstream SHA and patch digest `16a059f40ebfb56f472b3120ca37fd9bd72d9b571968ecdab84220d3faa4f158`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
 
 ```sh
 git rev-parse HEAD
