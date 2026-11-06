@@ -211,6 +211,15 @@ class IndependentContext439Tests(unittest.TestCase):
         ):
             with self.subTest(text=task_text):
                 self.assertEqual("docs-technical", self.tk.route(task_text)["profile"])
+        # Explicit second intents must not be erased by documentation compaction.
+        self.assertEqual(
+            "security-engineering",
+            self.tk.route("Обнови документацию API и проверь безопасность MCP")["profile"],
+        )
+        self.assertEqual(
+            "qa-python",
+            self.tk.route("Напиши документацию API и pytest-тесты")["profile"],
+        )
         self.assertEqual(
             "backend",
             self.tk.route("Разработай FastAPI endpoint и обнови документацию API")["profile"],
