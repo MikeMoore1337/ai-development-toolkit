@@ -200,7 +200,7 @@ class RouteReceiptTests(unittest.TestCase):
     def test_26_native_substage_not_applicable_but_original_invoked(self):
         d = copy.deepcopy(self.good)
         event = d["events"][2]
-        event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
+        event["data"].update(applicability="NATIVE_SUBSTAGE_NOT_APPLICABLE",
                              applicability_source="Upstream skill reference", applicability_reason="No concept-stage for an audited existing UI",
                              stage="native-inspection", command="impeccable inspect-native --scope test")
         result = verifier.validate(d, ROOT)
@@ -219,6 +219,14 @@ class RouteReceiptTests(unittest.TestCase):
         event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
                              applicability_source="Upstream skill reference", applicability_reason="Scope excludes seed",
                              stage="native-inspection", artifact=None)
+        self.assertTrue(self.check(d))
+
+    def test_28_entire_native_scope_exclusion_never_counts_all_three(self):
+        d = copy.deepcopy(self.good)
+        event = d["events"][2]
+        event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
+                             applicability_source="Pinned upstream skill", applicability_reason="Surface excluded",
+                             stage="native-inspection", command="impeccable inspect-native --scope test")
         self.assertTrue(self.check(d))
 
     def test_21_cli_never_exports_raw_event_payload(self):

@@ -165,6 +165,10 @@ def _event_problem(event: dict, root: Path, source_sha: str, run_kind: str) -> l
         if applicability == "NOT_APPLICABLE_NATIVE_SCOPE":
             if not (_is_str(data.get("applicability_source")) and _is_str(data.get("applicability_reason"))):
                 problems.append("SCOPE_EXCLUSION_UNDOCUMENTED")
+            problems.append("ORIGINAL_SCOPE_EXCLUDED")
+        elif applicability == "NATIVE_SUBSTAGE_NOT_APPLICABLE":
+            if not (_is_str(data.get("applicability_source")) and _is_str(data.get("applicability_reason"))):
+                problems.append("SUBSTAGE_EXCLUSION_UNDOCUMENTED")
             # Only a *specific native stage* may be skipped, never the original invocation.
             actual_stage = data.get("stage")
             if (not _is_str(actual_stage, 60) or not re.fullmatch(r"[a-z][a-z0-9_-]{2,59}", actual_stage)
