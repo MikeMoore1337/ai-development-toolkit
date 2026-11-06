@@ -34,6 +34,34 @@ class EpisodicMemoryPatchContract(unittest.TestCase):
             with patch.object(MODULE, "PATCH", windows_copy):
                 MODULE.check()
 
+    def test_crlf_applicability_uses_lf_stdin(self) -> None:
+        """The pinned patch is valid even when Windows Git checks it out as CRLF."""
+        with tempfile.TemporaryDirectory() as folder:
+            upstream = Path(folder) / "upstream"
+            upstream.mkdir()
+            patch_file = Path(folder) / "windows.patch"
+            original = MODULE.PATCH.read_bytes().replace(b"\r\n", b"\n")
+            patch_file.write_bytes(original.replace(b"\n", b"\r\n"))
+            calls = []
+
+            def fake_run(argv, **kwargs):
+                calls.append((argv, kwargs))
+                class Result:
+                    stdout = MODULE.UPSTREAM_SHA
+                return Result()
+
+            with patch.object(MODULE, "PATCH", patch_file):
+                with patch("sys.argv", ["check_episodic_memory_patch.py",
+                                        "--upstream-dir", str(upstream)]):
+                    with patch.object(MODULE.subprocess, "run", side_effect=fake_run):
+                        self.assertEqual(MODULE.main(), 0)
+
+            self.assertEqual(len(calls), 2)
+            argv, args = calls[1]
+            self.assertEqual(argv[-3:], ["apply", "--check", "-"])
+            self.assertEqual(args["input"], original)
+            self.assertNotIn(b"\r\n", args["input"])
+
     def test_symlinked_patch_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             fake = Path(folder) / "symlink.patch"
