@@ -126,5 +126,96 @@ class ProfileContextAuditTests(unittest.TestCase):
         }, ensure_ascii=False, sort_keys=True), flush=True)
 
 
+# Independent #439 source-only acceptance cases. No additional router or model.
+SCENARIOS_439 = (
+    ("python-fix", "Исправь баг в Python-функции", "codex-feature", "implementation"),
+    ("pytest-tests", "Напиши pytest-тесты для Python-функции", "qa-python", "pytest-test-design"),
+    ("fastapi-endpoint", "Реализуй FastAPI endpoint с валидацией", "backend", "api-design"),
+    ("react-fix", "Исправь баг в React-компоненте формы", "frontend", "component-architecture"),
+    ("mcp-security", "Проведи проверку безопасности MCP-сервера", "security-engineering", "security-review"),
+    ("ux-ui", "Спроектируй интерфейс приложения и покажи макет", "ui-orchestra", "ux-ui-design-orchestra"),
+    ("api-docs", "Обнови документацию API и примеры ответов", "docs-technical", "documentation-maintenance"),
+    ("fullstack", "Разработай fullstack-функцию с FastAPI backend и React frontend", "fullstack", "fullstack-integration"),
+)
+
+
+class IndependentContext439Tests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tk = audit.adt_mcp.Toolkit(ROOT)
+        cls.manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+
+    def test_eight_synthetic_routes_and_mandatory_skills(self):
+        self.assertEqual(8, len(SCENARIOS_439))
+        for label, task, expected, mandatory in SCENARIOS_439:
+            with self.subTest(scenario=label):
+                route = self.tk.route(task)
+                self.assertEqual(expected, route["profile"])
+                self.assertIn(mandatory, route["skills"])
+                self.assertEqual(len(route["skills"]), len(set(route["skills"])))
+                self.assertEqual([], route["unavailable"])
+                self.assertEqual("NOT_OBSERVED", route["routing_decision"]["client_activation"])
+
+    def test_actual_returned_source_bytes_and_low_budget(self):
+        rows = []
+        for label, task, expected, mandatory in SCENARIOS_439:
+            with self.subTest(scenario=label):
+                route = self.tk.route(task)
+                compact = self.tk.prepare_task(task, existing_skills=[],
+                                               existing_roles=[], max_skills=3)
+                full = [self.tk.read("skill", name, limit=32000)
+                        for name in route["skills"]]
+                self.assertFalse(any(x["truncated"] for x in full + compact["loaded_skills"]))
+                full_bytes = sum(len(x["content"].encode("utf-8")) for x in full)
+                compact_bytes = sum(len(x["content"].encode("utf-8"))
+                                    for x in compact["loaded_skills"])
+                self.assertEqual(compact_bytes,
+                                 compact["context_load_metrics"]["skill_source_bytes"])
+                self.assertLessEqual(compact_bytes, full_bytes)
+                self.assertEqual(route["skills"], compact["selected_skills"])
+                self.assertEqual(0, compact["context_load_metrics"]["reference_files_preloaded"])
+                self.assertEqual("NOT_MEASURED", compact["context_load_metrics"]["model_tokens"])
+                self.assertFalse(compact["installation_performed"])
+                self.assertFalse(compact["project_files_changed"])
+                preview = audit.profile_metrics.preview_metadata_budget(
+                    ROOT, self.manifest, expected, 8000)
+                limited = audit.profile_metrics.preview_metadata_budget(
+                    ROOT, self.manifest, expected, 1)
+                self.assertTrue(preview["within_budget"])
+                self.assertFalse(limited["within_budget"])
+                self.assertGreater(limited["over_budget_bytes"], 0)
+                self.assertIn(mandatory, [x["skill"] for x in preview["skill_metadata"]])
+                self.assertFalse(limited["automatic_pruning"])
+                self.assertFalse(limited["applied"])
+                self.assertEqual("NOT_MEASURED", limited["tokens"])
+                rows.append({
+                    "scenario": label, "routed_profile": route["profile"],
+                    "all_selected_skill_bytes": full_bytes,
+                    "first_three_skill_bytes": compact_bytes,
+                    "yaml_metadata_bytes": preview["eager_metadata_bytes"],
+                    "deferred_count": compact["context_load_metrics"]["deferred_skill_count"],
+                    "first_three": [x["name"] for x in compact["loaded_skills"]],
+                    "required_preserved": mandatory in route["skills"],
+                    "model_tokens": "NOT_MEASURED",
+                })
+        print("NATIVE_CONTEXT_439_SOURCE_BYTES=" +
+              json.dumps(rows, sort_keys=True, ensure_ascii=False), flush=True)
+
+    def test_docs_mention_does_not_override_backend_implementation(self):
+        self.assertEqual(
+            "backend",
+            self.tk.route("Разработай FastAPI endpoint и обнови документацию API")["profile"],
+        )
+
+    def test_determinism_and_no_duplicate_installed_skills(self):
+        task = SCENARIOS_439[2][1]
+        self.assertEqual(self.tk.route(task), self.tk.route(task))
+        prepared = self.tk.prepare_task(
+            task, existing_skills=["api-design"], existing_roles=[], max_skills=3)
+        self.assertIn("api-design", prepared["already_available_skills"])
+        self.assertNotIn("api-design", [x["name"] for x in prepared["loaded_skills"]])
+        self.assertFalse(prepared["installation_performed"])
+
+
 if __name__ == "__main__":
     unittest.main()
