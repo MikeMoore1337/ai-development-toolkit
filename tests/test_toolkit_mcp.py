@@ -558,6 +558,28 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertTrue(all(not x["result"].get("isError", False) for x in results))
         self.assertTrue(all(x == results[0] for x in results))
 
+
+    def test_observer_rejects_gitdir_file_redirect_even_when_root_matches(self):
+        self._init_observer_git()
+        other = self.project.parent / "other-gitdir"
+        other.mkdir()
+        subprocess.run(["git", "-C", str(other), "init", "-q", "-b", "main"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(other),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "--allow-empty", "-qm", "foreign"],
+                       check=True, capture_output=True)
+        dot_git = self.project / ".git"
+        dot_git.rename(self.project / ".original-git-for-test")
+        dot_git.write_text("gitdir: " + (other / ".git").as_posix() + "\n", encoding="utf-8")
+        # Git still reports self.project as --show-toplevel, but its HEAD
+        # belongs to other; membership in 'git worktree list' must reject it.
+        response = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="codex")
+        self.assertTrue(response["result"]["isError"], response)
+        self.assertNotIn(str(other), json.dumps(response))
+
     def test_observer_link_rejection_error_redacts_absolute_path(self):
         self._init_observer_git()
         secret_path = str(self.project)
