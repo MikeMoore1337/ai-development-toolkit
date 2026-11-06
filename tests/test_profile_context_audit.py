@@ -202,6 +202,15 @@ class IndependentContext439Tests(unittest.TestCase):
               json.dumps(rows, sort_keys=True, ensure_ascii=False), flush=True)
 
     def test_docs_mention_does_not_override_backend_implementation(self):
+        # Documentation-writing variants must not pre-load API implementation.
+        for task_text in (
+            "Обнови документацию API и примеры ответов",
+            "Напиши документацию API",
+            "Обнови API-документацию",
+            "Write API documentation",
+        ):
+            with self.subTest(text=task_text):
+                self.assertEqual("docs-technical", self.tk.route(task_text)["profile"])
         self.assertEqual(
             "backend",
             self.tk.route("Разработай FastAPI endpoint и обнови документацию API")["profile"],
