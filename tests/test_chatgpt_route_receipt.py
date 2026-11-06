@@ -234,6 +234,36 @@ class RouteReceiptTests(unittest.TestCase):
             changed = verifier.validate(self.good, root)
             self.assertIn("ARTIFACT_SHA256_MISMATCH", changed["errors"])
 
+    def test_30_windows_drive_relative_paths_cannot_escape_artifact_root(self):
+        for path in ("C:secrets.txt", "C:secret/contents.txt", "D:/secrets.txt",
+                     "fixtures/./route_receipt_artifact.txt",
+                     "fixtures//route_receipt_artifact.txt"):
+            with self.subTest(path=path):
+                d = copy.deepcopy(self.good)
+                d["events"][2]["data"]["artifact"]["path"] = path
+                if path in ("D:/secrets.txt", "fixtures/./route_receipt_artifact.txt"):
+                    with self.assertRaises(verifier.ReceiptRejected):
+                        verifier.validate(d, ROOT)
+                else:
+                    result = verifier.validate(d, ROOT)
+                    self.assertIn("ARTIFACT_PATH_INVALID", result["errors"])
+
+    def test_31_duplicate_json_fields_are_rejected_before_validation(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = Path(td) / "duplicated.json"
+            raw = FIXTURE.read_text(encoding="utf-8")
+            self.assertIn('"schema_version": 1,', raw)
+            raw = raw.replace('"schema_version": 1,',
+                              '"schema_version": 1, "schema_version": 1,', 1)
+            src.write_text(raw, encoding="utf-8")
+            proc = subprocess.run(
+                [sys.executable, str(ROOT / "scripts/verify_chatgpt_route_receipt.py"),
+                 "--receipt", str(src), "--artifact-root", str(ROOT)],
+                capture_output=True, text=True, encoding="utf-8", timeout=15)
+            self.assertEqual(2, proc.returncode)
+            self.assertEqual("RECEIPT_REJECTED", proc.stderr.strip())
+            self.assertNotIn("schema_version", proc.stdout)
+
     def test_28_entire_native_scope_exclusion_never_counts_all_three(self):
         d = copy.deepcopy(self.good)
         event = d["events"][2]

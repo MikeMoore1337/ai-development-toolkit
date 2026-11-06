@@ -79,6 +79,16 @@ def _only_keys(row: object, fields: set[str]) -> dict:
     return row
 
 
+def _unique_json_object(items: list[tuple[str, object]]) -> dict:
+    """Reject duplicate keys before JSON decoding discards their first values."""
+    row = {}
+    for key, value in items:
+        if key in row:
+            raise ReceiptRejected("DUPLICATE_JSON_FIELD")
+        row[key] = value
+    return row
+
+
 def _timestamp(value: object) -> datetime | None:
     if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", value):
         return None
@@ -96,15 +106,19 @@ def _artifact(data: object, root: Path) -> str | None:
     if not _is_str(path, 200) or not isinstance(digest, str) or not SHA256.fullmatch(digest):
         return "ARTIFACT_METADATA_INVALID"
     rel = PurePosixPath(path)
-    if rel.is_absolute() or ".." in rel.parts or "." in rel.parts or "\\" in path or not rel.parts:
+    if (rel.is_absolute() or any(part in ("", ".", "..") for part in path.split("/"))
+            or "\\" in path or ":" in path or not rel.parts
+            or not re.fullmatch(r"[a-zA-Z0-9._-]+(?:/[a-zA-Z0-9._-]+)*", path)):
         return "ARTIFACT_PATH_INVALID"
-    if root.is_symlink():
+    if root.is_symlink() or (hasattr(root, "is_junction") and root.is_junction()):
         return "ARTIFACT_ROOT_SYMLINK_REJECTED"
     target = root
     for part in rel.parts:
         target = target / part
-        if target.is_symlink():
+        if target.is_symlink() or (hasattr(target, "is_junction") and target.is_junction()):
             return "ARTIFACT_SYMLINK_REJECTED"
+    if not target.resolve().is_relative_to(root.resolve()):
+        return "ARTIFACT_PATH_INVALID"
     if not target.is_file():
         return "ARTIFACT_MISSING"
     if target.stat().st_size > 2 * 1024 * 1024:
@@ -326,7 +340,8 @@ def main() -> int:
     try:
         if args.receipt.is_symlink() or args.receipt.stat().st_size > 100_000:
             raise ReceiptRejected("UNSAFE_RECEIPT_FILE")
-        payload = json.loads(args.receipt.read_text(encoding="utf-8"))
+        payload = json.loads(args.receipt.read_text(encoding="utf-8"),
+                             object_pairs_hook=_unique_json_object)
         result = validate(payload, args.artifact_root)
     except (ReceiptRejected, OSError, UnicodeError, json.JSONDecodeError, RecursionError):
         # Deliberately do not echo untrusted exception text (could contain a secret/path).
