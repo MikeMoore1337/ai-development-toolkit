@@ -14,14 +14,19 @@ MAX_INPUT = 32_768
 
 
 def _git(repo: Path, *args: str) -> str:
+    # Never let inherited GIT_* controls redirect the repo/index or create
+    # tracing files during a read-only MCP observation.
+    safe_env = {key: value for key, value in os.environ.items()
+                if not key.upper().startswith("GIT_")}
+    safe_env["GIT_OPTIONAL_LOCKS"] = "0"
     run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo), *args], capture_output=True, check=True,
-                         timeout=10, env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"})
+                         timeout=10, env=safe_env)
     return run.stdout.decode("utf-8", errors="replace").strip()
 
 
 def state(repo: Path) -> dict:
     root = Path(_git(repo, "rev-parse", "--show-toplevel")).resolve()
-    branch = _git(root, "symbolic-ref", "--quiet", "--short", "HEAD")
+    branch = _git(root, "rev-parse", "--abbrev-ref", "HEAD")
     commit = _git(root, "rev-parse", "HEAD")
     raw_status = _git(root, "status", "--porcelain=v1", "-uno")
     return {
