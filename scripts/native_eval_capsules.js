@@ -143,6 +143,12 @@ function main(args) {
     assertNativeReceipt(value);
     assertNoSensitiveIdentity(rest[1]);
     const result = lib.receipt.verifyReceipt(value, rest[1], { artifact_path: artifact });
+    if (result.ok) {
+      // Bind a verified capsule identity without leaking raw metadata to stdout.
+      result.capsule_identity_sha256 = lib.canonical.hashValue({
+        run_id: value.run_id, capsule_id: value.capsule_id,
+      });
+    }
     output(result);
     if (!result.ok) process.exitCode = 1;
     return;

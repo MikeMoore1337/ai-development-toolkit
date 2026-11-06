@@ -238,5 +238,22 @@ fs.writeFileSync(file, JSON.stringify(value) + '\n');
             self.assertIn("LINKED_EVIDENCE_DENIED", rejected.stderr)
 
 
+
+    def test_native_verified_receipt_exposes_only_hashed_capsule_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            command = (str(TOOL), "receipt", "verify", str(receipt), str(capsule),
+                       "--artifact", str(artifact))
+            first = self.node(*command)
+            second = self.node(*command)
+            self.assertEqual(0, first.returncode, first.stderr)
+            self.assertEqual(first.stdout, second.stdout)
+            verdict = json.loads(first.stdout)
+            self.assertTrue(verdict["ok"])
+            self.assertRegex(verdict["capsule_identity_sha256"], r"^[0-9a-f]{64}$")
+            self.assertNotIn("run-safe", first.stdout)
+            self.assertNotIn("cap-secure", first.stdout)
+
 if __name__ == "__main__":
     unittest.main()

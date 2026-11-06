@@ -208,6 +208,35 @@ fs.writeFileSync(file, JSON.stringify(value) + '\n');
         with self.assertRaisesRegex(module.EvalInputError, "integrity check failed"):
             module.evaluate(self.data, self.root, verify_native_receipts=True)
 
+
+    def test_native_receipt_shared_across_variants_is_rejected(self):
+        self._make_native_receipts()
+        baseline, candidate = self.data["runs"][:2]
+        candidate["native_receipt"] = baseline["native_receipt"].copy()
+        candidate["evidence"] = list(baseline["evidence"])
+        with self.assertRaisesRegex(module.EvalInputError,
+                                    "native receipt/capsule reused across runs"):
+            module.evaluate(self.data, self.root, verify_native_receipts=True)
+
+    def test_native_capsule_identity_clone_with_new_paths_is_rejected(self):
+        self._make_native_receipts()
+        baseline, candidate = self.data["runs"][:2]
+        original = baseline["native_receipt"]
+        clone_dir = self.root / "capsules" / "cloned-baseline"
+        clone_file = self.root / "receipts" / "cloned-baseline.json"
+        shutil.copytree(self.root / original["capsule_dir"], clone_dir)
+        shutil.copy2(self.root / original["receipt"], clone_file)
+        candidate["native_receipt"] = {
+            "receipt": "receipts/cloned-baseline.json",
+            "capsule_dir": "capsules/cloned-baseline",
+            "artifact": candidate["evidence"][0],
+        }
+        # Distinct pathnames are insufficient: same verified run_id/capsule_id.
+        self.assertEqual(1, module._verify_native_receipts([candidate], self.root))
+        with self.assertRaisesRegex(module.EvalInputError,
+                                    "native capsule identity reused across runs"):
+            module.evaluate(self.data, self.root, verify_native_receipts=True)
+
     def _three_trial_fixture(self):
         """Synthetic: same pooled 6/9 acceptance but different repeatability."""
         baseline = {"a": (True, True, True), "b": (True, True, True),
