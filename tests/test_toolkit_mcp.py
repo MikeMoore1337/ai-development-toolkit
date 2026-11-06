@@ -656,6 +656,33 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertTrue(response["result"]["isError"], response)
         self.assertNotIn(str(other), json.dumps(response))
 
+
+    @unittest.skipUnless(os.name == "nt", "Windows junction-specific regression")
+    def test_observer_windows_junction_root_denied(self):
+        self._init_observer_git()
+        alias = self.project.parent / "observer-junction"
+        mklink = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(alias), str(self.project)],
+            capture_output=True,
+        )
+        if mklink.returncode:
+            self.skipTest("Windows junction creation is unavailable")
+        response = self._invoke("toolkit_observe_project",
+                                project=str(alias), client="codex")
+        self.assertTrue(response["result"]["isError"], response)
+        self.assertNotIn(str(alias), json.dumps(response))
+
+    def test_observer_unreadable_git_metadata_error_is_redacted(self):
+        self._init_observer_git()
+        with patch.object(mcp, "_handoff_module") as module:
+            module.return_value._git.side_effect = PermissionError(
+                "SENSITIVE_OBSERVER_FIXTURE /private/access-denied")
+            response = self._invoke("toolkit_observe_project",
+                                    project=str(self.project), client="codex")
+        self.assertTrue(response["result"]["isError"], response)
+        self.assertNotIn("SENSITIVE_OBSERVER_FIXTURE", json.dumps(response))
+        self.assertNotIn("/private/access-denied", json.dumps(response))
+
     def test_observer_link_rejection_error_redacts_absolute_path(self):
         self._init_observer_git()
         secret_path = str(self.project)
