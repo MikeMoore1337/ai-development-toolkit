@@ -311,11 +311,6 @@
       "source_sha256": "fe5b6a8ded3aed7654e77388babf031fac6966c87def3744cbd107a4feef3650"
     },
     {
-      "source": "docs/releases/v5.5.9.md",
-      "translation": "docs/ru/releases/v5.5.9.md",
-      "source_sha256": "6079c2dcfd97db934100eae1ae269404fcc209204856e187e499491ba9e767f2"
-    },
-    {
       "source": "docs/RELIABILITY_TESTING.md",
       "translation": "docs/ru/RELIABILITY_TESTING.md",
       "source_sha256": "17bff6fa76950aa9eb3f3089a30076ce1bb44428896067a156b878ad36ae18ba"
