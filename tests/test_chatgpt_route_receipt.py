@@ -141,7 +141,8 @@ class RouteReceiptTests(unittest.TestCase):
     def test_17_directory_traversal_and_symlink_rejected(self):
         d = copy.deepcopy(self.good)
         d["events"][2]["data"]["artifact"]["path"] = "../outside.txt"
-        self.assertTrue(self.check(d))
+        with self.assertRaises(verifier.ReceiptRejected):
+            verifier.validate(d, ROOT)
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             (root / "fixtures").mkdir()
@@ -167,6 +168,34 @@ class RouteReceiptTests(unittest.TestCase):
         d = copy.deepcopy(self.good)
         d["events"][2]["proof_ref"] = d["events"][1]["proof_ref"]
         self.assertTrue(self.check(d))
+
+    def test_22_unix_unc_and_tilde_personal_paths_rejected(self):
+        for value in ("/workspace/projects/private", "/tmp/file", "/var/log/secret", "~/private/file", r"\\server\share\data"):
+            with self.subTest(value=value):
+                d = copy.deepcopy(self.good)
+                d["events"][3]["data"]["command"] = value
+                with self.assertRaises(verifier.ReceiptRejected):
+                    verifier.validate(d, ROOT)
+
+    def test_23_excessive_nesting_is_rejected_without_trace(self):
+        d = copy.deepcopy(self.good)
+        nested = "value"
+        for _ in range(24):
+            nested = {"next": nested}
+        d["events"][2]["data"]["unexpected"] = nested
+        with self.assertRaises(verifier.ReceiptRejected):
+            verifier.validate(d, ROOT)
+
+    def test_24_boolean_browser_failure_count_is_not_zero(self):
+        d = copy.deepcopy(self.good)
+        d["events"][7]["data"]["tests_failed"] = False
+        self.assertTrue(self.check(d))
+
+    def test_25_symlinked_artifact_root_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            link = Path(td) / "link"
+            link.symlink_to(ROOT, target_is_directory=True)
+            self.assertEqual("FAIL", verifier.validate(self.good, link)["evidence_sequence"])
 
     def test_21_cli_never_exports_raw_event_payload(self):
         proc = subprocess.run([sys.executable, str(ROOT / "scripts/verify_chatgpt_route_receipt.py"),

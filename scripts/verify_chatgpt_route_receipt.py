@@ -44,7 +44,8 @@ DATA_FIELDS = {
 SENSITIVE = re.compile(r"(?i)(?:gh[pousr]_[a-z0-9_]{8,}|sk-[a-z0-9_-]{8,}|"
                        r"bearer\s+\S+|(?:api[-_ ]?key|authorization|password|token)\s*[:=]|"
                        r"[a-z0-9_.+%-]+@[a-z0-9.-]+\.[a-z]{2,}|"
-                       r"[a-z]:[\\/]|/(?:home|Users|mnt|root|private|etc)/)")
+                       r"[a-z]:[\\/]|\\\\[a-z0-9._-]+[\\/]|(?<!\S)~/|"
+                       r"(?<![a-z0-9:/])/(?:[a-z0-9._-]+/)*[a-z0-9._-]+)")
 
 
 class ReceiptRejected(ValueError):
@@ -55,7 +56,9 @@ def _is_str(v: object, limit: int = 300) -> bool:
     return isinstance(v, str) and 0 < len(v) <= limit and v.strip() == v
 
 
-def _safe_strings(value: object) -> None:
+def _safe_strings(value: object, depth: int = 0) -> None:
+    if depth > 16:
+        raise ReceiptRejected("NESTING_LIMIT_EXCEEDED")
     if isinstance(value, str):
         if len(value) > 600 or SENSITIVE.search(value):
             raise ReceiptRejected("SECRET_OR_PERSONAL_DATA_REJECTED")
@@ -63,11 +66,11 @@ def _safe_strings(value: object) -> None:
         for key, item in value.items():
             if not isinstance(key, str):
                 raise ReceiptRejected("INVALID_FIELD")
-            _safe_strings(key)
-            _safe_strings(item)
+            _safe_strings(key, depth + 1)
+            _safe_strings(item, depth + 1)
     elif isinstance(value, list):
         for item in value:
-            _safe_strings(item)
+            _safe_strings(item, depth + 1)
 
 
 def _only_keys(row: object, fields: set[str]) -> dict:
@@ -95,6 +98,8 @@ def _artifact(data: object, root: Path) -> str | None:
     rel = PurePosixPath(path)
     if rel.is_absolute() or ".." in rel.parts or "." in rel.parts or "\\" in path or not rel.parts:
         return "ARTIFACT_PATH_INVALID"
+    if root.is_symlink():
+        return "ARTIFACT_ROOT_SYMLINK_REJECTED"
     target = root
     for part in rel.parts:
         target = target / part
@@ -180,7 +185,8 @@ def _event_problem(event: dict, root: Path, source_sha: str, run_kind: str) -> l
             problems.append("NATIVE_REVIEW_STATUS_INVALID")
     elif stage == "BROWSER_VERIFICATION":
         if (type(data.get("tests_passed")) is not int or data["tests_passed"] < 1 or
-                data.get("tests_failed") != 0 or not _is_str(data.get("executor"), 120) or
+                type(data.get("tests_failed")) is not int or data["tests_failed"] != 0 or
+                not _is_str(data.get("executor"), 120) or
                 not _is_str(data.get("tool_result_ref"))):
             problems.append("BROWSER_TEST_NOT_PROVEN")
         artifact_problem = _artifact(data.get("artifact"), root)
@@ -310,7 +316,7 @@ def main() -> int:
             raise ReceiptRejected("UNSAFE_RECEIPT_FILE")
         payload = json.loads(args.receipt.read_text(encoding="utf-8"))
         result = validate(payload, args.artifact_root)
-    except (ReceiptRejected, OSError, UnicodeError, json.JSONDecodeError):
+    except (ReceiptRejected, OSError, UnicodeError, json.JSONDecodeError, RecursionError):
         # Deliberately do not echo untrusted exception text (could contain a secret/path).
         print("RECEIPT_REJECTED", file=sys.stderr)
         return 2
