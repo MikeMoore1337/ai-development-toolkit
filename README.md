@@ -90,6 +90,8 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 
 
+**Next release candidate:** `v5.5.9` - [release notes](docs/releases/v5.5.9.md) - **NOT PUBLISHED**. Source-only security hardening (#432) and existing Cursor integration; live host enforcement remains NOT_VERIFIED. Publication and installed-client updates are separate.
+
 **Latest published release:** [v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) (2026-11-05), exact source `374f1cf5088b59a690a720f128bd81827f2a888c`. [Release notes and rollback](docs/releases/v5.5.8.md), [CHANGELOG](CHANGELOG.md), [release process](docs/RELEASE_PROCESS.md). Publishing a Toolkit release does not update installed MCP or ChatGPT plugins.
 
 

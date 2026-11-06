@@ -1,5 +1,7 @@
 # Воспроизводимая процедура выпуска релиза
 
+**Кандидат v5.5.9 (06.11.2026): НЕ ОПУБЛИКОВАН.** [Состав и ограничения](releases/v5.5.9.md). Последний релиз - v5.5.8. Разрешение владельца завершить #432 позволяет пройти штатные проверки, но **не** превращает ошибку pre-tag или неподтверждённую защиту клиента в PASS. Точный SHA и права распространения проверяются перед созданием тега.
+
 **Опубликован v5.5.8 (05.11.2026):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) на точном SHA `374f1cf5088b59a690a720f128bd81827f2a888c`. [Проверка архива](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) PASS; SHA256 скачанного ZIP - `f21bb997a63b6982880ef3e1ad21ab9126e960539f2927c0f4e7fed8bc0875f4`. Отдельное разрешение владельца на права и публикацию записано в [Issue #540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540). Этот PR исправляет документацию без изменения тега; provenance PASS не заменяет юридическую экспертизу.
 
 [English source](../RELEASE_PROCESS.md) | [Правила публикации](PUBLICATION_POLICY.md) | [Языковая политика](LANGUAGE_POLICY.md)

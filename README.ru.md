@@ -90,6 +90,8 @@ Toolkit служит **источником инструкций, а не мес
 
 
 
+**Кандидат следующего релиза:** `v5.5.9` - [описание](docs/ru/releases/v5.5.9.md) - **НЕ ОПУБЛИКОВАН**. Нативная статическая безопасность (#432) и интеграция Cursor; host enforcement NOT_VERIFIED. Релиз и обновление установленных клиентов выполняются отдельно.
+
 **Последний опубликованный релиз:** [v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) (05.11.2026), точный SHA `374f1cf5088b59a690a720f128bd81827f2a888c`. [Состав, обновление и откат](docs/ru/releases/v5.5.8.md), [CHANGELOG](CHANGELOG.md), [регламент](docs/ru/RELEASE_PROCESS.md). Публикация Toolkit не обновляет установленные MCP или плагины ChatGPT.
 
 

@@ -37,9 +37,21 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.8)
+## Unreleased (main after v5.5.9)
 
-Post-publication synchronization of v5.5.8 documentation (#540), not contained in the tagged archive.
+No additions after this release candidate at preparation time.
+
+## 5.5.9 (candidate, 2026-11-06)
+
+**CANDIDATE ONLY, NOT PUBLISHED.** Last public release is still v5.5.8. Proposed source baseline `main@84c3dd0ec349c8465b8a18f4656f01d9ce4731b9` contains 51 commits and 51 changed files since v5.5.8, including ALL Cursor and security changes. The eventual tag must match the post-merge main SHA; see [full compare](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.8...84c3dd0ec349c8465b8a18f4656f01d9ce4731b9).
+
+- **Security #432:** Native offline skill/MCP/host config checks, prompt injection and hook/policy warnings, strict JSON parsing and SHA256, symlink/junction protections, POSIX directory permissions, SARIF source evidence, 60-case synthetics and honest advisory/enforcement boundaries.
+- **Independent synthetic limits:** 20-case originally held-out F1=72.73%, FPR=40%, FNR=20%; opened corpus later served regression only. Real-world accuracy and actual Codex client enforcement **NOT_VERIFIED**.
+- **Cursor integration:** approved native Cursor plugin, safer bootstrap, reuse of Personal MCP and progressive automatic Toolkit skill routing (#545/#546/#548).
+- **Other post-v5.5.8 changes:** documentation synchronization (#540) and CI/provenance upgrades already merged in main; this release PR adds only version, documentation and inventory metadata.
+- **No automatic client update:** Toolkit release does not install Personal MCP, ChatGPT plugin or Codex hooks; no paid API, ECC/AgentShield runtime or new backend service required.
+
+[EN release candidate notes](docs/releases/v5.5.9.md) · [RU notes](docs/ru/releases/v5.5.9.md). Publication requires exact post-merge CI, owner rights gate, live pre-tag checks, an immutable GitHub tag and downloaded archive verification.
 
 ## 5.5.8 (released, 2026-11-05)
 

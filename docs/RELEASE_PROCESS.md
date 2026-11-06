@@ -1,5 +1,7 @@
 # Reproducible release procedure
 
+**Prepared: `5.5.9` (candidate, NOT PUBLISHED), 2026-11-06.** [Source scope and limitations](releases/v5.5.9.md). Last published release remains v5.5.8. The owner's authorization to finish #432 permits proceeding through the documented gates, **not** treating a failed pre-tag check or unverified client enforcement as PASS. The exact merged release SHA and distribution scope must be checked before tagging.
+
 **Published v5.5.8 (2026-11-05):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) from exact SHA `374f1cf5088b59a690a720f128bd81827f2a888c`. The [archive validation](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) passed, and GitHub ZIP SHA256 is `f21bb997a63b6982880ef3e1ad21ab9126e960539f2927c0f4e7fed8bc0875f4`. Explicit owner release/rights approval is recorded in [Issue #540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540). This post-publication documentation PR does not rewrite the tag; provenance PASS is not independent legal clearance.
 
 [Русская версия](ru/RELEASE_PROCESS.md)

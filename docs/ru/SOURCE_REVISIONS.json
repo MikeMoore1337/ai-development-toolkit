@@ -308,7 +308,7 @@
     {
       "source": "docs/RELEASE_PROCESS.md",
       "translation": "docs/ru/RELEASE_PROCESS.md",
-      "source_sha256": "75108563c5e0cdaebb50d80106848b8b05ad5cc7a55c671caa5f3ab249a07600"
+      "source_sha256": "fe5b6a8ded3aed7654e77388babf031fac6966c87def3744cbd107a4feef3650"
     },
     {
       "source": "docs/RELIABILITY_TESTING.md",
