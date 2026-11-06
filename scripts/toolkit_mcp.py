@@ -292,7 +292,12 @@ def _project(value: object) -> Path:
     path = Path(value).expanduser()
     if not path.is_absolute() or not path.is_dir():
         raise ValueError("Project must be an existing absolute directory")
-    _ensure_no_symlink_chain(path)
+    try:
+        _ensure_no_symlink_chain(path)
+    except ValueError:
+        # The shared installer includes the rejected absolute path in its
+        # error; MCP responses must not reveal local project paths.
+        raise ValueError("Linked project directory is not permitted") from None
     return path
 
 
