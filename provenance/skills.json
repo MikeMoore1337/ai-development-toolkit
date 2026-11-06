@@ -4,6 +4,26 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
+      "id": "native-observability-434-regression",
+      "path": "tests/test_native_observability_434.py",
+      "name": "Independent Git-native observability regression tests",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted; claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored original synthetic Git regression tests under the repository MIT claim; independent legal title verification is not attested.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "tests/test_native_observability_434.py",
+      "last_reviewed": "2026-11-06",
+      "distribution": "included",
+      "notes": "Issue #434. Tests local read-only Git metadata and fail-closed boundaries; does not prove activation of any AI client."
+    },
+    {
       "id": "chatgpt-533-route-validator",
       "path": "scripts/verify_chatgpt_route_receipt.py",
       "name": "Offline opt-in ChatGPT routing receipt validator",
