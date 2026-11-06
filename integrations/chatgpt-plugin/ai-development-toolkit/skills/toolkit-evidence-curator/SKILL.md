@@ -55,3 +55,7 @@ available ChatGPT tools**, not a Claude subagent execution.
 
 State `CLIENT_ACTIVATION=NOT_VERIFIED` whenever an installed user's runtime
 has not been inspected. Output read-only text; no automated writes.
+
+## Optional opt-in ChatGPT routing receipt (#533)
+
+On a specifically requested one-shot routing evidence review, read [route receipt guidance](references/ROUTE_RECEIPT.md) and use `scripts/verify_chatgpt_route_receipt.py` from the exact Toolkit source SHA. Capture only primary result references visible to the current authorized host, separate synthetic structural validation from live client attestation, and report `BLOCKED_HOST_TRACE_API` without host-authenticated first-turn trace. Do not record conversations or install a background collector, and do not publish private plugin content.

@@ -681,6 +681,12 @@
       "seo-audit": [
         "extensions/seo/skills/seo-audit/SKILL.md",
         "extensions/seo/skills/seo-audit/references/CHECKLIST.md"
+      ],
+      "route-receipt": [
+        "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-evidence-curator/SKILL.md",
+        "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-evidence-curator/references/ROUTE_RECEIPT.md",
+        "scripts/verify_chatgpt_route_receipt.py",
+        "docs/ru/CHATGPT_ROUTE_RECEIPT.md"
       ]
     },
     "max_retrieved_sources_per_batch": 8,
