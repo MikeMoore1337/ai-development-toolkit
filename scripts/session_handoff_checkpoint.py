@@ -14,14 +14,21 @@ MAX_INPUT = 32_768
 
 
 def _git(repo: Path, *args: str) -> str:
-    run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo), *args], capture_output=True, check=True,
-                         timeout=10, env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"})
+    # Never let a calling AI client redirect the repository, index, Git config,
+    # executable helpers, or trace output through inherited GIT_* variables.
+    env = {key: value for key, value in os.environ.items()
+           if not key.upper().startswith("GIT_")}
+    env["GIT_OPTIONAL_LOCKS"] = "0"
+    run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo), *args],
+                         capture_output=True, check=True, timeout=10, env=env)
     return run.stdout.decode("utf-8", errors="replace").strip()
 
 
 def state(repo: Path) -> dict:
     root = Path(_git(repo, "rev-parse", "--show-toplevel")).resolve()
-    branch = _git(root, "symbolic-ref", "--quiet", "--short", "HEAD")
+    branch = _git(root, "rev-parse", "--abbrev-ref", "HEAD")
+    if branch == "HEAD":
+        branch = "DETACHED"
     commit = _git(root, "rev-parse", "HEAD")
     raw_status = _git(root, "status", "--porcelain=v1", "-uno")
     return {

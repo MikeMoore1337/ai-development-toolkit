@@ -645,7 +645,13 @@ def invoke(tool: str, args: dict) -> dict:
     if tool == "toolkit_observe_project":
         if set(args) != {"project", "client"}:
             raise ValueError("Observer requires only project and client")
-        return _observe_project(_project(args["project"]), args["client"])
+        try:
+            repo = _project(args["project"])
+            _ensure_no_symlink_chain(repo / ".git")
+        except (OSError, ValueError):
+            # MCP errors must not expose a rejected local path to the AI client.
+            raise ValueError("Observer requires a safe absolute Git root") from None
+        return _observe_project(repo, args["client"])
     if tool == "toolkit_catalog":
         return catalog()
     if tool == "toolkit_assess_skill_coverage":
