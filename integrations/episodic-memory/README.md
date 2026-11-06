@@ -62,6 +62,23 @@ activation and rollback evidence are still required to close Issue #338.
 
 **Important limitation:** indexed transcripts can still contain sensitive text. No raw personal sessions, private vault, or automatic session scan is authorized. A read-only MCP command is not by itself an OS or data-isolation boundary.
 
+### Git for Windows / CRLF
+
+Some Windows Git configurations (`core.autocrlf=true`) check out `*.patch` files with CRLF endings.
+The pinned checker now validates the original LF-normalized patch bytes through
+`git apply --check -` (stdin), so a standard Windows checkout does not produce
+a false failure. The original patch and upstream source SHA are unchanged.
+
+When **actually applying** the patch to a reviewed disposable upstream checkout
+on Windows, pass normalized bytes through Git stdin rather than using the
+CRLF file directly. Example for PowerShell (use `python3` on Linux):
+
+```powershell
+python -c "import pathlib,subprocess,sys; p=pathlib.Path(sys.argv[1]); subprocess.run(['git','-C',sys.argv[2],'apply','-'],input=p.read_bytes().replace(b'\r\n',b'\n'),check=True)" ".\integrations\episodic-memory\patches\0001-mcp-read-scoping-and-zero-inference-verify.patch" "C:\TEMP\isolated-episodic-upstream"
+```
+
+Do not run this command inside a user-installed client or real session directory.
+
 ## Reproduction and safety rules
 
 Use a **throwaway copy** of the original source, never the user's live Codex folder. Verify the patch integrity and upstream applicability without installation or execution of upstream code:
