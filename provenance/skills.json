@@ -6,7 +6,7 @@
     {
       "id": "release-v5-5-9-notes-english",
       "path": "docs/releases/v5.5.9.md",
-      "name": "v5.5.9 release candidate notes (English)",
+      "name": "v5.5.9 published release notes (English)",
       "kind": "documentation",
       "author": "Toolkit maintainers (AI-assisted, claimed)",
       "origin": "original",
@@ -21,12 +21,12 @@
       "evidence": "docs/releases/v5.5.9.md",
       "last_reviewed": "2026-11-06",
       "distribution": "included",
-      "notes": "Version 5.5.9 source release notes with explicit static-versus-host-enforcement limitations, baseline scope, and owner-only rights approval."
+      "notes": "Published v5.5.9 source notes from exact tag dd9ee982e8faef6d6988feea10cef91773b4851e; independent legal rights and host-enforcement not attested."
     },
     {
       "id": "release-v5-5-9-notes-russian",
       "path": "docs/ru/releases/v5.5.9.md",
-      "name": "v5.5.9 release candidate notes (Russian)",
+      "name": "v5.5.9 published release notes (Russian)",
       "kind": "documentation",
       "author": "Toolkit maintainers (AI-assisted, claimed)",
       "origin": "original",
@@ -41,7 +41,7 @@
       "evidence": "docs/releases/v5.5.9.md",
       "last_reviewed": "2026-11-06",
       "distribution": "included",
-      "notes": "Version 5.5.9 source release notes with explicit static-versus-host-enforcement limitations, baseline scope, and owner-only rights approval."
+      "notes": "Published v5.5.9 source notes from exact tag dd9ee982e8faef6d6988feea10cef91773b4851e; independent legal rights and host-enforcement not attested."
     },
     {
       "id": "native-security-432-acceptance-english",
