@@ -46,6 +46,12 @@ jobs:
         run: |
           set -euo pipefail
           npm ci --prefix upstream --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Snapshot tracked source after dependency installation
+        shell: bash
+        run: |
+          git -C upstream status --porcelain --untracked-files=no > "$RUNNER_TEMP/ecc439-before-cli-status.txt"
+          echo 'ECC_PRE_CLI_TRACKED_CHANGES:'
+          cat "$RUNNER_TEMP/ecc439-before-cli-status.txt"
       - name: Run original show/preview/explain on synthetic selectors without activation
         shell: bash
         env:
@@ -105,5 +111,13 @@ jobs:
           console.log('ECC_LEAN_ESTIMATED_TOKENS=' + lean.plan.estimate.estimatedTokens);
           console.log('ECC_FULL_ESTIMATED_TOKENS=' + full.plan.estimate.estimatedTokens);
           NODE
-          test -z "$(git status --porcelain --untracked-files=no)"
-          echo 'ECC_TRACKED_SOURCE_UNCHANGED=PASS'
+          git status --porcelain --untracked-files=no > "$RUNNER_TEMP/ecc439-after-cli-status.txt"
+          echo 'ECC_POST_CLI_TRACKED_CHANGES:'
+          cat "$RUNNER_TEMP/ecc439-after-cli-status.txt"
+          if cmp -s "$RUNNER_TEMP/ecc439-before-cli-status.txt" "$RUNNER_TEMP/ecc439-after-cli-status.txt"; then
+            echo 'ECC_READONLY_NO_ADDITIONAL_TRACKED_CHANGES=PASS'
+          else
+            echo 'ECC_READONLY_NO_ADDITIONAL_TRACKED_CHANGES=FAIL'
+            git diff --name-only
+            exit 1
+          fi
