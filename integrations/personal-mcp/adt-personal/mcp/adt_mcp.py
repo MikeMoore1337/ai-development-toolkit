@@ -937,6 +937,8 @@ class Toolkit:
                 deferred = engineering + ([specific_qa] if specific_qa else [])
                 deferred = list(dict.fromkeys(x for x in deferred if x != 'ui-orchestra'))
             elif ('docs-technical' in matches and not building and
+                  not (set(matches) - {'docs-technical', 'backend', 'frontend',
+                                       'codex-feature'}) and
                   re.search(
                       r'(?<!\w)(?:обнови|обновить|дополни|проверь|проверить|'
                       r'отредактируй|напиши|составь|edit|update|review|write|draft)\s+'
