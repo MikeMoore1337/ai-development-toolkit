@@ -1,6 +1,6 @@
 # Воспроизводимая процедура выпуска релиза
 
-**Кандидат v5.5.9 (06.11.2026): НЕ ОПУБЛИКОВАН.** [Состав и ограничения](releases/v5.5.9.md). Последний релиз - v5.5.8. Разрешение владельца завершить #432 позволяет пройти штатные проверки, но **не** превращает ошибку pre-tag или неподтверждённую защиту клиента в PASS. Точный SHA и права распространения проверяются перед созданием тега.
+**Опубликован v5.5.9 (06.11.2026):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9), точный SHA `dd9ee982e8faef6d6988feea10cef91773b4851e`. Предрелизные проверки LOCAL/REMOTE PASS, [архив](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42190684362) PASS, SHA256 скачанного ZIP `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. Согласие владельца не заменяет независимое подтверждение прав третьих лиц или фактическую блокировку операций клиентом.
 
 **Опубликован v5.5.8 (05.11.2026):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) на точном SHA `374f1cf5088b59a690a720f128bd81827f2a888c`. [Проверка архива](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) PASS; SHA256 скачанного ZIP - `f21bb997a63b6982880ef3e1ad21ab9126e960539f2927c0f4e7fed8bc0875f4`. Отдельное разрешение владельца на права и публикацию записано в [Issue #540](https://github.com/MikeMoore1337/ai-development-toolkit/issues/540). Этот PR исправляет документацию без изменения тега; provenance PASS не заменяет юридическую экспертизу.
 
@@ -14,7 +14,7 @@
 
 ## Версии и состояние выпуска
 
-**Последний опубликованный релиз:** [v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) (05.11.2026), точный коммит тега `374f1cf5088b59a690a720f128bd81827f2a888c`, `MANIFEST.json.version = 5.5.8`. [CI после слияния](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42031352833) и [проверка архива](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) - PASS. Personal MCP 0.1.19 и исходный плагин ChatGPT 0.1.5 обновляются отдельно.
+**Последний опубликованный релиз:** [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9) (06.11.2026), точный коммит `dd9ee982e8faef6d6988feea10cef91773b4851e`, `MANIFEST.json.version = 5.5.9`. Post-merge и архивный CI - PASS. Personal MCP, ChatGPT-плагин и Cursor обновляются отдельно.
 
 
 
@@ -25,13 +25,13 @@
 
 - `v5.5.4` опубликован 23.10.2026 с неизменяемым SHA тега `5affd7f18e9963eee6cb7692ad4d21d3b6f2c8c7` ([GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.4)). В теге `MANIFEST.json.version = 5.5.4`. Более поздние коммиты `main` не входят в опубликованный релиз автоматически.
 
-- Последний опубликованный тег - **`v5.5.8`**, версия манифеста `5.5.8`, SHA `374f1cf5088b59a690a720f128bd81827f2a888c`. Позднейшие коммиты main автоматически не публикуются.
+- Последний опубликованный тег - **`v5.5.9`**, версия в манифесте 5.5.9, SHA `dd9ee982e8faef6d6988feea10cef91773b4851e`. Предыдущий v5.5.8 остаётся неизменным. Последующие изменения `main` не входят в опубликованный тег.
 - `CHANGELOG.md` содержит раздел `Unreleased` для изменений после последнего тега. Последний опубликованный раздел должен иметь пометку `released`, а не `prepared`. Исторические записи сохраняются.
 - Идентичность опубликованного релиза определяется неизменяемым Git-тегом и GitHub Release **на точном SHA**. `main` — ветка разработки, которая может опережать опубликованный тег. Не называйте установку `main` опубликованным архивом.
 - Лишь после release preflight и **явного решения владельца** можно выбрать следующую версию, обновить манифест и подготовить отдельный релизный PR/тег. CI никогда не выпускает новую версию автоматически.
 - Проверки исходников не равны runtime-доказательствам: правильный формат или успешное копирование не доказывают обнаружение навыков клиентом, их активацию или пользу.
 
-Последний публичный тег: [v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8), SHA `374f1cf5088b59a690a720f128bd81827f2a888c` (5 ноября 2026 года), манифест `5.5.8`. [Сравнение v5.5.8...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.8...main) показывает позднейшие изменения.
+Последний публичный тег: [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9), SHA `dd9ee982e8faef6d6988feea10cef91773b4851e` (06.11.2026), версия 5.5.9. [Сравнение v5.5.9...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.9...main).
 
 ### Два этапа приёмки публикации и документации (#323)
 

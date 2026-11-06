@@ -1,5 +1,7 @@
 # Changelog
 
+**v5.5.9 publication confirmed (2026-11-06):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9) at immutable commit `dd9ee982e8faef6d6988feea10cef91773b4851e`. Clean Windows pre-tag checks LOCAL/REMOTE PASS; [post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42189731361) and [tag archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42190684362) SUCCESS. Downloaded GitHub ZIP SHA256: `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. Independent rights and client host enforcement are NOT_VERIFIED. Installed MCP and plugins are not automatically updated.
+
 **v5.5.8 publication confirmed (2026-11-05)**
 
 [GitHub Release v5.5.8](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.8) is published on exact SHA `374f1cf5088b59a690a720f128bd81827f2a888c`; tagged `MANIFEST.json.version = 5.5.8`. [Post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42031352833) and [published ZIP archive check](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42035484832) PASS. Actual GitHub ZIP SHA256: `f21bb997a63b6982880ef3e1ad21ab9126e960539f2927c0f4e7fed8bc0875f4` (973 files, provenance 774 components / 98 skills). Owner explicitly approved distribution for this exact source/rights scope in #540; independent third-party/employer rightsholder verification is not attested. Native Codex Skill activation NOT_VERIFIED, model improvement NOT_MEASURED. Installed Personal MCP and private ChatGPT plugin are not automatically updated. Initial release-published documentation CI reported PUBLICATION_DOCS_STALE; a separate forward-only PR updates main without modifying the tag.
@@ -39,11 +41,11 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.9)
 
-No additions after this release candidate at preparation time.
+Post-publication documentation alignment of v5.5.9, without changing the immutable tag.
 
-## 5.5.9 (candidate, 2026-11-06)
+## 5.5.9 (released, 2026-11-06)
 
-**CANDIDATE ONLY, NOT PUBLISHED.** Last public release is still v5.5.8. Proposed source baseline `main@84c3dd0ec349c8465b8a18f4656f01d9ce4731b9` contains 51 commits and 51 changed files since v5.5.8, including ALL Cursor and security changes. The eventual tag must match the post-merge main SHA; see [full compare](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.8...84c3dd0ec349c8465b8a18f4656f01d9ce4731b9).
+**PUBLISHED 2026-11-06** on exact merged SHA `dd9ee982e8faef6d6988feea10cef91773b4851e` after owner distribution approval and actual LOCAL_PRETAG_PASS / REMOTE_PRETAG_PASS. The verified GitHub ZIP SHA256 is `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. The tagged source includes all 51 main-line commits and 51 changed source paths since v5.5.8, including approved Cursor routing and Native Security #432. [Exact source compare](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.8...dd9ee982e8faef6d6988feea10cef91773b4851e). Static security findings do not verify host-enforced denial.
 
 - **Security #432:** Native offline skill/MCP/host config checks, prompt injection and hook/policy warnings, strict JSON parsing and SHA256, symlink/junction protections, POSIX directory permissions, SARIF source evidence, 60-case synthetics and honest advisory/enforcement boundaries.
 - **Independent synthetic limits:** 20-case originally held-out F1=72.73%, FPR=40%, FNR=20%; opened corpus later served regression only. Real-world accuracy and actual Codex client enforcement **NOT_VERIFIED**.
@@ -51,7 +53,7 @@ No additions after this release candidate at preparation time.
 - **Other post-v5.5.8 changes:** documentation synchronization (#540) and CI/provenance upgrades already merged in main; this release PR adds only version, documentation and inventory metadata.
 - **No automatic client update:** Toolkit release does not install Personal MCP, ChatGPT plugin or Codex hooks; no paid API, ECC/AgentShield runtime or new backend service required.
 
-[EN release candidate notes](docs/releases/v5.5.9.md) · [RU notes](docs/ru/releases/v5.5.9.md). Publication requires exact post-merge CI, owner rights gate, live pre-tag checks, an immutable GitHub tag and downloaded archive verification.
+[EN release notes](docs/releases/v5.5.9.md) · [RU notes](docs/ru/releases/v5.5.9.md). Publication requires exact post-merge CI, owner rights gate, live pre-tag checks, an immutable GitHub tag and downloaded archive verification.
 
 ## 5.5.8 (released, 2026-11-05)
 
