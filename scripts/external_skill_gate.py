@@ -73,7 +73,7 @@ def _manifest(source: Path, issues: list[dict]) -> dict | None:
         )
         if not isinstance(data, dict) or set(data) != {
             "schema_version", "candidate_id", "source_url", "source_revision", "license", "files"
-        } or data["schema_version"] != 1:
+        } or type(data["schema_version"]) is not int or data["schema_version"] != 1:
             raise ValueError("Invalid manifest structure")
         if not isinstance(data["candidate_id"], str) or not SLUG.fullmatch(data["candidate_id"]):
             raise ValueError("Invalid candidate ID")
