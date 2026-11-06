@@ -167,6 +167,15 @@ class ExternalSkillGateTests(unittest.TestCase):
                 self.assertEqual("REJECT", self._decision()["decision"])
                 self.assertIn("INVALID_MANIFEST", self._codes())
 
+    def test_manifest_boolean_schema_version_is_not_one(self):
+        # Python bool is a subclass of int: True == 1, but is not JSON integer 1.
+        self._write_manifest(schema_version=True)
+        report = self._decision()
+        self.assertEqual(report["decision"], "REJECT")
+        self.assertIn("INVALID_MANIFEST", {x["code"] for x in report["issues"]})
+        self._write_manifest(schema_version=1)
+        self.assertEqual(self._decision()["decision"], "ALLOW_FOR_REVIEW")
+
     def test_ambiguous_manifest_keys_fail_closed(self):
         # Duplicate source revision and file inventory keys must not silently
         # accept the final value. All data is local and synthetic.
