@@ -97,7 +97,7 @@ class NativeObservability434Tests(unittest.TestCase):
         with_escaping = self._data()["project"]["tracked_status_sha256"]
         self.assertEqual(baseline, without_escaping)
         self.assertEqual(baseline, with_escaping)
-        self.assertNotIn(unicode_file.name, json.dumps(self._data()))
+        self.assertNotIn(unicode_file.name, json.dumps(self._data(), ensure_ascii=False))
 
     def test_detached_head_is_a_valid_observation(self):
         expected_commit = self._data()["project"]["commit"]
