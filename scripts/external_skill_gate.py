@@ -64,7 +64,13 @@ def _manifest(source: Path, issues: list[dict]) -> dict | None:
     try:
         if source.is_symlink() or not source.is_file() or source.stat().st_size > MAX_MANIFEST_BYTES:
             raise ValueError("Missing, linked or oversized manifest")
-        data = json.loads(source.read_text(encoding="utf-8"))
+        # A candidate-supplied manifest is not trusted provenance. Reject
+        # ambiguous duplicate keys at every JSON object depth, not last-wins.
+        data = json.loads(
+            source.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_json_pairs,
+            parse_constant=_reject_json_constant,
+        )
         if not isinstance(data, dict) or set(data) != {
             "schema_version", "candidate_id", "source_url", "source_revision", "license", "files"
         } or data["schema_version"] != 1:
@@ -116,7 +122,13 @@ def _context(path: Path, candidate: Path) -> dict:
             raw = file.read(MAX_CONTEXT_BYTES + 1)
         if len(raw) > MAX_CONTEXT_BYTES:
             raise ValueError("Review context too large")
-        document = json.loads(raw.decode("utf-8"))
+        # Operator declarations can also be ambiguous, including cost and
+        # privilege claims; do not accept an overwritten duplicate key.
+        document = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=_unique_json_pairs,
+            parse_constant=_reject_json_constant,
+        )
     except (OSError, UnicodeError, ValueError) as exc:
         raise ValueError("Invalid review context") from exc
     if not isinstance(document, dict) or set(document) != CONTEXT_FIELDS:
@@ -523,6 +535,17 @@ def review_host_config(root: Path) -> dict:
                 _host_finding(findings, "HOST_PATH_NOT_REGULAR", relative)
                 continue
             try:
+                # A world-writable parent directory can allow config
+                # replacement even when the config file mode is owner-only.
+                # This is a POSIX static review signal, not an OS permission
+                # check on Windows nor a client runtime enforcement claim.
+                if os.name != "nt" and any(
+                    directory.stat().st_mode & 0o002
+                    for directory in (root, target.parent)
+                ):
+                    _host_finding(
+                        findings, "HOST_WORLD_WRITABLE_CONFIG_DIRECTORY", relative
+                    )
                 size = target.stat().st_size
                 total += size
                 if size > HOST_MAX_BYTES or total > HOST_TOTAL_BYTES:
