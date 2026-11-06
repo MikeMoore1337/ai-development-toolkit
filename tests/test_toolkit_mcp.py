@@ -430,14 +430,14 @@ class ToolkitMcpTests(unittest.TestCase):
     def test_observer_unicode_hash_not_affected_by_core_quotepath(self):
         self._init_observer_git()
         unicode_file = self.project / "проверка.txt"
-        unicode_file.write_text("original\\n", encoding="utf-8")
+        unicode_file.write_text("original\n", encoding="utf-8")
         subprocess.run(["git", "-C", str(self.project), "add", unicode_file.name],
                        check=True, capture_output=True)
         subprocess.run(["git", "-C", str(self.project),
                         "-c", "user.name=ObserverFixture",
                         "-c", "user.email=observer@example.invalid",
                         "commit", "-qm", "unicode"], check=True, capture_output=True)
-        unicode_file.write_text("changed\\n", encoding="utf-8")
+        unicode_file.write_text("changed\n", encoding="utf-8")
         baseline = self._invoke("toolkit_observe_project",
                                 project=str(self.project), client="codex")
         self.assertFalse(baseline["result"].get("isError", False), baseline)
@@ -476,7 +476,7 @@ class ToolkitMcpTests(unittest.TestCase):
              "params": {"name": "toolkit_observe_project",
                         "arguments": {"project": str(self.project), "client": "unsupported"}}},
         ]
-        payload = ("\\n".join(json.dumps(req) for req in requests) + "\\n").encode("utf-8")
+        payload = ("\n".join(json.dumps(req) for req in requests) + "\n").encode("utf-8")
         completed = subprocess.run(
             [sys.executable, str(ROOT / "scripts" / "toolkit_mcp.py"), "serve"],
             input=payload, capture_output=True, cwd=str(ROOT),
