@@ -293,6 +293,18 @@ class RouteReceiptTests(unittest.TestCase):
                              stage="native-inspection", command="impeccable inspect-native --scope test")
         self.assertTrue(self.check(d))
 
+    def test_35_native_main_command_can_accept_context_flag(self):
+        d = copy.deepcopy(self.good)
+        d["events"][2]["data"]["command"] = "impeccable concept-seed --context synthetic-brief.json"
+        self.assertEqual("PASS", verifier.validate(d, ROOT)["evidence_sequence"])
+        for command in ("impeccable context", "impeccable --help", "echo impeccable concept-seed"):
+            with self.subTest(command=command):
+                bad = copy.deepcopy(self.good)
+                bad["events"][2]["data"]["command"] = command
+                result = verifier.validate(bad, ROOT)
+                self.assertIn("NATIVE_STAGE_NOT_RUN", result["errors"])
+                self.assertEqual("FAIL", result["evidence_sequence"])
+
     def test_34_owner_approval_must_bind_a_verified_visual_artifact(self):
         d = copy.deepcopy(self.good)
         d["events"][5]["data"]["approved_sha256"] = "0" * 64

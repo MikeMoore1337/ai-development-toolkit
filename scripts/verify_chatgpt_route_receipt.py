@@ -173,7 +173,7 @@ def _event_problem(event: dict, root: Path, source_sha: str, run_kind: str) -> l
         command = data.get("command")
         if (not _is_str(command, 300) or type(data.get("exit_code")) is not int or
                 data["exit_code"] != 0 or
-                (isinstance(command, str) and re.search(r"(?i)(?:--help|\bhelp\b|\bcontext\b|\becho\b)", command))):
+                (isinstance(command, str) and re.search(r"(?i)(?:^|\s)(?:--help|-h|help|context|echo)(?=\s|$)", command))):
             problems.append("NATIVE_STAGE_NOT_RUN")
         applicability = data.get("applicability", "APPLICABLE")
         if applicability == "NOT_APPLICABLE_NATIVE_SCOPE":
