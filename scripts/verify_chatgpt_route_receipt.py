@@ -36,7 +36,7 @@ DATA_FIELDS = {
     "ORIGINAL": {"name", "upstream_sha", "entrypoint", "command", "executor",
                  "exit_code", "stage", "artifact", "tool_result_ref", "source_toolkit_sha",
                  "runtime_toolkit_sha", "applicability", "applicability_source", "applicability_reason"},
-    "OWNER_APPROVAL": {"decision", "approved_sha256", "message_ref"},
+    "OWNER_APPROVAL": {"decision", "approved_sha256", "approved_artifact", "message_ref"},
     "REVIEWER": {"mode", "disposition", "tool_result_ref"},
     "BROWSER_VERIFICATION": {"tests_passed", "tests_failed", "executor", "tool_result_ref", "artifact"},
 }
@@ -201,6 +201,13 @@ def _event_problem(event: dict, root: Path, source_sha: str, run_kind: str) -> l
                 not isinstance(data.get("approved_sha256"), str) or
                 not SHA256.fullmatch(data["approved_sha256"])):
             problems.append("OWNER_APPROVAL_NOT_PROVEN")
+        approved_artifact = data.get("approved_artifact")
+        artifact_problem = _artifact(approved_artifact, root)
+        if artifact_problem:
+            problems.append(artifact_problem)
+        if (not isinstance(approved_artifact, dict) or
+                data.get("approved_sha256") != approved_artifact.get("sha256")):
+            problems.append("OWNER_APPROVAL_ARTIFACT_MISMATCH")
     elif stage == "REVIEWER":
         if (data.get("mode") not in ("NATIVE", "INLINE_DEGRADED") or
                 data.get("disposition") != "ship" or not _is_str(data.get("tool_result_ref"))):

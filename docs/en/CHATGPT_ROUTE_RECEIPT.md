@@ -35,3 +35,5 @@ No raw prompts, transcripts, credentials, email addresses, personal absolute pat
 
 `NATIVE_SUBSTAGE_NOT_APPLICABLE` may skip a documented substage only when another native stage genuinely executes with an exit code and checked artifact. A whole-original `NOT_APPLICABLE_NATIVE_SCOPE` remains an incomplete all-three gate, never a successful invocation.
 
+
+Owner visual approval must refer to an existing approved_artifact whose recomputed SHA256 equals approved_sha256; a syntactically correct digest alone is not approval evidence.

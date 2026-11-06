@@ -293,6 +293,30 @@ class RouteReceiptTests(unittest.TestCase):
                              stage="native-inspection", command="impeccable inspect-native --scope test")
         self.assertTrue(self.check(d))
 
+    def test_34_owner_approval_must_bind_a_verified_visual_artifact(self):
+        d = copy.deepcopy(self.good)
+        d["events"][5]["data"]["approved_sha256"] = "0" * 64
+        result = verifier.validate(d, ROOT)
+        self.assertEqual("FAIL", result["evidence_sequence"])
+        self.assertIn("OWNER_APPROVAL_ARTIFACT_MISMATCH", result["errors"])
+
+        d = copy.deepcopy(self.good)
+        d["events"][5]["data"]["approved_artifact"]["sha256"] = "f" * 64
+        result = verifier.validate(d, ROOT)
+        self.assertEqual("FAIL", result["evidence_sequence"])
+        self.assertIn("ARTIFACT_SHA256_MISMATCH", result["errors"])
+        self.assertIn("OWNER_APPROVAL_ARTIFACT_MISMATCH", result["errors"])
+
+        d = copy.deepcopy(self.good)
+        d["events"][5]["data"].pop("approved_artifact")
+        self.assertTrue(self.check(d))
+
+        d = copy.deepcopy(self.good)
+        d["events"][5]["data"]["approved_artifact"]["path"] = "fixtures/not-exists.png"
+        result = verifier.validate(d, ROOT)
+        self.assertIn("ARTIFACT_MISSING", result["errors"])
+        self.assertEqual("FAIL", result["evidence_sequence"])
+
     def test_21_cli_never_exports_raw_event_payload(self):
         proc = subprocess.run([sys.executable, str(ROOT / "scripts/verify_chatgpt_route_receipt.py"),
                                "--receipt", str(FIXTURE), "--artifact-root", str(ROOT)],

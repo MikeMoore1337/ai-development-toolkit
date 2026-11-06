@@ -150,7 +150,11 @@
       "data": {
         "decision": "approve",
         "approved_sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e",
-        "message_ref": "synthetic-owner-message"
+        "message_ref": "synthetic-owner-message",
+        "approved_artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        }
       }
     },
     {
