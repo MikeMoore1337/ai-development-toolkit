@@ -19,7 +19,8 @@ def _git(repo: Path, *args: str) -> str:
     env = {key: value for key, value in os.environ.items()
            if not key.upper().startswith("GIT_")}
     env["GIT_OPTIONAL_LOCKS"] = "0"
-    run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-C", str(repo), *args],
+    run = subprocess.run(["git", "-c", "core.fsmonitor=false", "-c", "core.quotePath=true",
+                          "-C", str(repo), *args],
                          capture_output=True, check=True, timeout=10, env=env)
     return run.stdout.decode("utf-8", errors="replace").strip()
 

@@ -83,6 +83,22 @@ class NativeObservability434Tests(unittest.TestCase):
                           "SENSITIVE_OBSERVER_FIXTURE", "edited, but"):
             self.assertNotIn(sensitive, serialized)
 
+    def test_non_ascii_status_hash_independent_of_local_quote_path(self):
+        unicode_file = self.repo / "проверка.txt"
+        unicode_file.write_text("before\n", encoding="utf-8")
+        self._git("add", unicode_file.name)
+        self._git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                  "commit", "-qm", "unicode fixture")
+        unicode_file.write_text("after\n", encoding="utf-8")
+        baseline = self._data()["project"]["tracked_status_sha256"]
+        self._git("config", "--local", "core.quotePath", "false")
+        without_escaping = self._data()["project"]["tracked_status_sha256"]
+        self._git("config", "--local", "core.quotePath", "true")
+        with_escaping = self._data()["project"]["tracked_status_sha256"]
+        self.assertEqual(baseline, without_escaping)
+        self.assertEqual(baseline, with_escaping)
+        self.assertNotIn(unicode_file.name, json.dumps(self._data()))
+
     def test_detached_head_is_a_valid_observation(self):
         expected_commit = self._data()["project"]["commit"]
         self._git("checkout", "-q", "--detach", "HEAD")
