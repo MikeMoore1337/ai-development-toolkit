@@ -414,6 +414,147 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertFalse((nested / ".adt").exists())
 
 
+
+    def test_observer_detached_head_is_observed_without_session_claims(self):
+        self._init_observer_git()
+        subprocess.run(["git", "-C", str(self.project), "checkout", "--detach", "-q"],
+                       check=True, capture_output=True)
+        response = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="codex")
+        self.assertFalse(response["result"].get("isError", False), response)
+        data = response["result"]["structuredContent"]
+        self.assertEqual(data["project"]["branch"], "HEAD")
+        self.assertEqual(data["session_active"], "NOT_OBSERVED")
+        self.assertEqual(data["L5_invocation"], "NOT_VERIFIED")
+
+    def test_observer_git_environment_cannot_spoof_sha_or_write_trace(self):
+        self._init_observer_git()
+        subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "-qm", "tracked"], check=True, capture_output=True)
+        expected = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="codex")
+        self.assertFalse(expected["result"].get("isError", False), expected)
+        baseline = expected["result"]["structuredContent"]["project"]
+
+        other = self.project.parent / "different-synthetic-repo"
+        other.mkdir()
+        subprocess.run(["git", "-C", str(other), "init", "-q", "-b", "main"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(other),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "--allow-empty", "-qm", "foreign"],
+                       check=True, capture_output=True)
+        trace = self.project.parent / "unwanted-git-trace.log"
+        alternate_index = self.project.parent / "unwanted-git-index"
+        with patch.dict(os.environ, {
+            "GIT_DIR": str(other / ".git"),
+            "GIT_WORK_TREE": str(self.project),
+            "GIT_INDEX_FILE": str(alternate_index),
+            "GIT_TRACE": str(trace),
+            "GIT_OPTIONAL_LOCKS": "1",
+        }):
+            response = self._invoke("toolkit_observe_project",
+                                    project=str(self.project), client="codex")
+        self.assertFalse(response["result"].get("isError", False), response)
+        self.assertEqual(response["result"]["structuredContent"]["project"], baseline)
+        self.assertFalse(trace.exists(), "Read-only Git must not emit trace files")
+        self.assertFalse(alternate_index.exists())
+        self.assertNotIn(str(other), json.dumps(response))
+
+    def test_observer_untracked_repeatable_and_no_index_mutation(self):
+        self._init_observer_git()
+        subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "-qm", "tracked"], check=True, capture_output=True)
+        index = self.project / ".git" / "index"
+        index_before = index.read_bytes()
+        tracked_before = (self.project / "AGENTS.md").read_bytes()
+        first = self._invoke("toolkit_observe_project",
+                             project=str(self.project), client="claude-code")
+        second = self._invoke("toolkit_observe_project",
+                              project=str(self.project), client="claude-code")
+        self.assertEqual(first, second)
+        data = second["result"]["structuredContent"]
+        self.assertEqual(set(data["project"]), {
+            "repo_id", "branch", "commit", "tracked_status_sha256",
+            "tracked_dirty", "worktree_count",
+        })
+        self.assertEqual(index.read_bytes(), index_before)
+        self.assertEqual((self.project / "AGENTS.md").read_bytes(), tracked_before)
+
+        (self.project / "untracked-synthetic.txt").write_text("untracked", encoding="utf-8")
+        untracked = self._invoke("toolkit_observe_project",
+                                 project=str(self.project), client="claude-code")
+        self.assertEqual(untracked["result"]["structuredContent"]["project"],
+                         data["project"], "Untracked files are deliberately NOT_OBSERVED")
+        self.assertEqual(index.read_bytes(), index_before)
+        (self.project / "AGENTS.md").write_text("MODIFIED_PRIVATE_FIXTURE", encoding="utf-8")
+        changed = self._invoke("toolkit_observe_project",
+                               project=str(self.project), client="claude-code")
+        self.assertTrue(changed["result"]["structuredContent"]["project"]["tracked_dirty"])
+        self.assertNotEqual(changed["result"]["structuredContent"]["project"]["tracked_status_sha256"],
+                            data["project"]["tracked_status_sha256"])
+        self.assertNotIn("MODIFIED_PRIVATE_FIXTURE", json.dumps(changed))
+        self.assertEqual(index.read_bytes(), index_before)
+
+    def test_observer_worktree_count_and_sha_transition(self):
+        self._init_observer_git()
+        before = self._invoke("toolkit_observe_project",
+                              project=str(self.project), client="codex")["result"]["structuredContent"]
+        linked = self.project.parent / "synthetic-linked-worktree"
+        subprocess.run(["git", "-C", str(self.project), "worktree", "add",
+                        "-q", "-b", "synthetic-secondary", str(linked)],
+                       check=True, capture_output=True)
+        after_worktree = self._invoke(
+            "toolkit_observe_project", project=str(self.project), client="codex"
+        )["result"]["structuredContent"]
+        self.assertEqual(after_worktree["project"]["worktree_count"], 2)
+        self.assertEqual(after_worktree["project"]["commit"], before["project"]["commit"])
+        self.assertNotIn(str(linked), json.dumps(after_worktree))
+
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "--allow-empty", "-qm", "new SHA"],
+                       check=True, capture_output=True)
+        after_commit = self._invoke(
+            "toolkit_observe_project", project=str(self.project), client="codex"
+        )["result"]["structuredContent"]
+        self.assertNotEqual(after_commit["project"]["commit"], before["project"]["commit"])
+        self.assertEqual(after_commit["project"]["worktree_count"], 2)
+        self.assertEqual(after_commit["L6_effectiveness"], "NOT_MEASURED")
+
+    def test_observer_missing_roots_alias_and_parallel_reads(self):
+        self._init_observer_git()
+        missing = self.project.parent / "missing-project"
+        for path in (str(missing), str(self.project.parent), "relative/project", ""):
+            with self.subTest(path=path):
+                response = self._invoke("toolkit_observe_project", project=path, client="codex")
+                self.assertTrue(response["result"]["isError"], response)
+        alias = self.project.parent / "linked-project"
+        try:
+            alias.symlink_to(self.project, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            pass  # Windows may not authorize symlinks; existing junction tests remain.
+        else:
+            response = self._invoke("toolkit_observe_project", project=str(alias), client="codex")
+            self.assertTrue(response["result"]["isError"], response)
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            results = list(pool.map(lambda _: self._invoke(
+                "toolkit_observe_project", project=str(self.project), client="codex"
+            ), range(6)))
+        self.assertTrue(all(not x["result"].get("isError", False) for x in results))
+        self.assertTrue(all(x == results[0] for x in results))
+
     # #433 MCP discovery uses the already-shipped manual Git handoff contract.
     # Only synthetic public references and a temporary external packet folder.
     def _handoff_fixture(self):
