@@ -79,7 +79,13 @@ def main() -> int:
             upstream = args.upstream_dir.resolve(strict=True)
             if git(["rev-parse", "HEAD"], upstream) != UPSTREAM_SHA:
                 raise ValueError("Upstream commit differs from pinned revision")
-            git(["apply", "--check", str(PATCH)], upstream)
+            # Pass normalized LF bytes over stdin. Windows Git may check
+            # out patch files with CRLF, which git apply rejects on disk.
+            subprocess.run(
+                ["git", "-C", str(upstream), "apply", "--check", "-"],
+                input=PATCH.read_bytes().replace(b"\r\n", b"\n"),
+                check=True, capture_output=True, timeout=30,
+            )
         print("EPISODIC_MEMORY_PATCH=PASS")
         print(f"UPSTREAM_APPLICABILITY={'PASS' if args.upstream_dir else 'NOT_RUN'}")
         print("EXECUTION=NONE; CODEX_CLI=NONE; MODEL_CALLS=NONE")
