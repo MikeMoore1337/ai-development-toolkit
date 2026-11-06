@@ -197,6 +197,30 @@ class RouteReceiptTests(unittest.TestCase):
             link.symlink_to(ROOT, target_is_directory=True)
             self.assertEqual("FAIL", verifier.validate(self.good, link)["evidence_sequence"])
 
+    def test_26_native_substage_not_applicable_but_original_invoked(self):
+        d = copy.deepcopy(self.good)
+        event = d["events"][2]
+        event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
+                             applicability_source="Upstream skill reference", applicability_reason="No concept-stage for an audited existing UI",
+                             stage="native-inspection", command="impeccable inspect-native --scope test")
+        result = verifier.validate(d, ROOT)
+        self.assertEqual("PASS", result["evidence_sequence"])
+        self.assertEqual("SYNTHETIC_ONLY", result["client_attestation"])
+
+    def test_27_scope_skip_cannot_replace_original_invocation(self):
+        d = copy.deepcopy(self.good)
+        event = d["events"][2]
+        event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
+                             applicability_source="Upstream skill reference", applicability_reason="Scope excludes seed",
+                             stage="help", command="impeccable --help", exit_code=0)
+        self.assertTrue(self.check(d))
+        d = copy.deepcopy(self.good)
+        event = d["events"][2]
+        event["data"].update(applicability="NOT_APPLICABLE_NATIVE_SCOPE",
+                             applicability_source="Upstream skill reference", applicability_reason="Scope excludes seed",
+                             stage="native-inspection", artifact=None)
+        self.assertTrue(self.check(d))
+
     def test_21_cli_never_exports_raw_event_payload(self):
         proc = subprocess.run([sys.executable, str(ROOT / "scripts/verify_chatgpt_route_receipt.py"),
                                "--receipt", str(FIXTURE), "--artifact-root", str(ROOT)],

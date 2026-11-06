@@ -30,3 +30,6 @@ Start a **fresh ordinary conversation** with the private Toolkit enabled. A mini
 ## Security and cleanup
 
 No raw prompts, transcripts, credentials, email addresses, personal absolute paths, production UI, chat history, background hooks, network calls, storage or paid APIs. Unknown JSON fields and obvious sensitive strings are rejected. Only bounded files under the supplied artifact root are hashed; symlinks, traversal and oversized files are rejected. The CLI prints a sanitized summary. User-owned private receipt copies can be deleted directly after review; the checker never creates them or sends them to GitHub. Publish a sanitized report **only on the owner's separate explicit decision**. None of the three upstream tools is modified. Reuse #274 (version diagnostics) and #434 (future Native Observability), rather than building another event bus.
+
+A documented, upstream-declared non-applicable native substage may be replaced with an actually executed alternative native stage, exit status and verified artifact; it never excuses invoking the original tool.
+

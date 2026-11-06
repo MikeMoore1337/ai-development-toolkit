@@ -157,19 +157,27 @@ def _event_problem(event: dict, root: Path, source_sha: str, run_kind: str) -> l
             problems.append("SOURCE_RUNTIME_MISMATCH")
         expected_stage = ORIGINAL_STAGES.get(name) if isinstance(name, str) else None
         command = data.get("command")
-        if (not _is_str(command, 300) or not isinstance(data.get("exit_code"), int) or
-                isinstance(data.get("exit_code"), bool) or data["exit_code"] != 0 or
-                (isinstance(command, str) and (re.search(r"(?i)(?:--help|\bhelp\b|\bcontext\b|\becho\b)", command))) or
-                data.get("stage") != expected_stage):
+        if (not _is_str(command, 300) or type(data.get("exit_code")) is not int or
+                data["exit_code"] != 0 or
+                (isinstance(command, str) and re.search(r"(?i)(?:--help|\bhelp\b|\bcontext\b|\becho\b)", command))):
             problems.append("NATIVE_STAGE_NOT_RUN")
-        if data.get("applicability") == "NOT_APPLICABLE_NATIVE_SCOPE":
+        applicability = data.get("applicability", "APPLICABLE")
+        if applicability == "NOT_APPLICABLE_NATIVE_SCOPE":
             if not (_is_str(data.get("applicability_source")) and _is_str(data.get("applicability_reason"))):
                 problems.append("SCOPE_EXCLUSION_UNDOCUMENTED")
-            problems.append("NOT_APPLICABLE_DOES_NOT_PROVE_INVOCATION")
-        else:
-            artifact_problem = _artifact(data.get("artifact"), root)
-            if artifact_problem:
-                problems.append(artifact_problem)
+            # Only a *specific native stage* may be skipped, never the original invocation.
+            actual_stage = data.get("stage")
+            if (not _is_str(actual_stage, 60) or not re.fullmatch(r"[a-z][a-z0-9_-]{2,59}", actual_stage)
+                    or actual_stage == expected_stage or actual_stage in {"help", "context", "setup", "install"}):
+                problems.append("ALTERNATIVE_NATIVE_STAGE_NOT_RUN")
+        elif applicability != "APPLICABLE":
+            problems.append("INVALID_APPLICABILITY")
+        elif data.get("stage") != expected_stage:
+            problems.append("NATIVE_STAGE_NOT_RUN")
+        # Even with documented stage non-applicability, a genuine native output is required.
+        artifact_problem = _artifact(data.get("artifact"), root)
+        if artifact_problem:
+            problems.append(artifact_problem)
     elif stage == "OWNER_APPROVAL":
         if (data.get("decision") != "approve" or not _is_str(data.get("message_ref")) or
                 not isinstance(data.get("approved_sha256"), str) or
