@@ -518,6 +518,10 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertEqual(after_worktree["project"]["worktree_count"], 2)
         self.assertEqual(after_worktree["project"]["commit"], before["project"]["commit"])
         self.assertNotIn(str(linked), json.dumps(after_worktree))
+        linked_result = self._invoke("toolkit_observe_project",
+                                     project=str(linked), client="codex")
+        self.assertFalse(linked_result["result"].get("isError", False), linked_result)
+        self.assertEqual(linked_result["result"]["structuredContent"]["project"]["worktree_count"], 2)
 
         subprocess.run(["git", "-C", str(self.project),
                         "-c", "user.name=ObserverFixture",
