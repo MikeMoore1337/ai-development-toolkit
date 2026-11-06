@@ -5,3 +5,5 @@
 *.json text eol=lf
 # Bash scripts invoked from Windows WSL2 must retain LF on checkout.
 integrations/harness2/*.sh text eol=lf
+# Raw SHA256 of the synthetic receipt artifact must be checkout-platform invariant.
+fixtures/route_receipt_artifact.txt -text

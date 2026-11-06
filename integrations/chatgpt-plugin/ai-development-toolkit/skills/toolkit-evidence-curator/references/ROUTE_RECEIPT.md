@@ -1,0 +1,9 @@
+# Optional ordinary ChatGPT routing receipt (#533)
+
+Only when the owner explicitly requests a one-shot routing-evidence verification, use the existing Evidence Curator procedure and `scripts/verify_chatgpt_route_receipt.py` from the **verified source revision**. Follow `docs/en/CHATGPT_ROUTE_RECEIPT.md` or `docs/ru/CHATGPT_ROUTE_RECEIPT.md`. Do **not** install an observer, capture raw chats, poll host internals, trigger an external model or change any original specialist.
+
+Read the actual private packaged `USER_PREFERENCES.json` when accessible (backend storage alone is not evidence of a chat read). Capture permitted tool result IDs/outputs **at the time of each actual host invocation**; distinguish this from loading `SKILL.md` or a model-written assertion. The existing UX/UI Design Orchestra remains the only design coordinator. Collect each original entrypoint, pinned SHA, actual command, exit code, executor, stage and artifact SHA256 separately, followed by owner approval, reviewer disposition and browser results.
+
+The offline validator accepts only sanitized assertions and local artifacts, and **cannot authenticate a ChatGPT tool-call stream**. Always report `BLOCKED_HOST_TRACE_API` when host-authenticated pre-call events and first-turn trace are not exposed. A synthetic PASS never means LIVE PASS. Never promote a saved backend setting to observed first-turn activation, a help-only output to an original run, or an `INLINE_DEGRADED` reviewer with `fix` to release readiness. No automatic export to public GitHub, no storage in Toolkit, and no change to public plugin sharing.
+
+Check that any owner approval digest matches the local, independently hash-verified `approved_artifact`. Never treat an arbitrary owner SHA256 string as visual approval evidence.

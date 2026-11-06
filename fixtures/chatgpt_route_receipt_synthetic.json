@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "task_id": "task_11111111111111111111111111111111",
+  "run_kind": "SYNTHETIC",
+  "request_blind": "NOT_VERIFIED",
+  "versions": {
+    "toolkit": {
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source": "synthetic-github-sha"
+    },
+    "plugin_backend": {
+      "version": "0.1.19",
+      "source": "synthetic-plugin-creator"
+    },
+    "active_mount": {
+      "version": "NOT_VERIFIED",
+      "source": "NOT_VERIFIED"
+    }
+  },
+  "events": [
+    {
+      "event_id": "evt_00000000000000000000000000000001",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 1,
+      "stage": "PREFERENCE_READ",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:01:00Z",
+      "recorded_at": "2026-11-06T00:01:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-1",
+      "data": {
+        "preference_file": "USER_PREFERENCES.json",
+        "value": "ALL_THREE",
+        "read_source": "tool_result",
+        "tool_result_ref": "synthetic-pref-result"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000002",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 2,
+      "stage": "ORCHESTRA",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:02:00Z",
+      "recorded_at": "2026-11-06T00:02:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-2",
+      "data": {
+        "skill": "ux-ui-design-orchestra",
+        "mode": "create-design",
+        "loaded_sources": [
+          "SKILL.md",
+          "WORKFLOW.md",
+          "CREATE_DESIGN.md"
+        ],
+        "tool_result_ref": "synthetic-orchestra-result"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000003",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 3,
+      "stage": "ORIGINAL",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:03:00Z",
+      "recorded_at": "2026-11-06T00:03:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-3",
+      "data": {
+        "name": "impeccable",
+        "upstream_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "entrypoint": "scripts/impeccable",
+        "command": "impeccable concept-seed --scope test",
+        "executor": "synthetic-test-runner",
+        "exit_code": 0,
+        "stage": "concept-seed",
+        "artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        },
+        "tool_result_ref": "synthetic-impeccable-result",
+        "source_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runtime_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000004",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 4,
+      "stage": "ORIGINAL",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:04:00Z",
+      "recorded_at": "2026-11-06T00:04:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-4",
+      "data": {
+        "name": "design-taste-frontend",
+        "upstream_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "entrypoint": "scripts/draw.mjs",
+        "command": "node draw.mjs --app test",
+        "executor": "synthetic-test-runner",
+        "exit_code": 0,
+        "stage": "draw-app",
+        "artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        },
+        "tool_result_ref": "synthetic-design-taste-frontend-result",
+        "source_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runtime_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000005",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 5,
+      "stage": "ORIGINAL",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:05:00Z",
+      "recorded_at": "2026-11-06T00:05:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-5",
+      "data": {
+        "name": "ui-ux-pro-max",
+        "upstream_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "entrypoint": "scripts/search.py",
+        "command": "python search.py test --design-system",
+        "executor": "synthetic-test-runner",
+        "exit_code": 0,
+        "stage": "design-system",
+        "artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        },
+        "tool_result_ref": "synthetic-ui-ux-pro-max-result",
+        "source_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runtime_toolkit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000006",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 6,
+      "stage": "OWNER_APPROVAL",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:06:00Z",
+      "recorded_at": "2026-11-06T00:06:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-6",
+      "data": {
+        "decision": "approve",
+        "approved_sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e",
+        "message_ref": "synthetic-owner-message",
+        "approved_artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        }
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000007",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 7,
+      "stage": "REVIEWER",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:07:00Z",
+      "recorded_at": "2026-11-06T00:07:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-7",
+      "data": {
+        "mode": "NATIVE",
+        "disposition": "ship",
+        "tool_result_ref": "synthetic-review-result"
+      }
+    },
+    {
+      "event_id": "evt_00000000000000000000000000000008",
+      "task_id": "task_11111111111111111111111111111111",
+      "sequence": 8,
+      "stage": "BROWSER_VERIFICATION",
+      "status": "OBSERVED",
+      "observed_at": "2026-11-06T00:08:00Z",
+      "recorded_at": "2026-11-06T00:08:01Z",
+      "evidence_origin": "SYNTHETIC_FIXTURE",
+      "proof_ref": "synthetic-proof-8",
+      "data": {
+        "tests_passed": 3,
+        "tests_failed": 0,
+        "executor": "synthetic-browser-fixture",
+        "tool_result_ref": "synthetic-browser-result",
+        "artifact": {
+          "path": "fixtures/route_receipt_artifact.txt",
+          "sha256": "6c0d2852e6c327573e7b6fe7cb97a4e164b5a52d742880857aaf59fb93a72f3e"
+        }
+      }
+    }
+  ]
+}
