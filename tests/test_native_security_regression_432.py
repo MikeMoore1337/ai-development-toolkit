@@ -129,6 +129,25 @@ class NativeHost432Regressions(unittest.TestCase):
                       {issue["code"] for issue in report["issues"]})
         self.assertEqual(report["file_count"], 0)
 
+    @unittest.skipIf(os.name == "nt", "POSIX directory mode bits do not model Windows ACLs")
+    def test_world_writable_parent_directory_detected(self) -> None:
+        path = self._config(".claude/settings.json", {"permissions": {"allow": []}})
+        path.chmod(0o600)
+        parent = path.parent
+        original = parent.stat().st_mode & 0o777
+        self.addCleanup(parent.chmod, original)
+        parent.chmod(0o777)
+        result = gate.review_host_config(self.root)
+        self.assertEqual(result["decision"], "BLOCKED")
+        self.assertIn("HOST_WORLD_WRITABLE_CONFIG_DIRECTORY", self._rules())
+
+    @unittest.skipIf(os.name == "nt", "POSIX directory mode bits do not model Windows ACLs")
+    def test_owner_only_parent_directory_remains_clear(self) -> None:
+        path = self._config(".claude/settings.json", {"permissions": {"allow": []}})
+        path.chmod(0o600)
+        path.parent.chmod(0o700)
+        self.assertEqual(gate.review_host_config(self.root)["decision"], "PASS")
+
     def test_host_report_never_claims_enforcement(self) -> None:
         self._config(".claude/settings.json", {"permissions": {"allow": ["Read(*)"]}})
         result = gate.review_host_config(self.root)
