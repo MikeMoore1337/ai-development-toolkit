@@ -13,13 +13,17 @@ import subprocess
 import sys
 
 UPSTREAM_SHA = "7e06519357777badd7a115d2014a7ef845904310"
-PATCH_SHA256 = "26202d49f6a37fa3dabbe53a4f048398b1a0e129624e1c20d2da90166c2ba5e6"
+PATCH_SHA256 = "51c3ac5cdc06d76e5e7ff6d98aa2897ccc9b15b905fe59237f8e2419212e555d"
 ROOT = Path(__file__).resolve().parents[1]
 PATCH = ROOT / "integrations/episodic-memory/patches/0001-mcp-read-scoping-and-zero-inference-verify.patch"
 EXPECTED_FILES = {
     "src/mcp-server.ts",
     "src/verify.ts",
     "test/mcp-server.test.ts",
+    "src/index-cli.ts",
+    "src/indexer.ts",
+    "src/search.ts",
+    "test/search-exclusion.test.ts",
 }
 REQUIRED_PATTERNS = (
     "function indexedArchivePath(requested: string)",
@@ -27,6 +31,10 @@ REQUIRED_PATTERNS = (
     "SELECT 1 FROM exchanges WHERE archive_path",
     "EPISODIC_MEMORY_SKIP_SUMMARIES",
     "expect(excluded.isError).toBe(true)",
+    "shouldSkipConversation(sourcePath)",
+    "const visibleResults = results.filter",
+    "const noSummaries = getNoSummaries() ||",
+    "expect(results.map(r => r.exchange.id)).toEqual(['allowed'])",
 )
 
 
