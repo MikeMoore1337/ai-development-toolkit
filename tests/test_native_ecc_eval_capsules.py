@@ -130,5 +130,113 @@ console.log('NATIVE_CAPSULE_NEGATIVE=PASS');
             self.assertEqual(2, unknown.returncode)
 
 
+    def _security_fixture(self, root: Path, *, run_id: str = "run-safe"):
+        """Build one local capsule with the original MIT library only."""
+        script = r"""
+const fs = require('node:fs'), path = require('node:path');
+const h = require(__LIB__), root = process.argv[1], runId = process.argv[2];
+const clock = () => new Date('2026-10-28T00:00:00.000Z');
+const art = path.join(root, 'artifact.txt'), dir = path.join(root, 'capsule');
+fs.writeFileSync(art, 'synthetic artifact');
+const c = h.capsule.Capsule.create(dir, {
+  run_id: runId, capsule_id: 'cap-secure', task_family: 'offline',
+  harness_version: 'toolkit/1', clock
+});
+c.append('plan', 'recorded', {task_id: 'synthetic'});
+const receipt = h.receipt.buildReceipt(dir, {artifact_path: art, clock});
+h.receipt.writeReceipt(receipt, path.join(root, 'receipt.json'));
+""".replace("__LIB__", json.dumps(str(VENDORED / "scripts" / "lib" / "eval-harness")))
+        result = self.node("-e", script, str(root), run_id)
+        self.assertEqual(0, result.returncode, result.stderr[-900:])
+        return root / "capsule", root / "receipt.json", root / "artifact.txt"
+
+    def test_native_rejects_unsigned_recomputed_gate_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            # Valid syntax and self-consistent receipt hash cannot make an
+            # unsupported gate PASS trustworthy.
+            script = r"""
+const fs = require('node:fs'), h = require(__LIB__);
+const file = process.argv[1], value = JSON.parse(fs.readFileSync(file, 'utf8'));
+value.gate_verdict = 'PASS';
+const {receipt_hash, signature, ...unsigned} = value;
+value.receipt_hash = h.canonical.hashValue({...unsigned, signature: null});
+fs.writeFileSync(file, JSON.stringify(value) + '\n');
+""".replace("__LIB__", json.dumps(str(VENDORED / "scripts" / "lib" / "eval-harness")))
+            changed = self.node("-e", script, str(receipt))
+            self.assertEqual(0, changed.returncode, changed.stderr)
+            before = {p.name: p.read_bytes() for p in (receipt, artifact, capsule / "projection.json")}
+            result = self.node(str(TOOL), "receipt", "verify", str(receipt), str(capsule),
+                               "--artifact", str(artifact))
+            self.assertEqual(1, result.returncode)
+            self.assertIn("UNVERIFIED_ATTESTATION_DENIED", result.stderr)
+            self.assertEqual("", result.stdout)
+            self.assertEqual(before, {p.name: p.read_bytes() for p in
+                                     (receipt, artifact, capsule / "projection.json")})
+
+    def test_native_rejects_secret_in_metadata_and_receipt_without_echo(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            canary = "sk-" + "Q" * 32  # Never an actual credential.
+            capsule, receipt, artifact = self._security_fixture(root, run_id=canary)
+            self.assertIn(canary, receipt.read_text(encoding="utf-8"))
+            for args in (
+                ("capsule", "verify", str(capsule)),
+                ("capsule", "project", str(capsule)),
+                ("receipt", "build", str(capsule), "--artifact", str(artifact)),
+                ("receipt", "verify", str(receipt), str(capsule),
+                 "--artifact", str(artifact)),
+            ):
+                with self.subTest(action=args[:2]):
+                    before = (capsule / "projection.json").read_bytes()
+                    result = self.node(str(TOOL), *args)
+                    self.assertEqual(1, result.returncode)
+                    self.assertIn("SENSITIVE_EVIDENCE_DENIED", result.stderr)
+                    self.assertNotIn(canary, result.stderr + result.stdout)
+                    self.assertEqual(before, (capsule / "projection.json").read_bytes())
+
+    def test_native_rejects_unknown_receipt_fields_and_unverified_signature(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            baseline = json.loads(receipt.read_text(encoding="utf-8"))
+            cases = (
+                ({"private_email": "person@example.invalid"}, "UNSUPPORTED_RECEIPT_FIELDS"),
+                ({"signature": "unverified-signer"}, "UNVERIFIED_ATTESTATION_DENIED"),
+                ({"gate_receipt_digest": "a" * 64}, "UNVERIFIED_ATTESTATION_DENIED"),
+            )
+            for change, marker in cases:
+                with self.subTest(change=next(iter(change))):
+                    receipt.write_text(json.dumps({**baseline, **change}), encoding="utf-8")
+                    result = self.node(str(TOOL), "receipt", "verify", str(receipt),
+                                       str(capsule), "--artifact", str(artifact))
+                    self.assertEqual(1, result.returncode)
+                    self.assertIn(marker, result.stderr)
+
+    def test_native_rejects_linked_receipt_and_capsule_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            linked_receipt = root / "receipt-link.json"
+            try:
+                linked_receipt.symlink_to(receipt)
+            except (OSError, NotImplementedError):
+                self.skipTest("Host does not permit creating symbolic links")
+            rejected = self.node(str(TOOL), "receipt", "verify", str(linked_receipt),
+                                 str(capsule), "--artifact", str(artifact))
+            self.assertEqual(1, rejected.returncode)
+            self.assertIn("LINKED_EVIDENCE_DENIED", rejected.stderr)
+            # A symlinked projection must also be refused, not regenerated.
+            projection = capsule / "projection.json"
+            original = root / "original-projection.json"
+            projection.rename(original)
+            projection.symlink_to(original)
+            rejected = self.node(str(TOOL), "receipt", "verify", str(receipt),
+                                 str(capsule), "--artifact", str(artifact))
+            self.assertEqual(1, rejected.returncode)
+            self.assertIn("LINKED_EVIDENCE_DENIED", rejected.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

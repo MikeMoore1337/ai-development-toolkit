@@ -187,6 +187,27 @@ h.receipt.writeReceipt(receipt, receiptPath);
             with self.assertRaisesRegex(module.EvalInputError, "Node.js required"):
                 module.evaluate(self.data, self.root, verify_native_receipts=True)
 
+    def test_native_receipt_bridge_rejects_rehashed_unsigned_gate_pass(self):
+        """A self-hashed PASS must not be turned into a quality verdict."""
+        self._make_native_receipts()
+        receipt_path = self.root / self.data["runs"][0]["native_receipt"]["receipt"]
+        script = r"""
+const fs = require('node:fs');
+const h = require(process.argv[1]), file = process.argv[2];
+const value = JSON.parse(fs.readFileSync(file, 'utf8'));
+value.gate_verdict = 'PASS';
+const {receipt_hash, signature, ...unsigned} = value;
+value.receipt_hash = h.canonical.hashValue({...unsigned, signature: null});
+fs.writeFileSync(file, JSON.stringify(value) + '\n');
+"""
+        lib = ROOT / "third_party/ecc-v2.2.3/eval-harness/scripts/lib/eval-harness"
+        mutated = subprocess.run([shutil.which("node"), "-e", script, str(lib),
+                                  str(receipt_path)], cwd=ROOT, capture_output=True,
+                                 text=True, timeout=15, check=False)
+        self.assertEqual(0, mutated.returncode, mutated.stderr)
+        with self.assertRaisesRegex(module.EvalInputError, "integrity check failed"):
+            module.evaluate(self.data, self.root, verify_native_receipts=True)
+
     def _three_trial_fixture(self):
         """Synthetic: same pooled 6/9 acceptance but different repeatability."""
         baseline = {"a": (True, True, True), "b": (True, True, True),
