@@ -167,6 +167,45 @@ class ExternalSkillGateTests(unittest.TestCase):
                 self.assertEqual("REJECT", self._decision()["decision"])
                 self.assertIn("INVALID_MANIFEST", self._codes())
 
+    def test_ambiguous_manifest_keys_fail_closed(self):
+        # Duplicate source revision and file inventory keys must not silently
+        # accept the final value. All data is local and synthetic.
+        clean = json.loads(self.manifest.read_text(encoding="utf-8"))
+        original = json.dumps(clean)
+        self.assertEqual(self._decision()["decision"], "ALLOW_FOR_REVIEW")
+        duplicate_rev = original.replace(
+            '"source_revision": "' + ("a" * 40) + '"',
+            '"source_revision": "' + ("b" * 40) + '", '
+            '"source_revision": "' + ("a" * 40) + '"', 1,
+        )
+        duplicate_files = original.replace(
+            '"files": ' + json.dumps(clean["files"]),
+            '"files": {"SKILL.md": "' + ("0" * 64) + '"}, '
+            '"files": ' + json.dumps(clean["files"]), 1,
+        )
+        for raw in (duplicate_rev, duplicate_files):
+            with self.subTest(raw=raw[:60]):
+                self.manifest.write_text(raw, encoding="utf-8")
+                self.assertEqual(self._decision()["decision"], "REJECT")
+                self.assertIn("INVALID_MANIFEST", self._codes())
+
+    def test_ambiguous_operator_review_context_fails_closed(self):
+        context = self._review_context()
+        clean = context.read_text(encoding="utf-8")
+        ambiguous = clean.replace(
+            '"cost_class": "NO_PAID_API_CLAIMED"',
+            '"cost_class": "PAID_API", "cost_class": "NO_PAID_API_CLAIMED"',
+            1,
+        )
+        self.assertNotEqual(ambiguous, clean)
+        context.write_text(ambiguous, encoding="utf-8")
+        report = gate.review(self.candidate, self.manifest, context)
+        self.assertEqual(report["decision"], "REJECT")
+        self.assertIn("INVALID_REVIEW_CONTEXT",
+                      {item["code"] for item in report["issues"]})
+        self.assertEqual(report["adoption_dossier"]["publication_gate"],
+                         "BLOCKED_PENDING_INDEPENDENT_PROVENANCE_AND_OWNER_APPROVAL")
+
     def test_missing_or_extra_files_and_digest_mismatch_are_rejected(self):
         self._write("unexpected.txt", "untracked")
         self.assertIn("UNDECLARED_FILE", self._codes())
