@@ -936,6 +936,19 @@ class Toolkit:
                 visual_phase = 'create-design'
                 deferred = engineering + ([specific_qa] if specific_qa else [])
                 deferred = list(dict.fromkeys(x for x in deferred if x != 'ui-orchestra'))
+            elif ('docs-technical' in matches and not building and
+                  not (set(matches) - {'docs-technical', 'backend', 'frontend',
+                                       'codex-feature'}) and
+                  re.search(
+                      r'(?<!\w)(?:обнови|обновить|дополни|проверь|проверить|'
+                      r'отредактируй|напиши|составь|edit|update|review|write|draft)\s+'
+                      r'(?:\S+\s+){0,2}(?:api[- ]?)?'
+                      r'(?:документац\w*|documentation|readme|docs)(?!\w)',
+                      text,
+                  )):
+                # An API mention inside a documentation-only request is not
+                # sufficient evidence to eagerly load backend engineering.
+                chosen = 'docs-technical'
             elif building and engineering:
                 if ('fullstack' in self.profiles and
                     ('fullstack' in matches or ('backend' in matches and 'frontend' in matches))):
