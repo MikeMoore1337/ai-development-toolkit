@@ -453,6 +453,52 @@ class ToolkitMcpTests(unittest.TestCase):
                              status_hash)
             self.assertNotIn(unicode_file.name, json.dumps(observed, ensure_ascii=False))
 
+
+    def test_observer_real_stdio_mcp_roundtrip_stays_read_only(self):
+        self._init_observer_git()
+        subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "-qm", "tracked"], check=True, capture_output=True)
+        index = self.project / ".git" / "index"
+        before_index = index.read_bytes()
+        before_source = (self.project / "AGENTS.md").read_bytes()
+        requests = [
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+             "params": {"protocolVersion": "2025-11-25"}},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+             "params": {"name": "toolkit_observe_project",
+                        "arguments": {"project": str(self.project), "client": "codex"}}},
+            {"jsonrpc": "2.0", "id": 4, "method": "tools/call",
+             "params": {"name": "toolkit_observe_project",
+                        "arguments": {"project": str(self.project), "client": "unsupported"}}},
+        ]
+        payload = ("\\n".join(json.dumps(req) for req in requests) + "\\n").encode("utf-8")
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "toolkit_mcp.py"), "serve"],
+            input=payload, capture_output=True, cwd=str(ROOT),
+            timeout=20, check=True,
+        )
+        responses = [json.loads(line) for line in completed.stdout.decode("utf-8").splitlines()]
+        self.assertEqual([item["id"] for item in responses], [1, 2, 3, 4])
+        self.assertEqual(responses[0]["result"]["protocolVersion"], "2025-11-25")
+        tool = next(x for x in responses[1]["result"]["tools"]
+                    if x["name"] == "toolkit_observe_project")
+        self.assertTrue(tool["annotations"]["readOnlyHint"])
+        observed = responses[2]["result"]
+        self.assertFalse(observed.get("isError", False), observed)
+        self.assertEqual(observed["structuredContent"]["session_active"], "NOT_OBSERVED")
+        self.assertEqual(observed["structuredContent"]["L5_invocation"], "NOT_VERIFIED")
+        self.assertEqual(observed["structuredContent"]["project"]["worktree_count"], 1)
+        self.assertTrue(responses[3]["result"]["isError"])
+        self.assertNotIn(str(self.project), completed.stdout.decode("utf-8"))
+        self.assertNotIn("OWNER_PRIVATE_FIXTURE", completed.stdout.decode("utf-8"))
+        self.assertEqual(index.read_bytes(), before_index)
+        self.assertEqual((self.project / "AGENTS.md").read_bytes(), before_source)
+
     def test_observer_git_environment_cannot_spoof_sha_or_write_trace(self):
         self._init_observer_git()
         subprocess.run(["git", "-C", str(self.project), "add", "AGENTS.md"],
