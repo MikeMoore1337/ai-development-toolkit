@@ -15,6 +15,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import unicodedata
 from typing import Callable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -176,7 +177,7 @@ def scan(scope: str = "personal", *,
 # This is not a replacement for a complete YARA/schema or runtime audit.
 NATIVE_PATTERNS = (
     ("PROMPT_OVERRIDE", "HIGH", re.compile(
-        r"\bignore\s+(?:all\s+|previous\s+|prior\s+)?instructions?\b|"
+        r"\bignore\s+(?:(?:all|previous|prior)\s+){0,3}instructions?\b|"
         r"\bигнорируй\s+(?:все\s+)?(?:предыдущие\s+)?инструкции\b", re.I)),
     ("ROLE_FORGERY", "HIGH", re.compile(
         r"(?:^|[\n\r])\s*(?:system|assistant)\s*:|"
@@ -191,7 +192,10 @@ NATIVE_PATTERNS = (
         r"\b(?:output|print|display|return|reveal|show)\b.{0,80}"
         r"\b(?:system\s+prompt|previous\s+conversation|conversation\s+history)\b|"
         r"\b(?:покажи|выведи|верни|раскрой|передай)\b.{0,80}"
-        r"(?:системн(?:ый|ого)\s+промпт[а]?|истори(?:ю|я)\s+переписки)\b",
+        r"(?:системн(?:ый|ого)\s+промпт[а]?|истори(?:ю|я)\s+переписки)\b|"\
+        r"\b(?:post|send|upload|transmit|forward)\b.{0,100}"\
+        r"\b(?:chat\s+context|private\s+chat|conversation\s+(?:history|transcript)|"\
+        r"message\s+history)\b.{0,90}\b(?:to|toward|into)\s+https?://",
         re.I)),
     ("SENSITIVE_FILE_HARVEST_INSTRUCTION", "HIGH", re.compile(
         r"\b(?:always|must|first|before)\b.{0,100}"
@@ -203,11 +207,17 @@ NATIVE_PATTERNS = (
     ("EXTERNAL_COLLECTION_ENDPOINT", "MEDIUM", re.compile(
         r"\b(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\b",
         re.I)),
+    ("OPAQUE_ENCODED_INSTRUCTION", "MEDIUM", re.compile(
+        r"\b(?:decode|декодируй|расшифруй)\s+[A-Za-z0-9+/=]{24,512}\s+"
+        r"(?:and\s+)?(?:follow|obey|execute|выполни)\b", re.I)),
     ("POLICY_OVERRIDE", "HIGH", re.compile(
         r"\b(?:discard|bypass|disable|override)\s+(?:all\s+)?"
         r"(?:prior\s+|previous\s+)?(?:safety\s+)?(?:policies|rules|restrictions)\b|"
         r"\b(?:отмени|обойди|отключи)\s+(?:все\s+)?"
-        r"(?:правила|политики|ограничения)\s+безопасности\b", re.I)),
+        r"(?:правила|политики|ограничения)\s+безопасности\b|"
+        r"\b(?:change|modify|rewrite|replace)\s+(?:the\s+)?(?:safety|security)\s+"
+        r"(?:policy|rules|restrictions)\s+to\s+(?:permit|allow|enable)\s+unrestricted\b",
+        re.I)),
 )
 
 # Only an entire recognized *defensive* explanation may suppress a match.
@@ -219,7 +229,40 @@ NATIVE_DEFENSIVE = (
     re.compile(r"\s*do not send (?:a\s+)?password or token\.?(?:\s*)\Z", re.I),
     re.compile(r"\s*avoid (?:using\s+)?(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)"
                r" in (?:actual\s+)?production code\.?(?:\s*)\Z", re.I),
+    # Entire defensive explanation, with no trailing instruction clauses.
+    re.compile(r"\s*the\s+(?:phrase|text|string)\s+ignore\s+"
+               r"(?:(?:all|previous|prior)\s+){1,2}instructions\s+is\s+"
+               r"(?:a\s+)?(?:known\s+)?(?:attack|prompt\s+injection|malicious\s+phrase);\s*"
+               r"(?:report|treat|classify)\s+it\s+as\s+untrusted\s+input\.?\s*\Z", re.I),
+    re.compile(r"\s*(?:the\s+)?(?:host|domain|endpoint)\s+"
+               r"(?:webhook\.site|ngrok\.(?:io|app)|requestbin\.com)\s+"
+               r"must\s+never\s+be\s+used\s+for\s+(?:production|live)\s+"
+               r"(?:events|data|traffic|requests)\.?\s*\Z", re.I),
 )
+
+
+# Replace confusable glyphs only inside mixed Latin/Cyrillic or Latin/Greek
+# tokens. Never transliterate ordinary Russian text or execute encoded strings.
+NATIVE_CONFUSABLES = str.maketrans({
+    "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "х": "x",
+    "у": "y", "і": "i", "ο": "o", "α": "a", "ρ": "p", "ε": "e",
+})
+NATIVE_MIXED_TOKEN = re.compile(r"[A-Za-z\u0370-\u03ff\u0400-\u04ff]+")
+
+
+def _native_static_normalization(value: str) -> str:
+    """Bounded textual normalization; not a security guarantee."""
+    canonical = unicodedata.normalize("NFKC", value)
+
+    def normalize_token(match: re.Match[str]) -> str:
+        token = match.group()
+        if not any(ch.isascii() and ch.isalpha() for ch in token):
+            return token
+        if not any(ord(ch) in NATIVE_CONFUSABLES for ch in token):
+            return token
+        return token.translate(NATIVE_CONFUSABLES)
+
+    return NATIVE_MIXED_TOKEN.sub(normalize_token, canonical)
 
 
 def _native_defensive_only(description: str) -> bool:
@@ -286,9 +329,12 @@ def scan_native_descriptions(scope: str = "personal", *, data: dict | None = Non
             texts = _native_desc_fields(item)
             if not texts:
                 raise ValueError("No inspected description")
+            normalized = [(message, _native_static_normalization(message))
+                          for message in texts]
             for label, severity, pattern in NATIVE_PATTERNS:
-                if any(pattern.search(message) and not _native_defensive_only(message)
-                       for message in texts):
+                if any((pattern.search(message) or pattern.search(canonical))
+                       and not _native_defensive_only(message)
+                       for message, canonical in normalized):
                     findings.append({"tool": name, "rule": label, "severity": severity})
         status = ("BLOCKED" if any(f["severity"] == "HIGH" for f in findings) else
                   "REVIEW_REQUIRED" if findings else "PASS")

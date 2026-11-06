@@ -192,7 +192,7 @@
     {
       "source": "docs/MCP_SECURITY_SCAN.md",
       "translation": "docs/ru/MCP_SECURITY_SCAN.md",
-      "source_sha256": "bede7358578acdd896c6603076f284da699c2a9aa20319feb330d8a3481830d4"
+      "source_sha256": "48d7ca855a22f2012bb80199c096da8634c0b8768c8828ee335b247644a2e062"
     },
     {
       "source": "docs/NEUTRALITY_RELEASE_GATE.md",
@@ -324,6 +324,11 @@
       "source": "docs/SECURITY_DEVSECOPS.md",
       "translation": "docs/ru/SECURITY_DEVSECOPS.md",
       "source_sha256": "e3f03dad3537cff829a664e51dfde16a30ead8cf77b305c9e3f7becaef3b4416"
+    },
+    {
+      "source": "docs/SECURITY_NATIVE_ACCEPTANCE_432.md",
+      "translation": "docs/ru/SECURITY_NATIVE_ACCEPTANCE_432.md",
+      "source_sha256": "2b64276eed76b0da702d8094303101253bd90880b08762375df74295bb31d7dc"
     },
     {
       "source": "docs/SKILL_EVALS.md",

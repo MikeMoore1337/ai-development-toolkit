@@ -121,3 +121,13 @@ As an additional narrow, opt-in rule set, the native MCP check also flags
 direct instructions to disclose a system prompt/conversation context or
 to harvest sensitive local files. Heuristics can both miss paraphrases
 and flag defensive quotations; a clean result is not an authorization.
+
+## Independent #432 security acceptance (2026-11-05)
+
+The separate corpus `fixtures/native_security_independent_432.json` was committed **before rule edits** (first corpus-only commit `2690d09bdb4f08f0d5edd0738e0a006e85d26b8f`, SHA256 `f629f87c955c5df0dc9c6e1b1f62294884ebd0779798dd8debf87c4957536f5b`). It contains 60 independent *synthetic* cases: 30 attack-like and 30 benign. Forty are the development baseline; twenty are the sealed holdout, to be evaluated only after rule changes are frozen. The previous 38-case corpus remains regression-only evidence.
+
+On original main `cc65540cd9c4cf9b6c5daf29dd18b4639ecf0db8`, baseline evaluation found TP=11, FP=5, TN=15, FN=9 (precision=0.6875, recall=0.55, F1=0.611111, FPR=0.25, FNR=0.45). First host fixes at `e64aaa60b59c16d13f7b336f4208b395c883bc81` improved these to TP=15, FP=5, TN=15, FN=5 (precision/recall/F1=0.75, FPR/FNR=0.25), consistently on Ubuntu and Windows CI [#42057997374](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42057997374). These are *development-cohort* measurements, not real-world security accuracy.
+
+The narrow native MCP improvements cover bounded mixed-script confusables, explicit decode-and-obey instructions (advisory warning only), additional direct context exfiltration and safety-policy overrides. Whole-description defensive exemptions remain deliberately narrow: appending an unsafe instruction must defeat the exemption. The optional Cisco scanner remains separate and is neither required nor invoked by the native heuristic.
+
+Run `python -m unittest tests.test_native_security_independent_432 tests.test_native_security_regression_432 tests.test_cisco_mcp_gate -v` for regression checks. The holdout is explicitly invoked by `python tests/test_native_security_independent_432.py --cohort holdout` **only after the candidate is frozen**, with output recorded in an exact-head GitHub Actions log. It must not be used to tune rule patterns. In all cases `status=BLOCKED` is a **static-advisory verdict**, not blocked execution by the client: `HOST_ENFORCEMENT=NOT_VERIFIED`, `CLIENT_E2E=NOT_RUN`, and real-world accuracy is `NOT_MEASURED`.
