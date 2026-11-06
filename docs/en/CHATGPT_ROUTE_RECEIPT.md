@@ -6,7 +6,7 @@ An **explicit, one-shot, opt-in** evidence check inside the existing Toolkit Tas
 
 The contract describes the ordered sequence: real `USER_PREFERENCES.json` tool read (`design_originals=ALL_THREE`) -> actual `ux-ui-design-orchestra` source loads in `create-design` -> three distinct native original invocations -> explicit owner approval of an identified artifact -> Impeccable finish review (`ship`, or documented `INLINE_DEGRADED`) -> independent browser checks. Each original has its own pinned upstream SHA, original entrypoint, actual command, executor, exit code, main stage and SHA256-verified local artifact. Help/context/setup alone do not count as the main native process.
 
-Toolkit repository SHA, private plugin backend version and confirmed active mount version are **separate** claims with sources. An unexposed active package version is `NOT_VERIFIED`.
+Toolkit repository SHA, private plugin backend version and confirmed active mount version are **separate** claims with sources. An unexposed active package version is `NOT_VERIFIED`. Any self-reported active mount version supplied in LIVE JSON is rejected until authenticated host mount metadata is available.
 
 ## Repeatable offline check
 

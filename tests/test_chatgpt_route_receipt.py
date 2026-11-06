@@ -264,6 +264,19 @@ class RouteReceiptTests(unittest.TestCase):
             self.assertEqual("RECEIPT_REJECTED", proc.stderr.strip())
             self.assertNotIn("schema_version", proc.stdout)
 
+    def test_32_self_reported_active_mount_version_never_promoted(self):
+        d = copy.deepcopy(self.good)
+        d["run_kind"] = "LIVE"
+        d["versions"]["active_mount"] = {"version": "9.9.9", "source": "self_reported"}
+        for event in d["events"]:
+            event["evidence_origin"] = ("OWNER_MESSAGE" if event["stage"] == "OWNER_APPROVAL"
+                                        else "HOST_TOOL_RESULT")
+        result = verifier.validate(d, ROOT)
+        self.assertEqual("FAIL", result["evidence_sequence"])
+        self.assertEqual("NOT_VERIFIED", result["active_mount_version"])
+        self.assertIn("ACTIVE_MOUNT_CLAIM_UNATTESTED", result["errors"])
+        self.assertEqual("BLOCKED_HOST_TRACE_API", result["client_attestation"])
+
     def test_28_entire_native_scope_exclusion_never_counts_all_three(self):
         d = copy.deepcopy(self.good)
         event = d["events"][2]

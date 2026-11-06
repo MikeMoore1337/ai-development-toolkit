@@ -262,6 +262,10 @@ def validate(receipt: object, artifact_root: Path) -> dict:
     if not isinstance(events, list) or len(events) > 20:
         raise ReceiptRejected("INVALID_EVENT_COUNT")
     errors: list[str] = ["TOOLKIT_SOURCE_NOT_VERIFIED"] if versions["toolkit"]["sha"] == "NOT_VERIFIED" else []
+    # The current offline validator has no authenticated live host mount metadata.
+    # A version supplied in a JSON file cannot establish an actual mounted package.
+    if run_kind == "LIVE" and versions["active_mount"]["version"] != "NOT_VERIFIED":
+        errors.append("ACTIVE_MOUNT_CLAIM_UNATTESTED")
     seen_events: set[str] = set()
     seen_proofs: set[str] = set()
     observed_before = recorded_before = None
@@ -309,7 +313,8 @@ def validate(receipt: object, artifact_root: Path) -> dict:
     return {"evidence_sequence": "FAIL" if errors else "PASS",
             "client_attestation": client_attestation,
             "live_client_trace": "NOT_VERIFIED" if run_kind == "SYNTHETIC" else "BLOCKED_HOST_TRACE_API",
-            "active_mount_version": versions["active_mount"]["version"],
+            "active_mount_version": ("NOT_VERIFIED" if run_kind == "LIVE"
+                                     else versions["active_mount"]["version"]),
             "reviewer_status": reviewer_status,
             "errors": list(dict.fromkeys(errors)),
             "scope": "OFFLINE_ASSERTIONS_AND_LOCAL_ARTIFACT_HASHES_ONLY",
