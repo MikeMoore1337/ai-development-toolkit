@@ -42,3 +42,7 @@ All metrics measure **static advisory detection** of predetermined strings/confi
 - `INDEPENDENT_SECOND_PERSON_REVIEW=NOT_OBTAINED`
 
 **No full PASS, merge or release follows from these findings.** To close #432 with full product acceptance requires owner-authorized host E2E demonstrating pre-execution denial, independent external review and separate approval for merge/release. Do not change these statuses merely because CI is green.
+
+## Later targeted hardening, not a second independent measurement (2026-11-06)
+
+After the previously sealed 20-case holdout was opened, a separate code-review pass identified ambiguous duplicate-key parsing in candidate/operator JSON and a missing POSIX world-writable parent-directory review signal. Both are addressed within the existing `external_skill_gate.py` and covered by dedicated positive/negative regressions. The original frozen-corpus metrics above refer to the code and commit stated there. Any repeated run of that already-opened holdout is **regression only**, not fresh blind evaluation of the current commit. Neither fix verifies actual client enforcement or proves a GitHub source claim.
