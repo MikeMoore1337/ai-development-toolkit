@@ -414,7 +414,6 @@ class ToolkitMcpTests(unittest.TestCase):
         self.assertFalse((nested / ".adt").exists())
 
 
-
     def test_observer_detached_head_is_observed_without_session_claims(self):
         self._init_observer_git()
         subprocess.run(["git", "-C", str(self.project), "checkout", "--detach", "-q"],
