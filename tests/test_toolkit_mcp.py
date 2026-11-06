@@ -422,9 +422,36 @@ class ToolkitMcpTests(unittest.TestCase):
                                 project=str(self.project), client="codex")
         self.assertFalse(response["result"].get("isError", False), response)
         data = response["result"]["structuredContent"]
-        self.assertEqual(data["project"]["branch"], "HEAD")
+        self.assertEqual(data["project"]["branch"], "DETACHED")
         self.assertEqual(data["session_active"], "NOT_OBSERVED")
         self.assertEqual(data["L5_invocation"], "NOT_VERIFIED")
+
+
+    def test_observer_unicode_hash_not_affected_by_core_quotepath(self):
+        self._init_observer_git()
+        unicode_file = self.project / "проверка.txt"
+        unicode_file.write_text("original\\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.project), "add", unicode_file.name],
+                       check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(self.project),
+                        "-c", "user.name=ObserverFixture",
+                        "-c", "user.email=observer@example.invalid",
+                        "commit", "-qm", "unicode"], check=True, capture_output=True)
+        unicode_file.write_text("changed\\n", encoding="utf-8")
+        baseline = self._invoke("toolkit_observe_project",
+                                project=str(self.project), client="codex")
+        self.assertFalse(baseline["result"].get("isError", False), baseline)
+        status_hash = baseline["result"]["structuredContent"]["project"]["tracked_status_sha256"]
+        for quote_path in ("false", "true"):
+            subprocess.run(["git", "-C", str(self.project),
+                            "config", "--local", "core.quotePath", quote_path],
+                           check=True, capture_output=True)
+            observed = self._invoke("toolkit_observe_project",
+                                    project=str(self.project), client="codex")
+            self.assertFalse(observed["result"].get("isError", False), observed)
+            self.assertEqual(observed["result"]["structuredContent"]["project"]["tracked_status_sha256"],
+                             status_hash)
+            self.assertNotIn(unicode_file.name, json.dumps(observed, ensure_ascii=False))
 
     def test_observer_git_environment_cannot_spoof_sha_or_write_trace(self):
         self._init_observer_git()
@@ -455,6 +482,9 @@ class ToolkitMcpTests(unittest.TestCase):
             "GIT_WORK_TREE": str(self.project),
             "GIT_INDEX_FILE": str(alternate_index),
             "GIT_TRACE": str(trace),
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.fsmonitor",
+            "GIT_CONFIG_VALUE_0": "true",
             "GIT_OPTIONAL_LOCKS": "1",
         }):
             response = self._invoke("toolkit_observe_project",
