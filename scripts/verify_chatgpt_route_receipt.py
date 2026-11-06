@@ -7,7 +7,7 @@ No chat export API, network requests, telemetry, hooks or background process.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
@@ -293,6 +293,8 @@ def validate(receipt: object, artifact_root: Path) -> dict:
         observed, recorded = _timestamp(event["observed_at"]), _timestamp(event["recorded_at"])
         if not observed or not recorded or observed > recorded:
             errors.append("INVALID_EVENT_TIMES")
+        elif recorded - observed > timedelta(minutes=5):
+            errors.append("DELAYED_OR_BACKDATED_CAPTURE")
         if observed_before and observed and observed <= observed_before:
             errors.append("BACKDATED_OR_REORDERED_EVENT")
         if recorded_before and recorded and recorded <= recorded_before:

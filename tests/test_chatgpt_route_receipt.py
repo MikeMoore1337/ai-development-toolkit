@@ -277,6 +277,14 @@ class RouteReceiptTests(unittest.TestCase):
         self.assertIn("ACTIVE_MOUNT_CLAIM_UNATTESTED", result["errors"])
         self.assertEqual("BLOCKED_HOST_TRACE_API", result["client_attestation"])
 
+    def test_33_delayed_capture_or_backdated_first_event_rejected(self):
+        d = copy.deepcopy(self.good)
+        d["events"][0]["observed_at"] = "2026-11-05T00:00:00Z"
+        result = verifier.validate(d, ROOT)
+        self.assertEqual("FAIL", result["evidence_sequence"])
+        self.assertIn("DELAYED_OR_BACKDATED_CAPTURE", result["errors"])
+        self.assertEqual("SYNTHETIC_ONLY", result["client_attestation"])
+
     def test_28_entire_native_scope_exclusion_never_counts_all_three(self):
         d = copy.deepcopy(self.good)
         event = d["events"][2]

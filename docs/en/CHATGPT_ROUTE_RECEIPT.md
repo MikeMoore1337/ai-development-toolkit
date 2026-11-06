@@ -21,7 +21,7 @@ python -m unittest discover -s tests -p test_chatgpt_route_receipt.py -v
 
 `--new` prints an anonymous template only; it does **not** generate a host event. Validation reads only an explicitly supplied JSON and relative local artifacts; it does not write files. A structural `evidence_sequence=PASS` proves only a consistent *claim set* and matching local artifact hashes, **not** real client invocation. Synthetic input always yields `client_attestation=SYNTHETIC_ONLY`. Live input cannot be attested by a self-reported JSON, so the status remains `BLOCKED_HOST_TRACE_API` until a genuine authenticated host-export/trace verification interface exists. Implementing that capability requires separate design and authorization. Host tool-call availability cannot be inferred from prose or an installed source file.
 
-The fixture's SHA values, timestamps and commands are explicitly fictional. Time-order checks catch recorded duplicates and obviously backdated events, but timestamps in a mutable file are not a trusted clock. Absence of authenticated host events is an **unresolved platform limitation**. A documented upstream scope exclusion may be recorded but never promoted to evidence of an invocation.
+The fixture's SHA values, timestamps and commands are explicitly fictional. Time-order checks catch recorded duplicates, capture delays over five minutes and obviously backdated events, but timestamps in a mutable file are not a trusted clock. Absence of authenticated host events is an **unresolved platform limitation**. A documented upstream scope exclusion may be recorded but never promoted to evidence of an invocation.
 
 ## Independent ordinary ChatGPT scenario
 
