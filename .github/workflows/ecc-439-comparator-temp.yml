@@ -41,17 +41,20 @@ jobs:
           console.log('ECC_PIN_AND_LICENSE=PASS');
           console.log('ECC_NODE_VERSION=' + process.version);
           NODE
-      - name: Install pinned NPM runtime dependencies only (no lifecycle scripts)
+      - name: Install pinned NPM runtime dependencies in runner temp only (no lifecycle scripts)
         shell: bash
         run: |
           set -euo pipefail
-          npm ci --prefix upstream --omit=dev --ignore-scripts --no-audit --no-fund
+          mkdir -p "$RUNNER_TEMP/ecc439deps"
+          cp upstream/package.json upstream/package-lock.json "$RUNNER_TEMP/ecc439deps/"
+          npm ci --prefix "$RUNNER_TEMP/ecc439deps" --omit=dev --ignore-scripts --no-audit --no-fund
       - name: Snapshot tracked source after dependency installation
         shell: bash
         run: |
           git -C upstream status --porcelain --untracked-files=no > "$RUNNER_TEMP/ecc439-before-cli-status.txt"
           echo 'ECC_PRE_CLI_TRACKED_CHANGES:'
           cat "$RUNNER_TEMP/ecc439-before-cli-status.txt"
+          test ! -s "$RUNNER_TEMP/ecc439-before-cli-status.txt"
       - name: Run original show/preview/explain on synthetic selectors without activation
         shell: bash
         env:
@@ -60,6 +63,7 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/ecc439home"
           export HOME="$RUNNER_TEMP/ecc439home"
+          export NODE_PATH="$RUNNER_TEMP/ecc439deps/node_modules"
           cd upstream
           node scripts/profile.js show lean@1 --json > "$RUNNER_TEMP/lean-show.json"
           node scripts/profile.js show full@1 --json > "$RUNNER_TEMP/full-show.json"
@@ -114,7 +118,7 @@ jobs:
           git status --porcelain --untracked-files=no > "$RUNNER_TEMP/ecc439-after-cli-status.txt"
           echo 'ECC_POST_CLI_TRACKED_CHANGES:'
           cat "$RUNNER_TEMP/ecc439-after-cli-status.txt"
-          if cmp -s "$RUNNER_TEMP/ecc439-before-cli-status.txt" "$RUNNER_TEMP/ecc439-after-cli-status.txt"; then
+          if test ! -s "$RUNNER_TEMP/ecc439-after-cli-status.txt" && cmp -s "$RUNNER_TEMP/ecc439-before-cli-status.txt" "$RUNNER_TEMP/ecc439-after-cli-status.txt"; then
             echo 'ECC_READONLY_NO_ADDITIONAL_TRACKED_CHANGES=PASS'
           else
             echo 'ECC_READONLY_NO_ADDITIONAL_TRACKED_CHANGES=FAIL'
