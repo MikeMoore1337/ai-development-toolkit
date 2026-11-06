@@ -221,6 +221,19 @@ class RouteReceiptTests(unittest.TestCase):
                              stage="native-inspection", artifact=None)
         self.assertTrue(self.check(d))
 
+    def test_29_raw_fixture_digest_has_cross_platform_checkout_policy(self):
+        attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+        self.assertIn("fixtures/route_receipt_artifact.txt -text", attributes.splitlines())
+        digest = self.good["events"][2]["data"]["artifact"]["sha256"]
+        self.assertEqual(digest, hashlib.sha256(ARTIFACT.read_bytes()).hexdigest())
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            fixture = root / "fixtures" / "route_receipt_artifact.txt"
+            fixture.parent.mkdir(parents=True)
+            fixture.write_bytes(ARTIFACT.read_bytes().replace(b"\n", b"\r\n"))
+            changed = verifier.validate(self.good, root)
+            self.assertIn("ARTIFACT_SHA256_MISMATCH", changed["errors"])
+
     def test_28_entire_native_scope_exclusion_never_counts_all_three(self):
         d = copy.deepcopy(self.good)
         event = d["events"][2]
