@@ -36,3 +36,20 @@ An additional integration regression executes the preview for **every profile in
 The existing offline acceptance suite `tests/test_profile_context_audit.py` now covers Python fixes, pytest, FastAPI endpoints, React fixes, MCP security, UX/UI design, API documentation, and fullstack tasks. It verifies selected profiles and mandatory skills, stable de-duplication and deterministic routing, the complete selected instruction source bytes versus the first three returned skills, as well as 8000-byte and deliberately insufficient 1-byte metadata budgets. The source preview does not apply or prune any skills. API documentation-only requests must not accidentally load the backend implementation profile solely because they mention API; implementation requests that also mention documentation must still route to backend.
 
 Reproduce without a native client: `python -m unittest discover -s tests -p test_profile_context_audit.py -v`. The log marker `NATIVE_CONTEXT_439_SOURCE_BYTES` is **UTF-8 source bytes, not model tokens**. Real hosted context costs, Codex quota reductions and task-quality effects remain `NOT_MEASURED`; the test must not be reported as proof of client activation. This suite uses the native Toolkit router and does not require ECC.
+
+## Pinned original ECC read-only comparator (independent CI, 2026-11-06)
+
+An isolated, temporary GitHub Actions job actually executed the **original** `scripts/profile.js` from `affaan-m/ECC@25278e7d7b6cf6e6a4e7a6c8e10f14ff22f0eb5b` (MIT, Node.js). NPM runtime dependencies were installed **only under the disposable runner temp directory**, with `--ignore-scripts --omit=dev --no-audit --no-fund`; no ECC installation in Toolkit or any user's client. The job invoked `show lean@1`, `show full@1`, `preview lean@1 --target codex --selection auto`, `preview full@1 --target codex --selection manual` and `explain skill:context-budget`; attempted exclusion of required `skill:configure-ecc` failed closed.
+
+| Original ECC result | `lean@1` | `full@1` |
+| --- | ---: | ---: |
+| Selected ECC skills | 3 | 311 |
+| Rendered discovery metadata, UTF-8 bytes | 1,219 | 121,264 |
+| ECC's estimated tokens (`ceil(bytes per item / 4)`) | 306 | 30,433 |
+| Budget | 8,000 *estimated* tokens, blocking | 8,000 *estimated* tokens, report-only |
+| Native model tokens | NOT_MEASURED | NOT_MEASURED |
+| Client activation | NOT_OBSERVED | NOT_OBSERVED |
+
+Evidence: [exact pinned read-only ECC comparator run #42239055664](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42239055664), **SUCCESS**. Source status was clean both before and after all CLI calls. Its original commands neither modified tracked ECC source nor performed client activation. The temporary CI workflow was removed after this one-off comparison.
+
+**Do not directly compare** ECC's generated *JSON discovery metadata* bytes with Toolkit's *YAML frontmatter* bytes: their catalogs, serialization and skills are different. Neither number measures native host context or actual model tokens. No new runtime, router, installer, hooks or providers were added to Toolkit.
