@@ -1,4 +1,5 @@
 * text=auto
+.gitattributes text eol=lf
 *.md text eol=lf
 *.py text eol=lf
 *.yml text eol=lf
@@ -7,3 +8,6 @@
 integrations/harness2/*.sh text eol=lf
 # Raw SHA256 of the synthetic receipt artifact must be checkout-platform invariant.
 fixtures/route_receipt_artifact.txt -text
+# Preserve all bundled native ECC MIT notices byte-exact on Windows.
+optional-original-skills/*/LICENSE text eol=lf
+third_party/ecc-v2.2.3/LICENSE text eol=lf
