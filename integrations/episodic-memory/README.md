@@ -34,6 +34,10 @@ The same patch now checks the exclusion marker before manually copying/indexing,
 and suppresses excluded or unreadable archive paths on both text and vector result
 paths. Search now canonicalizes the archive root and target file with realpath,
 rejecting Windows junctions and Unix symlinks that escape the archive.
+Additional canonical-path checks reject junction aliases inside the archive,
+which could otherwise bypass source-side privacy markers. Optional summaries
+are read only from regular, archive-contained files: symlinks, junctions,
+out-of-archive paths and unreadable summaries are ignored.
 MCP reads and searches also check the original synthetic source, because
 a source can gain an opt-out marker while the older archive remains unmarked. The `index` CLI also honors `EPISODIC_MEMORY_SKIP_SUMMARIES=1`,
 in addition to explicit `--no-summaries`. It does not replace the original
@@ -89,7 +93,7 @@ Use a **throwaway copy** of the original source, never the user's live Codex fol
 python3 scripts/check_episodic_memory_patch.py --upstream-dir /absolute/disposable/episodic-memory
 ```
 
-The verifier checks the upstream SHA and patch digest `a29f66b6e74402a0240201b9e7675559a6e23fde6bc208fae6f45237c713bbc5`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
+The verifier checks the upstream SHA and patch digest `10fbd96ab6c8dca370138a87844e9c8abd38abb6d14b485fd6bb45437b66f514`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
 
 ```sh
 git rev-parse HEAD
