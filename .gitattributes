@@ -8,6 +8,6 @@
 integrations/harness2/*.sh text eol=lf
 # Raw SHA256 of the synthetic receipt artifact must be checkout-platform invariant.
 fixtures/route_receipt_artifact.txt -text
-# Preserve the exact pinned MIT license bytes on Windows (no CRLF checkout).
-optional-original-skills/windows-desktop-e2e/LICENSE text eol=lf
+# Preserve all bundled native ECC MIT notices byte-exact on Windows.
+optional-original-skills/*/LICENSE text eol=lf
 third_party/ecc-v2.2.3/LICENSE text eol=lf

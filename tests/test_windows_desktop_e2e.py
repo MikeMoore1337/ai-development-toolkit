@@ -47,16 +47,18 @@ class NativeWindowsE2ETests(unittest.TestCase):
         )
 
     def test_pinned_mit_license_has_stable_raw_bytes_on_windows(self):
-        # Unlike .md, the extensionless LICENSE would otherwise become CRLF on Windows.
+        # Windows core.autocrlf=true must not turn bundled MIT notices into CRLF.
         attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
         self.assertIn(".gitattributes text eol=lf", attributes)
+        self.assertIn("optional-original-skills/*/LICENSE text eol=lf", attributes)
+        self.assertIn("third_party/ecc-v2.2.3/LICENSE text eol=lf", attributes)
         upstream_sha256 = "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
-        for path in (
-            "optional-original-skills/windows-desktop-e2e/LICENSE",
-            "third_party/ecc-v2.2.3/LICENSE",
-        ):
+        manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        native_skills = manifest["extension_packs"]["native-ecc-ports"]["skills"]
+        paths = ["third_party/ecc-v2.2.3/LICENSE"]
+        paths += [f"optional-original-skills/{name}/LICENSE" for name in native_skills]
+        for path in paths:
             with self.subTest(path=path):
-                self.assertIn(f"{path} text eol=lf", attributes)
                 data = (ROOT / path).read_bytes()
                 self.assertNotIn(b"\r", data)
                 self.assertEqual(upstream_sha256, hashlib.sha256(data).hexdigest())
