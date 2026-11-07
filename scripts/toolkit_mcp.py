@@ -292,7 +292,12 @@ def _project(value: object) -> Path:
     path = Path(value).expanduser()
     if not path.is_absolute() or not path.is_dir():
         raise ValueError("Project must be an existing absolute directory")
-    _ensure_no_symlink_chain(path)
+    try:
+        _ensure_no_symlink_chain(path)
+    except ValueError:
+        # The shared installer includes the rejected absolute path in its
+        # error; MCP responses must not reveal local project paths.
+        raise ValueError("Linked project directory is not permitted") from None
     return path
 
 
@@ -448,14 +453,19 @@ def _observe_project(repo: Path, client: object) -> dict:
         raise ValueError("Unsupported observer client")
     module = _handoff_module()
     try:
+        # A linked .git directory can redirect Git to another repository while
+        # rev-parse --show-toplevel still reports the requested project.
+        _ensure_no_symlink_chain(repo / ".git")
         actual_root = Path(module._git(repo, "rev-parse", "--show-toplevel")).resolve()
         if actual_root != repo.resolve():
             raise ValueError("Observer requires explicit repository root")
         state = module.state(repo)
         worktrees = module._git(repo, "worktree", "list", "--porcelain")
-        count = sum(line.startswith("worktree ") for line in worktrees.splitlines())
-        if not 1 <= count <= 128:
-            raise ValueError("Unrecognized worktree count")
+        declared_roots = [Path(line[9:]).resolve() for line in worktrees.splitlines()
+                          if line.startswith("worktree ")]
+        count = len(declared_roots)
+        if not 1 <= count <= 128 or repo.resolve() not in declared_roots:
+            raise ValueError("Unrecognized worktree root or count")
     except (OSError, ValueError, subprocess.CalledProcessError,
             subprocess.TimeoutExpired):
         raise ValueError("Local Git metadata unavailable or unsafe") from None
