@@ -49,6 +49,7 @@ class NativeWindowsE2ETests(unittest.TestCase):
     def test_pinned_mit_license_has_stable_raw_bytes_on_windows(self):
         # Unlike .md, the extensionless LICENSE would otherwise become CRLF on Windows.
         attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
+        self.assertIn(".gitattributes text eol=lf", attributes)
         upstream_sha256 = "326146379f01bb137c0a5d3c54770c1aa31076705c8b88a7f6b26a460f6221b2"
         for path in (
             "optional-original-skills/windows-desktop-e2e/LICENSE",
