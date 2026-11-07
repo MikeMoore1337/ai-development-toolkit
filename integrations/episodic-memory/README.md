@@ -20,7 +20,66 @@ The minimal patch:
 4. Makes `index --verify` treat deliberately absent AI summaries as normal when `EPISODIC_MEMORY_SKIP_SUMMARIES=1`; `--repair` also respects this flag.
 5. Adds positive and negative upstream MCP regression tests.
 
+## Additional manual-index and retrieval privacy checks (Issue #338)
+
+An independent review found two additional upstream 1.6.0 paths that bypass
+the direct MCP `read` guard:
+
+- Manual `index` / `--cleanup` / `--session` scanned sessions carrying
+  `DO NOT INDEX THIS CHAT` without the sync-specific marker gate.
+- `search` could return a previously indexed transcript after it was marked
+  private. Archived content is now rechecked when building search results.
+
+The same patch now checks the exclusion marker before manually copying/indexing,
+and suppresses excluded or unreadable archive paths on both text and vector result
+paths. Search now canonicalizes the archive root and target file with realpath,
+rejecting Windows junctions and Unix symlinks that escape the archive.
+MCP reads and searches also check the original synthetic source, because
+a source can gain an opt-out marker while the older archive remains unmarked. The `index` CLI also honors `EPISODIC_MEMORY_SKIP_SUMMARIES=1`,
+in addition to explicit `--no-summaries`. It does not replace the original
+embedding model, index, parser, SQLite layer or search algorithm.
+
+Regression tests use only synthetic transcripts and mock embeddings for the
+privacy cases. They do not invoke summarization or paid APIs. A passing mocked
+test must not be described as native vector retrieval. Allowed search results
+still contain snippets and local archive paths; use an isolated profile.
+
+**Manual index safeguard:** always pass `--no-summaries` as an additional
+defense when indexing test data. `EPISODIC_MEMORY_DISABLE_AUTO_SYNC=1`
+disables background hook sync only; it does not prevent deliberate manual
+`sync` or `index`. To enforce synthetic-only source isolation, set
+`TEST_PROJECTS_DIR` to one dedicated fixture directory and
+`TEST_ARCHIVE_DIR` to its disposable archive, in addition to
+`EPISODIC_MEMORY_CONFIG_DIR`, `TEST_DB_PATH` and temporary harness homes.
+No global installation, default user directories or actual Codex sessions
+are required for this source test.
+
+For removal, delete **only the dedicated disposable synthetic profile** after
+verifying the canonical vault and user profiles are outside that directory.
+Do not use `index --rebuild` to remove data from a real profile: it deletes
+and regenerates the database, not the archive. A clean reinstall should work
+from the pinned upstream plus this integrity-checked patch. Native client
+activation and rollback evidence are still required to close Issue #338.
+
+
 **Important limitation:** indexed transcripts can still contain sensitive text. No raw personal sessions, private vault, or automatic session scan is authorized. A read-only MCP command is not by itself an OS or data-isolation boundary.
+
+### Git for Windows / CRLF
+
+Some Windows Git configurations (`core.autocrlf=true`) check out `*.patch` files with CRLF endings.
+The pinned checker now validates the original LF-normalized patch bytes through
+`git apply --check -` (stdin), so a standard Windows checkout does not produce
+a false failure. The original patch and upstream source SHA are unchanged.
+
+When **actually applying** the patch to a reviewed disposable upstream checkout
+on Windows, pass normalized bytes through Git stdin rather than using the
+CRLF file directly. Example for PowerShell (use `python3` on Linux):
+
+```powershell
+python -c "import pathlib,subprocess,sys; p=pathlib.Path(sys.argv[1]); subprocess.run(['git','-C',sys.argv[2],'apply','-'],input=p.read_bytes().replace(b'\r\n',b'\n'),check=True)" ".\integrations\episodic-memory\patches\0001-mcp-read-scoping-and-zero-inference-verify.patch" "C:\TEMP\isolated-episodic-upstream"
+```
+
+Do not run this command inside a user-installed client or real session directory.
 
 ## Reproduction and safety rules
 
@@ -30,7 +89,7 @@ Use a **throwaway copy** of the original source, never the user's live Codex fol
 python3 scripts/check_episodic_memory_patch.py --upstream-dir /absolute/disposable/episodic-memory
 ```
 
-The verifier checks the upstream SHA and patch digest `26202d49f6a37fa3dabbe53a4f048398b1a0e129624e1c20d2da90166c2ba5e6`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
+The verifier checks the upstream SHA and patch digest `a29f66b6e74402a0240201b9e7675559a6e23fde6bc208fae6f45237c713bbc5`. Check the exact source revision and apply this file with `git apply --check` before `git apply`; reject any revision drift. Example, after cloning the upstream into an isolated folder and checking out the pinned SHA:
 
 ```sh
 git rev-parse HEAD

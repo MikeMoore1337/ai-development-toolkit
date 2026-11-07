@@ -1,5 +1,66 @@
+diff --git a/src/index-cli.ts b/src/index-cli.ts
+index 272ecdb..b8e302f 100644
+--- a/src/index-cli.ts
++++ b/src/index-cli.ts
+@@ -47,7 +47,7 @@ function getNoSummaries(): boolean {
+ }
+ 
+ const concurrency = getConcurrency();
+-const noSummaries = getNoSummaries();
++const noSummaries = getNoSummaries() || process.env.EPISODIC_MEMORY_SKIP_SUMMARIES === '1';
+ 
+ async function main() {
+   try {
+diff --git a/src/indexer.ts b/src/indexer.ts
+index 173ef67..88cc2ee 100644
+--- a/src/indexer.ts
++++ b/src/indexer.ts
+@@ -3,6 +3,7 @@ import path from 'path';
+ import os from 'os';
+ import { initDatabase, insertExchange } from './db.js';
+ import { parseConversation } from './parser.js';
++import { shouldSkipConversation } from './sync.js';
+ import { initEmbeddings, generateExchangeEmbedding } from './embeddings.js';
+ import { summarizeConversation } from './summarizer.js';
+ import { ConversationExchange } from './types.js';
+@@ -108,6 +109,11 @@ export async function indexConversations(
+ 
+     for (const file of files) {
+       const sourcePath = path.join(projectPath, file);
++      // Manual index commands must respect the upstream DO NOT INDEX marker.
++      if (shouldSkipConversation(sourcePath)) {
++        console.log('  Skipped explicitly excluded conversation');
++        continue;
++      }
+       const archivePath = path.join(projectArchive, file);
+ 
+       // Source transcripts can vanish mid-run (Claude Code cleanup). Skip loudly.
+@@ -234,6 +240,11 @@ export async function indexSession(sessionId: string, concurrency: number = 1, n
+       found = true;
+       const file = files[0];
+       const sourcePath = path.join(projectPath, file);
++      // Manual index commands must respect the upstream DO NOT INDEX marker.
++      if (shouldSkipConversation(sourcePath)) {
++        console.log('  Skipped explicitly excluded conversation');
++        continue;
++      }
+ 
+       const db = initDatabase();
+       await initEmbeddings();
+@@ -350,6 +361,11 @@ export async function indexUnprocessed(concurrency: number = 1, noSummaries: boo
+ 
+     for (const file of files) {
+       const sourcePath = path.join(projectPath, file);
++      // Manual index commands must respect the upstream DO NOT INDEX marker.
++      if (shouldSkipConversation(sourcePath)) {
++        console.log('  Skipped explicitly excluded conversation');
++        continue;
++      }
+       const projectArchive = path.join(ARCHIVE_DIR, project);
+       const archivePath = path.join(projectArchive, file);
+       const summaryPath = archivePath.replace('.jsonl', '-summary.txt');
 diff --git a/src/mcp-server.ts b/src/mcp-server.ts
-index c1cbd0e..1695a8f 100644
+index c1cbd0e..15df918 100644
 --- a/src/mcp-server.ts
 +++ b/src/mcp-server.ts
 @@ -23,6 +23,10 @@ import {
@@ -9,7 +70,7 @@ index c1cbd0e..1695a8f 100644
 +import path from 'path';
 +import Database from 'better-sqlite3';
 +import { getArchiveDir, getDbPath } from './paths.js';
-+import { shouldSkipConversation } from './sync.js';
++import { shouldSkipIndexedArchive } from './sync.js';
  
  // Zod Schemas for Input Validation
  
@@ -38,7 +99,7 @@ index c1cbd0e..1695a8f 100644
 +  } finally {
 +    db.close();
 +  }
-+  if (shouldSkipConversation(resolved)) {
++  if (shouldSkipIndexedArchive(resolved)) {
 +    throw new Error('Conversation is excluded from indexing');
 +  }
 +  return resolved;
@@ -65,6 +126,81 @@ index c1cbd0e..1695a8f 100644
        const markdownContent = formatConversationAsMarkdown(
          jsonlContent,
          params.startLine,
+diff --git a/src/search.ts b/src/search.ts
+index 786d511..4bc1a96 100644
+--- a/src/search.ts
++++ b/src/search.ts
+@@ -1,5 +1,6 @@
+ import Database from 'better-sqlite3';
+ import { initDatabase } from './db.js';
++import { shouldSkipIndexedArchive } from './sync.js';
+ import { initEmbeddings, generateQueryEmbedding } from './embeddings.js';
+ import { SearchResult, ConversationExchange, MultiConceptResult } from './types.js';
+ import { isErroredSentinel } from './summary-sentinel.js';
+@@ -262,7 +263,11 @@ export async function searchConversations(
+ 
+   db.close();
+ 
+-  return results.map((row: any) => {
++  // A transcript can become private after indexing: do not expose stale DB content.
++  const visibleResults = results.filter((row: any) =>
++    typeof row.archive_path === 'string' && !shouldSkipIndexedArchive(row.archive_path)
++  );
++  return visibleResults.map((row: any) => {
+     const exchange = exchangeFromRow(row);
+ 
+     // Try to load summary if available. Skip error sentinels (#96) so failed
+diff --git a/src/sync.ts b/src/sync.ts
+index d9ee681..fd0796d 100644
+--- a/src/sync.ts
++++ b/src/sync.ts
+@@ -2,7 +2,7 @@ import fs from 'fs';
+ import path from 'path';
+ import { StringDecoder } from 'string_decoder';
+ import { SUMMARIZER_CONTEXT_MARKER } from './constants.js';
+-import { getExcludedProjects, findJsonlFiles, statIfExists } from './paths.js';
++import { getExcludedProjects, findJsonlFiles, statIfExists, getArchiveDir, getConversationSourceDirs } from './paths.js';
+ import { formatErrorSentinel, shouldQueueForSummary } from './summary-sentinel.js';
+ import { getMaxMessageBytes, isOversizeExchange } from './message-size.js';
+ 
+@@ -48,6 +48,37 @@ export function shouldSkipConversation(filePath: string): boolean {
+   }
+ }
+ 
++/**
++ * Re-check the live source as well as the archived copy. A source can acquire
++ * a DO NOT INDEX marker after it was archived; a stale DB and old archive
++ * must never expose that session through search or MCP read.
++ */
++export function shouldSkipIndexedArchive(archivePath: string): boolean {
++  const root = path.resolve(getArchiveDir());
++  const relative = path.relative(root, path.resolve(archivePath));
++  if (!relative || relative === '..' || relative.startsWith('..' + path.sep) ||
++      path.isAbsolute(relative)) return true;
++  // An indexed path can be replaced by a symlink/junction after indexing.
++  // Lexical containment is insufficient: search results include stored DB text.
++  let resolvedArchive: string;
++  try {
++    const physicalRoot = fs.realpathSync(root);
++    resolvedArchive = fs.realpathSync(archivePath);
++    const physicalRelative = path.relative(physicalRoot, resolvedArchive);
++    if (!physicalRelative || physicalRelative === '..' ||
++        physicalRelative.startsWith('..' + path.sep) ||
++        path.isAbsolute(physicalRelative)) return true;
++  } catch {
++    return true; // Missing or unreadable archive: fail closed.
++  }
++  if (shouldSkipConversation(resolvedArchive)) return true;
++  for (const sourceDir of getConversationSourceDirs()) {
++    const sourcePath = path.join(sourceDir, relative);
++    if (fs.existsSync(sourcePath) && shouldSkipConversation(sourcePath)) return true;
++  }
++  return false;
++}
++
+ /**
+  * True when a transcript contains at least one message line in any supported
+  * harness format. Summarizer-spawned Agent SDK sessions materialize as
 diff --git a/src/verify.ts b/src/verify.ts
 index 0dd2c5d..8b2ec60 100644
 --- a/src/verify.ts
@@ -112,7 +248,7 @@ index 0dd2c5d..8b2ec60 100644
        // Index exchanges
        for (const exchange of exchanges) {
 diff --git a/test/mcp-server.test.ts b/test/mcp-server.test.ts
-index 47382c9..b614542 100644
+index 47382c9..0205d6f 100644
 --- a/test/mcp-server.test.ts
 +++ b/test/mcp-server.test.ts
 @@ -1,7 +1,8 @@
@@ -125,7 +261,7 @@ index 47382c9..b614542 100644
  import { tmpdir } from 'node:os';
  import { join } from 'node:path';
  import { fileURLToPath } from 'node:url';
-@@ -121,4 +122,43 @@ describe('MCP search tool', () => {
+@@ -121,4 +122,65 @@ describe('MCP search tool', () => {
      });
      expect(existsSync(testDbPath)).toBe(true);
    });
@@ -168,4 +304,184 @@ index 47382c9..b614542 100644
 +    expect(excluded.isError).toBe(true);
 +    expect(getTextContent(excluded.content as ToolContent[])).not.toContain(privateMarker);
 +  });
++  it('denies archived reads when only the original synthetic source was later marked private', async () => {
++    const archiveDir = join(testDir!, 'archive', 'synthetic');
++    const sourceDir = join(testDir!, 'projects', 'synthetic');
++    mkdirSync(archiveDir, { recursive: true });
++    mkdirSync(sourceDir, { recursive: true });
++    const archive = join(archiveDir, 'late-optout.jsonl');
++    const source = join(sourceDir, 'late-optout.jsonl');
++    writeFileSync(archive, '{}\n');
++    writeFileSync(source, '{}\n');
++    const db = new Database(testDbPath);
++    try {
++      db.prepare('INSERT INTO exchanges (id,project,timestamp,user_message,assistant_message,archive_path,line_start,line_end) VALUES (?,?,?,?,?,?,?,?)')
++        .run('late-optout-1', 'synthetic', '2026-10-24T00:00:00Z',
++          'synthetic late privacy marker', 'Allowed answer', archive, 1, 1);
++    } finally { db.close(); }
++    writeFileSync(source,
++      '<INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>\n');
++    const result = await client.callTool({ name: 'read', arguments: { path: archive } });
++    expect(result.isError).toBe(true);
++    expect(getTextContent(result.content as ToolContent[])).not.toContain('Allowed answer');
++  });
++
  });
+diff --git a/test/search-exclusion.test.ts b/test/search-exclusion.test.ts
+new file mode 100644
+index 0000000..7077a4e
+--- /dev/null
++++ b/test/search-exclusion.test.ts
+@@ -0,0 +1,152 @@
++import { afterEach, beforeEach, describe, expect, it } from 'vitest';
++import { mkdtempSync, mkdirSync, rmSync, writeFileSync, symlinkSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
++import { initDatabase, insertExchange } from '../src/db.js';
++import { vi } from 'vitest';
++const { embedSpy } = vi.hoisted(() => ({
++  embedSpy: vi.fn(async () => new Array(384).fill(0.1)),
++}));
++vi.mock('../src/embeddings.js', () => ({
++  initEmbeddings: vi.fn(async () => {}),
++  generateExchangeEmbedding: embedSpy,
++  generateQueryEmbedding: vi.fn(),
++  generateEmbedding: vi.fn(),
++}));
++import { indexConversations, indexSession, indexUnprocessed } from '../src/indexer.js';
++
++import { searchConversations } from '../src/search.js';
++
++describe('indexed conversation exclusion on retrieval', () => {
++  let directory: string;
++  const previousDbPath = process.env.TEST_DB_PATH;
++  beforeEach(() => {
++    directory = mkdtempSync(join(tmpdir(), 'episodic-exclusion-'));
++    process.env.TEST_DB_PATH = join(directory, 'index.sqlite');
++    process.env.TEST_ARCHIVE_DIR = join(directory, 'archive');
++    process.env.TEST_PROJECTS_DIR = join(directory, 'sources');
++    process.env.EPISODIC_MEMORY_CONFIG_DIR = join(directory, 'config');
++  });
++  afterEach(() => {
++    delete process.env.TEST_PROJECTS_DIR;
++    delete process.env.TEST_ARCHIVE_DIR;
++    delete process.env.EPISODIC_MEMORY_CONFIG_DIR;
++    if (previousDbPath === undefined) delete process.env.TEST_DB_PATH;
++    else process.env.TEST_DB_PATH = previousDbPath;
++    rmSync(directory, { recursive: true, force: true });
++  });
++  it('never returns an archived transcript marked private after indexing', async () => {
++    const archive = join(directory, 'archive');
++    mkdirSync(archive);
++    const safe = join(archive, 'safe.jsonl');
++    const hidden = join(archive, 'hidden.jsonl');
++    writeFileSync(safe, '{}\n');
++    writeFileSync(hidden, '{}\n');
++    const db = initDatabase();
++    for (const [id, file] of [['allowed', safe], ['secret', hidden]]) {
++      insertExchange(db, {
++        id, project: 'synthetic', timestamp: '2026-10-24T00:00:00.000Z',
++        userMessage: 'privacy339 retrieval marker', assistantMessage: 'Synthetic answer',
++        archivePath: file, lineStart: 1, lineEnd: 2,
++      }, Array(384).fill(0.1));
++    }
++    db.close();
++    // The archive changes *after* the exchange was indexed.
++    writeFileSync(hidden,
++      '<INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>\n');
++    const results = await searchConversations('privacy339', { mode: 'text', limit: 10 });
++    expect(results.map(r => r.exchange.id)).toEqual(['allowed']);
++    expect(results.some(r => r.exchange.archivePath === hidden)).toBe(false);
++  });
++
++  it('skips explicitly private RU/EN synthetic transcripts in every manual index path', async () => {
++    const sources = join(directory, 'sources');
++    const project = join(sources, 'synthetic-project');
++    mkdirSync(project, { recursive: true });
++    const archive = join(directory, 'isolated-archive');
++    process.env.TEST_PROJECTS_DIR = sources;
++    process.env.TEST_ARCHIVE_DIR = archive;
++    process.env.EPISODIC_MEMORY_CONFIG_DIR = join(directory, 'isolated-config');
++    const makeTranscript = (name: string, message: string) => {
++      const uid = 'user-' + name;
++      writeFileSync(join(project, name + '.jsonl'), [
++        { type: 'user', uuid: uid, sessionId: name, timestamp: '2026-10-24T00:00:00.000Z',
++          message: { role: 'user', content: message } },
++        { type: 'assistant', uuid: 'assistant-' + name, parentUuid: uid,
++          sessionId: name, timestamp: '2026-10-24T00:00:01.000Z',
++          message: { role: 'assistant', content: [{ type: 'text', text: 'Synthetic answer.' }] } },
++      ].map(JSON.stringify).join('\n') + '\n');
++    };
++    makeTranscript('public-english', 'Why choose SQLite? For local-only persistence.');
++    makeTranscript('private-russian',
++      '\u041F\u043E\u0447\u0435\u043C\u0443 \u0437\u0430\u043F\u0440\u0435\u0449\u0435\u043D\u043E \u0438\u043D\u0434\u0435\u043A\u0441\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435? <INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>');
++    embedSpy.mockClear();
++    await indexConversations(undefined, undefined, 1, true);
++    await indexUnprocessed(1, true);
++    await indexSession('private-russian', 1, true);
++    const db = initDatabase();
++    const rows = db.prepare('SELECT user_message FROM exchanges').all() as Array<{ user_message: string }>;
++    db.close();
++    expect(rows).toHaveLength(1);
++    expect(rows[0].user_message).toContain('SQLite');
++    expect(embedSpy).toHaveBeenCalled();
++    expect(rows.every(r => !r.user_message.includes('DO NOT INDEX'))).toBe(true);
++  });
++
++  it('prevents stale archive retrieval after the original source gains an exclusion marker', async () => {
++    const archive = join(directory, 'archive', 'project-a');
++    const source = join(directory, 'sources', 'project-a');
++    mkdirSync(archive, { recursive: true });
++    mkdirSync(source, { recursive: true });
++    const archived = join(archive, 'source-marked.jsonl');
++    const original = join(source, 'source-marked.jsonl');
++    writeFileSync(archived, '{}\n');
++    writeFileSync(original, '{}\n');
++    const db = initDatabase();
++    insertExchange(db, {
++      id: 'source-marked', project: 'project-a',
++      timestamp: '2026-10-24T00:00:00.000Z',
++      userMessage: 'local archive privacy decision',
++      assistantMessage: 'Only synthetic data may be retained',
++      archivePath: archived, lineStart: 1, lineEnd: 2,
++    }, Array(384).fill(0.1));
++    db.close();
++    expect((await searchConversations('privacy', { mode: 'text' })).map(r => r.exchange.id))
++      .toContain('source-marked');
++    writeFileSync(original,
++      '<INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>\n');
++    const results = await searchConversations('privacy', { mode: 'text' });
++    expect(results.some(r => r.exchange.id === 'source-marked')).toBe(false);
++  });
+++
++  it('excludes an indexed archive path that escapes via a Windows junction', async () => {
++    const archive = join(directory, 'archive');
++    const outside = join(directory, 'outside');
++    mkdirSync(archive, { recursive: true });
++    mkdirSync(outside, { recursive: true });
++    const linkedFolder = join(archive, 'linked-folder');
++    // Windows junctions are supported without administrator privileges.
++    // On POSIX this is a normal directory symlink.
++    symlinkSync(outside, linkedFolder, 'junction');
++    const actualFile = join(outside, 'external.jsonl');
++    const indexedAlias = join(linkedFolder, 'external.jsonl');
++    writeFileSync(actualFile, '{}\n');
++    const db = initDatabase();
++    try {
++      insertExchange(db, {
++        id: 'linked-synthetic', project: 'synthetic',
++        timestamp: '2026-10-24T00:00:00.000Z',
++        userMessage: 'archive-junction-synthetic-marker',
++        assistantMessage: 'Synthetic-only response',
++        archivePath: indexedAlias, lineStart: 1, lineEnd: 2,
++      }, new Array(384).fill(0.1));
++    } finally {
++      db.close();
++    }
++    const results = await searchConversations(
++      'archive-junction-synthetic-marker', { mode: 'text', limit: 10 }
++    );
++    expect(results.map(r => r.exchange.id)).not.toContain('linked-synthetic');
++  });
++
++});
