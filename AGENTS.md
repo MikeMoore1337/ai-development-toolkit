@@ -1,5 +1,13 @@
 # Repository instructions
 
+## Agent instruction language
+
+Write repository-owned `AGENTS.md`, reusable `SKILL.md`, agent role definitions and machine-directed prompts in **English** by default. Keep skill frontmatter (`name`, `description`) clear and trigger-specific.
+
+Preserve literal Russian user-query examples, localized output templates, terminology checks, statutory names and bilingual evaluation fixtures when their exact language is part of the tested behavior. Do not mechanically translate Russian-first linguistic skills, bundled upstream/third-party material or SHA-pinned vendor references.
+
+This rule does not translate README, human-oriented documentation, UI text or user content. Maintain the existing language of human documentation and communicate with the owner in Russian unless asked otherwise.
+
 ## Native-first external tool boundary (#492)
 
 When the user explicitly selects an original third-party skill, agent, plugin, MCP server or tool to lead a task, follow the upstream workflow, features, modes, agents and lifecycle. Toolkit guidance must not inject alternative controllers, hooks or behavioral restrictions. An external tool named in research is not necessarily selected. Additional Toolkit reference advice is permitted only on separate explicit request and cannot take control. Host/system safety, user/project permissions, secret handling, financial consent and release gates remain binding. See [native external boundary](docs/EXTERNAL_NATIVE_BOUNDARY.md). This issue does not modify the UX/UI Orchestra workstream.
