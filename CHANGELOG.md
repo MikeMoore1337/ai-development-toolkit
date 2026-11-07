@@ -41,7 +41,8 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.9)
 
-Post-publication documentation alignment of v5.5.9, without changing the immutable tag.
+- Native Eval Capsules (#437): optional independent receipt SHA-256 digest pin rejects full consistent journal/receipt replacement when a trusted out-of-band value is provided. This is offline integrity checking, not signature/witness authentication, model-quality certification or a published release.
+- Post-publication documentation alignment of v5.5.9, without changing the immutable tag.
 
 ## 5.5.9 (released, 2026-11-06)
 

@@ -10,7 +10,7 @@
  *   node scripts/native_eval_capsules.js capsule verify <dir>
  *   node scripts/native_eval_capsules.js capsule project <dir>
  *   node scripts/native_eval_capsules.js receipt build <dir> [--artifact <file>]
- *   node scripts/native_eval_capsules.js receipt verify <receipt-file> <dir> [--artifact <file>]
+ *   node scripts/native_eval_capsules.js receipt verify <receipt-file> <dir> [--artifact <file>] [--expected-receipt-hash <sha256>]
  *   node scripts/native_eval_capsules.js gate run
  * No automatic writes, network calls, shell execution, model execution or promotion.
  * The project and build commands explicitly write local projection evidence.
@@ -101,6 +101,28 @@ function artifactArgs(rest) {
   return rest[1];
 }
 
+// An expected receipt hash is useful only when obtained through a separate,
+// trusted channel. Comparing it does not establish a witness or model outcome.
+function receiptVerifyOptions(rest) {
+  if (rest.length % 2 !== 0) refuse('INVALID_OPTIONS');
+  let artifact;
+  let expectedReceiptHash;
+  for (let i = 0; i < rest.length; i += 2) {
+    const option = rest[i];
+    const value = rest[i + 1];
+    if (!value || value.startsWith('--')) refuse('INVALID_OPTIONS');
+    if (option === '--artifact' && artifact === undefined) {
+      artifact = value;
+    } else if (option === '--expected-receipt-hash' && expectedReceiptHash === undefined
+               && /^[0-9a-f]{64}$/.test(value)) {
+      expectedReceiptHash = value;
+    } else {
+      refuse('INVALID_OPTIONS');
+    }
+  }
+  return { artifact, expectedReceiptHash };
+}
+
 function main(args) {
   const [group, action, ...rest] = args;
   if (group === 'gate' && action === 'run') {
@@ -132,7 +154,7 @@ function main(args) {
   }
   if (group === 'receipt' && action === 'verify') {
     if (rest.length < 2 || rest[0].startsWith('--') || rest[1].startsWith('--')) return usage();
-    const artifact = artifactArgs(rest.slice(2));
+    const { artifact, expectedReceiptHash } = receiptVerifyOptions(rest.slice(2));
     const file = rest[0];
     assertNoLinks(file);
     assertCapsuleFiles(rest[1]);
@@ -143,7 +165,17 @@ function main(args) {
     assertNativeReceipt(value);
     assertNoSensitiveIdentity(rest[1]);
     const result = lib.receipt.verifyReceipt(value, rest[1], { artifact_path: artifact });
+    if (result.ok && expectedReceiptHash !== undefined
+        && value.receipt_hash !== expectedReceiptHash) {
+      output({
+        ok: false, check: 'receipt_anchor',
+        reason: 'receipt_hash does not match the independently supplied digest',
+      });
+      process.exitCode = 1;
+      return;
+    }
     if (result.ok) {
+      if (expectedReceiptHash !== undefined) result.expected_receipt_hash_matches = true;
       // Bind a verified capsule identity without leaking raw metadata to stdout.
       result.capsule_identity_sha256 = lib.canonical.hashValue({
         run_id: value.run_id, capsule_id: value.capsule_id,
