@@ -150,6 +150,28 @@ index 786d511..4bc1a96 100644
      const exchange = exchangeFromRow(row);
  
      // Try to load summary if available. Skip error sentinels (#96) so failed
+@@ -270,10 +275,15 @@ export async function searchConversations(
+     const summaryPath = row.archive_path.replace('.jsonl', '-summary.txt');
+     let summary: string | undefined;
+-    if (fs.existsSync(summaryPath)) {
+-      const raw = fs.readFileSync(summaryPath, 'utf-8');
+-      if (!isErroredSentinel(raw)) {
+-        summary = raw.trim();
+-      }
+-    }
++    // Optional summaries must never follow symlinks or leave the archive.
++    try {
++      if (fs.lstatSync(summaryPath).isFile() && !shouldSkipIndexedArchive(summaryPath)) {
++        const raw = fs.readFileSync(summaryPath, 'utf-8');
++        if (!isErroredSentinel(raw)) {
++          summary = raw.trim();
++        }
++      }
++    } catch {
++      // Missing or unreadable summaries are safely omitted.
++    }
+ 
+     // Create snippet (first 200 chars, collapse newlines)
 diff --git a/src/sync.ts b/src/sync.ts
 index d9ee681..fd0796d 100644
 --- a/src/sync.ts
@@ -163,7 +185,7 @@ index d9ee681..fd0796d 100644
  import { formatErrorSentinel, shouldQueueForSummary } from './summary-sentinel.js';
  import { getMaxMessageBytes, isOversizeExchange } from './message-size.js';
  
-@@ -48,6 +48,37 @@ export function shouldSkipConversation(filePath: string): boolean {
+@@ -48,6 +48,41 @@ export function shouldSkipConversation(filePath: string): boolean {
    }
  }
  
@@ -187,6 +209,10 @@ index d9ee681..fd0796d 100644
 +    if (!physicalRelative || physicalRelative === '..' ||
 +        physicalRelative.startsWith('..' + path.sep) ||
 +        path.isAbsolute(physicalRelative)) return true;
++    // In-root junction aliases must not bypass original-source privacy checks.
++    const logicalKey = process.platform === 'win32' ? relative.toLowerCase() : relative;
++    const physicalKey = process.platform === 'win32' ? physicalRelative.toLowerCase() : physicalRelative;
++    if (logicalKey !== physicalKey) return true;
 +  } catch {
 +    return true; // Missing or unreadable archive: fail closed.
 +  }
@@ -332,7 +358,7 @@ new file mode 100644
 index 0000000..7077a4e
 --- /dev/null
 +++ b/test/search-exclusion.test.ts
-@@ -0,0 +1,152 @@
+@@ -0,0 +1,213 @@
 +import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 +import { mkdtempSync, mkdirSync, rmSync, writeFileSync, symlinkSync } from 'node:fs';
 +import { tmpdir } from 'node:os';
@@ -482,6 +508,67 @@ index 0000000..7077a4e
 +      'archive-junction-synthetic-marker', { mode: 'text', limit: 10 }
 +    );
 +    expect(results.map(r => r.exchange.id)).not.toContain('linked-synthetic');
++  });
++
++  it('rejects an in-archive junction alias to a private original source', async () => {
++    const archive = join(directory, 'archive');
++    const privateArchive = join(archive, 'secret-project');
++    const privateSource = join(directory, 'sources', 'secret-project');
++    mkdirSync(privateArchive, { recursive: true });
++    mkdirSync(privateSource, { recursive: true });
++    writeFileSync(join(privateArchive, 'secret.jsonl'), '{}\n');
++    writeFileSync(join(privateSource, 'secret.jsonl'),
++      '<INSTRUCTIONS-TO-EPISODIC-MEMORY>DO NOT INDEX THIS CHAT</INSTRUCTIONS-TO-EPISODIC-MEMORY>\n');
++    const aliasDir = join(archive, 'safe-project');
++    symlinkSync(privateArchive, aliasDir, 'junction');
++    const db = initDatabase();
++    try {
++      insertExchange(db, {
++        id: 'alias-private', project: 'safe-project',
++        timestamp: '2026-10-24T00:00:00.000Z',
++        userMessage: 'internal-alias-privacy-test',
++        assistantMessage: 'Synthetic content not for disclosure',
++        archivePath: join(aliasDir, 'secret.jsonl'), lineStart: 1, lineEnd: 2,
++      }, Array(384).fill(0.1));
++    } finally { db.close(); }
++    const results = await searchConversations('internal-alias-privacy-test', { mode: 'text' });
++    expect(results.some(r => r.exchange.id === 'alias-private')).toBe(false);
++  });
++
++  it('does not read symlinked or junctioned summaries outside the archive', async () => {
++    const archive = join(directory, 'archive');
++    mkdirSync(archive, { recursive: true });
++    const conversation = join(archive, 'summary-source.jsonl');
++    writeFileSync(conversation, '{}\n');
++    const outsideFile = join(directory, 'outside-summary.txt');
++    writeFileSync(outsideFile, 'OUTSIDE_SUMMARY_SENTINEL');
++    const summaryPath = conversation.replace('.jsonl', '-summary.txt');
++    try {
++      symlinkSync(outsideFile, summaryPath, 'file');
++    } catch (error) {
++      const code = (error as NodeJS.ErrnoException).code;
++      if (process.platform !== 'win32' || !['EPERM', 'EACCES', 'ENOTSUP'].includes(code ?? '')) {
++        throw error;
++      }
++      // A directory junction still detects unsafe summary reads on Windows.
++      const outsideDir = join(directory, 'outside-summary-dir');
++      mkdirSync(outsideDir);
++      symlinkSync(outsideDir, summaryPath, 'junction');
++    }
++    const db = initDatabase();
++    try {
++      insertExchange(db, {
++        id: 'safe-summary', project: 'synthetic',
++        timestamp: '2026-10-24T00:00:00.000Z',
++        userMessage: 'summary-alias-privacy-test',
++        assistantMessage: 'Allowed response',
++        archivePath: conversation, lineStart: 1, lineEnd: 2,
++      }, Array(384).fill(0.1));
++    } finally { db.close(); }
++    const results = await searchConversations('summary-alias-privacy-test', { mode: 'text' });
++    expect(results).toHaveLength(1);
++    expect((results[0] as typeof results[number] & { summary?: string }).summary).toBeUndefined();
++    expect(JSON.stringify(results)).not.toContain('OUTSIDE_SUMMARY_SENTINEL');
 +  });
 +
 +});
