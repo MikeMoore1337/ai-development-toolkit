@@ -91,6 +91,9 @@ def _verify_native_receipts(records: list[dict[str, Any]], root: Path) -> int:
         raise EvalInputError("Native receipt verifier unavailable; Node.js required")
     clean_env = {key: val for key, val in os.environ.items()
                  if not key.upper().startswith("NODE_")}
+    seen_receipts: set[Path] = set()
+    seen_capsules: set[Path] = set()
+    seen_identities: set[str] = set()
     for record in records:
         task = record["task_id"]
         receipt = record.get("native_receipt")
@@ -98,6 +101,8 @@ def _verify_native_receipts(records: list[dict[str, Any]], root: Path) -> int:
             raise EvalInputError(f"{task}: exactly one native receipt binding required")
         target = _trusted_local(root, receipt["receipt"], directory=False, task=task)
         capsule = _trusted_local(root, receipt["capsule_dir"], directory=True, task=task)
+        if target in seen_receipts or capsule in seen_capsules:
+            raise EvalInputError(f"{task}: native receipt/capsule reused across runs")
         artifact_name = receipt["artifact"]
         if artifact_name not in record["evidence"]:
             raise EvalInputError(f"{task}: receipt artifact is not recorded evidence")
@@ -125,6 +130,15 @@ def _verify_native_receipts(records: list[dict[str, Any]], root: Path) -> int:
             raise EvalInputError(f"{task}: malformed native receipt verifier output") from exc
         if not isinstance(verdict, dict) or verdict.get("ok") is not True or verdict.get("check") is not None:
             raise EvalInputError(f"{task}: native receipt verdict not confirmed")
+        identity = verdict.get("capsule_identity_sha256")
+        if (not isinstance(identity, str) or len(identity) != 64
+                or any(char not in "0123456789abcdef" for char in identity)):
+            raise EvalInputError(f"{task}: native capsule identity not verified")
+        if identity in seen_identities:
+            raise EvalInputError(f"{task}: native capsule identity reused across runs")
+        seen_receipts.add(target)
+        seen_capsules.add(capsule)
+        seen_identities.add(identity)
     return len(records)
 
 
