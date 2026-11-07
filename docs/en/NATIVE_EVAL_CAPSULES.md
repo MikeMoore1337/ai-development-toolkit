@@ -29,6 +29,25 @@ node scripts/native_eval_capsules.js receipt verify /local/receipt.json /local/c
 
 **Distinct run binding:** With skill_eval.py --verify-native-receipts, every paired run requires a distinct receipt file and capsule directory, and a distinct hash of its verified run_id/capsule_id. Reusing or copying one capsule into multiple baseline/candidate records is rejected even when all hashes match. This hash is a uniqueness marker, not a signed witness or proof of model quality.
 
+### Optional out-of-band receipt digest pin
+
+For an independently recorded SHA-256 receipt hash, pass the lowercase digest
+directly to the existing read-only verifier (the artifact path remains optional):
+
+    node scripts/native_eval_capsules.js receipt verify /local/receipt.json /local/capsule --artifact /local/artifact --expected-receipt-hash 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+The digest must originate outside the potentially untrusted receipt/capsule and
+must have been obtained through a trusted independent channel *before* a
+suspected replacement. A matching value only proves correspondence to the
+caller-supplied digest; it does not authenticate the caller, establish an actual
+external witness, or verify the model's results. Passing a forged digest along
+with forged files defeats this check. With an independently saved original
+digest, a complete hash-consistent journal/receipt rewrite is rejected with
+exit 1, check=receipt_anchor. Invalid, duplicate or unsupported options fail
+closed. This command does not write files, sign receipts, send network requests,
+create a witness database or change the default unpinned verifier or paired
+skill_eval.py behavior.
+
 ## Reproducible offline validation
 
 `tests/test_native_ecc_eval_capsules.py` validates each upstream Git blob and SHA256, runs five unmodified Node.js source suites where Node is present, and checks Toolkit-specific forged receipts, mutated journal, missing fixtures, replay SE4 denial, CLI gating and no unwanted writes. Passing these tests proves **source and local deterministic behavior only**, not verified Codex Desktop activation. With Node absent, the source integrity test still runs but runtime evaluation is **NOT_VERIFIED**, not PASS.

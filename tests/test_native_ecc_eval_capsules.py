@@ -255,5 +255,94 @@ fs.writeFileSync(file, JSON.stringify(value) + '\n');
             self.assertNotIn("run-safe", first.stdout)
             self.assertNotIn("cap-secure", first.stdout)
 
+
+    def test_external_receipt_hash_pin_detects_complete_consistent_replacement(self):
+        """Internal hashes alone cannot detect wholesale rewrites; trusted pins can."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            original = json.loads(receipt.read_text(encoding="utf-8"))
+            original_digest = original["receipt_hash"]
+            pinned = self.node(str(TOOL), "receipt", "verify", str(receipt), str(capsule),
+                               "--expected-receipt-hash", original_digest,
+                               "--artifact", str(artifact))
+            self.assertEqual(0, pinned.returncode, pinned.stderr)
+            self.assertTrue(json.loads(pinned.stdout)["expected_receipt_hash_matches"])
+
+            # Rebuild the entire capsule and receipt under the same identities,
+            # keeping the artifact unchanged. No agent, process, network or model.
+            second_root = root / "replacement"
+            second_root.mkdir()
+            second_capsule, second_receipt, _ = self._security_fixture(second_root)
+            script = r"""
+const h = require(__LIB__);
+const path = require('node:path');
+const clock = () => new Date('2026-10-28T00:00:00.000Z');
+const dir = process.argv[1], file = process.argv[2];
+const cap = h.capsule.Capsule.open(dir, {clock});
+cap.append('attempt', 'changed', {task_id:'synthetic', status:'rewritten'});
+const receipt = h.receipt.buildReceipt(dir, {artifact_path:file, clock});
+h.receipt.writeReceipt(receipt, path.join(path.dirname(dir), 'receipt.json'));
+""".replace("__LIB__", json.dumps(str(
+                VENDORED / "scripts" / "lib" / "eval-harness")))
+            changed = self.node("-e", script, str(second_capsule), str(artifact))
+            self.assertEqual(0, changed.returncode, changed.stderr)
+            for name in ("capsule.json", "journal.ndjson", "projection.json"):
+                shutil.copyfile(second_capsule / name, capsule / name)
+            shutil.copyfile(second_receipt, receipt)
+            before = {p.name: p.read_bytes() for p in (
+                receipt, artifact, capsule / "capsule.json",
+                capsule / "journal.ndjson", capsule / "projection.json",
+            )}
+            unpinned = self.node(str(TOOL), "receipt", "verify",
+                                 str(receipt), str(capsule), "--artifact", str(artifact))
+            self.assertEqual(0, unpinned.returncode, unpinned.stderr)
+            self.assertTrue(json.loads(unpinned.stdout)["ok"])
+
+            rejected = self.node(str(TOOL), "receipt", "verify",
+                                 str(receipt), str(capsule), "--artifact", str(artifact),
+                                 "--expected-receipt-hash", original_digest)
+            self.assertEqual(1, rejected.returncode)
+            result = json.loads(rejected.stdout)
+            self.assertFalse(result["ok"])
+            self.assertEqual("receipt_anchor", result["check"])
+            self.assertNotIn(original_digest, rejected.stderr + rejected.stdout)
+
+            # A digest supplied by the same forger also passes. Caller must
+            # independently obtain/trust the original pin.
+            rewritten_digest = json.loads(receipt.read_text(encoding="utf-8"))["receipt_hash"]
+            self.assertNotEqual(original_digest, rewritten_digest)
+            rebound = self.node(str(TOOL), "receipt", "verify",
+                                str(receipt), str(capsule),
+                                "--expected-receipt-hash", rewritten_digest,
+                                "--artifact", str(artifact))
+            self.assertEqual(0, rebound.returncode, rebound.stderr)
+            self.assertTrue(json.loads(rebound.stdout)["expected_receipt_hash_matches"])
+            self.assertEqual(before, {p.name: p.read_bytes() for p in (
+                receipt, artifact, capsule / "capsule.json",
+                capsule / "journal.ndjson", capsule / "projection.json",
+            )})
+
+    def test_external_receipt_pin_options_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capsule, receipt, artifact = self._security_fixture(root)
+            sha = json.loads(receipt.read_text(encoding="utf-8"))["receipt_hash"]
+            bad = (
+                ("--expected-receipt-hash", "BAD_DIGEST"),
+                ("--expected-receipt-hash", "A" * 64),
+                ("--expected-receipt-hash", sha, "--expected-receipt-hash", sha),
+                ("--artifact", str(artifact), "--artifact", str(artifact)),
+                ("--expected-receipt-hash",),
+                ("--unsupported-option", sha),
+            )
+            for options in bad:
+                with self.subTest(options=options):
+                    result = self.node(str(TOOL), "receipt", "verify",
+                                       str(receipt), str(capsule), *options)
+                    self.assertEqual(1, result.returncode)
+                    self.assertIn("INVALID_OPTIONS", result.stderr)
+                    self.assertEqual("", result.stdout)
+
 if __name__ == "__main__":
     unittest.main()
