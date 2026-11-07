@@ -106,6 +106,8 @@ jobs:
           # security test to prevent contradictory test expectations.
           npx --no-install vitest run test/mcp-server.test.ts --maxWorkers=1
           if ($LASTEXITCODE -ne 0) { throw 'Windows patched MCP tests FAILED' }
+          npx --no-install vitest run test/search-exclusion.test.ts --maxWorkers=1
+          if ($LASTEXITCODE -ne 0) { throw 'Windows index and retrieval exclusion tests FAILED' }
           $env:EPISODIC_MEMORY_SKIP_SUMMARIES = '0'
           try {
             npx --no-install vitest run test/verify.test.ts --maxWorkers=1

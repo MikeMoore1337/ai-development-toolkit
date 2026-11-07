@@ -13,20 +13,34 @@ import subprocess
 import sys
 
 UPSTREAM_SHA = "7e06519357777badd7a115d2014a7ef845904310"
-PATCH_SHA256 = "26202d49f6a37fa3dabbe53a4f048398b1a0e129624e1c20d2da90166c2ba5e6"
+PATCH_SHA256 = "a29f66b6e74402a0240201b9e7675559a6e23fde6bc208fae6f45237c713bbc5"
 ROOT = Path(__file__).resolve().parents[1]
 PATCH = ROOT / "integrations/episodic-memory/patches/0001-mcp-read-scoping-and-zero-inference-verify.patch"
 EXPECTED_FILES = {
     "src/mcp-server.ts",
     "src/verify.ts",
     "test/mcp-server.test.ts",
+    "src/index-cli.ts",
+    "src/indexer.ts",
+    "src/search.ts",
+    "src/sync.ts",
+    "test/search-exclusion.test.ts",
 }
 REQUIRED_PATTERNS = (
     "function indexedArchivePath(requested: string)",
-    "shouldSkipConversation(resolved)",
+    "shouldSkipIndexedArchive(resolved)",
     "SELECT 1 FROM exchanges WHERE archive_path",
     "EPISODIC_MEMORY_SKIP_SUMMARIES",
     "expect(excluded.isError).toBe(true)",
+    "shouldSkipConversation(sourcePath)",
+    "const visibleResults = results.filter",
+    "shouldSkipIndexedArchive(row.archive_path)",
+    "export function shouldSkipIndexedArchive(archivePath: string)",
+    "const physicalRoot = fs.realpathSync(root)",
+    "resolvedArchive = fs.realpathSync(archivePath)",
+    "symlinkSync(outside, linkedFolder, 'junction')",
+    "const noSummaries = getNoSummaries() ||",
+    "expect(results.map(r => r.exchange.id)).toEqual(['allowed'])",
 )
 
 
@@ -68,7 +82,13 @@ def main() -> int:
             upstream = args.upstream_dir.resolve(strict=True)
             if git(["rev-parse", "HEAD"], upstream) != UPSTREAM_SHA:
                 raise ValueError("Upstream commit differs from pinned revision")
-            git(["apply", "--check", str(PATCH)], upstream)
+            # Pass normalized LF bytes over stdin. Windows Git may check
+            # out patch files with CRLF, which git apply rejects on disk.
+            subprocess.run(
+                ["git", "-C", str(upstream), "apply", "--check", "-"],
+                input=PATCH.read_bytes().replace(b"\r\n", b"\n"),
+                check=True, capture_output=True, timeout=30,
+            )
         print("EPISODIC_MEMORY_PATCH=PASS")
         print(f"UPSTREAM_APPLICABILITY={'PASS' if args.upstream_dir else 'NOT_RUN'}")
         print("EXECUTION=NONE; CODEX_CLI=NONE; MODEL_CALLS=NONE")
