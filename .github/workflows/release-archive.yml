@@ -5,6 +5,8 @@ on:
     tags: ["v*"]
   release:
     types: [published]
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       tag:
@@ -19,7 +21,7 @@ jobs:
   release-archive:
     # A separate source-only integration release uses adt-integrations-<SHA>;
     # the Toolkit application archive gate accepts only vX.Y.Z releases.
-    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v')
+    if: github.event_name != 'issue_comment' && (github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -137,3 +139,123 @@ jobs:
               raise SystemExit("PUBLICATION_DOCS_STALE: " + ", ".join(bad))
           print("PUBLICATION_DOCS_MATCH_RELEASE=" + tag)
           PY
+
+
+  publish-v5510:
+    name: Exact-SHA owner-approved v5.5.10 source publication
+    # Explicit owner command only; no automatic publication on push or PR.
+    if: >-
+      github.event_name == 'issue_comment' &&
+      github.event.issue.number == 437 &&
+      github.event.comment.user.login == 'MikeMoore1337' &&
+      github.event.comment.author_association == 'OWNER' &&
+      startsWith(github.event.comment.body, 'PUBLISH_TOOLKIT_v5.5.10 SHA=')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      OWNER_COMMAND: ${{ github.event.comment.body }}
+    steps:
+      - name: Read exact owner source decision with strict format
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, re
+          value = os.environ['OWNER_COMMAND']
+          command = re.fullmatch(
+              r'PUBLISH_TOOLKIT_v5[.]5[.]10 SHA=([0-9a-f]{40}) OWNER_SOURCE_DISTRIBUTION=YES',
+              value,
+          )
+          if command is None:
+              raise SystemExit('BLOCKED: exact SHA and owner source distribution decision required')
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
+              out.write('RELEASE_SHA=' + command.group(1) + '\n')
+          print('SOURCE_DISTRIBUTION=OWNER_APPROVED_EXACT_SHA')
+          print('INDEPENDENT_RIGHTS_ATTESTATION=NOT_VERIFIED')
+          PY
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: "3.12"
+      - name: Verify clean exact main, source integrity, provenance and pre-tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.commit.sha')" = "$RELEASE_SHA"
+          test -z "$(git status --porcelain --untracked-files=normal)"
+          python scripts/verify_checksums.py
+          python scripts/validate_provenance.py --mode release
+          python scripts/check_public_package.py
+          python scripts/pre_tag_preflight.py --tag v5.5.10 --sha "$RELEASE_SHA"
+      - name: Require six successful exact-commit main CI checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_SHA/check-runs?per_page=100" > "$RUNNER_TEMP/ci-checks.json"
+          python3 - <<'PY'
+          import json, os
+          with open(os.path.join(os.environ['RUNNER_TEMP'], 'ci-checks.json'), encoding='utf-8') as inp:
+              checks = json.load(inp)
+          required = (
+              'tests (ubuntu-latest, 3.12)',
+              'tests (ubuntu-latest, 3.13)',
+              'tests (windows-latest, 3.14)',
+              'macOS portability (macos-15, Python 3.12)',
+              'macOS portability (macos-15-intel, Python 3.12)',
+              'Integration source archives (main only)',
+          )
+          if checks.get('total_count', 101) > 100:
+              raise SystemExit('BLOCKED: excessive/incomplete check listing')
+          for name in required:
+              actual = [c for c in checks.get('check_runs', []) if c.get('name') == name]
+              if len(actual) != 1 or actual[0].get('status') != 'completed' or actual[0].get('conclusion') != 'success':
+                  raise SystemExit('BLOCKED: exact-main CI job not green: ' + name)
+          print('EXACT_MAIN_CI=6_OF_6_SUCCESS')
+          PY
+      - name: Publish immutable annotated tag and GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.commit.sha')" = "$RELEASE_SHA"
+          tag_object="$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" \
+            -f tag=v5.5.10 \
+            -f message="Toolkit v5.5.10 source approved by owner at $RELEASE_SHA. Client E2E and external witness not verified." \
+            -f object="$RELEASE_SHA" -f type=commit --jq '.sha')"
+          test -n "$tag_object"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f ref=refs/tags/v5.5.10 -f sha="$tag_object" >/dev/null
+          cat > "$RUNNER_TEMP/release-notes.md" <<'EOF'
+          # AI Development Toolkit v5.5.10
+
+          Source release with native eval capsule and receipt-integrity improvements (#437), native observability, episodic memory, Windows source compatibility and other accumulated changes.
+
+          Offline receipt hashes and the opt-in external digest pin do not attest model quality, authentic witness identity or actual AI-client activation. CLIENT_E2E=NOT_VERIFIED, EXTERNAL_WITNESS=NOT_VERIFIED, MODEL_QUALITY_EFFECT=NOT_MEASURED. Candidate OS executor remains unsupported. No external ECC runtime, paid model API, background agent or automatic client update.
+
+          Exact composition, permissions, checksum inventory and rollback information are in the immutable source tag. Owner distribution consent is recorded in Issue #437; independent third-party/employer title verification is NOT_ATTESTED.
+          EOF
+          printf '\nExact tagged commit: %s\n' "$RELEASE_SHA" >> "$RUNNER_TEMP/release-notes.md"
+          gh release create v5.5.10 --verify-tag --target "$RELEASE_SHA" \
+            --title "AI Development Toolkit v5.5.10" --notes-file "$RUNNER_TEMP/release-notes.md"
+      - name: Verify tag and Release exact identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v5.5.10" --jq '.object.sha')"
+          exact_commit="$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$tag_sha" --jq '.object.sha')"
+          test "$exact_commit" = "$RELEASE_SHA"
+          published="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v5.5.10" --jq '.published_at')"
+          test -n "$published"
+          test "$published" != null
+          echo "TAGGED_SOURCE_SHA=$exact_commit"
+          echo "RELEASE_PUBLISHED=true; archive verification is a separate gate"
