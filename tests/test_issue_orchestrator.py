@@ -66,6 +66,17 @@ class PlannerTests(unittest.TestCase):
         self.assertIn("SELF_DEPENDENCY", statuses[4])
         self.assertEqual([1], [x["number"] for x in result["available"]])
 
+    def test_dependency_cycle_is_diagnosed_not_treated_as_finished(self):
+        data = snapshot([issue(1, body="Depends on #2"),
+                         issue(2, body="Blocked by #1"),
+                         issue(3, body="Requires #2")])
+        result = mod.plan(data, state(), "main")
+        reasons = {x["number"]: x["reasons"] for x in result["excluded"]}
+        self.assertIn("DEPENDENCY_CYCLE", reasons[1])
+        self.assertIn("DEPENDENCY_CYCLE", reasons[2])
+        self.assertNotIn("DEPENDENCY_CYCLE", reasons[3])
+        self.assertIn("OPEN_DEPENDENCY", reasons[3])
+
     def test_unrelated_issue_links_not_dependencies(self):
         x = issue(2, body="See #1 for context.\n- Related to #1")
         self.assertEqual(set(), mod.dependencies(x))
@@ -141,6 +152,7 @@ class MergeGateTests(unittest.TestCase):
         mutations = [
             ({"baseRefName": "prod"}, "PR_BASE_BRANCH_MISMATCH"),
             ({"headRefOid": "bad"}, "PR_HEAD_SHA_NOT_VERIFIED"),
+            ({"body": ""}, "PR_NOT_ASSOCIATED_WITH_ISSUE"),
             ({"body": "", "headRefName": "feature/x"}, "PR_NOT_ASSOCIATED_WITH_ISSUE"),
             ({"isDraft": True}, "DRAFT_PR"),
             ({"mergeStateStatus": "BLOCKED"}, "PR_NOT_MERGEABLE"),
@@ -168,6 +180,13 @@ class DurableStateTests(unittest.TestCase):
             self.assertEqual(12, mod.read_state(root, REPO, "main")["active"])
             with self.assertRaisesRegex(ValueError, "STATE_CONTEXT_MISMATCH"):
                 mod.read_state(root, REPO, "dev")
+
+    def test_read_only_planning_does_not_create_state_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "missing-state-dir"
+            planned = mod.state_directory(REPO, str(root))
+            self.assertFalse(planned.exists())
+            self.assertIsNone(mod.read_state(planned, REPO, "main")["active"])
 
     def test_exclusive_lock_refuses_second_writer(self):
         with tempfile.TemporaryDirectory() as temp:
