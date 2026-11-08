@@ -575,6 +575,19 @@ def reconcile_active(policy: dict[str, Any], root: Path,
     if actual_branch != branch:
         return {"status": "NEEDS_HUMAN",
                 "reason": "WORKTREE_BRANCH_MISMATCH", "issue": owned}
+    marker = place / ".git"
+    if (not marker.exists() or marker.is_symlink() or
+            (hasattr(marker, "is_junction") and marker.is_junction())):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "WORKTREE_GIT_METADATA_UNVERIFIED", "issue": owned}
+    def common_dir(path: Path) -> Path:
+        raw = Path(scrubbed_argv(["git", "-C", str(path),
+                                 "rev-parse", "--git-common-dir"]))
+        return (raw if raw.is_absolute() else path / raw).resolve()
+
+    if common_dir(place) != common_dir(Path(policy["checkout"])):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "WORKTREE_GIT_REPOSITORY_CHANGED", "issue": owned}
     sha = scrubbed_argv(["git", "-C", str(place), "rev-parse", "HEAD"])
     if not SHA_RE.fullmatch(sha):
         raise SupervisorError("WORKTREE_HEAD_UNVERIFIED")
