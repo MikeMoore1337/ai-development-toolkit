@@ -40,6 +40,17 @@ Read-only audit of an initialized scoped queue:
 
     py -3.14 scripts/issue_supervisor.py audit --repo OWNER/REPO
 
+For an already claimed Issue, read-only recovery inspection checks the live
+Issue and HOLD labels, local worktree repository identity/HEAD, exact owned PR,
+and unexpected changes before attempting any new model turn. It **never**
+reclaims a stalled worker merely because a timeout elapsed:
+
+    py -3.14 scripts/issue_supervisor.py reconcile --repo OWNER/REPO
+
+The `NEEDS_HUMAN` result is intentional: an interrupted or ambiguous turn may
+still have side effects. Recovery currently requires an independently verified
+host-specific procedure, not deleting the controller state or rerunning Codex.
+
 Results distinguish `QUEUE_ALL_VERIFIED`, `QUEUE_HAS_ELIGIBLE`, `QUEUE_RUNNING` and `QUEUE_NO_ELIGIBLE_WITH_BLOCKERS`, with separate lists for closed-verified, available, waiting approval, blocked and excluded Issues.
 
 ## Open acceptance gates - keep Issue #570 OPEN
