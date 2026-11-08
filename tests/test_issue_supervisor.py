@@ -96,12 +96,15 @@ class SupervisorPolicyTests(unittest.TestCase):
             target = root / "supervisor.json"
             sup.atomic_json(target, {"schema": 1, "message": "safe"})
             self.assertEqual("safe", sup.load_json(target)["message"])
+            lock_file = root / "host.lock"
+            lock_file.write_bytes(b"existing lock sentinel")
             with sup.single_writer(root):
                 with self.assertRaisesRegex(sup.SupervisorError, "SUPERVISOR_ALREADY_RUNNING"):
                     with sup.single_writer(root):
                         pass
             with sup.single_writer(root):
                 pass
+            self.assertEqual(b"existing lock sentinel", lock_file.read_bytes())
 
     def test_state_and_scope_mismatch_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -262,6 +265,99 @@ class SupervisorStepTests(unittest.TestCase):
                 out = sup.step(p, root, st, StubRunner())
             self.assertEqual("STOPPED", out["status"])
             owner.assert_not_called()
+
+    def test_stop_cli_signals_while_writer_lock_is_held(self):
+        from io import StringIO
+        with tempfile.TemporaryDirectory() as tmp:
+            p, root, st = self._setup(tmp)
+            sup.atomic_json(root / "policy.json", p)
+            sup.atomic_json(root / "supervisor.json", st)
+            output = StringIO()
+            with sup.single_writer(root), patch("sys.stdout", output):
+                code = sup.main(["stop", "--repo", REPO,
+                                 "--state-dir", str(root)])
+            self.assertEqual(0, code, output.getvalue())
+            self.assertEqual("STOP_REQUESTED", json.loads(output.getvalue())["status"])
+            self.assertTrue(sup.stop_requested(root))
+            self.assertEqual("RUNNING", sup.read_runtime(root, p)["mode"])
+            with patch.object(sup, "github_owner") as owner:
+                result = sup.step(p, root, st, StubRunner())
+            self.assertEqual("STOPPED", result["status"])
+            self.assertEqual("STOPPED", sup.read_runtime(root, p)["mode"])
+            owner.assert_not_called()
+
+    def test_stop_between_plan_and_claim_prevents_start(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p, root, st = self._setup(tmp)
+            calls = []
+
+            def fake_controller(_policy, action, **_kwargs):
+                calls.append(action)
+                if action == "status":
+                    return {"active": None}
+                if action == "plan":
+                    sup.request_stop(root)
+                    return {"available": [{"number": 1}]}
+                raise AssertionError("STOP must prevent claim")
+
+            with patch.object(sup, "github_owner", return_value="example"), \
+                    patch.object(sup, "controller", side_effect=fake_controller), \
+                    patch.object(sup, "sync_checkout") as sync:
+                result = sup.step(p, root, st, StubRunner())
+            self.assertEqual("STOPPED", result["status"])
+            self.assertEqual(["status", "plan"], calls)
+            self.assertIsNone(st["active"])
+            self.assertEqual(0, st["turns_used"])
+            sync.assert_not_called()
+
+    def test_stop_during_turn_preserves_completion_without_next_issue(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p, root, st = self._setup(tmp)
+            runner = StubRunner()
+
+            def fake_controller(_policy, action, **_kwargs):
+                if action == "status":
+                    return {"active": None}
+                if action == "plan":
+                    return {"available": [{"number": 1}]}
+                if action == "start":
+                    return {"status": "CLAIMED", "issue": 1}
+                raise AssertionError(action)
+
+            def finish_turn(*_args):
+                sup.request_stop(root)
+                return {"status": "completed", "thread_id": "synthetic-thread"}
+
+            with patch.object(sup, "github_owner", return_value="example"), \
+                    patch.object(sup, "controller", side_effect=fake_controller), \
+                    patch.object(sup, "sync_checkout"), \
+                    patch.object(sup, "issue_worktree", return_value=str(Path(tmp))), \
+                    patch.object(runner, "turn", side_effect=finish_turn):
+                result = sup.step(p, root, st, runner)
+            self.assertEqual("STOPPED", result["status"])
+            self.assertFalse(result["in_flight_worker_killed"])
+            self.assertEqual("TURN_DONE", st["stage"])
+            self.assertEqual("STOPPED", st["mode"])
+            self.assertEqual(1, st["turns_used"])
+            self.assertEqual("synthetic-thread", st["thread_id"])
+            self.assertEqual("STOPPED", sup.read_runtime(root, p)["mode"])
+
+    def test_stop_latch_is_idempotent_and_never_follows_symlinks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "data"
+            sup.prepare_root(root)
+            sup.request_stop(root)
+            sup.request_stop(root)
+            # Text-mode newline conversion differs on Windows (CRLF).
+            self.assertEqual("STOP" + chr(10),
+                             (root / "STOP").read_text(encoding="ascii"))
+            (root / "STOP").unlink()
+            try:
+                (root / "STOP").symlink_to(root / "missing")
+            except (OSError, NotImplementedError):
+                self.skipTest("Cannot create a dangling symlink on this host")
+            with self.assertRaisesRegex(sup.SupervisorError, "UNSAFE_STOP_SIGNAL"):
+                sup.request_stop(root)
 
     def test_scope_max_issues_stops_early(self):
         with tempfile.TemporaryDirectory() as tmp:

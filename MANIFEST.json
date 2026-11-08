@@ -659,6 +659,7 @@
       "automatic_install": false,
       "automatic_background_execution": false,
       "publisher_enabled": false,
+      "durable_stop_signal": "OUT_OF_BAND_NON_INTERRUPT",
       "host_e2e": "NOT_VERIFIED",
       "live_execution": "BLOCKED_OS_CREDENTIAL_ISOLATION",
       "external_paid_api_allowed": false
