@@ -1,6 +1,6 @@
 # Reproducible release procedure
 
-**Next release candidate:** `5.5.10` (candidate, NOT PUBLISHED). Source release preparation for the complete approved scope; latest published remains [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9). The actual tag must match the eventual merged commit after owner authorization, CI and the read-only pre-tag guard. Real AI client activation and trusted external witnessing remain NOT_VERIFIED.
+**Published v5.5.10 (2026-11-08):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.10), annotated tag exact commit `1960ff03bc9bd9552621646f3965e280d33fbf34`. [Main CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42473654960) and [tagged source archive validation](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42474710619) SUCCESS: checksum inventory and technical provenance PASS. Original v5.5.9 tag unchanged. Independent legal rights, native client activation and trusted external witness remain NOT_VERIFIED.
 
 **Published v5.5.9 (2026-11-06):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9), exact source `dd9ee982e8faef6d6988feea10cef91773b4851e`. Clean local/remote pre-tag PASS, archive validation [#42190684362](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42190684362), independently downloaded ZIP SHA256 `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. Owner approval permits this source distribution but does not attest third-party/employer-IP rights. No actual client host enforcement is claimed.
 
@@ -17,7 +17,7 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 
 ## Version and release state
 
-**Latest published release:** [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9) (2026-11-06), exact commit `dd9ee982e8faef6d6988feea10cef91773b4851e`, `MANIFEST.json.version = 5.5.9`; post-merge and release archive checks PASS. Personal MCP/ChatGPT plugin/Cursor versions are separate, not auto-installed.
+**Latest published release:** [v5.5.10](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.10) (2026-11-08), exact tagged source `1960ff03bc9bd9552621646f3965e280d33fbf34`, `MANIFEST.json.version = 5.5.10`; post-merge and tagged archive checks PASS. Installed Personal MCP / ChatGPT / Codex clients are separate.
 
 
 
@@ -34,7 +34,7 @@ The historical public GitHub Release [v5.5.0](https://github.com/MikeMoore1337/a
 - Only after the release preflight and explicit owner decision may the next version be chosen, the manifest updated, and a separate release PR/tag prepared. CI never publishes a version automatically.
 - Source status is not runtime evidence: verified static format or successful copy does not prove client discovery, activation or improvement.
 
-Last published tag: [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9), exact commit `dd9ee982e8faef6d6988feea10cef91773b4851e` (2026-11-06), archive manifest version 5.5.9 and ZIP SHA256 `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. [Compare v5.5.9...main](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.9...main).
+Last published tag: [v5.5.10](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.10), immutable annotated tag exact commit `1960ff03bc9bd9552621646f3965e280d33fbf34` (2026-11-08), archive manifest 5.5.10. [Post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42473654960) and [published source archive check](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42474710619) PASS; independent client/witness tests NOT_VERIFIED.
 
 
 ### Two-phase publication and documentation acceptance (#323)
