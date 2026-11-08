@@ -521,6 +521,7 @@ class ActiveReconciliationTests(unittest.TestCase):
         root = Path(temp) / "state"
         place = root / "worktrees" / "issue-2"
         place.mkdir(parents=True)
+        (place / ".git").write_text("gitdir: synthetic-placeholder\n", encoding="utf-8")
         host = sup.initial_state(p)
         host.update(mode="PAUSED", stage="TURN_DONE", active=2)
         return p, root, place, host
@@ -533,10 +534,15 @@ class ActiveReconciliationTests(unittest.TestCase):
                 "headRefOid": sha}
 
     @staticmethod
-    def git_fixture(sha, *, branch=None, dirty=False):
+    def git_fixture(sha, *, branch=None, dirty=False, foreign_common=False):
         def run(args, **_kwargs):
             if args[-2:] == ["branch", "--show-current"]:
                 return branch or "issue-orchestrator/issue-2-supervised"
+            if args[-2:] == ["rev-parse", "--git-common-dir"]:
+                place = Path(args[2])
+                if place.name == "checkout":
+                    return str(place / ".git")
+                return str(place.parents[2] / ("attacker" if foreign_common else "checkout") / ".git")
             if args[-2:] == ["rev-parse", "HEAD"]:
                 return sha
             if args[-2:] == ["status", "--porcelain"]:
@@ -608,6 +614,21 @@ class ActiveReconciliationTests(unittest.TestCase):
                         out = sup.reconcile_active(p, root, host)
                     self.assertEqual("NEEDS_HUMAN", out["status"])
                     self.assertEqual(reason, out["reason"])
+
+    def test_foreign_worktree_git_directory_refused(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            with patch.object(sup, "controller", return_value={"active": 2}), \
+                    patch.object(sup.queue, "gh_json", return_value={
+                        "number": 2, "state": "OPEN", "labels": []}), \
+                    patch.object(sup, "scrubbed_argv",
+                                 side_effect=self.git_fixture("a" * 40,
+                                                              foreign_common=True)), \
+                    patch.object(sup, "associated_pr") as owned:
+                out = sup.reconcile_active(p, root, host)
+                owned.assert_not_called()
+            self.assertEqual("NEEDS_HUMAN", out["status"])
+            self.assertEqual("WORKTREE_GIT_REPOSITORY_CHANGED", out["reason"])
 
     def test_no_pr_is_not_evidence_of_completion(self):
         with tempfile.TemporaryDirectory() as temp:
