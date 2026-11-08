@@ -35,7 +35,8 @@ def state(entries=None, active=None):
 
 
 def pr(number=10, *, merge=False, checks=None, review=None, branch="main"):
-    result = {"number": number, "headRefName": "issue-orchestrator/issue-2-fix",
+    result = {"number": number, "headRepository": {"nameWithOwner": REPO},
+              "headRefName": "issue-orchestrator/issue-2-fix",
               "headRefOid": SHA, "baseRefName": branch, "isDraft": False,
               "body": "Closes #2", "mergeStateStatus": "CLEAN",
               "mergedAt": "2026-11-08T10:00:00Z" if merge else None,
@@ -143,14 +144,15 @@ class DesignApprovalTests(unittest.TestCase):
 
 class MergeGateTests(unittest.TestCase):
     def test_clean_exact_ci_and_merge_evidence(self):
-        self.assertEqual(SHA, mod.check_pr(pr(), 2, "main", merged=False))
-        self.assertEqual(SHA, mod.check_pr(pr(merge=True), 2, "main", merged=True))
+        self.assertEqual(SHA, mod.check_pr(pr(), 2, "main", merged=False, repo=REPO))
+        self.assertEqual(SHA, mod.check_pr(pr(merge=True), 2, "main", merged=True, repo=REPO))
         with self.assertRaisesRegex(ValueError, "PR_NOT_MERGED"):
-            mod.check_pr(pr(), 2, "main", merged=True)
+            mod.check_pr(pr(), 2, "main", merged=True, repo=REPO)
 
     def test_negative_cases_fail_closed(self):
         mutations = [
             ({"baseRefName": "prod"}, "PR_BASE_BRANCH_MISMATCH"),
+            ({"headRepository": {"nameWithOwner": "attacker/fork"}}, "CROSS_REPOSITORY_PR_REFUSED"),
             ({"headRefOid": "bad"}, "PR_HEAD_SHA_NOT_VERIFIED"),
             ({"body": ""}, "PR_NOT_ASSOCIATED_WITH_ISSUE"),
             ({"body": "", "headRefName": "feature/x"}, "PR_NOT_ASSOCIATED_WITH_ISSUE"),
@@ -166,7 +168,7 @@ class MergeGateTests(unittest.TestCase):
         for patch_data, expected in mutations:
             with self.subTest(patch_data=patch_data), self.assertRaisesRegex(
                     ValueError, expected):
-                mod.check_pr({**pr(), **patch_data}, 2, "main", merged=False)
+                mod.check_pr({**pr(), **patch_data}, 2, "main", merged=False, repo=REPO)
 
 
 class DurableStateTests(unittest.TestCase):
@@ -187,6 +189,18 @@ class DurableStateTests(unittest.TestCase):
             planned = mod.state_directory(REPO, str(root))
             self.assertFalse(planned.exists())
             self.assertIsNone(mod.read_state(planned, REPO, "main")["active"])
+
+    def test_corrupted_state_refuses_new_task(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = mod.state_directory(REPO, temp)
+            bad = state({"7": {"status": "BOGUS"}})
+            mod.write_state(root, bad)
+            with self.assertRaisesRegex(ValueError, "INVALID_STATE_ENTRY"):
+                mod.read_state(root, REPO, "main")
+            bad = state({"7": {"status": "READY"}}, active=7)
+            mod.write_state(root, bad)
+            with self.assertRaisesRegex(ValueError, "INCONSISTENT_ACTIVE_ISSUE"):
+                mod.read_state(root, REPO, "main")
 
     def test_exclusive_lock_refuses_second_writer(self):
         with tempfile.TemporaryDirectory() as temp:
