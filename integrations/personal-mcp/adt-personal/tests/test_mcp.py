@@ -682,6 +682,13 @@ class TestToolkitMCP(unittest.TestCase):
                 self.assertEqual(result['extra_model_calls'], 0)
                 self.assertEqual(result['execution'], 'NOT_RUN')
 
+        # Preserve the original reason for pre-existing combined-risk cases.
+        legacy = self.tk.prepare_task(
+            'Review a security migration for release.',
+            proactive_model_advice=True)['model_advisor']
+        self.assertEqual(legacy['status'], 'REVIEW_CANDIDATE')
+        self.assertEqual(legacy['reason_code'], 'ARCHITECTURE_SECURITY_REVIEW')
+
         still_quiet = (
             'Fix a critical security typo in README.',
             'Исправь опечатку в документации критической безопасности.',
