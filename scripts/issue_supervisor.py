@@ -487,14 +487,102 @@ def make_prompt(policy: dict[str, Any], number: int, thread_id: str | None) -> s
     )
 
 
+def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
+    """Read-only GitHub-attested terminal summary, not a second planner.
+
+    Each DONE entry requires the real Issue to be CLOSED, the associated PR
+    MERGED at the recorded HEAD and merge SHA, and fresh exact merge-SHA
+    check runs. A missing check is NOT_VERIFIED, never success.
+    """
+    saved = controller(policy, "status")
+    observed = queue.live_snapshot(policy["repo"], policy["issues"])
+    indexed, _prs = queue.require_snapshot(observed)
+    planned = queue.plan(observed, saved, policy["branch"],
+                         requested_scope=policy["issues"])
+    available_ids = {item["number"] for item in planned["available"]}
+    excluded_ids = {item["number"]: item["reasons"]
+                    for item in planned["excluded"]}
+    closed: list[int] = []
+    blocked: list[dict[str, Any]] = []
+    waiting: list[int] = []
+    excluded: list[dict[str, Any]] = []
+    available: list[int] = []
+
+    for number in policy["issues"]:
+        issue = indexed.get(number)
+        if issue is None:
+            raise SupervisorError("SCOPED_ISSUE_NOT_OBSERVED")
+        task = saved.get("entries", {}).get(str(number), {})
+        status = task.get("status", "NEW")
+        if issue["state"] == "CLOSED":
+            if status != "DONE":
+                blocked.append({"issue": number,
+                                "reason": "CLOSED_WITHOUT_VERIFIED_CONTROLLER_RECEIPT"})
+                continue
+            pr_number = task.get("pr")
+            head_sha = task.get("head_sha")
+            merge_sha = task.get("merge_sha")
+            if (type(pr_number) is not int or pr_number < 1 or
+                    not isinstance(head_sha, str) or not SHA_RE.fullmatch(head_sha) or
+                    not isinstance(merge_sha, str) or not SHA_RE.fullmatch(merge_sha)):
+                blocked.append({"issue": number, "reason": "INVALID_DELIVERY_RECEIPT"})
+                continue
+            try:
+                pr = queue.pr_view(policy["repo"], pr_number)
+                checked_head = queue.check_pr(
+                    pr, number, policy["branch"], merged=True, repo=policy["repo"])
+                merged_oid = (pr.get("mergeCommit") or {}).get("oid")
+                if checked_head != head_sha or merged_oid != merge_sha:
+                    raise SupervisorError("MERGE_RECEIPT_REVISION_MISMATCH")
+                checks = queue.gh_json(
+                    "api", f"repos/{policy['repo']}/commits/{merge_sha}/check-runs")
+                contexts = checks.get("check_runs") if isinstance(checks, dict) else None
+                if (not isinstance(contexts, list) or not contexts or
+                        any(not isinstance(c, dict)
+                            or c.get("head_sha") != merge_sha
+                            or c.get("status") != "completed"
+                            or c.get("conclusion") not in ("success", "neutral")
+                            for c in contexts)):
+                    raise SupervisorError("POST_MERGE_CHECKS_NOT_VERIFIED")
+            except (queue.QueueError, SupervisorError, OSError, ValueError):
+                blocked.append({"issue": number, "reason": "DELIVERY_EVIDENCE_UNVERIFIED"})
+                continue
+            closed.append(number)
+            continue
+        if status == "WAITING_DESIGN":
+            waiting.append(number)
+        elif number in available_ids:
+            available.append(number)
+        elif number in excluded_ids:
+            excluded.append({"issue": number, "reasons": excluded_ids[number]})
+        else:
+            blocked.append({"issue": number, "reason": "UNCLASSIFIED_OPEN_ISSUE"})
+
+    active = saved.get("active")
+    if (len(closed) == len(policy["issues"]) and active is None and
+            not blocked and not waiting and not excluded):
+        result = "QUEUE_ALL_VERIFIED"
+    elif active is not None:
+        result = "QUEUE_RUNNING"
+    elif available:
+        result = "QUEUE_HAS_ELIGIBLE"
+    else:
+        result = "QUEUE_NO_ELIGIBLE_WITH_BLOCKERS"
+    return {"status": result, "scope": policy["issues"],
+            "closed_verified": closed, "available": available,
+            "waiting_design": waiting, "blocked": blocked,
+            "excluded": excluded, "active": active,
+            "execution": "READ_ONLY_GITHUB_VERIFIED"}
+
+
 def load_policy(root: Path) -> dict[str, Any]:
     return validate_policy(load_json(root / "policy.json"))
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("init", "status", "preflight", "step",
-                                            "run", "pause", "resume", "stop"))
+    parser.add_argument("action", choices=("init", "status", "audit", "preflight",
+                                            "step", "run", "pause", "resume", "stop"))
     parser.add_argument("--repo", required=True)
     parser.add_argument("--branch", default="main")
     parser.add_argument("--issues", default="")
@@ -541,6 +629,8 @@ def main(argv: list[str] | None = None) -> int:
                 state = read_runtime(root, policy)
                 if args.action == "status":
                     result = {k: state[k] for k in ("mode", "stage", "active", "turns_used", "finished")}
+                elif args.action == "audit":
+                    result = audit_queue(policy)
                 elif args.action == "stop":
                     state["mode"] = "STOPPED"
                     audited_save(root, state, "OWNER_STOP")
