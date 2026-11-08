@@ -228,6 +228,37 @@ class DurableStateTests(unittest.TestCase):
                 mod.execute(arg("block", issue=3))
                 self.assertEqual("BLOCKED", mod.execute(arg("status"))["entries"]["3"]["status"])
 
+    def test_authenticated_design_approval_then_verified_merge(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as temp:
+            fixture = snapshot([issue(2, label=["P0", "approval:design"])])
+            def arg(action):
+                return SimpleNamespace(action=action, repo=REPO, branch="main",
+                                       state_dir=temp, issue=2, pr=10,
+                                       revision=SHA, preview_url="https://example.org/mock",
+                                       reason="", merge=False, close_issue=False)
+            with patch.object(mod, "live_snapshot", return_value=fixture):
+                mod.execute(arg("start"))
+                mod.execute(arg("design-request"))
+                with patch.object(mod, "live_design_approved", return_value=False):
+                    self.assertEqual("WAITING_DESIGN", mod.execute(arg("approve"))["status"])
+                with patch.object(mod, "live_design_approved", return_value=True):
+                    self.assertEqual("DESIGN_APPROVED", mod.execute(arg("approve"))["status"])
+                claimed = mod.execute(arg("start"))
+                self.assertEqual("IMPLEMENTATION", claimed["phase"])
+                self.assertEqual(SHA, mod.execute(arg("status"))["entries"]["2"]["preview_revision"])
+                with patch.object(mod, "live_design_approved", return_value=False), patch.object(
+                        mod, "gh_json", return_value={"labels": [{"name": "approval:design"}]}):
+                    with self.assertRaisesRegex(ValueError, "DESIGN_APPROVAL_MISSING_OR_REVOKED"):
+                        mod.execute(arg("finish"))
+                with patch.object(mod, "live_design_approved", return_value=True), patch.object(
+                        mod, "gh_json", return_value={"labels": [{"name": "approval:design"}]}), patch.object(
+                        mod, "pr_view", return_value=pr(merge=True)):
+                    finished = mod.execute(arg("finish"))
+                self.assertEqual("DONE", finished["status"])
+                self.assertEqual(MERGE, finished["merge_sha"])
+                self.assertIsNone(mod.execute(arg("status"))["active"])
+
     def test_exclusive_lock_refuses_second_writer(self):
         with tempfile.TemporaryDirectory() as temp:
             root = mod.state_directory(REPO, temp)
