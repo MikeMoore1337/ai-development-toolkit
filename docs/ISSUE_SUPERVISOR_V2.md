@@ -20,7 +20,7 @@ The SDK adapter **unconditionally refuses** live execution with OS_SEPARATED_WOR
 3. GitHub owner and exact remote HEAD checks, clean target checkout, fast-forward only, deterministic issue worktrees with verified common Git directory.
 4. Persist turn attempts before SDK dispatch and fail closed into RECONCILIATION_REQUIRED after ambiguous completion.
 5. A PR with completed checks still cannot be merged: independent exact-SHA reviewer and privileged publisher are NOT_IMPLEMENTED.
-6. Explicit STOP sentinel prevents the next step from claiming work; a full process-lifetime kill switch is NOT_IMPLEMENTED.
+6. A durable out-of-band STOP signal prevents another claim/turn even while the writer lock is held; it is checked after a completed turn. This does **not** kill an SDK subprocess already in flight. A process-lifetime child kill switch is NOT_IMPLEMENTED.
 7. The read-only `audit` CLI re-observes selected Issues, verified merged PR HEAD, exact merge SHA, a latest independent GitHub APPROVED review tied to the exact HEAD, and post-merge GitHub Actions. It only reports `QUEUE_ALL_VERIFIED` when every scope member is independently checked; empty `available` and max-issues exhaustion never prove completion.
 8. Sensitive output is not written into the audit, and no real model or API calls are made during offline tests.
 
@@ -46,6 +46,16 @@ and unexpected changes before attempting any new model turn. It **never**
 reclaims a stalled worker merely because a timeout elapsed:
 
     py -3.14 scripts/issue_supervisor.py reconcile --repo OWNER/REPO
+
+Manual emergency stop is available without waiting for the writer lock:
+
+    py -3.14 scripts/issue_supervisor.py stop --repo OWNER/REPO
+
+`STOP_REQUESTED` means the signal was durably latched while a step still holds
+the lock; it is **not** evidence of a terminated worker. `STOPPED` means the
+host state was updated, but an already running SDK child is still not proven
+terminated. A blocked or crashed host must be checked independently. The STOP
+latch persists across host restarts, and the CLI never silently clears it.
 
 The `NEEDS_HUMAN` result is intentional: an interrupted or ambiguous turn may
 still have side effects. Recovery currently requires an independently verified
