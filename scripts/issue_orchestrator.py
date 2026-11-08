@@ -59,7 +59,7 @@ def gh_json(*args: str) -> Any:
         raise QueueError("INVALID_GITHUB_JSON") from exc
 
 
-def live_snapshot(repo: str) -> dict[str, Any]:
+def live_snapshot(repo: str, issue_scope: list[int] | None = None) -> dict[str, Any]:
     validate_repo(repo)
     issues = gh_json("issue", "list", "-R", repo, "--state", "open",
                      "--limit", str(MAX_ITEMS), "--json",
@@ -71,13 +71,20 @@ def live_snapshot(repo: str) -> dict[str, Any]:
         raise QueueError("INVALID_GITHUB_SNAPSHOT")
     if len(issues) >= MAX_ITEMS or len(prs) >= MAX_ITEMS:
         raise QueueError("GITHUB_RESULT_LIMIT_REACHED")
-    # Do not truncate a long-lived repo at its first 1000 historical issues:
-    # fetch only explicitly referenced closed/missing prerequisites.
+    # Fetch historical prerequisites and ALL selected scope members, including
+    # closed predecessors no longer referenced by any currently open Issue.
+    # Without this, sequential 1 -> 2 -> 3 stops after #2 is closed because
+    # #1 disappears from the open-Issue snapshot and plan rejects the scope.
     indexed = {item["number"] for item in issues}
-    required = set().union(*(dependencies(item) for item in issues))
+    required = set(issue_scope or ()) | set().union(
+        *(dependencies(item) for item in issues))
     for number in sorted(required - indexed):
         remote = gh_json("issue", "view", str(number), "-R", repo,
                          "--json", "number,title,body,state,labels,url")
+        if (not isinstance(remote, dict) or type(remote.get("number")) is not int or
+                remote["number"] != number or
+                remote.get("state") not in ("OPEN", "CLOSED")):
+            raise QueueError("ISSUE_REFERENCE_MISMATCH")
         issues.append(remote)
     return {"issues": issues, "pull_requests": prs}
 
@@ -439,7 +446,9 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
     requested_scope = parse_issue_scope(getattr(args, "issues", None))
     if args.action == "plan":
         state = read_state(root, repo, branch)
-        return plan(live_snapshot(repo), state, branch, requested_scope=requested_scope)
+        effective_scope = resolve_scope(state, requested_scope)
+        return plan(live_snapshot(repo, effective_scope), state, branch,
+                    requested_scope=requested_scope)
     if args.action == "status":
         return read_state(root, repo, branch)
     with exclusive(root):
@@ -450,7 +459,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
             if current is not None:
                 raise QueueError("ONE_WRITER_ALREADY_ACTIVE")
             selected = resolve_scope(state, requested_scope)
-            queue = plan(live_snapshot(repo), state, branch,
+            queue = plan(live_snapshot(repo, selected), state, branch,
                          requested_scope=requested_scope)["available"]
             if not queue:
                 return {"status": "NO_AVAILABLE_ISSUES"}

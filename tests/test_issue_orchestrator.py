@@ -377,5 +377,126 @@ class SafePilotScopeTests(unittest.TestCase):
                 mod.read_state(root, REPO, "main")
 
 
+class ClosedScopedIssueRecoveryTests(unittest.TestCase):
+    """Regression: after #1 and #2 close, #3 must remain claimable."""
+
+    @staticmethod
+    def mocked_gh(issues: list[dict], *, missing: set[int] | None = None,
+                  mismatch: bool = False):
+        indexed = {item["number"]: item for item in issues}
+        missing = missing or set()
+        calls: list[int] = []
+
+        def query(*args):
+            if args[:2] == ("issue", "list"):
+                return [item for item in issues if item["state"] == "OPEN"]
+            if args[:2] == ("pr", "list"):
+                return []
+            if args[:2] == ("issue", "view"):
+                number = int(args[2])
+                calls.append(number)
+                if number in missing or number not in indexed:
+                    raise mod.QueueError("GITHUB_COMMAND_FAILED")
+                item = indexed[number].copy()
+                if mismatch:
+                    item["number"] += 100
+                return item
+            raise AssertionError(f"Unexpected gh_json call: {args}")
+
+        return query, calls
+
+    def test_all_intermediate_scoped_states_fetch_closed_members(self):
+        for completed in (0, 1, 2, 3):
+            with self.subTest(completed=completed):
+                rows = [
+                    issue(1, state="CLOSED" if completed >= 1 else "OPEN"),
+                    issue(2, state="CLOSED" if completed >= 2 else "OPEN",
+                          body="Depends on #1"),
+                    issue(3, state="CLOSED" if completed >= 3 else "OPEN",
+                          body="Depends on #2"),
+                ]
+                stub, fetched = self.mocked_gh(rows)
+                with patch.object(mod, "gh_json", side_effect=stub):
+                    snapshot_data = mod.live_snapshot(REPO, [1, 2, 3])
+                self.assertEqual({1, 2, 3},
+                                 {x["number"] for x in snapshot_data["issues"]})
+                self.assertEqual(set(range(1, completed + 1)), set(fetched))
+                planned = mod.plan(snapshot_data, state(), "main",
+                                   requested_scope=[1, 2, 3])
+                available = [entry["number"] for entry in planned["available"]]
+                self.assertEqual([] if completed == 3 else [completed + 1],
+                                 available)
+                self.assertEqual(completed == 3, planned["complete"])
+
+    def test_read_only_plan_and_start_resume_from_persisted_scope(self):
+        from types import SimpleNamespace
+
+        rows = [issue(1, state="CLOSED"),
+                issue(2, state="CLOSED", body="Depends on #1"),
+                issue(3, body="Depends on #2")]
+        stub, fetched = self.mocked_gh(rows)
+        with tempfile.TemporaryDirectory() as temp:
+            root = mod.state_directory(REPO, temp, create=True)
+            saved = state({"1": {"status": "DONE"},
+                           "2": {"status": "DONE"}})
+            saved["issue_scope"] = [1, 2, 3]
+            mod.write_state(root, saved)
+
+            args = SimpleNamespace(repo=REPO, branch="main", action="plan",
+                                   state_dir=temp, issues=None)
+            with patch.object(mod, "gh_json", side_effect=stub):
+                preview = mod.execute(args)
+                self.assertEqual([3], [x["number"] for x in preview["available"]])
+                self.assertEqual([1, 2, 3], preview["issue_scope"])
+                self.assertIsNone(mod.execute(SimpleNamespace(
+                    repo=REPO, branch="main", action="status",
+                    state_dir=temp, issues=None))["active"])
+                args.action = "start"
+                claimed = mod.execute(args)
+
+            self.assertEqual("CLAIMED", claimed["status"])
+            self.assertEqual(3, claimed["issue"])
+            self.assertEqual({1, 2}, set(fetched))
+            persisted = mod.read_state(root, REPO, "main")
+            self.assertEqual(3, persisted["active"])
+            self.assertEqual([1, 2, 3], persisted["issue_scope"])
+            self.assertEqual("DONE", persisted["entries"]["1"]["status"])
+            self.assertEqual("DONE", persisted["entries"]["2"]["status"])
+
+    def test_fails_closed_when_scoped_closed_member_unavailable(self):
+        rows = [issue(1, state="CLOSED"),
+                issue(2, state="CLOSED", body="Depends on #1"),
+                issue(3, body="Depends on #2")]
+        stub, _ = self.mocked_gh(rows, missing={1})
+        with patch.object(mod, "gh_json", side_effect=stub):
+            with self.assertRaisesRegex(ValueError, "GITHUB_COMMAND_FAILED"):
+                mod.live_snapshot(REPO, [1, 2, 3])
+
+    def test_rejects_inconsistent_issue_view_and_does_not_claim(self):
+        from types import SimpleNamespace
+
+        rows = [issue(1, state="CLOSED"), issue(2)]
+        stub, _ = self.mocked_gh(rows, mismatch=True)
+        with tempfile.TemporaryDirectory() as temp:
+            args = SimpleNamespace(repo=REPO, branch="main", action="start",
+                                   state_dir=temp, issues="1,2")
+            with patch.object(mod, "gh_json", side_effect=stub):
+                with self.assertRaisesRegex(ValueError, "ISSUE_REFERENCE_MISMATCH"):
+                    mod.execute(args)
+            persisted = mod.read_state(Path(temp), REPO, "main")
+            self.assertIsNone(persisted["active"])
+            self.assertFalse(persisted["entries"])
+
+    def test_unscoped_fetch_does_not_load_unrelated_closed_issue(self):
+        rows = [issue(1, state="CLOSED"),
+                issue(2, state="CLOSED", body="Depends on #1"),
+                issue(3, body="Depends on #2")]
+        stub, fetched = self.mocked_gh(rows)
+        with patch.object(mod, "gh_json", side_effect=stub):
+            snapshot_data = mod.live_snapshot(REPO)
+        self.assertEqual([2], fetched)
+        self.assertEqual({2, 3}, {item["number"] for item in snapshot_data["issues"]})
+
+
 if __name__ == "__main__":
     unittest.main()
