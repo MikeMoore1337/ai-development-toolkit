@@ -128,6 +128,19 @@ def require_snapshot(snapshot: dict[str, Any]) -> tuple[dict[int, dict], list[di
     return by_number, prs
 
 
+def is_cyclic(start: int, graph: dict[int, set[int]]) -> bool:
+    remaining = list(graph.get(start, set()))
+    visited: set[int] = set()
+    while remaining:
+        item = remaining.pop()
+        if item == start:
+            return True
+        if item not in visited:
+            visited.add(item)
+            remaining.extend(graph.get(item, set()))
+    return False
+
+
 def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[str, Any]:
     by_num, prs = require_snapshot(snapshot)
     entries = state.get("entries", {})
@@ -137,6 +150,9 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
     for pr in prs:
         for number in pr_issue_numbers(pr):
             open_prs.setdefault(number, []).append(pr.get("number", 0))
+    graph = {number: {dep for dep in dependencies(issue)
+                       if dep in by_num and by_num[dep]["state"] == "OPEN"}
+             for number, issue in by_num.items() if issue["state"] == "OPEN"}
     available, excluded = [], []
     for number, issue in by_num.items():
         if issue["state"] != "OPEN":
@@ -158,6 +174,8 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
         deps = dependencies(issue)
         if number in deps:
             reasons.append("SELF_DEPENDENCY")
+        if is_cyclic(number, graph):
+            reasons.append("DEPENDENCY_CYCLE")
         for dependent in sorted(deps):
             target = by_num.get(dependent)
             if target is None:
@@ -180,7 +198,7 @@ def utcnow() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def state_directory(repo: str, override: str | None) -> Path:
+def state_directory(repo: str, override: str | None, *, create: bool = False) -> Path:
     root = Path(override).expanduser() if override else (
         Path.home() / ".adt" / "issue-orchestrator" / repo.split("/")[0] / repo.split("/")[1]
     )
@@ -190,8 +208,11 @@ def state_directory(repo: str, override: str | None) -> Path:
     for path in (root, *root.parents):
         if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
             raise QueueError("LINKED_STATE_DIRECTORY")
-    root.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if os.name != "nt" and root.stat().st_mode & 0o077:
+    if create:
+        root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if root.exists() and not root.is_dir():
+        raise QueueError("STATE_DIRECTORY_NOT_DIRECTORY")
+    if root.exists() and os.name != "nt" and root.stat().st_mode & 0o077:
         raise QueueError("STATE_DIRECTORY_NOT_PRIVATE")
     return root
 
@@ -283,7 +304,10 @@ def check_pr(pr: dict, issue: int, branch: str, *, merged: bool) -> str:
     head = str(pr.get("headRefOid") or "")
     if not SHA_RE.fullmatch(head):
         raise QueueError("PR_HEAD_SHA_NOT_VERIFIED")
-    if issue not in pr_issue_numbers(pr):
+    own_branch = re.fullmatch(
+        rf"issue-orchestrator/issue-{issue}(?:-[A-Za-z0-9._/-]+)?",
+        str(pr.get("headRefName", "")))
+    if issue not in pr_issue_numbers(pr) or not own_branch:
         raise QueueError("PR_NOT_ASSOCIATED_WITH_ISSUE")
     if pr.get("isDraft"):
         raise QueueError("DRAFT_PR")
@@ -323,7 +347,7 @@ def pr_view(repo: str, number: int) -> dict:
 
 def execute(args: argparse.Namespace) -> dict[str, Any]:
     repo = validate_repo(args.repo)
-    root = state_directory(repo, args.state_dir)
+    root = state_directory(repo, args.state_dir, create=args.action not in ("plan", "status"))
     branch = args.branch
     if args.action == "plan":
         state = read_state(root, repo, branch)
@@ -341,9 +365,8 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
             if not queue:
                 return {"status": "NO_AVAILABLE_ISSUES"}
             target = queue[0]["number"]
-            entries[str(target)] = {"status": "IN_PROGRESS", "started_at": utcnow(),
-                                    **({"design_approved": True}
-                                       if entries.get(str(target), {}).get("design_approved") else {})}
+            entries[str(target)] = {**entries.get(str(target), {}),
+                                    "status": "IN_PROGRESS", "started_at": utcnow()}
             state["active"] = target
             write_state(root, state)
             return {"status": "CLAIMED", "issue": target, "branch": branch}
@@ -380,6 +403,12 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
             task.update(status="READY", design_approved=True, approved_at=utcnow())
             write_state(root, state)
             return {"status": "DESIGN_APPROVED", "issue": number}
+        if args.action == "retry":
+            if current is not None or task.get("status") != "BLOCKED":
+                raise QueueError("RETRY_REQUIRES_NO_ACTIVE_WRITER")
+            task.update(status="READY", retry_at=utcnow(), reason="")
+            write_state(root, state)
+            return {"status": "RETRY_READY", "issue": number}
         if args.action == "block":
             if current != number or task.get("status") != "IN_PROGRESS":
                 raise QueueError("BLOCK_REQUIRES_ACTIVE_ISSUE")
@@ -402,6 +431,8 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
                 if pr.get("headRefOid") != head:
                     raise QueueError("HEAD_CHANGED_DURING_MERGE")
             check_pr(pr, number, branch, merged=True)
+            if args.close_issue:
+                gh("issue", "close", str(number), "-R", repo)
             task.update(status="DONE", pr=args.pr, head_sha=head,
                         merge_sha=(pr["mergeCommit"] or {}).get("oid"),
                         finished_at=utcnow())
@@ -415,7 +446,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("plan", "status", "start", "design-request",
-                                            "approve", "block", "finish"))
+                                            "approve", "block", "retry", "finish"))
     parser.add_argument("--repo", required=True, help="GitHub owner/repository")
     parser.add_argument("--branch", required=True, help="Authorized delivery branch")
     parser.add_argument("--state-dir", help="Private, absolute directory outside repository")
@@ -424,11 +455,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--preview-url", default="")
     parser.add_argument("--reason", default="")
     parser.add_argument("--pr", type=int)
+    parser.add_argument("--close-issue", action="store_true",
+                        help="Explicit opt-in: close issue only after verified merge")
     parser.add_argument("--merge", action="store_true",
                         help="Explicit opt-in: merge verified PR without --admin")
     args = parser.parse_args(argv)
     try:
-        if args.action in ("design-request", "approve", "block", "finish") and (
+        if args.action in ("design-request", "approve", "block", "retry", "finish") and (
                 args.issue is None or args.issue < 1):
             raise QueueError("ISSUE_NUMBER_REQUIRED")
         if args.action == "finish" and (args.pr is None or args.pr < 1):
