@@ -113,6 +113,12 @@ class SupervisorPolicyTests(unittest.TestCase):
             with self.assertRaisesRegex(sdk.SDKDenied, "OS_SEPARATED_WORKER_NOT_ATTESTED"):
                 instance.verify_isolation()
 
+    def test_direct_worker_bypass_is_refused_before_sdk_import(self):
+        with self.assertRaisesRegex(sdk.SDKDenied, "OS_SEPARATED_WORKER_NOT_ATTESTED"):
+            sdk.execute_worker({"action": "preflight",
+                                "runtime_acknowledged": True,
+                                "included_usage_confirmed": True})
+
     def test_prompt_never_grants_agent_push_or_merge(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = policy(Path(tmp))
