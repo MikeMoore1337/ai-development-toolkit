@@ -179,6 +179,7 @@ class DurableStateTests(unittest.TestCase):
             s = mod.read_state(root, REPO, "main")
             self.assertIsNone(s["active"])
             s["active"] = 12
+            s["entries"]["12"] = {"status": "IN_PROGRESS"}
             mod.write_state(root, s)
             self.assertEqual(12, mod.read_state(root, REPO, "main")["active"])
             with self.assertRaisesRegex(ValueError, "STATE_CONTEXT_MISMATCH"):
