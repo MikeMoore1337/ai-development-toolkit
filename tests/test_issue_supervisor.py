@@ -515,5 +515,113 @@ class QueueTerminalAuditTests(unittest.TestCase):
             self.assertNotEqual("QUEUE_ALL_VERIFIED", result["status"])
 
 
+class ActiveReconciliationTests(unittest.TestCase):
+    def build(self, temp):
+        p = policy(Path(temp))
+        root = Path(temp) / "state"
+        place = root / "worktrees" / "issue-2"
+        place.mkdir(parents=True)
+        host = sup.initial_state(p)
+        host.update(mode="PAUSED", stage="TURN_DONE", active=2)
+        return p, root, place, host
+
+    @staticmethod
+    def pr(sha):
+        return {"baseRefName": "main",
+                "headRefName": "issue-orchestrator/issue-2-supervised",
+                "headRepository": {"nameWithOwner": REPO},
+                "headRefOid": sha}
+
+    @staticmethod
+    def git_fixture(sha, *, branch=None, dirty=False):
+        def run(args, **_kwargs):
+            if args[-2:] == ["branch", "--show-current"]:
+                return branch or "issue-orchestrator/issue-2-supervised"
+            if args[-2:] == ["rev-parse", "HEAD"]:
+                return sha
+            if args[-2:] == ["status", "--porcelain"]:
+                return " M README.md" if dirty else ""
+            raise AssertionError(args)
+        return run
+
+    def test_matching_owned_pr_produces_review_gate_not_auto_resume(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            sha = "a" * 40
+            with patch.object(sup, "controller", return_value={"active": 2}), \
+                    patch.object(sup.queue, "gh_json", return_value={
+                        "number": 2, "state": "OPEN", "labels": []}), \
+                    patch.object(sup, "scrubbed_argv", side_effect=self.git_fixture(sha)), \
+                    patch.object(sup, "associated_pr", return_value=5), \
+                    patch.object(sup.queue, "pr_view", return_value=self.pr(sha)):
+                out = sup.reconcile_active(p, root, host)
+            self.assertEqual("PR_PRESENT_REVIEW_REQUIRED", out["status"])
+            self.assertEqual(sha, out["pr_head"])
+            self.assertEqual(2, host["active"])
+            self.assertEqual("TURN_DONE", host["stage"])
+
+    def test_foreign_writer_refused_before_git_or_github(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            with patch.object(sup, "controller", return_value={"active": 1}), \
+                    patch.object(sup.queue, "gh_json") as gh:
+                out = sup.reconcile_active(p, root, host)
+                gh.assert_not_called()
+            self.assertEqual("NEEDS_HUMAN", out["status"])
+            self.assertEqual("QUEUE_ACTIVE_MISMATCH", out["reason"])
+
+    def test_live_closed_or_held_issue_is_never_reclaimed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            for state, labels, reason in (
+                ("CLOSED", [], "ACTIVE_ISSUE_NOT_OPEN"),
+                ("OPEN", [{"name": "HOLD"}], "ACTIVE_ISSUE_NOW_HELD"),
+            ):
+                with self.subTest(state=state), \
+                        patch.object(sup, "controller", return_value={"active": 2}), \
+                        patch.object(sup.queue, "gh_json", return_value={
+                            "number": 2, "state": state, "labels": labels}), \
+                        patch.object(sup, "scrubbed_argv") as git:
+                    out = sup.reconcile_active(p, root, host)
+                    git.assert_not_called()
+                self.assertEqual(reason, out["reason"])
+
+    def test_unknown_worker_and_head_mismatch_fail_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            sha = "a" * 40
+            cases = [
+                ("b" * 40, False, "TURN_DONE", "WORKTREE_AND_PR_HEAD_DIVERGED"),
+                (sha, True, "TURN_DONE", "DIRTY_WORKTREE_WITH_OPEN_PR"),
+                (sha, False, "TURN_IN_FLIGHT", "UNVERIFIED_IN_FLIGHT_WORKER"),
+            ]
+            for local, dirty, stage, reason in cases:
+                with self.subTest(reason=reason):
+                    host["stage"] = stage
+                    with patch.object(sup, "controller", return_value={"active": 2}), \
+                            patch.object(sup.queue, "gh_json", return_value={
+                                "number": 2, "state": "OPEN", "labels": []}), \
+                            patch.object(sup, "scrubbed_argv",
+                                         side_effect=self.git_fixture(local, dirty=dirty)), \
+                            patch.object(sup, "associated_pr", return_value=5), \
+                            patch.object(sup.queue, "pr_view", return_value=self.pr(sha)):
+                        out = sup.reconcile_active(p, root, host)
+                    self.assertEqual("NEEDS_HUMAN", out["status"])
+                    self.assertEqual(reason, out["reason"])
+
+    def test_no_pr_is_not_evidence_of_completion(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            with patch.object(sup, "controller", return_value={"active": 2}), \
+                    patch.object(sup.queue, "gh_json", return_value={
+                        "number": 2, "state": "OPEN", "labels": []}), \
+                    patch.object(sup, "scrubbed_argv",
+                                 side_effect=self.git_fixture("a" * 40)), \
+                    patch.object(sup, "associated_pr", return_value=None):
+                out = sup.reconcile_active(p, root, host)
+            self.assertEqual("NEEDS_HUMAN", out["status"])
+            self.assertEqual("NO_OWNED_PR", out["reason"])
+
+
 if __name__ == "__main__":
     unittest.main()
