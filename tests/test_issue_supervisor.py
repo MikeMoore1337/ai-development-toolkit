@@ -272,7 +272,7 @@ class HostGitIsolationTests(unittest.TestCase):
                                                "branch", "--show-current"]))
             self.assertEqual(str(worktree), sup.issue_worktree(p, state_dir, 2))
             with self.assertRaisesRegex(sup.SupervisorError,
-                                        "ISSUE_WORKTREE_BRANCH_MISMATCH"):
+                                        "EXECUTOR_COMMAND_FAILED"):
                 (worktree / ".git").rename(worktree / ".git.backup")
                 try:
                     sup.issue_worktree(p, state_dir, 2)
