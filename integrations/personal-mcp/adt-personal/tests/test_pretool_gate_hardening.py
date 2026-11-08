@@ -213,5 +213,35 @@ class GateGuardHardeningTests(unittest.TestCase):
         self.assertEqual(json.loads(output)["decision"], "BLOCK_RECOMMENDED")
 
 
+    def test_sensitive_glob_wildcards_need_review(self):
+        patterns = (
+            "**/[.]env", "**/id_?sa", "**/credenti?ls.json",
+            "**/private.[p]em", "**/[.]env.production",
+        )
+        for pattern in patterns:
+            with self.subTest(pattern=pattern):
+                out = module.review_event(self.event("Glob", {"pattern": pattern}))
+                self.assertEqual(out["decision"], "REVIEW_REQUIRED")
+                self.assertEqual(out["reason_code"], "SENSITIVE_OR_OUT_OF_SCOPE_PATH")
+                self.assertEqual(out["blocking_effect"], "NONE_SOURCE_ONLY")
+                self.assertFalse(out["hook_registered"])
+
+    def test_glob_fix_preserves_benign_reads(self):
+        for pattern in ("src/**/*_test.py", "packages/*/README.md",
+                        "docs/**/*.md", "assets/**/*.svg"):
+            with self.subTest(pattern=pattern):
+                out = module.review_event(self.event("Glob", {"pattern": pattern}))
+                self.assertEqual(out["decision"], "ALLOW_CANDIDATE")
+        for path in (".env.example", "config/.env.dist", "src/app.py"):
+            self.assertEqual(
+                module.review_event(self.event("Read", {"path": path}))["decision"],
+                "ALLOW_CANDIDATE",
+            )
+        self.assertEqual(
+            module.review_event(self.event("Grep", {"pattern": r"\.env"}))["decision"],
+            "ALLOW_CANDIDATE",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
