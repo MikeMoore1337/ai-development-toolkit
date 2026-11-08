@@ -592,7 +592,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sdk-runtime-acknowledged", action="store_true")
     parser.add_argument("--included-usage-confirmed", action="store_true")
     parser.add_argument("--allow-merge", action="store_true")
-    parser.add_argument("--max-issues", type=int, default=3)
+    parser.add_argument("--max-issues", type=int, default=None)
     parser.add_argument("--max-turns", type=int, default=9)
     parser.add_argument("--max-attempts-per-issue", type=int, default=3)
     parser.add_argument("--max-turn-seconds", type=int, default=1800)
@@ -611,7 +611,9 @@ def main(argv: list[str] | None = None) -> int:
                 "sdk_runtime_acknowledged": args.sdk_runtime_acknowledged,
                 "chatgpt_included_usage_confirmed": args.included_usage_confirmed,
                 "allow_merge": args.allow_merge,
-                "max_issues": args.max_issues, "max_turns": args.max_turns,
+                "max_issues": args.max_issues if args.max_issues is not None else len(
+                    queue.parse_issue_scope(args.issues) or []),
+                "max_turns": args.max_turns,
                 "max_attempts_per_issue": args.max_attempts_per_issue,
                 "max_turn_seconds": args.max_turn_seconds,
                 "poll_seconds": args.poll_seconds,
