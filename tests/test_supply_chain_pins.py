@@ -84,6 +84,9 @@ class SupplyChainPinTests(unittest.TestCase):
             "python scripts/validate_provenance.py --mode release",
             "python scripts/pre_tag_preflight.py --tag v5.5.10",
             "EXACT_MAIN_SIX_JOB_CI=PASS",
+            "actions: write",
+            "gh workflow run release-archive.yml --ref main -f tag=v5.5.10",
+            "ARCHIVE_VALIDATION_DISPATCHED=YES",
         ):
             with self.subTest(required=expected):
                 self.assertIn(expected, body)

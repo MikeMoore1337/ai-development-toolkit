@@ -10,6 +10,7 @@ import json
 import re
 import shlex
 import sys
+from fnmatch import fnmatchcase
 
 MAX_INPUT_BYTES = 16384
 MAX_COMMAND_CHARS = 4096
@@ -106,17 +107,28 @@ def _sensitive_path(value: str) -> bool:
             return True
         if part.endswith(SENSITIVE_SUFFIXES):
             return True
-        # A Glob wildcard may match an explicit sensitive basename or suffix.
-        # Do not interpret broad patterns like "*.py" as secret access.
-        if any(ch in part for ch in "*?[") and any(
-            marker in part for marker in (
+        # Glob character classes and '?' may hide a sensitive name from
+        # simple substring matching. This is a lexical review, not Glob I/O.
+        if any(ch in part for ch in "*?["):
+            if (any(ch in part for ch in "?[") and
+                    any(fnmatchcase(name, part) for name in
+                        (*SENSITIVE_DIRS, *SENSITIVE_FILES, ".env"))):
+                return True
+            # Normalize only single literal-character classes such as [p]em.
+            literal = re.sub(r"\[([A-Za-z0-9_.-])\]", r"\1", part)
+            if literal.endswith(SENSITIVE_SUFFIXES) or (
+                literal != part and (literal == ".env" or
+                                     literal.startswith(".env.") and
+                                     literal not in PUBLIC_ENV_TEMPLATES)
+            ):
+                return True
+            if any(marker in part for marker in (
                 ".env", ".ssh", ".aws", ".azure", ".gnupg", ".kube",
                 "id_rsa", "id_ed25519", ".npmrc", ".pypirc",
                 "credentials.json", "service-account.json", "service_account.json",
                 *SENSITIVE_SUFFIXES,
-            )
-        ):
-            return True
+            )):
+                return True
     return False
 
 

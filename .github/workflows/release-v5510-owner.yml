@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
-      actions: read
+      actions: write
       checks: read
     env:
       GH_TOKEN: ${{ github.token }}
@@ -113,3 +113,11 @@ jobs:
           test -n "$published_at"
           test "$published_at" != null
           echo "TAG_AND_RELEASE_ATTESTED_FOR=$RELEASE_SHA"
+      - name: Dispatch independent verification of the actual published GitHub ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          # GITHUB_TOKEN does not ordinarily trigger push/release workflows.
+          # workflow_dispatch is an explicitly supported exception.
+          gh workflow run release-archive.yml --ref main -f tag=v5.5.10
+          echo "ARCHIVE_VALIDATION_DISPATCHED=YES; outcome must be checked independently before release acceptance"
