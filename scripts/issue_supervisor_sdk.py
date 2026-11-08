@@ -49,6 +49,9 @@ def execute_worker(payload: dict[str, Any]) -> dict[str, Any]:
         raise SDKDenied("BUNDLED_RUNTIME_NOT_ACKNOWLEDGED")
     if payload.get("included_usage_confirmed") is not True:
         raise SDKDenied("INCLUDED_PLAN_USAGE_NOT_CONFIRMED")
+    # Defense in depth: direct --worker calls must not bypass the parent
+    # supervisor's isolation gate. A same-user process is not credential-free.
+    raise SDKDenied("OS_SEPARATED_WORKER_NOT_ATTESTED")
     try:
         from openai_codex import Codex, ApprovalMode, Sandbox
     except ImportError as exc:
@@ -158,6 +161,7 @@ def main() -> int:
             "INVALID_WORKER_REQUEST", "BUNDLED_RUNTIME_NOT_ACKNOWLEDGED",
             "INCLUDED_PLAN_USAGE_NOT_CONFIRMED", "OFFICIAL_CODEX_SDK_NOT_INSTALLED",
             "AUTH_NOT_VERIFIED_CHATGPT_PLAN", "PAID_OR_EXTERNAL_API_ENVIRONMENT_REFUSED",
+            "OS_SEPARATED_WORKER_NOT_ATTESTED",
             "INVALID_WORKTREE", "INVALID_PROMPT", "INVALID_THREAD_ID"):
             reason = "SDK_WORKER_FAILED"
         print(json.dumps({"status": "REFUSED", "reason": reason}))
