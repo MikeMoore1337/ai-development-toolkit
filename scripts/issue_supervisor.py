@@ -233,6 +233,10 @@ def issue_worktree(policy: dict[str, Any], root: Path, number: int) -> str:
         place.parent.mkdir(parents=True, exist_ok=True)
         scrubbed_argv(["git", "-C", policy["checkout"], "worktree", "add",
                        "-b", branch, str(place), policy["branch"]], timeout=120)
+    parent = place.parent
+    if (parent.is_symlink() or
+            (hasattr(parent, "is_junction") and parent.is_junction())):
+        raise SupervisorError("LINKED_WORKTREE_PARENT")
     if not place.is_dir() or place.is_symlink() or (hasattr(place, "is_junction") and place.is_junction()):
         raise SupervisorError("UNSAFE_ISSUE_WORKTREE")
     actual_branch = scrubbed_argv(["git", "-C", str(place), "branch", "--show-current"])
@@ -553,20 +557,23 @@ def reconcile_active(policy: dict[str, Any], root: Path,
     # Check the live Issue before using any local worktree.
     actual = queue.gh_json(
         "issue", "view", str(owned), "-R", policy["repo"],
-        "--json", "number,state,labels")
+        "--json", "number,state,labels,title")
     if not isinstance(actual, dict) or actual.get("number") != owned:
         raise SupervisorError("LIVE_ISSUE_ID_MISMATCH")
     if actual.get("state") != "OPEN":
         return {"status": "NEEDS_HUMAN",
                 "reason": "ACTIVE_ISSUE_NOT_OPEN", "issue": owned}
     label_names = queue.labels(actual)
-    if label_names & queue.BLOCK_LABELS:
+    if (label_names & queue.BLOCK_LABELS or
+            queue.BLOCK_TITLE_MARKERS.search(str(actual.get("title") or ""))):
         return {"status": "NEEDS_HUMAN",
                 "reason": "ACTIVE_ISSUE_NOW_HELD", "issue": owned}
 
     place = root / "worktrees" / f"issue-{owned}"
-    if not place.is_dir() or place.is_symlink() or (
-            hasattr(place, "is_junction") and place.is_junction()):
+    parent = place.parent
+    if (parent.is_symlink() or (hasattr(parent, "is_junction") and parent.is_junction()) or
+            not place.is_dir() or place.is_symlink() or
+            (hasattr(place, "is_junction") and place.is_junction())):
         return {"status": "NEEDS_HUMAN",
                 "reason": "WORKTREE_MISSING_OR_UNSAFE", "issue": owned}
     branch = issue_branch(owned)
@@ -605,6 +612,13 @@ def reconcile_active(policy: dict[str, Any], root: Path,
         return {"status": "NEEDS_HUMAN",
                 "reason": "OWNED_PR_CONTEXT_CHANGED", "issue": owned,
                 "pr": pr_num}
+    if pr.get("mergedAt"):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "MERGED_PR_REQUIRES_CONTROLLER_RECONCILIATION",
+                "issue": owned, "pr": pr_num}
+    if pr.get("isDraft"):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "OWNED_PR_IS_DRAFT", "issue": owned, "pr": pr_num}
     head = pr.get("headRefOid")
     if not isinstance(head, str) or not SHA_RE.fullmatch(head):
         raise SupervisorError("OWNED_PR_HEAD_UNVERIFIED")
