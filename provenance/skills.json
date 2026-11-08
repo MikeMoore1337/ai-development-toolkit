@@ -4,26 +4,6 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
-      "id": "release-v5510-owner-controlled-publication-workflow",
-      "path": ".github/workflows/release-v5510-owner.yml",
-      "name": "One-version exact-SHA owner-comment-gated v5.5.10 release workflow",
-      "kind": "workflow",
-      "author": "Toolkit maintainers (AI-assisted, claimed)",
-      "origin": "original",
-      "source_url": null,
-      "source_reference": null,
-      "source_revision": null,
-      "license": "MIT",
-      "distribution_basis": "Toolkit-authored one-off GitHub Actions release gate; owner-triggered only; independent redistribution rights and host deployment not attested.",
-      "attribution_required": false,
-      "attribution_path": null,
-      "status": "documented",
-      "evidence": ".github/workflows/release-v5510-owner.yml",
-      "last_reviewed": "2026-11-08",
-      "distribution": "included",
-      "notes": "Owner comment on Issue #437 with an exact post-merge SHA is mandatory; validates six exact-SHA jobs and clean pre-tag before annotated tag/Release. Does not alter client installation; optional source-release infrastructure, no automatic publication."
-    },
-    {
       "id": "chatgpt-533-route-validator",
       "path": "scripts/verify_chatgpt_route_receipt.py",
       "name": "Offline opt-in ChatGPT routing receipt validator",
