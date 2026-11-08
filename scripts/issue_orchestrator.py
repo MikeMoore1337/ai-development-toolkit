@@ -177,8 +177,7 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
             reasons.append("EXISTING_OPEN_PR")
         if stage in ("IN_PROGRESS", "WAITING_DESIGN", "BLOCKED", "DONE"):
             reasons.append(stage)
-        if lset & DESIGN_LABELS and own.get("design_approved") is not True:
-            reasons.append("DESIGN_APPROVAL_REQUIRED")
+        preview_needed = bool(lset & DESIGN_LABELS and own.get("design_approved") is not True)
         deps = dependencies(issue)
         if number in deps:
             reasons.append("SELF_DEPENDENCY")
@@ -192,6 +191,7 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
                 reasons.append("OPEN_DEPENDENCY")
         item = {"number": number, "title": issue.get("title", ""),
                 "priority": priority(issue), "dependencies": sorted(deps),
+                "phase": "DESIGN_PREVIEW" if preview_needed else "IMPLEMENTATION",
                 "reasons": sorted(set(reasons))}
         (excluded if reasons else available).append(item)
     available.sort(key=lambda x: (x["priority"], x["number"]))
@@ -388,10 +388,12 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
                 return {"status": "NO_AVAILABLE_ISSUES"}
             target = queue[0]["number"]
             entries[str(target)] = {**entries.get(str(target), {}),
-                                    "status": "IN_PROGRESS", "started_at": utcnow()}
+                                    "status": "IN_PROGRESS", "started_at": utcnow(),
+                                    "phase": queue[0]["phase"]}
             state["active"] = target
             write_state(root, state)
-            return {"status": "CLAIMED", "issue": target, "branch": branch}
+            return {"status": "CLAIMED", "issue": target, "branch": branch,
+                    "phase": queue[0]["phase"]}
         number = args.issue
         if number is None or str(number) not in entries:
             raise QueueError("ISSUE_NOT_CLAIMED")
@@ -441,6 +443,8 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         if args.action == "finish":
             if current != number or task.get("status") != "IN_PROGRESS":
                 raise QueueError("FINISH_REQUIRES_ACTIVE_ISSUE")
+            if task.get("phase") == "DESIGN_PREVIEW" and task.get("design_approved") is not True:
+                raise QueueError("DESIGN_APPROVAL_REQUIRED_BEFORE_MERGE")
             pr = pr_view(repo, args.pr)
             head = check_pr(pr, number, branch, merged=bool(pr.get("mergedAt")), repo=repo)
             if not pr.get("mergedAt"):
