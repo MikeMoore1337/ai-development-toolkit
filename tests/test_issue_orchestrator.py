@@ -290,5 +290,92 @@ class DurableStateTests(unittest.TestCase):
                 self.assertEqual(7, mod.read_state(Path(temp), REPO, "main")["active"])
 
 
+class SafePilotScopeTests(unittest.TestCase):
+    def test_hold_in_title_is_excluded_even_without_labels(self):
+        data = snapshot([issue(344, title="[P2][HOLD] L6 experiment"),
+                         issue(401, title="[P0] Ordinary work")])
+        result = mod.plan(data, state(), "main")
+        self.assertEqual([401], [i["number"] for i in result["available"]])
+        self.assertIn("EXCLUDED_TITLE", result["excluded"][0]["reasons"])
+
+    def test_blocking_title_marker_variants(self):
+        for marker in ("HOLD", "BLOCKED", "DRAFT", "PAUSED", "BACKLOG", "NO_GO"):
+            with self.subTest(marker=marker):
+                candidate = issue(7, title=f"[P0][{marker}] sensitive task")
+                result = mod.plan(snapshot([candidate]), state(), "main")
+                self.assertEqual([], result["available"])
+                self.assertIn("EXCLUDED_TITLE", result["excluded"][0]["reasons"])
+
+    def test_open_pr_title_blocks_duplicate_work(self):
+        data = snapshot([issue(401), issue(437), issue(449)],
+                        [{"number": 568, "title": "fix(#401): advisor",
+                          "body": "Independent review of model advice", "headRefName": "other-branch"},
+                         {"number": 571, "title": "chore(release): v5.5.10 (#437)",
+                          "body": "Source packaging only", "headRefName": "release-branch"}])
+        result = mod.plan(data, state(), "main")
+        self.assertEqual([449], [i["number"] for i in result["available"]])
+        self.assertEqual({401, 437}, {i["number"] for i in result["excluded"]})
+        self.assertTrue(all("EXISTING_OPEN_PR" in i["reasons"]
+                            for i in result["excluded"]))
+
+    def test_unrelated_pr_body_references_are_not_ownership(self):
+        data = snapshot([issue(10), issue(11)],
+                        [{"number": 42, "title": "fix: separate issue",
+                          "body": "See #10 and #11 for background",
+                          "headRefName": "unrelated"}])
+        self.assertEqual([10, 11], [i["number"] for i in
+                                    mod.plan(data, state(), "main")["available"]])
+
+    def test_scope_parsing_and_missing_issues(self):
+        self.assertEqual([1, 3, 5], mod.parse_issue_scope("5,1,3"))
+        for raw in ("", "0", "-1", "1,1", "1, 2", "x", "1,", "1;2", "1,2,2"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                mod.parse_issue_scope(raw)
+        with self.assertRaisesRegex(ValueError, "SELECTED_ISSUE_NOT_FOUND"):
+            mod.plan(snapshot([issue(1)]), state(), "main", requested_scope=[1, 999])
+
+    def test_plan_scope_is_read_only_and_filters_other_tasks(self):
+        data = snapshot([issue(2, label=["P0"]), issue(3), issue(4)])
+        result = mod.plan(data, state(), "main", requested_scope=[3, 4])
+        self.assertEqual([3, 4], [i["number"] for i in result["available"]])
+        self.assertEqual([3, 4], result["issue_scope"])
+        self.assertEqual("NOT_RUN", result["execution"])
+        self.assertIsNone(state().get("issue_scope"))
+
+    def test_scope_persists_and_cannot_expand_after_restart(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as temp:
+            data = snapshot([issue(1, label=["P0"]), issue(2), issue(3)])
+            args = SimpleNamespace(action="start", repo=REPO, branch="main",
+                                   state_dir=temp, issues="3,2", issue=2,
+                                   reason="Synthetic block")
+            with patch.object(mod, "live_snapshot", return_value=data):
+                claim = mod.execute(args)
+                self.assertEqual(2, claim["issue"])
+                saved = mod.read_state(Path(temp), REPO, "main")
+                self.assertEqual([2, 3], saved["issue_scope"])
+                args.action = "block"
+                mod.execute(args)
+                args.action = "start"
+                args.issues = "1"
+                with self.assertRaisesRegex(ValueError, "ISSUE_SCOPE_CHANGE_REFUSED"):
+                    mod.execute(args)
+                args.issues = None
+                self.assertEqual(3, mod.execute(args)["issue"])
+                saved = mod.read_state(Path(temp), REPO, "main")
+                self.assertEqual([2, 3], saved["issue_scope"])
+                with self.assertRaisesRegex(ValueError, "ISSUE_SCOPE_CHANGE_REFUSED"):
+                    mod.plan(data, saved, "main", requested_scope=[1, 2])
+
+    def test_corrupted_scope_refused_without_reset(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = mod.state_directory(REPO, temp)
+            s = state()
+            s["issue_scope"] = [2, 2]
+            mod.write_state(root, s)
+            with self.assertRaisesRegex(ValueError, "INVALID_PERSISTED_ISSUE_SCOPE"):
+                mod.read_state(root, REPO, "main")
+
+
 if __name__ == "__main__":
     unittest.main()
