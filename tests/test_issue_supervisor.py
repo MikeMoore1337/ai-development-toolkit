@@ -376,6 +376,20 @@ class QueueTerminalAuditTests(unittest.TestCase):
                          "state": state, "body": body, "labels": []})
         return {"issues": rows, "pull_requests": []}
 
+    @staticmethod
+    def gh_response(checks):
+        def query(*args):
+            if args[:2] == ("pr", "view"):
+                return {"author": {"login": "code-author"}}
+            if args[0] == "api" and "/reviews?" in args[1]:
+                return [{"id": 7, "user": {"login": "independent-reviewer"},
+                         "state": "APPROVED", "commit_id": "a" * 40}]
+            if args[0] == "api" and "/check-runs" in args[1]:
+                return checks
+            raise AssertionError(f"Unexpected GitHub call: {args}")
+
+        return query
+
     def verified_receipt(self, n):
         return {"status": "DONE", "pr": n + 3,
                 "head_sha": "a" * 40, "merge_sha": "b" * 40}
@@ -405,7 +419,7 @@ class QueueTerminalAuditTests(unittest.TestCase):
                     patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
                     patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
                                  self.make_pr(n - 3)), \
-                    patch.object(sup.queue, "gh_json", return_value=checks):
+                    patch.object(sup.queue, "gh_json", side_effect=self.gh_response(checks)):
                 result = sup.audit_queue(p)
             self.assertEqual("QUEUE_ALL_VERIFIED", result["status"])
             self.assertEqual([1, 2, 3], result["closed_verified"])
@@ -426,7 +440,7 @@ class QueueTerminalAuditTests(unittest.TestCase):
                     patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
                     patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
                                  self.make_pr(n - 3)), \
-                    patch.object(sup.queue, "gh_json", return_value=checks):
+                    patch.object(sup.queue, "gh_json", side_effect=self.gh_response(checks)):
                 result = sup.audit_queue(p)
             self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
             self.assertEqual([3], [i["issue"] for i in result["blocked"]])
@@ -444,7 +458,7 @@ class QueueTerminalAuditTests(unittest.TestCase):
                         ["CLOSED", "CLOSED", "CLOSED"])), \
                     patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
                                  self.make_pr(n - 3)), \
-                    patch.object(sup.queue, "gh_json", return_value={"check_runs": []}):
+                    patch.object(sup.queue, "gh_json", side_effect=self.gh_response({"check_runs": []})):
                 result = sup.audit_queue(p)
             self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
             self.assertEqual([], result["closed_verified"])
@@ -465,7 +479,7 @@ class QueueTerminalAuditTests(unittest.TestCase):
                         ["CLOSED", "CLOSED", "CLOSED"])), \
                     patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
                                  self.make_pr(n - 3)), \
-                    patch.object(sup.queue, "gh_json", return_value=incomplete):
+                    patch.object(sup.queue, "gh_json", side_effect=self.gh_response(incomplete)):
                 result = sup.audit_queue(p)
             self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
             self.assertEqual(3, len(result["blocked"]))
