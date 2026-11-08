@@ -189,8 +189,11 @@ def assert_checkout(policy: dict[str, Any]) -> None:
     if name != policy["branch"]:
         raise SupervisorError("CHECKOUT_BRANCH_MISMATCH")
     local = scrubbed_argv(["git", "-C", checkout, "rev-parse", "HEAD"])
-    remote_sha = scrubbed_argv(["git", "-C", checkout, "ls-remote", "origin",
-                                "refs/heads/" + policy["branch"]]).split()[0]
+    remote_refs = scrubbed_argv(["git", "-C", checkout, "ls-remote", "origin",
+                                  "refs/heads/" + policy["branch"]]).split()
+    if len(remote_refs) != 2 or remote_refs[1] != "refs/heads/" + policy["branch"]:
+        raise SupervisorError("REMOTE_BRANCH_REF_NOT_VERIFIED")
+    remote_sha = remote_refs[0]
     if local != remote_sha or not SHA_RE.fullmatch(local):
         raise SupervisorError("CHECKOUT_NOT_AT_REMOTE_HEAD")
 
@@ -229,14 +232,16 @@ def issue_worktree(policy: dict[str, Any], root: Path, number: int) -> str:
     """Create a dedicated checked-out Git worktree; leave it after delivery."""
     place = root / "worktrees" / f"issue-{number}"
     branch = issue_branch(number)
-    if not place.exists():
-        place.parent.mkdir(parents=True, exist_ok=True)
-        scrubbed_argv(["git", "-C", policy["checkout"], "worktree", "add",
-                       "-b", branch, str(place), policy["branch"]], timeout=120)
     parent = place.parent
     if (parent.is_symlink() or
             (hasattr(parent, "is_junction") and parent.is_junction())):
         raise SupervisorError("LINKED_WORKTREE_PARENT")
+    if not place.exists():
+        parent.mkdir(parents=True, exist_ok=True)
+        if parent.is_symlink() or (hasattr(parent, "is_junction") and parent.is_junction()):
+            raise SupervisorError("LINKED_WORKTREE_PARENT")
+        scrubbed_argv(["git", "-C", policy["checkout"], "worktree", "add",
+                       "-b", branch, str(place), policy["branch"]], timeout=120)
     if not place.is_dir() or place.is_symlink() or (hasattr(place, "is_junction") and place.is_junction()):
         raise SupervisorError("UNSAFE_ISSUE_WORKTREE")
     actual_branch = scrubbed_argv(["git", "-C", str(place), "branch", "--show-current"])
@@ -519,8 +524,11 @@ def independent_review_on_exact_head(repo: str, pr_number: int,
         if isinstance(login, str) and login:
             # GitHub REST supplies these chronologically. Retain highest id
             # to resist out-of-order presentation.
+            review_id = review.get("id")
+            if type(review_id) is not int or review_id < 1:
+                raise SupervisorError("INVALID_REVIEW_ID")
             previous = latest.get(login)
-            if previous is None or int(review.get("id", 0)) > int(previous.get("id", 0)):
+            if previous is None or review_id > previous["id"]:
                 latest[login] = review
     for login, review in latest.items():
         if login.lower() == author.lower():
