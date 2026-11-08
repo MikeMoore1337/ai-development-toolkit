@@ -71,8 +71,10 @@ def execute_worker(payload: dict[str, Any]) -> dict[str, Any]:
         previous = payload.get("thread_id")
         if previous is not None and (not isinstance(previous, str) or len(previous) > 300):
             raise SDKDenied("INVALID_THREAD_ID")
+        # Never authorize escalations inside the untrusted coding worker.
+        # Privileged publishing is an independent host responsibility.
         kwargs = {"cwd": cwd, "sandbox": Sandbox.workspace_write,
-                  "approval_mode": ApprovalMode.auto_review}
+                  "approval_mode": ApprovalMode.deny_all}
         thread = sdk.thread_resume(previous, **kwargs) if previous else sdk.thread_start(**kwargs)
         # Running a turn may have side effects in the isolated worktree.
         # The parent process persists the charged attempt BEFORE launching us.
