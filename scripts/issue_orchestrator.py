@@ -315,7 +315,8 @@ def check_pr(pr: dict, issue: int, branch: str, *, merged: bool) -> str:
     own_branch = re.fullmatch(
         rf"issue-orchestrator/issue-{issue}(?:-[A-Za-z0-9._/-]+)?",
         str(pr.get("headRefName", "")))
-    if issue not in pr_issue_numbers(pr) or not own_branch:
+    body_refs = {int(n) for n in CLOSE_REF.findall(pr.get("body") or "")}
+    if issue not in body_refs or not own_branch:
         raise QueueError("PR_NOT_ASSOCIATED_WITH_ISSUE")
     if pr.get("isDraft"):
         raise QueueError("DRAFT_PR")
@@ -440,7 +441,10 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
                     raise QueueError("HEAD_CHANGED_DURING_MERGE")
             check_pr(pr, number, branch, merged=True)
             if args.close_issue:
-                gh("issue", "close", str(number), "-R", repo)
+                issue_info = gh_json("issue", "view", str(number), "-R", repo,
+                                     "--json", "state")
+                if issue_info.get("state") == "OPEN":
+                    gh("issue", "close", str(number), "-R", repo)
             task.update(status="DONE", pr=args.pr, head_sha=head,
                         merge_sha=(pr["mergeCommit"] or {}).get("oid"),
                         finished_at=utcnow())
