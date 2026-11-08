@@ -488,6 +488,48 @@ def make_prompt(policy: dict[str, Any], number: int, thread_id: str | None) -> s
     )
 
 
+def independent_review_on_exact_head(repo: str, pr_number: int,
+                                     head_sha: str, review_decision: str | None) -> None:
+    """Verify latest independent GitHub approval targets the current PR HEAD.
+
+    A model-generated review summary or a generic GitHub APPROVED flag is not
+    sufficient. Never accept a stale commit_id or a later changes-requested
+    verdict. This is evidence review, not a model execution.
+    """
+    if review_decision != "APPROVED" or not SHA_RE.fullmatch(head_sha):
+        raise SupervisorError("REVIEW_NOT_APPROVED_AT_HEAD")
+    info = queue.gh_json("pr", "view", str(pr_number), "-R", repo, "--json", "author")
+    author = (info.get("author") or {}).get("login") if isinstance(info, dict) else None
+    if not isinstance(author, str) or not author:
+        raise SupervisorError("PR_AUTHOR_NOT_VERIFIED")
+    reviews = queue.gh_json(
+        "api", f"repos/{repo}/pulls/{pr_number}/reviews?per_page=100")
+    if not isinstance(reviews, list) or len(reviews) >= 100:
+        raise SupervisorError("REVIEW_HISTORY_UNAVAILABLE_OR_TRUNCATED")
+    latest: dict[str, dict[str, Any]] = {}
+    for review in reviews:
+        if not isinstance(review, dict):
+            raise SupervisorError("INVALID_REVIEW_RECORD")
+        user = review.get("user") or {}
+        login = user.get("login") if isinstance(user, dict) else None
+        if isinstance(login, str) and login:
+            # GitHub REST supplies these chronologically. Retain highest id
+            # to resist out-of-order presentation.
+            previous = latest.get(login)
+            if previous is None or int(review.get("id", 0)) > int(previous.get("id", 0)):
+                latest[login] = review
+    for login, review in latest.items():
+        if login.lower() == author.lower():
+            continue
+        if review.get("state") == "CHANGES_REQUESTED":
+            raise SupervisorError("LATEST_REVIEW_REQUESTS_CHANGES")
+    if not any(login.lower() != author.lower()
+               and review.get("state") == "APPROVED"
+               and review.get("commit_id") == head_sha
+               for login, review in latest.items()):
+        raise SupervisorError("INDEPENDENT_EXACT_HEAD_REVIEW_MISSING")
+
+
 def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
     """Read-only GitHub-attested terminal summary, not a second planner.
 
@@ -535,6 +577,8 @@ def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
                 merged_oid = (pr.get("mergeCommit") or {}).get("oid")
                 if checked_head != head_sha or merged_oid != merge_sha:
                     raise SupervisorError("MERGE_RECEIPT_REVISION_MISMATCH")
+                independent_review_on_exact_head(
+                    policy["repo"], pr_number, head_sha, pr.get("reviewDecision"))
                 checks = queue.gh_json(
                     "api", f"repos/{policy['repo']}/commits/{merge_sha}/check-runs")
                 contexts = checks.get("check_runs") if isinstance(checks, dict) else None
