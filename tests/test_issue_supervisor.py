@@ -450,6 +450,26 @@ class QueueTerminalAuditTests(unittest.TestCase):
             self.assertEqual([], result["closed_verified"])
             self.assertEqual(3, len(result["blocked"]))
 
+    def test_truncated_post_merge_checks_cannot_hide_failed_check(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            recorded = {"schema": 1, "repo": REPO, "branch": "main",
+                        "entries": {str(n): self.verified_receipt(n)
+                                    for n in p["issues"]},
+                        "issue_scope": p["issues"], "active": None}
+            incomplete = {"total_count": 2, "check_runs": [
+                {"head_sha": "b" * 40, "status": "completed",
+                 "conclusion": "success"}]}
+            with patch.object(sup, "controller", return_value=recorded), \
+                    patch.object(sup.queue, "live_snapshot", return_value=self.make_snapshot(
+                        ["CLOSED", "CLOSED", "CLOSED"])), \
+                    patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
+                                 self.make_pr(n - 3)), \
+                    patch.object(sup.queue, "gh_json", return_value=incomplete):
+                result = sup.audit_queue(p)
+            self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
+            self.assertEqual(3, len(result["blocked"]))
+
     def test_waiting_design_is_separate_from_eligible_work(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = policy(Path(tmp))
