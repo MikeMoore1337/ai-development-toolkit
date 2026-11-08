@@ -21,7 +21,7 @@ The SDK adapter **unconditionally refuses** live execution with OS_SEPARATED_WOR
 4. Persist turn attempts before SDK dispatch and fail closed into RECONCILIATION_REQUIRED after ambiguous completion.
 5. A PR with completed checks still cannot be merged: independent exact-SHA reviewer and privileged publisher are NOT_IMPLEMENTED.
 6. Explicit STOP sentinel prevents the next step from claiming work; a full process-lifetime kill switch is NOT_IMPLEMENTED.
-7. The read-only `audit` CLI re-observes selected Issues, verified merged PR HEAD, exact merge SHA and post-merge GitHub Actions. It only reports `QUEUE_ALL_VERIFIED` when every scope member is independently checked; empty `available` and max-issues exhaustion never prove completion.
+7. The read-only `audit` CLI re-observes selected Issues, verified merged PR HEAD, exact merge SHA, a latest independent GitHub APPROVED review tied to the exact HEAD, and post-merge GitHub Actions. It only reports `QUEUE_ALL_VERIFIED` when every scope member is independently checked; empty `available` and max-issues exhaustion never prove completion.
 8. Sensitive output is not written into the audit, and no real model or API calls are made during offline tests.
 
 ## One-request activation contract
