@@ -1,5 +1,7 @@
 # Changelog
 
+**v5.5.10 publication confirmed (2026-11-08):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.10) at immutable annotated tag pointing to exact source `1960ff03bc9bd9552621646f3965e280d33fbf34`. [Post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42473654960) and [GitHub-hosted release-archive integrity/provenance validation](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42474710619) SUCCESS. Native Eval #437 receipt integrity remains `OFFLINE_VERIFIED_NOT_OUTCOME`; client activation and independent witness are NOT_VERIFIED. Independent local download/digest of the public GitHub ZIP was not performed in this review.
+
 **v5.5.9 publication confirmed (2026-11-06):** [GitHub Release](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9) at immutable commit `dd9ee982e8faef6d6988feea10cef91773b4851e`. Clean Windows pre-tag checks LOCAL/REMOTE PASS; [post-merge CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42189731361) and [tag archive verification](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42190684362) SUCCESS. Downloaded GitHub ZIP SHA256: `deff545efd3738c988874469db7fdeab8c2f55324471cff57a49a9c0647b9f64`. Independent rights and client host enforcement are NOT_VERIFIED. Installed MCP and plugins are not automatically updated.
 
 **v5.5.8 publication confirmed (2026-11-05)**
@@ -41,18 +43,17 @@ GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 ## Unreleased (main after v5.5.10)
 
-No additions after this candidate at preparation time. This section is not a published-release assertion.
+No new changes recorded after published v5.5.10 at time of this documentation sync.
 
-## 5.5.10 (candidate, 2026-11-08)
+## 5.5.10 (released, 2026-11-08)
 
-**CANDIDATE ONLY - NOT PUBLISHED.** Current public release remains v5.5.9. Proposed base `main@f70e3e668718f26886b907eed5674d6fb403b6a2` is 38 commits and 43 changed paths ahead of the immutable v5.5.9 source. The final release source must be confirmed at its own exact merged SHA before any tag or GitHub Release.
+**PUBLISHED 2026-11-08.** Annotated `v5.5.10` resolves to `1960ff03bc9bd9552621646f3965e280d33fbf34`. The full scope since immutable v5.5.9 includes **51 commits / 56 changed paths**, not just #437. [Source comparison](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.9...1960ff03bc9bd9552621646f3965e280d33fbf34). [Post-merge source CI](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42473654960) and [GitHub-hosted tagged archive integrity/provenance check](https://github.com/MikeMoore1337/ai-development-toolkit/actions/runs/42474710619) both succeeded.
 
-- **Native Eval #437:** fail-closed unsigned forged gate verdicts, known-secret receipt checks, unique native evidence for paired runs and optional out-of-band SHA256 receipt pin. A matching digest is not independent attestation, witness identity or model-quality verification.
-- **Other accumulated changes:** native observability #434, episodic memory #338, Windows UIA source integrity #450, ChatGPT route receipts #533 and context security #439. [Full scope](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.9...f70e3e668718f26886b907eed5674d6fb403b6a2).
-- **Boundaries:** `CLIENT_E2E=NOT_VERIFIED`; `EXTERNAL_WITNESS=NOT_VERIFIED`; `MODEL_QUALITY_EFFECT=NOT_MEASURED`. No automatic client update, paid API or new mandatory ECC runtime.
-- **Release gates:** exact source and CI, owner rights decision, provenance and clean pre-tag, independent published ZIP validation and subsequent documentation alignment. The release candidate has not been tagged or distributed.
+- **Native Eval #437:** fail-closed unsigned gate PASS and known secret formats, distinct evidence identities, and opt-in external `--expected-receipt-hash` SHA-256 pin. Matching a caller-supplied digest is not a trusted independent witness or model-quality proof.
+- **Other accumulated changes:** Observability #434, Episodic Memory #338, Windows UIA source integrity #450, routing evidence #533, Hooks #438, and orchestrator protections #572. The source release is not an automatic installed-client update.
+- **Acceptance boundaries:** `CLIENT_E2E=NOT_VERIFIED`, `EXTERNAL_WITNESS=NOT_VERIFIED`, `MODEL_QUALITY_EFFECT=NOT_MEASURED`. No claim of real model-agent operation or independent third-party/employer rights clearance.
 
-[English candidate notes](docs/releases/v5.5.10.md) · [Russian candidate notes](docs/ru/releases/v5.5.10.md).
+[EN notes](docs/releases/v5.5.10.md) · [RU notes](docs/ru/releases/v5.5.10.md).
 
 ## 5.5.9 (released, 2026-11-06)
 
