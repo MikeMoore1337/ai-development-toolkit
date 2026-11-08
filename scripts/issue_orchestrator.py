@@ -103,6 +103,10 @@ def priority(issue: dict[str, Any]) -> int:
     for i in range(4):
         if found & {f"p{i}", f"priority:p{i}", f"priority: p{i}"}:
             return i
+    title = issue.get("title") or ""
+    match = re.search(r"\[P([0-3])\]", title, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
     return 4
 
 
