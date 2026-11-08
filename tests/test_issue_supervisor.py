@@ -348,8 +348,9 @@ class SupervisorStepTests(unittest.TestCase):
             sup.prepare_root(root)
             sup.request_stop(root)
             sup.request_stop(root)
-            self.assertEqual(bytes([83, 84, 79, 80, 10]),
-                             (root / "STOP").read_bytes())
+            # Text-mode newline conversion differs on Windows (CRLF).
+            self.assertEqual("STOP" + chr(10),
+                             (root / "STOP").read_text(encoding="ascii"))
             (root / "STOP").unlink()
             try:
                 (root / "STOP").symlink_to(root / "missing")
