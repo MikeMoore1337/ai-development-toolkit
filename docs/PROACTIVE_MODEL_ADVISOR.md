@@ -1,5 +1,15 @@
 # Proactive model advice for normal Codex Desktop tasks (#401)
 
+## Explicit high-impact review signals
+
+The existing read-only MCP risk hint recognizes **explicitly critical
+security review** and **explicit independent architecture review**
+in Russian and English, even without unrelated concurrency or migration
+keywords. Ordinary documentation fixes, generic architectural work and
+trivial tests remain non-candidates. The hint only asks the host to
+evaluate an optional independent review; it never selects a model,
+confirms live inventory, grants consent or executes a second model.
+
 ## Unknown per-call subscription quota is not an advisory blocker
 
 When the live Codex client has a verified native model candidate but does
