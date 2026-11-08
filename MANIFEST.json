@@ -648,6 +648,20 @@
       "automatic_background_execution": false,
       "default_git_mutations": false,
       "paid_api_required": false
+    },
+    "issue_supervisor_v2": {
+      "issue": 570,
+      "mode": "source_only_blocked_host_isolation",
+      "controller": "scripts/issue_orchestrator.py",
+      "supervisor": "scripts/issue_supervisor.py",
+      "sdk_adapter": "scripts/issue_supervisor_sdk.py",
+      "operator_guide": "docs/ISSUE_SUPERVISOR_V2.md",
+      "automatic_install": false,
+      "automatic_background_execution": false,
+      "publisher_enabled": false,
+      "host_e2e": "NOT_VERIFIED",
+      "live_execution": "BLOCKED_OS_CREDENTIAL_ISOLATION",
+      "external_paid_api_allowed": false
     }
   },
   "make_feature_source_bundled": true,
