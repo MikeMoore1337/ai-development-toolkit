@@ -398,7 +398,8 @@ class QueueTerminalAuditTests(unittest.TestCase):
                         "entries": {str(n): self.verified_receipt(n)
                                     for n in p["issues"]},
                         "issue_scope": p["issues"], "active": None}
-            checks = {"check_runs": [{"head_sha": "b" * 40,
+            checks = {"total_count": 1,
+                      "check_runs": [{"head_sha": "b" * 40,
                                      "status": "completed", "conclusion": "success"}]}
             with patch.object(sup, "controller", return_value=recorded), \
                     patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
@@ -418,7 +419,8 @@ class QueueTerminalAuditTests(unittest.TestCase):
                         "entries": {"1": self.verified_receipt(1),
                                     "2": self.verified_receipt(2)},
                         "issue_scope": p["issues"], "active": None}
-            checks = {"check_runs": [{"head_sha": "b" * 40,
+            checks = {"total_count": 1,
+                      "check_runs": [{"head_sha": "b" * 40,
                                      "status": "completed", "conclusion": "success"}]}
             with patch.object(sup, "controller", return_value=recorded), \
                     patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
