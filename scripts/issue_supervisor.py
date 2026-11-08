@@ -17,9 +17,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 import tempfile
-import time
 from typing import Any
 
 import issue_orchestrator as queue
@@ -121,6 +119,8 @@ def load_json(path: Path) -> dict[str, Any]:
 def single_writer(root: Path):
     """Portable kernel lock: released on process death, unlike stale O_EXCL files."""
     path = root / "host.lock"
+    if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
+        raise SupervisorError("LINKED_LOCK_FILE")
     with open(path, "a+b") as handle:
         handle.seek(0)
         handle.write(b"0")
@@ -293,7 +293,10 @@ def audited_save(root: Path, state: dict[str, Any], event: str) -> None:
     record = {"at": state["updated_at"], "event": event,
               "active": state["active"], "stage": state["stage"],
               "turns_used": state["turns_used"]}
-    with (root / "audit.jsonl").open("a", encoding="utf-8") as handle:
+    audit = root / "audit.jsonl"
+    if audit.is_symlink() or (hasattr(audit, "is_junction") and audit.is_junction()):
+        raise SupervisorError("LINKED_AUDIT_FILE")
+    with audit.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         handle.flush()
         os.fsync(handle.fileno())
@@ -311,8 +314,21 @@ def read_runtime(root: Path, policy: dict[str, Any]) -> dict[str, Any]:
         raise SupervisorError("STATE_CONTEXT_OR_SCHEMA_MISMATCH")
     if type(state.get("turns_used")) is not int or state["turns_used"] < 0:
         raise SupervisorError("CORRUPT_USAGE_COUNTER")
-    if not isinstance(state.get("issue_attempts"), dict) or not isinstance(state.get("finished"), list):
+    attempts = state.get("issue_attempts")
+    completed = state.get("finished")
+    if (not isinstance(attempts, dict) or not isinstance(completed, list) or
+            len(completed) != len(set(completed)) or
+            any(type(x) is not int or x not in policy["issues"] for x in completed) or
+            any(not isinstance(k, str) or not k.isdecimal() or int(k) not in policy["issues"]
+                or type(v) is not int or v < 0 or v > policy["max_attempts_per_issue"]
+                for k, v in attempts.items()) or
+            state["turns_used"] > policy["max_turns"]):
         raise SupervisorError("CORRUPT_USAGE_STATE")
+    current = state.get("active")
+    if current is not None and (type(current) is not int or current not in policy["issues"]):
+        raise SupervisorError("CORRUPT_ACTIVE_ISSUE")
+    if current is not None and current in completed:
+        raise SupervisorError("ACTIVE_ISSUE_ALREADY_COMPLETED")
     return state
 
 
@@ -321,6 +337,8 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
     """Advance at most one bounded step. The queue alone authorizes claims/merges."""
     if state["mode"] != "RUNNING":
         return {"status": state["mode"]}
+    if state["stage"] == "DONE":
+        return {"status": "DONE"}
     if (root / "STOP").exists():
         state["mode"] = "STOPPED"
         audited_save(root, state, "KILL_SWITCH")
@@ -492,6 +510,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--poll-seconds", type=int, default=120)
     args = parser.parse_args(argv)
     try:
+        queue.validate_repo(args.repo)
         root = private_root(args.repo, args.state_dir)
         if args.action == "init":
             if not args.checkout:
@@ -499,7 +518,7 @@ def main(argv: list[str] | None = None) -> int:
             policy = {
                 "schema": 1, "repo": args.repo, "branch": args.branch,
                 "issues": queue.parse_issue_scope(args.issues),
-                "checkout": str(Path(args.checkout).resolve()),
+                "checkout": str(Path(args.checkout).absolute()),
                 "sdk_runtime_acknowledged": args.sdk_runtime_acknowledged,
                 "chatgpt_included_usage_confirmed": args.included_usage_confirmed,
                 "allow_merge": args.allow_merge,
@@ -553,7 +572,12 @@ def main(argv: list[str] | None = None) -> int:
                     CodexSDKRunner(policy).preflight()
                     result = {"status": "PREFLIGHT_PASS", "api_billing": "NOT_VERIFIED",
                               "sdk_runtime": "OWNER_ACKNOWLEDGED"}
-                elif args.action in ("step", "run"):
+                elif args.action == "run":
+                    # A one-shot step is not a resident supervisor. Reject the
+                    # misleading CLI action until process/service lifecycle,
+                    # heartbeat and OS kill switch are actually implemented.
+                    raise SupervisorError("PERSISTENT_SUPERVISOR_NOT_IMPLEMENTED")
+                elif args.action == "step":
                     from issue_supervisor_sdk import CodexSDKRunner
                     runner = CodexSDKRunner(policy)
                     result = step(policy, root, state, runner)
