@@ -46,6 +46,29 @@ class SupervisorPolicyTests(unittest.TestCase):
             self.assertEqual([], sup.initial_state(p)["finished"])
             self.assertEqual("NEW", sup.initial_state(p)["stage"])
 
+    def test_one_issue_scope_defaults_to_one_max_issue_without_model_run(self):
+        from io import StringIO
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            checkout = base / "checkout"
+            checkout.mkdir()
+            (checkout / ".git").mkdir()
+            directory = base / "host-state"
+            output = StringIO()
+            args = ["init", "--repo", REPO, "--branch", "main",
+                    "--checkout", str(checkout), "--state-dir", str(directory),
+                    "--issues", "1"]
+            with patch("sys.stdout", output):
+                result = sup.main(args)
+            self.assertEqual(0, result, output.getvalue())
+            self.assertEqual("INITIALIZED_PAUSED",
+                             json.loads(output.getvalue())["status"])
+            installed_policy = sup.load_json(directory / "policy.json")
+            self.assertEqual([1], installed_policy["issues"])
+            self.assertEqual(1, installed_policy["max_issues"])
+            self.assertEqual("PAUSED",
+                             sup.load_json(directory / "supervisor.json")["mode"])
+
     def test_scope_limits_and_consent_validation(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = policy(Path(tmp))
