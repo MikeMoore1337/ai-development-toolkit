@@ -209,6 +209,44 @@ def controller(policy: dict[str, Any], action: str, **extra: Any) -> dict[str, A
     return result
 
 
+def issue_branch(number: int) -> str:
+    return f"issue-orchestrator/issue-{number}-supervised"
+
+
+def sync_checkout(policy: dict[str, Any]) -> None:
+    """Only fast-forward a clean target checkout; never reset or force anything."""
+    path = policy["checkout"]
+    if scrubbed_argv(["git", "-C", path, "status", "--porcelain"]):
+        raise SupervisorError("CHECKOUT_NOT_CLEAN")
+    if scrubbed_argv(["git", "-C", path, "branch", "--show-current"]) != policy["branch"]:
+        raise SupervisorError("CHECKOUT_BRANCH_MISMATCH")
+    scrubbed_argv(["git", "-C", path, "fetch", "--no-tags", "origin", policy["branch"]])
+    scrubbed_argv(["git", "-C", path, "merge", "--ff-only", "FETCH_HEAD"])
+    assert_checkout(policy)
+
+
+def issue_worktree(policy: dict[str, Any], root: Path, number: int) -> str:
+    """Create a dedicated checked-out Git worktree; leave it after delivery."""
+    place = root / "worktrees" / f"issue-{number}"
+    branch = issue_branch(number)
+    if not place.exists():
+        place.parent.mkdir(parents=True, exist_ok=True)
+        scrubbed_argv(["git", "-C", policy["checkout"], "worktree", "add",
+                       "-b", branch, str(place), policy["branch"]], timeout=120)
+    if not place.is_dir() or place.is_symlink() or (hasattr(place, "is_junction") and place.is_junction()):
+        raise SupervisorError("UNSAFE_ISSUE_WORKTREE")
+    actual_branch = scrubbed_argv(["git", "-C", str(place), "branch", "--show-current"])
+    if actual_branch != branch:
+        raise SupervisorError("ISSUE_WORKTREE_BRANCH_MISMATCH")
+    common = Path(scrubbed_argv(["git", "-C", str(place), "rev-parse",
+                                "--git-common-dir"])).resolve()
+    base_common = Path(scrubbed_argv(["git", "-C", policy["checkout"],
+                                     "rev-parse", "--git-common-dir"])).resolve()
+    if common != base_common:
+        raise SupervisorError("ISSUE_WORKTREE_REPOSITORY_MISMATCH")
+    return str(place)
+
+
 def associated_pr(policy: dict[str, Any], number: int) -> int | None:
     prs = queue.gh_json("pr", "list", "-R", policy["repo"], "--state", "all",
                         "--limit", "1000", "--json",
@@ -282,10 +320,11 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
     github_owner(policy["repo"])
     current = controller(policy, "status")
     active = current["active"]
-    if state["stage"] == "TURN_IN_FLIGHT":
-        # A process crash can leave a live Codex turn. Never double-dispatch.
+    # Pending status from a previous process is never evidence that the turn
+    # finished. Check GitHub PR evidence before refusing any replay.
+    if state["stage"] == "TURN_IN_FLIGHT" and active is None:
         state["stage"] = "RECONCILIATION_REQUIRED"
-        audited_save(root, state, "UNKNOWN_TURN_AFTER_RESTART")
+        audited_save(root, state, "UNKNOWN_TURN_WITHOUT_QUEUE")
         return {"status": "RECONCILIATION_REQUIRED"}
     if state["active"] is not None and active != state["active"]:
         raise SupervisorError("QUEUE_ACTIVE_MISMATCH")
@@ -293,6 +332,10 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
         raise SupervisorError("FOREIGN_ACTIVE_QUEUE_WRITER")
     if active is not None:
         pr = associated_pr(policy, active)
+        if state["stage"] == "TURN_IN_FLIGHT" and pr is None:
+            state["stage"] = "RECONCILIATION_REQUIRED"
+            audited_save(root, state, "UNKNOWN_TURN_AFTER_RESTART")
+            return {"status": "RECONCILIATION_REQUIRED"}
         if pr is not None:
             try:
                 result = controller(policy, "finish", issue=active, pr=pr,
@@ -330,11 +373,15 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
             return {"status": "DONE"}
         planned = controller(policy, "plan")
         if not planned["available"]:
+            if planned["complete"] and not planned["excluded"]:
+                state["stage"] = "DONE"
+                audited_save(root, state, "ALL_SCOPED_ISSUES_COMPLETED")
+                return {"status": "DONE"}
             return {"status": "QUEUE_EMPTY_OR_BLOCKED", "complete": planned["complete"],
                     "excluded": [i["number"] for i in planned["excluded"]]}
         # Do NOT claim before runtime authentication and spend policy checks.
         runner.preflight()
-        assert_checkout(policy)
+        sync_checkout(policy)
         claimed = controller(policy, "start")
         if claimed.get("status") != "CLAIMED":
             raise SupervisorError("QUEUE_CLAIM_FAILED")
@@ -356,13 +403,15 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
         audited_save(root, state, "ISSUE_ATTEMPT_BUDGET_EXHAUSTED")
         return {"status": "QUOTA_BLOCKED"}
     runner.preflight()
+    worktree = issue_worktree(policy, root, active)
     prompt = make_prompt(policy, active, state["thread_id"])
     state["turns_used"] += 1
     state["issue_attempts"][str(active)] = attempts + 1
     state["stage"] = "TURN_IN_FLIGHT"
     audited_save(root, state, "TURN_DISPATCH_STARTED")
     try:
-        reply = runner.turn(active, prompt, state["thread_id"], policy["max_turn_seconds"])
+        reply = runner.turn(active, prompt, state["thread_id"],
+                            policy["max_turn_seconds"], worktree)
     except Exception:
         state["stage"] = "RECONCILIATION_REQUIRED"
         audited_save(root, state, "TURN_FAILED_OR_UNKNOWN")
