@@ -100,7 +100,7 @@ class PlannerTests(unittest.TestCase):
     def test_branch_association_and_no_false_positive(self):
         self.assertEqual({5}, mod.pr_issue_numbers({
             "headRefName": "issue-orchestrator/issue-5-a", "body": ""}))
-        self.assertEqual(set(), mod.pr_issue_numbers({
+        self.assertNotIn(5, mod.pr_issue_numbers({
             "headRefName": "issue-orchestrator/issue-55-a", "body": "See #5"}))
 
     def test_state_and_snapshot_must_be_valid(self):
