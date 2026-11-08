@@ -317,6 +317,21 @@ def approval_found(comments: list[dict], owner: str, issue: int,
     return decision
 
 
+def live_design_approved(repo: str, number: int, task: dict) -> bool:
+    revision = task.get("preview_revision")
+    requested = task.get("requested_at")
+    if not isinstance(revision, str) or not isinstance(requested, str):
+        return False
+    owner = gh_json("repo", "view", repo, "--json", "owner").get("owner", {}).get("login")
+    if not owner:
+        raise QueueError("OWNER_NOT_VERIFIED")
+    comments = gh_json("issue", "view", str(number), "-R", repo,
+                       "--json", "comments").get("comments", [])
+    if not isinstance(comments, list):
+        raise QueueError("INVALID_DESIGN_COMMENTS")
+    return approval_found(comments, owner, number, revision, requested)
+
+
 def check_pr(pr: dict, issue: int, branch: str, *, merged: bool, repo: str) -> str:
     if not isinstance(pr, dict) or pr.get("baseRefName") != branch:
         raise QueueError("PR_BASE_BRANCH_MISMATCH")
@@ -416,13 +431,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         if args.action == "approve":
             if task.get("status") != "WAITING_DESIGN":
                 raise QueueError("ISSUE_NOT_WAITING_FOR_DESIGN")
-            meta = gh_json("repo", "view", repo, "--json", "owner")
-            owner = meta.get("owner", {}).get("login")
-            if not owner:
-                raise QueueError("OWNER_NOT_VERIFIED")
-            info = gh_json("issue", "view", str(number), "-R", repo, "--json", "comments")
-            if not approval_found(info.get("comments", []), owner, number,
-                                  task["preview_revision"], task["requested_at"]):
+            if not live_design_approved(repo, number, task):
                 return {"status": "WAITING_DESIGN", "issue": number}
             task.update(status="READY", design_approved=True, approved_at=utcnow())
             write_state(root, state)
@@ -445,6 +454,13 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
                 raise QueueError("FINISH_REQUIRES_ACTIVE_ISSUE")
             if task.get("phase") == "DESIGN_PREVIEW" and task.get("design_approved") is not True:
                 raise QueueError("DESIGN_APPROVAL_REQUIRED_BEFORE_MERGE")
+            latest_issue = gh_json("issue", "view", str(number), "-R", repo,
+                                   "--json", "labels")
+            requires_design = bool(labels(latest_issue) & DESIGN_LABELS or
+                                   task.get("preview_revision"))
+            if requires_design and (task.get("design_approved") is not True or
+                                    not live_design_approved(repo, number, task)):
+                raise QueueError("DESIGN_APPROVAL_MISSING_OR_REVOKED")
             pr = pr_view(repo, args.pr)
             head = check_pr(pr, number, branch, merged=bool(pr.get("mergedAt")), repo=repo)
             if not pr.get("mergedAt"):
