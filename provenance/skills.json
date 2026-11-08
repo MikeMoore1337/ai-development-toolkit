@@ -4,6 +4,26 @@
   "baseline_commit": "b81cd6dc8c60c2466242928e37b237de25eddd12",
   "components": [
     {
+      "id": "release-v5510-owner-controlled-workflow",
+      "path": ".github/workflows/release-v5510-owner.yml",
+      "name": "One-time exact-SHA owner-comment-gated v5.5.10 source release",
+      "kind": "workflow",
+      "author": "Toolkit maintainers (AI-assisted; claimed)",
+      "origin": "original",
+      "source_url": null,
+      "source_reference": null,
+      "source_revision": null,
+      "license": "MIT",
+      "distribution_basis": "Toolkit-authored opt-in source release workflow; owner permission to distribute exact snapshot is required, third-party/employer rights not independently proven.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": ".github/workflows/release-v5510-owner.yml",
+      "last_reviewed": "2026-11-08",
+      "distribution": "included",
+      "notes": "Only issue #437 exact source SHA comment by authenticated OWNER can publish; release requires exact main six CI checks, provenance, checksum inventory and pre-tag PASS; no paid API/client auto-install."
+    },
+    {
       "id": "chatgpt-533-route-validator",
       "path": "scripts/verify_chatgpt_route_receipt.py",
       "name": "Offline opt-in ChatGPT routing receipt validator",
