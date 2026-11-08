@@ -407,17 +407,18 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
             return {"status": state["stage"]}
     else:
         if len(state["finished"]) >= policy["max_issues"]:
-            state["stage"] = "DONE"
+            state["stage"] = "QUOTA_BLOCKED"
             audited_save(root, state, "MAX_ISSUES_REACHED")
-            return {"status": "DONE"}
+            return {"status": "QUEUE_STOPPED_AT_LIMIT",
+                    "reason": "MAX_ISSUES_REACHED"}
         planned = controller(policy, "plan")
         if not planned["available"]:
-            if planned["complete"] and not planned["excluded"]:
+            report = audit_queue(policy)
+            if report["status"] == "QUEUE_ALL_VERIFIED":
                 state["stage"] = "DONE"
-                audited_save(root, state, "ALL_SCOPED_ISSUES_COMPLETED")
-                return {"status": "DONE"}
-            return {"status": "QUEUE_EMPTY_OR_BLOCKED", "complete": planned["complete"],
-                    "excluded": [i["number"] for i in planned["excluded"]]}
+                audited_save(root, state, "ALL_SCOPED_ISSUES_VERIFIED")
+                return report
+            return report
         # Do NOT claim before runtime authentication and spend policy checks.
         runner.preflight()
         sync_checkout(policy)
@@ -572,7 +573,7 @@ def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
             "closed_verified": closed, "available": available,
             "waiting_design": waiting, "blocked": blocked,
             "excluded": excluded, "active": active,
-            "execution": "READ_ONLY_GITHUB_VERIFIED"}
+            "execution": "READ_ONLY_GITHUB_OBSERVATION"}
 
 
 def load_policy(root: Path) -> dict[str, Any]:
