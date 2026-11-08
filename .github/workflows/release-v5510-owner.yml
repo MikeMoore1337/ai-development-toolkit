@@ -1,0 +1,123 @@
+name: Toolkit v5.5.10 owner-approved publication
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+concurrency:
+  group: toolkit-v5.5.10-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: >-
+      github.repository == 'MikeMoore1337/ai-development-toolkit' &&
+      github.event.issue.number == 437 &&
+      github.event.comment.user.login == 'MikeMoore1337' &&
+      github.event.comment.author_association == 'OWNER' &&
+      startsWith(github.event.comment.body, 'PUBLISH_TOOLKIT_v5.5.10 SHA=')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: write
+      checks: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      OWNER_COMMAND: ${{ github.event.comment.body }}
+    steps:
+      - name: Bind owner decision to exact merged commit
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, re
+          match = re.fullmatch(
+              r'PUBLISH_TOOLKIT_v5[.]5[.]10 SHA=([0-9a-f]{40}) OWNER_SOURCE_APPROVAL=YES',
+              os.environ['OWNER_COMMAND']
+          )
+          if not match:
+              raise SystemExit('BLOCKED: invalid owner decision')
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as f:
+              f.write('RELEASE_SHA=' + match.group(1) + '\n')
+          print('OWNER_APPROVAL_FOR_EXACT_SHA=DECLARED; third-party title not independently attested')
+          PY
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Verify exact source, source provenance and six CI jobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.commit.sha')" = "$RELEASE_SHA"
+          python scripts/verify_checksums.py
+          python scripts/validate_provenance.py --mode release
+          gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_SHA/check-runs?per_page=100" > "$RUNNER_TEMP/ci.json"
+          python3 - <<'PY'
+          import json, os
+          with open(os.path.join(os.environ['RUNNER_TEMP'], 'ci.json'), encoding='utf-8') as f:
+              payload = json.load(f)
+          names = [
+              'tests (ubuntu-latest, 3.12)',
+              'tests (ubuntu-latest, 3.13)',
+              'tests (windows-latest, 3.14)',
+              'macOS portability (macos-15, Python 3.12)',
+              'macOS portability (macos-15-intel, Python 3.12)',
+              'Integration source archives (main only)',
+          ]
+          if payload.get('total_count', 101) > 100:
+              raise SystemExit('BLOCKED: incomplete checks')
+          for name in names:
+              hits = [x for x in payload.get('check_runs', []) if x.get('name') == name]
+              if len(hits) != 1 or hits[0].get('status') != 'completed' or hits[0].get('conclusion') != 'success' or hits[0].get('head_sha') != os.environ['RELEASE_SHA']:
+                  raise SystemExit('BLOCKED: exact-SHA check not green: ' + name)
+          print('EXACT_MAIN_SIX_JOB_CI=PASS')
+          PY
+      - name: Require read-only local and remote pre-tag PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/pre_tag_preflight.py --tag v5.5.10 --sha "$RELEASE_SHA"
+      - name: Create immutable annotated tag and GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.commit.sha')" = "$RELEASE_SHA"
+          tag_object="$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" \
+            -f tag=v5.5.10 \
+            -f message="AI Development Toolkit v5.5.10 owner-approved SHA $RELEASE_SHA; client E2E and independent witness NOT_VERIFIED" \
+            -f object="$RELEASE_SHA" -f type=commit --jq '.sha')"
+          test -n "$tag_object"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f ref=refs/tags/v5.5.10 -f sha="$tag_object" >/dev/null
+          cat > "$RUNNER_TEMP/notes.md" <<'EOF'
+          # AI Development Toolkit v5.5.10
+          Source release: Native Eval Capsules / Receipts (#437) and cumulative changes since v5.5.9, including Observability, Memory and Windows UIA compatibility.
+          Evidence boundaries: CLIENT_E2E=NOT_VERIFIED; EXTERNAL_WITNESS=NOT_VERIFIED; MODEL_QUALITY_EFFECT=NOT_MEASURED. A hash or caller-supplied trusted digest does not certify agent outcomes or witness identity.
+          No external ECC runtime, paid API, automatic model execution or automatic installed-client update. Third-party/employer IP clearance is not independently attested.
+          EOF
+          printf '\nExact source SHA: `%s`\n' "$RELEASE_SHA" >> "$RUNNER_TEMP/notes.md"
+          gh release create v5.5.10 --verify-tag --title 'AI Development Toolkit v5.5.10' --notes-file "$RUNNER_TEMP/notes.md"
+      - name: Confirm exact tagged source and publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_object="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/v5.5.10" --jq '.object.sha')"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$tag_object" --jq '.object.sha')" = "$RELEASE_SHA"
+          published_at="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v5.5.10" --jq '.published_at')"
+          test -n "$published_at"
+          test "$published_at" != null
+          echo "TAG_AND_RELEASE_ATTESTED_FOR=$RELEASE_SHA"
+      - name: Dispatch independent verification of the actual published GitHub ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          # GITHUB_TOKEN does not ordinarily trigger push/release workflows.
+          # workflow_dispatch is an explicitly supported exception.
+          gh workflow run release-archive.yml --ref main -f tag=v5.5.10
+          echo "ARCHIVE_VALIDATION_DISPATCHED=YES; outcome must be checked independently before release acceptance"

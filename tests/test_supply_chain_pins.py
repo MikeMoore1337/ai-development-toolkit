@@ -47,7 +47,7 @@ class SupplyChainPinTests(unittest.TestCase):
         expected = {
             "cisco-mcp-smoke.yml", "episodic-memory-windows.yml",
             "personal-mcp-optin-discovery-smoke.yml", "pinned-skill-discovery-smoke.yml",
-            "publish-integration-sources.yml", "release-archive.yml",
+            "publish-integration-sources.yml", "release-archive.yml", "release-v5510-owner.yml",
             "github-observe-export.yml",
             "validate.yml", "replica-public-parity.yml", "harness2-upstream.yml",
             "ecc-agentshield.yml", "ecc-memory-vault.yml", "ecc-observability.yml", "ecc-gap-catalog.yml", "native-upstream-acceptance.yml",
@@ -69,6 +69,30 @@ class SupplyChainPinTests(unittest.TestCase):
                     self.assertRegex(value.rsplit("@", 1)[1], r"^[0-9a-f]{40}$")
                     observed.setdefault(value.split("@", 1)[0], set()).add(value.split("@")[1])
         self.assertEqual(set(PINNED), set(observed))
+
+    def test_owner_release_workflow_is_explicit_sha_gated(self):
+        body = (WORKFLOWS / "release-v5510-owner.yml").read_text(encoding="utf-8")
+        for expected in (
+            "issue_comment:",
+            "types: [created]",
+            "github.event.issue.number == 437",
+            "github.event.comment.user.login == 'MikeMoore1337'",
+            "github.event.comment.author_association == 'OWNER'",
+            "PUBLISH_TOOLKIT_v5.5.10 SHA=",
+            "OWNER_SOURCE_APPROVAL=YES",
+            "python scripts/verify_checksums.py",
+            "python scripts/validate_provenance.py --mode release",
+            "python scripts/pre_tag_preflight.py --tag v5.5.10",
+            "EXACT_MAIN_SIX_JOB_CI=PASS",
+            "actions: write",
+            "gh workflow run release-archive.yml --ref main -f tag=v5.5.10",
+            "ARCHIVE_VALIDATION_DISPATCHED=YES",
+        ):
+            with self.subTest(required=expected):
+                self.assertIn(expected, body)
+        self.assertNotIn("workflow_dispatch:", body)
+        self.assertNotIn("  push:", body)
+        self.assertIn("concurrency:", body)
 
     def test_negative_unpinned_and_unapproved_sources(self):
         for candidate in ("actions/checkout@v7", "actions/setup-python@v5",
