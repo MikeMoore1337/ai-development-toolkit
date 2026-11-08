@@ -24,6 +24,8 @@ SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 BLOCK_LABELS = {"hold", "blocked", "do-not-automate", "do not automate",
                 "manual-only", "needs-owner-approval", "backlog", "draft"}
 DESIGN_LABELS = {"approval:design", "requires-design-approval"}
+BLOCK_TITLE_MARKERS = re.compile(r"\[(?:HOLD|BLOCKED|DRAFT|PAUSED|BACKLOG|NO_GO)\]", re.I)
+PR_TITLE_ISSUE_RE = re.compile(r"(?<![\w/])#([1-9][0-9]*)\b")
 DEP_LINE = re.compile(r"(?im)^\s*(?:[-*]\s*)?(?:blocked by|depends on|requires)\s*:?\s*(.*)$")
 ISSUE_REF = re.compile(r"(?<![\w/])#([1-9][0-9]*)\b")
 CLOSE_REF = re.compile(r"(?im)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#([1-9][0-9]*)\b")
@@ -64,7 +66,7 @@ def live_snapshot(repo: str) -> dict[str, Any]:
                      "number,title,body,state,labels,url")
     prs = gh_json("pr", "list", "-R", repo, "--state", "open",
                   "--limit", str(MAX_ITEMS), "--json",
-                  "number,body,headRefName,baseRefName,isDraft,url")
+                  "number,title,body,headRefName,baseRefName,isDraft,url")
     if not isinstance(issues, list) or not isinstance(prs, list):
         raise QueueError("INVALID_GITHUB_SNAPSHOT")
     if len(issues) >= MAX_ITEMS or len(prs) >= MAX_ITEMS:
@@ -113,6 +115,13 @@ def priority(issue: dict[str, Any]) -> int:
 def pr_issue_numbers(pr: dict[str, Any]) -> set[int]:
     body = pr.get("body") or ""
     result = {int(n) for n in CLOSE_REF.findall(body)}
+    # Title references are conservatively treated as already in progress:
+    # e.g. fix(#401), feat: something (#437). The PR body may contain
+    # unrelated references, so only explicit closing keywords count there.
+    title = pr.get("title") or ""
+    if not isinstance(title, str):
+        raise QueueError("INVALID_PULL_REQUEST_TITLE")
+    result.update(int(n) for n in PR_TITLE_ISSUE_RE.findall(title))
     # A deterministic orchestrator-owned branch is also a valid association.
     match = re.match(r"^issue-orchestrator/issue-([1-9][0-9]*)(?:-|$)",
                      str(pr.get("headRefName", "")))
@@ -153,8 +162,42 @@ def is_cyclic(start: int, graph: dict[int, set[int]]) -> bool:
     return False
 
 
-def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[str, Any]:
+def parse_issue_scope(raw: str | None) -> list[int] | None:
+    if raw is None:
+        return None
+    if not isinstance(raw, str) or not raw or len(raw) > 256:
+        raise QueueError("INVALID_ISSUE_SCOPE")
+    parts = raw.split(",")
+    if len(parts) > 30 or any(not re.fullmatch(r"[1-9][0-9]*", p) for p in parts):
+        raise QueueError("INVALID_ISSUE_SCOPE")
+    numbers = [int(p) for p in parts]
+    if len(numbers) != len(set(numbers)):
+        raise QueueError("DUPLICATE_ISSUE_IN_SCOPE")
+    return sorted(numbers)
+
+
+def resolve_scope(state: dict[str, Any], requested: list[int] | None) -> list[int] | None:
+    stored = state.get("issue_scope")
+    if stored is not None:
+        if (not isinstance(stored, list) or not stored or
+                len(stored) > 30 or
+                any(type(n) is not int or n <= 0 for n in stored) or
+                stored != sorted(set(stored))):
+            raise QueueError("INVALID_PERSISTED_ISSUE_SCOPE")
+        if requested is not None and requested != stored:
+            raise QueueError("ISSUE_SCOPE_CHANGE_REFUSED")
+        return stored
+    if requested is not None and state.get("entries"):
+        raise QueueError("EXISTING_QUEUE_CANNOT_BE_RESCOPED")
+    return requested
+
+
+def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str,
+         *, requested_scope: list[int] | None = None) -> dict[str, Any]:
     by_num, prs = require_snapshot(snapshot)
+    scope = resolve_scope(state, requested_scope)
+    if scope is not None and set(scope) - set(by_num):
+        raise QueueError("SELECTED_ISSUE_NOT_FOUND")
     entries = state.get("entries", {})
     if not isinstance(entries, dict) or not isinstance(branch, str) or not branch:
         raise QueueError("INVALID_QUEUE_STATE")
@@ -167,7 +210,7 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
              for number, issue in by_num.items() if issue["state"] == "OPEN"}
     available, excluded = [], []
     for number, issue in by_num.items():
-        if issue["state"] != "OPEN":
+        if issue["state"] != "OPEN" or (scope is not None and number not in scope):
             continue
         own = entries.get(str(number), {})
         if not isinstance(own, dict):
@@ -177,6 +220,8 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
         reasons = []
         if lset & BLOCK_LABELS:
             reasons.append("EXCLUDED_LABEL")
+        if BLOCK_TITLE_MARKERS.search(str(issue.get("title") or "")):
+            reasons.append("EXCLUDED_TITLE")
         if open_prs.get(number):
             reasons.append("EXISTING_OPEN_PR")
         if stage in ("IN_PROGRESS", "WAITING_DESIGN", "BLOCKED", "DONE"):
@@ -201,7 +246,7 @@ def plan(snapshot: dict[str, Any], state: dict[str, Any], branch: str) -> dict[s
     available.sort(key=lambda x: (x["priority"], x["number"]))
     excluded.sort(key=lambda x: (x["priority"], x["number"]))
     return {"available": available, "excluded": excluded,
-            "active": state.get("active"), "branch": branch,
+            "active": state.get("active"), "branch": branch, "issue_scope": scope,
             "complete": not available and state.get("active") is None,
             "execution": "NOT_RUN"}
 
@@ -277,6 +322,7 @@ def read_state(root: Path, repo: str, branch: str) -> dict[str, Any]:
             raise QueueError("INVALID_STATE_ENTRY")
     if current is not None and state["entries"].get(str(current), {}).get("status") != "IN_PROGRESS":
         raise QueueError("INCONSISTENT_ACTIVE_ISSUE")
+    resolve_scope(state, None)
     return state
 
 
@@ -390,9 +436,10 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
     repo = validate_repo(args.repo)
     root = state_directory(repo, args.state_dir, create=args.action not in ("plan", "status"))
     branch = args.branch
+    requested_scope = parse_issue_scope(getattr(args, "issues", None))
     if args.action == "plan":
         state = read_state(root, repo, branch)
-        return plan(live_snapshot(repo), state, branch)
+        return plan(live_snapshot(repo), state, branch, requested_scope=requested_scope)
     if args.action == "status":
         return read_state(root, repo, branch)
     with exclusive(root):
@@ -402,10 +449,14 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
         if args.action == "start":
             if current is not None:
                 raise QueueError("ONE_WRITER_ALREADY_ACTIVE")
-            queue = plan(live_snapshot(repo), state, branch)["available"]
+            selected = resolve_scope(state, requested_scope)
+            queue = plan(live_snapshot(repo), state, branch,
+                         requested_scope=requested_scope)["available"]
             if not queue:
                 return {"status": "NO_AVAILABLE_ISSUES"}
             target = queue[0]["number"]
+            if selected is not None and "issue_scope" not in state:
+                state["issue_scope"] = selected
             entries[str(target)] = {**entries.get(str(target), {}),
                                     "status": "IN_PROGRESS", "started_at": utcnow(),
                                     "phase": queue[0]["phase"]}
@@ -499,6 +550,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repo", required=True, help="GitHub owner/repository")
     parser.add_argument("--branch", required=True, help="Authorized delivery branch")
     parser.add_argument("--state-dir", help="Private, absolute directory outside repository")
+    parser.add_argument("--issues", help="Pilot allowlist: comma-separated Issue numbers; persisted on first claim")
     parser.add_argument("--issue", type=int)
     parser.add_argument("--revision", default="")
     parser.add_argument("--preview-url", default="")
