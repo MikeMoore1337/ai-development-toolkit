@@ -39,10 +39,20 @@ GitHub [v5.5.0](https://github.com/MikeMoore1337/ai-development-toolkit/releases
 
 GitHub [v5.5.1](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.1) was published at immutable tag SHA `64f163acc322acc6aecf5b1f44b6f76744505f46`. **Its tagged `MANIFEST.json.version` is still `5.4.0`.** The v5.5.1 correction from PR #169 was not merged before tagging. This is a second actual release-identity discrepancy, not a valid correction of v5.5.0. Do not force-move the existing tag. New forward-only candidate v5.5.2 requires exact tag/manifest identity, source rights approval and downloadable archive verification (#146, #153).
 
-## Unreleased (main after v5.5.9)
+## Unreleased (pending v5.5.10)
 
-- Native Eval Capsules (#437): optional independent receipt SHA-256 digest pin rejects full consistent journal/receipt replacement when a trusted out-of-band value is provided. This is offline integrity checking, not signature/witness authentication, model-quality certification or a published release.
-- Post-publication documentation alignment of v5.5.9, without changing the immutable tag.
+No additions after this candidate at preparation time. This section is not a published-release assertion.
+
+## 5.5.10 (candidate, 2026-11-08)
+
+**CANDIDATE ONLY - NOT PUBLISHED.** Current public release remains v5.5.9. Proposed base `main@f70e3e668718f26886b907eed5674d6fb403b6a2` is 38 commits and 43 changed paths ahead of the immutable v5.5.9 source. The final release source must be confirmed at its own exact merged SHA before any tag or GitHub Release.
+
+- **Native Eval #437:** fail-closed unsigned forged gate verdicts, known-secret receipt checks, unique native evidence for paired runs and optional out-of-band SHA256 receipt pin. A matching digest is not independent attestation, witness identity or model-quality verification.
+- **Other accumulated changes:** native observability #434, episodic memory #338, Windows UIA source integrity #450, ChatGPT route receipts #533 and context security #439. [Full scope](https://github.com/MikeMoore1337/ai-development-toolkit/compare/v5.5.9...f70e3e668718f26886b907eed5674d6fb403b6a2).
+- **Boundaries:** `CLIENT_E2E=NOT_VERIFIED`; `EXTERNAL_WITNESS=NOT_VERIFIED`; `MODEL_QUALITY_EFFECT=NOT_MEASURED`. No automatic client update, paid API or new mandatory ECC runtime.
+- **Release gates:** exact source and CI, owner rights decision, provenance and clean pre-tag, independent published ZIP validation and subsequent documentation alignment. The release candidate has not been tagged or distributed.
+
+[English candidate notes](docs/releases/v5.5.10.md) · [Russian candidate notes](docs/ru/releases/v5.5.10.md).
 
 ## 5.5.9 (released, 2026-11-06)
 
