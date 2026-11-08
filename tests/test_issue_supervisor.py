@@ -326,6 +326,45 @@ class HostGitIsolationTests(unittest.TestCase):
                     pr(15, "issue-orchestrator/issue-1-supervised", "See #1")]):
                 self.assertIsNone(sup.associated_pr(p, 1))
 
+    def test_remote_ref_missing_or_truncated_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            expected = "a" * 40
+            def run(args, **_kwargs):
+                if args[-2:] == ["get-url", "origin"]:
+                    return f"https://github.com/{REPO}.git"
+                if args[-2:] == ["status", "--porcelain"]:
+                    return ""
+                if args[-2:] == ["branch", "--show-current"]:
+                    return "main"
+                if args[-2:] == ["rev-parse", "HEAD"]:
+                    return expected
+                if "ls-remote" in args:
+                    return ""
+                raise AssertionError(args)
+            with patch.object(sup, "scrubbed_argv", side_effect=run):
+                with self.assertRaisesRegex(sup.SupervisorError,
+                                            "REMOTE_BRANCH_REF_NOT_VERIFIED"):
+                    sup.assert_checkout(p)
+
+    def test_reject_linked_worktree_parent_before_git_mutation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            p = policy(base)
+            root = base / "state"
+            root.mkdir()
+            destination = base / "external"
+            destination.mkdir()
+            try:
+                (root / "worktrees").symlink_to(destination, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("This Windows runner cannot create test symlinks")
+            with patch.object(sup, "scrubbed_argv") as git:
+                with self.assertRaisesRegex(sup.SupervisorError,
+                                            "LINKED_WORKTREE_PARENT"):
+                    sup.issue_worktree(p, root, 1)
+                git.assert_not_called()
+
     def test_corrupt_usage_counts_are_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -440,6 +479,15 @@ class QueueTerminalAuditTests(unittest.TestCase):
                     patch.object(sup.queue, "gh_json", side_effect=lambda *args:
                                  base if args[:2] == ("pr", "view") else reviews), \
                     self.assertRaisesRegex(sup.SupervisorError, expected):
+                sup.independent_review_on_exact_head(REPO, 4, "a" * 40, "APPROVED")
+
+    def test_malformed_review_id_is_refused_without_auto_approval(self):
+        base = {"author": {"login": "code-author"}}
+        bad = [{"id": None, "user": {"login": "reviewer"},
+                "state": "APPROVED", "commit_id": "a" * 40}]
+        with patch.object(sup.queue, "gh_json", side_effect=lambda *args:
+                          base if args[:2] == ("pr", "view") else bad):
+            with self.assertRaisesRegex(sup.SupervisorError, "INVALID_REVIEW_ID"):
                 sup.independent_review_on_exact_head(REPO, 4, "a" * 40, "APPROVED")
 
     def test_queue_empty_is_not_complete_when_closed_receipt_missing(self):
