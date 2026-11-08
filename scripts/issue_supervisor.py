@@ -327,11 +327,10 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
         return {"status": "STOPPED"}
     assert_no_api_credentials()
     github_owner(policy["repo"])
-    # This source-only candidate has not proven an OS-separated SDK worker,
-    # safe publishing credentials or a restartable Windows service. Refuse
-    # before touching the queue or executing an SDK turn. Explicit opt-in
-    # flags are policy inputs, not independent isolation evidence.
-    raise SupervisorError("WORKER_AND_PUBLISHER_ISOLATION_NOT_VERIFIED")
+    # This safety gate is implemented only by a trusted runner. The actual
+    # SDK adapter refuses until independently verified OS user / credential
+    # separation is available. Unit tests may inject a synthetic adapter.
+    runner.verify_isolation()
     current = controller(policy, "status")
     active = current["active"]
     # Pending status from a previous process is never evidence that the turn
@@ -540,6 +539,8 @@ def main(argv: list[str] | None = None) -> int:
                     if not (policy["sdk_runtime_acknowledged"] and
                             policy["chatgpt_included_usage_confirmed"]):
                         raise SupervisorError("OWNER_OPT_IN_REQUIRED")
+                    from issue_supervisor_sdk import CodexSDKRunner
+                    CodexSDKRunner(policy).verify_isolation()
                     state["mode"] = "RUNNING"
                     audited_save(root, state, "OWNER_RESUME")
                     result = {"status": "RUNNING"}
@@ -548,6 +549,7 @@ def main(argv: list[str] | None = None) -> int:
                     github_owner(policy["repo"])
                     assert_checkout(policy)
                     from issue_supervisor_sdk import CodexSDKRunner
+                    CodexSDKRunner(policy).verify_isolation()
                     CodexSDKRunner(policy).preflight()
                     result = {"status": "PREFLIGHT_PASS", "api_billing": "NOT_VERIFIED",
                               "sdk_runtime": "OWNER_ACKNOWLEDGED"}
