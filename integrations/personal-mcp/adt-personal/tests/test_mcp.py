@@ -659,6 +659,50 @@ class TestToolkitMCP(unittest.TestCase):
             proactive_model_advice=True)['model_advisor']
         self.assertEqual(migration['status'], 'REVIEW_CANDIDATE')
 
+        # Independent #401 RU/EN regression: explicit severity and independent
+        # architecture review matter without introducing routine-task noise.
+        high_impact = (
+            ('Проверь критическое изменение безопасности.',
+             'EXPLICIT_CRITICAL_SECURITY_REVIEW'),
+            ('Review a critical security change.',
+             'EXPLICIT_CRITICAL_SECURITY_REVIEW'),
+            ('Проведи независимую архитектурную проверку.',
+             'EXPLICIT_INDEPENDENT_ARCHITECTURE_REVIEW'),
+            ('Conduct an independent architecture review.',
+             'EXPLICIT_INDEPENDENT_ARCHITECTURE_REVIEW'),
+        )
+        for request, expected_reason in high_impact:
+            with self.subTest(request=request):
+                result = self.tk.prepare_task(
+                    request, proactive_model_advice=True)['model_advisor']
+                self.assertEqual(result['status'], 'REVIEW_CANDIDATE')
+                self.assertEqual(result['reason_code'], expected_reason)
+                self.assertEqual(result['available_models'], [])
+                self.assertEqual(result['user_consent'], 'NOT_REQUESTED')
+                self.assertEqual(result['extra_model_calls'], 0)
+                self.assertEqual(result['execution'], 'NOT_RUN')
+
+        # Preserve the original reason for pre-existing combined-risk cases.
+        legacy = self.tk.prepare_task(
+            'Review a security migration for release.',
+            proactive_model_advice=True)['model_advisor']
+        self.assertEqual(legacy['status'], 'REVIEW_CANDIDATE')
+        self.assertEqual(legacy['reason_code'], 'ARCHITECTURE_SECURITY_REVIEW')
+
+        still_quiet = (
+            'Fix a critical security typo in README.',
+            'Исправь опечатку в документации критической безопасности.',
+            'Review architecture naming conventions.',
+            'Проверь архитектуру простой функции.',
+            'Не проводи критический аудит безопасности; исправь опечатку.',
+            'Do not review critical security; fix a README typo.',
+        )
+        for request in still_quiet:
+            with self.subTest(request=request):
+                result = self.tk.prepare_task(
+                    request, proactive_model_advice=True)['model_advisor']
+                self.assertEqual(result['status'], 'NO_REVIEW_SIGNAL')
+
         for invalid in (None, 'true', 1, 0, []):
             with self.subTest(invalid=invalid):
                 with self.assertRaises(ToolkitError):
