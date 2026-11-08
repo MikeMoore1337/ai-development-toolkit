@@ -88,6 +88,18 @@ class CodexSDKRunner:
         self.policy = policy
         self.script = str(Path(__file__).resolve())
 
+    def verify_isolation(self) -> None:
+        """Refuse until an independent, privilege-separated worker is attested.
+
+        A same-user Windows child can potentially read the owner's gh token
+        from Credential Manager even when GH_TOKEN is removed from the
+        environment. Prompt-level restrictions cannot prevent this.
+        A safe isolated launcher must use an OS identity that cannot access
+        the publisher's keyring or home directory; merely setting a Boolean
+        in the policy is not proof. No SDK turn is allowed in this revision.
+        """
+        raise SDKDenied("OS_SEPARATED_WORKER_NOT_ATTESTED")
+
     def _invoke(self, payload: dict[str, Any], timeout: int) -> dict[str, Any]:
         payload = {"runtime_acknowledged": self.policy["sdk_runtime_acknowledged"],
                    "included_usage_confirmed": self.policy["chatgpt_included_usage_confirmed"],
