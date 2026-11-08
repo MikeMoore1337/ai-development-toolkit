@@ -28,6 +28,12 @@ The SDK adapter **unconditionally refuses** live execution with OS_SEPARATED_WOR
 
 The owner wants exactly one explicit, repository/branch/Issue-scoped instruction, after which a trusted host should advance automatically through `plan -> start -> worktree -> tests -> independent review -> PR -> exact-head CI -> permitted merge -> post-merge verification -> plan`. The owner must not type "continue" after each Issue; this does not confer permission over an entire unselected backlog.
 
+Example of the intended **single owner instruction**, not an enabled command:
+
+> Run the authorized Toolkit Issue Orchestrator for OWNER/REPO, target branch dev, and only Issues #12, #34 and #56. Process the eligible issues one at a time without asking me to repeat "continue"; validate tests, independent SHA-bound review, PR checks, merge authorization and post-merge evidence before moving to the next. Show UI previews only when owner approval is required. Report separately verified, blocked, waiting and held issues, and stop on unverified costs or security permissions.
+
+The trusted Windows host must bind the specific repository, branch and immutable allowlist to this instruction before any unattended execution. A generic single-Issue request must never authorize an entire backlog.
+
 Until the host runtime, privileged publisher and autonomous restart are independently proven, the new supervisor **will not start models**. The `run` command refuses `PERSISTENT_SUPERVISOR_NOT_IMPLEMENTED`, and SDK worker calls refuse `OS_SEPARATED_WORKER_NOT_ATTESTED`. Do not bypass these gates.
 
 Read-only audit of an initialized scoped queue:
