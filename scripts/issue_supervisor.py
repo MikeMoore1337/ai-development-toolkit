@@ -530,6 +530,88 @@ def independent_review_on_exact_head(repo: str, pr_number: int,
         raise SupervisorError("INDEPENDENT_EXACT_HEAD_REVIEW_MISSING")
 
 
+def reconcile_active(policy: dict[str, Any], root: Path,
+                     state: dict[str, Any]) -> dict[str, Any]:
+    """Read-only reconciliation; never release a claim or create a worktree.
+
+    Called explicitly with the same lock as the resident supervisor. This
+    reports ambiguous work, branch edits and PR changes as NEEDS_HUMAN,
+    instead of treating elapsed time or an agent message as authorization to
+    dispatch a new turn.
+    """
+    live = controller(policy, "status")
+    queued = live.get("active")
+    owned = state.get("active")
+    if queued != owned:
+        return {"status": "NEEDS_HUMAN", "reason": "QUEUE_ACTIVE_MISMATCH",
+                "queue_active": queued, "host_active": owned}
+    if owned is None:
+        return {"status": "QUEUE_IDLE", "reason": "NO_ACTIVE_CLAIM"}
+    if type(owned) is not int or owned not in policy["issues"]:
+        raise SupervisorError("INVALID_SCOPED_ACTIVE_ISSUE")
+
+    # Check the live Issue before using any local worktree.
+    actual = queue.gh_json(
+        "issue", "view", str(owned), "-R", policy["repo"],
+        "--json", "number,state,labels")
+    if not isinstance(actual, dict) or actual.get("number") != owned:
+        raise SupervisorError("LIVE_ISSUE_ID_MISMATCH")
+    if actual.get("state") != "OPEN":
+        return {"status": "NEEDS_HUMAN",
+                "reason": "ACTIVE_ISSUE_NOT_OPEN", "issue": owned}
+    label_names = queue.labels(actual)
+    if label_names & queue.BLOCK_LABELS:
+        return {"status": "NEEDS_HUMAN",
+                "reason": "ACTIVE_ISSUE_NOW_HELD", "issue": owned}
+
+    place = root / "worktrees" / f"issue-{owned}"
+    if not place.is_dir() or place.is_symlink() or (
+            hasattr(place, "is_junction") and place.is_junction()):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "WORKTREE_MISSING_OR_UNSAFE", "issue": owned}
+    branch = issue_branch(owned)
+    actual_branch = scrubbed_argv(
+        ["git", "-C", str(place), "branch", "--show-current"])
+    if actual_branch != branch:
+        return {"status": "NEEDS_HUMAN",
+                "reason": "WORKTREE_BRANCH_MISMATCH", "issue": owned}
+    sha = scrubbed_argv(["git", "-C", str(place), "rev-parse", "HEAD"])
+    if not SHA_RE.fullmatch(sha):
+        raise SupervisorError("WORKTREE_HEAD_UNVERIFIED")
+    dirty = bool(scrubbed_argv(["git", "-C", str(place), "status", "--porcelain"]))
+
+    pr_num = associated_pr(policy, owned)
+    if pr_num is None:
+        return {"status": "NEEDS_HUMAN",
+                "reason": "NO_OWNED_PR", "issue": owned,
+                "local_head": sha, "dirty": dirty}
+    pr = queue.pr_view(policy["repo"], pr_num)
+    if (pr.get("baseRefName") != policy["branch"] or
+            pr.get("headRefName") != branch or
+            (pr.get("headRepository") or {}).get("nameWithOwner") != policy["repo"]):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "OWNED_PR_CONTEXT_CHANGED", "issue": owned,
+                "pr": pr_num}
+    head = pr.get("headRefOid")
+    if not isinstance(head, str) or not SHA_RE.fullmatch(head):
+        raise SupervisorError("OWNED_PR_HEAD_UNVERIFIED")
+    if sha != head:
+        return {"status": "NEEDS_HUMAN",
+                "reason": "WORKTREE_AND_PR_HEAD_DIVERGED", "issue": owned,
+                "pr": pr_num, "local_head": sha, "pr_head": head}
+    if dirty:
+        return {"status": "NEEDS_HUMAN",
+                "reason": "DIRTY_WORKTREE_WITH_OPEN_PR", "issue": owned,
+                "pr": pr_num, "pr_head": head}
+    if state["stage"] in ("TURN_IN_FLIGHT", "RECONCILIATION_REQUIRED"):
+        return {"status": "NEEDS_HUMAN",
+                "reason": "UNVERIFIED_IN_FLIGHT_WORKER", "issue": owned,
+                "pr": pr_num, "pr_head": head}
+    return {"status": "PR_PRESENT_REVIEW_REQUIRED", "issue": owned,
+            "pr": pr_num, "pr_head": head, "local_head": sha,
+            "execution": "READ_ONLY_NO_RECLAIM"}
+
+
 def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
     """Read-only GitHub-attested terminal summary, not a second planner.
 
@@ -630,8 +712,9 @@ def load_policy(root: Path) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("init", "status", "audit", "preflight",
-                                            "step", "run", "pause", "resume", "stop"))
+    parser.add_argument("action", choices=("init", "status", "audit", "reconcile",
+                                            "preflight", "step", "run",
+                                            "pause", "resume", "stop"))
     parser.add_argument("--repo", required=True)
     parser.add_argument("--branch", default="main")
     parser.add_argument("--issues", default="")
@@ -682,6 +765,8 @@ def main(argv: list[str] | None = None) -> int:
                     result = {k: state[k] for k in ("mode", "stage", "active", "turns_used", "finished")}
                 elif args.action == "audit":
                     result = audit_queue(policy)
+                elif args.action == "reconcile":
+                    result = reconcile_active(policy, root, state)
                 elif args.action == "stop":
                     state["mode"] = "STOPPED"
                     audited_save(root, state, "OWNER_STOP")
