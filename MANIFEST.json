@@ -637,7 +637,19 @@
     "fixtures": 61,
     "private_project_references": false
   },
-  "optional_integrations": {},
+  "optional_integrations": {
+    "issue_orchestrator": {
+      "issue": 565,
+      "mode": "opt_in_host_driven_pilot",
+      "controller": "scripts/issue_orchestrator.py",
+      "operator_guide": "docs/ISSUE_ORCHESTRATOR.md",
+      "execution_backend": "EXTERNAL_AUTHORIZED_CODEX_SESSION",
+      "host_e2e": "NOT_VERIFIED",
+      "automatic_background_execution": false,
+      "default_git_mutations": false,
+      "paid_api_required": false
+    }
+  },
   "make_feature_source_bundled": true,
   "provenance_registry": "provenance/skills.json",
   "release_provenance_gate": "owner_approval_ID1337_snapshots_plus_new_release_signoff",
