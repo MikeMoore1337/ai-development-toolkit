@@ -115,6 +115,41 @@ def load_json(path: Path) -> dict[str, Any]:
     return result
 
 
+def stop_requested(root: Path) -> bool:
+    """Inspect the durable, out-of-band STOP latch without taking the writer lock."""
+    marker = root / "STOP"
+    if (marker.is_symlink() or
+            (hasattr(marker, "is_junction") and marker.is_junction()) or
+            (marker.exists() and not marker.is_file())):
+        raise SupervisorError("UNSAFE_STOP_SIGNAL")
+    return marker.exists()
+
+
+def request_stop(root: Path) -> None:
+    """Request shutdown while a long-running step owns host.lock.
+
+    This is a durable request, not proof that an in-flight SDK subprocess
+    was terminated. Never truncate or follow a pre-existing STOP file.
+    """
+    if stop_requested(root):
+        return
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        fd = os.open(root / "STOP", flags, 0o600)
+    except FileExistsError:
+        if not stop_requested(root):
+            raise SupervisorError("STOP_SIGNAL_RACE")
+        return
+    except OSError as exc:
+        raise SupervisorError("STOP_SIGNAL_UNAVAILABLE") from exc
+    with os.fdopen(fd, "w", encoding="ascii") as handle:
+        handle.write("STOP\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+
+
 @contextmanager
 def single_writer(root: Path):
     """Portable kernel lock: released on process death, unlike stale O_EXCL files."""
@@ -311,6 +346,17 @@ def audited_save(root: Path, state: dict[str, Any], event: str) -> None:
         os.fsync(handle.fileno())
 
 
+def stop_at_boundary(root: Path, state: dict[str, Any],
+                     event: str) -> dict[str, Any] | None:
+    """Honor a pending stop at a checkpoint; never claim a child was killed."""
+    if not stop_requested(root):
+        return None
+    state["mode"] = "STOPPED"
+    audited_save(root, state, event)
+    return {"status": "STOPPED", "active": state["active"],
+            "stage": state["stage"], "in_flight_worker_killed": False}
+
+
 def read_runtime(root: Path, policy: dict[str, Any]) -> dict[str, Any]:
     state = load_json(state_file(root))
     if (state.get("schema") != 1 or state.get("repo") != policy["repo"] or
@@ -348,10 +394,9 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
         return {"status": state["mode"]}
     if state["stage"] == "DONE":
         return {"status": "DONE"}
-    if (root / "STOP").exists():
-        state["mode"] = "STOPPED"
-        audited_save(root, state, "KILL_SWITCH")
-        return {"status": "STOPPED"}
+    stopped = stop_at_boundary(root, state, "OWNER_STOP_AT_STEP_ENTRY")
+    if stopped:
+        return stopped
     assert_no_api_credentials()
     github_owner(policy["repo"])
     # This safety gate is implemented only by a trusted runner. The actual
@@ -428,9 +473,16 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
                 audited_save(root, state, "ALL_SCOPED_ISSUES_VERIFIED")
                 return report
             return report
+        # A stop arriving during GitHub planning must not claim another Issue.
+        stopped = stop_at_boundary(root, state, "OWNER_STOP_BEFORE_CLAIM")
+        if stopped:
+            return stopped
         # Do NOT claim before runtime authentication and spend policy checks.
         runner.preflight()
         sync_checkout(policy)
+        stopped = stop_at_boundary(root, state, "OWNER_STOP_AFTER_SYNC")
+        if stopped:
+            return stopped
         claimed = controller(policy, "start")
         if claimed.get("status") != "CLAIMED":
             raise SupervisorError("QUEUE_CLAIM_FAILED")
@@ -452,8 +504,14 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
         audited_save(root, state, "ISSUE_ATTEMPT_BUDGET_EXHAUSTED")
         return {"status": "QUOTA_BLOCKED"}
     runner.preflight()
+    stopped = stop_at_boundary(root, state, "OWNER_STOP_BEFORE_WORKTREE")
+    if stopped:
+        return stopped
     worktree = issue_worktree(policy, root, active)
     prompt = make_prompt(policy, active, state["thread_id"])
+    stopped = stop_at_boundary(root, state, "OWNER_STOP_BEFORE_TURN")
+    if stopped:
+        return stopped
     state["turns_used"] += 1
     state["issue_attempts"][str(active)] = attempts + 1
     state["stage"] = "TURN_IN_FLIGHT"
@@ -474,6 +532,9 @@ def step(policy: dict[str, Any], root: Path, state: dict[str, Any],
     state["thread_id"] = reply["thread_id"]
     state["stage"] = "TURN_DONE"
     audited_save(root, state, "TURN_COMPLETED")
+    stopped = stop_at_boundary(root, state, "OWNER_STOP_AFTER_TURN")
+    if stopped:
+        return stopped
     return {"status": "TURN_COMPLETED", "issue": active, "turns_used": state["turns_used"]}
 
 
@@ -794,6 +855,24 @@ def main(argv: list[str] | None = None) -> int:
                       "scope": policy["issues"], "state_dir": str(root)}
         else:
             policy = load_policy(root)
+            if args.action == "stop":
+                # A worker can hold host.lock for an entire model turn.
+                # Signal STOP without waiting for that lock.
+                request_stop(root)
+                try:
+                    with single_writer(root):
+                        state = read_runtime(root, policy)
+                        state["mode"] = "STOPPED"
+                        audited_save(root, state, "OWNER_STOP")
+                        result = {"status": "STOPPED",
+                                  "in_flight_worker_killed": False}
+                except SupervisorError as exc:
+                    if str(exc) != "SUPERVISOR_ALREADY_RUNNING":
+                        raise
+                    result = {"status": "STOP_REQUESTED",
+                              "in_flight_worker_killed": False}
+                print(json.dumps(result, ensure_ascii=False, indent=2))
+                return 0
             with single_writer(root):
                 state = read_runtime(root, policy)
                 if args.action == "status":
@@ -802,11 +881,6 @@ def main(argv: list[str] | None = None) -> int:
                     result = audit_queue(policy)
                 elif args.action == "reconcile":
                     result = reconcile_active(policy, root, state)
-                elif args.action == "stop":
-                    state["mode"] = "STOPPED"
-                    audited_save(root, state, "OWNER_STOP")
-                    (root / "STOP").write_text("STOP\n", encoding="ascii")
-                    result = {"status": "STOPPED"}
                 elif args.action == "pause":
                     state["mode"] = "PAUSED"
                     audited_save(root, state, "OWNER_PAUSE")
@@ -814,7 +888,7 @@ def main(argv: list[str] | None = None) -> int:
                 elif args.action == "resume":
                     if state["stage"] in ("RECONCILIATION_REQUIRED", "TURN_IN_FLIGHT"):
                         raise SupervisorError("RECONCILIATION_REQUIRED")
-                    if (root / "STOP").exists():
+                    if stop_requested(root):
                         raise SupervisorError("STOP_LATCHED")
                     if not (policy["sdk_runtime_acknowledged"] and
                             policy["chatgpt_included_usage_confirmed"]):
