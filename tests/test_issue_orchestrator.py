@@ -86,10 +86,11 @@ class PlannerTests(unittest.TestCase):
         data = snapshot([issue(1, label=["HOLD"]), issue(2, label=["approval:design"]),
                          issue(3, label=["do-not-automate"])])
         result = mod.plan(data, state(), "main")
-        self.assertEqual([], result["available"])
-        self.assertIn("DESIGN_APPROVAL_REQUIRED", result["excluded"][1]["reasons"])
+        self.assertEqual([2], [x["number"] for x in result["available"]])
+        self.assertEqual("DESIGN_PREVIEW", result["available"][0]["phase"])
+        self.assertEqual([1, 3], [x["number"] for x in result["excluded"]])
         approved = state({"2": {"status": "READY", "design_approved": True}})
-        self.assertEqual([2], [x["number"] for x in mod.plan(data, approved, "main")["available"]])
+        self.assertEqual("IMPLEMENTATION", mod.plan(data, approved, "main")["available"][0]["phase"])
 
     def test_existing_pr_no_double_work(self):
         data = snapshot([issue(2), issue(3)], [
@@ -201,6 +202,31 @@ class DurableStateTests(unittest.TestCase):
             mod.write_state(root, bad)
             with self.assertRaisesRegex(ValueError, "INCONSISTENT_ACTIVE_ISSUE"):
                 mod.read_state(root, REPO, "main")
+
+    def test_design_claim_wait_and_next_task(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as temp:
+            fixture = snapshot([issue(2, label=["P0", "approval:design"]),
+                                issue(3)])
+            def arg(action, **changes):
+                base = dict(action=action, repo=REPO, branch="main", state_dir=temp,
+                            issue=2, pr=10, revision=SHA,
+                            preview_url="https://example.org/mock", reason="blocked",
+                            merge=False, close_issue=False)
+                return SimpleNamespace(**{**base, **changes})
+            with patch.object(mod, "live_snapshot", return_value=fixture):
+                claimed = mod.execute(arg("start"))
+                self.assertEqual(2, claimed["issue"])
+                self.assertEqual("DESIGN_PREVIEW", claimed["phase"])
+                with patch.object(mod, "pr_view", return_value=pr(merge=True)):
+                    with self.assertRaisesRegex(ValueError, "DESIGN_APPROVAL_REQUIRED"):
+                        mod.execute(arg("finish"))
+                waiting = mod.execute(arg("design-request"))
+                self.assertEqual("WAITING_DESIGN", waiting["status"])
+                self.assertIsNone(mod.execute(arg("status"))["active"])
+                self.assertEqual(3, mod.execute(arg("start"))["issue"])
+                mod.execute(arg("block", issue=3))
+                self.assertEqual("BLOCKED", mod.execute(arg("status"))["entries"]["3"]["status"])
 
     def test_exclusive_lock_refuses_second_writer(self):
         with tempfile.TemporaryDirectory() as temp:
