@@ -262,6 +262,17 @@ def read_state(root: Path, repo: str, branch: str) -> dict[str, Any]:
             state.get("repo") != repo or state.get("branch") != branch or
             not isinstance(state.get("entries"), dict)):
         raise QueueError("STATE_CONTEXT_MISMATCH")
+    current = state.get("active")
+    if current is not None and (type(current) is not int or current < 1):
+        raise QueueError("INVALID_ACTIVE_ISSUE")
+    for key, task in state["entries"].items():
+        if (not isinstance(key, str) or not key.isdecimal() or
+                not isinstance(task, dict) or
+                task.get("status") not in
+                ("NEW", "READY", "IN_PROGRESS", "WAITING_DESIGN", "BLOCKED", "DONE")):
+            raise QueueError("INVALID_STATE_ENTRY")
+    if current is not None and state["entries"].get(str(current), {}).get("status") != "IN_PROGRESS":
+        raise QueueError("INCONSISTENT_ACTIVE_ISSUE")
     return state
 
 
@@ -306,9 +317,11 @@ def approval_found(comments: list[dict], owner: str, issue: int,
     return decision
 
 
-def check_pr(pr: dict, issue: int, branch: str, *, merged: bool) -> str:
+def check_pr(pr: dict, issue: int, branch: str, *, merged: bool, repo: str) -> str:
     if not isinstance(pr, dict) or pr.get("baseRefName") != branch:
         raise QueueError("PR_BASE_BRANCH_MISMATCH")
+    if (pr.get("headRepository") or {}).get("nameWithOwner") != repo:
+        raise QueueError("CROSS_REPOSITORY_PR_REFUSED")
     head = str(pr.get("headRefOid") or "")
     if not SHA_RE.fullmatch(head):
         raise QueueError("PR_HEAD_SHA_NOT_VERIFIED")
@@ -351,7 +364,7 @@ def check_pr(pr: dict, issue: int, branch: str, *, merged: bool) -> str:
 def pr_view(repo: str, number: int) -> dict:
     return gh_json("pr", "view", str(number), "-R", repo, "--json",
                    "number,body,headRefName,headRefOid,baseRefName,isDraft,"
-                   "mergeStateStatus,mergedAt,mergeCommit,reviewDecision,statusCheckRollup")
+                   "mergeStateStatus,mergedAt,mergeCommit,reviewDecision,statusCheckRollup,headRepository")
 
 
 def execute(args: argparse.Namespace) -> dict[str, Any]:
@@ -429,7 +442,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
             if current != number or task.get("status") != "IN_PROGRESS":
                 raise QueueError("FINISH_REQUIRES_ACTIVE_ISSUE")
             pr = pr_view(repo, args.pr)
-            head = check_pr(pr, number, branch, merged=bool(pr.get("mergedAt")))
+            head = check_pr(pr, number, branch, merged=bool(pr.get("mergedAt")), repo=repo)
             if not pr.get("mergedAt"):
                 if not args.merge:
                     return {"status": "AWAITING_MERGE", "issue": number,
@@ -439,7 +452,7 @@ def execute(args: argparse.Namespace) -> dict[str, Any]:
                 pr = pr_view(repo, args.pr)
                 if pr.get("headRefOid") != head:
                     raise QueueError("HEAD_CHANGED_DURING_MERGE")
-            check_pr(pr, number, branch, merged=True)
+            check_pr(pr, number, branch, merged=True, repo=repo)
             if args.close_issue:
                 issue_info = gh_json("issue", "view", str(number), "-R", repo,
                                      "--json", "state")
