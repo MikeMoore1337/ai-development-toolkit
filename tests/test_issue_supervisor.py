@@ -579,14 +579,16 @@ class ActiveReconciliationTests(unittest.TestCase):
     def test_live_closed_or_held_issue_is_never_reclaimed(self):
         with tempfile.TemporaryDirectory() as temp:
             p, root, _place, host = self.build(temp)
-            for state, labels, reason in (
-                ("CLOSED", [], "ACTIVE_ISSUE_NOT_OPEN"),
-                ("OPEN", [{"name": "HOLD"}], "ACTIVE_ISSUE_NOW_HELD"),
+            for state, labels, title, reason in (
+                ("CLOSED", [], "Task 2", "ACTIVE_ISSUE_NOT_OPEN"),
+                ("OPEN", [{"name": "HOLD"}], "Task 2", "ACTIVE_ISSUE_NOW_HELD"),
+                ("OPEN", [], "[P0][HOLD] Task 2", "ACTIVE_ISSUE_NOW_HELD"),
             ):
-                with self.subTest(state=state), \
+                with self.subTest(state=state, title=title), \
                         patch.object(sup, "controller", return_value={"active": 2}), \
                         patch.object(sup.queue, "gh_json", return_value={
-                            "number": 2, "state": state, "labels": labels}), \
+                            "number": 2, "state": state, "labels": labels,
+                            "title": title}), \
                         patch.object(sup, "scrubbed_argv") as git:
                     out = sup.reconcile_active(p, root, host)
                     git.assert_not_called()
@@ -611,6 +613,29 @@ class ActiveReconciliationTests(unittest.TestCase):
                                          side_effect=self.git_fixture(local, dirty=dirty)), \
                             patch.object(sup, "associated_pr", return_value=5), \
                             patch.object(sup.queue, "pr_view", return_value=self.pr(sha)):
+                        out = sup.reconcile_active(p, root, host)
+                    self.assertEqual("NEEDS_HUMAN", out["status"])
+                    self.assertEqual(reason, out["reason"])
+
+    def test_externally_merged_or_draft_pr_requires_reconciliation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, root, _place, host = self.build(temp)
+            sha = "a" * 40
+            for updates, reason in (
+                ({"mergedAt": "2026-11-08T19:00:00Z"},
+                 "MERGED_PR_REQUIRES_CONTROLLER_RECONCILIATION"),
+                ({"isDraft": True}, "OWNED_PR_IS_DRAFT"),
+            ):
+                with self.subTest(reason=reason):
+                    with patch.object(sup, "controller", return_value={"active": 2}), \
+                            patch.object(sup.queue, "gh_json", return_value={
+                                "number": 2, "state": "OPEN", "labels": [],
+                                "title": "Task 2"}), \
+                            patch.object(sup, "scrubbed_argv",
+                                         side_effect=self.git_fixture(sha)), \
+                            patch.object(sup, "associated_pr", return_value=5), \
+                            patch.object(sup.queue, "pr_view", return_value={
+                                **self.pr(sha), **updates}):
                         out = sup.reconcile_active(p, root, host)
                     self.assertEqual("NEEDS_HUMAN", out["status"])
                     self.assertEqual(reason, out["reason"])
