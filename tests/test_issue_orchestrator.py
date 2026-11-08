@@ -57,6 +57,13 @@ class PlannerTests(unittest.TestCase):
         self.assertIsNone(result["active"])
         self.assertEqual("NOT_RUN", result["execution"])
 
+    def test_priority_from_title_only_when_no_label_exists(self):
+        data = snapshot([issue(2, title="[P0] Emergency"),
+                         issue(3, title="[P2] Routine"),
+                         issue(4, label=["P1"], title="[P0] Label wins")])
+        result = mod.plan(data, state(), "main")
+        self.assertEqual([2, 4, 3], [x["number"] for x in result["available"]])
+
     def test_open_or_unknown_dependencies_and_self_loop(self):
         data = snapshot([issue(1), issue(2, body="- Blocked by: #1"),
                          issue(3, body="requires #999"), issue(4, body="Depends on #4")])
