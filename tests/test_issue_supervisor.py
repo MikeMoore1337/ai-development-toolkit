@@ -247,8 +247,8 @@ class SupervisorStepTests(unittest.TestCase):
             with patch.object(sup, "github_owner", return_value="example"), \
                     patch.object(sup, "controller", return_value={"active": None}):
                 out = sup.step(p, root, st, StubRunner())
-            self.assertEqual("DONE", out["status"])
-            self.assertEqual("DONE", st["stage"])
+            self.assertEqual("QUEUE_STOPPED_AT_LIMIT", out["status"])
+            self.assertEqual("QUOTA_BLOCKED", st["stage"])
 
 
 class HostGitIsolationTests(unittest.TestCase):
