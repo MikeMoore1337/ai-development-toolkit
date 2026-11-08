@@ -344,5 +344,100 @@ class HostGitIsolationTests(unittest.TestCase):
             self.assertEqual("PAUSED", sup.load_json(root / "supervisor.json")["mode"])
 
 
+class QueueTerminalAuditTests(unittest.TestCase):
+    def make_snapshot(self, states):
+        rows = []
+        for n, state in enumerate(states, 1):
+            body = f"Depends on #{n-1}" if n > 1 else ""
+            rows.append({"number": n, "title": f"[P{n-1}] Task {n}",
+                         "state": state, "body": body, "labels": []})
+        return {"issues": rows, "pull_requests": []}
+
+    def verified_receipt(self, n):
+        return {"status": "DONE", "pr": n + 3,
+                "head_sha": "a" * 40, "merge_sha": "b" * 40}
+
+    def make_pr(self, n):
+        return {"headRefName": f"issue-orchestrator/issue-{n}-supervised",
+                "headRefOid": "a" * 40, "baseRefName": "main",
+                "headRepository": {"nameWithOwner": REPO},
+                "body": f"Closes #{n}", "isDraft": False,
+                "mergedAt": "2026-11-08T00:00:00Z",
+                "mergeCommit": {"oid": "b" * 40},
+                "statusCheckRollup": [{"status": "COMPLETED", "conclusion": "SUCCESS"}],
+                "reviewDecision": "APPROVED"}
+
+    def test_final_success_requires_real_closed_pr_and_post_merge_ci(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            snapshot = self.make_snapshot(["CLOSED", "CLOSED", "CLOSED"])
+            recorded = {"schema": 1, "repo": REPO, "branch": "main",
+                        "entries": {str(n): self.verified_receipt(n)
+                                    for n in p["issues"]},
+                        "issue_scope": p["issues"], "active": None}
+            checks = {"check_runs": [{"head_sha": "b" * 40,
+                                     "status": "completed", "conclusion": "success"}]}
+            with patch.object(sup, "controller", return_value=recorded), \
+                    patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
+                    patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
+                                 self.make_pr(n - 3)), \
+                    patch.object(sup.queue, "gh_json", return_value=checks):
+                result = sup.audit_queue(p)
+            self.assertEqual("QUEUE_ALL_VERIFIED", result["status"])
+            self.assertEqual([1, 2, 3], result["closed_verified"])
+            self.assertEqual([], result["blocked"])
+
+    def test_queue_empty_is_not_complete_when_closed_receipt_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            snapshot = self.make_snapshot(["CLOSED", "CLOSED", "CLOSED"])
+            recorded = {"schema": 1, "repo": REPO, "branch": "main",
+                        "entries": {"1": self.verified_receipt(1),
+                                    "2": self.verified_receipt(2)},
+                        "issue_scope": p["issues"], "active": None}
+            checks = {"check_runs": [{"head_sha": "b" * 40,
+                                     "status": "completed", "conclusion": "success"}]}
+            with patch.object(sup, "controller", return_value=recorded), \
+                    patch.object(sup.queue, "live_snapshot", return_value=snapshot), \
+                    patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
+                                 self.make_pr(n - 3)), \
+                    patch.object(sup.queue, "gh_json", return_value=checks):
+                result = sup.audit_queue(p)
+            self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
+            self.assertEqual([3], [i["issue"] for i in result["blocked"]])
+            self.assertEqual([1, 2], result["closed_verified"])
+
+    def test_missing_post_merge_checks_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            recorded = {"schema": 1, "repo": REPO, "branch": "main",
+                        "entries": {str(n): self.verified_receipt(n)
+                                    for n in p["issues"]},
+                        "issue_scope": p["issues"], "active": None}
+            with patch.object(sup, "controller", return_value=recorded), \
+                    patch.object(sup.queue, "live_snapshot", return_value=self.make_snapshot(
+                        ["CLOSED", "CLOSED", "CLOSED"])), \
+                    patch.object(sup.queue, "pr_view", side_effect=lambda repo, n:
+                                 self.make_pr(n - 3)), \
+                    patch.object(sup.queue, "gh_json", return_value={"check_runs": []}):
+                result = sup.audit_queue(p)
+            self.assertEqual("QUEUE_NO_ELIGIBLE_WITH_BLOCKERS", result["status"])
+            self.assertEqual([], result["closed_verified"])
+            self.assertEqual(3, len(result["blocked"]))
+
+    def test_waiting_design_is_separate_from_eligible_work(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = policy(Path(tmp))
+            recorded = {"schema": 1, "repo": REPO, "branch": "main",
+                        "entries": {"1": {"status": "WAITING_DESIGN"}},
+                        "issue_scope": p["issues"], "active": None}
+            with patch.object(sup, "controller", return_value=recorded), \
+                    patch.object(sup.queue, "live_snapshot", return_value=self.make_snapshot(
+                        ["OPEN", "OPEN", "OPEN"])):
+                result = sup.audit_queue(p)
+            self.assertEqual([1], result["waiting_design"])
+            self.assertNotEqual("QUEUE_ALL_VERIFIED", result["status"])
+
+
 if __name__ == "__main__":
     unittest.main()
