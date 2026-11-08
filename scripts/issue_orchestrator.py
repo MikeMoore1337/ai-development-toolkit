@@ -18,7 +18,7 @@ import sys
 import tempfile
 from typing import Any
 
-MAX_ITEMS = 500
+MAX_ITEMS = 1000
 REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 BLOCK_LABELS = {"hold", "blocked", "do-not-automate", "do not automate",
@@ -59,7 +59,7 @@ def gh_json(*args: str) -> Any:
 
 def live_snapshot(repo: str) -> dict[str, Any]:
     validate_repo(repo)
-    issues = gh_json("issue", "list", "-R", repo, "--state", "all",
+    issues = gh_json("issue", "list", "-R", repo, "--state", "open",
                      "--limit", str(MAX_ITEMS), "--json",
                      "number,title,body,state,labels,url")
     prs = gh_json("pr", "list", "-R", repo, "--state", "open",
@@ -69,6 +69,14 @@ def live_snapshot(repo: str) -> dict[str, Any]:
         raise QueueError("INVALID_GITHUB_SNAPSHOT")
     if len(issues) >= MAX_ITEMS or len(prs) >= MAX_ITEMS:
         raise QueueError("GITHUB_RESULT_LIMIT_REACHED")
+    # Do not truncate a long-lived repo at its first 1000 historical issues:
+    # fetch only explicitly referenced closed/missing prerequisites.
+    indexed = {item["number"] for item in issues}
+    required = set().union(*(dependencies(item) for item in issues))
+    for number in sorted(required - indexed):
+        remote = gh_json("issue", "view", str(number), "-R", repo,
+                         "--json", "number,title,body,state,labels,url")
+        issues.append(remote)
     return {"issues": issues, "pull_requests": prs}
 
 
