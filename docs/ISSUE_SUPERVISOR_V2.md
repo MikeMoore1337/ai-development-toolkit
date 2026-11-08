@@ -21,7 +21,20 @@ The SDK adapter **unconditionally refuses** live execution with OS_SEPARATED_WOR
 4. Persist turn attempts before SDK dispatch and fail closed into RECONCILIATION_REQUIRED after ambiguous completion.
 5. A PR with completed checks still cannot be merged: independent exact-SHA reviewer and privileged publisher are NOT_IMPLEMENTED.
 6. Explicit STOP sentinel prevents the next step from claiming work; a full process-lifetime kill switch is NOT_IMPLEMENTED.
-7. Sensitive output is not written into the audit, and no real model or API calls are made during offline tests.
+7. The read-only `audit` CLI re-observes selected Issues, verified merged PR HEAD, exact merge SHA and post-merge GitHub Actions. It only reports `QUEUE_ALL_VERIFIED` when every scope member is independently checked; empty `available` and max-issues exhaustion never prove completion.
+8. Sensitive output is not written into the audit, and no real model or API calls are made during offline tests.
+
+## One-request activation contract
+
+The owner wants exactly one explicit, repository/branch/Issue-scoped instruction, after which a trusted host should advance automatically through `plan -> start -> worktree -> tests -> independent review -> PR -> exact-head CI -> permitted merge -> post-merge verification -> plan`. The owner must not type "continue" after each Issue; this does not confer permission over an entire unselected backlog.
+
+Until the host runtime, privileged publisher and autonomous restart are independently proven, the new supervisor **will not start models**. The `run` command refuses `PERSISTENT_SUPERVISOR_NOT_IMPLEMENTED`, and SDK worker calls refuse `OS_SEPARATED_WORKER_NOT_ATTESTED`. Do not bypass these gates.
+
+Read-only audit of an initialized scoped queue:
+
+    py -3.14 scripts/issue_supervisor.py audit --repo OWNER/REPO
+
+Results distinguish `QUEUE_ALL_VERIFIED`, `QUEUE_HAS_ELIGIBLE`, `QUEUE_RUNNING` and `QUEUE_NO_ELIGIBLE_WITH_BLOCKERS`, with separate lists for closed-verified, available, waiting approval, blocked and excluded Issues.
 
 ## Open acceptance gates - keep Issue #570 OPEN
 
