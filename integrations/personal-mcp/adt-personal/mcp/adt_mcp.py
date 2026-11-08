@@ -221,9 +221,9 @@ def _model_review_hint(task: str, observed_findings: list[str] | None = None) ->
     ) and not routine_docs
     reason = ('MULTI_BOUNDARY_SECURITY_REVIEW' if security and (concurrency or integrity)
               else 'MIGRATION_RECOVERY_REVIEW' if migration and (concurrency or integrity)
-              else 'ARCHITECTURE_SECURITY_REVIEW' if architecture and security and review and signal
               else 'EXPLICIT_CRITICAL_SECURITY_REVIEW' if security and critical and review and signal
               else 'EXPLICIT_INDEPENDENT_ARCHITECTURE_REVIEW' if architecture and independent and review and signal
+              else 'ARCHITECTURE_SECURITY_REVIEW' if signal
               else 'INSUFFICIENT_COMBINED_RISK_SIGNALS')
     from_new_findings = bool(observed_findings) and signal and (
         _model_review_hint(task)['status'] != 'REVIEW_CANDIDATE')
