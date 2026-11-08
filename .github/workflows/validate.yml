@@ -73,11 +73,21 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/actionlint"
-          curl --fail --location --silent --show-error --retry 3 \
+          if curl --fail --location --silent --show-error --retry 3 \
             "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" \
-            --output "$RUNNER_TEMP/actionlint.tar.gz"
-          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check --status
-          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP/actionlint" actionlint
+            --output "$RUNNER_TEMP/actionlint.tar.gz"; then
+            # The official binary remains SHA256-pinned; never fall back on
+            # checksum mismatch or extract a partially downloaded artifact.
+            echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check --status
+            tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP/actionlint" actionlint
+          else
+            # GitHub release-asset CDN sometimes returns HTTP 504 for all retries.
+            # Official upstream installation: Go module v1.7.12, verified by
+            # the standard Go module checksum database. Never skip actionlint.
+            go version
+            GOSUMDB=sum.golang.org GOBIN="$RUNNER_TEMP/actionlint" \
+              go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          fi
           "$RUNNER_TEMP/actionlint/actionlint" -version
           "$RUNNER_TEMP/actionlint/actionlint" -no-color -shellcheck= -pyflakes=
           printf '%s\n' 'name: Negative fixture' 'on: push' 'jobs:' '  invalid:' \
