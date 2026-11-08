@@ -425,6 +425,23 @@ class QueueTerminalAuditTests(unittest.TestCase):
             self.assertEqual([1, 2, 3], result["closed_verified"])
             self.assertEqual([], result["blocked"])
 
+    def test_stale_review_or_changes_requested_never_attests(self):
+        base = {"author": {"login": "code-author"}}
+        stale = [{"id": 11, "user": {"login": "reviewer"},
+                  "state": "APPROVED", "commit_id": "e" * 40}]
+        requested = stale + [
+            {"id": 12, "user": {"login": "reviewer"},
+             "state": "CHANGES_REQUESTED", "commit_id": "a" * 40}]
+        for reviews, expected in (
+            (stale, "INDEPENDENT_EXACT_HEAD_REVIEW_MISSING"),
+            (requested, "LATEST_REVIEW_REQUESTS_CHANGES"),
+        ):
+            with self.subTest(reviews=reviews), \
+                    patch.object(sup.queue, "gh_json", side_effect=lambda *args:
+                                 base if args[:2] == ("pr", "view") else reviews), \
+                    self.assertRaisesRegex(sup.SupervisorError, expected):
+                sup.independent_review_on_exact_head(REPO, 4, "a" * 40, "APPROVED")
+
     def test_queue_empty_is_not_complete_when_closed_receipt_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
             p = policy(Path(tmp))
