@@ -245,5 +245,98 @@ class SupervisorStepTests(unittest.TestCase):
             self.assertEqual("DONE", st["stage"])
 
 
+class HostGitIsolationTests(unittest.TestCase):
+    def test_real_synthetic_worktree_shares_expected_git_dir(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            repo = root / "checkout"
+            repo.mkdir()
+            for command in (["git", "init", "-b", "main"],
+                            ["git", "config", "user.name", "Local Test"],
+                            ["git", "config", "user.email", "local-test@example.invalid"]):
+                p = subprocess.run(command, cwd=repo, capture_output=True, text=True)
+                self.assertEqual(0, p.returncode, p.stderr)
+            (repo / "README.md").write_text("Fixture only\n", encoding="utf-8")
+            for command in (["git", "add", "--", "README.md"],
+                            ["git", "commit", "-m", "test: seed"]):
+                p = subprocess.run(command, cwd=repo, capture_output=True, text=True)
+                self.assertEqual(0, p.returncode, p.stderr)
+            p = policy(root, checkout=str(repo))
+            state_dir = root / "host-state"
+            state_dir.mkdir()
+            worktree = Path(sup.issue_worktree(p, state_dir, 2))
+            self.assertTrue(worktree.is_dir())
+            self.assertEqual("issue-orchestrator/issue-2-supervised",
+                             sup.scrubbed_argv(["git", "-C", str(worktree),
+                                               "branch", "--show-current"]))
+            self.assertEqual(str(worktree), sup.issue_worktree(p, state_dir, 2))
+            with self.assertRaisesRegex(sup.SupervisorError,
+                                        "ISSUE_WORKTREE_BRANCH_MISMATCH"):
+                (worktree / ".git").rename(worktree / ".git.backup")
+                try:
+                    sup.issue_worktree(p, state_dir, 2)
+                finally:
+                    (worktree / ".git.backup").rename(worktree / ".git")
+
+    def test_pr_ownership_and_duplicates_fail_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p = policy(Path(temp))
+            def pr(number, branch, body, base="main"):
+                return {"number": number, "headRefName": branch,
+                        "body": body, "baseRefName": base}
+            candidate = pr(13, "issue-orchestrator/issue-1-supervised", "Closes #1")
+            with patch.object(sup.queue, "gh_json", return_value=[candidate]):
+                self.assertEqual(13, sup.associated_pr(p, 1))
+                self.assertIsNone(sup.associated_pr(p, 2))
+            with patch.object(sup.queue, "gh_json", return_value=[
+                    candidate, pr(14, "issue-orchestrator/issue-1-other", "Closes #1")]):
+                with self.assertRaisesRegex(sup.SupervisorError, "AMBIGUOUS_ISSUE_PR"):
+                    sup.associated_pr(p, 1)
+            with patch.object(sup.queue, "gh_json", return_value=[
+                    pr(15, "issue-orchestrator/issue-1-supervised", "See #1")]):
+                self.assertIsNone(sup.associated_pr(p, 1))
+
+    def test_corrupt_usage_counts_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            p = policy(root)
+            sup.prepare_root(root / "state")
+            st = sup.initial_state(p)
+            for field, value in (
+                ("issue_attempts", {"1": -1}),
+                ("issue_attempts", {"4": 1}),
+                ("issue_attempts", {"2": True}),
+                ("finished", [1, 1]),
+                ("finished", [4]),
+                ("turns_used", 300),
+            ):
+                with self.subTest(field=field, value=value):
+                    mutated = {**st, field: value}
+                    sup.atomic_json(root / "state" / "supervisor.json", mutated)
+                    with self.assertRaisesRegex(sup.SupervisorError,
+                                                "CORRUPT_USAGE"):
+                        sup.read_runtime(root / "state", p)
+
+    def test_resident_run_action_is_not_a_disguised_single_step(self):
+        from io import StringIO
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            p = policy(base)
+            root = base / "host-state"
+            sup.prepare_root(root)
+            sup.atomic_json(root / "policy.json", p)
+            sup.atomic_json(root / "supervisor.json", sup.initial_state(p))
+            args = ["run", "--repo", REPO, "--state-dir", str(root)]
+            output = StringIO()
+            with patch("sys.stdout", output):
+                code = sup.main(args)
+            self.assertEqual(2, code)
+            self.assertEqual("REFUSED", json.loads(output.getvalue())["status"])
+            self.assertIn("PERSISTENT_SUPERVISOR_NOT_IMPLEMENTED",
+                          output.getvalue())
+            self.assertEqual("PAUSED", sup.load_json(root / "supervisor.json")["mode"])
+
+
 if __name__ == "__main__":
     unittest.main()
