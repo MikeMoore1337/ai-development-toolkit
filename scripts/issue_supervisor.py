@@ -157,9 +157,9 @@ def single_writer(root: Path):
     if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
         raise SupervisorError("LINKED_LOCK_FILE")
     with open(path, "a+b") as handle:
-        handle.seek(0)
-        handle.write(b"0")
-        handle.flush()
+        # Never write to the lock byte before acquiring it. On Windows an
+        # active owner may lock that byte, turning a nonblocking lock probe
+        # into an unexpected PermissionError before LK_NBLCK runs.
         handle.seek(0)
         if os.name == "nt":
             import msvcrt
