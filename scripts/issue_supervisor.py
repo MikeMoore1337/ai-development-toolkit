@@ -538,7 +538,11 @@ def audit_queue(policy: dict[str, Any]) -> dict[str, Any]:
                 checks = queue.gh_json(
                     "api", f"repos/{policy['repo']}/commits/{merge_sha}/check-runs")
                 contexts = checks.get("check_runs") if isinstance(checks, dict) else None
-                if (not isinstance(contexts, list) or not contexts or
+                total_count = checks.get("total_count") if isinstance(checks, dict) else None
+                # GitHub check-runs API paginates; a first page of green jobs
+                # cannot conceal failed jobs on later pages.
+                if (type(total_count) is not int or total_count <= 0 or
+                        not isinstance(contexts, list) or len(contexts) != total_count or
                         any(not isinstance(c, dict)
                             or c.get("head_sha") != merge_sha
                             or c.get("status") != "completed"
