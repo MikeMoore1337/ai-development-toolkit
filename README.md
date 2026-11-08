@@ -90,6 +90,8 @@ All three platforms use the same Skill Manager; commands and Python launchers di
 
 
 
+**Next release candidate:** `v5.5.10` - [scope and acceptance](docs/releases/v5.5.10.md) - **NOT PUBLISHED**. Includes Native Eval #437 integrity hardening and other accumulated changes; real AI-client activation and independent witness remain NOT_VERIFIED. Release and installed-client updates are separate.
+
 **Latest published release:** [v5.5.9](https://github.com/MikeMoore1337/ai-development-toolkit/releases/tag/v5.5.9) (2026-11-06), exact source `dd9ee982e8faef6d6988feea10cef91773b4851e`. [Release notes and rollback](docs/releases/v5.5.9.md), [CHANGELOG](CHANGELOG.md), [release process](docs/RELEASE_PROCESS.md). This GitHub source release does not automatically update installed MCP, ChatGPT or Cursor clients; native security remains advisory, not verified host enforcement.
 
 
