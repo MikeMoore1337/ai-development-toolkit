@@ -96,12 +96,15 @@ class SupervisorPolicyTests(unittest.TestCase):
             target = root / "supervisor.json"
             sup.atomic_json(target, {"schema": 1, "message": "safe"})
             self.assertEqual("safe", sup.load_json(target)["message"])
+            lock_file = root / "host.lock"
+            lock_file.write_bytes(b"existing lock sentinel")
             with sup.single_writer(root):
                 with self.assertRaisesRegex(sup.SupervisorError, "SUPERVISOR_ALREADY_RUNNING"):
                     with sup.single_writer(root):
                         pass
             with sup.single_writer(root):
                 pass
+            self.assertEqual(b"existing lock sentinel", lock_file.read_bytes())
 
     def test_state_and_scope_mismatch_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
