@@ -31,7 +31,7 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         )
         self.assertEqual(self.scope["upstream"]["version"], "0.10.0")
         target = self.scope["target"]
-        self.assertEqual(target["repository"], "MikeMoore1337/adt-orchestrator-pilot")
+        self.assertEqual(target["repository"], "example/issue-orchestrator-pilot")
         self.assertEqual(target["branch"], "main")
         self.assertEqual(target["issue_numbers"], [7, 8])
         self.assertEqual(len(target["issue_numbers"]), len(set(target["issue_numbers"])))

@@ -29,9 +29,11 @@ This directory holds a minimal, declarative evaluation of upstream [issue-orches
 
 ## Files and fixed pilot boundary
 
+This is a generic Toolkit-owned source template: `example/issue-orchestrator-pilot` is deliberately a placeholder, **not** a real target or an authorization. The actual pilot repository and its exact GitHub issue links live outside portable Toolkit, under the separately permitted test repository.
+
 - `pilot-0.10.0.yaml` - upstream-formatted configuration candidate, **not installed** in the target repository or loaded automatically.
-- `pilot-scope.json` - immutable declaration of approved target `MikeMoore1337/adt-orchestrator-pilot`, branch `main`, Issues `#7` and `#8`, label `adt-io570-pilot-20261109`.
-- GitHub Issues [#7](https://github.com/MikeMoore1337/adt-orchestrator-pilot/issues/7) and [#8](https://github.com/MikeMoore1337/adt-orchestrator-pilot/issues/8) were newly created for this pilot. The second has upstream-native `Depends-on: #7`.
+- `pilot-scope.json` - source-only example of the intended fixed scope for a separately approved pilot, with placeholder repository `example/issue-orchestrator-pilot`, branch `main`, Issues `#7` and `#8`, label `adt-io570-pilot-20261109`.
+- GitHub Issues Issue #7 and Issue #8 were newly created for this pilot. The second has upstream-native `Depends-on: #7`.
 
 Do not treat `filtering.max_to_start: 2` as an immutable allowlist: it limits launches, not which issues qualify. A third issue labelled with the pilot label could become eligible. **Do not start the original engine unless that gap is closed by an upstream-supported mechanism or specifically accepted after a verified hard safety gate.** Check both labels and exact IDs against GitHub immediately before any eventual activation.
 

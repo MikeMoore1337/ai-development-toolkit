@@ -2,9 +2,10 @@
 # Upstream 0.10.0, pinned d4a79824ccd806089cf3f70ec632d39b8ee255ea
 # Do NOT copy into a running repository or launch until the provider/security gate passes.
 # This declares an original-engine configuration, NOT an SDK adapter.
+# example/issue-orchestrator-pilot is a generic placeholder, not a real GitHub repo.
 
 repo:
-  name: MikeMoore1337/adt-orchestrator-pilot
+  name: example/issue-orchestrator-pilot
 
 worktrees:
   base: "../adt-orchestrator-pilot-worktrees"

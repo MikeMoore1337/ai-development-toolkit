@@ -6,7 +6,7 @@
     "license": "Apache-2.0"
   },
   "target": {
-    "repository": "MikeMoore1337/adt-orchestrator-pilot",
+    "repository": "example/issue-orchestrator-pilot",
     "branch": "main",
     "issue_numbers": [
       7,
