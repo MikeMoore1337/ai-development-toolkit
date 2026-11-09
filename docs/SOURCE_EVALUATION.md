@@ -25,7 +25,7 @@
 | [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Семейство иконок и сайт | Для React использовать соответствующий пакет; стили могут отличаться |
 | [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Большая библиотека иконок | Использовать только при соответствии существующей дизайн-системе |
 | [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | P2 | Набор инструментов иконок | Предпочитать уже используемый Lucide; не заменять библиотеку целиком без причины |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Критика анимации и дизайна | Использовать motion-quality; исходные материалы частично есть в архиве |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Качество UI, мобильные интерфейсы, Apple-UX и анимации | Выбор оригинальных навыков через UX/UI Design Orchestra; без установки всего пакета по умолчанию |
 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | Команды для аудита и оформления frontend | В исходном архиве уже были навык и EXE; избегать дубликатов и бинарного файла |
 | [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | Приложение для переноса скриншота в UI | Только идеи screenshot-fidelity; самому приложению нужны ключи API |
 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Отдельный агентный runtime и навыки | Архитектурный пример для Hermes, не тот же продукт и не готовое обновление |
@@ -40,7 +40,7 @@
 - [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector/tree/cf5cac7ba5c756a6e0ebf52dc9763f49422f889f): `cf5cac7ba5c756a6e0ebf52dc9763f49422f889f`
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill/tree/f624f37a8c650b9cc550253104925efe4c8de246): `f624f37a8c650b9cc550253104925efe4c8de246`
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/08d5b470495d242ca0470f4aeae1956c3a074f83): `08d5b470495d242ca0470f4aeae1956c3a074f83`
-- [emilkowalski/skills](https://github.com/emilkowalski/skills/tree/2d228630ba1446365f614a108cb8252f1feda202): `2d228630ba1446365f614a108cb8252f1feda202`
+- [emilkowalski/skills](https://github.com/emilkowalski/skills/tree/715c1807e08c497cfd1dc4feb450a2a3300ef2a9): `715c1807e08c497cfd1dc4feb450a2a3300ef2a9`
 - [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify/tree/86c57be8204673c2a1b9849a3292a7dd3ab373d8): `86c57be8204673c2a1b9849a3292a7dd3ab373d8`
 - [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent/tree/edab579989a1680a6cbd2bb98ad30dc165c36c8b): `edab579989a1680a6cbd2bb98ad30dc165c36c8b`
 
