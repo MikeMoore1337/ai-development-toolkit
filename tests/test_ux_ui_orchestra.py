@@ -62,6 +62,16 @@ class DesignOrchestraTests(unittest.TestCase):
             self.assertIn("EMIL_ORIGINAL_SKILLS.md", body)
             self.assertIn("715c1807e08c497cfd1dc4feb450a2a3300ef2a9", body)
 
+    def test_emil_source_reachable_through_live_chatgpt_design_source_set(self):
+        data = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        source = ".agents/skills/ux-ui-design-orchestra/references/EMIL_ORIGINAL_SKILLS.md"
+        self.assertIn(source, data["chatgpt_personal_live"]["source_sets"]["ui-orchestra"])
+        plugin = (ROOT / "integrations/chatgpt-plugin/ai-development-toolkit/skills/toolkit-ui-review/SKILL.md")
+        text = plugin.read_text(encoding="utf-8")
+        self.assertIn(source, text)
+        self.assertIn("disable-model-invocation: true", text)
+        self.assertIn("ALL_THREE", text)
+
     def test_original_three_skill_invocation_gates(self):
         good = self.with_rendered_comparison(self.load_three_directions())
         good["gate"] = "AWAITING_VISUAL_APPROVAL"
