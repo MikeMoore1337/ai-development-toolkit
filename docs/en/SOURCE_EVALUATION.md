@@ -24,7 +24,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 | [phosphor-icons/homepage](https://github.com/phosphor-icons/homepage) | P3 | Icon family and website | For React use its corresponding package; visual styles can differ |
 | [tabler/tabler-icons](https://github.com/tabler/tabler-icons) | P3 | Large icon library | Choose only when it fits the existing design system |
 | [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | P2 | Icon toolkit | Prefer incumbent Lucide when already used; avoid wholesale replacement |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | Animation and design critique | Use motion-quality; portions of originals were already in the source archive |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | P1 | UI polish, mobile UX, Apple design and motion | Select native originals through UX/UI Design Orchestra; no automatic full-pack installation |
 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | P1 | Frontend audit and styling commands | Original archive already contained a skill and EXE; avoid duplicates and the binary |
 | [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) | P2 | Screenshot-to-UI application | Screenshot-fidelity process only; the application needs API keys |
 | [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) | P2 | Standalone agent runtime and skills | Architectural reference for Hermes, not the same project or a drop-in update |
@@ -39,7 +39,7 @@ Assessment based on reading GitHub README files; the specified commit SHAs were 
 - [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector/tree/cf5cac7ba5c756a6e0ebf52dc9763f49422f889f): `cf5cac7ba5c756a6e0ebf52dc9763f49422f889f`
 - [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill/tree/f624f37a8c650b9cc550253104925efe4c8de246): `f624f37a8c650b9cc550253104925efe4c8de246`
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable/tree/08d5b470495d242ca0470f4aeae1956c3a074f83): `08d5b470495d242ca0470f4aeae1956c3a074f83`
-- [emilkowalski/skills](https://github.com/emilkowalski/skills/tree/2d228630ba1446365f614a108cb8252f1feda202): `2d228630ba1446365f614a108cb8252f1feda202`
+- [emilkowalski/skills](https://github.com/emilkowalski/skills/tree/715c1807e08c497cfd1dc4feb450a2a3300ef2a9): `715c1807e08c497cfd1dc4feb450a2a3300ef2a9`
 - [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify/tree/86c57be8204673c2a1b9849a3292a7dd3ab373d8): `86c57be8204673c2a1b9849a3292a7dd3ab373d8`
 - [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent/tree/edab579989a1680a6cbd2bb98ad30dc165c36c8b): `edab579989a1680a6cbd2bb98ad30dc165c36c8b`
 
