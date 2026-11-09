@@ -21,6 +21,47 @@ class DesignOrchestraTests(unittest.TestCase):
     def assert_bad(self, fragment, item):
         self.assertTrue(any(fragment in err for err in checker.validate(item)), checker.validate(item))
 
+    def test_emil_originals_pinned_and_selectively_routed(self):
+        source = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+        pin = "715c1807e08c497cfd1dc4feb450a2a3300ef2a9"
+        self.assertEqual(pin, source["source_revision_pins"]["emilkowalski/skills"])
+        orchestra = ROOT / ".agents/skills/ux-ui-design-orchestra"
+        guide = (orchestra / "references/EMIL_ORIGINAL_SKILLS.md").read_text(encoding="utf-8")
+        self.assertIn(pin, guide)
+        self.assertIn("MIT", guide)
+        upstream = (
+            "emil-design-eng", "animate", "animate-expo", "review-animations",
+            "improve-animations", "find-animation-opportunities",
+            "remove-animations", "choreograph", "animation-performance",
+            "animation-vocabulary", "apple-design", "gestures", "write-swift",
+            "pick-ui-library", "prototype", "mobile-native", "break-ui", "ask-sonner",
+        )
+        for name in upstream:
+            with self.subTest(name=name):
+                self.assertIn("`" + name + "`", guide)
+
+    def test_emil_source_receipts_and_upstream_opt_out_respected(self):
+        orchestra = ROOT / ".agents/skills/ux-ui-design-orchestra"
+        guide = (orchestra / "references/EMIL_ORIGINAL_SKILLS.md").read_text(encoding="utf-8")
+        for name in ("review-animations", "prototype", "pick-ui-library"):
+            self.assertIn("`" + name + "` | **Explicit invocation only**", guide)
+        for value in ("REFERENCE_ONLY", "FILES_PRESENT_UNATTESTED", "LOADED",
+                      "INVOKED", "ALL_THREE", "implement-approved",
+                      "disable-model-invocation: true",
+                      "NATIVE_CLIENT_E2E_NOT_VERIFIED"):
+            self.assertIn(value, guide)
+        self.assertIn("without permission", guide)
+
+    def test_emil_originals_linked_by_existing_orchestra_and_bilingual_guides(self):
+        orchestra = ROOT / ".agents/skills/ux-ui-design-orchestra"
+        for path in ("SKILL.md", "references/SPECIALISTS.md", "references/WORKFLOW.md"):
+            self.assertIn("EMIL_ORIGINAL_SKILLS.md",
+                          (orchestra / path).read_text(encoding="utf-8"))
+        for path in ("docs/UX_UI_DESIGN.md", "docs/ru/UX_UI_DESIGN.md"):
+            body = (ROOT / path).read_text(encoding="utf-8")
+            self.assertIn("EMIL_ORIGINAL_SKILLS.md", body)
+            self.assertIn("715c1807e08c497cfd1dc4feb450a2a3300ef2a9", body)
+
     def test_original_three_skill_invocation_gates(self):
         good = self.with_rendered_comparison(self.load_three_directions())
         good["gate"] = "AWAITING_VISUAL_APPROVAL"
