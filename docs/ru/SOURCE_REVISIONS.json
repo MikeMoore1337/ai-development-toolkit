@@ -369,7 +369,7 @@
       "source": "docs/SOURCE_EVALUATION.md",
       "translation": "docs/en/SOURCE_EVALUATION.md",
       "source_language": "ru",
-      "source_sha256": "7808b1a79ae8f9bee4f2e2b7a8808830a8337f42a2aaa7cfc16ba561ebb20c02"
+      "source_sha256": "5fb07d2772674240d507e0dd2a3cfcc3ec270156b97e6e1aa7a339b5abecf400"
     },
     {
       "source": "docs/TASK_PROMPT_TEMPLATE.md",
@@ -400,7 +400,7 @@
     {
       "source": "docs/UX_UI_DESIGN.md",
       "translation": "docs/ru/UX_UI_DESIGN.md",
-      "source_sha256": "79f2d0d2da40e080179d74c2c5c3f4dfbdba63110104b2b4f2aa23baff1d71b0"
+      "source_sha256": "ba50723aef27a2b37897863c9444f1db87d2119215fe221456341dbb549c6946"
     },
     {
       "source": "docs/UX_UI_EVALS.md",
