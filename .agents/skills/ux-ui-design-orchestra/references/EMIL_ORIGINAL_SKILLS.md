@@ -32,6 +32,10 @@ The matrix covers all 18 upstream skills. It does **not** make all 18 necessary.
 5. In `STANDARD` mode this is a task-selected specialist source. In existing `original_design_skills.mode=ALL_THREE`, the required Impeccable / Taste / UI UX Pro Max trio **remains exactly three**, with its own exact-invocation approval gate. Emil specialists may complement the trio, but never satisfy one of its receipts or silently add a fourth mandatory gate.
 6. Deliver truthful visual and browser evidence, relevant reduced-motion/keyboard/device checks, and the original coordinator's visual acceptance gate. No automatic paid APIs, production access, new daemon/queue, changes to Toolkit from consumer projects, application edits before approval, PR merge or deployment.
 
+## Task-Issue Orchestrator compatibility
+
+If a selected GitHub Issue is executed by the original Issue Orchestrator tracked in Toolkit #570, it remains the sole queue/agent/review/recovery engine. The UX/UI Design Orchestra and Emil specialist(s) are **task-scoped instructions within that Issue**, not another scheduler. A new/substantial visual design still stops for version-specific owner visual approval; an execution queue must not interpret a synthetic CI success or available skill link as permission to merge or release a design. This is a compatibility contract, **not live Issue Orchestrator E2E proof**.
+
 ## Status boundary
 
 A source/index change in Toolkit is **routing integration only**. Actual native discovery, installation, method invocation, browser inspection and usefulness are separate per-client/per-project evidence. If no authorized executor or design task exists, record `NATIVE_CLIENT_E2E_NOT_VERIFIED` rather than announcing that a skill was used.
