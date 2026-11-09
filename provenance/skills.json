@@ -21,7 +21,7 @@
       "evidence": "integrations/issue-orchestrator/README.ru.md",
       "last_reviewed": "2026-11-09",
       "distribution": "included",
-      "notes": "Toolkit-authored guide for an upstream pinned reference. Explicitly blocked provider and unverified E2E; no model runtime or API credentials."
+      "notes": "Toolkit-authored guide of pinned upstream: Codex CLI approved via ChatGPT by owner; host isolation and E2E unverified; no model runtime or API-key credentials."
     },
     {
       "id": "upstream-io570-pilot-config",
@@ -41,7 +41,7 @@
       "evidence": "integrations/issue-orchestrator/pilot-0.10.0.yaml",
       "last_reviewed": "2026-11-09",
       "distribution": "included",
-      "notes": "Toolkit-authored generic YAML template; original Codex CLI provider forbidden until separate owner authorization. No engine launch performed."
+      "notes": "Toolkit-authored YAML template for original Codex CLI provider, now owner-permitted with ChatGPT authentication. No real runtime launch or extra paid API."
     },
     {
       "id": "upstream-io570-scope",
@@ -81,7 +81,7 @@
       "evidence": "tests/test_upstream_issue_orchestrator_pilot.py",
       "last_reviewed": "2026-11-09",
       "distribution": "included",
-      "notes": "Toolkit-authored offline tests cover config and declared blockers; do not claim real SDK compatibility, provider execution or E2E."
+      "notes": "Toolkit-authored offline tests cover original config, owner CLI permission and remaining host gates; no claim of live agent or E2E."
     },
     {
       "id": "release-v5510-owner-controlled-workflow",

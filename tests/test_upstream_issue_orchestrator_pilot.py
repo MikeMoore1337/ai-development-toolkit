@@ -61,11 +61,12 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
             "python -m unittest discover -s tests -v",
         )
 
-    def test_provider_compatibility_is_explicitly_blocked(self):
+    def test_cli_permission_does_not_activate_unverified_runtime(self):
         policy = self.scope["enforcement"]
-        self.assertEqual(policy["provider_status"], "BLOCKED_PROVIDER_COMPATIBILITY")
+        self.assertEqual(policy["provider_status"], "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED")
         self.assertFalse(policy["live_execution_authorized"])
-        self.assertFalse(policy["codex_cli_authorized"])
+        self.assertTrue(policy["codex_cli_authorized"])
+        self.assertFalse(policy["host_cli_authenticated"])
         self.assertFalse(policy["paid_api_authorized"])
         self.assertFalse(policy["actual_immutable_allowlist"])
         self.assertFalse(policy["e2e_verified"])
@@ -79,7 +80,9 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
     def test_manifest_declares_disabled_upstream_integration(self):
         integration = self.manifest["optional_integrations"]["upstream_issue_orchestrator"]
         self.assertEqual(integration["source_sha"], self.scope["upstream"]["commit"])
-        self.assertEqual(integration["provider_status"], "BLOCKED_PROVIDER_COMPATIBILITY")
+        self.assertEqual(integration["provider_status"], "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED")
+        self.assertTrue(integration["codex_cli_owner_permitted"])
+        self.assertFalse(integration["paid_api_authorized"])
         self.assertFalse(integration["automatic_install"])
         self.assertFalse(integration["live_execution"])
         self.assertFalse(integration["automatic_background_execution"])

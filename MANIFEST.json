@@ -666,7 +666,7 @@
     },
     "upstream_issue_orchestrator": {
       "issue": 570,
-      "mode": "source_only_provider_blocked",
+      "mode": "source_only_cli_owner_permitted_host_not_verified",
       "upstream": "issue-orchestrator/issue-orchestrator",
       "source_sha": "d4a79824ccd806089cf3f70ec632d39b8ee255ea",
       "version": "0.10.0",
@@ -676,9 +676,11 @@
       "automatic_install": false,
       "automatic_background_execution": false,
       "live_execution": false,
-      "provider_status": "BLOCKED_PROVIDER_COMPATIBILITY",
+      "provider_status": "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED",
       "host_e2e": "NOT_VERIFIED",
-      "human_merge": true
+      "human_merge": true,
+      "codex_cli_owner_permitted": true,
+      "paid_api_authorized": false
     }
   },
   "make_feature_source_bundled": true,

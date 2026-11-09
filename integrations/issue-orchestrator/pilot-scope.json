@@ -22,11 +22,12 @@
   "enforcement": {
     "wip": 1,
     "actual_immutable_allowlist": false,
-    "provider_status": "BLOCKED_PROVIDER_COMPATIBILITY",
+    "provider_status": "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED",
     "live_execution_authorized": false,
-    "codex_cli_authorized": false,
+    "codex_cli_authorized": true,
     "paid_api_authorized": false,
     "human_merge": true,
-    "e2e_verified": false
+    "e2e_verified": false,
+    "host_cli_authenticated": false
   }
 }

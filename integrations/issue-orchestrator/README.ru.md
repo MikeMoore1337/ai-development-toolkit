@@ -1,6 +1,6 @@
 # Original Issue-Orchestrator - pinned Toolkit pilot (#570)
 
-**State: SOURCE-ONLY / BLOCKED_PROVIDER_COMPATIBILITY. This is NOT an activated integration.**
+**State: SOURCE-ONLY / CODEX_CLI_OWNER_PERMITTED / HOST_NOT_VERIFIED. This is NOT an activated integration.**
 
 This directory holds a minimal, declarative evaluation of upstream [issue-orchestrator/issue-orchestrator](https://github.com/issue-orchestrator/issue-orchestrator). It does not implement a second queue, supervisor, reviewer, worktree manager, agent provider or auto-merge.
 
@@ -22,7 +22,7 @@ This directory holds a minimal, declarative evaluation of upstream [issue-orches
 | Pause/resume/restart, dashboard, timeline | BUILT IN |
 | WIP=1 | CONFIG: `execution.concurrency.max_concurrent_sessions: 1`; disable reserved tech-lead slots |
 | Exact pilot scope (two immutable Issue IDs) | GAP: `filtering.label` is supported; `filtering.issue` takes only one number. Label membership can change after preflight. The JSON scope below is an audit declaration, NOT an enforced runtime allowlist. |
-| Codex Python SDK with ChatGPT authentication | BLOCKED: built-in `codex` provider invokes `codex` CLI, not the Python SDK |
+| Codex CLI with ChatGPT authorization | ORIGINAL PROVIDER SUPPORTED; owner reported `codex login status` -> `Logged in using ChatGPT` on Windows. Login, quota and isolation in the intended executor remain NOT_VERIFIED |
 | Independent OS credential isolation on owner's Windows host | NOT_VERIFIED; per-agent sandbox is not proof of GitHub secret isolation |
 | Autonomous unattended E2E with two new pilot issues | NOT_VERIFIED |
 | Merging | HUMAN by default; preserved, with no auto-deploy |
@@ -37,7 +37,7 @@ This is a generic Toolkit-owned source template: `example/issue-orchestrator-pil
 
 Do not treat `filtering.max_to_start: 2` as an immutable allowlist: it limits launches, not which issues qualify. A third issue labelled with the pilot label could become eligible. **Do not start the original engine unless that gap is closed by an upstream-supported mechanism or specifically accepted after a verified hard safety gate.** Check both labels and exact IDs against GitHub immediately before any eventual activation.
 
-## Critical provider blocker
+## Provider compatibility and execution gate
 
 At upstream `d4a79824ccd806089cf3f70ec632d39b8ee255ea`:
 
@@ -46,17 +46,17 @@ At upstream `d4a79824ccd806089cf3f70ec632d39b8ee255ea`:
 3. The public plugin entry point `issue_orchestrator.ai_provider_keys` supplies API-key metadata, not a pluggable Python SDK execution backend.
 4. `agents[].command` is a documented override, but provider-less custom commands reject `sandbox: true`; simply launching an SDK script does not preserve the provider readiness, authentication, sandbox, interactive review and credential gates.
 
-The owner's installed `openai-codex==0.167.0` SDK reportedly returned `AUTH_TYPE=chatgpt` on Windows. This is owner-reported authentication evidence, **not** SDK compatibility with upstream, subscription cost verification or an isolated coding agent. No model has been launched here.
+The Python `openai-codex` SDK is not needed for this integration: use the original CLI provider. The owner has confirmed that Windows `codex login status` prints `Logged in using ChatGPT`. This proves the **Windows CLI login mode reported by the owner**, not that the Linux/WSL executor has the same authentication, available quota, or isolated GitHub credentials. No model has been launched here.
 
-**Disposition: `BLOCKED_PROVIDER_COMPATIBILITY`.** Do NOT invoke Codex CLI or Claude CLI, install paid providers, silently switch to an API key, create a VM/new Windows user, or enable the legacy Toolkit supervisor.
+**Disposition: `CODEX_CLI_OWNER_PERMITTED / HOST_NOT_VERIFIED`.** Codex CLI is now explicitly permitted when authenticated via ChatGPT. Do NOT use API-key billing, extra paid providers, Claude CLI, create a VM/new Windows user, expose publisher credentials or enable the legacy Toolkit supervisor. Do not start the original engine until host security and pilot issue-scope gates have passed.
 
-Acceptable next decisions are limited to (a) upstream maintaining a documented, security-reviewed SDK provider interface, (b) separately and explicitly authorizing Codex CLI after runtime, auth, security and subscription checks, or (c) verifying another upstream-supported, policy-compliant coding provider. No alternative has yet been authorized.
+Next: verify the pinned original CLI in the intended execution environment (prefer existing WSL2 Linux for the upstream POSIX terminal runner); run `codex --version`, `codex login status`, and the original engine's `doctor` after installation review. Windows sign-in does **not** automatically authenticate a separate WSL/Linux profile. Reject unknown or API-key billing. Test that the coding process cannot access GitHub publishing credentials and that the exact pilot issue scope remains guarded at claim time. Existing GUI/SDK success is not E2E evidence.
 
 ## Later activation procedure - NOT performed
 
 1. Inspect the pinned upstream tree, LICENSE, NOTICE, lockfile, dependencies and actual target host. No auto-download or global installation. Confirm the exact Git HEAD `d4a79824ccd806089cf3f70ec632d39b8ee255ea`.
-2. Resolve provider compatibility and credential isolation first; record an explicit owner authorization. The source-only candidate is NOT permission to use Codex CLI.
-3. Reconcile the pilot `AGENTS.md` (currently documents the legacy Toolkit controller) and supply the upstream-managed agent prompts and guardrails via the upstream `setup` workflow. Review every proposed change before applying it.
+2. The owner has permitted ChatGPT-authenticated Codex CLI for this pilot; independently verify the *host's* CLI login, subscription mode, credential isolation, approved repo and immutable Issue membership before activating. The permission is not a paid API grant or a blanket run authorization.
+3. Use the separate pilot repository's updated `AGENTS.md` and upstream agent/reviewer prompts; review the upstream `setup` and guardrail hooks before applying them. The Toolkit legacy controller must stay inactive. Review every proposed change before applying it.
 4. Verify that `main` and the exclusive scope label still refer to only Issues #7 and #8. Scope must be fail-closed before runtime and remain guarded against late membership changes.
 5. After the above gates, follow supported upstream `issue-orchestrator setup`, `setup-guardrails`, `init`, `doctor`, `start`, `pause`, `resume`, `status` and `restart` interfaces as appropriate, using the version-pinned configuration. None was executed in this chat.
 6. Observe one real coding session at a time; independent reviewer, bounded rework, PR, exact-head CI, human merge, GitHub Issue closure, post-merge CI, automatic move to #8 and restart/reconciliation. Do not claim success from an empty runnable queue.

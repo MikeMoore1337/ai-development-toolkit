@@ -1,6 +1,7 @@
-# SOURCE-ONLY / BLOCKED_PROVIDER_COMPATIBILITY
+# SOURCE-ONLY / CODEX_CLI_OWNER_PERMITTED / HOST_NOT_VERIFIED
 # Upstream 0.10.0, pinned d4a79824ccd806089cf3f70ec632d39b8ee255ea
-# Do NOT copy into a running repository or launch until the provider/security gate passes.
+# Owner permits Codex CLI authenticated through ChatGPT; no API-key billing.
+# Do NOT launch until exact host auth, issue-scope, branch and credential checks pass.
 # This declares an original-engine configuration, NOT an SDK adapter.
 # example/issue-orchestrator-pilot is a generic placeholder, not a real GitHub repo.
 
