@@ -1,0 +1,71 @@
+# SOURCE-ONLY / BLOCKED_PROVIDER_COMPATIBILITY
+# Upstream 0.10.0, pinned d4a79824ccd806089cf3f70ec632d39b8ee255ea
+# Do NOT copy into a running repository or launch until the provider/security gate passes.
+# This declares an original-engine configuration, NOT an SDK adapter.
+
+repo:
+  name: MikeMoore1337/adt-orchestrator-pilot
+
+worktrees:
+  base: "../adt-orchestrator-pilot-worktrees"
+  base_branch_override: main
+
+agents:
+  "agent:dev":
+    prompt: ".issue-orchestrator/prompts/dev.md"
+    provider: codex
+    ai_system: codex
+    sandbox: true
+    timeout_minutes: 45
+    reviewer: "agent:reviewer"
+    provider_args:
+      approval_mode: default
+      sandbox: workspace-write
+  "agent:reviewer":
+    prompt: ".issue-orchestrator/prompts/reviewer.md"
+    provider: codex
+    ai_system: codex
+    sandbox: true
+    timeout_minutes: 30
+    provider_args:
+      approval_mode: default
+      sandbox: workspace-write
+
+execution:
+  concurrency:
+    max_concurrent_sessions: 1
+    session_timeout_minutes: 60
+  terminal_adapter: subprocess
+
+review:
+  enabled: true
+  default: "agent:reviewer"
+  max_rework_cycles: 2
+  internal:
+    enabled: false
+
+validation:
+  quick:
+    cmd: "python -m unittest discover -s tests -v"
+    timeout_seconds: 300
+  publish:
+    cmd: "python -m unittest discover -s tests -v"
+    timeout_seconds: 900
+    dirty_check: tracked
+
+filtering:
+  label: "adt-io570-pilot-20261109"
+  exclude_labels: ["HOLD", "blocked"]
+  max_to_start: 2
+
+tech_lead:
+  enabled: false
+
+goal_pilot:
+  enabled: false
+
+merge_queue:
+  enabled: false
+
+e2e:
+  enabled: false

@@ -1,0 +1,32 @@
+{
+  "upstream": {
+    "repository": "issue-orchestrator/issue-orchestrator",
+    "commit": "d4a79824ccd806089cf3f70ec632d39b8ee255ea",
+    "version": "0.10.0",
+    "license": "Apache-2.0"
+  },
+  "target": {
+    "repository": "MikeMoore1337/adt-orchestrator-pilot",
+    "branch": "main",
+    "issue_numbers": [
+      7,
+      8
+    ],
+    "required_label": "adt-io570-pilot-20261109",
+    "dependency": {
+      "successor": 8,
+      "predecessor": 7,
+      "directive": "Depends-on: #7"
+    }
+  },
+  "enforcement": {
+    "wip": 1,
+    "actual_immutable_allowlist": false,
+    "provider_status": "BLOCKED_PROVIDER_COMPATIBILITY",
+    "live_execution_authorized": false,
+    "codex_cli_authorized": false,
+    "paid_api_authorized": false,
+    "human_merge": true,
+    "e2e_verified": false
+  }
+}

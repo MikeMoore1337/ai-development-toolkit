@@ -1,3 +1,5 @@
+> **LEGACY (session-driven), not the upstream Issue-Orchestrator engine.** For Issue #570's pinned original-engine integration, use [the source-only upstream pilot guide](../integrations/issue-orchestrator/README.ru.md). The original-engine pilot remains BLOCKED_PROVIDER_COMPATIBILITY; do not activate both controllers.
+
 # Issue Orchestrator: последовательное выполнение GitHub Issues через Codex
 
 Статус: **экспериментальный модуль, только по явному запуску**. Задача: [#565](https://github.com/MikeMoore1337/ai-development-toolkit/issues/565).

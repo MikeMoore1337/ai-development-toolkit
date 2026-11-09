@@ -663,6 +663,22 @@
       "host_e2e": "NOT_VERIFIED",
       "live_execution": "BLOCKED_OS_CREDENTIAL_ISOLATION",
       "external_paid_api_allowed": false
+    },
+    "upstream_issue_orchestrator": {
+      "issue": 570,
+      "mode": "source_only_provider_blocked",
+      "upstream": "issue-orchestrator/issue-orchestrator",
+      "source_sha": "d4a79824ccd806089cf3f70ec632d39b8ee255ea",
+      "version": "0.10.0",
+      "config": "integrations/issue-orchestrator/pilot-0.10.0.yaml",
+      "scope": "integrations/issue-orchestrator/pilot-scope.json",
+      "operator_guide": "integrations/issue-orchestrator/README.ru.md",
+      "automatic_install": false,
+      "automatic_background_execution": false,
+      "live_execution": false,
+      "provider_status": "BLOCKED_PROVIDER_COMPATIBILITY",
+      "host_e2e": "NOT_VERIFIED",
+      "human_merge": true
     }
   },
   "make_feature_source_bundled": true,
