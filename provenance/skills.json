@@ -16064,6 +16064,26 @@
       "last_reviewed": "2026-11-08",
       "distribution": "included",
       "notes": "Prototype only: OS identity isolation and live SDK host E2E NOT_VERIFIED; runtime and publishing BLOCKED. Official SDK and upstream reference code are not bundled."
+    },
+    {
+      "id": "security-coverage-585-synthetic-tests",
+      "path": "tests/test_security_coverage.py",
+      "name": "Cloudflare-inspired offline coverage evidence regression tests",
+      "kind": "test",
+      "author": "Toolkit maintainers (AI-assisted; claimed)",
+      "origin": "inspired_by",
+      "source_url": "https://github.com/cloudflare/security-audit-skill",
+      "source_reference": "skills/security-audit/SKILL.md",
+      "source_revision": "c1c8a8c1471069fb0e188eeaff69b8e8db6564a8",
+      "license": "MIT",
+      "distribution_basis": "Original Toolkit-authored synthetic regression code informed by MIT Cloudflare methodology; no upstream executable or file copied; independent legal title verification not attested.",
+      "attribution_required": false,
+      "attribution_path": null,
+      "status": "documented",
+      "evidence": "tests/test_security_coverage.py",
+      "last_reviewed": "2026-11-12",
+      "distribution": "included",
+      "notes": "Issue #585; optional source-only coverage and verification structure, not an executed security audit or verified agent independence."
     }
   ],
   "owner_review_record": {
