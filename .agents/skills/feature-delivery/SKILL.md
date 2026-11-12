@@ -7,6 +7,8 @@ description: "Use for implementing a new feature or significant behavior change.
 
 Use the smallest workflow that can provide verifiable value. Read project `AGENTS.md`, current code, tests, and accepted product decisions first. Do not replace an existing project process.
 
+**Optional multi-Issue planning and session retrospective:** Only when the owner asks to split a larger task, reuse the existing issue tracker and [vertical-slice/dependency guide](../../../docs/ISSUE_EXECUTION_DISCIPLINE.md): one independently demonstrable outcome per Issue, explicit minimal `Blocked by: #N` edges, preserved scope and approvals. Do not turn a single small change into multiple Issues, launch workers, create Issues, or alter the Issue Orchestrator WIP=1 automatically. On request or an observed session-efficiency defect, use the same guide for a redacted post-session retrospective with `NOT_MEASURED` for unavailable counters; no hooks, transcript collection or invented token savings.
+
 ## Route by risk (not code size alone)
 
 | Route | Apply when | Minimum evidence |
