@@ -47,7 +47,7 @@ class IssueExecutionDisciplineTests(unittest.TestCase):
         guide = (ROOT / "docs/ISSUE_ORCHESTRATOR.md").read_text(encoding="utf-8")
         self.assertIn("ISSUE_EXECUTION_DISCIPLINE.md", guide)
         self.assertIn("WIP=1", guide)
-        self.assertIn("не изменяет очередь", guide)
+        self.assertIn("не изменяет очередь", guide.replace("**", ""))
 
 
 if __name__ == "__main__":
