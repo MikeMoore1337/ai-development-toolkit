@@ -40,7 +40,7 @@ class IssueExecutionDisciplineTests(unittest.TestCase):
                 self.assertIn("NOT_MEASURED", document)
                 self.assertIn("WIP=1", document)
                 self.assertIn("retro", document)
-        self.assertIn("Source-only", english)
+        self.assertIn("source-only", english.lower())
         self.assertIn("не", russian)
 
     def test_issue_orchestrator_guide_links_without_new_executor(self):
