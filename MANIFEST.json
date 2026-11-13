@@ -682,7 +682,6 @@
       "codex_cli_owner_permitted": true,
       "paid_api_authorized": false,
       "pilot_evidence": {
-        "repository": "MikeMoore1337/adt-orchestrator-pilot",
         "closed_issues": [
           7,
           8
@@ -697,7 +696,8 @@
         "operator_assisted_publication": true,
         "fully_unattended_e2e_verified": false,
         "recovery_custody_pending_issue": 7,
-        "product_rollout_authorized": false
+        "product_rollout_authorized": false,
+        "pilot_scope": "separate_owner_authorized_synthetic_fixture"
       }
     }
   },
