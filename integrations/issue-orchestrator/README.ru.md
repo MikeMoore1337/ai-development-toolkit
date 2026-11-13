@@ -1,6 +1,10 @@
 # Original Issue-Orchestrator - pinned Toolkit pilot (#570)
 
-**State: SOURCE-ONLY / CODEX_CLI_OWNER_PERMITTED / HOST_NOT_VERIFIED. This is NOT an activated integration.**
+**State: SOURCE TEMPLATE ONLY / PHYSICAL WSL2 PILOT OBSERVED / FULL UNATTENDED E2E NOT_VERIFIED. This Toolkit template itself is not an activated engine.**
+
+> **Текущий результат (13.11.2026).** Оригинальный Issue-Orchestrator v0.10.0 запускался в WSL2 с Codex CLI через вход ChatGPT. Одна очередь (WIP=1) последовательно выполнила тестовые Issues #7 и #8: PR #15 и #17 слиты, post-merge CI прошёл. PR #17 опубликовал оператор после исправления локальной ошибки `stale info`, а не оригинальный движок. Восстановительная правка #7 дополнительно слита через PR #18. В локальной базе всё ещё удерживается `divergent_validated_heads` для #7: требуется утверждённый `release_validated_work` и проверка после перезапуска. **Полное автономное E2E, окончательная реконсиляция и внедрение в рабочие репозитории НЕ подтверждены.**
+
+
 
 This directory holds a minimal, declarative evaluation of upstream [issue-orchestrator/issue-orchestrator](https://github.com/issue-orchestrator/issue-orchestrator). It does not implement a second queue, supervisor, reviewer, worktree manager, agent provider or auto-merge.
 
@@ -22,9 +26,9 @@ This directory holds a minimal, declarative evaluation of upstream [issue-orches
 | Pause/resume/restart, dashboard, timeline | BUILT IN |
 | WIP=1 | CONFIG: `execution.concurrency.max_concurrent_sessions: 1`; disable reserved tech-lead slots |
 | Exact pilot scope (two immutable Issue IDs) | GAP: `filtering.label` is supported; `filtering.issue` takes only one number. Label membership can change after preflight. The JSON scope below is an audit declaration, NOT an enforced runtime allowlist. |
-| Codex CLI with ChatGPT authorization | ORIGINAL PROVIDER SUPPORTED; owner reported `codex login status` -> `Logged in using ChatGPT` on Windows. Login, quota and isolation in the intended executor remain NOT_VERIFIED |
+| Codex CLI with ChatGPT authorization | ORIGINAL PROVIDER SUPPORTED; owner reported `codex login status` -> `Logged in using ChatGPT` on Windows. WSL2 ChatGPT login and scoped native sandbox were reported PASS by the owner; permanent host separation and fully unattended publication remain NOT_VERIFIED |
 | Independent OS credential isolation on owner's Windows host | NOT_VERIFIED; per-agent sandbox is not proof of GitHub secret isolation |
-| Autonomous unattended E2E with two new pilot issues | NOT_VERIFIED |
+| Autonomous unattended E2E with two new pilot issues | PARTIAL: #7 and #8 completed with operator-assisted publication; unattended E2E NOT_VERIFIED |
 | Merging | HUMAN by default; preserved, with no auto-deploy |
 
 ## Files and fixed pilot boundary
@@ -46,13 +50,13 @@ At upstream `d4a79824ccd806089cf3f70ec632d39b8ee255ea`:
 3. The public plugin entry point `issue_orchestrator.ai_provider_keys` supplies API-key metadata, not a pluggable Python SDK execution backend.
 4. `agents[].command` is a documented override, but provider-less custom commands reject `sandbox: true`; simply launching an SDK script does not preserve the provider readiness, authentication, sandbox, interactive review and credential gates.
 
-The Python `openai-codex` SDK is not needed for this integration: use the original CLI provider. The owner has confirmed that Windows `codex login status` prints `Logged in using ChatGPT`. This proves the **Windows CLI login mode reported by the owner**, not that the Linux/WSL executor has the same authentication, available quota, or isolated GitHub credentials. No model has been launched here.
+The Python `openai-codex` SDK is not needed for this integration: use the original CLI provider. The owner has confirmed that Windows `codex login status` prints `Logged in using ChatGPT`. This proves the **Windows CLI login mode reported by the owner**, not that the Linux/WSL executor has the same authentication, available quota, or isolated GitHub credentials. Real model turns were observed by the owner in the separate WSL2 pilot; this portable Toolkit source template never launches models.
 
-**Disposition: `CODEX_CLI_OWNER_PERMITTED / HOST_NOT_VERIFIED`.** Codex CLI is now explicitly permitted when authenticated via ChatGPT. Do NOT use API-key billing, extra paid providers, Claude CLI, create a VM/new Windows user, expose publisher credentials or enable the legacy Toolkit supervisor. Do not start the original engine until host security and pilot issue-scope gates have passed.
+**Disposition: `SOURCE_TEMPLATE / WSL2_PILOT_PARTIAL / FULL_E2E_NOT_VERIFIED`.** Codex CLI is now explicitly permitted when authenticated via ChatGPT. Do NOT use API-key billing, extra paid providers, Claude CLI, create a VM/new Windows user, expose publisher credentials or enable the legacy Toolkit supervisor. Do not start the original engine until host security and pilot issue-scope gates have passed.
 
 Next: verify the pinned original CLI in the intended execution environment (prefer existing WSL2 Linux for the upstream POSIX terminal runner); run `codex --version`, `codex login status`, and the original engine's `doctor` after installation review. Windows sign-in does **not** automatically authenticate a separate WSL/Linux profile. Reject unknown or API-key billing. Test that the coding process cannot access GitHub publishing credentials and that the exact pilot issue scope remains guarded at claim time. Existing GUI/SDK success is not E2E evidence.
 
-## Later activation procedure - NOT performed
+## Separate generic Toolkit template activation - NOT performed
 
 1. Inspect the pinned upstream tree, LICENSE, NOTICE, lockfile, dependencies and actual target host. No auto-download or global installation. Confirm the exact Git HEAD `d4a79824ccd806089cf3f70ec632d39b8ee255ea`.
 2. The owner has permitted ChatGPT-authenticated Codex CLI for this pilot; independently verify the *host's* CLI login, subscription mode, credential isolation, approved repo and immutable Issue membership before activating. The permission is not a paid API grant or a blanket run authorization.

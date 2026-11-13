@@ -29,9 +29,13 @@ Coordinate with the existing target role instead of creating a second issue, tas
 
 1. Product design: Impeccable `shape`/`distill` for a new concept, `critique`/`polish` for existing UI; use the actual brand if available. Report hierarchy, usability and generic-template risks in this specific product.
 2. Technical UX: UI Skills + current accessibility/browser QA; focus, text, responsiveness, empty/error/loading, input flow. Report objective defects with route/viewport.
-3. Optional motion specialist: Emil's `review-animations` / `improve-animations` + project motion guidance. If no motion issue, choose design system consistency or product-specific flow reviewer instead. Taste / UI UX Pro Max only for user-authorized concept exploration and comparative ideas, not automatic reskinning.
+3. Optional Emil design specialist: choose a relevant native source by the [pinned Emil routing matrix](EMIL_ORIGINAL_SKILLS.md). Use `emil-design-eng` for polish, `apple-design` for an Apple-style brief, `mobile-native` for touch/PWA, `break-ui` for permitted worst-case UI checks, or `improve-animations` for a motion audit. `review-animations` is explicit-only per upstream `disable-model-invocation: true`. If none fits, choose design system consistency or product-specific flow review. Taste / UI UX Pro Max remain governed by the separate user-selected original mode, not an automatic reskinning.
 
 Give all workers the **same** input digest: repository revision, product UX, approved brand decisions, viewports, task/out-of-scope, allowed tools, non-write gate and evidence references. Workers should return findings keyed by stable local IDs and an explicit no-write affirmation. The coordinator must inspect actual outputs and can reject a recommendation.
+
+## Selective Emil specialist activation
+
+Read [EMIL_ORIGINAL_SKILLS.md](EMIL_ORIGINAL_SKILLS.md) only when the task genuinely matches one of its native scopes. Preserve the original `SKILL.md` instructions at the recorded upstream commit, respect explicit-only skills and no-write/owner-approval stages, and record actual client execution separately from `REFERENCE_ONLY` or `LOADED`. There is no fourth mandatory original or second orchestration controller. If source/setup/client invocation is blocked, say what is blocked and do not replace it with a fabricated invocation.
 
 ## Tool-native creative freedom
 

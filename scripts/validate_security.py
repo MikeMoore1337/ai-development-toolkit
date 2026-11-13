@@ -208,6 +208,93 @@ def safe_report(text: str, *, defect: str | None = None) -> bool:
     return FAKE_SECRET not in text
 
 
+# Opt-in Cloudflare-inspired evidence ledger; this validates records, not agents.
+_AUDIT_UNIT_STATES = frozenset({"planned", "covered", "deferred", "out_of_scope"})
+_AUDIT_VERDICTS = frozenset({"confirmed", "needs_validation", "rejected"})
+_AUDIT_EVIDENCE = frozenset({"SOURCE_ONLY", "SYNTHETIC_TESTED", "REAL_TESTED", "HUMAN_REVIEWED"})
+
+
+def validate_audit_coverage(ledger: dict, *, require_complete: bool = False) -> dict:
+    """Check audit record consistency, never claim a real security audit happened."""
+    import re
+
+    def required(item: dict, key: str) -> str:
+        value = item.get(key)
+        if not isinstance(value, str) or not value.strip() or value in {"UNKNOWN", "NOT_VERIFIED"}:
+            raise ValueError("missing audit field: " + key)
+        return value
+
+    if not isinstance(ledger, dict):
+        raise ValueError("audit ledger must be an object")
+    scope = required(ledger, "scope")
+    source_sha = required(ledger, "source_sha")
+    if re.fullmatch(r"[a-f0-9]{40}", source_sha) is None:
+        raise ValueError("source_sha must be a full Git commit SHA")
+    units, findings = ledger.get("units"), ledger.get("findings")
+    if not isinstance(units, list) or not units or not isinstance(findings, list):
+        raise ValueError("nonempty units and a findings list required")
+    by_id = {}
+    for unit in units:
+        if not isinstance(unit, dict):
+            raise ValueError("audit unit must be an object")
+        uid = required(unit, "id")
+        for field in ("boundary", "attack_class", "source_location"):
+            required(unit, field)
+        status = required(unit, "status")
+        if uid in by_id or status not in _AUDIT_UNIT_STATES:
+            raise ValueError("duplicate unit or invalid coverage status")
+        by_id[uid] = unit
+        if status == "covered":
+            required(unit, "evidence")
+            if unit.get("evidence_level") not in _AUDIT_EVIDENCE:
+                raise ValueError("covered unit requires evidence level")
+        if status in {"deferred", "out_of_scope"}:
+            required(unit, "reason")
+
+    seen, unresolved = set(), 0
+    for finding in findings:
+        if not isinstance(finding, dict):
+            raise ValueError("finding must be an object")
+        fid, uid = required(finding, "id"), required(finding, "unit_id")
+        verdict = required(finding, "verdict")
+        required(finding, "source_location")
+        if fid in seen or uid not in by_id or by_id[uid]["status"] == "out_of_scope":
+            raise ValueError("duplicate, unknown or excluded finding")
+        seen.add(fid)
+        if finding.get("source_sha") != source_sha:
+            raise ValueError("stale finding source SHA")
+        if verdict not in _AUDIT_VERDICTS:
+            raise ValueError("unknown finding verdict")
+        if verdict == "confirmed":
+            if by_id[uid]["status"] != "covered":
+                raise ValueError("confirmed finding lacks a covered unit")
+            for field in ("evidence", "observed_result", "impact", "reproduction",
+                          "hunter_id", "verifier_id", "severity"):
+                required(finding, field)
+            if finding["hunter_id"] == finding["verifier_id"]:
+                raise ValueError("self-attested verification is forbidden")
+            if finding.get("evidence_level") not in (_AUDIT_EVIDENCE - {"SOURCE_ONLY"}):
+                raise ValueError("source-only finding is not executed confirmation")
+        else:
+            if finding.get("severity") is not None:
+                raise ValueError("unconfirmed finding has unsupported severity")
+            required(finding, "blocker" if verdict == "needs_validation" else "disproof")
+            if verdict == "needs_validation":
+                unresolved += 1
+
+    in_scope = [unit for unit in units if unit["status"] != "out_of_scope"]
+    covered = sum(unit["status"] == "covered" for unit in in_scope)
+    complete = bool(in_scope) and covered == len(in_scope) and unresolved == 0
+    if require_complete and not complete:
+        raise ValueError("audit scope has unfinished coverage or unverified findings")
+    return {
+        "scope": scope, "source_sha": source_sha, "in_scope": len(in_scope),
+        "covered": covered, "unresolved_findings": unresolved,
+        "coverage_plan_complete": complete,
+        "evidence_class": "STRUCTURE_VALIDATED", "runtime_audit": "NOT_RUN",
+    }
+
+
 CASES = (
     "cross-tenant", "client-owner", "write-before-deny", "log-secret",
     "tool-escape", "no-approval", "ci-write", "fake-provenance",
@@ -277,4 +364,27 @@ def run_cases() -> dict:
 
 
 if __name__ == "__main__":
-    print(json.dumps(run_cases(), sort_keys=True))
+    import argparse
+    import sys
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="Offline security synthetic checks and coverage records")
+    parser.add_argument("--coverage-json", type=Path, help="Explicitly selected local ledger JSON")
+    parser.add_argument("--require-complete", action="store_true")
+    args = parser.parse_args()
+    if args.coverage_json is None:
+        if args.require_complete:
+            parser.error("--require-complete requires --coverage-json")
+        print(json.dumps(run_cases(), sort_keys=True))
+    else:
+        try:
+            target = args.coverage_json
+            if target.is_symlink() or not target.is_file() or target.stat().st_size > 262144:
+                raise ValueError("invalid ledger file")
+            result = validate_audit_coverage(
+                json.loads(target.read_text(encoding="utf-8")),
+                require_complete=args.require_complete)
+        except (OSError, ValueError, UnicodeError):
+            print(json.dumps({"ok": False, "status": "INVALID_COVERAGE_RECORD"}))
+            sys.exit(1)
+        print(json.dumps({"ok": True, **result}, sort_keys=True))

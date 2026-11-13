@@ -33,3 +33,7 @@ Run `python scripts/validate_security.py` and `python -m unittest tests.test_sec
 [Threat/risk/verification contract](../extensions/security/skills/security-engineering/references/CONTRACTS.md) · [Secret and CI guidance](../extensions/security/skills/security-engineering/references/OPERATIONS.md) · [Supply chain](../extensions/security/skills/security-engineering/references/SUPPLY_CHAIN.md).
 
 Official references (checked 2026-10-20): [OWASP ASVS 5.0.0](https://asvs.owasp.org/), [NIST SSDF SP 800-218 1.1 final](https://csrc.nist.gov/pubs/sp/800/218/final), [SLSA v1.2 approved](https://slsa.dev/spec/v1.2/), [OWASP Software Component Verification](https://owasp.org/projects/software-component-verification-standard). These are guidance sources, not certifications.
+
+## Opt-in coverage-led review (Cloudflare methods)
+
+For explicitly authorized, narrow security audits, the [coverage ledger protocol](../extensions/security/skills/security-engineering/references/COVERAGE_LEDGER.md) adds uncovered/deferred units and revision-bound `confirmed / needs_validation / rejected` records to existing Toolkit threat modeling. Run `python scripts/validate_security.py --coverage-json /path/to/ledger.json [--require-complete]` only when a local record is supplied. A synthetic baseline/candidate pilot is in `tests/test_security_coverage.py`. Structural validation is not proof of real verifier independence or an executed penetration test (`NOT_MEASURED`); no Cloudflare runtime or agent is installed.

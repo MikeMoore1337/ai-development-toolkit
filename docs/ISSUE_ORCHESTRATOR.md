@@ -1,4 +1,4 @@
-> **LEGACY (session-driven), not the upstream Issue-Orchestrator engine.** For Issue #570's pinned original-engine integration, use [the source-only upstream pilot guide](../integrations/issue-orchestrator/README.ru.md). The original-engine pilot remains BLOCKED_PROVIDER_COMPATIBILITY; do not activate both controllers.
+> **LEGACY #565 (управление сессиями), не исходный движок Issue-Orchestrator.** Для интеграции оригинального движка по #570 см. [пилот v0.10.0](../integrations/issue-orchestrator/README.ru.md). Пилот #7/#8 завершён с участием оператора; полностью автономная публикация и финальная реконсиляция не подтверждены. Не запускать оба управляющих процесса одновременно.
 
 # Issue Orchestrator: последовательное выполнение GitHub Issues через Codex
 
@@ -134,3 +134,7 @@ python /path/to/ai-development-toolkit/scripts/issue_orchestrator.py retry --rep
 ## Границы экспериментальной версии
 
 Это **управление внутри активной сессии Codex**, а не запущенная круглосуточная служба. При закрытии клиента, прекращении сессии или исчерпании лимитов автоматического перезапуска нет, но состояние сохранено. Для постоянной автономной работы потребуется отдельный разрешённый supervisor через официальный Codex SDK/app-server либо CLI с собственной проверкой прав, изоляции и стоимости. Текущий модуль не создаёт макеты сам, не гарантирует полноценный независимый review и не подтверждает фактическую работу Codex без host E2E.
+
+## Необязательная подготовка небольших Issues
+
+Когда владелец **сам просит разбить** крупную задачу, используйте [методику вертикальных срезов и разбора сессий](ru/ISSUE_EXECUTION_DISCIPLINE.md) до публикации Issues. Она опирается на существующие `Blocked by: #N`, `plan` и защиту циклов, но **не** изменяет очередь, WIP=1, состояние, разрешения, правила слияния или работу автономного supervisor. Проверяйте зависимости штатным `plan` в режиме только чтения; не считайте новый документ запущенным исполнителем.
