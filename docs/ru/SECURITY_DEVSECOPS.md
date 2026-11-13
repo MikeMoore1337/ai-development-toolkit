@@ -33,3 +33,7 @@
 [Контракты](../../extensions/security/skills/security-engineering/references/CONTRACTS.md) · [CI и секреты](../../extensions/security/skills/security-engineering/references/OPERATIONS.md) · [Цепочка поставки](../../extensions/security/skills/security-engineering/references/SUPPLY_CHAIN.md).
 
 Официальные источники (проверены 20.10.2026): [OWASP ASVS 5.0.0](https://asvs.owasp.org/), [NIST SSDF SP 800-218 1.1](https://csrc.nist.gov/pubs/sp/800/218/final), [SLSA v1.2](https://slsa.dev/spec/v1.2/), [OWASP Software Component Verification](https://owasp.org/projects/software-component-verification-standard). Это рекомендации, а не сертификат соответствия.
+
+## Необязательная проверка покрытия (методика Cloudflare)
+
+Для явно разрешённого аудита ограниченной области используйте [протокол покрытия](../../extensions/security/skills/security-engineering/references/COVERAGE_LEDGER.md): отдельные непроверенные участки, привязка к SHA и статусы `confirmed / needs_validation / rejected`. Команда `python scripts/validate_security.py --coverage-json /path/to/ledger.json [--require-complete]` проверяет структуру локального реестра. Синтетический пилот - `tests/test_security_coverage.py`. Это не установка Cloudflare, не запуск агентов и не доказательство независимого воспроизведения уязвимости; реальная полезность пока `NOT_MEASURED`.
