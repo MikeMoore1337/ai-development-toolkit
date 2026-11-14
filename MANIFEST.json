@@ -663,6 +663,51 @@
       "host_e2e": "NOT_VERIFIED",
       "live_execution": "BLOCKED_OS_CREDENTIAL_ISOLATION",
       "external_paid_api_allowed": false
+    },
+    "upstream_issue_orchestrator": {
+      "issue": 570,
+      "mode": "source_only_cli_owner_permitted_host_not_verified",
+      "upstream": "issue-orchestrator/issue-orchestrator",
+      "source_sha": "d4a79824ccd806089cf3f70ec632d39b8ee255ea",
+      "version": "0.10.0",
+      "config": "integrations/issue-orchestrator/pilot-0.10.0.yaml",
+      "scope": "integrations/issue-orchestrator/pilot-scope.json",
+      "operator_guide": "integrations/issue-orchestrator/README.ru.md",
+      "automatic_install": false,
+      "automatic_background_execution": false,
+      "live_execution": false,
+      "provider_status": "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED",
+      "host_e2e": "NOT_VERIFIED",
+      "human_merge": true,
+      "codex_cli_owner_permitted": true,
+      "paid_api_authorized": false,
+      "pilot_evidence": {
+        "closed_issues": [
+          7,
+          8
+        ],
+        "merged_prs": [
+          15,
+          17,
+          18
+        ],
+        "pilot_main_sha": "05f9e3736e33ff9e5b03a79553aec7e891dacb4e",
+        "original_queue_wip_one_observed": true,
+        "operator_assisted_publication": true,
+        "fully_unattended_e2e_verified": false,
+        "recovery_custody_pending_issue": null,
+        "recovery_custody_resolved_issue": 7,
+        "recovery_resolution": "operator_abandoned",
+        "original_cold_restart_retention_verified": true,
+        "stage2_prepared_issues": [20, 21],
+        "stage2_prepared_pr": 22,
+        "stage2_preparation_main_sha": "05f9e3736e33ff9e5b03a79553aec7e891dacb4e",
+        "stage2_source_exact_head_ci": "SUCCESS",
+        "stage2_post_merge_ci": "SUCCESS",
+        "stage2_codex_activated": false,
+        "product_rollout_authorized": false,
+        "pilot_scope": "separate_owner_authorized_synthetic_fixture"
+      }
     }
   },
   "make_feature_source_bundled": true,
