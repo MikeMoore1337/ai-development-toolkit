@@ -691,11 +691,20 @@
           17,
           18
         ],
-        "pilot_main_sha": "70936e3c8db7d26c22387a23816e7bf25a856a22",
+        "pilot_main_sha": "05f9e3736e33ff9e5b03a79553aec7e891dacb4e",
         "original_queue_wip_one_observed": true,
         "operator_assisted_publication": true,
         "fully_unattended_e2e_verified": false,
-        "recovery_custody_pending_issue": 7,
+        "recovery_custody_pending_issue": null,
+        "recovery_custody_resolved_issue": 7,
+        "recovery_resolution": "operator_abandoned",
+        "original_cold_restart_retention_verified": true,
+        "stage2_prepared_issues": [20, 21],
+        "stage2_prepared_pr": 22,
+        "stage2_preparation_main_sha": "05f9e3736e33ff9e5b03a79553aec7e891dacb4e",
+        "stage2_source_exact_head_ci": "SUCCESS",
+        "stage2_post_merge_ci": "SUCCESS",
+        "stage2_codex_activated": false,
         "product_rollout_authorized": false,
         "pilot_scope": "separate_owner_authorized_synthetic_fixture"
       }

@@ -9,14 +9,14 @@
     "repository": "example/issue-orchestrator-pilot",
     "branch": "main",
     "issue_numbers": [
-      7,
-      8
+      20,
+      21
     ],
-    "required_label": "adt-io570-pilot-20261109",
+    "required_label": "adt-io570-stage2-20261114",
     "dependency": {
-      "successor": 8,
-      "predecessor": 7,
-      "directive": "Depends-on: #7"
+      "successor": 21,
+      "predecessor": 20,
+      "directive": "Depends-on: #20"
     }
   },
   "enforcement": {
@@ -28,6 +28,12 @@
     "paid_api_authorized": false,
     "human_merge": true,
     "e2e_verified": false,
-    "host_cli_authenticated": false
+    "host_cli_authenticated": false,
+    "stage2_source_prepared": true,
+    "stage2_physical_host_gate_verified": false,
+    "separate_owner_activation_required": true,
+    "original_engine_unattended_publication_verified": false,
+    "preparation_review_and_ci_pass": true,
+    "source_only_template": true
   }
 }

@@ -1,74 +1,34 @@
-# Original Issue-Orchestrator - pinned Toolkit pilot (#570)
+# Оригинальный Issue-Orchestrator - пилот интеграции Toolkit #570
 
-**State: SOURCE TEMPLATE ONLY / PHYSICAL WSL2 PILOT OBSERVED / FULL UNATTENDED E2E NOT_VERIFIED. This Toolkit template itself is not an activated engine.**
+**Состояние на 14.11.2026:** Stage 2 подготовлен и проверен в GitHub, **не активирован**. Полный автономный цикл создания PR оригинальным движком остаётся `NOT_VERIFIED`. Этот каталог - переносимый шаблон, а не включённый планировщик.
 
-> **Текущий результат (13.11.2026).** Оригинальный Issue-Orchestrator v0.10.0 запускался в WSL2 с Codex CLI через вход ChatGPT. Одна очередь (WIP=1) последовательно выполнила тестовые Issues #7 и #8: PR #15 и #17 слиты, post-merge CI прошёл. PR #17 опубликовал оператор после исправления локальной ошибки `stale info`, а не оригинальный движок. Восстановительная правка #7 дополнительно слита через PR #18. В локальной базе всё ещё удерживается `divergent_validated_heads` для #7: требуется утверждённый `release_validated_work` и проверка после перезапуска. **Полное автономное E2E, окончательная реконсиляция и внедрение в рабочие репозитории НЕ подтверждены.**
+## Что действительно проверено
 
+В закреплённой версии [issue-orchestrator/issue-orchestrator](https://github.com/issue-orchestrator/issue-orchestrator) 0.10.0 (`d4a79824ccd806089cf3f70ec632d39b8ee255ea`) реализованы очередь GitHub Issues, зависимости, Codex CLI, рабочие деревья Git, quick/publish-проверки, независимые рецензенты и восстановление. Настройка позволяет `WIP=1` и сохраняет человеческое слияние PR. Не нужно дублировать эти механизмы внутри Toolkit.
 
+В первом физическом WSL2-пилоте задачи #7 и #8 закрыты, PR #15, #17 и #18 слиты, соответствующий CI прошёл. Исходный движок выполнил кодирование и последовательный переход #7 -> #8, но публикация PR #17 потребовала ручного исправления Git `stale info`. Поэтому сквозную автоматическую публикацию **не следует считать подтверждённой**.
 
-This directory holds a minimal, declarative evaluation of upstream [issue-orchestrator/issue-orchestrator](https://github.com/issue-orchestrator/issue-orchestrator). It does not implement a second queue, supervisor, reviewer, worktree manager, agent provider or auto-merge.
+Сохранённая запись #7 `divergent_validated_heads` была разрешена **оригинальным владельцем записи** после подтверждённого одобрения предложения #19. Физическая проверка дала `RELEASE_APPLIED_BY_ORIGINAL_OWNER=PASS`, `IO570_TERMINAL_RELEASE_VERIFIED=PASS`, состояние `abandoned/operator_abandoned`; GitHub подтвердил снятие `recovery-pending`. После холодного запуска и завершения с кодом 0 повторная проверка сохранения результата также прошла. Это не доказывает полную автономную доставку.
 
-| Upstream | Pinned baseline |
+Во втором пилоте подготовлены новые синтетические Issues **#20 -> #21**, зависимость `Depends-on: #20`. Исходный [PR #22](PR #22 в отдельно разрешённом синтетическом репозитории) слит в отдельном тестовом репозитории в `main` при SHA `05f9e3736e33ff9e5b03a79553aec7e891dacb4e`. Предварительный CI Python 3.13/3.14, проверка применения заплатки к закреплённому исходнику и post-merge CI успешны. **Метки запуска и исполнителя не назначены, Codex не запускался.**
+
+## Состав шаблона
+
+| Файл | Назначение |
 |---|---|
-| Repository | issue-orchestrator/issue-orchestrator |
-| Commit | `d4a79824ccd806089cf3f70ec632d39b8ee255ea` |
-| Version | `0.10.0` (early beta) |
-| License | Apache-2.0; preserve LICENSE/NOTICE and trademark attribution |
-| Interface | Supported CLI and YAML configuration; MCP is experimental |
+| `pilot-0.10.0.yaml` | Нативная конфигурация исходного движка: `WIP=1`, Codex, reviewer, `seed_ref: origin/main`, quick/publish unittest, `max_to_start: 2` |
+| `pilot-scope.json` | Аудируемый пример отбора #20 и #21 с меткой `adt-io570-stage2-20261114`, без полномочия запуска |
 
-## Verified design fit at the pinned SHA
+Имя `example/issue-orchestrator-pilot` намеренно оставлено **заполнителем**. Настоящий пилотный репозиторий хранит собственные `AGENTS.md`, защищённые сценарии WSL2, ограниченную заплатку Git и реальные параметры. Не копируй шаблон в действующие репозитории как разрешение на исполнение.
 
-| Requirement | Upstream assessment |
-|---|---|
-| GitHub issue discovery, dependencies, scheduler | BUILT IN |
-| Worktrees, PR publishing, reconciliation and recovery | BUILT IN |
-| Quick/publish validations, independent reviewer role and bounded rework | BUILT IN; configure |
-| Pause/resume/restart, dashboard, timeline | BUILT IN |
-| WIP=1 | CONFIG: `execution.concurrency.max_concurrent_sessions: 1`; disable reserved tech-lead slots |
-| Exact pilot scope (two immutable Issue IDs) | GAP: `filtering.label` is supported; `filtering.issue` takes only one number. Label membership can change after preflight. The JSON scope below is an audit declaration, NOT an enforced runtime allowlist. |
-| Codex CLI with ChatGPT authorization | ORIGINAL PROVIDER SUPPORTED; owner reported `codex login status` -> `Logged in using ChatGPT` on Windows. WSL2 ChatGPT login and scoped native sandbox were reported PASS by the owner; permanent host separation and fully unattended publication remain NOT_VERIFIED |
-| Independent OS credential isolation on owner's Windows host | NOT_VERIFIED; per-agent sandbox is not proof of GitHub secret isolation |
-| Autonomous unattended E2E with two new pilot issues | PARTIAL: #7 and #8 completed with operator-assisted publication; unattended E2E NOT_VERIFIED |
-| Merging | HUMAN by default; preserved, with no auto-deploy |
+## Границы безопасности
 
-## Files and fixed pilot boundary
+- **Оригинал закреплён:** SHA `d4a79824ccd806089cf3f70ec632d39b8ee255ea`, версия 0.10.0, лицензия Apache-2.0. Заплатка на Git-публикацию применяется **только по явной переменной** в изолированной копии оригинального исходника для Stage 2. Заплатка проверяет точный SHA удалённого ref, ancestry и CAS через `--force-with-lease=refs/heads/<branch>:<sha>`; не расширяет разрешённые ветки, не отключает хуки и не создаёт альтернативный издатель PR.
+- **Провайдер:** только Codex CLI с авторизацией через ChatGPT. Платные API, ключи `OPENAI_API_KEY`/`CODEX_API_KEY`, Claude CLI и автоматические покупки запрещены. Проверки контейнера GitHub Actions не доказывают наличие доверенного runtime и изоляцию токенов на физическом WSL2.
+- **Границы Issues:** `filtering.label` в оригинале изменяемый; `filtering.issue` принимает только одну Issue. `max_to_start: 2` ограничивает количество запусков, но **не является неизменяемым списком ID**. В отдельном, контролируемом владельцем синтетическом репозитории дополнительно есть предварительная проверка точных #20/#21 и отсутствия третьей открытой Issue. Она одноразовая и не превращается в непрерывный барьер допуска. Для многопользовательского production такая защита недостаточна.
+- **Запуск:** не разрешён текущим шаблоном. Для физического пилота необходимы точный source SHA, независимая проверка CI, безопасный WSL2 no-model probe, действующий Codex ChatGPT login, согласованные Git refs, **отдельная команда владельца на активацию**, и только затем исходный движок с `WIP=1`. Слияния PR оставляются за человеком.
+- **Недоказанное:** безручная публикация настоящего PR обоих новых заданий, независимое review на новых SHA, движение по зависимости после human merge, восстановление после сбоя нового цикла и применение к другим проектам. До этих проверок #570 остаётся `OPEN`, интеграция Toolkit - source-only.
 
-This is a generic Toolkit-owned source template: `example/issue-orchestrator-pilot` is deliberately a placeholder, **not** a real target or an authorization. The actual pilot repository and its exact GitHub issue links live outside portable Toolkit, under the separately permitted test repository.
+Сопутствующий документ `docs/ISSUE_ORCHESTRATOR.md` относится к прежнему #565 и **не является** инструкцией запуска нового движка. Не запускай два контроллера одновременно.
 
-- `pilot-0.10.0.yaml` - upstream-formatted configuration candidate, **not installed** in the target repository or loaded automatically.
-- `pilot-scope.json` - source-only example of the intended fixed scope for a separately approved pilot, with placeholder repository `example/issue-orchestrator-pilot`, branch `main`, Issues `#7` and `#8`, label `adt-io570-pilot-20261109`.
-- GitHub Issues Issue #7 and Issue #8 were newly created for this pilot. The second has upstream-native `Depends-on: #7`.
-
-Do not treat `filtering.max_to_start: 2` as an immutable allowlist: it limits launches, not which issues qualify. A third issue labelled with the pilot label could become eligible. **Do not start the original engine unless that gap is closed by an upstream-supported mechanism or specifically accepted after a verified hard safety gate.** Check both labels and exact IDs against GitHub immediately before any eventual activation.
-
-## Provider compatibility and execution gate
-
-At upstream `d4a79824ccd806089cf3f70ec632d39b8ee255ea`:
-
-1. `src/issue_orchestrator/execution/agent_runner_providers/__init__.py` registers `claude-code`, `codex` and `deepseek`.
-2. `.../codex.py` uses `executable = "codex"` and probes `codex login status`. Its commands launch Codex CLI.
-3. The public plugin entry point `issue_orchestrator.ai_provider_keys` supplies API-key metadata, not a pluggable Python SDK execution backend.
-4. `agents[].command` is a documented override, but provider-less custom commands reject `sandbox: true`; simply launching an SDK script does not preserve the provider readiness, authentication, sandbox, interactive review and credential gates.
-
-The Python `openai-codex` SDK is not needed for this integration: use the original CLI provider. The owner has confirmed that Windows `codex login status` prints `Logged in using ChatGPT`. This proves the **Windows CLI login mode reported by the owner**, not that the Linux/WSL executor has the same authentication, available quota, or isolated GitHub credentials. Real model turns were observed by the owner in the separate WSL2 pilot; this portable Toolkit source template never launches models.
-
-**Disposition: `SOURCE_TEMPLATE / WSL2_PILOT_PARTIAL / FULL_E2E_NOT_VERIFIED`.** Codex CLI is now explicitly permitted when authenticated via ChatGPT. Do NOT use API-key billing, extra paid providers, Claude CLI, create a VM/new Windows user, expose publisher credentials or enable the legacy Toolkit supervisor. Do not start the original engine until host security and pilot issue-scope gates have passed.
-
-Next: verify the pinned original CLI in the intended execution environment (prefer existing WSL2 Linux for the upstream POSIX terminal runner); run `codex --version`, `codex login status`, and the original engine's `doctor` after installation review. Windows sign-in does **not** automatically authenticate a separate WSL/Linux profile. Reject unknown or API-key billing. Test that the coding process cannot access GitHub publishing credentials and that the exact pilot issue scope remains guarded at claim time. Existing GUI/SDK success is not E2E evidence.
-
-## Separate generic Toolkit template activation - NOT performed
-
-1. Inspect the pinned upstream tree, LICENSE, NOTICE, lockfile, dependencies and actual target host. No auto-download or global installation. Confirm the exact Git HEAD `d4a79824ccd806089cf3f70ec632d39b8ee255ea`.
-2. The owner has permitted ChatGPT-authenticated Codex CLI for this pilot; independently verify the *host's* CLI login, subscription mode, credential isolation, approved repo and immutable Issue membership before activating. The permission is not a paid API grant or a blanket run authorization.
-3. Use the separate pilot repository's updated `AGENTS.md` and upstream agent/reviewer prompts; review the upstream `setup` and guardrail hooks before applying them. The Toolkit legacy controller must stay inactive. Review every proposed change before applying it.
-4. Verify that `main` and the exclusive scope label still refer to only Issues #7 and #8. Scope must be fail-closed before runtime and remain guarded against late membership changes.
-5. After the above gates, follow supported upstream `issue-orchestrator setup`, `setup-guardrails`, `init`, `doctor`, `start`, `pause`, `resume`, `status` and `restart` interfaces as appropriate, using the version-pinned configuration. None was executed in this chat.
-6. Observe one real coding session at a time; independent reviewer, bounded rework, PR, exact-head CI, human merge, GitHub Issue closure, post-merge CI, automatic move to #8 and restart/reconciliation. Do not claim success from an empty runnable queue.
-
-The source-only Toolkit tests validate the declared configuration and fail-closed statuses, **not** upstream `doctor`, live GitHub label invariants, security isolation, agent execution or the required E2E.
-
-## Related legacy modules
-
-`scripts/issue_orchestrator.py`, `scripts/issue_supervisor.py` and `scripts/issue_supervisor_sdk.py` are legacy/source-only reference material from previous experiments. They are not activated, removed, imported or wired to this upstream integration. Do not run two queue controllers.
-
-Sources: pinned [configuration](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/configuration.md), [quickstart](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/quickstart.md), [stability](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/stability.md), [FAQ dependencies](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/faq.md), and [GitHub permissions](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/github-permissions.md).
+Первоисточники: [документация о стабильности интерфейсов](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/stability.md), [конфигурация](https://github.com/issue-orchestrator/issue-orchestrator/blob/d4a79824ccd806089cf3f70ec632d39b8ee255ea/docs/user/configuration.md).

@@ -33,9 +33,9 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         target = self.scope["target"]
         self.assertEqual(target["repository"], "example/issue-orchestrator-pilot")
         self.assertEqual(target["branch"], "main")
-        self.assertEqual(target["issue_numbers"], [7, 8])
+        self.assertEqual(target["issue_numbers"], [20, 21])
         self.assertEqual(len(target["issue_numbers"]), len(set(target["issue_numbers"])))
-        self.assertEqual(target["dependency"]["directive"], "Depends-on: #7")
+        self.assertEqual(target["dependency"]["directive"], "Depends-on: #20")
 
     def test_original_config_scope_and_branch(self):
         target = self.scope["target"]
@@ -44,8 +44,11 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         filtering = self.config["filtering"]
         self.assertEqual(filtering["label"], target["required_label"])
         self.assertEqual(filtering["max_to_start"], 2)
-        self.assertNotIn("issue", filtering)  # Single-number filter cannot select [7, 8]
+        self.assertNotIn("issue", filtering)  # Single-number filter cannot select [20, 21]
         self.assertEqual(self.config["execution"]["concurrency"]["max_concurrent_sessions"], 1)
+        self.assertEqual(self.config["worktrees"]["seed_ref"], "origin/main")
+        self.assertFalse(self.config["retry"]["interrupted_sessions"]["enabled"])
+        self.assertEqual(self.config["agents"]["agent:dev"]["provider_args"]["execution_mode"], "exec")
 
     def test_no_second_controller_or_automatic_merge(self):
         self.assertFalse(self.config["tech_lead"]["enabled"])
@@ -67,6 +70,10 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         self.assertFalse(policy["live_execution_authorized"])
         self.assertTrue(policy["codex_cli_authorized"])
         self.assertFalse(policy["host_cli_authenticated"])
+        self.assertTrue(policy["stage2_source_prepared"])
+        self.assertFalse(policy["stage2_physical_host_gate_verified"])
+        self.assertTrue(policy["separate_owner_activation_required"])
+        self.assertFalse(policy["original_engine_unattended_publication_verified"])
         self.assertFalse(policy["paid_api_authorized"])
         self.assertFalse(policy["actual_immutable_allowlist"])
         self.assertFalse(policy["e2e_verified"])
@@ -86,6 +93,10 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         self.assertFalse(integration["automatic_install"])
         self.assertFalse(integration["live_execution"])
         self.assertFalse(integration["automatic_background_execution"])
+        self.assertIsNone(integration["pilot_evidence"]["recovery_custody_pending_issue"])
+        self.assertEqual(integration["pilot_evidence"]["recovery_resolution"], "operator_abandoned")
+        self.assertEqual(integration["pilot_evidence"]["stage2_prepared_issues"], [20, 21])
+        self.assertFalse(integration["pilot_evidence"]["stage2_codex_activated"])
         self.assertEqual(
             integration["config"], "integrations/issue-orchestrator/pilot-0.10.0.yaml"
         )
