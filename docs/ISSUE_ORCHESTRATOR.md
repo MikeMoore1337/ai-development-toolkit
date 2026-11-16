@@ -1,3 +1,5 @@
+> **LEGACY #565 (управление сессиями), не исходный движок Issue-Orchestrator.** Актуальная конфигурация оригинального движка описана в [пилоте v0.10.0](../integrations/issue-orchestrator/README.ru.md). Stage 2 физически запускался 16.11.2026, но остановился на `coder_no_completion` в независимом ревью; проверенный код #20 удержан с `recovery-pending`, #21 не выполнена. Незавершённый E2E перенесён в [#589](https://github.com/MikeMoore1337/ai-development-toolkit/issues/589). Не запускать старый и новый контроллеры одновременно.
+
 # Issue Orchestrator: последовательное выполнение GitHub Issues через Codex
 
 Статус: **экспериментальный модуль, только по явному запуску**. Задача: [#565](https://github.com/MikeMoore1337/ai-development-toolkit/issues/565).

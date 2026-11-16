@@ -1,0 +1,79 @@
+# SOURCE-ONLY / STAGE2_PREPARED / CODEX_CLI_OWNER_PERMITTED / E2E_NOT_VERIFIED
+# Upstream 0.10.0, pinned d4a79824ccd806089cf3f70ec632d39b8ee255ea
+# Owner permits Codex CLI authenticated through ChatGPT; no API-key billing.
+# Never activate from this generic template. Stage-2 source is merged in the separately approved disposable pilot; physical WSL2 security checks and distinct owner activation remain outstanding.
+# This declares an original-engine configuration, NOT an SDK adapter.
+# example/issue-orchestrator-pilot is a generic placeholder, not a real GitHub repo.
+
+repo:
+  name: example/issue-orchestrator-pilot
+
+worktrees:
+  base: "../adt-orchestrator-pilot-worktrees"
+  base_branch_override: main
+  seed_ref: origin/main
+
+agents:
+  "agent:dev":
+    prompt: ".issue-orchestrator/prompts/dev.md"
+    provider: codex
+    ai_system: codex
+    sandbox: true
+    timeout_minutes: 15
+    reviewer: "agent:reviewer"
+    provider_args:
+      execution_mode: exec
+      approval_mode: default
+      sandbox: workspace-write
+  "agent:reviewer":
+    prompt: ".issue-orchestrator/prompts/reviewer.md"
+    provider: codex
+    ai_system: codex
+    sandbox: true
+    timeout_minutes: 10
+    provider_args:
+      approval_mode: default
+      sandbox: workspace-write
+
+execution:
+  concurrency:
+    max_concurrent_sessions: 1
+    session_timeout_minutes: 20
+  terminal_adapter: subprocess
+
+review:
+  enabled: true
+  default: "agent:reviewer"
+  max_rework_cycles: 2
+  internal:
+    enabled: false
+
+validation:
+  quick:
+    cmd: "python -m unittest discover -s tests -v"
+    timeout_seconds: 300
+  publish:
+    cmd: "python -m unittest discover -s tests -v"
+    timeout_seconds: 900
+    dirty_check: tracked
+
+retry:
+  interrupted_sessions:
+    enabled: false
+
+filtering:
+  label: "adt-io570-stage2-20261114"
+  exclude_labels: ["HOLD", "blocked"]
+  max_to_start: 2
+
+tech_lead:
+  enabled: false
+
+goal_pilot:
+  enabled: false
+
+merge_queue:
+  enabled: false
+
+e2e:
+  enabled: false
