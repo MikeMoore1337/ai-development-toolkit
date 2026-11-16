@@ -87,7 +87,7 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
     def test_manifest_declares_disabled_upstream_integration(self):
         integration = self.manifest["optional_integrations"]["upstream_issue_orchestrator"]
         self.assertEqual(integration["source_sha"], self.scope["upstream"]["commit"])
-        self.assertEqual(integration["provider_status"], "CODEX_CLI_OWNER_PERMITTED_HOST_NOT_VERIFIED")
+        self.assertEqual(integration["provider_status"], "CODEX_CLI_CHATGPT_WSL2_PILOT_VERIFIED")
         self.assertTrue(integration["codex_cli_owner_permitted"])
         self.assertFalse(integration["paid_api_authorized"])
         self.assertFalse(integration["automatic_install"])
@@ -96,7 +96,12 @@ class OriginalIssueOrchestratorSourceContract(unittest.TestCase):
         self.assertIsNone(integration["pilot_evidence"]["recovery_custody_pending_issue"])
         self.assertEqual(integration["pilot_evidence"]["recovery_resolution"], "operator_abandoned")
         self.assertEqual(integration["pilot_evidence"]["stage2_prepared_issues"], [20, 21])
-        self.assertFalse(integration["pilot_evidence"]["stage2_codex_activated"])
+        self.assertTrue(integration["pilot_evidence"]["stage2_codex_activated"])
+        self.assertEqual(integration["host_e2e"], "BLOCKED_REVIEW_EXCHANGE")
+        self.assertFalse(integration["pilot_evidence"]["stage2_autonomous_pr_published"])
+        self.assertEqual(integration["pilot_evidence"]["stage2_followup_issue"], 589)
+        self.assertEqual(integration["pilot_evidence"]["stage2_issue20_state"], "PARKED_RECOVERY_PENDING_NO_PR")
+        self.assertEqual(integration["pilot_evidence"]["stage2_issue21_state"], "BLOCKED_CROSS_MILESTONE_UNSTARTED")
         self.assertEqual(
             integration["config"], "integrations/issue-orchestrator/pilot-0.10.0.yaml"
         )
