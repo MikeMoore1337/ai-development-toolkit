@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -53,6 +54,15 @@ class PonytailHostTests(unittest.TestCase):
             self.run_action("install")
         self.assertEqual("other source", (dest / "SKILL.md").read_text())
 
+    def test_unfinished_staging_blocks_status_and_install(self):
+        stage = self.target / ".adt-ponytail-stage-interrupted"
+        stage.mkdir(parents=True)
+        (stage / "foreign.txt").write_text("keep")
+        for action in ("status", "install"):
+            with self.subTest(action=action), self.assertRaisesRegex(host.Hold, "unfinished staging"):
+                self.run_action(action)
+        self.assertEqual("keep", (stage / "foreign.txt").read_text())
+
     def test_legacy_duplicate_blocks_install(self):
         (self.legacy / "ponytail").mkdir(parents=True)
         with self.assertRaisesRegex(host.Hold, "possible duplicate"):
@@ -70,6 +80,28 @@ class PonytailHostTests(unittest.TestCase):
         with self.assertRaisesRegex(host.Hold, "installed skill changed"):
             self.run_action("uninstall")
         self.assertTrue((self.target / host.MARKER).exists())
+
+    def test_partial_uninstall_fails_closed(self):
+        self.run_action("install")
+        unlink = Path.unlink
+        calls = 0
+
+        def fail_on_second(file, *args, **kwargs):
+            nonlocal calls
+            if file.name == "SKILL.md":
+                calls += 1
+                if calls == 2:
+                    raise OSError("simulated failure")
+            return unlink(file, *args, **kwargs)
+
+        with patch.object(Path, "unlink", new=fail_on_second):
+            with self.assertRaises(OSError):
+                self.run_action("uninstall")
+        for action in ("status", "uninstall"):
+            with self.subTest(action=action), self.assertRaisesRegex(host.Hold, "incomplete"):
+                self.run_action(action)
+        self.assertTrue((self.target / "ponytail-review" / "SKILL.md").is_file())
+        self.assertTrue((self.target / host.MARKER).is_file())
 
     def test_foreign_file_blocks_uninstall(self):
         self.run_action("install")
@@ -111,6 +143,18 @@ class PonytailHostTests(unittest.TestCase):
                 self.run_action("install")
         self.assertEqual("NOT_INSTALLED", self.run_action("status"))
 
+    def test_failed_install_preserves_foreign_file_in_stage(self):
+        def fail_with_foreign_file(source, destination):
+            (source.parent / "foreign.txt").write_text("keep")
+            raise OSError("simulated failure")
+
+        with patch.object(host.os, "rename", side_effect=fail_with_foreign_file):
+            with self.assertRaises(OSError):
+                self.run_action("install")
+        stages = list(self.target.glob(".adt-ponytail-stage-*"))
+        self.assertEqual(1, len(stages))
+        self.assertEqual("keep", (stages[0] / "foreign.txt").read_text())
+
     def test_source_symlink_refused(self):
         (self.source / "ponytail" / "SKILL.md").unlink()
         try:
@@ -126,6 +170,23 @@ class PonytailHostTests(unittest.TestCase):
             with self.assertRaisesRegex(host.Hold, "symlink or junction"):
                 self.run_action("install")
         self.assertFalse(self.target.exists())
+
+    @unittest.skipUnless(os.name == "nt", "Windows junction test")
+    def test_real_junction_ancestor_refused(self):
+        home = self.root / "home"
+        home.mkdir()
+        junction = self.root / "junction"
+        result = subprocess.run(["cmd.exe", "/d", "/c", "mklink", "/J", str(junction), str(home)],
+                                capture_output=True, text=True, check=False)
+        if result.returncode:
+            self.skipTest("Windows junction creation unavailable")
+        try:
+            with self.assertRaisesRegex(host.Hold, "symlink or junction"):
+                host.execute("install", source=self.source, destination=junction / ".agents" / "skills",
+                             codex_root=self.legacy)
+            self.assertFalse((home / ".agents").exists())
+        finally:
+            junction.rmdir()
 
 
 if __name__ == "__main__":

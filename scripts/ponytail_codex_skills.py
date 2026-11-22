@@ -9,7 +9,6 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -100,6 +99,18 @@ def check_skills(root: Path, payload: dict[str, bytes]) -> bool:
     return True
 
 
+def remove_unchanged(directory: Path, body: bytes) -> None:
+    file = directory / "SKILL.md"
+    try:
+        if (not linked(directory) and not linked(file) and directory.is_dir()
+                and sorted(p.name for p in directory.iterdir()) == ["SKILL.md"]
+                and file.is_file() and canonical(file.read_bytes()) == body):
+            file.unlink()
+            directory.rmdir()
+    except OSError:
+        pass
+
+
 def execute(action: str, *, source: Path = SOURCE, destination: Path | None = None,
             codex_root: Path | None = None) -> str:
     # Default Codex user skills location; no writes to any project checkout.
@@ -107,6 +118,8 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
     codex = codex_root if codex_root is not None else Path.home() / ".codex" / "skills"
     payload = verify_upstream(source)
     ensure_destination(root, create=False)
+    if root.is_dir() and any(path.name.startswith(".adt-ponytail-stage-") for path in root.iterdir()):
+        raise Hold("unfinished staging directory; inspect before recovery")
     managed = ownership(root)
     if managed:
         if not check_skills(root, payload):
@@ -143,18 +156,16 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
                 out.write(marker_body)
         except BaseException:
             for directory in reversed(installed):
-                file = directory / "SKILL.md"
-                try:
-                    if (not linked(directory) and not linked(file) and directory.is_dir()
-                            and sorted(p.name for p in directory.iterdir()) == ["SKILL.md"]
-                            and file.is_file() and canonical(file.read_bytes()) == payload[directory.name]):
-                        file.unlink()
-                        directory.rmdir()
-                except OSError:
-                    pass
+                remove_unchanged(directory, payload[directory.name])
             raise
         finally:
-            shutil.rmtree(staged)
+            if not linked(staged) and staged.is_dir():
+                for name, body in payload.items():
+                    remove_unchanged(staged / name, body)
+                try:
+                    staged.rmdir()
+                except OSError:
+                    pass
         return "INSTALLED"
     if action == "uninstall":
         if not managed:
