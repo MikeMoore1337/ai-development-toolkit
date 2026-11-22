@@ -142,8 +142,16 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
             with (root / MARKER).open("x", encoding="utf-8") as out:
                 out.write(marker_body)
         except BaseException:
-            for file in reversed(installed):
-                shutil.rmtree(file)
+            for directory in reversed(installed):
+                file = directory / "SKILL.md"
+                try:
+                    if (not linked(directory) and not linked(file) and directory.is_dir()
+                            and sorted(p.name for p in directory.iterdir()) == ["SKILL.md"]
+                            and file.is_file() and canonical(file.read_bytes()) == payload[directory.name]):
+                        file.unlink()
+                        directory.rmdir()
+                except OSError:
+                    pass
             raise
         finally:
             shutil.rmtree(staged)
@@ -174,7 +182,7 @@ def main() -> int:
         return 2
     print(f"PONYTAIL_HOST={result}")
     print("CLIENT_DISCOVERY=NOT_VERIFIED")
-    print("CODEX_NATIVE_PLUGIN_HOOKS=NOT_INSTALLED")
+    print("CODEX_NATIVE_PLUGIN_HOOKS=NOT_MANAGED")
     return 0
 
 

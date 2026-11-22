@@ -1,6 +1,7 @@
 """Offline tests: no real user skill directories and no Codex CLI invocations."""
 import hashlib
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -76,6 +77,39 @@ class PonytailHostTests(unittest.TestCase):
         with self.assertRaisesRegex(host.Hold, "unexpected installed files"):
             self.run_action("uninstall")
         self.assertTrue((self.target / "ponytail" / "MY_FILE").exists())
+
+    def test_failed_install_does_not_delete_foreign_file(self):
+        rename = os.rename
+        calls = 0
+
+        def fail_after_foreign_file(source, destination):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                (self.target / "ponytail" / "MY_FILE").write_text("keep")
+                raise OSError("simulated failure")
+            rename(source, destination)
+
+        with patch.object(host.os, "rename", side_effect=fail_after_foreign_file):
+            with self.assertRaises(OSError):
+                self.run_action("install")
+        self.assertEqual("keep", (self.target / "ponytail" / "MY_FILE").read_text())
+
+    def test_failed_install_removes_unchanged_files(self):
+        rename = os.rename
+        calls = 0
+
+        def fail_on_second(source, destination):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise OSError("simulated failure")
+            rename(source, destination)
+
+        with patch.object(host.os, "rename", side_effect=fail_on_second):
+            with self.assertRaises(OSError):
+                self.run_action("install")
+        self.assertEqual("NOT_INSTALLED", self.run_action("status"))
 
     def test_source_symlink_refused(self):
         (self.source / "ponytail" / "SKILL.md").unlink()
