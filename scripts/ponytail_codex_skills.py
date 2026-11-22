@@ -61,7 +61,7 @@ def verify_upstream(source: Path) -> dict[str, bytes]:
 
 
 def ensure_destination(root: Path, *, create: bool) -> None:
-    if linked(root) or linked(root.parent):
+    if any(linked(path) for path in (root, *root.parents)):
         raise Hold("destination is a symlink or junction")
     if root.exists() and not root.is_dir():
         raise Hold("destination is not a directory")

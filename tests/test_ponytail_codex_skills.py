@@ -120,6 +120,13 @@ class PonytailHostTests(unittest.TestCase):
         with self.assertRaisesRegex(host.Hold, "linked"):
             self.run_action("install")
 
+    def test_linked_destination_ancestor_refused(self):
+        linked = host.linked
+        with patch.object(host, "linked", side_effect=lambda path: path == self.root / "home" or linked(path)):
+            with self.assertRaisesRegex(host.Hold, "symlink or junction"):
+                self.run_action("install")
+        self.assertFalse(self.target.exists())
+
 
 if __name__ == "__main__":
     unittest.main()
