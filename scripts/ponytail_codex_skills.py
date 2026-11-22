@@ -9,7 +9,6 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -61,7 +60,7 @@ def verify_upstream(source: Path) -> dict[str, bytes]:
 
 
 def ensure_destination(root: Path, *, create: bool) -> None:
-    if linked(root) or linked(root.parent):
+    if any(linked(path) for path in (root, *root.parents)):
         raise Hold("destination is a symlink or junction")
     if root.exists() and not root.is_dir():
         raise Hold("destination is not a directory")
@@ -86,18 +85,32 @@ def ownership(root: Path) -> bool:
     return True
 
 
-def check_skills(root: Path, payload: dict[str, bytes]) -> bool:
+def check_skills(root: Path, payload: dict[str, bytes]) -> list[str]:
+    missing = []
     for name, body in payload.items():
         directory, file = root / name, root / name / "SKILL.md"
         if linked(directory) or linked(file):
             raise Hold(f"linked installed skill: {name}")
         if not directory.exists():
-            return False
+            missing.append(name)
+            continue
         if not directory.is_dir() or sorted(p.name for p in directory.iterdir()) != ["SKILL.md"]:
             raise Hold(f"unexpected installed files: {name}")
         if not file.is_file() or canonical(file.read_bytes()) != body:
             raise Hold(f"installed skill changed: {name}")
-    return True
+    return missing
+
+
+def remove_unchanged(directory: Path, body: bytes) -> None:
+    file = directory / "SKILL.md"
+    try:
+        if (not linked(directory) and not linked(file) and directory.is_dir()
+                and sorted(p.name for p in directory.iterdir()) == ["SKILL.md"]
+                and file.is_file() and canonical(file.read_bytes()) == body):
+            file.unlink()
+            directory.rmdir()
+    except OSError:
+        pass
 
 
 def execute(action: str, *, source: Path = SOURCE, destination: Path | None = None,
@@ -107,9 +120,12 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
     codex = codex_root if codex_root is not None else Path.home() / ".codex" / "skills"
     payload = verify_upstream(source)
     ensure_destination(root, create=False)
+    if root.is_dir() and any(path.name.startswith(".adt-ponytail-stage-") for path in root.iterdir()):
+        raise Hold("unfinished staging directory; inspect before recovery")
     managed = ownership(root)
     if managed:
-        if not check_skills(root, payload):
+        missing = check_skills(root, payload)
+        if missing and action == "status":
             raise Hold("managed installation is incomplete")
     else:
         existing = [name for name in BLOBS if (root / name).exists() or linked(root / name)]
@@ -118,7 +134,7 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
     if action == "status":
         return "INSTALLED" if managed else "NOT_INSTALLED"
     if action == "install":
-        if managed:
+        if managed and not missing:
             return "ALREADY_INSTALLED"
         # A second old Codex skill root can cause duplicate discovery. Fail closed.
         if codex != root:
@@ -126,32 +142,42 @@ def execute(action: str, *, source: Path = SOURCE, destination: Path | None = No
                 if (codex / name).exists() or linked(codex / name):
                     raise Hold(f"possible duplicate in legacy Codex skills: {name}")
         ensure_destination(root, create=True)
+        pending = {name: payload[name] for name in missing} if managed else payload
         staged = Path(tempfile.mkdtemp(prefix=".adt-ponytail-stage-", dir=root))
         installed = []
         try:
-            for name, body in payload.items():
+            for name, body in pending.items():
                 (staged / name).mkdir()
                 (staged / name / "SKILL.md").write_bytes(body)
-            for name in BLOBS:
+            for name in pending:
                 if (root / name).exists() or linked(root / name):
                     raise Hold(f"collision during install: {name}")
                 os.rename(staged / name, root / name)
                 installed.append(root / name)
-            marker_body = json.dumps({"source": "DietrichGebert/ponytail", "commit": PIN,
-                                      "skills": sorted(BLOBS)}, sort_keys=True) + "\n"
-            with (root / MARKER).open("x", encoding="utf-8") as out:
-                out.write(marker_body)
+            if not managed:
+                marker_body = json.dumps({"source": "DietrichGebert/ponytail", "commit": PIN,
+                                          "skills": sorted(BLOBS)}, sort_keys=True) + "\n"
+                with (root / MARKER).open("x", encoding="utf-8") as out:
+                    out.write(marker_body)
         except BaseException:
-            for file in reversed(installed):
-                shutil.rmtree(file)
+            for directory in reversed(installed):
+                remove_unchanged(directory, payload[directory.name])
             raise
         finally:
-            shutil.rmtree(staged)
+            if not linked(staged) and staged.is_dir():
+                for name, body in payload.items():
+                    remove_unchanged(staged / name, body)
+                try:
+                    staged.rmdir()
+                except OSError:
+                    pass
         return "INSTALLED"
     if action == "uninstall":
         if not managed:
             raise Hold("no managed installation to uninstall")
         for name in BLOBS:
+            if name in missing:
+                continue
             (root / name / "SKILL.md").unlink()
             (root / name).rmdir()
         (root / MARKER).unlink()
@@ -174,7 +200,7 @@ def main() -> int:
         return 2
     print(f"PONYTAIL_HOST={result}")
     print("CLIENT_DISCOVERY=NOT_VERIFIED")
-    print("CODEX_NATIVE_PLUGIN_HOOKS=NOT_INSTALLED")
+    print("CODEX_NATIVE_PLUGIN_HOOKS=NOT_MANAGED")
     return 0
 
 

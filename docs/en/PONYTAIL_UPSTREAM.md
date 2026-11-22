@@ -35,6 +35,8 @@ From an up-to-date Toolkit checkout, run in Windows PowerShell:
 
 The script uses **only the six unchanged SKILL.md** files in `third_party/ponytail-v5.3.2/skills`, verifies their exact Git blob SHAs and installs into `%USERPROFILE%\.agents\skills` for all projects, including Hermes. No Codex CLI, Claude CLI, hooks, model calls, network access or extra Gateway. Legacy `%USERPROFILE%\.codex\skills` duplicates, links, foreign files and bad hashes fail closed. Uninstall only removes files stamped by this installer.
 
+The status command checks the skill-only marker; it does not detect active Codex plugins or hooks. Inspect the client separately before installing to avoid duplicates. If an owned installation has missing skill directories, status refuses the incomplete state; `--install` restores missing directories and `--uninstall` finishes removal only after checking all remaining skills. Empty or changed skill directories, an invalid marker, directories without a marker, and leftover staging still require manual inspection. Preserve unowned and modified files.
+
 Restart/open Codex Desktop and check `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help` appear. Codex **may** select a matching skill implicitly, but invocation is not guaranteed. This is **skill-only**: no native lifecycle hooks or persistent Full/Lite mode. Until checked on the actual Windows client: `HOST_NOT_VERIFIED`.
 
 The isolated Hermes Agent previously tested on VPS does not activate Ponytail in Codex Desktop or Hermes BRC. Resident BRC services remain unchanged.
