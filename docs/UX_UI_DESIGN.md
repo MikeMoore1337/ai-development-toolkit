@@ -75,6 +75,12 @@ When the owner prefers or has approved an earlier result, **retain a versioned v
 
 No application edits before explicit approval of the particular design version. No original skill, rendering engine or specialist can be claimed active without actual invocation evidence. For explicit `ALL_THREE` policy see #449.
 
+## Emil Kowalski originals - selective design specialists
+
+The existing [UX/UI Design Orchestra](../.agents/skills/ux-ui-design-orchestra/SKILL.md) now has a [pinned routing index for all 18 upstream skills](../.agents/skills/ux-ui-design-orchestra/references/EMIL_ORIGINAL_SKILLS.md) from [emilkowalski/skills](https://github.com/emilkowalski/skills) (MIT, source `715c1807e08c497cfd1dc4feb450a2a3300ef2a9`). It selects only a relevant native skill for the actual task: `emil-design-eng` (polish), `apple-design` (Apple-style UX), `mobile-native` (PWA/touch), `break-ui` (edge-case layouts), or focused animation methods. Explicit-only upstream skills, including `review-animations`, `prototype` and `pick-ui-library`, are not auto-invoked.
+
+This is a **source/routing integration**, not installation or a claimed live execution. Hosts must inspect and load the pinned original source, review any installer or requested change, respect no-write design modes and report actual invocation evidence. The existing Impeccable/Taste/UI UX Pro Max `ALL_THREE` gate is unchanged; Emil is an optional specialist, not a fourth required original. No application code changes before accepting a specific visual design.
+
 ## Original design skills - explicit ALL_THREE mode (#449)
 
 A standing user choice or an observed private-plugin preference is an existing opt-in: ordinary design requests do not need to repeat tool names. The ChatGPT adapter reads `skills/toolkit-task-router/references/USER_PREFERENCES.json` using the existing preference schema; the public file is empty, while an owner-edited private package may persist `skills.design_originals=ALL_THREE`. Missing local settings do not reset a known personal choice. Explicit project/task overrides and native-controller precedence remain; this preference grants no execution rights.

@@ -22,3 +22,5 @@ metadata:
 8. **Report and hand off:** prioritize confirmed or plausible risk with a minimal fix and regression test, retain uncertainty, identify residual risk and the responsible human decision. Do not claim regulatory compliance, SLSA level, or safety without evidence.
 
 User guides: `docs/SECURITY_DEVSECOPS.md` and `docs/ru/SECURITY_DEVSECOPS.md`. Demonstration: `python scripts/validate_security.py` from the Toolkit root (offline synthetic evidence only).
+
+**Optional deep-audit evidence:** For an explicitly scoped, authorized coverage-led review, follow [the coverage-ledger reference](references/COVERAGE_LEDGER.md). This reuses the existing offline security validator; no new scanning controller, automatic agents, live endpoints, permissions or external runtime.
