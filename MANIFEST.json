@@ -821,5 +821,11 @@
     "runtime_state": "CLIENT_RUNTIME_NOT_VERIFIED",
     "external_ecc_runtime_required": false,
     "mcp_tool": "toolkit_preflight_parallel_plan"
+  },
+  "optional_codex_pretool_gate": {
+    "path": "integrations/personal-mcp/adt-personal/hooks/codex_pretool_gate.py",
+    "default": "OFF",
+    "host_security_boundary": false,
+    "local_cwd_assumption_default": false
   }
 }
